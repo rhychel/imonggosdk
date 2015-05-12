@@ -1238,14 +1238,12 @@ containing a value of this type.
         public static int abc_text_size_subtitle_material_toolbar=0x7f070022;
         public static int abc_text_size_title_material=0x7f070023;
         public static int abc_text_size_title_material_toolbar=0x7f070024;
-        public static int activity_horizontal_margin=0x7f070025;
-        public static int activity_vertical_margin=0x7f070026;
-        public static int dialog_fixed_height_major=0x7f070027;
-        public static int dialog_fixed_height_minor=0x7f070028;
-        public static int dialog_fixed_width_major=0x7f070029;
-        public static int dialog_fixed_width_minor=0x7f07002a;
-        public static int disabled_alpha_material_dark=0x7f07002b;
-        public static int disabled_alpha_material_light=0x7f07002c;
+        public static int dialog_fixed_height_major=0x7f070025;
+        public static int dialog_fixed_height_minor=0x7f070026;
+        public static int dialog_fixed_width_major=0x7f070027;
+        public static int dialog_fixed_width_minor=0x7f070028;
+        public static int disabled_alpha_material_dark=0x7f070029;
+        public static int disabled_alpha_material_light=0x7f07002a;
     }
     public static final class drawable {
         public static int abc_ab_share_pack_holo_dark=0x7f020000;
@@ -1314,7 +1312,6 @@ containing a value of this type.
         public static int action_mode_bar=0x7f08002e;
         public static int action_mode_bar_stub=0x7f08002d;
         public static int action_mode_close_button=0x7f080020;
-        public static int action_settings=0x7f08003f;
         public static int activity_chooser_view_content=0x7f080021;
         public static int always=0x7f080016;
         public static int beginning=0x7f080013;
@@ -1393,11 +1390,7 @@ containing a value of this type.
         public static int abc_search_dropdown_item_icons_2line=0x7f030014;
         public static int abc_search_view=0x7f030015;
         public static int abc_simple_dropdown_hint=0x7f030016;
-        public static int activity_main=0x7f030017;
-        public static int support_simple_spinner_dropdown_item=0x7f030018;
-    }
-    public static final class menu {
-        public static int menu_main=0x7f0c0000;
+        public static int support_simple_spinner_dropdown_item=0x7f030017;
     }
     public static final class string {
         public static int abc_action_bar_home_description=0x7f0a0000;
@@ -1416,9 +1409,6 @@ containing a value of this type.
         public static int abc_shareactionprovider_share_with=0x7f0a000d;
         public static int abc_shareactionprovider_share_with_application=0x7f0a000e;
         public static int abc_toolbar_collapse_description=0x7f0a000f;
-        public static int action_settings=0x7f0a0010;
-        public static int app_name=0x7f0a0011;
-        public static int hello_world=0x7f0a0012;
     }
     public static final class style {
         public static int Base_TextAppearance_AppCompat=0x7f0b0000;
