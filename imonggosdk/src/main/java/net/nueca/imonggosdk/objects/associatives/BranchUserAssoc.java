@@ -24,6 +24,8 @@ public class BranchUserAssoc {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = USER_ID_FIELD_NAME)
     private User user;
 
+    public BranchUserAssoc() { }
+
     public BranchUserAssoc(Branch branch, User user) {
         this.branch = branch;
         this.user = user;

@@ -4,7 +4,7 @@ package net.nueca.imonggosdk.enums;
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
  */
-public enum DatabaseOperations {
+public enum DatabaseOperation {
     /**
      * Create table.
      */

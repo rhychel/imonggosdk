@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ImonggoSDK</string>
+
+    <!-- Requesting URLs -->
+    <string name="API_URL_PLDTRETAILCLOUD">http://www.pldtretailcloud.com/system/api_url?account_id=%s</string>
+    <string name="API_URL_IRETAILCLOUD_COM">http://www.iretailcloud.com/system/api_url?account_id=%s</string>
+    <string name="API_URL_IRETAILCLOUD_NET">http://www.iretailcloud.net/system/api_url?account_id=%s</string>
+    <string name="API_URL_IMONGGO">http://www.imonggo.com/system/api_url?account_id=%s</string>
+    <string name="API_URL_CUSTOM">%1$s/system/api_url?account_id=%2$s</string> <!-- TODO URL for custom server domain -->
+    <string name="API_URL_CUSTOM_SECURED">%1$s/system/api_url?account_id=%2$s</string> <!-- TODO URL for custom server domain -->
+
+    <string name="API_TOKEN_URL">%1$s/api/%2$s?email=%3$s&amp;password=%4$s</string>
+
+    <string name="API_MODULE_URL">http://%1$s:x@%2$s/api/%3$s</string>
+    <string name="API_MODULE_URL_SECURED">https://%1$s:x@%2$s/api/%3$s</string>
+    <string name="API_MODULE_ID_URL">http://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
+    <string name="API_MODULE_ID_URL_SECURED">https://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
+
+    <string name="PRODUCT_IMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg</string>
+    <string name="PRODUCT_IMAGE_URL_SECURED">https://%1$s:x@%2$s/api/products/%3$s.jpg</string>
+    <string name="PRODUCT_LARGEIMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
+    <string name="PRODUCT_LARGEIMAGE_URL_SECURED">https://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
+	<string name="param_login">email=%1$s&amp;password=%2$s</string>
+
+</resources>
