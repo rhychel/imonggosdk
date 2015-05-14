@@ -292,12 +292,12 @@ public final class R {
 		public static final int abc_text_size_subtitle_material_toolbar = 0x7f070022;
 		public static final int abc_text_size_title_material = 0x7f070023;
 		public static final int abc_text_size_title_material_toolbar = 0x7f070024;
-		public static final int dialog_fixed_height_major = 0x7f070027;
-		public static final int dialog_fixed_height_minor = 0x7f070028;
-		public static final int dialog_fixed_width_major = 0x7f070029;
-		public static final int dialog_fixed_width_minor = 0x7f07002a;
-		public static final int disabled_alpha_material_dark = 0x7f07002b;
-		public static final int disabled_alpha_material_light = 0x7f07002c;
+		public static final int dialog_fixed_height_major = 0x7f070025;
+		public static final int dialog_fixed_height_minor = 0x7f070026;
+		public static final int dialog_fixed_width_major = 0x7f070027;
+		public static final int dialog_fixed_width_minor = 0x7f070028;
+		public static final int disabled_alpha_material_dark = 0x7f070029;
+		public static final int disabled_alpha_material_light = 0x7f07002a;
 	}
 	public static final class drawable {
 		public static final int abc_ab_share_pack_holo_dark = 0x7f020000;
@@ -444,25 +444,25 @@ public final class R {
 		public static final int abc_search_dropdown_item_icons_2line = 0x7f030014;
 		public static final int abc_search_view = 0x7f030015;
 		public static final int abc_simple_dropdown_hint = 0x7f030016;
-		public static final int support_simple_spinner_dropdown_item = 0x7f030018;
+		public static final int support_simple_spinner_dropdown_item = 0x7f030017;
 	}
 	public static final class string {
-		public static final int abc_action_bar_home_description = 0x7f0a0000;
-		public static final int abc_action_bar_home_description_format = 0x7f0a0001;
-		public static final int abc_action_bar_home_subtitle_description_format = 0x7f0a0002;
-		public static final int abc_action_bar_up_description = 0x7f0a0003;
-		public static final int abc_action_menu_overflow_description = 0x7f0a0004;
-		public static final int abc_action_mode_done = 0x7f0a0005;
-		public static final int abc_activity_chooser_view_see_all = 0x7f0a0006;
-		public static final int abc_activitychooserview_choose_application = 0x7f0a0007;
-		public static final int abc_searchview_description_clear = 0x7f0a0008;
-		public static final int abc_searchview_description_query = 0x7f0a0009;
-		public static final int abc_searchview_description_search = 0x7f0a000a;
-		public static final int abc_searchview_description_submit = 0x7f0a000b;
-		public static final int abc_searchview_description_voice = 0x7f0a000c;
-		public static final int abc_shareactionprovider_share_with = 0x7f0a000d;
-		public static final int abc_shareactionprovider_share_with_application = 0x7f0a000e;
-		public static final int abc_toolbar_collapse_description = 0x7f0a000f;
+		public static final int abc_action_bar_home_description = 0x7f0a000f;
+		public static final int abc_action_bar_home_description_format = 0x7f0a0010;
+		public static final int abc_action_bar_home_subtitle_description_format = 0x7f0a0011;
+		public static final int abc_action_bar_up_description = 0x7f0a0012;
+		public static final int abc_action_menu_overflow_description = 0x7f0a0013;
+		public static final int abc_action_mode_done = 0x7f0a0014;
+		public static final int abc_activity_chooser_view_see_all = 0x7f0a0015;
+		public static final int abc_activitychooserview_choose_application = 0x7f0a0016;
+		public static final int abc_searchview_description_clear = 0x7f0a0017;
+		public static final int abc_searchview_description_query = 0x7f0a0018;
+		public static final int abc_searchview_description_search = 0x7f0a0019;
+		public static final int abc_searchview_description_submit = 0x7f0a001a;
+		public static final int abc_searchview_description_voice = 0x7f0a001b;
+		public static final int abc_shareactionprovider_share_with = 0x7f0a001c;
+		public static final int abc_shareactionprovider_share_with_application = 0x7f0a001d;
+		public static final int abc_toolbar_collapse_description = 0x7f0a001e;
 	}
 	public static final class style {
 		public static final int Base_TextAppearance_AppCompat = 0x7f0b0000;
