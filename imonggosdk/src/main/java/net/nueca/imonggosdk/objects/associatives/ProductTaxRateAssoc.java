@@ -24,6 +24,8 @@ public class ProductTaxRateAssoc {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = TAXRATE_ID_FIELD_NAME)
     private TaxRate taxRate;
 
+    public ProductTaxRateAssoc() { }
+
     public ProductTaxRateAssoc(Product product, TaxRate taxRate) {
         this.product = product;
         this.taxRate = taxRate;

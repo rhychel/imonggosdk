@@ -17,6 +17,8 @@ public class Unit extends BaseTable {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
 
+    public Unit() { }
+
     public Unit(Product product) {
         this.product = product;
     }

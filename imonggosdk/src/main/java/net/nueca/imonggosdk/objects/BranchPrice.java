@@ -8,7 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class BranchPrice extends BaseTable {
+public class BranchPrice {
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -20,6 +20,10 @@ public class BranchPrice extends BaseTable {
     private transient Product product;
     @DatabaseField
     private double retail_price = 0.0;
+    @DatabaseField
+    protected String utc_created_at, utc_updated_at;
+
+    public BranchPrice() { }
 
     public BranchPrice(Branch branch, Product product) {
         this.branch = branch;
@@ -56,5 +60,29 @@ public class BranchPrice extends BaseTable {
 
     public void setRetail_price(double retail_price) {
         this.retail_price = retail_price;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUtc_created_at() {
+        return utc_created_at;
+    }
+
+    public void setUtc_created_at(String utc_created_at) {
+        this.utc_created_at = utc_created_at;
+    }
+
+    public String getUtc_updated_at() {
+        return utc_updated_at;
+    }
+
+    public void setUtc_updated_at(String utc_updated_at) {
+        this.utc_updated_at = utc_updated_at;
     }
 }

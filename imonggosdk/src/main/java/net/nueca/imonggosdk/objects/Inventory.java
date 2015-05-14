@@ -21,6 +21,8 @@ public class Inventory {
     @DatabaseField
     private String utc_updated_at = "", utc_created_at = "";
 
+    public Inventory() { }
+
     public Inventory(Branch branch, Product product) {
         this.branch = branch;
         this.product = product;

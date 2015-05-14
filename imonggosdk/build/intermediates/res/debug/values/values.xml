@@ -137,6 +137,25 @@
     <item name="split_action_bar" type="id"/>
     <item name="up" type="id"/>
     <integer name="abc_max_action_buttons">2</integer>
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="API_MODULE_ID_URL">http://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
+    <string name="API_MODULE_ID_URL_SECURED">https://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
+    <string name="API_MODULE_URL">http://%1$s:x@%2$s/api/%3$s</string>
+    <string name="API_MODULE_URL_SECURED">https://%1$s:x@%2$s/api/%3$s</string>
+    <string name="API_TOKEN_URL">%1$s/api/%2$s?email=%3$s&amp;password=%4$s</string>
+    <string name="API_URL_CUSTOM">%1$s/system/api_url?account_id=%2$s</string>
+    <string name="API_URL_CUSTOM_SECURED">%1$s/system/api_url?account_id=%2$s</string>
+    <string name="API_URL_IMONGGO">http://www.imonggo.com/system/api_url?account_id=%s</string>
+    <string name="API_URL_IRETAILCLOUD_COM">http://www.iretailcloud.com/system/api_url?account_id=%s</string>
+    <string name="API_URL_IRETAILCLOUD_NET">http://www.iretailcloud.net/system/api_url?account_id=%s</string>
+    <string name="API_URL_PLDTRETAILCLOUD">http://www.pldtretailcloud.com/system/api_url?account_id=%s</string>
+    <string name="PRODUCT_IMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg</string>
+    <string name="PRODUCT_IMAGE_URL_SECURED">https://%1$s:x@%2$s/api/products/%3$s.jpg</string>
+    <string name="PRODUCT_LARGEIMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
+    <string name="PRODUCT_LARGEIMAGE_URL_SECURED">https://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values/values.xml -->
+    <eat-comment/>
     <string name="abc_action_bar_home_description">Navigate home</string>
     <string name="abc_action_bar_home_description_format">%1$s, %2$s</string>
     <string name="abc_action_bar_home_subtitle_description_format">%1$s, %2$s, %3$s</string>
@@ -153,6 +172,12 @@
     <string name="abc_shareactionprovider_share_with">Share with</string>
     <string name="abc_shareactionprovider_share_with_application">Share with %s</string>
     <string name="abc_toolbar_collapse_description">Collapse</string>
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">ImonggoSDK</string>
+    <string name="param_login">email=%1$s&amp;password=%2$s</string>
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values/values.xml -->
+    <eat-comment/>
     <style name="Base.TextAppearance.AppCompat" parent="android:TextAppearance">
         <item name="android:textColor">?android:textColorPrimary</item>
         <item name="android:textColorHint">?android:textColorHint</item>

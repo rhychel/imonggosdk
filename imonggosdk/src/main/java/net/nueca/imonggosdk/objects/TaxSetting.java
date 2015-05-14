@@ -19,7 +19,7 @@ public class TaxSetting {
     @DatabaseField
     private boolean tax_inclusive = true;
     @ForeignCollectionField
-    private ForeignCollection<TaxRate> taxRates;
+    private transient ForeignCollection<TaxRate> taxRates;
 
     public TaxSetting() { }
 

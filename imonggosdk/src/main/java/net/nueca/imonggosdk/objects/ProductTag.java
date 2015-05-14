@@ -19,6 +19,8 @@ public class ProductTag {
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_id")
     private Product product;
 
+    public ProductTag() { }
+
     public ProductTag(String tag, Product product) {
         this.tag = tag;
         this.searchKey = tag.toLowerCase();

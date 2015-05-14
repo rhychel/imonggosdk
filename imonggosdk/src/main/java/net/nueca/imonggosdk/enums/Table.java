@@ -4,7 +4,7 @@ package net.nueca.imonggosdk.enums;
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
  */
-public enum Tables {
+public enum Table {
     BRANCHES,
     BRANCH_PRICES,
     BRANCH_TAGS,
@@ -19,5 +19,10 @@ public enum Tables {
     USERS,
 
     BRANCH_USERS,
-    PRODUCT_TAX_RATES
+    PRODUCT_TAX_RATES,
+
+    SETTINGS,
+    TOKENS,
+    APPLICATION_SETTINGS,
+    LAST_UPDATED_AT
 }
