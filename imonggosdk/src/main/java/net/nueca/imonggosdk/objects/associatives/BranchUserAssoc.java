@@ -38,4 +38,20 @@ public class BranchUserAssoc {
     public User getUser() {
         return user;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

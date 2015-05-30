@@ -13,7 +13,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class TaxSetting {
 
     @DatabaseField(generatedId = true)
-    private int id;
+    private transient int id;
     @DatabaseField
     private boolean compute_tax = false;
     @DatabaseField

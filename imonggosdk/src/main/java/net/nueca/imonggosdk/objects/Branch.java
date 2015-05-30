@@ -5,6 +5,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import net.nueca.imonggosdk.objects.base.BaseTable;
+
 /**
  * Created by rhymart on 5/12/15.
  * imonggosdk (c)2015

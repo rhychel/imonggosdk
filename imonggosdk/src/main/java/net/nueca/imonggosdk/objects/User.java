@@ -3,6 +3,13 @@ package net.nueca.imonggosdk.objects;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.BaseTable;
+
+import java.sql.SQLException;
+
 /**
  * Created by rhymart on 5/12/15.
  * imonggosdk (c)2015
@@ -10,7 +17,7 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class User extends BaseTable {
     @DatabaseField
-    private int home_branch_id;
+    private int home_branch_id = 0;
     @DatabaseField
     private String name, email, role_code, status;
     @DatabaseField
@@ -85,4 +92,24 @@ public class User extends BaseTable {
     public boolean equals(Object o) {
         return (o instanceof User) && ((User)o).getId() == id;
     }
+
+    @Override
+    public void insert(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.USERS, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void delete(ImonggoDBHelper dbHelper) {
+
+    }
+
+    @Override
+    public void update(ImonggoDBHelper dbHelper) {
+
+    }
+
 }

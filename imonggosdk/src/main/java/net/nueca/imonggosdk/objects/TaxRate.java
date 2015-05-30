@@ -79,6 +79,14 @@ public class TaxRate {
         this.id = id;
     }
 
+    public TaxSetting getTaxSetting() {
+        return taxSetting;
+    }
+
+    public void setTaxSetting(TaxSetting taxSetting) {
+        this.taxSetting = taxSetting;
+    }
+
     public String getUtc_created_at() {
         return utc_created_at;
     }
