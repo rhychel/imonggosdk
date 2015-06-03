@@ -1,6 +1,14 @@
-package net.nueca.imonggosdk.objects;
+package net.nueca.imonggosdk.objects.base;
+
+import android.util.Log;
 
 import com.j256.ormlite.field.DatabaseField;
+
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.objects.User;
+
+import java.util.ArrayList;
 
 /**
  * Created by rhymart on 5/13/15.
@@ -48,4 +56,17 @@ public abstract class BaseTable {
     public void setUtc_updated_at(String utc_updated_at) {
         this.utc_updated_at = utc_updated_at;
     }
+
+    public abstract void insertTo(ImonggoDBHelper dbHelper);
+    public abstract void deleteTo(ImonggoDBHelper dbHelper);
+    public abstract void updateTo(ImonggoDBHelper dbHelper);
+    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
+        if(databaseOperation == DatabaseOperation.INSERT)
+            insertTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.UPDATE)
+            updateTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.DELETE)
+            deleteTo(dbHelper);
+    }
+
 }
