@@ -57,8 +57,16 @@ public abstract class BaseTable {
         this.utc_updated_at = utc_updated_at;
     }
 
-    public abstract void insert(ImonggoDBHelper dbHelper);
-    public abstract void delete(ImonggoDBHelper dbHelper);
-    public abstract void update(ImonggoDBHelper dbHelper);
+    public abstract void insertTo(ImonggoDBHelper dbHelper);
+    public abstract void deleteTo(ImonggoDBHelper dbHelper);
+    public abstract void updateTo(ImonggoDBHelper dbHelper);
+    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
+        if(databaseOperation == DatabaseOperation.INSERT)
+            insertTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.UPDATE)
+            updateTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.DELETE)
+            deleteTo(dbHelper);
+    }
 
 }

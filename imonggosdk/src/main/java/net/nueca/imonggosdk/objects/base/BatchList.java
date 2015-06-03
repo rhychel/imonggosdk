@@ -13,13 +13,47 @@ import java.util.ArrayList;
  * imonggosdk (c)2015
  */
 public class BatchList<T> extends ArrayList<T> {
-    public <T> void batchOperations(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
+
+    public class BatchListException extends RuntimeException {
+        public BatchListException() {
+            throw new RuntimeException("Error!");
+        }
+
+        public BatchListException(String detailMessage) {
+            throw new RuntimeException("Stub!");
+        }
+    }
+
+    private DatabaseOperation databaseOperation = DatabaseOperation.INSERT;
+    private ImonggoDBHelper dbHelper;
+
+    public BatchList() { }
+
+    public BatchList(ImonggoDBHelper dbHelper) {
+        this.dbHelper = dbHelper;
+    }
+
+    public BatchList(DatabaseOperation databaseOperation) {
+        this.databaseOperation = databaseOperation;
+    }
+
+    public BatchList(DatabaseOperation databaseOperation, ImonggoDBHelper dbHelper) {
+        this.databaseOperation = databaseOperation;
+        this.dbHelper = dbHelper;
+    }
+
+    public void doOperation() {
+        if(dbHelper == null)
+            throw new NullPointerException("Oops! Your dbHelper is null!");
+        doOperation(dbHelper);
+    }
+
+    public void doOperation(ImonggoDBHelper dbHelper) {
         if(size() == 0) {
-            Log.e("BatchList Size", "Ooops! There's nothing to save.");
+            Log.e("BatchList", "Ooops! There's nothing to save.");
             return;
         }
         if(get(0) instanceof User)
             dbHelper.batchCreateOrUpdateUsers(this, databaseOperation);
-
     }
 }

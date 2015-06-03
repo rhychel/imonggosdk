@@ -22,6 +22,8 @@ public class User extends BaseTable {
     private String name, email, role_code, status;
     @DatabaseField
     private transient int sequenceNumber = 1;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "session_id")
+    private transient Session session = null;
 
     private transient boolean isSelected = false;// For what?
 
@@ -83,6 +85,14 @@ public class User extends BaseTable {
         this.isSelected = isSelected;
     }
 
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
     @Override
     public String toString() {
         return name;
@@ -94,7 +104,7 @@ public class User extends BaseTable {
     }
 
     @Override
-    public void insert(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper dbHelper) {
         try {
             dbHelper.dbOperations(this, Table.USERS, DatabaseOperation.INSERT);
         } catch (SQLException e) {
@@ -103,13 +113,21 @@ public class User extends BaseTable {
     }
 
     @Override
-    public void delete(ImonggoDBHelper dbHelper) {
-
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.USERS, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void update(ImonggoDBHelper dbHelper) {
-
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.USERS, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

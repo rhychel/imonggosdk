@@ -5,6 +5,12 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+
+import java.sql.SQLException;
+
 /**
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
@@ -53,5 +59,38 @@ public class TaxSetting {
 
     public void setTaxRates(ForeignCollection<TaxRate> taxRates) {
         this.taxRates = taxRates;
+    }
+
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.TAX_SETTINGS, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.TAX_SETTINGS, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.TAX_SETTINGS, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
+        if(databaseOperation == DatabaseOperation.INSERT)
+            insertTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.UPDATE)
+            updateTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.DELETE)
+            deleteTo(dbHelper);
     }
 }

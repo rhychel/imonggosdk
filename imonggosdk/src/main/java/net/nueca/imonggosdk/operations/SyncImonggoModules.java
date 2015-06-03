@@ -292,13 +292,9 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             return;
                         }
 
-//                        BatchList<User> newUsers = new BatchList<>(); // container for the new users
-//                        BatchList<User> updateUsers = new BatchList<>(); // container for the updated users
-//                        BatchList<User> deleteUsers = new BatchList<>(); // container for the deleted users
-
-                        List<User> newUsers = new ArrayList<>();
-                        List<User> updateUsers = new ArrayList<>();
-                        List<User> deleteUsers = new ArrayList<>();
+                        BatchList<User> newUsers = new BatchList<>(DatabaseOperation.INSERT, getHelper()); // container for the new users
+                        BatchList<User> updateUsers = new BatchList<>(DatabaseOperation.UPDATE, getHelper()); // container for the updated users
+                        BatchList<User> deleteUsers = new BatchList<>(DatabaseOperation.DELETE, getHelper()); // container for the deleted users
 
                         for(int i = 0;i < size;i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -317,12 +313,9 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                                     newUsers.add(user);
                             }
                         }
-//                        if(newUsers.size() > 0)
-//                            getHelper().batchCreateOrUpdateUsers(newUsers, DatabaseOperation.INSERT);
-//                        if(updateUsers.size() > 0)
-//                            getHelper().batchCreateOrUpdateUsers(updateUsers, DatabaseOperation.UPDATE);
-//                        if(deleteUsers.size() > 0)
-//                            getHelper().batchCreateOrUpdateUsers(deleteUsers, DatabaseOperation.DELETE);
+                        newUsers.doOperation();
+                        updateUsers.doOperation();
+                        deleteUsers.doOperation();
                     } break;
 
                     /**
@@ -339,9 +332,9 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             return;
                         }
 
-                        List<Branch> newBranches = new ArrayList<>();
-                        List<BranchTag> newBranchTags = new ArrayList<>();
-                        List<BranchUserAssoc> newBranchUserAssocs = new ArrayList<>();
+                        BatchList<Branch> newBranches = new BatchList<>(getHelper());
+                        BatchList<BranchTag> newBranchTags = new BatchList<>(getHelper());
+                        BatchList<BranchUserAssoc> newBranchUserAssocs = new BatchList<>(getHelper());
                         for(int i = 0;i < size;i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             Branch branch = gson.fromJson(jsonObject.toString(), Branch.class);
@@ -359,12 +352,9 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             newBranchUserAssocs.add(branchUserAssoc);
                         }
 
-                        if(newBranches.size() > 0)
-                            getHelper().batchCreateOrUpdateBranches(newBranches, DatabaseOperation.INSERT);
-                        if(newBranchUserAssocs.size() > 0)
-                            getHelper().batchCreateOrUpdateBranchUsers(newBranchUserAssocs, DatabaseOperation.INSERT);
-                        if(newBranchTags.size() > 0)
-                            getHelper().batchCreateOrUpdateBranchTags(newBranchTags, DatabaseOperation.INSERT);
+                        newBranches.doOperation();
+                        newBranchUserAssocs.doOperation();
+                        newBranchTags.doOperation();
                     } break;
                     /**
                      * Process the products
@@ -374,11 +364,11 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             syncNext();
                             return;
                         }
+                        BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                        BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                        BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                        BatchList<ProductTag> productTags = new BatchList<>(getHelper());
 
-                        List<Product> newProducts = new ArrayList<>();
-                        List<Product> updateProducts = new ArrayList<>();
-                        List<Product> deleteProducts = new ArrayList<>();
-                        List<ProductTag> productTags = new ArrayList<>();
                         for(int i = 0;i < size;i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             Product product = gson.fromJson(jsonObject.toString(), Product.class);
@@ -412,14 +402,10 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             // Save the taxes to the database
                         }
 
-                        if(newProducts.size() > 0)
-                            getHelper().batchCreateOrUpdateProducts(newProducts, DatabaseOperation.INSERT);
-                        if(updateProducts.size() > 0)
-                            getHelper().batchCreateOrUpdateProducts(updateProducts, DatabaseOperation.UPDATE);
-                        if(deleteProducts.size() > 0)
-                            getHelper().batchCreateOrUpdateProducts(deleteProducts, DatabaseOperation.DELETE);
-                        if(productTags.size() > 0)
-                            getHelper().batchCreateOrUpdateProductTags(productTags, DatabaseOperation.INSERT);
+                        newProducts.doOperation();
+                        updateProducts.doOperation();
+                        deleteProducts.doOperation();
+                        productTags.doOperation(); // Other product tags should be deleted!
                     } break;
                     case INVENTORIES: {
 

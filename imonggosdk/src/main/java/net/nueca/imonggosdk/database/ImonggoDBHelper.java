@@ -42,7 +42,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk.db";
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private Dao<Branch, Integer> branches = null;
     private Dao<BranchPrice, Integer> branchPrices = null;
@@ -552,14 +552,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
     /**
      * BATCH INSERT or UPDATE
      */
-    public void batchCreateOrUpdateBranches(final List<Branch> branches, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateBranches(final BatchList branches, final DatabaseOperation databaseOperations) {
         try {
             Dao<Branch, Integer> daoBranches = getBranches();
             daoBranches.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(Branch branch : branches)
-                        dbOperations(branch, Table.BRANCHES, databaseOperations);
+                    for(Branch branch : ((BatchList<Branch>)branches))
+                        branch.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -570,14 +570,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateBranchPrices(final List<BranchPrice> branchPrices, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateBranchPrices(final BatchList branchPrices, final DatabaseOperation databaseOperations) {
         try {
             Dao<BranchPrice, Integer> daoBranchPrices = getBranchPrices();
             daoBranchPrices.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(BranchPrice branchPrice : branchPrices)
-                        dbOperations(branchPrice, Table.BRANCH_PRICES, databaseOperations);
+                    for(BranchPrice branchPrice : ((BatchList<BranchPrice>)branchPrices))
+                        branchPrice.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -588,14 +588,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateBranchTags(final List<BranchTag> branchTags, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateBranchTags(final BatchList branchTags, final DatabaseOperation databaseOperations) {
         try {
             Dao<BranchTag, Integer> daoBranchTags = getBranchTags();
             daoBranchTags.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(BranchTag branchTag : branchTags)
-                        dbOperations(branchTag, Table.BRANCH_TAGS, databaseOperations);
+                    for(BranchTag branchTag : ((BatchList<BranchTag>)branchTags))
+                        branchTag.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -606,14 +606,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateCustomers(final List<Customer> customers, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateCustomers(final BatchList customers, final DatabaseOperation databaseOperations) {
         try {
             Dao<Customer, Integer> daoCustomers = getCustomers();
             daoCustomers.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(Customer customer : customers)
-                        dbOperations(customer, Table.CUSTOMERS, databaseOperations);
+                    for(Customer customer : ((BatchList<Customer>)customers))
+                        customer.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -624,14 +624,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateInventories(final List<Inventory> inventories, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateInventories(final BatchList inventories, final DatabaseOperation databaseOperations) {
         try {
             Dao<Inventory, Integer> daoInventories = getInventories();
             daoInventories.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(Inventory inventory : inventories)
-                        dbOperations(inventory, Table.INVENTORIES, databaseOperations);
+                    for(Inventory inventory : ((BatchList<Inventory>)inventories))
+                        inventory.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -642,14 +642,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateProducts(final List<Product> products, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateProducts(final BatchList products, final DatabaseOperation databaseOperations) {
         try {
             Dao<Product, Integer> daoProducts = getProducts();
             daoProducts.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(Product product : products)
-                        dbOperations(product, Table.PRODUCTS, databaseOperations);
+                    for(Product product : ((BatchList<Product>)products))
+                        product.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -660,14 +660,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateProductTags(final List<ProductTag> productTags, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateProductTags(final BatchList productTags, final DatabaseOperation databaseOperations) {
         try {
             Dao<ProductTag, Integer> daoProductTags = getProductTags();
             daoProductTags.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(ProductTag productTag : productTags)
-                        dbOperations(productTag, Table.PRODUCT_TAGS, databaseOperations);
+                    for(ProductTag productTag : ((BatchList<ProductTag>)productTags))
+                        productTag.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -678,14 +678,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateTaxRates(final List<TaxRate> taxRates, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateTaxRates(final BatchList taxRates, final DatabaseOperation databaseOperations) {
         try {
             Dao<TaxRate, Integer> daoTaxRates = getTaxRates();
             daoTaxRates.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(TaxRate taxRate : taxRates)
-                        dbOperations(taxRate, Table.TAX_RATES, databaseOperations);
+                    for(TaxRate taxRate : ((BatchList<TaxRate>)taxRates))
+                        taxRate.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -696,14 +696,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateTaxSettings(final List<TaxSetting> taxSettings, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateTaxSettings(final BatchList taxSettings, final DatabaseOperation databaseOperations) {
         try {
             Dao<TaxSetting, Integer> daoTaxSettings = getTaxSettings();
             daoTaxSettings.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(TaxSetting taxSetting : taxSettings)
-                        dbOperations(taxSetting, Table.TAX_SETTINGS, databaseOperations);
+                    for(TaxSetting taxSetting : ((BatchList<TaxSetting>)taxSettings))
+                        taxSetting.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -714,14 +714,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateUnits(final List<Unit> units, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateUnits(final BatchList units, final DatabaseOperation databaseOperations) {
         try {
             Dao<Unit, Integer> daoUnits = getUnits();
             daoUnits.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(Unit unit : units)
-                        dbOperations(unit, Table.UNITS, databaseOperations);
+                    for(Unit unit : ((BatchList<Unit>)units))
+                        unit.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -739,8 +739,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 @Override
                 public Void call() throws Exception {
                     for(User user : ((BatchList<User>)users))
-                        user.insert(ImonggoDBHelper.this);
-//                        dbOperations(user, Table.USERS, databaseOperations);
+                        user.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -751,14 +750,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateDocumentTypes(final List<DocumentType> documentTypes, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateDocumentTypes(final BatchList documentTypes, final DatabaseOperation databaseOperations) {
         try {
             Dao<DocumentType, Integer> daoDocumentTypes = getDocumentTypes();
             daoDocumentTypes.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(DocumentType documentType : documentTypes)
-                        dbOperations(documentType, Table.DOCUMENT_TYPES, databaseOperations);
+                    for(DocumentType documentType : ((BatchList<DocumentType>)documentTypes))
+                        documentType.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -769,14 +768,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateDocumentPurposes(final List<DocumentPurpose> documentPurposes, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateDocumentPurposes(final BatchList documentPurposes, final DatabaseOperation databaseOperations) {
         try {
             Dao<DocumentPurpose, Integer> daoDocumentPurposes = getDocumentPurposes();
             daoDocumentPurposes.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for (DocumentPurpose documentPurpose : documentPurposes)
-                        dbOperations(documentPurpose, Table.DOCUMENT_PURPOSES, databaseOperations);
+                    for (DocumentPurpose documentPurpose : ((BatchList<DocumentPurpose>)documentPurposes))
+                        documentPurpose.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -787,14 +786,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateBranchUsers(final List<BranchUserAssoc> branchUserAssocs, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateBranchUsers(final BatchList branchUserAssocs, final DatabaseOperation databaseOperations) {
         try {
             Dao<BranchUserAssoc, Integer> daoBranchUsers = getBranchUserAssocs();
             daoBranchUsers.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(BranchUserAssoc branchUserAssoc : branchUserAssocs)
-                        dbOperations(branchUserAssoc, Table.BRANCH_USERS, databaseOperations);
+                    for(BranchUserAssoc branchUserAssoc : ((BatchList<BranchUserAssoc>)branchUserAssocs))
+                        branchUserAssoc.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -805,14 +804,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void batchCreateOrUpdateProductTaxRates(final List<ProductTaxRateAssoc> productTaxRateAssocs, final DatabaseOperation databaseOperations) {
+    public void batchCreateOrUpdateProductTaxRates(final BatchList productTaxRateAssocs, final DatabaseOperation databaseOperations) {
         try {
             Dao<ProductTaxRateAssoc, Integer> daoProductTaxRates = getProductTaxRateAssocs();
             daoProductTaxRates.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    for(ProductTaxRateAssoc productTaxRateAssoc : productTaxRateAssocs)
-                        dbOperations(productTaxRateAssoc, Table.PRODUCT_TAX_RATES, databaseOperations);
+                    for(ProductTaxRateAssoc productTaxRateAssoc : ((BatchList<ProductTaxRateAssoc>)productTaxRateAssocs))
+                        productTaxRateAssoc.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });

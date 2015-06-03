@@ -3,6 +3,12 @@ package net.nueca.imonggosdk.objects;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+
+import java.sql.SQLException;
+
 /**
  * Created by rhymart on 5/12/15.
  * imonggosdk (c)2015
@@ -62,5 +68,38 @@ public class BranchTag {
     @Override
     public String toString() {
         return tag;
+    }
+
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.BRANCH_TAGS, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.BRANCH_TAGS, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.BRANCH_TAGS, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
+        if(databaseOperation == DatabaseOperation.INSERT)
+            insertTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.UPDATE)
+            updateTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.DELETE)
+            deleteTo(dbHelper);
     }
 }
