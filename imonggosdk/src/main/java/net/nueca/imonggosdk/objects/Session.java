@@ -3,6 +3,12 @@ package net.nueca.imonggosdk.objects;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+
+import java.sql.SQLException;
+
 /**
  * Created by rhymart on 5/12/15.
  * imonggosdk (c)2015
@@ -32,6 +38,10 @@ public class Session {
     private int device_id = 0;
     @DatabaseField
     private boolean hasLoggedIn = false;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
+    private User user;
+
+    public Session() { }
 
     public int getId() {
         return id;
@@ -123,5 +133,46 @@ public class Session {
 
     public void setHasLoggedIn(boolean hasLoggedIn) {
         this.hasLoggedIn = hasLoggedIn;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.SESSIONS, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.SESSIONS, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.SESSIONS, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
+        if(databaseOperation == DatabaseOperation.INSERT)
+            insertTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.UPDATE)
+            updateTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.DELETE)
+            deleteTo(dbHelper);
     }
 }
