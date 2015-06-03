@@ -258,7 +258,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             return;
                         }
 
-                        List<TaxRate> newTaxRates = new ArrayList<>();
+                        BatchList<TaxRate> newTaxRates = new BatchList<>(getHelper());
                         for(int i = 0;i < size;i++) {
                             JSONObject taxRatejson = jsonArray.getJSONObject(i);
                             TaxRate taxRate = gson.fromJson(taxRatejson.toString(), TaxRate.class);
@@ -273,7 +273,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             }
                             newTaxRates.add(taxRate);
                         }
-                        getHelper().batchCreateOrUpdateTaxRates(newTaxRates, DatabaseOperation.INSERT);
+                        newTaxRates.doOperation();
 
                         syncNext();
                     }
