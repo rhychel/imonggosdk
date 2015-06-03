@@ -1,0 +1,24 @@
+package net.nueca.imonggosdk.enums;
+
+/**
+ * Created by rhymart on 5/15/15.
+ * imonggosdk (c)2015
+ */
+public enum RequestType {
+    LAST_UPDATED_AT,
+    COUNT,
+    API_CONTENT,
+    APPLICATION_SETTINGS,
+    SETTINGS,
+
+    DOCUMENT_TYPES,
+
+    POST,
+    DELETE,
+    PUT,
+    GET,
+
+    INVENTORIES,
+
+    CUSTOMER_CHECKIN
+}

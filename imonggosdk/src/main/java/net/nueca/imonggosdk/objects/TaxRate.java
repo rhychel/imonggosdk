@@ -3,6 +3,12 @@ package net.nueca.imonggosdk.objects;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+
+import java.sql.SQLException;
+
 /**
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
@@ -79,6 +85,14 @@ public class TaxRate {
         this.id = id;
     }
 
+    public TaxSetting getTaxSetting() {
+        return taxSetting;
+    }
+
+    public void setTaxSetting(TaxSetting taxSetting) {
+        this.taxSetting = taxSetting;
+    }
+
     public String getUtc_created_at() {
         return utc_created_at;
     }
@@ -93,5 +107,38 @@ public class TaxRate {
 
     public void setUtc_updated_at(String utc_updated_at) {
         this.utc_updated_at = utc_updated_at;
+    }
+
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.TAX_RATES, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.TAX_RATES, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.TAX_RATES, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
+        if(databaseOperation == DatabaseOperation.INSERT)
+            insertTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.UPDATE)
+            updateTo(dbHelper);
+        else if(databaseOperation == DatabaseOperation.DELETE)
+            deleteTo(dbHelper);
     }
 }
