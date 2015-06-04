@@ -134,48 +134,60 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
         enableDrawer(isEnabled);
     }
 
-    public void changeBackgroundColor(int resource_keypadBG) {
+    public void changeBackgroundDrawable(int resource_keypadBG) {
         keypadBackground = resource_keypadBG;
-        keypadView.setBackgroundResource(keypadBackground);
+        drawer_layout.setBackgroundResource(keypadBackground);
         drawer.setBackgroundResource(keypadBackground);
     }
-    public void changeTextColor(int resource_textColor) {
+    public void changeBackgroundColor(int resource_keypadBG) {
+        keypadBackground = resource_keypadBG;
+        drawer_layout.setBackgroundColor(keypadBackground);
+        drawer.setBackgroundColor(keypadBackground);
+    }
+
+    public void changeTextColorResource(int resource_textColor) {
         buttonTextColor = resource_textColor;
-        colorizeButtons();
+        changeTextColor();
+    }
+
+    public void changeButtonBackgroundDrawable(int resource_buttonBG) {
+        buttonBackground = resource_buttonBG;
+        changeBackgroundDrawable();
     }
     public void changeButtonBackgroundColor(int resource_buttonBG) {
         buttonBackground = resource_buttonBG;
-        colorizeButtons();
+        changeBackgroundColor();
+    }
+    public void changeGoBackgroundDrawable(int resource_buttonGoBG) {
+        goButtonBackground = resource_buttonGoBG;
+        ibtnGo.setBackgroundResource(goButtonBackground);
     }
     public void changeGoBackgroundColor(int resource_buttonGoBG) {
         goButtonBackground = resource_buttonGoBG;
-        colorizeButtons();
+        ibtnGo.setBackgroundColor(goButtonBackground);
     }
 
-    public void changeColor(int resource_textColor, int resource_buttonBG,
+    private void changeColor(int resource_textColor, int resource_buttonBG,
                             int resource_buttonGoBG, int resource_keypadBG) {
         buttonTextColor = resource_textColor;
         buttonBackground = resource_buttonBG;
         keypadBackground = resource_keypadBG;
         goButtonBackground = resource_buttonGoBG;
 
-        keypadView.setBackgroundResource(keypadBackground);
+        drawer_layout.setBackgroundResource(keypadBackground);
         drawer.setBackgroundResource(keypadBackground);
-        colorizeButtons();
+        Log.e("changeColor","called");
+        changeBackgroundDrawable();
+        ibtnGo.setBackgroundResource(goButtonBackground);
     }
 
     private void colorize(Button button) {
         button.setTextColor(getResources().getColorStateList(buttonTextColor));
         button.setBackgroundResource(buttonBackground);
     }
-
-    private void colorizeButtons() {
+    private void changeTextColor() {
         for(int i=0; i<buttonList.size(); i++) {
             View child = buttonList.get(i);
-            if(child.getId() == R.id.ibtnGo) {
-                child.setBackgroundColor(goButtonBackground);
-                continue;
-            }
             if(child instanceof Button) {
                 ((Button) child).setTextColor(getResources().getColorStateList(buttonTextColor));
             }
@@ -184,8 +196,25 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
                 if(stateList != null)
                     ((ImageButton) child).setColorFilter(stateList.getDefaultColor());
             }
+        }
+    }
 
+    private void changeBackgroundDrawable() {
+        for(int i=0; i<buttonList.size(); i++) {
+            View child = buttonList.get(i);
+            if(child.getId() == R.id.ibtnGo)
+                continue;
+                //child.setBackground(getResources().getDrawable(goButtonBackground));
             child.setBackgroundResource(buttonBackground);
+        }
+    }
+    private void changeBackgroundColor() {
+        for(int i=0; i<buttonList.size(); i++) {
+            View child = buttonList.get(i);
+            if(child.getId() == R.id.ibtnGo)
+                continue;
+                //child.setBackgroundColor(goButtonBackground);
+            child.setBackgroundColor(buttonBackground);
         }
     }
 
