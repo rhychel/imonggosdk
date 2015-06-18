@@ -23,18 +23,17 @@ import java.util.Map;
 /**
  * Created by rhymart on 5/19/15.
  * imonggosdk (c)2015
- *
+ * <p/>
  * =====================================================
  * ==---------------RESTFul HTTP Methods--------------==
  * =====================================================
- *
  */
 public class HTTPRequests {
 
     public static JsonObjectRequest sendGETJsonObjectRequest(Context context, final Session session,
-                                                              final VolleyRequestListener volleyRequestListener, Server server,
-                                                              final Table table, final RequestType requestType, String parameter) {
-        if(volleyRequestListener != null)
+                                                             final VolleyRequestListener volleyRequestListener, Server server,
+                                                             final Table table, final RequestType requestType, String parameter) {
+        if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
@@ -42,14 +41,14 @@ public class HTTPRequests {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if(volleyRequestListener != null)
+                        if (volleyRequestListener != null)
                             volleyRequestListener.onSuccess(table, requestType, response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error.networkResponse != null)
+                        if (error.networkResponse != null)
                             volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
                         else
                             volleyRequestListener.onError(table, false, null, 0);
@@ -58,7 +57,7 @@ public class HTTPRequests {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                String auth = "Basic "+session.getApiAuthentication();
+                String auth = "Basic " + session.getApiAuthentication();
                 params.put("Authorization", auth);
                 return params;
             }
@@ -68,23 +67,23 @@ public class HTTPRequests {
     }
 
     public static JsonArrayRequest sendGETJsonArrayRequest(Context context, final Session session,
-                                                            final VolleyRequestListener volleyRequestListener, Server server,
-                                                            final Table table, final RequestType requestType, String parameter) {
-        if(volleyRequestListener != null)
+                                                           final VolleyRequestListener volleyRequestListener, Server server,
+                                                           final Table table, final RequestType requestType, String parameter) {
+        if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        if(volleyRequestListener != null)
+                        if (volleyRequestListener != null)
                             volleyRequestListener.onSuccess(table, requestType, response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(volleyRequestListener != null) {
+                        if (volleyRequestListener != null) {
                             if (error.networkResponse != null)
                                 volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
                             else
@@ -95,7 +94,7 @@ public class HTTPRequests {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                String auth = "Basic "+session.getApiAuthentication();
+                String auth = "Basic " + session.getApiAuthentication();
                 params.put("Authorization", auth);
                 return params;
             }
@@ -104,11 +103,10 @@ public class HTTPRequests {
         return jsonArrayRequest;
     }
 
-
     public static JsonObjectRequest sendGETRequest(Context context, final Session session,
-                                                             final VolleyRequestListener volleyRequestListener, Server server,
-                                                             final Table table, String id, String parameter) {
-        if(volleyRequestListener != null)
+                                                   final VolleyRequestListener volleyRequestListener, Server server,
+                                                   final Table table, String id, String parameter) {
+        if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, RequestType.GET);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
@@ -116,14 +114,14 @@ public class HTTPRequests {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if(volleyRequestListener != null)
+                        if (volleyRequestListener != null)
                             volleyRequestListener.onSuccess(table, RequestType.GET, response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error.networkResponse != null)
+                        if (error.networkResponse != null)
                             volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
                         else
                             volleyRequestListener.onError(table, false, null, 0);
@@ -132,7 +130,7 @@ public class HTTPRequests {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                String auth = "Basic "+session.getApiAuthentication();
+                String auth = "Basic " + session.getApiAuthentication();
                 params.put("Authorization", auth);
                 return params;
             }
@@ -144,7 +142,7 @@ public class HTTPRequests {
     public static JsonObjectRequest sendPOSTRequest(Context context, final Session session,
                                                     final VolleyRequestListener volleyRequestListener, Server server,
                                                     final Table table, final JSONObject jsonObject, String parameter) {
-        if(volleyRequestListener != null)
+        if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, RequestType.POST);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.POST,
@@ -152,14 +150,14 @@ public class HTTPRequests {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if(volleyRequestListener != null)
+                        if (volleyRequestListener != null)
                             volleyRequestListener.onSuccess(table, RequestType.POST, jsonObject);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(volleyRequestListener != null) {
+                        if (volleyRequestListener != null) {
                             if (error.networkResponse != null)
                                 volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
                             else
@@ -170,7 +168,7 @@ public class HTTPRequests {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                String auth = "Basic "+session.getApiAuthentication();
+                String auth = "Basic " + session.getApiAuthentication();
                 params.put("Authorization", auth);
                 return params;
             }
@@ -182,7 +180,7 @@ public class HTTPRequests {
     public static JsonObjectRequest sendPUTRequest(Context context, final Session session,
                                                    final VolleyRequestListener volleyRequestListener, Server server,
                                                    final Table table, final JSONObject jsonObject, String id, String parameter) {
-        if(volleyRequestListener != null)
+        if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, RequestType.POST);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.PUT,
@@ -190,14 +188,14 @@ public class HTTPRequests {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if(volleyRequestListener != null)
+                        if (volleyRequestListener != null)
                             volleyRequestListener.onSuccess(table, RequestType.PUT, response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(volleyRequestListener != null) {
+                        if (volleyRequestListener != null) {
                             if (error.networkResponse != null)
                                 volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
                             else
@@ -208,7 +206,7 @@ public class HTTPRequests {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                String auth = "Basic "+session.getApiAuthentication();
+                String auth = "Basic " + session.getApiAuthentication();
                 params.put("Authorization", auth);
                 return params;
             }
@@ -225,14 +223,14 @@ public class HTTPRequests {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if(volleyRequestListener != null)
+                        if (volleyRequestListener != null)
                             volleyRequestListener.onSuccess(table, RequestType.DELETE, response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(volleyRequestListener != null) {
+                        if (volleyRequestListener != null) {
                             if (error.networkResponse != null)
                                 volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
                             else
@@ -243,7 +241,7 @@ public class HTTPRequests {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                String auth = "Basic "+session.getApiAuthentication();
+                String auth = "Basic " + session.getApiAuthentication();
                 params.put("Authorization", auth);
                 return params;
             }

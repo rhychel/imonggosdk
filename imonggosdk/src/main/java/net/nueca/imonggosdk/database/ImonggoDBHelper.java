@@ -10,28 +10,26 @@ import com.j256.ormlite.table.TableUtils;
 
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
-import net.nueca.imonggosdk.objects.base.BatchList;
-import net.nueca.imonggosdk.objects.document.DocumentPurpose;
-import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.base.BatchList;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.document.DocumentType;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -238,7 +236,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             case BRANCHES: {
                 TableUtils.dropTable(getConnectionSource(), Branch.class, true);
             } break;
-            case BRANCH_PRICES: {
+            case     BRANCH_PRICES: {
                 TableUtils.dropTable(getConnectionSource(), BranchPrice.class, true);
             } break;
             case BRANCH_TAGS: {
