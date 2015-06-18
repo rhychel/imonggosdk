@@ -5,7 +5,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import net.nueca.concessioengine.activities.LoginActivity;
+import net.nueca.concessioengine.tools.DialogMaterial;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.tools.AccountTools;
 
@@ -27,6 +30,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void stopLogin() {
         btnSignIn.setVisibility(View.VISIBLE);
+        dialog.hide();
     }
 
     @Override
@@ -35,6 +39,7 @@ public class C_Login extends LoginActivity {
             if(AccountTools.isLoggedIn(getHelper())){
                 btnSignIn.setVisibility(View.GONE);
                 btnLogout.setVisibility(View.VISIBLE);
+                dialog.hide();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,6 +64,7 @@ public class C_Login extends LoginActivity {
     }
     Button btnSignIn;
     Button btnLogout;
+    MaterialDialog dialog;
     @Override
     protected void createLayout() {
         super.createLayout();
@@ -66,6 +72,8 @@ public class C_Login extends LoginActivity {
 
         btnSignIn = (Button) findViewById(R.id.btn_signin);
         btnLogout = (Button) findViewById(R.id.btn_logout);
+        dialog = DialogMaterial.showProgressDialog(this, "Log In", "Please wait...", false);
+        dialog.hide();
 
         try {
             if(AccountTools.isLoggedIn(getHelper())){
@@ -84,6 +92,9 @@ public class C_Login extends LoginActivity {
             public void onClick(View v) {
                 startLogin(getApplicationContext(), "carolflower", "carol@me.com", "carolflower", Server.IMONGGO);
                 btnSignIn.setVisibility(View.GONE);
+
+                dialog.show();
+
             }
         });
         btnLogout.setOnClickListener(new View.OnClickListener() {

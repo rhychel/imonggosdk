@@ -305,7 +305,7 @@
     <string name="API_MODULE_ID_URL_SECURED">https://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
     <string name="API_MODULE_URL">http://%1$s:x@%2$s/api/%3$s</string>
     <string name="API_MODULE_URL_SECURED">https://%1$s:x@%2$s/api/%3$s</string>
-    <string name="API_TOKEN_URL">%1$s/api/%2$s?mEmail=%3$s&amp;mPassword=%4$s</string>
+    <string name="API_TOKEN_URL">%1$s/api/%2$s?email=%3$s&amp;password=%4$s</string>
     <string name="API_URL_CUSTOM">%1$s/system/api_url?account_id=%2$s</string>
     <string name="API_URL_CUSTOM_SECURED">%1$s/system/api_url?account_id=%2$s</string>
     <string name="API_URL_IMONGGO">http://www.imonggo.com/system/api_url?account_id=%s</string>
@@ -350,7 +350,7 @@
     <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="app_name">ImonggoSDK</string>
-    <string name="param_login">mEmail=%1$s&amp;mPassword=%2$s</string>
+    <string name="param_login">email=%1$s&amp;password=%2$s</string>
     <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <string name="status_bar_notification_info_overflow">999+</string>
