@@ -41,6 +41,7 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
     private String PREFIX= "";
     private boolean BEGIN_FROM_DECIMAL;
     private int DECIMAL_LENGTH = 2;
+    private boolean isNegative = false;
 
     public static final int DEFAULT_KEYPAD_BUTTON_TEXTCOLOR = R.color.keypad_button_text;
     public static final int DEFAULT_KEYPAD_BUTTON_BG = R.drawable.keypad_button;
@@ -53,7 +54,7 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
     private List<TextHolder> textViewList;
 
     private View button00, buttonDot, ibtnMore;
-    private ImageButton ibtnGo;
+    private ImageButton ibtnGo, ibtnNegative;
 
     private int buttonTextColor,buttonBackground, keypadBackground, goButtonBackground;
 
@@ -72,6 +73,7 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
         ibtnMore = findViewById(R.id.ibtnMore);
         enableDrawer(false);
         ibtnGo = (ImageButton)findViewById(R.id.ibtnGo);
+        ibtnNegative = (ImageButton)findViewById(R.id.ibtnNegative);
 
         button00 = findViewById(R.id.button00);
         //buttonDash = findViewById(R.id.buttonDash);
@@ -118,6 +120,11 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
         buttonDot.setEnabled(isEnabled);
         //button00.setAlpha(isEnabled? 1f : 0.75f);
     }
+    public void setAllowNegative(boolean allow) {
+        ibtnNegative.setEnabled(allow);
+        //button00.setAlpha(isEnabled? 1f : 0.75f);
+    }
+
     private boolean DRAWER_ENABLED = true;
     private void enableDrawer(boolean isEnabled) {
         ibtnMore.setEnabled(isEnabled);
@@ -232,6 +239,19 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
             }
         });
         ibtnGo.setOnClickListener(goClickListener);
+        ibtnNegative.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleNegative();
+                doWrite("");
+            }
+        });
+    }
+    private void toggleNegative() {
+        isNegative = !isNegative;
+        ibtnNegative.setImageResource(isNegative?
+                        R.drawable.ic_negative_scale : R.drawable.ic_positive_scale
+        );
     }
 
     public void setAsBackspaceButton(View view) {
@@ -272,16 +292,22 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
     private void doWrite(String str) {
         String unparsed = mTextHolder.getTextView().getText().toString();
         unparsed = unparsed.replaceAll("[^0-9.,]", "");
-        if(unparsed.length() >= MAX_LENGTH)
+        if(unparsed.length() >= MAX_LENGTH && str.length() > 0)
             return;
 
         if(BEGIN_FROM_DECIMAL) {
             String parsed = unparsed.replaceAll("[^0-9]","");
             parsed += str;
-            BigDecimal number = new BigDecimal(parsed);
+            BigDecimal number = BigDecimal.ZERO;
+            if(parsed.length() > 0)
+                number = new BigDecimal(parsed);
             String divisor = String.format("%1$-" + (DECIMAL_LENGTH+1) + "s", "1").replaceAll("[^0-9]","0");
             number = number.divide(new BigDecimal(divisor));
-            mTextHolder.getTextView().setText(PREFIX + String.format(FORMAT, number));
+
+            String numStr = String.format(FORMAT, number);
+            if(numStr.replaceAll("[0.,]","").length() > 0)
+                numStr = (isNegative?"-":"") + numStr;
+            mTextHolder.getTextView().setText(PREFIX + numStr);
         }
         else {
             unparsed = unparsed.replaceAll("[^0-9.,]", "");
@@ -291,8 +317,14 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
                 if (unparsed.contains("."))
                     return;
 
-                BigDecimal number = new BigDecimal(parsed);
-                mTextHolder.getTextView().setText(PREFIX + String.format(FORMAT, number) + ".");
+                BigDecimal number = BigDecimal.ZERO;
+                if(parsed.length() > 0)
+                    number = new BigDecimal(parsed);
+
+                String numStr = String.format(FORMAT, number) + ".";
+                if(numStr.replaceAll("[0.,]","").length() > 0)
+                    numStr = (isNegative?"-":"") + numStr;
+                mTextHolder.getTextView().setText(PREFIX + numStr);
             }
             else { // str not decimal point
                 for(int i=0; i<str.length();i++) {
@@ -309,8 +341,14 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
                         decimalNum = decimalNum.substring(0, DECIMAL_LENGTH+1);
                     parsed = parsed.substring(0, parsed.indexOf("."));
                 }
-                BigDecimal number = new BigDecimal(parsed);
-                mTextHolder.getTextView().setText(PREFIX + String.format(FORMAT, number) + decimalNum);
+                BigDecimal number = BigDecimal.ZERO;
+                if(parsed.length() > 0)
+                    number = new BigDecimal(parsed);
+
+                String numStr = String.format(FORMAT, number) + decimalNum;
+                if(numStr.replaceAll("[0.,]","").length() > 0)
+                    numStr = (isNegative?"-":"") + numStr;
+                mTextHolder.getTextView().setText(PREFIX + numStr);
             }
         }
     }
@@ -327,10 +365,16 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
             }
             parsed = parsed.substring(0, parsed.length()-1);
 
-            BigDecimal number = new BigDecimal(parsed);
+            BigDecimal number = BigDecimal.ZERO;
+            if(parsed.length() > 0)
+                number = new BigDecimal(parsed);
             String divisor = String.format("%1$-" + (DECIMAL_LENGTH+1) + "s", "1").replaceAll("[^0-9]","0");
             number = number.divide(new BigDecimal(divisor));
-            mTextHolder.getTextView().setText(PREFIX + String.format(FORMAT, number));
+
+            String numStr = String.format(FORMAT, number);
+            if(numStr.replaceAll("[0.,]","").length() > 0)
+                numStr = (isNegative?"-":"") + numStr;
+            mTextHolder.getTextView().setText(PREFIX + numStr);
         }
         else {
             String parsed = unparsed.replaceAll("[^0-9.]", "");
@@ -347,8 +391,14 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
                     return;
                 parsed = parsed.substring(0, parsed.indexOf("."));
             }
-            BigDecimal number = new BigDecimal(parsed);
-            mTextHolder.getTextView().setText(PREFIX + String.format(FORMAT, number) + decimalNum);
+            BigDecimal number = BigDecimal.ZERO;
+            if(parsed.length() > 0)
+                number = new BigDecimal(parsed);
+
+            String numStr = String.format(FORMAT, number) + decimalNum;
+            if(numStr.replaceAll("[0.,]","").length() > 0)
+                numStr = (isNegative?"-":"") + numStr;
+            mTextHolder.getTextView().setText(PREFIX + numStr);
         }
     }
     private void doClear() {
@@ -414,17 +464,17 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
         return null;
     }
 
-    public void addTextHolder(TextView view, String tag, boolean requireDecimal, @Nullable TextHolderHelper listener) {
-        addTextHolder(new TextHolder(view, tag, listener, requireDecimal));
+    public void addTextHolder(TextView view, String tag, boolean requireDecimal, boolean allowNegative, @Nullable TextHolderHelper listener) {
+        addTextHolder(new TextHolder(view, tag, listener, requireDecimal, allowNegative));
     }
-    public void addTextHolder(EditText view, String tag, boolean requireDecimal, @Nullable TextHolderHelper listener) {
-        addTextHolder(new TextHolder(view, tag, listener, requireDecimal));
+    public void addTextHolder(EditText view, String tag, boolean requireDecimal, boolean allowNegative, @Nullable TextHolderHelper listener) {
+        addTextHolder(new TextHolder(view, tag, listener, requireDecimal, allowNegative));
     }
-    public void addTextHolder(TextView view, String tag, boolean requireDecimal, int decimalPlace, @Nullable TextHolderHelper listener) {
-        addTextHolder(new TextHolder(view, tag, listener, requireDecimal, decimalPlace));
+    public void addTextHolder(TextView view, String tag, boolean requireDecimal, int decimalPlace, boolean allowNegative, @Nullable TextHolderHelper listener) {
+        addTextHolder(new TextHolder(view, tag, listener, requireDecimal, decimalPlace, allowNegative));
     }
-    public void addTextHolder(EditText view, String tag, boolean requireDecimal, int decimalPlace, @Nullable TextHolderHelper listener) {
-        addTextHolder(new TextHolder(view, tag, listener, requireDecimal, decimalPlace));
+    public void addTextHolder(EditText view, String tag, boolean requireDecimal, int decimalPlace, boolean allowNegative, @Nullable TextHolderHelper listener) {
+        addTextHolder(new TextHolder(view, tag, listener, requireDecimal, decimalPlace, allowNegative));
     }
 
     private void addTextHolder(final TextHolder textHolder) {
@@ -462,12 +512,22 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
                     closeDrawer();
                     setTextHolder(textHolder);
 
+                    if(isNegative)
+                        toggleNegative();
+
                     setDecimalLength(textHolder.getDecimalPlace());
                     setRequireDecimal(textHolder.requireDecimal);
+                    setAllowNegative(textHolder.allowNegative);
+
+                    if(textHolder.getTextView().getText().toString().contains("-")) {
+                        ibtnNegative.callOnClick();
+                    }
+                    doWrite("");
 
                     if (textHolder.helper != null) {
                         View customDrawer = textHolder.helper.initializeCustomLayout(inflater);
                         enableDrawer(true);
+
                         if(customDrawer == null) {
                             setDefaultDrawer(textHolder);
                         } else {
@@ -482,6 +542,8 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
 
 
                         textHolder.helper.hasFocus(view, true);
+                    } else { // no helper
+                        enableDrawer(false);
                     }
                 }
             }
@@ -505,12 +567,15 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
     }
     private LayoutInflater inflater = (LayoutInflater) getContext()
             .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
     private void setDefaultDrawer(TextHolder textHolder) {
         View view = inflater.inflate(R.layout.imonggosdk_keypad_default_drawer,null);
         setCustomDrawer(view);
 
-        if(textHolder.extraButtons == null)
+        if(textHolder.extraButtons == null || textHolder.extraButtons.size() <= 0) {
+            setEnableDrawer(false);
             return;
+        }
 
         if(extraButtonList == null)
             extraButtonList = new ArrayList<>();
@@ -535,33 +600,39 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
     }
 
     public class TextHolder {
-        public TextHolder(View view, String tag, TextHolderHelper helper, boolean requireDecimal) {
-            this.mTextHolder = view;
-            setTag(tag);
-            this.helper = helper;
-            this.requireDecimal = requireDecimal;
-            if(helper != null) {
-                extraButtons = helper.initializeDefaultLayoutButtons();
-            }
-            this.mDecimalPlace = 2;
-        }
-        public TextHolder(View view, String tag, TextHolderHelper helper, boolean requireDecimal, int decimalPlace) {
-            this.mTextHolder = view;
-            setTag(tag);
-            this.helper = helper;
-            this.requireDecimal = requireDecimal;
-            if(helper != null) {
-                extraButtons = helper.initializeDefaultLayoutButtons();
-            }
-            this.mDecimalPlace = decimalPlace;
-        }
         public View mTextHolder;
         public TextHolderHelper helper;
         boolean requireDecimal;
         private Object TAG;
         private int mDecimalPlace;
+        private boolean allowNegative = false;
 
         private List<ExtraButton> extraButtons;
+
+        public TextHolder(View view, String tag, TextHolderHelper helper, boolean requireDecimal, boolean allowNegative) {
+            this.mTextHolder = view;
+            setTag(tag);
+            this.helper = helper;
+            if(helper != null) {
+                extraButtons = new ArrayList<>();
+                helper.initializeDefaultLayoutButtons(extraButtons);
+            }
+            this.requireDecimal = requireDecimal;
+            this.mDecimalPlace = 2;
+            this.allowNegative = allowNegative;
+        }
+        public TextHolder(View view, String tag, TextHolderHelper helper, boolean requireDecimal, int decimalPlace, boolean allowNegative) {
+            this.mTextHolder = view;
+            setTag(tag);
+            this.helper = helper;
+            if(helper != null) {
+                extraButtons = new ArrayList<>();
+                helper.initializeDefaultLayoutButtons(extraButtons);
+            }
+            this.requireDecimal = requireDecimal;
+            this.mDecimalPlace = decimalPlace;
+            this.allowNegative = allowNegative;
+        }
 
         public TextView getTextView() { return (TextView)mTextHolder; }
         public Object getTag() { return TAG; }
@@ -581,7 +652,7 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
         void hasFocus(View focused, boolean hasFocus);
         void onConfirmClick(String text);
         @Nullable
-        List<ExtraButton> initializeDefaultLayoutButtons();
+        void initializeDefaultLayoutButtons(List<ExtraButton> extraButtons);
         @Nullable
         View initializeCustomLayout(LayoutInflater inflater);
     }

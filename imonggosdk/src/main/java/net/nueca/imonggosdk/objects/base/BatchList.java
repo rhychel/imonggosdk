@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class BatchList<T> extends ArrayList<T> {
 
-    public class BatchListException extends RuntimeException {
+    public class BatchListException {
         public BatchListException() {
             throw new RuntimeException("Error!");
         }
