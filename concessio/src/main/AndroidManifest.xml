@@ -7,7 +7,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name">
         <activity
-            android:name=".C_Login"
+            android:name="net.nueca.concessio.C_Login2"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

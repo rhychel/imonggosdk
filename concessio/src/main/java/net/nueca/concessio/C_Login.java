@@ -18,8 +18,13 @@ import java.sql.SQLException;
 public class C_Login extends LoginActivity {
 
     @Override
-    protected void initActivity(String msg) {
-        Log.i("Jn-C_Login", "initActivity child message: " + msg);
+    protected void initActivity() {
+
+    }
+
+    @Override
+    protected void beforeFetchingData() {
+
     }
 
     @Override
@@ -39,6 +44,7 @@ public class C_Login extends LoginActivity {
             if(AccountTools.isLoggedIn(getHelper())){
                 btnSignIn.setVisibility(View.GONE);
                 btnLogout.setVisibility(View.VISIBLE);
+
                 dialog.hide();
             }
         } catch (SQLException e) {
@@ -53,7 +59,7 @@ public class C_Login extends LoginActivity {
         Log.i("Jn-C_Login", "onCreate");
 
         try {
-            if(AccountTools.isLoggedIn(getHelper()))
+            if(AccountTools.isLoggedIn(getHelper()) && !AccountTools.isUnlinked(this))
                 Log.e("Account", "I'm logged in!");
             else
                 Log.e("Account", "I'm not logged in!");
@@ -71,8 +77,8 @@ public class C_Login extends LoginActivity {
         Log.i("Jn-C_Login", "createLayout");
 
         btnSignIn = (Button) findViewById(R.id.btn_signin);
-        btnLogout = (Button) findViewById(R.id.btn_logout);
-        dialog = DialogMaterial.showProgressDialog(this, "Log In", "Please wait...", false);
+        btnLogout = (Button) findViewById(R.id.btn_unlink);
+        dialog = DialogMaterial.createProgressDialog(this, "Log In", "Please wait...", false);
         dialog.hide();
 
         try {
@@ -101,11 +107,10 @@ public class C_Login extends LoginActivity {
             @Override
             public void onClick(View v) {
                 btnLogout.setVisibility(View.GONE);
-                logoutUser();
+                startLogout();
                 unlinkAccount();
             }
         });
-
     }
 
     @Override

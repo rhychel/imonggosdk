@@ -58,7 +58,7 @@ public class AccountTools {
      * @param context
      * @param isUnlinked
      */
-    public static void setUnlinked(Context context, boolean isUnlinked) {
+    public static void updateUnlinked(Context context, boolean isUnlinked) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
@@ -73,6 +73,8 @@ public class AccountTools {
     }
 
     /**
+     * Removes user details from database
+     *
      * @param context
      * @param dbHelper
      * @param accountlistner
@@ -88,7 +90,7 @@ public class AccountTools {
         // update database
         session.updateTo(dbHelper);
 
-        AccountTools.setUnlinked(context, false);
+        updateUnlinked(context, false);
 
         // update the account listener
         if (accountlistner != null) {
@@ -97,9 +99,18 @@ public class AccountTools {
 
     }
 
-    // TODO: Offline Data
+    /**
+     * Deletes Account Details from the database
+     *
+     * TODO: Offline Data
+     * @param context
+     * @param dbHelper
+     * @param accountListener
+     * @throws SQLException
+     */
+
     public static void unlinkAccount(Context context, ImonggoDBHelper dbHelper, AccountListener accountListener) throws SQLException {
-        AccountTools.setUnlinked(context, true);
+        updateUnlinked(context, true);
         dbHelper.deleteAllDatabaseValues();
 
         // update the account listener

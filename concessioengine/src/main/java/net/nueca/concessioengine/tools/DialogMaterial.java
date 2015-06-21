@@ -35,13 +35,13 @@ public class DialogMaterial {
                 .show();
     }
 
-    public static MaterialDialog showProgressDialog(Context context, String title, String content, Boolean cancelable) {
+    public static MaterialDialog createProgressDialog(Context context, String title, String content, Boolean cancelable) {
         return new MaterialDialog.Builder(context)
                 .title(title)
                 .content(content)
                 .progress(true, 0)
                 .cancelable(cancelable)
-                .show();
+                .build();
     }
 
 

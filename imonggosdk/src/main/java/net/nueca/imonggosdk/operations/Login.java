@@ -263,7 +263,6 @@ public class Login {
      * @param server
      */
     public void startLoginUser(Server server) {
-
         requestForApiToken(server);
         mRequestQueue.start();
     }

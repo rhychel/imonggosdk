@@ -1,6 +1,7 @@
 package net.nueca.imonggosdk.enums;
 
 public enum SettingsName {
+	AUTO_UPDATE,
 	ENABLE_CUSTOMER_MEMBERSHIP,
 	ENABLE_REWARD_POINTS,
 	ENABLE_SALESMAN,
