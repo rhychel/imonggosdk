@@ -16,6 +16,7 @@ import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.Session;
@@ -40,7 +41,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk.db";
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     private Dao<Branch, Integer> branches = null;
     private Dao<BranchPrice, Integer> branchPrices = null;
@@ -62,6 +63,8 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
     private Dao<ProductTaxRateAssoc, Integer> productTaxRateAssocs = null;
 
     private Dao<LastUpdatedAt, Integer> lastUpdatedAts = null;
+
+    private Dao<OfflineData, Integer> offlineData = null;
 
     public ImonggoDBHelper(Context context) { super(context, DATABASE_NAME, null, DATABASE_VERSION); }
 
@@ -88,6 +91,8 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, ProductTaxRateAssoc.class);
 
             TableUtils.createTable(connectionSource, LastUpdatedAt.class);
+
+            TableUtils.createTable(connectionSource, OfflineData.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -116,6 +121,8 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, ProductTaxRateAssoc.class, true);
 
             TableUtils.dropTable(connectionSource, LastUpdatedAt.class, true);
+
+            TableUtils.dropTable(connectionSource, OfflineData.class, true);
 
             onCreate(database, connectionSource);
         } catch (SQLException e) {
@@ -228,6 +235,12 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         return lastUpdatedAts;
     }
 
+    public Dao<OfflineData, Integer> getOfflineData() throws SQLException {
+        if(offlineData == null)
+            offlineData = getDao(OfflineData.class);
+        return offlineData;
+    }
+
     /**
      * DROP Table
      */
@@ -278,6 +291,10 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             case DOCUMENT_PURPOSES:
                 TableUtils.dropTable(getConnectionSource(), DocumentPurpose.class, true);
                 break;
+
+            case OFFLINEDATA: {
+                TableUtils.dropTable(getConnectionSource(), OfflineData.class, true);
+            } break;
 
             // ASSOCIATIVES
             case BRANCH_USERS: {
@@ -359,6 +376,11 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 break;
             case DOCUMENT_PURPOSES:
                 getDocumentPurposes().create((DocumentPurpose)object);
+                break;
+
+            case OFFLINEDATA:
+                getOfflineData().create((OfflineData)object);
+                break;
 
             // ASSOCIATIVES
             case BRANCH_USERS:
@@ -417,6 +439,10 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 break;
             case DOCUMENT_PURPOSES:
                 getDocumentPurposes().delete((DocumentPurpose) object);
+                break;
+
+            case OFFLINEDATA:
+                getOfflineData().delete((OfflineData) object);
                 break;
 
             // ASSOCIATIVES
@@ -478,6 +504,10 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 getDocumentPurposes().deleteBuilder().delete();
                 break;
 
+            case OFFLINEDATA:
+                getOfflineData().deleteBuilder().delete();
+                break;
+
             // ASSOCIATIVES
             case BRANCH_USERS:
                 getBranchUserAssocs().deleteBuilder().delete();
@@ -535,6 +565,10 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 break;
             case DOCUMENT_PURPOSES:
                 getDocumentPurposes().update((DocumentPurpose) object);
+                break;
+
+            case OFFLINEDATA:
+                getOfflineData().update((OfflineData) object);
                 break;
 
             // ASSOCIATIVES
@@ -837,6 +871,8 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             getLastUpdatedAts().deleteBuilder().delete();
             getDocumentTypes().deleteBuilder().delete();
             getDocumentPurposes().deleteBuilder().delete();
+
+            getOfflineData().deleteBuilder().delete();
 
             getBranchUserAssocs().deleteBuilder().delete();
             getProductTaxRateAssocs().deleteBuilder().delete();

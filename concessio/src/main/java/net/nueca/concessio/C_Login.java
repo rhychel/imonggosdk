@@ -7,6 +7,7 @@ import android.widget.Button;
 
 import net.nueca.concessioengine.activities.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -35,6 +36,7 @@ public class C_Login extends LoginActivity {
             if(AccountTools.isLoggedIn(getHelper())){
                 btnSignIn.setVisibility(View.GONE);
                 btnLogout.setVisibility(View.VISIBLE);
+                SwableTools.startSwable(this);
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -33,5 +33,7 @@ public enum Table {
     TOKENS,
     APPLICATION_SETTINGS,
     LAST_UPDATED_AT,
-    POS_DEVICES
+    POS_DEVICES,
+
+    OFFLINEDATA
 }
