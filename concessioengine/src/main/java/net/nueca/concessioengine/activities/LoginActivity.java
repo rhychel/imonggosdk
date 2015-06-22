@@ -56,7 +56,17 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
     /**
      * If you want to add some logic before fetching data
      */
-    protected abstract void beforeFetchingData();
+    protected abstract void updateAppData();
+
+    /**
+     * If you want to add some logic i select branches
+     */
+    protected abstract void showSelectBranches();
+
+    /**
+     * If you want to do something before showing the welcome screen
+     */
+    protected abstract void showDashBoard();
 
     protected abstract void beforeLogin();
 
@@ -70,7 +80,8 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
         initEquipments();
         initActivity();
         loginChecker();
-        createLayout();
+        createLoginLayout();
+        autoUpdateChecker();
     }
 
     /**
@@ -86,14 +97,19 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
             e.printStackTrace();
         }
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // *********************************************************
         progressDialog = DialogMaterial.createProgressDialog(LoginActivity.this,
                 getString(R.string.LOGIN_PROGRESS_DIALOG_TITLE), "Please Wait...", false);
         progressDialog.hide();
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // *********************************************************
     }
 
 
-    // Methods which checks if someone is loggedIn
+    /**
+     * Methods which checks if someone is logged in
+     */
     private void loginChecker() {
         try {
             // Account is unlinked and user is logout
@@ -103,7 +119,6 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
                 setLoggingIn(false);
                 setLoggedIn(false);
             }
-
             // Account is Linked
             if (!AccountTools.isUnlinked(this)) {
                 // if user is logout
@@ -113,14 +128,10 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
                     setLoggingIn(false);
                     setLoggedIn(false);
                 }
-
                 // if User is Logged In
                 if (AccountTools.isLoggedIn(getHelper())) {
                     Log.i("loginChecker", "Account is linked and user is logged in");
                     setUnlinked(false);
-
-                    // TODO: delete this line
-                    btnUnlinkDevice.setVisibility(View.VISIBLE);
 
                     // user is logged in set up data
                     mSession = getSession();
@@ -149,28 +160,10 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
         }
     }
 
-    protected void updateData() {
-        Log.i("Jn-Login", "updating data parent");
-
-        beforeFetchingData();
-
-        if (!isUnlinked()) {
-            // User is Logged Out
-            if (!isLoggingIn() && !isLoggedIn()) {
-                // TODO LOGOUT
-            }
-
-            //  User is Logged In
-            if (isLoggingIn() && isLoggedIn()) {
-
-            }
-        }
-    }
-
     /**
      * Sets the default login layout.
      * <p/>
-     * Note: Do not call super.createLayout() in subclass activity
+     * Note: Do not call super.createLoginLayout() in subclass activity
      * when Implementing custom layout.
      * <p/>
      * How:
@@ -178,35 +171,40 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
      * 2. call the function setupLayoutEquipments(...); and it will automatically set the logic
      * 3. that's all
      */
-    protected void createLayout() {
-        Log.i("Jn-LoginActivity", "createLayout");
+    protected void createLoginLayout() {
+        Log.i("Jn-LoginActivity", "createLoginLayout");
 
-        // Account is unlinked and user is logout
-        if (isUnlinked() && !isLoggedIn()) {
+        // if user is logout
+        if (!isLoggedIn()) {
             // show login layout
             setLoginLayout();
+        } else {
+            Log.i("CreateLoginLayout", "Error cannot create login layout when user " +
+                    "is logged in and account is unlink");
         }
-
-        // Account is Linked
-        if (!isUnlinked()) {
-
-            // User is logged out
-            if (!isLoggedIn()) {
-                setLoginLayout();
-            }
-
-        } else if (isLoggedIn()) { // User is logged in
-            if (isAutoUpdate()) {
-                // Fetch data
-                updateData();
-            } else {
-                // welcome screen
-            }
-        }
-
     }
 
+    /**
+     * Checks if AutoUpdate is on. If True Update the data, else skip to welcome screen
+     */
+    private void autoUpdateChecker(){
+        // Account is Linked User is logged in
+        if (!isUnlinked() && isLoggedIn() & isLoggingIn()) {
+            if (isAutoUpdate()) {
+                Log.i("updateData", "auto update is on.");
+                // Fetch data
+                updateAppData();
+                // TODO: fetching logic
+            }
+            // TODO: show select branches screen
+            showSelectBranches();
+            createSelectBranchesLayout();
+        }
+    }
 
+    protected void createSelectBranchesLayout(){
+        setContentView(R.layout.concessioengine_select_branches);
+    }
 
     private void setLoginLayout() {
         setContentView(R.layout.concessioengine_login);

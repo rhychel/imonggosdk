@@ -77,9 +77,9 @@ public class AccountTools {
      *
      * @param context
      * @param dbHelper
-     * @param accountlistner
+     * @param accountListener
      */
-    public static void logoutUser(Context context, ImonggoDBHelper dbHelper, AccountListener accountlistner) throws SQLException {
+    public static void logoutUser(Context context, ImonggoDBHelper dbHelper, AccountListener accountListener) throws SQLException {
         // Get the session and reset; AccountId, Email, and Password.
         Session session = dbHelper.getSessions().queryForAll().get(0);
         session.setAccountId("");
@@ -93,10 +93,9 @@ public class AccountTools {
         updateUnlinked(context, false);
 
         // update the account listener
-        if (accountlistner != null) {
-            accountlistner.onLogoutAccount();
+        if (accountListener != null) {
+            accountListener.onLogoutAccount();
         }
-
     }
 
     /**

@@ -31,7 +31,17 @@ public class C_Login2 extends LoginActivity{
     }
 
     @Override
-    protected void beforeFetchingData() {
+    protected void updateAppData() {
+
+    }
+
+    @Override
+    protected void showSelectBranches() {
+
+    }
+
+    @Override
+    protected void showDashBoard() {
 
     }
 

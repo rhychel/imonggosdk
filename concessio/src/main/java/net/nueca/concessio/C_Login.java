@@ -23,7 +23,17 @@ public class C_Login extends LoginActivity {
     }
 
     @Override
-    protected void beforeFetchingData() {
+    protected void updateAppData() {
+
+    }
+
+    @Override
+    protected void showSelectBranches() {
+
+    }
+
+    @Override
+    protected void showDashBoard() {
 
     }
 
@@ -41,7 +51,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void afterLogin() {
         try {
-            if(AccountTools.isLoggedIn(getHelper())){
+            if (AccountTools.isLoggedIn(getHelper())) {
                 btnSignIn.setVisibility(View.GONE);
                 btnLogout.setVisibility(View.VISIBLE);
 
@@ -59,7 +69,7 @@ public class C_Login extends LoginActivity {
         Log.i("Jn-C_Login", "onCreate");
 
         try {
-            if(AccountTools.isLoggedIn(getHelper()) && !AccountTools.isUnlinked(this))
+            if (AccountTools.isLoggedIn(getHelper()) && !AccountTools.isUnlinked(this))
                 Log.e("Account", "I'm logged in!");
             else
                 Log.e("Account", "I'm not logged in!");
@@ -68,13 +78,15 @@ public class C_Login extends LoginActivity {
         }
 
     }
+
     Button btnSignIn;
     Button btnLogout;
     MaterialDialog dialog;
+
     @Override
-    protected void createLayout() {
-        super.createLayout();
-        Log.i("Jn-C_Login", "createLayout");
+    protected void createLoginLayout() {
+        super.createLoginLayout();
+        Log.i("Jn-C_Login", "createLoginLayout");
 
         btnSignIn = (Button) findViewById(R.id.btn_signin);
         btnLogout = (Button) findViewById(R.id.btn_unlink);
@@ -82,7 +94,7 @@ public class C_Login extends LoginActivity {
         dialog.hide();
 
         try {
-            if(AccountTools.isLoggedIn(getHelper())){
+            if (AccountTools.isLoggedIn(getHelper())) {
                 btnLogout.setVisibility(View.VISIBLE);
                 btnSignIn.setVisibility(View.GONE);
             } else {
@@ -113,12 +125,6 @@ public class C_Login extends LoginActivity {
         });
     }
 
-    @Override
-    protected void updateData() {
-        super.updateData();
-
-        Log.i("Jn-C_Login", "updateData");
-    }
 
     @Override
     public void onLogoutAccount() {
