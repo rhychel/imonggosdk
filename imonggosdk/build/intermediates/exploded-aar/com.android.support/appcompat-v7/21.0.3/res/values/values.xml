@@ -884,7 +884,7 @@
              Specifies a theme override for a view. When a theme override is set, the
              view will be inflated using a {@link android.content.Context} themed with
              the specified resource. During XML inflation, any child views under the
-             view with a theme override will inherit the themed context.
+             view with a theme override will inherit the themed mContext.
         -->
         <attr name="theme" format="reference" />
 
