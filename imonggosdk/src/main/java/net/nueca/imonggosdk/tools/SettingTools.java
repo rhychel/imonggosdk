@@ -16,15 +16,17 @@ import net.nueca.imonggosdk.enums.SettingsName;
 public class SettingTools {
 
     private static final String IS_AUTOUPDATE = "_is_auto_update";
+    private static final String DEFAULT_BRANCH = "_default_branch";
 
     /**
      * Add setting name to shared preferences
      *
      * @param context current context
      * @param settingsName name of the Settings that will be updated
-     * @param bool true or false
+     * @param bool for boolean input
+     * @param value for string input
      */
-    public static void updateSettings(Context context, SettingsName settingsName, boolean bool) {
+    public static void updateSettings(Context context, SettingsName settingsName, boolean bool, String value) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
@@ -34,6 +36,10 @@ public class SettingTools {
             if(settingsName == SettingsName.AUTO_UPDATE) {
                 Log.e("Key[updateIsAutoUpdate]", pinfo.packageName + IS_AUTOUPDATE);
                 editor.putBoolean(pinfo.packageName + IS_AUTOUPDATE, bool);
+                editor.apply();
+            } else if(settingsName == SettingsName.BRANCH_NAME){
+                Log.e("Key[defaultBranch]", pinfo.packageName + DEFAULT_BRANCH);
+                editor.putString(pinfo.packageName + IS_AUTOUPDATE, value);
                 editor.apply();
             } else {
                 // OTHER SETTINGS NAME
@@ -56,10 +62,29 @@ public class SettingTools {
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             Log.e("Key[isAutoUpdate]", pinfo.packageName + IS_AUTOUPDATE);
-            return preferences.getBoolean(pinfo.packageName + IS_AUTOUPDATE, true);
+            return preferences.getBoolean(pinfo.packageName + IS_AUTOUPDATE, false);
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("Key[isAutoUpdate]", "Not Found");
             return true;
         }
+    }
+
+    /**
+     * Returns Default Branch
+     *
+     * @param context current context
+     * @return Branch name, "" if none
+     */
+    public static String defaultBranch(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            Log.e("Key[defaultBranch]", pinfo.packageName + DEFAULT_BRANCH);
+            return preferences.getString(pinfo.packageName + IS_AUTOUPDATE, "");
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Key[defaultBranch]", "Not Found");
+            return "";
+        }
+
     }
 }

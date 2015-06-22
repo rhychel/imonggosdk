@@ -40,6 +40,7 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
     private Boolean isLoggingIn;
     private Boolean isLoggedIn;
     private Boolean isAutoUpdate;
+    private String defaultBranch;
     private MaterialDialog progressDialog;
     private EditText accountIdEditText;
     private EditText emailEditText;
@@ -93,19 +94,19 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
             isLoggedIn = AccountTools.isLoggedIn(getHelper());
             isLoggingIn = AccountTools.isLoggedIn(getHelper());
             isAutoUpdate = SettingTools.isAutoUpdate(this);
+            defaultBranch = SettingTools.defaultBranch(this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        // *********************************************************
+        /*********************************************************/
         progressDialog = DialogMaterial.createProgressDialog(LoginActivity.this,
                 getString(R.string.LOGIN_PROGRESS_DIALOG_TITLE), "Please Wait...", false);
         progressDialog.hide();
-        // *********************************************************
+        /*********************************************************/
     }
-
 
     /**
      * Methods which checks if someone is logged in
@@ -187,7 +188,7 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
     /**
      * Checks if AutoUpdate is on. If True Update the data, else skip to welcome screen
      */
-    private void autoUpdateChecker(){
+    private void autoUpdateChecker() {
         // Account is Linked User is logged in
         if (!isUnlinked() && isLoggedIn() & isLoggingIn()) {
             if (isAutoUpdate()) {
@@ -196,13 +197,22 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
                 updateAppData();
                 // TODO: fetching logic
             }
-            // TODO: show select branches screen
+            checkBranches();
+        }
+    }
+
+    private void checkBranches() {
+        Log.i("defaultBranch", defaultBranch);
+        // if default branch is not equal to ""
+        if (getDefaultBranch().equals("")) {
             showSelectBranches();
+            // TODO: show select branches screen
             createSelectBranchesLayout();
         }
     }
 
-    protected void createSelectBranchesLayout(){
+
+    protected void createSelectBranchesLayout() {
         setContentView(R.layout.concessioengine_select_branches);
     }
 
@@ -282,6 +292,7 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
         btnUnlinkDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i("btnUnlinkListener", "Unlink Account");
                 unlinkAccount();
             }
         });
@@ -418,8 +429,7 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
             progressDialog.setTitle("Unlinking Account");
             progressDialog.show();
 
-            // Unlink Account
-            if (isUnlinked()) {
+            if (!isUnlinked()) {
                 AccountTools.unlinkAccount(this, getHelper(), this);
 
                 setUnlinked(true);
@@ -491,6 +501,10 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
         return isAutoUpdate;
     }
 
+    public String getDefaultBranch() {
+        return defaultBranch;
+    }
+
     private void setLoggedIn(Boolean isLoggedIn) {
         this.isLoggedIn = isLoggedIn;
     }
@@ -502,6 +516,10 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
     private void setUnlinked(Boolean isUnlinked) {
         this.isUnlinked = isUnlinked;
         AccountTools.updateUnlinked(this, isUnlinked);
+    }
+
+    private void setDefaultBranch(String branchName) {
+        defaultBranch = branchName;
     }
 
     @Override
