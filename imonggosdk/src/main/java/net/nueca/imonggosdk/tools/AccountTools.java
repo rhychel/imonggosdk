@@ -58,7 +58,7 @@ public class AccountTools {
      * @param context
      * @param isUnlinked
      */
-    public static void setUnlinked(Context context, boolean isUnlinked) {
+    public static void updateUnlinked(Context context, boolean isUnlinked) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
@@ -73,11 +73,13 @@ public class AccountTools {
     }
 
     /**
+     * Removes user details from database
+     *
      * @param context
      * @param dbHelper
-     * @param accountlistner
+     * @param accountListener
      */
-    public static void logoutUser(Context context, ImonggoDBHelper dbHelper, AccountListener accountlistner) throws SQLException {
+    public static void logoutUser(Context context, ImonggoDBHelper dbHelper, AccountListener accountListener) throws SQLException {
         // Get the session and reset; AccountId, Email, and Password.
         Session session = dbHelper.getSessions().queryForAll().get(0);
         session.setAccountId("");
@@ -88,18 +90,26 @@ public class AccountTools {
         // update database
         session.updateTo(dbHelper);
 
-        AccountTools.setUnlinked(context, false);
+        updateUnlinked(context, false);
 
         // update the account listener
-        if (accountlistner != null) {
-            accountlistner.onLogoutAccount();
+        if (accountListener != null) {
+            accountListener.onLogoutAccount();
         }
-
     }
 
-    // TODO: Offline Data
+    /**
+     * Deletes Account Details from the database
+     *
+     * TODO: Offline Data
+     * @param context
+     * @param dbHelper
+     * @param accountListener
+     * @throws SQLException
+     */
+
     public static void unlinkAccount(Context context, ImonggoDBHelper dbHelper, AccountListener accountListener) throws SQLException {
-        AccountTools.setUnlinked(context, true);
+        updateUnlinked(context, true);
         dbHelper.deleteAllDatabaseValues();
 
         // update the account listener

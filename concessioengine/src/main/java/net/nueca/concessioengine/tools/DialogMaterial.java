@@ -1,4 +1,4 @@
-package net.nueca.imonggosdk.tools;
+package net.nueca.concessioengine.tools;
 
 import android.content.Context;
 
@@ -12,13 +12,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
  * by afollestad of github.com
  */
 public class DialogMaterial {
-
-    /**
-     * Default Constructor
-     */
-    public DialogMaterial(){
-
-    }
 
     public static void showBasicNoTitle(Context context, String content, String positiveText, String negativeText, Boolean cancelable, MaterialDialog.ButtonCallback callback) {
         new MaterialDialog.Builder(context)
@@ -40,6 +33,15 @@ public class DialogMaterial {
                 .callback(callback)
                 .cancelable(cancelable)
                 .show();
+    }
+
+    public static MaterialDialog createProgressDialog(Context context, String title, String content, Boolean cancelable) {
+        return new MaterialDialog.Builder(context)
+                .title(title)
+                .content(content)
+                .progress(true, 0)
+                .cancelable(cancelable)
+                .build();
     }
 
 

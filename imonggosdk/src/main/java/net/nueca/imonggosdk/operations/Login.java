@@ -221,7 +221,7 @@ public class Login {
                 }
 
                 // show Toast Message
-                LoggingTools.showToast(mContext, "Account URL Request Successful");
+                Log.i("Jn-Login","Account URL Request Successful");
 
                 // Login User | Request for token
                 startLoginUser(server);
@@ -263,7 +263,6 @@ public class Login {
      * @param server
      */
     public void startLoginUser(Server server) {
-
         requestForApiToken(server);
         mRequestQueue.start();
     }
@@ -347,7 +346,7 @@ public class Login {
 
                     if (mLoginListener != null) {
                         mLoginListener.onLoginSuccess(mSession);
-                        LoggingTools.showToast(mContext, "API Token Request Successful");
+                        Log.i("Jn-Login","API Token Request Successful");
                     }
                     if (mVolleyRequestListener != null) {
                         mVolleyRequestListener.onSuccess(Table.TOKENS, RequestType.LOGIN, response);
@@ -356,7 +355,7 @@ public class Login {
                 } else {
                     if (mLoginListener != null) {
                         mLoginListener.onLoginSuccess(mSession);
-                        LoggingTools.showToast(mContext, "API Token Request Successful");
+                        Log.i("Jn-Login", "API Token Request Successful");
                     }
                     if (mVolleyRequestListener != null) {
                         mVolleyRequestListener.onSuccess(Table.TOKENS, RequestType.LOGIN, response);
@@ -416,7 +415,7 @@ public class Login {
             @Override
             public void onSuccess(Table table, RequestType requestType, Object response) {
                 try {
-                    LoggingTools.showToast(mContext, "POS DEVICE ID Request Successful");
+                    Log.i("Jn-Login","POS DEVICE ID Request Successful");
 
                     // Get the response and save it to mSession object
                     JSONObject pos_device = (JSONObject) response;
