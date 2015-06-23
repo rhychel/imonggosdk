@@ -37,19 +37,19 @@ public class Configurations {
     public static void setAccountId(String accountId) {
         SharedPreferences.Editor editor = imonggoPreference.edit();
         editor.putString(ACCOUNT_ID_CACHE, accountId);
-        editor.commit();
+        editor.apply();
     }
 
     public static void setEmail(String email) {
         SharedPreferences.Editor editor = imonggoPreference.edit();
         editor.putString(EMAIL_CACHE, email);
-        editor.commit();
+        editor.apply();
     }
 
     public static void setServer(int server) {
         SharedPreferences.Editor editor = imonggoPreference.edit();
         editor.putInt(SERVER_KEY, server);
-        editor.commit();
+        editor.apply();
     }
 
 	/**
@@ -72,6 +72,7 @@ public class Configurations {
 			put(Table.INVENTORIES, "inventories.json");
 			put(Table.SETTINGS, "settings.json");
 			put(Table.TOKENS, "tokens.json");
+			put(Table.POS_DEVICES, "pos_devices.json");
 
 //			put(Modules.INVOICES, "invoices.json");
 //			put(Modules.DOCUMENTS, "documents.json");
@@ -87,7 +88,6 @@ public class Configurations {
     public static EnumMap<Table, String> API_MODULES_ID = new EnumMap<Table, String>(Table.class){
 
         private static final long serialVersionUID = 9136022492409598128L;
-
         {
 			put(Table.BRANCHES, "branches");
 			put(Table.USERS, "users");
@@ -99,6 +99,7 @@ public class Configurations {
 			put(Table.INVENTORIES, "inventories");
             put(Table.SETTINGS, "settings");
             put(Table.TOKENS, "tokens");
+			put(Table.POS_DEVICES, "pos_devices");
 
 //            put(Modules.INVOICES, "invoices");
 //            put(Modules.DOCUMENTS, "documents");

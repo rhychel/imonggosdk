@@ -3,4 +3,16 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password </string>
+    <string name="action_sign_in">Sign in </string>
+
+    <string name="LOGIN_UI_TEXT_HINT_ACCOUNT_ID">ACCOUNT ID</string>
+    <string name="LOGIN_UI_TEXT_HINT_EMAIL_ID">EMAIL</string>
+    <string name="LOGIN_UI_TEXT_HINT_PASSWORD_ID">PASSWORD</string>
+    <string name="LOGIN_UI_BUTTON_SIGNIN">Sign In</string>
+
+
+
 </resources>

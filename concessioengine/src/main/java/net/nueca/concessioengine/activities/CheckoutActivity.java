@@ -7,4 +7,5 @@ import net.nueca.imonggosdk.activities.ImonggoActionBarActivity;
  * imonggosdk (c)2015
  */
 public class CheckoutActivity extends ImonggoActionBarActivity {
+
 }

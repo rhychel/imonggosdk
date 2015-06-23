@@ -10,7 +10,6 @@ import net.nueca.imonggosdk.enums.Parameter;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
-import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
@@ -31,8 +30,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by rhymart on 5/14/15.
@@ -44,7 +41,6 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
     private void startSyncContents(RequestType requestType) throws SQLException {
         if(getHelper() == null)
             Log.e(TAG, "helper is null");
-
         if(requestType == RequestType.LAST_UPDATED_AT) {
             newLastUpdatedAt = null;
             lastUpdatedAt = null;
