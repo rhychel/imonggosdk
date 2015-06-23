@@ -5,6 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 
 import java.sql.SQLException;
@@ -38,6 +39,8 @@ public class Session {
     private int device_id = 0;
     @DatabaseField
     private boolean hasLoggedIn = false;
+    @DatabaseField
+    private Server server;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private User user;
 
@@ -133,6 +136,14 @@ public class Session {
 
     public void setHasLoggedIn(boolean hasLoggedIn) {
         this.hasLoggedIn = hasLoggedIn;
+    }
+
+    public Server getServer() {
+        return server;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
     }
 
     public User getUser() {

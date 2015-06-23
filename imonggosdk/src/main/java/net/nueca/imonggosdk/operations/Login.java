@@ -210,6 +210,7 @@ public class Login {
                 mSession.setEmail(mEmail);
                 mSession.setPassword(mPassword);
                 mSession.setAccountUrl(response);
+                mSession.setServer(server);
 
                 // Insert Session to Database
                 mSession.insertTo(mDBHelper);
@@ -303,6 +304,7 @@ public class Login {
                     tempSession.setEmail(getSession().getEmail());
                     tempSession.setPassword(getSession().getPassword());
                     tempSession.setDevice_id(getSession().getDevice_id());
+                    tempSession.setServer(getSession().getServer());
 
                     getSession().deleteTo(mDBHelper);
 
@@ -325,8 +327,6 @@ public class Login {
                     }
                 } else { // if Account is linked
                     try {
-
-
 
                         // set the response token
                         mSession.setApiToken(response.getString("api_token"));
@@ -415,9 +415,10 @@ public class Login {
                     // Get the response and save it to mSession object
                     JSONObject pos_device = (JSONObject) response;
 
-                    Log.i("_response", "response: " + response.toString() + "  --  pos_device: " + pos_device.toString());
-                    int id = pos_device.getInt("id");
-                    mSession.setDevice_id(1);
+
+                    int id = Integer.parseInt( pos_device.get("id").toString());
+                    Log.i("_response", "response: " + response.toString() + "  --  pos_device: " + id );
+                    getSession().setDevice_id(id);
 
                     // Update the database
                     mSession.updateTo(mDBHelper);
@@ -428,7 +429,6 @@ public class Login {
                         // CODE
                     } else { // not using Concession Settings
                         Log.i("Jn-Login", "Not Using Concession Settings");
-
                         // Update the Listener
                         if (mLoginListener != null) {
                             mLoginListener.onLoginSuccess(mSession);
@@ -439,7 +439,6 @@ public class Login {
                             mVolleyRequestListener.onSuccess(Table.TOKENS, RequestType.LOGIN, response);
                         }
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
