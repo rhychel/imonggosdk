@@ -35,5 +35,6 @@ public enum Table {
     LAST_UPDATED_AT,
     POS_DEVICES,
 
-    OFFLINEDATA
+    OFFLINEDATA,
+    ORDERS
 }

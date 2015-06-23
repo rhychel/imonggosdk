@@ -19,6 +19,8 @@ import java.util.Date;
 public class OfflineData extends BaseTable {
     public static final int TYPE_ORDER = 1001;
     public static final int TYPE_INVOICE = 1002;
+    public static final int TYPE_DOCUMENT = 1003;
+    public static final int TYPE_CUSTOMER = 1004;
 	
 	@DatabaseField(generatedId=true)
 	private int id;
