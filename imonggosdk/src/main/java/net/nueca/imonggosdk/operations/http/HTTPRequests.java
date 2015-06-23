@@ -1,6 +1,7 @@
 package net.nueca.imonggosdk.operations.http;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
@@ -48,10 +49,12 @@ public class HTTPRequests {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if (error.networkResponse != null)
-                            volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
-                        else
-                            volleyRequestListener.onError(table, false, null, 0);
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null)
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
                     }
                 }) {
             @Override
@@ -150,8 +153,9 @@ public class HTTPRequests {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.i("postrequestresponse", response.toString());
                         if (volleyRequestListener != null)
-                            volleyRequestListener.onSuccess(table, RequestType.POST, jsonObject);
+                            volleyRequestListener.onSuccess(table, RequestType.POST, response);
                     }
                 },
                 new Response.ErrorListener() {
