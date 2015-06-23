@@ -281,6 +281,7 @@ public class Login {
             @Override
             public void onResponse(JSONObject response) {
 
+
                 if (response.toString().trim().equals("")) {
                     // If Listener is not null update the listener onStopLogin
                     if (mLoginListener != null) {
@@ -294,7 +295,7 @@ public class Login {
                     }
                     return;
                 }
-                // if Account is Unlinked
+                // if Account is Linked
                 if (!AccountTools.isUnlinked(mContext)) {
                     Session tempSession = new Session();
                     tempSession.setAccountId(getSession().getAccountId());
@@ -307,29 +308,33 @@ public class Login {
 
                     try {
                         mSession = new Session();
-                        mSession.setAccountId(tempSession.getAccountId());
-                        mSession.setAccountUrl(tempSession.getAccountUrl());
-                        mSession.setEmail(tempSession.getEmail());
-                        mSession.setApiToken(response.getString("api_token"));
-                        mSession.setApiAuthentication(ImonggoTools.buildAPIAuthentication(response.getString("api_token")));
-                        mSession.setPassword(tempSession.getPassword());
-                        mSession.setDevice_id(tempSession.getDevice_id());
+                        getSession().setAccountId(tempSession.getAccountId());
+                        getSession().setAccountUrl(tempSession.getAccountUrl());
+                        getSession().setEmail(tempSession.getEmail());
+                        getSession().setApiToken(response.getString("api_token"));
+                        getSession().setApiAuthentication(ImonggoTools.buildAPIAuthentication(response.getString("api_token")));
+                        getSession().setPassword(tempSession.getPassword());
+                        getSession().setDevice_id(tempSession.getDevice_id());
 
                         // Insert Session to Database
                         mSession.insertTo(mDBHelper);
-
+                        Log.i("Jn-Login", "API Token Request Successful");
                         Log.i("Jn-Login", "session inserted to database");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 } else { // if Account is linked
                     try {
+
+
+
                         // set the response token
                         mSession.setApiToken(response.getString("api_token"));
                         mSession.setApiAuthentication(ImonggoTools.buildAPIAuthentication(response.getString("api_token")));
 
                         // update the session in the database
                         mSession.updateTo(mDBHelper);
+                        Log.i("Jn-Login", "API Token Request Successful");
                         Log.i("Jn-Login", "session updated in the database");
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -343,19 +348,9 @@ public class Login {
 
                     requestForPOSDeviceID(server);
                     mRequestQueue.start();
-
-                    if (mLoginListener != null) {
-                        mLoginListener.onLoginSuccess(mSession);
-                        Log.i("Jn-Login","API Token Request Successful");
-                    }
-                    if (mVolleyRequestListener != null) {
-                        mVolleyRequestListener.onSuccess(Table.TOKENS, RequestType.LOGIN, response);
-                    }
-
                 } else {
                     if (mLoginListener != null) {
                         mLoginListener.onLoginSuccess(mSession);
-                        Log.i("Jn-Login", "API Token Request Successful");
                     }
                     if (mVolleyRequestListener != null) {
                         mVolleyRequestListener.onSuccess(Table.TOKENS, RequestType.LOGIN, response);
@@ -419,8 +414,10 @@ public class Login {
 
                     // Get the response and save it to mSession object
                     JSONObject pos_device = (JSONObject) response;
+
+                    Log.i("_response", "response: " + response.toString() + "  --  pos_device: " + pos_device.toString());
                     int id = pos_device.getInt("id");
-                    mSession.setDevice_id(id);
+                    mSession.setDevice_id(1);
 
                     // Update the database
                     mSession.updateTo(mDBHelper);
@@ -435,10 +432,11 @@ public class Login {
                         // Update the Listener
                         if (mLoginListener != null) {
                             mLoginListener.onLoginSuccess(mSession);
+                            Log.i("Jn-Login","API Token Request Successful");
                         }
 
                         if (mVolleyRequestListener != null) {
-                            mVolleyRequestListener.onSuccess(Table.TOKENS, RequestType.POST, response);
+                            mVolleyRequestListener.onSuccess(Table.TOKENS, RequestType.LOGIN, response);
                         }
                     }
 
