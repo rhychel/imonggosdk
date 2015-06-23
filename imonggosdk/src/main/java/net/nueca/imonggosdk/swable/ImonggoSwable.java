@@ -75,7 +75,6 @@ public class ImonggoSwable extends SwableService {
                                 break;
                         }
                     }
-
                     Log.e("ImonggoSwable", "starting sync : " + offlineDataList.size() + " queued");
                     if(swableStateListener != null)
                         swableStateListener.onSwableStarted();
