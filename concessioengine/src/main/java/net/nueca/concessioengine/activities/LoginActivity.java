@@ -40,7 +40,8 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
     private Boolean isLoggingIn;
     private Boolean isLoggedIn;
     private Boolean isAutoUpdate;
-    private String defaultBranch;
+    private String mDefaultBranch;
+    private Server mServer;
     private MaterialDialog progressDialog;
     private EditText accountIdEditText;
     private EditText emailEditText;
@@ -94,7 +95,7 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
             isLoggedIn = AccountTools.isLoggedIn(getHelper());
             isLoggingIn = AccountTools.isLoggedIn(getHelper());
             isAutoUpdate = SettingTools.isAutoUpdate(this);
-            defaultBranch = SettingTools.defaultBranch(this);
+            mDefaultBranch = SettingTools.defaultBranch(this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -115,7 +116,6 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
         try {
             // Account is unlinked and user is logout
             if (AccountTools.isUnlinked(this) && !AccountTools.isLoggedIn(getHelper())) {
-                Log.i("loginChecker", "Account is linked and user is logged out");
                 setUnlinked(true);
                 setLoggingIn(false);
                 setLoggedIn(false);
@@ -124,14 +124,12 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
             if (!AccountTools.isUnlinked(this)) {
                 // if user is logout
                 if (!AccountTools.isLoggedIn(getHelper())) {
-                    Log.i("loginChecker", "Account is linked and user is logged out");
                     setUnlinked(false);
                     setLoggingIn(false);
                     setLoggedIn(false);
                 }
                 // if User is Logged In
                 if (AccountTools.isLoggedIn(getHelper())) {
-                    Log.i("loginChecker", "Account is linked and user is logged in");
                     setUnlinked(false);
 
                     // user is logged in set up data
@@ -140,8 +138,6 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
                     if (!mSession.getApiAuthentication().equals("")) { // User is authenticated
                         setLoggingIn(true);
                         setLoggedIn(true);
-
-                        Log.i("loginChecker", "account authenticated");
 
                         // TODO: do this after fetching data
                         /* // check if sessions email exist in user's database
@@ -202,7 +198,7 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
     }
 
     private void checkBranches() {
-        Log.i("defaultBranch", defaultBranch);
+        Log.i("mDefaultBranch", mDefaultBranch);
         // if default branch is not equal to ""
         if (getDefaultBranch().equals("")) {
             showSelectBranches();
@@ -210,7 +206,6 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
             createSelectBranchesLayout();
         }
     }
-
 
     protected void createSelectBranchesLayout() {
         setContentView(R.layout.concessioengine_select_branches);
@@ -223,6 +218,8 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
                 (EditText) findViewById(R.id.text_email),
                 (EditText) findViewById(R.id.text_password),
                 (Button) findViewById(R.id.btn_signin), (Button) findViewById(R.id.btn_unlink));
+
+        setServer(Server.IRETAILCLOUD_COM);
     }
 
     protected void setupLayoutEquipments(EditText editTextAccountId, EditText
@@ -231,9 +228,10 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
         this.emailEditText = editTextEmail;
         this.passwordEditText = editTextPassword;
 
-        this.accountIdEditText.setText("carolflower");
-        this.emailEditText.setText("carol@me.com");
-        this.passwordEditText.setText("carolflower");
+        this.accountIdEditText.setText("retailpos");
+        this.emailEditText.setText("retailpos@test.com");
+        this.passwordEditText.setText("retailpos");
+
 
         this.btnSignIn = btnSignin;
         this.btnUnlinkDevice = btnLogout;
@@ -283,7 +281,7 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
                     progressDialog.show();
                     // Login Function
                     Log.i("Jn-LoginActivity", "Loggin in...");
-                    startLogin(getApplicationContext(), accountId, email, password, Server.IMONGGO);
+                    startLogin(getApplicationContext(), accountId, email, password, getServer());
                 }
             }
         });
@@ -310,6 +308,8 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
 
             @Override
             public void onLoginSuccess(Session session) {
+
+
                 Log.i("Jn-LoginActivity", "onLoginSuccess");
                 afterLogin();
 
@@ -502,8 +502,10 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
     }
 
     public String getDefaultBranch() {
-        return defaultBranch;
+        return mDefaultBranch;
     }
+
+    public Server getServer() {return mServer;}
 
     private void setLoggedIn(Boolean isLoggedIn) {
         this.isLoggedIn = isLoggedIn;
@@ -518,8 +520,12 @@ public abstract class LoginActivity extends ImonggoAppCompatActivity implements 
         AccountTools.updateUnlinked(this, isUnlinked);
     }
 
-    private void setDefaultBranch(String branchName) {
-        defaultBranch = branchName;
+    public void setServer(Server server){
+        this.mServer = server;
+    }
+
+    private void setmDefaultBranch(String branchName) {
+        mDefaultBranch = branchName;
     }
 
     @Override

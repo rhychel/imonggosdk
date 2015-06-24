@@ -124,10 +124,12 @@ public class HTTPRequests {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if (error.networkResponse != null)
-                            volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
-                        else
-                            volleyRequestListener.onError(table, false, null, 0);
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null) {
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            } else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
                     }
                 }) {
             @Override

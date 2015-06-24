@@ -4,20 +4,26 @@ import android.os.Bundle;
 import android.util.Log;
 
 import net.nueca.concessioengine.activities.LoginActivity;
+import net.nueca.concessioengine.tools.DialogMaterial;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class C_Login extends LoginActivity{
+public class C_Login extends LoginActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         try {
-            if(AccountTools.isLoggedIn(getHelper()) && !AccountTools.isUnlinked(this))
+            if (AccountTools.isLoggedIn(getHelper()) && !AccountTools.isUnlinked(this)) {
                 Log.e("Account", "I'm logged in!");
-            else
+                Log.i("session pos id", getSession().getDevice_id() + "");
+                Log.i("session server", getSession().getServer() + "");
+            } else
                 Log.e("Account", "I'm not logged in!");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,6 +64,12 @@ public class C_Login extends LoginActivity{
     @Override
     protected void afterLogin() {
 
+        List<Table> list = new ArrayList<>();
+
+        list.add(Table.BRANCH_USERS);
+        list.add(Table.USERS);
+
+        DialogMaterial.showCustomDialog(this, list, "Updating", false);
     }
 
     @Override
