@@ -180,6 +180,7 @@ public class HTTPRequests {
             }
         };
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        Log.e("URL",jsonObjectRequest.getUrl());
         return jsonObjectRequest;
     }
 

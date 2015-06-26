@@ -2,6 +2,7 @@ package net.nueca.imonggosdk.swable;
 
 import android.util.Log;
 
+import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
@@ -43,7 +44,7 @@ public class ImonggoSwable extends SwableService {
             setSyncing(true);
             try {
                 if(AccountTools.isLoggedIn(getHelper())) {
-                    Log.e("ImonggoSwable", "syncModule : syncing");
+                    Log.e("ImonggoSwable", "syncModule : trying to sync");
                     if(!getSession().isHasLoggedIn()) {
                         setSyncing(false);
                     }
@@ -64,13 +65,13 @@ public class ImonggoSwable extends SwableService {
                             swableStateListener.onQueued(offlineData);
 
                         switch (offlineData.getType()) {
-                            case OfflineData.TYPE_ORDER:
+                            case OfflineDataType.ORDER:
                                 send(Table.ORDERS, offlineData);
                                 break;
-                            case OfflineData.TYPE_INVOICE:
+                            case OfflineDataType.INVOICE:
                                 send(Table.INVOICES, offlineData);
                                 break;
-                            case OfflineData.TYPE_DOCUMENT:
+                            case OfflineDataType.DOCUMENT:
                                 send(Table.DOCUMENTS, offlineData);
                                 break;
                         }
@@ -81,7 +82,7 @@ public class ImonggoSwable extends SwableService {
                     getQueue().start();
                 }
                 else {
-                    Log.e("ImonggoSwable", "stopping sync");
+                    Log.e("ImonggoSwable", "stopping sync : not logged in");
                     if(swableStateListener != null)
                         swableStateListener.onSwableStopping();
                     stopSelf();
@@ -105,39 +106,66 @@ public class ImonggoSwable extends SwableService {
         void onSwableStopping();
     }
 
-    private void send(Table table, final OfflineData offlineData) {
+    private void send(Table table, OfflineData offlineData) {
+        send(table, offlineData, "");
+    }
+
+    private void send(Table table, final OfflineData offlineData, String parameters) {
         try {
             getQueue().add(
-                    HTTPRequests.sendPOSTRequest(this, getSession(), new VolleyRequestListener() {
-                        @Override
-                        public void onStart(Table table, RequestType requestType) {
-                            offlineData.setSyncing(true);
-
-                            if (swableStateListener != null)
-                                swableStateListener.onSyncing(offlineData);
+                HTTPRequests.sendPOSTRequest(this, getSession(), new VolleyRequestListener() {
+                    @Override
+                    public void onStart(Table table, RequestType requestType) {
+                        offlineData.setSyncing(true);
+                        try {
+                            Log.e("JSON", new JSONObject(offlineData.getData()).toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
 
-                        @Override
-                        public void onSuccess(Table table, RequestType requestType, Object response) {
+                        Log.e("ImonggoSwable", "sending : started");
+
+                        if (swableStateListener != null)
+                            swableStateListener.onSyncing(offlineData);
+                    }
+
+                    @Override
+                    public void onSuccess(Table table, RequestType requestType, Object response) {
+                        Log.e("ImonggoSwable", "sending success : " + response);
+                        try {
                             offlineData.setSyncing(false);
-                            offlineData.setSynced(true);
                             offlineData.setQueued(false);
 
+                            if(response instanceof JSONObject) {
+                                JSONObject responseJson = ((JSONObject) response);
+                                if(responseJson.has("id")) {
+                                    Log.d("ImonggoSwable", "sending success : return ID : " + responseJson.getString("id"));
+                                    offlineData.setReturnId(responseJson.getString("id"));
+                                }
+                            }
 
-                            if (swableStateListener != null)
+                            offlineData.setSynced(true);
+                            offlineData.updateTo(getHelper());
+
+                            if (swableStateListener != null && offlineData.isSynced())
                                 swableStateListener.onSynced(offlineData);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+                    }
 
-                        @Override
-                        public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                    @Override
+                    public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                        Log.e("ImonggoSwable", "sending failed : isConnected? " + hasInternet + " : error ["+responseCode+"] : " + response);
 
-                        }
+                    }
 
-                        @Override
-                        public void onRequestError() {
-
-                        }
-                    }, Server.IMONGGO, table, new JSONObject(offlineData.getData()), "")
+                    @Override
+                    public void onRequestError() {
+                        Log.e("ImonggoSwable", "sending failed : request error");
+                    }
+                }, Server.IRETAILCLOUD_NET, table, new JSONObject(offlineData.getData()), "?branch_id="+ offlineData.getBranch_id() + parameters)
             );
         } catch (JSONException e) {
             e.printStackTrace();

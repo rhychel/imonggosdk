@@ -1,7 +1,9 @@
 package net.nueca.imonggosdk.objects;
 
+import android.util.Log;
 import android.util.SparseArray;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -17,13 +19,6 @@ import java.util.Date;
 
 @DatabaseTable
 public class OfflineData extends BaseTable {
-    public static final int TYPE_ORDER = 1001;
-    public static final int TYPE_INVOICE = 1002;
-    public static final int TYPE_DOCUMENT = 1003;
-    public static final int TYPE_CUSTOMER = 1004;
-	
-	@DatabaseField(generatedId=true)
-	private int id;
 
     @DatabaseField
     private String date;
@@ -137,15 +132,7 @@ public class OfflineData extends BaseTable {
         this.dateCreated = Calendar.getInstance().getTime();
     }
 
-    public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getData() {
+    public String getData() {
 		return data;
 	}
 
@@ -395,13 +382,14 @@ public class OfflineData extends BaseTable {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof OfflineData && id == ((OfflineData)o).getId();
+        return id == ((OfflineData)o).getId();
     }
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
+        Log.e("OfflineData", "insertTo " + dbHelper.toString());
         try {
-            dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.UPDATE);
+            dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.INSERT);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -410,7 +398,7 @@ public class OfflineData extends BaseTable {
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.UPDATE);
+            dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.DELETE);
         } catch (SQLException e) {
             e.printStackTrace();
         }

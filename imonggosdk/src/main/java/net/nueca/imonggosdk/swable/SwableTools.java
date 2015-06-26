@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.android.volley.RequestQueue;
 
@@ -13,6 +14,7 @@ import net.nueca.imonggosdk.operations.http.HTTPRequests;
 
 public class SwableTools {
 	public static Intent startSwable(Activity activity) {
+		Log.e("SwableTools", "startSwable");
 		Intent service = new Intent(activity,ImonggoSwable.class);
 		activity.startService(service);
 		return service;
