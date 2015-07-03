@@ -9,9 +9,13 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.tools.DateTimeTools;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -112,21 +116,38 @@ public class OfflineData extends BaseTable {
     private boolean isExpanded = false;
 
 	public OfflineData() { }
-	
-	public OfflineData(String data, int type) {
-		String []timestamp = DateTimeTools.getCurrentDateTimeInvoice();
-		String timeId = timestamp[0]+" "+timestamp[1];
+
+    public OfflineData(String data, int type) {
+        String []timestamp = DateTimeTools.getCurrentDateTimeInvoice();
+        String timeId = timestamp[0]+" "+timestamp[1];
         this.date = timeId;
-		this.type = type;
-		this.data = data;
+        this.type = type;
+        this.data = data;
         this.dateCreated = Calendar.getInstance().getTime();
-	}
+    }
+    public OfflineData(String data, OfflineDataType type) {
+        String []timestamp = DateTimeTools.getCurrentDateTimeInvoice();
+        String timeId = timestamp[0]+" "+timestamp[1];
+        this.date = timeId;
+        this.type = type.getNumericValue();
+        this.data = data;
+        this.dateCreated = Calendar.getInstance().getTime();
+    }
 
     public OfflineData(String reference_no, String data, int type) {
         String []timestamp = DateTimeTools.getCurrentDateTimeInvoice();
         String timeId = timestamp[0]+" "+timestamp[1];
         this.date = timeId;
         this.type = type;
+        this.data = data;
+        this.reference_no = reference_no;
+        this.dateCreated = Calendar.getInstance().getTime();
+    }
+    public OfflineData(String reference_no, String data, OfflineDataType type) {
+        String []timestamp = DateTimeTools.getCurrentDateTimeInvoice();
+        String timeId = timestamp[0]+" "+timestamp[1];
+        this.date = timeId;
+        this.type = type.getNumericValue();
         this.data = data;
         this.reference_no = reference_no;
         this.dateCreated = Calendar.getInstance().getTime();
@@ -382,7 +403,7 @@ public class OfflineData extends BaseTable {
 
     @Override
     public boolean equals(Object o) {
-        return id == ((OfflineData)o).getId();
+        return o instanceof OfflineData && id == ((OfflineData)o).getId();
     }
 
     @Override
@@ -397,6 +418,7 @@ public class OfflineData extends BaseTable {
 
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
+        Log.e("OfflineData", "deleteTo " + dbHelper.toString());
         try {
             dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.DELETE);
         } catch (SQLException e) {
@@ -406,10 +428,23 @@ public class OfflineData extends BaseTable {
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
+        Log.e("OfflineData", "updateTo " + dbHelper.toString());
         try {
             dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void parseData() {
+        try {
+            JSONObject data = new JSONObject(getData());
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 }

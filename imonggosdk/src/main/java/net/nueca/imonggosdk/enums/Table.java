@@ -26,6 +26,9 @@ public enum Table {
     DOCUMENT_PURPOSES,
 
     INVOICES,
+    INVOICE_LINES,
+    INVOICE_TAX_RATES,
+    PAYMENTS,
 
     SALES_PROMOTIONS,
 
@@ -36,5 +39,7 @@ public enum Table {
     POS_DEVICES,
 
     OFFLINEDATA,
-    ORDERS
+
+    ORDERS,
+    ORDER_LINES
 }
