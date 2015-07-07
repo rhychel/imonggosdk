@@ -1,6 +1,10 @@
 package net.nueca.imonggosdk.objects.order;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -27,22 +31,27 @@ import java.util.List;
  */
 public class Order extends BaseTable {
 
+    @Expose
     @DatabaseField
     private String target_delivery_date = ""; // current_date+2days
 
+    @Expose
     @DatabaseField
     private String remark = "";
 
+    @Expose
     @DatabaseField
     private String reference = "";
 
+    @Expose
     @DatabaseField
     private String order_type_code = "stock_request";
 
+    @Expose
     @DatabaseField
     private int serving_branch_id = 0;
 
-    @DatabaseField
+    @Expose
     private BatchList<OrderLine> order_lines = new BatchList<>(DatabaseOperation.INSERT);
 
     @ForeignCollectionField
@@ -111,14 +120,41 @@ public class Order extends BaseTable {
         this.serving_branch_id = serving_branch_id;
     }
 
-    public JSONObject toJSONObject() throws JSONException {
+    public static Order fromJSONString(String jsonString) throws JSONException {
+        JSONObject jsonObject = new JSONObject(jsonString);
+        return fromJSONObject(jsonObject);
+    }
+
+    public static Order fromJSONObject(JSONObject jsonObject) throws JSONException {
         Gson gson = new Gson();
+        if(jsonObject.has("order")) {
+            jsonObject = jsonObject.getJSONObject("order");
+        }
+        Order order = gson.fromJson(jsonObject.toString(),Order.class);
+        return order;
+    }
+
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        refreshListObjects();
+        return (gson.toJson(this));
+    }
+
+    public JSONObject toJSONObject() throws JSONException {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         refreshListObjects();
         return new JSONObject(gson.toJson(this));
     }
 
+    private transient boolean didRefresh = false;
     // call this to save the OrderLine objects to database
     public Order refresh(ImonggoDBHelper dbHelper) {
+        if(didRefresh) {
+            Log.e("Order", "refresh : called more than once");
+            return this;
+        }
+        didRefresh = true;
+
         for(OrderLine orderLine : order_lines)
             orderLine.setOrder(this);
         order_lines.doOperation(dbHelper);
@@ -139,6 +175,11 @@ public class Order extends BaseTable {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
+        if(id < 0) {
+            Log.e("Order", "insertTo : Invalid ID : use returned ID from server after sending as this Order's ID");
+            return;
+        }
+
         refresh(dbHelper);
         try {
             dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.INSERT);

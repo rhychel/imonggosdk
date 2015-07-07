@@ -9,6 +9,8 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 
@@ -64,7 +66,12 @@ public class ImonggoSwable extends SwableService {
                         return;
                     }
 
+                    int count = 0;
                     for (OfflineData offlineData : offlineDataList) {
+                        count++;
+                        Log.e("OfflineDataList", OfflineDataType.identify(offlineData.getType()).toString() + " " +
+                                count + " " + offlineDataList.size());
+
                         if(offlineData.isCancelled()) {
                             swableStateListener.onAlreadyCancelled(offlineData);
                             continue;
@@ -96,6 +103,19 @@ public class ImonggoSwable extends SwableService {
                                 delete(Table.DOCUMENTS, offlineData);
                                 break;
                         }
+                        /*if(OfflineDataType.identify(offlineData.getType()) == OfflineDataType.SEND_ORDER)
+                            send(Table.ORDERS, offlineData);
+                        else if(OfflineDataType.identify(offlineData.getType()) == OfflineDataType.SEND_INVOICE)
+                            send(Table.INVOICES, offlineData);
+                        else if(OfflineDataType.identify(offlineData.getType()) == OfflineDataType.SEND_DOCUMENT)
+                            send(Table.DOCUMENTS, offlineData);
+
+                        else if(OfflineDataType.identify(offlineData.getType()) == OfflineDataType.CANCEL_ORDER)
+                            delete(Table.ORDERS, offlineData);
+                        else if(OfflineDataType.identify(offlineData.getType()) == OfflineDataType.CANCEL_INVOICE)
+                            delete(Table.INVOICES, offlineData);
+                        else if(OfflineDataType.identify(offlineData.getType()) == OfflineDataType.CANCEL_DOCUMENT)
+                            delete(Table.DOCUMENTS, offlineData);*/
                     }
                     Log.e("ImonggoSwable", "starting sync : " + offlineDataList.size() + " queued");
                     if(swableStateListener != null)
@@ -130,17 +150,26 @@ public class ImonggoSwable extends SwableService {
 
     private void send(Table table, final OfflineData offlineData) {
         try {
+            String jsonString = offlineData.getData();
+            switch(OfflineDataType.identify(offlineData.getType())) {
+                case SEND_ORDER:
+                    jsonString = "{\"order\":" + jsonString + "}";
+                    break;
+                case SEND_INVOICE:
+                    jsonString = "{\"invoice\":" + jsonString + "}";
+                    break;
+                case SEND_DOCUMENT:
+                    jsonString = "{\"document\":" + jsonString + "}";
+                    break;
+            }
+            JSONObject jsonObject = new JSONObject(jsonString);
+            Log.e("JSON", jsonObject.toString());
+
             getQueue().add(
                 HTTPRequests.sendPOSTRequest(this, getSession(), new VolleyRequestListener() {
                     @Override
                     public void onStart(Table table, RequestType requestType) {
                         offlineData.setSyncing(true);
-                        try {
-                            Log.e("JSON", new JSONObject(offlineData.getData()).toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
                         Log.e("ImonggoSwable", "sending : started -- with RefNo '" + offlineData.getReference_no() + "'");
 
                         if (swableStateListener != null)
@@ -164,6 +193,19 @@ public class ImonggoSwable extends SwableService {
 
                             offlineData.setSynced(true);
                             offlineData.updateTo(getHelper());
+
+                            switch(OfflineDataType.identify(offlineData.getType())) {
+                                case SEND_ORDER:
+                                    Order order = Order.fromJSONString(offlineData.getData());
+                                    order.setId(Integer.parseInt(offlineData.getReturnId()));
+                                    order.insertTo(getHelper());
+                                    break;
+                                case SEND_INVOICE:
+                                    Invoice invoice = Invoice.fromJSONString(offlineData.getData());
+                                    invoice.setId(Integer.parseInt(offlineData.getReturnId()));
+                                    invoice.insertTo(getHelper());
+                                    break;
+                            }
 
                             if (swableStateListener != null && offlineData.isSynced())
                                 swableStateListener.onSynced(offlineData);
@@ -237,7 +279,8 @@ public class ImonggoSwable extends SwableService {
                     public void onRequestError() {
                         Log.e("ImonggoSwable", "sending failed : request error");
                     }
-                }, getSession().getServer(), table, new JSONObject(offlineData.getData()), "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters())
+                }, getSession().getServer(), table, jsonObject, "?branch_id="+ offlineData.getBranch_id() + offlineData
+                        .getParameters())
             );
         } catch (JSONException e) {
             e.printStackTrace();

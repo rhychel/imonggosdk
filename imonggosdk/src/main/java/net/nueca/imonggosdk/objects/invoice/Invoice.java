@@ -3,6 +3,8 @@ package net.nueca.imonggosdk.objects.invoice;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -25,23 +27,39 @@ import java.util.List;
  * Created by gama on 7/1/15.
  */
 public class Invoice extends BaseTable {
+    @Expose
     @DatabaseField
     protected String invoice_date;
+
+    @Expose
     @DatabaseField
     protected String status;
+
+    @Expose
     @DatabaseField
     protected String email;
+
+    @Expose
     @DatabaseField
     protected int user_id;
+
+    @Expose
     @DatabaseField
     protected boolean tax_inclusive;
+
+    @Expose
     @DatabaseField
     protected String remark;
+
+    @Expose
     @DatabaseField
     protected String reference;
 
+    @Expose
     protected BatchList<InvoiceLine> invoice_lines = new BatchList<>(DatabaseOperation.INSERT);
+    @Expose
     protected BatchList<Payment> payments = new BatchList<>(DatabaseOperation.INSERT);
+    @Expose
     protected BatchList<InvoiceTaxRate> invoice_tax_rates = new BatchList<>(DatabaseOperation.INSERT);
 
     @ForeignCollectionField
@@ -99,7 +117,9 @@ public class Invoice extends BaseTable {
     }
 
     public List<InvoiceLine> getInvoiceLines() {
-        if(invoice_lines == null || invoice_lines.size() <= 0)
+        if(invoice_lines == null)
+            invoice_lines = new BatchList<>(DatabaseOperation.INSERT);
+        if(invoice_lines.size() <= 0)
             refreshListObjects();
         return invoice_lines;
     }
@@ -152,20 +172,27 @@ public class Invoice extends BaseTable {
         return jsonArray;
     }
 
+    private transient boolean didRefresh = false;
     // call this to save the InvoiceLine, Payment and InvoiceTaxRates objects to database
     public Invoice refresh(ImonggoDBHelper dbHelper) {
+        if(didRefresh) {
+            Log.e("Invoice", "refresh : called more than once");
+            return this;
+        }
+        didRefresh = true;
+
         for(InvoiceLine invoiceLine : invoice_lines)
             invoiceLine.setInvoice(this);
-
-        for(Payment payment : payments)
-            payment.setInvoice(this);
 
         for(InvoiceTaxRate invoiceTaxRate : invoice_tax_rates)
             invoiceTaxRate.setInvoice(this);
 
+        for(Payment payment : payments)
+            payment.setInvoice(this);
+
         invoice_lines.doOperation(dbHelper);
-        payments.doOperation(dbHelper);
         invoice_tax_rates.doOperation(dbHelper);
+        payments.doOperation(dbHelper);
         return this;
     }
 
@@ -194,9 +221,15 @@ public class Invoice extends BaseTable {
     }
 
     public JSONObject toJSONObject() throws JSONException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         refreshListObjects();
         return new JSONObject(gson.toJson(this));
+    }
+
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        refreshListObjects();
+        return (gson.toJson(this));
     }
 
     private Invoice() {}
@@ -217,6 +250,11 @@ public class Invoice extends BaseTable {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
+        if(id < 0) {
+            Log.e("Invoice", "insertTo : Invalid ID : use returned ID from server after sending as this Invoice's ID");
+            return;
+        }
+
         refresh(dbHelper);
         try {
             dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.INSERT);

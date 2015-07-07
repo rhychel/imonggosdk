@@ -14,7 +14,11 @@ import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
+
+import org.json.JSONException;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -38,20 +42,20 @@ public class SwableTools {
 	}
 
     public static OfflineData addOfflineData(ImonggoDBHelper helper, User user, Object o, OfflineDataType type)
-            throws SQLException {
+            throws SQLException, JSONException {
         return addOfflineData(helper, user, o, type, "");
     }
     public static OfflineData addOfflineData(ImonggoDBHelper helper, User user, Object o, OfflineDataType type, String parameters)
-            throws SQLException {
+            throws SQLException, JSONException {
         return addOfflineData(helper, user.getHome_branch_id(), o, type, parameters);
     }
 
     public static OfflineData addOfflineData(ImonggoDBHelper helper, Session session, Object o, OfflineDataType type)
-            throws SQLException {
+            throws SQLException, JSONException {
         return addOfflineData(helper, session, o, type, "");
     }
     public static OfflineData addOfflineData(ImonggoDBHelper helper, Session session, Object o, OfflineDataType type, String parameters)
-            throws SQLException {
+            throws SQLException, JSONException {
         if(helper.getUsers().queryForAll().size() <= 0) {
             Log.e("SwableTools", "addOfflineData : no users in table, Users");
             return null;
@@ -61,20 +65,18 @@ public class SwableTools {
     }
 
     public static OfflineData addOfflineData(ImonggoDBHelper helper, int branchId, Object o, OfflineDataType type)
-            throws SQLException {
+            throws SQLException, JSONException {
         return addOfflineData(helper, branchId, o, type, "");
     }
     public static OfflineData addOfflineData(ImonggoDBHelper helper, int branchId, Object o, OfflineDataType type, String parameters)
-            throws SQLException {
+            throws SQLException, JSONException {
         String data;
         if(o instanceof String)
             data = (String)o;
-        /*
         else if(o instanceof Order)
-            data = ((Order)o).toJSONObject().toString();
+            data = ((Order) o).refresh(helper).toJSONString();
         else if(o instanceof Invoice)
-            data = ((Invoice)o).toJSONObject().toString();
-        */
+            data = ((Invoice) o).refresh(helper).toJSONString();
         else {
             Log.e("SwableTools", "addOfflineData : Class '" + o.getClass().getSimpleName() + "' is not supported for OfflineData");
             return null;
@@ -83,6 +85,16 @@ public class SwableTools {
         OfflineData offlineData = new OfflineData(data, type);
         offlineData.setBranch_id(branchId);
         offlineData.setParameters(parameters);
+
+        if(o instanceof Order) {
+            Order order = (Order) o;
+            offlineData.setReference_no(order.getReference());
+        }
+        else if(o instanceof Invoice) {
+            Invoice invoice = (Invoice) o;
+            offlineData.setReference_no(invoice.getReference());
+        }
+
         offlineData.insertTo(helper);
         return offlineData;
     }

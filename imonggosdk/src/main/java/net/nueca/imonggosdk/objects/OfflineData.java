@@ -12,6 +12,8 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
 import org.json.JSONException;
@@ -22,7 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @DatabaseTable
-public class OfflineData extends BaseTable {
+public class OfflineData extends BaseTable2 {
 
     @DatabaseField
     private String date;
@@ -408,7 +410,7 @@ public class OfflineData extends BaseTable {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
-        Log.e("OfflineData", "insertTo " + dbHelper.toString());
+        Log.e("OfflineData", "insert " + this.getReference_no());
         try {
             dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.INSERT);
         } catch (SQLException e) {
@@ -434,17 +436,5 @@ public class OfflineData extends BaseTable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    private void parseData() {
-        try {
-            JSONObject data = new JSONObject(getData());
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
     }
 }

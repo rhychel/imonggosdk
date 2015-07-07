@@ -1,6 +1,8 @@
 package net.nueca.imonggosdk.objects.invoice;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -17,17 +19,20 @@ import java.sql.SQLException;
  * Created by gama on 7/1/15.
  */
 public class Payment extends BaseTable2 {
+    @Expose
     @DatabaseField
     protected int payment_type_id;
 
+    @Expose
     @DatabaseField
     protected double amount;
 
+    @Expose
     @DatabaseField
     protected double tender;
 
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
-    private Invoice invoice;
+    private transient Invoice invoice;
 
     public int getPaymentTypeId() {
         return payment_type_id;
@@ -98,7 +103,12 @@ public class Payment extends BaseTable2 {
     }
 
     public JSONObject toJSONObject() throws JSONException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return new JSONObject(gson.toJson(this));
+        /*JSONObject jsonObject = new JSONObject();
+        jsonObject.put("payment_type_id", payment_type_id);
+        jsonObject.put("amount", amount);
+        jsonObject.put("tender", tender);
+        return jsonObject;*/
     }
 }

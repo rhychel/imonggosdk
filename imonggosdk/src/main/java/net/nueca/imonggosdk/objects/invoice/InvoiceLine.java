@@ -1,6 +1,10 @@
 package net.nueca.imonggosdk.objects.invoice;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -18,20 +22,24 @@ import java.sql.SQLException;
  * Created by gama on 7/1/15.
  */
 public class InvoiceLine extends BaseTable2 {
+    @Expose
     @DatabaseField
     protected int product_id;
 
+    @Expose
     @DatabaseField
     protected int quantity;
 
+    @Expose
     @DatabaseField
     protected double retail_price;
 
+    @Expose
     @DatabaseField
     protected String discount_text;
 
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
-    private Invoice invoice;
+    private transient Invoice invoice;
 
     public InvoiceLine () {}
 
@@ -119,7 +127,13 @@ public class InvoiceLine extends BaseTable2 {
     }
 
     public JSONObject toJSONObject() throws JSONException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return new JSONObject(gson.toJson(this));
+        /*JSONObject jsonObject = new JSONObject();
+        jsonObject.put("product_id", product_id);
+        jsonObject.put("quantity", quantity);
+        jsonObject.put("retail_price", retail_price);
+        jsonObject.put("discount_text", discount_text);
+        return jsonObject;*/
     }
 }
