@@ -36,7 +36,7 @@ public class OrderLine extends BaseTable2 {
     @DatabaseField
     private double quantity = 0.0;
 
-    @Expose
+    /*@Expose
     @DatabaseField
     private int unit_id = -1;
 
@@ -58,7 +58,7 @@ public class OrderLine extends BaseTable2 {
 
     @Expose
     @DatabaseField
-    private String brand = "";
+    private String brand = "";*/
 
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "order_id")
     private transient Order order;
@@ -101,13 +101,13 @@ public class OrderLine extends BaseTable2 {
         this.quantity = quantity;
     }
 
-    public void setUnitId(int unit_id) {
+    /*public void setUnitId(int unit_id) {
         this.unit_id = unit_id;
     }
 
     public int getUnitId() {
         return unit_id;
-    }
+    }*/
 
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new Gson();
@@ -126,7 +126,7 @@ public class OrderLine extends BaseTable2 {
         return jsonObject;*/
     }
 
-    public double getUnitQuantity() {
+    /*public double getUnitQuantity() {
         return unit_quantity;
     }
 
@@ -164,7 +164,7 @@ public class OrderLine extends BaseTable2 {
 
     public void setBrand(String brand) {
         this.brand = brand;
-    }
+    }*/
 
     public int getLineNo() {
         return line_no;

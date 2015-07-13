@@ -3,7 +3,6 @@ package net.nueca.imonggosdk.objects;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -11,20 +10,26 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @DatabaseTable
 public class OfflineData extends BaseTable2 {
+    public static final transient int INVOICE = 0;
+    public static final transient int ORDER = 1;
+    public static final transient int DOCUMENT = 2;
 
     @DatabaseField
     private String date;
@@ -63,7 +68,7 @@ public class OfflineData extends BaseTable2 {
     private boolean isPurePullout = false;
 
     @DatabaseField
-    private String returnId = " --- ";
+    private String returnId = "";
 
     @DatabaseField
     private String branchName = "";
@@ -99,7 +104,7 @@ public class OfflineData extends BaseTable2 {
     private String childrenReferences = "";
 
     @DatabaseField
-    private int transactionType = 1; // For COUNT ONLY!!!
+    private int offlineDataTransactionType = 1; // For COUNT ONLY!!!
 
     @DatabaseField
     private boolean hasExtendedAttributes = false;
@@ -117,42 +122,42 @@ public class OfflineData extends BaseTable2 {
 
     private boolean isExpanded = false;
 
-	public OfflineData() { }
+    @DatabaseField
+    private boolean isPagedRequest = false;
 
-    public OfflineData(String data, int type) {
+    @DatabaseField
+    private int pagedRequestCount = 0;
+
+    public OfflineData() {}
+
+    public OfflineData(Invoice invoice, OfflineDataType offlineDataType) {
         String []timestamp = DateTimeTools.getCurrentDateTimeInvoice();
         String timeId = timestamp[0]+" "+timestamp[1];
         this.date = timeId;
-        this.type = type;
-        this.data = data;
         this.dateCreated = Calendar.getInstance().getTime();
-    }
-    public OfflineData(String data, OfflineDataType type) {
-        String []timestamp = DateTimeTools.getCurrentDateTimeInvoice();
-        String timeId = timestamp[0]+" "+timestamp[1];
-        this.date = timeId;
-        this.type = type.getNumericValue();
-        this.data = data;
-        this.dateCreated = Calendar.getInstance().getTime();
+
+        this.offlineDataTransactionType = offlineDataType.getNumericValue();
+        this.type = INVOICE;
+        this.data = invoice.toJSONString();
+        this.reference_no = invoice.getReference();
+
+        this.isPagedRequest = false;
     }
 
-    public OfflineData(String reference_no, String data, int type) {
+    public OfflineData(Order order, OfflineDataType offlineDataType) {
         String []timestamp = DateTimeTools.getCurrentDateTimeInvoice();
         String timeId = timestamp[0]+" "+timestamp[1];
         this.date = timeId;
-        this.type = type;
-        this.data = data;
-        this.reference_no = reference_no;
         this.dateCreated = Calendar.getInstance().getTime();
-    }
-    public OfflineData(String reference_no, String data, OfflineDataType type) {
-        String []timestamp = DateTimeTools.getCurrentDateTimeInvoice();
-        String timeId = timestamp[0]+" "+timestamp[1];
-        this.date = timeId;
-        this.type = type.getNumericValue();
-        this.data = data;
-        this.reference_no = reference_no;
-        this.dateCreated = Calendar.getInstance().getTime();
+
+        this.offlineDataTransactionType = offlineDataType.getNumericValue();
+        this.type = ORDER;
+        this.data = order.toJSONString();
+        this.reference_no = order.getReference();
+
+        this.isPagedRequest = order.shouldPageRequest();
+        this.pagedRequestCount = SwableTools.computePagedRequestCount(order.getOrderLines().size(),
+                Order.MAX_ORDERLINES_PER_PAGE);
     }
 
     public String getData() {
@@ -220,6 +225,8 @@ public class OfflineData extends BaseTable2 {
     }
 
     public String getParameters() {
+        if(parameters.length() > 0 && parameters.charAt(0) != '&')
+            return "&" + parameters;
         return parameters;
     }
 
@@ -347,12 +354,12 @@ public class OfflineData extends BaseTable2 {
         this.isPastCutoff = isPastCutoff;
     }
 
-    public int getTransactionType() {
-        return transactionType;
+    public OfflineDataType getOfflineDataTransactionType() {
+        return OfflineDataType.identify(offlineDataTransactionType);
     }
 
-    public void setTransactionType(int transactionType) {
-        this.transactionType = transactionType;
+    public void setOfflineDataTransactionType(OfflineDataType offlineDataType) {
+        this.offlineDataTransactionType = offlineDataType.getNumericValue();
     }
 
     public boolean isHasExtendedAttributes() {
@@ -403,6 +410,18 @@ public class OfflineData extends BaseTable2 {
         this.documentReason = documentReason;
     }
 
+    public boolean isPagedRequest() {
+        return isPagedRequest;
+    }
+
+    public int getPagedRequestCount() {
+        return pagedRequestCount;
+    }
+
+    public void setPagedRequestCount(int pagedRequestCount) {
+        this.pagedRequestCount = pagedRequestCount;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof OfflineData && id == ((OfflineData)o).getId();
@@ -410,7 +429,15 @@ public class OfflineData extends BaseTable2 {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
-        Log.e("OfflineData", "insert " + this.getReference_no());
+        String typeStr;
+        switch (type) {
+            case INVOICE: typeStr = "INVOICE"; break;
+            case ORDER: typeStr = "ORDER"; break;
+            case DOCUMENT: typeStr = "DOCUMENT"; break;
+            default: typeStr = "UNKNOWN"; break;
+        }
+        Log.e("OfflineData", "insert " + typeStr + " " + this.getReference_no());
+
         try {
             dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.INSERT);
         } catch (SQLException e) {
@@ -420,7 +447,14 @@ public class OfflineData extends BaseTable2 {
 
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
-        Log.e("OfflineData", "deleteTo " + dbHelper.toString());
+        String typeStr;
+        switch (type) {
+            case INVOICE: typeStr = "INVOICE"; break;
+            case ORDER: typeStr = "ORDER"; break;
+            case DOCUMENT: typeStr = "DOCUMENT"; break;
+            default: typeStr = "UNKNOWN"; break;
+        }
+        Log.e("OfflineData", "delete " + typeStr + " " + this.getReference_no());
         try {
             dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.DELETE);
         } catch (SQLException e) {
@@ -430,11 +464,33 @@ public class OfflineData extends BaseTable2 {
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
-        Log.e("OfflineData", "updateTo " + dbHelper.toString());
+        String typeStr;
+        switch (type) {
+            case INVOICE: typeStr = "INVOICE"; break;
+            case ORDER: typeStr = "ORDER"; break;
+            case DOCUMENT: typeStr = "DOCUMENT"; break;
+            default: typeStr = "UNKNOWN"; break;
+        }
+        Log.e("OfflineData", "update " + typeStr + " " + this.getReference_no());
         try {
             dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Object generateObjectFromData() throws JSONException {
+        if(type == INVOICE)
+            return Invoice.fromJSONString(data);
+        else if(type == ORDER)
+            return Order.fromJSONString(data);
+        else if(type == DOCUMENT)
+            return null;
+        else
+            return null;
+    }
+
+    public List<String> parseReturnID() {
+        return Arrays.asList(returnId.split(","));
     }
 }

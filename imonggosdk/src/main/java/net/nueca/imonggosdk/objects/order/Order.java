@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects.order;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -14,9 +15,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BatchList;
-import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
-import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
-import net.nueca.imonggosdk.objects.invoice.Payment;
+import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +29,7 @@ import java.util.List;
  * NuecaLibrary (c)2014
  */
 public class Order extends BaseTable {
+    public static transient final int MAX_ORDERLINES_PER_PAGE = 1;
 
     @Expose
     @DatabaseField
@@ -85,6 +85,11 @@ public class Order extends BaseTable {
         this.reference = reference;
     }
 
+    public void generateNewReference(Context context, int deviceId) {
+        this.reference = ReferenceNumberTool.generateRefNo(context,
+                deviceId);
+    }
+
     public List<OrderLine> getOrderLines() {
         if(order_lines == null || order_lines.size() <= 0)
             refreshListObjects();
@@ -120,6 +125,10 @@ public class Order extends BaseTable {
         this.serving_branch_id = serving_branch_id;
     }
 
+    public void addOrderLine(OrderLine orderLine) {
+        order_lines.add(orderLine);
+    }
+
     public static Order fromJSONString(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         return fromJSONObject(jsonObject);
@@ -146,14 +155,14 @@ public class Order extends BaseTable {
         return new JSONObject(gson.toJson(this));
     }
 
-    private transient boolean didRefresh = false;
+    private transient boolean didFinalize = false;
     // call this to save the OrderLine objects to database
-    public Order refresh(ImonggoDBHelper dbHelper) {
-        if(didRefresh) {
-            Log.e("Order", "refresh : called more than once");
+    public Order finalize(ImonggoDBHelper dbHelper) {
+        if(didFinalize) {
+            Log.e("Order", "finalize : called more than once");
             return this;
         }
-        didRefresh = true;
+        didFinalize = true;
 
         for(OrderLine orderLine : order_lines)
             orderLine.setOrder(this);
@@ -180,31 +189,35 @@ public class Order extends BaseTable {
             return;
         }
 
-        refresh(dbHelper);
         try {
             dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.INSERT);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        finalize(dbHelper);
     }
 
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
-        refresh(dbHelper);
         try {
             dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.DELETE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        finalize(dbHelper);
     }
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
-        refresh(dbHelper);
         try {
             dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        finalize(dbHelper);
+    }
+
+    public boolean shouldPageRequest() {
+        return order_lines.size() > MAX_ORDERLINES_PER_PAGE;
     }
 }

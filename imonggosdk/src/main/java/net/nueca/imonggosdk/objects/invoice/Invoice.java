@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects.invoice;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -14,13 +15,13 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BatchList;
+import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,6 +70,12 @@ public class Invoice extends BaseTable {
     @ForeignCollectionField
     private transient ForeignCollection<InvoiceTaxRate> invoice_tax_rates_fc;
 
+    public Invoice() {
+        invoice_lines = new BatchList<>(DatabaseOperation.INSERT);
+        payments = new BatchList<>(DatabaseOperation.INSERT);
+        invoice_tax_rates = new BatchList<>(DatabaseOperation.INSERT);
+    }
+
     public void setInvoiceDate(String date) { invoice_date = date; }
 
     public String getInvoiceDate() { return invoice_date; }
@@ -114,6 +121,11 @@ public class Invoice extends BaseTable {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public void generateNewReference(Context context, int deviceId) {
+        this.reference = ReferenceNumberTool.generateRefNo(context,
+                deviceId);
     }
 
     public List<InvoiceLine> getInvoiceLines() {
@@ -172,14 +184,24 @@ public class Invoice extends BaseTable {
         return jsonArray;
     }
 
-    private transient boolean didRefresh = false;
+    public void addInvoiceLine(InvoiceLine invoiceLine) {
+        invoice_lines.add(invoiceLine);
+    }
+    public void addInvoiceTaxRate(InvoiceTaxRate invoiceTaxRate) {
+        invoice_tax_rates.add(invoiceTaxRate);
+    }
+    public void addPayment(Payment payment) {
+        payments.add(payment);
+    }
+
+    private transient boolean didFinalize = false;
     // call this to save the InvoiceLine, Payment and InvoiceTaxRates objects to database
-    public Invoice refresh(ImonggoDBHelper dbHelper) {
-        if(didRefresh) {
-            Log.e("Invoice", "refresh : called more than once");
+    public Invoice finalize(ImonggoDBHelper dbHelper) {
+        if(didFinalize) {
+            Log.e("Invoice", "finalize : called more than once");
             return this;
         }
-        didRefresh = true;
+        didFinalize = true;
 
         for(InvoiceLine invoiceLine : invoice_lines)
             invoiceLine.setInvoice(this);
@@ -232,8 +254,6 @@ public class Invoice extends BaseTable {
         return (gson.toJson(this));
     }
 
-    private Invoice() {}
-
     public static Invoice fromJSONString(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         return fromJSONObject(jsonObject);
@@ -255,31 +275,31 @@ public class Invoice extends BaseTable {
             return;
         }
 
-        refresh(dbHelper);
         try {
             dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.INSERT);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        finalize(dbHelper);
     }
 
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
-        refresh(dbHelper);
         try {
             dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.DELETE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        finalize(dbHelper);
     }
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
-        refresh(dbHelper);
         try {
             dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        finalize(dbHelper);
     }
 }

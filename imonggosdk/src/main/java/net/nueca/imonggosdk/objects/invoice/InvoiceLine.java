@@ -136,4 +136,12 @@ public class InvoiceLine extends BaseTable2 {
         jsonObject.put("discount_text", discount_text);
         return jsonObject;*/
     }
+
+    public double computeTotal(boolean applyDiscount) {
+        double total = retail_price * quantity;
+        if(applyDiscount){
+
+        }
+        return total;
+    }
 }
