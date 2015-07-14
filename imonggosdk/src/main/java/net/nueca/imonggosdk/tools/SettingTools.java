@@ -17,6 +17,7 @@ public class SettingTools {
 
     private static final String IS_AUTOUPDATE = "_is_auto_update";
     private static final String DEFAULT_BRANCH = "_default_branch";
+    private static final String CURRENT_SERVER = "_current_server";
 
     /**
      * Add setting name to shared preferences
@@ -80,11 +81,29 @@ public class SettingTools {
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             Log.e("Key[defaultBranch]", pinfo.packageName + DEFAULT_BRANCH);
-            return preferences.getString(pinfo.packageName + IS_AUTOUPDATE, "");
+            return preferences.getString(pinfo.packageName + DEFAULT_BRANCH, "");
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("Key[defaultBranch]", "Not Found");
             return "";
         }
 
+    }
+
+    /**
+     * Returns Current Selected Server
+     *
+     * @param context current context
+     * @return current server, "" if none
+     */
+    public static String currentServer(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            Log.e("Key[currentServer]", pinfo.packageName + CURRENT_SERVER);
+            return preferences.getString(pinfo.packageName + CURRENT_SERVER, "");
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Key[currentServer]", "Not Found");
+            return "";
+        }
     }
 }

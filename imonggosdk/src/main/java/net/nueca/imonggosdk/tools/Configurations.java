@@ -74,10 +74,10 @@ public class Configurations {
 			put(Table.TOKENS, "tokens.json");
 			put(Table.POS_DEVICES, "pos_devices.json");
 
-//			put(Modules.INVOICES, "invoices.json");
+			put(Table.INVOICES, "invoices.json");
 //			put(Modules.DOCUMENTS, "documents.json");
 //            put(Modules.CONCESSIO_SETTINGS, "application_settings/concesio.json");
-//            put(Modules.ORDERS, "orders.json");
+            put(Table.ORDERS, "orders.json");
 //            put(Modules.POS_DEVICES, "pos_devices.json");
 //            put(Modules.SALES_PROMOTIONS, "sales_promotions.json");
 //            put(Modules.DOCUMENT_TYPES, "document_types.json");
@@ -101,9 +101,9 @@ public class Configurations {
             put(Table.TOKENS, "tokens");
 			put(Table.POS_DEVICES, "pos_devices");
 
-//            put(Modules.INVOICES, "invoices");
+            put(Table.INVOICES, "invoices");
 //            put(Modules.DOCUMENTS, "documents");
-//            put(Modules.ORDERS, "orders");
+			put(Table.ORDERS, "orders");
 //            put(Modules.CONCESSIO_SETTINGS, "application_settings");
 //            put(Modules.DISCOUNTS, "sales_promotions");
 //            put(Modules.DOCUMENT_TYPES, "document_types");

@@ -109,16 +109,17 @@ public class ImonggoOperations {
         return HTTPRequests.sendGETRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", "");
     }
 
-    public static JsonObjectRequest sendPOSDevice(Context context, RequestQueue queue, Session session,
+    public static void sendPOSDevice(Context context, RequestQueue queue, Session session,
                                                   VolleyRequestListener volleyRequestListener, Server server) {
 
-        return sendPOSDevice(context,queue, session, volleyRequestListener, server, null, "");
+        sendPOSDevice(context,queue, session, volleyRequestListener, server, null, "");
     }
 
-    public static JsonObjectRequest sendPOSDevice(Context context, RequestQueue queue, Session session,
+    public static void sendPOSDevice(Context context, RequestQueue queue, Session session,
                                                   VolleyRequestListener volleyRequestListener, Server server, JSONObject jsonObject, String parameter) {
 
-        return HTTPRequests.sendPOSTRequest(context,session,volleyRequestListener,server,Table.POS_DEVICES, jsonObject, parameter);
+
+        queue.add( HTTPRequests.sendPOSTRequest(context,session,volleyRequestListener,server,Table.POS_DEVICES, jsonObject, parameter));
     }
 
 }

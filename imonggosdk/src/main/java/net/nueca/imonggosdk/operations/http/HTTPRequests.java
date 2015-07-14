@@ -1,6 +1,7 @@
 package net.nueca.imonggosdk.operations.http;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
@@ -48,10 +49,12 @@ public class HTTPRequests {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if (error.networkResponse != null)
-                            volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
-                        else
-                            volleyRequestListener.onError(table, false, null, 0);
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null)
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
                     }
                 }) {
             @Override
@@ -121,10 +124,12 @@ public class HTTPRequests {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if (error.networkResponse != null)
-                            volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
-                        else
-                            volleyRequestListener.onError(table, false, null, 0);
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null) {
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            } else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
                     }
                 }) {
             @Override
@@ -150,8 +155,9 @@ public class HTTPRequests {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.i("postrequestresponse", response.toString());
                         if (volleyRequestListener != null)
-                            volleyRequestListener.onSuccess(table, RequestType.POST, jsonObject);
+                            volleyRequestListener.onSuccess(table, RequestType.POST, response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -174,6 +180,7 @@ public class HTTPRequests {
             }
         };
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        Log.e("URL",jsonObjectRequest.getUrl());
         return jsonObjectRequest;
     }
 
@@ -181,7 +188,7 @@ public class HTTPRequests {
                                                    final VolleyRequestListener volleyRequestListener, Server server,
                                                    final Table table, final JSONObject jsonObject, String id, String parameter) {
         if (volleyRequestListener != null)
-            volleyRequestListener.onStart(table, RequestType.POST);
+            volleyRequestListener.onStart(table, RequestType.PUT);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.PUT,
                 ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter), jsonObject,
@@ -217,9 +224,12 @@ public class HTTPRequests {
 
     public static JsonObjectRequest sendDELETERequest(Context context, final Session session,
                                                       final VolleyRequestListener volleyRequestListener, Server server,
-                                                      final Table table, final JSONObject jsonObject, String id, String parameter) {
+                                                      final Table table, String id, String parameter) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(table, RequestType.DELETE);
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.DELETE,
-                ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter), jsonObject,
+                ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -247,6 +257,7 @@ public class HTTPRequests {
             }
         };
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        Log.e("URL",jsonObjectRequest.getUrl());
         return jsonObjectRequest;
     }
 
