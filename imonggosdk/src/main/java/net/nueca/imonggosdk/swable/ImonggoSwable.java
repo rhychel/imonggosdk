@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,6 +28,7 @@ import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -237,13 +239,6 @@ public class ImonggoSwable extends SwableService {
                                     invoice.setId(Integer.parseInt(offlineData.getReturnId()));
                                     invoice.insertTo(getHelper());
                                     break;
-                            }
-                            try {
-                                Log.e("-----------OfflineData", "size : " + getHelper().getOfflineData().queryForAll().size());
-                                Log.e("-----------Invoice", "size : " + getHelper().getInvoices().queryForAll().size());
-                                Log.e("-----------Order", "size : " + getHelper().getOrders().queryForAll().size());
-                            } catch (SQLException e) {
-                                e.printStackTrace();
                             }
 
                             if (swableStateListener != null && offlineData.isSynced())
@@ -490,8 +485,7 @@ public class ImonggoSwable extends SwableService {
                         try {
                             Log.e("ImonggoSwable", "sending : started [" + page + "] -- Transaction Type: " +
                                     parent.generateObjectFromData().getClass().getSimpleName() +
-                                    " - with Parent RefNo '" + parent.getReference_no() + "' " +
-                                    "- Paged RefNo " + parent.getReference_no()+"-"+(page)
+                                    " - Paged RefNo " + parent.getReference_no()+"-"+(page)
                             );
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -534,20 +528,14 @@ public class ImonggoSwable extends SwableService {
                                             invoice.insertTo(getHelper());
                                             break;
                                     }
-                                    try {
-                                    Log.e("-----------OfflineData", "size : " + getHelper().getOfflineData().queryForAll().size());
-                                    Log.e("-----------Invoice", "size : " + getHelper().getInvoices().queryForAll().size());
-                                    Log.e("-----------Order", "size : " + getHelper().getOrders().queryForAll().size());
-                                    } catch (SQLException e) {
-                                        e.printStackTrace();
-                                    }
                                 }
                             }
 
                             parent.setSynced(page == 1 || parent.isSynced());
                             parent.updateTo(getHelper());
 
-                            if (parent.isSynced() && page == maxpage) {
+                            if (parent.isSynced() && !parent.getReturnId().contains(NO_RETURN_ID) &&
+                                    parent.parseReturnID().size() == maxpage) {
                                 Log.e("ImonggoSwable", "paged sending : returned ID's : " + parent.getReturnId() +
                                         " size : " + parent.parseReturnID().size());
                                 if(swableStateListener != null)
@@ -675,8 +663,12 @@ public class ImonggoSwable extends SwableService {
                             offlineData.setSynced(offlineData.isCancelled());
                             offlineData.updateTo(getHelper());
 
-                            if (swableStateListener != null && offlineData.isSynced())
-                                swableStateListener.onSynced(offlineData);
+                            list.set(list.indexOf(id),NO_RETURN_ID);
+
+                            if(offlineData.isSynced() && Collections.frequency(list, NO_RETURN_ID) == list.size()) {
+                                if (swableStateListener != null)
+                                    swableStateListener.onSynced(offlineData);
+                            }
                         }
 
                         @Override
