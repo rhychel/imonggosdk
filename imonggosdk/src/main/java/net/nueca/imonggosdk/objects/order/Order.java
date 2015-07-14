@@ -61,11 +61,11 @@ public class Order extends BaseTable {
         order_lines = new BatchList<>(DatabaseOperation.INSERT);
     }
 
-    public String getTargetDeliveryDate() {
+    public String getTarget_delivery_date() {
         return target_delivery_date;
     }
 
-    public void setTargetDeliveryDate(String target_delivery_date) {
+    public void setTarget_delivery_date(String target_delivery_date) {
         this.target_delivery_date = target_delivery_date;
     }
 
@@ -109,19 +109,19 @@ public class Order extends BaseTable {
         return jsonArray;
     }
 
-    public String getOrderTypeCode() {
+    public String getOrder_type_code() {
         return order_type_code;
     }
 
-    public void setOrderTypeCode(String order_type_code) {
+    public void setOrder_type_code(String order_type_code) {
         this.order_type_code = order_type_code;
     }
 
-    public int getServingBranchId() {
+    public int getServing_branch_id() {
         return serving_branch_id;
     }
 
-    public void setServingBranchId(int serving_branch_id) {
+    public void setServing_branch_id(int serving_branch_id) {
         this.serving_branch_id = serving_branch_id;
     }
 
