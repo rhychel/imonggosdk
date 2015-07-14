@@ -2,7 +2,6 @@ package net.nueca.concessio;
 
 import android.os.Bundle;
 import android.util.Log;
-
 import net.nueca.concessioengine.activities.LoginActivity;
 import net.nueca.concessioengine.tools.DialogMaterial;
 import net.nueca.imonggosdk.enums.Table;
@@ -17,7 +16,6 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         try {
             if (AccountTools.isLoggedIn(getHelper()) && !AccountTools.isUnlinked(this)) {
                 Log.e("Account", "I'm logged in!");
@@ -64,12 +62,6 @@ public class C_Login extends LoginActivity {
     @Override
     protected void afterLogin() {
 
-        List<Table> list = new ArrayList<>();
-
-        list.add(Table.BRANCH_USERS);
-        list.add(Table.USERS);
-
-        DialogMaterial.showCustomDialog(this, list, "Updating", false);
     }
 
     @Override

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="http://schemas.android.com/tools">
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <attr format="reference" name="drawerArrowStyle"/>
     <attr format="dimension" name="height"/>
     <attr format="boolean" name="isLightTheme"/>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/values/values.xml -->
     <eat-comment/>
     <attr format="color" name="md_background_color"/>
     <attr format="reference" name="md_btn_negative_selector"/>
@@ -53,7 +53,7 @@
         <enum name="end" value="2"/>
     </attr>
     <attr format="color" name="md_widget_color"/>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <attr format="string" name="title"/>
     <bool name="abc_action_bar_embed_tabs">true</bool>
@@ -89,7 +89,7 @@
     <color name="highlighted_text_material_light">#66009688</color>
     <color name="hint_foreground_material_dark">@color/bright_foreground_disabled_material_dark</color>
     <color name="hint_foreground_material_light">@color/bright_foreground_disabled_material_light</color>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/color.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/src/main/res/values/keypad_color.xml -->
     <eat-comment/>
     <color name="keypad_default_bg">#096363</color>
     <color name="keypad_default_buttonbg">#096363</color>
@@ -102,7 +102,7 @@
     <color name="keypad_default_text_disabled">#88ffc859</color>
     <color name="keypad_default_text_pressed">#ffe8ba</color>
     <color name="keypad_default_textholder">#198888</color>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <color name="link_text_material_dark">@color/material_deep_teal_200</color>
     <color name="link_text_material_light">@color/material_deep_teal_500</color>
@@ -111,7 +111,7 @@
     <color name="material_blue_grey_950">#ff21272b</color>
     <color name="material_deep_teal_200">#ff80cbc4</color>
     <color name="material_deep_teal_500">#ff009688</color>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/values/values.xml -->
     <eat-comment/>
     <color name="md_btn_selected">#33969696</color>
     <color name="md_btn_selected_dark">#40CBCBCB</color>
@@ -120,7 +120,7 @@
     <color name="md_edittext_error">#DD2C00</color>
     <color name="md_material_blue_600">#1E88E5</color>
     <color name="md_material_blue_800">#1565C0</color>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <color name="primary_dark_material_dark">#ff000000</color>
     <color name="primary_dark_material_light">#ff757575</color>
@@ -227,10 +227,10 @@
     <dimen name="abc_text_size_subtitle_material_toolbar">16dp</dimen>
     <dimen name="abc_text_size_title_material">20sp</dimen>
     <dimen name="abc_text_size_title_material_toolbar">20dp</dimen>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/values/values.xml -->
     <eat-comment/>
     <dimen name="circular_progress_border">4dp</dimen>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <item name="dialog_fixed_height_major" type="dimen">80%</item>
     <item name="dialog_fixed_height_minor" type="dimen">100%</item>
@@ -238,10 +238,10 @@
     <item name="dialog_fixed_width_minor" type="dimen">320dp</item>
     <item format="float" name="disabled_alpha_material_dark" type="dimen">0.30</item>
     <item format="float" name="disabled_alpha_material_light" type="dimen">0.26</item>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <dimen name="item_touch_helper_max_drag_scroll_per_frame">20dp</dimen>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/values/values.xml -->
     <eat-comment/>
     <dimen name="md_action_corner_radius">2dp</dimen>
     <dimen name="md_bg_corner_radius">2dp</dimen>
@@ -274,7 +274,7 @@
     <dimen name="md_simplelistitem_padding_top">8dp</dimen>
     <dimen name="md_title_frame_margin_bottom">12dp</dimen>
     <dimen name="md_title_textsize">20sp</dimen>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <dimen name="notification_large_icon_height">64dp</dimen>
     <dimen name="notification_large_icon_width">64dp</dimen>
@@ -285,10 +285,10 @@
     <item name="action_menu_divider" type="id"/>
     <item name="action_menu_presenter" type="id"/>
     <item name="home" type="id"/>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <item name="item_touch_helper_previous_elevation" type="id"/>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <item name="progress_circular" type="id"/>
     <item name="progress_horizontal" type="id"/>
@@ -299,7 +299,7 @@
     <integer name="abc_max_action_buttons">2</integer>
     <integer name="cancel_button_image_alpha">127</integer>
     <integer name="status_bar_notification_info_maxnum">999</integer>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/strings.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="API_MODULE_ID_URL">http://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
     <string name="API_MODULE_ID_URL_SECURED">https://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
@@ -329,7 +329,7 @@
     <string name="PRODUCT_IMAGE_URL_SECURED">https://%1$s:x@%2$s/api/products/%3$s.jpg</string>
     <string name="PRODUCT_LARGEIMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
     <string name="PRODUCT_LARGEIMAGE_URL_SECURED">https://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <string name="abc_action_bar_home_description">Navigate home</string>
     <string name="abc_action_bar_home_description_format">%1$s, %2$s</string>
@@ -348,11 +348,11 @@
     <string name="abc_shareactionprovider_share_with">Share with</string>
     <string name="abc_shareactionprovider_share_with_application">Share with %s</string>
     <string name="abc_toolbar_collapse_description">Collapse</string>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/strings.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="app_name">ImonggoSDK</string>
     <string name="param_login">email=%1$s&amp;password=%2$s</string>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <string name="status_bar_notification_info_overflow">999+</string>
     <style name="AlertDialog.AppCompat" parent="Base.AlertDialog.AppCompat"/>
@@ -1273,7 +1273,7 @@
         <item name="android:scaleType">center</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/values/values.xml -->
     <eat-comment/>
     <style name="MD_ActionButton">
         <item name="android:layout_width">wrap_content</item>
@@ -1327,7 +1327,7 @@
         <item name="android:windowEnterAnimation">@anim/popup_enter</item>
         <item name="android:windowExitAnimation">@anim/popup_exit</item>
     </style>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>
     <style name="Platform.AppCompat" parent="android:Theme">
         <item name="android:windowNoTitle">true</item>

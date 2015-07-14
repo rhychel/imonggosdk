@@ -11,43 +11,33 @@ import net.nueca.imonggosdk.tools.AccountTools;
 import java.sql.SQLException;
 
 /**
- * Created by Jn on 6/10/2015.
+ * Created by rhymart on 5/14/15.
  * imonggosdk (c)2015
  */
 public class ImonggoAppCompatActivity extends AppCompatActivity {
 
     private ImonggoDBHelper dbHelper;
 
-    /**
-     * Returns the Database Helper
-     *
-     * @return databaseHelper
-     */
-    public ImonggoDBHelper getHelper() {
-        if (dbHelper == null)
-            dbHelper = OpenHelperManager.getHelper(this, ImonggoDBHelper.class);
-        return dbHelper;
-    }
-
-    /**
-     * Gets the current session
-     *
-     * @return user session
-     * @throws SQLException
-     */
-    public Session getSession() throws SQLException {
-        Session session = null;
-        if (AccountTools.isLoggedIn(getHelper()))
-            session = getHelper().getSessions().queryForAll().get(0);
-        return session;
-    }
-
     @Override
     protected void onDestroy() {
-        if (dbHelper != null) {
+        if(dbHelper != null) {
             OpenHelperManager.releaseHelper();
             dbHelper = null;
         }
         super.onDestroy();
     }
+
+    public ImonggoDBHelper getHelper() {
+        if(dbHelper == null)
+            dbHelper = OpenHelperManager.getHelper(this, ImonggoDBHelper.class);
+        return dbHelper;
+    }
+
+    public Session getSession() throws SQLException {
+        Session session = null;
+        if(AccountTools.isLoggedIn(getHelper()))
+            session = getHelper().getSessions().queryForAll().get(0);
+        return session;
+    }
+
 }
