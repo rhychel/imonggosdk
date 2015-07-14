@@ -1,5 +1,4 @@
 package net.nueca.concessio;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,11 +7,12 @@ import android.widget.TextView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import net.nueca.concessioengine.activities.LoginActivity;
+import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
 
-public class C_Login extends LoginActivity {
+public class C_Login extends ImonggoAppCompatActivity {
 
     private SlidingUpPanelLayout sliding_layout;
     private TextView tvTapMe;
@@ -75,12 +75,12 @@ public class C_Login extends LoginActivity {
     public void onBackPressed() {
         Log.e("sliding_layout", sliding_layout.getPanelState().ordinal()+"");
         if (sliding_layout != null &&
-                (sliding_layout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED
-                        || sliding_layout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
+                (sliding_layout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || sliding_layout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
             sliding_layout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else {
             super.onBackPressed();
         }
     }
+
 
 }

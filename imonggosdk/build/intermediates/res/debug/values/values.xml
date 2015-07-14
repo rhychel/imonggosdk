@@ -89,7 +89,7 @@
     <color name="highlighted_text_material_light">#66009688</color>
     <color name="hint_foreground_material_dark">@color/bright_foreground_disabled_material_dark</color>
     <color name="hint_foreground_material_light">@color/bright_foreground_disabled_material_light</color>
-    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/src/main/res/values/color.xml -->
+    <!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk/imonggosdk/src/main/res/values/keypad_color.xml -->
     <eat-comment/>
     <color name="keypad_default_bg">#096363</color>
     <color name="keypad_default_buttonbg">#096363</color>

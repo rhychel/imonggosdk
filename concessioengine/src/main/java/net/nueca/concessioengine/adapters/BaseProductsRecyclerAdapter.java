@@ -21,8 +21,13 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseProductsRecycler
         void onItemClicked(View view, int position);
     }
 
+    public interface OnItemLongClickListener {
+        void onItemLongClicked(View view, int position);
+    }
+
     private Context context;
-    protected OnItemClickListener onItemClickListener;
+    protected OnItemClickListener onItemClickListener = null;
+    protected OnItemLongClickListener onItemLongClickListener = null;
 
     private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
     protected ProductsList productsList;
@@ -36,7 +41,7 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseProductsRecycler
         this.context = context;
     }
 
-    public abstract class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public abstract class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public ViewHolder(View itemView) {
             super(itemView);
         }
@@ -61,6 +66,10 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseProductsRecycler
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
     public Context getContext() {
