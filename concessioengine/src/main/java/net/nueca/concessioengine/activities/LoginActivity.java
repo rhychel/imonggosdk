@@ -1,15 +1,11 @@
 package net.nueca.concessioengine.activities;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
-import net.nueca.concessioengine.R;
-import net.nueca.imonggosdk.activities.ImonggoActionBarActivity;
+import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 
 
-public abstract class LoginActivity extends ImonggoActionBarActivity {
+public abstract class LoginActivity extends ImonggoAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

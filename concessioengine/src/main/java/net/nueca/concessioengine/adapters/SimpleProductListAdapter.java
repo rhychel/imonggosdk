@@ -35,10 +35,6 @@ public class SimpleProductListAdapter extends BaseProductsAdapter {
         setDbHelper(dbHelper);
     }
 
-    public void setDbHelper(ImonggoDBHelper dbHelper) {
-        ProductsAdapterHelper.setDbHelper(dbHelper);
-    }
-
     private static class ListViewHolder {
         NetworkImageView ivProductImage;
         AutofitTextView tvProductName, tvQuantity;

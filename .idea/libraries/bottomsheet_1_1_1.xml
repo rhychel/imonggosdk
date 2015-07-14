@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="bottomsheet-1.1.1">
+    <ANNOTATIONS>
+      <root url="jar://$PROJECT_DIR$/concessioengine/build/intermediates/exploded-aar/com.cocosw/bottomsheet/1.1.1/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/concessioengine/build/intermediates/exploded-aar/com.cocosw/bottomsheet/1.1.1/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/concessioengine/build/intermediates/exploded-aar/com.cocosw/bottomsheet/1.1.1/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

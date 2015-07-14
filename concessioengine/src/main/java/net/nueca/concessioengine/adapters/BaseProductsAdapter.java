@@ -5,6 +5,7 @@ import android.widget.ArrayAdapter;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.tools.ProductListTools;
 
@@ -37,6 +38,10 @@ public abstract class BaseProductsAdapter extends ArrayAdapter<Product> {
 
     protected ProductsAdapterHelper getAdapterHelper() {
         return productsAdapterHelper;
+    }
+
+    public void setDbHelper(ImonggoDBHelper dbHelper) {
+        ProductsAdapterHelper.setDbHelper(dbHelper);
     }
 
 }

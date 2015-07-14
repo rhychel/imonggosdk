@@ -105,4 +105,5 @@ public class ImonggoOperations {
                                               VolleyRequestListener volleyRequestListener, Server server) {
          return HTTPRequests.sendGETRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", "");
     }
+
 }
