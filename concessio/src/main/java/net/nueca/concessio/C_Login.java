@@ -3,16 +3,14 @@ package net.nueca.concessio;
 import android.os.Bundle;
 import android.util.Log;
 
-import net.nueca.concessioengine.activities.LoginActivity;
-import net.nueca.concessioengine.tools.DialogMaterial;
+import net.nueca.concessioengine.activities.login.BaseLoginActivity;
+import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class C_Login extends LoginActivity {
+public class C_Login extends BaseLoginActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +19,7 @@ public class C_Login extends LoginActivity {
         try {
             if (AccountTools.isLoggedIn(getHelper()) && !AccountTools.isUnlinked(this)) {
                 Log.e("Account", "I'm logged in!");
-                Log.i("session pos id", getSession().getDevice_id() + "");
-                Log.i("session server", getSession().getServer() + "");
+
             } else
                 Log.e("Account", "I'm not logged in!");
         } catch (SQLException e) {
@@ -30,24 +27,27 @@ public class C_Login extends LoginActivity {
         }
     }
 
-
     @Override
     protected void initActivity() {
-
+        // set the server choice here
+        setServer(Server.IRETAILCLOUD_NET);
     }
 
     @Override
     protected void updateAppData() {
+        // update the app code here
+    }
+
+    @Override
+    protected void updateModules() {
+        // set the list of modules here
+        int[] modules = {Table.BRANCHES.ordinal(), Table.PRODUCTS.ordinal(), Table.CUSTOMERS.ordinal() };
+        setModules(modules);
 
     }
 
     @Override
-    protected void showSelectBranches() {
-
-    }
-
-    @Override
-    protected void showDashBoard() {
+    protected void onCreateSelectBranchLayout() {
 
     }
 
@@ -62,14 +62,28 @@ public class C_Login extends LoginActivity {
     }
 
     @Override
-    protected void afterLogin() {
+    protected void loginSuccess() {
+
+        /*//int[] modules = {}
 
         List<Table> list = new ArrayList<>();
 
         list.add(Table.BRANCH_USERS);
         list.add(Table.USERS);
 
-        DialogMaterial.showCustomDialog(this, list, "Updating", false);
+        DialogTools.showCustomDialog(this, list, "Updating", false);*/
+    }
+
+    /**
+     * Using Custom Layout
+     *
+     * 1. call setUsingCustomLayout(...);
+     * 2. call setContentView(...);
+     * 3. call the function setupLayoutEquipments(...); and it will automatically set the logic
+     */
+    @Override
+    protected void onCreateLoginLayout() {
+
     }
 
     @Override

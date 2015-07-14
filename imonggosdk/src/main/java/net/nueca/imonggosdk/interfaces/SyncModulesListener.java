@@ -8,8 +8,8 @@ import net.nueca.imonggosdk.enums.Table;
  */
 public interface SyncModulesListener {
     void onStartDownload(Table table);
-    void onDownloadProgress(Table table, int page);
+    void onDownloadProgress(Table table, int page, int max);
     void onEndDownload(Table table);
     void onFinishDownload();
-    void onErrorDownload(String message);
+    void onErrorDownload(Table table, String message);
 }
