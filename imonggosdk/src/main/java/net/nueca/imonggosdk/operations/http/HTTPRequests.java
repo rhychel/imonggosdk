@@ -180,6 +180,7 @@ public class HTTPRequests {
             }
         };
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        Log.e("URL",jsonObjectRequest.getUrl());
         return jsonObjectRequest;
     }
 
@@ -187,7 +188,7 @@ public class HTTPRequests {
                                                    final VolleyRequestListener volleyRequestListener, Server server,
                                                    final Table table, final JSONObject jsonObject, String id, String parameter) {
         if (volleyRequestListener != null)
-            volleyRequestListener.onStart(table, RequestType.POST);
+            volleyRequestListener.onStart(table, RequestType.PUT);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.PUT,
                 ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter), jsonObject,
@@ -223,9 +224,12 @@ public class HTTPRequests {
 
     public static JsonObjectRequest sendDELETERequest(Context context, final Session session,
                                                       final VolleyRequestListener volleyRequestListener, Server server,
-                                                      final Table table, final JSONObject jsonObject, String id, String parameter) {
+                                                      final Table table, String id, String parameter) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(table, RequestType.DELETE);
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.DELETE,
-                ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter), jsonObject,
+                ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -253,6 +257,7 @@ public class HTTPRequests {
             }
         };
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        Log.e("URL",jsonObjectRequest.getUrl());
         return jsonObjectRequest;
     }
 
