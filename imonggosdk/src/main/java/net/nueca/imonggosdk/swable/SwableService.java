@@ -9,7 +9,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
-public abstract class SwableService extends Service implements SwableConnectionHandler.OnConnectionChangedListener {
+import net.nueca.imonggosdk.operations.ImonggoService;
+
+public abstract class SwableService extends ImonggoService implements SwableConnectionHandler.OnConnectionChangedListener {
 
 	public static final int NO_INTERNET_DELAY = 3000;
 	public static final int INTERNET_DELAY = 10000;
@@ -45,7 +47,7 @@ public abstract class SwableService extends Service implements SwableConnectionH
 						Thread.sleep(NO_INTERNET_DELAY); // 3 seconds
 						Log.d("SwableService", "---syncing started");
 						while(isShouldSync()) {
-							Log.d("SwableService", "---syncing data set"+isSyncing());
+							Log.d("SwableService", "---syncing data set "+isSyncing());
 							if (!isSyncing()) {
 								Log.d("SwableService", "---syncing data called");
 								runSyncModule.sendEmptyMessage(0);

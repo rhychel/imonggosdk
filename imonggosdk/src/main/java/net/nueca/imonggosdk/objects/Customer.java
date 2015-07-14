@@ -42,7 +42,7 @@ public class Customer extends BaseTable {
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.CUSTOMERS, DatabaseOperation.UPDATE);
+            dbHelper.dbOperations(this, Table.CUSTOMERS, DatabaseOperation.INSERT);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -51,7 +51,7 @@ public class Customer extends BaseTable {
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.CUSTOMERS, DatabaseOperation.UPDATE);
+            dbHelper.dbOperations(this, Table.CUSTOMERS, DatabaseOperation.DELETE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
