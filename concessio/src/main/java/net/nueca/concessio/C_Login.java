@@ -2,6 +2,12 @@ package net.nueca.concessio;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
+import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 
 import net.nueca.concessioengine.activities.login.BaseLoginActivity;
 import net.nueca.imonggosdk.enums.Server;
@@ -10,7 +16,7 @@ import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
 
-public class C_Login extends BaseLoginActivity{
+public class C_Login extends BaseLoginActivity {
 
     @Override
     protected void initActivity() {
@@ -46,7 +52,6 @@ public class C_Login extends BaseLoginActivity{
 
     @Override
     protected void loginSuccess() {
-
     }
 
     @Override
