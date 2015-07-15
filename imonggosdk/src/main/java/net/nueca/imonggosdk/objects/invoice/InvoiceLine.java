@@ -59,11 +59,11 @@ public class InvoiceLine extends BaseTable2 {
         this.discount_text = discount_text;
     }
 
-    public int getProductId() {
+    public int getProduct_id() {
         return product_id;
     }
 
-    public void setProductId(int product_id) {
+    public void setProduct_id(int product_id) {
         this.product_id = product_id;
     }
 
@@ -75,19 +75,19 @@ public class InvoiceLine extends BaseTable2 {
         this.quantity = quantity;
     }
 
-    public double getRetailPrice() {
+    public double getRetail_price() {
         return retail_price;
     }
 
-    public void setRetailPrice(double retail_price) {
+    public void setRetail_price(double retail_price) {
         this.retail_price = retail_price;
     }
 
-    public String getDiscountText() {
+    public String getDiscount_text() {
         return discount_text;
     }
 
-    public void setDiscountText(String discount_text) {
+    public void setDiscount_text(String discount_text) {
         this.discount_text = discount_text;
     }
 

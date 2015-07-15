@@ -43,11 +43,11 @@ public class InvoiceTaxRate extends BaseTable2 {
         this.rate = rate;
     }
 
-    public String getTaxRateId() {
+    public String getTax_rate_id() {
         return tax_rate_id;
     }
 
-    public void setTaxRateId(String tax_rate_id) {
+    public void setTax_rate_id(String tax_rate_id) {
         this.tax_rate_id = tax_rate_id;
     }
 
