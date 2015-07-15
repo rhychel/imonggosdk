@@ -8,8 +8,8 @@ import net.nueca.imonggosdk.enums.Table;
  * NuecaLibrary (c)2014
  */
 public interface VolleyRequestListener {
-    public void onStart(Table table, RequestType requestType);
-    public void onSuccess(Table table, RequestType requestType, Object response);
-    public void onError(Table table, boolean hasInternet, Object response, int responseCode);
-    public void onRequestError();
+    void onStart(Table table, RequestType requestType);
+    void onSuccess(Table table, RequestType requestType, Object response);
+    void onError(Table table, boolean hasInternet, Object response, int responseCode);
+    void onRequestError();
 }

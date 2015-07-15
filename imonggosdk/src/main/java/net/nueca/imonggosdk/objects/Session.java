@@ -5,6 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 
 import java.sql.SQLException;
@@ -37,7 +38,11 @@ public class Session {
     @DatabaseField
     private int device_id = 0;
     @DatabaseField
-    private boolean hasLoggedIn = false;
+    private boolean has_logged_in = false;
+    @DatabaseField
+    private Server server;
+    @DatabaseField
+    private String current_branch;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private User user;
 
@@ -127,12 +132,20 @@ public class Session {
         this.device_id = device_id;
     }
 
-    public boolean isHasLoggedIn() {
-        return hasLoggedIn;
+    public boolean isHas_logged_in() {
+        return has_logged_in;
     }
 
-    public void setHasLoggedIn(boolean hasLoggedIn) {
-        this.hasLoggedIn = hasLoggedIn;
+    public void setHas_logged_in(boolean has_logged_in) {
+        this.has_logged_in = has_logged_in;
+    }
+
+    public Server getServer() {
+        return server;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
     }
 
     public User getUser() {
@@ -141,6 +154,14 @@ public class Session {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getCurrent_branch() {
+        return current_branch;
+    }
+
+    public void setCurrent_branch(String current_branch) {
+        this.current_branch = current_branch;
     }
 
     public void insertTo(ImonggoDBHelper dbHelper) {

@@ -4,7 +4,7 @@
 
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="22" />
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
@@ -17,6 +17,15 @@
         android:allowBackup="true"
         android:label="@string/app_name" >
         <uses-library android:name="android.test.runner" />
+
+        <service
+            android:name="net.nueca.imonggosdk.operations.sync.TestService"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="net.nueca.imonggosdk.operations.sync.TestService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
