@@ -77,19 +77,19 @@ public class OrderLine extends BaseTable2 {
         this.quantity = quantity;
     }
 
-    public int getProductId() {
+    public int getProduct_id() {
         return product_id;
     }
 
-    public void setProductId(int product_id) {
+    public void setProduct_id(int product_id) {
         this.product_id = product_id;
     }
 
-    public double getRetailPrice() {
+    public double getRetail_price() {
         return retail_price;
     }
 
-    public void setRetailPrice(double retail_price) {
+    public void setRetail_price(double retail_price) {
         this.retail_price = retail_price;
     }
 
@@ -166,11 +166,11 @@ public class OrderLine extends BaseTable2 {
         this.brand = brand;
     }*/
 
-    public int getLineNo() {
+    public int getLine_no() {
         return line_no;
     }
 
-    public void setLineNo(int line_no) {
+    public void setLine_no(int line_no) {
         this.line_no = line_no;
     }
 

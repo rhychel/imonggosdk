@@ -16,6 +16,7 @@ import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 
 import java.sql.SQLException;
@@ -491,6 +492,21 @@ public class OfflineData extends BaseTable2 {
     }
 
     public List<String> parseReturnID() {
+        //if(returnId.length() <= 0)
+        //    return new ArrayList<>();
         return Arrays.asList(returnId.split(","));
+    }
+
+    public void insertReturnIdAt(int index, String returnId) {
+        ArrayList<String> retIds = new ArrayList<>(parseReturnID());
+        if(retIds.size() >= index+1 )
+            retIds.set(index, returnId);
+        else {
+            while(retIds.size() < index)
+                retIds.add("@");
+            retIds.add(returnId);
+        }
+
+        this.returnId = StringUtils.join(retIds, ',');
     }
 }

@@ -122,10 +122,14 @@ public class SwableTools {
             return;
         }
         OfflineData forVoid = null;
-        for(OfflineData od : transactions) {
-            for(String str: od.parseReturnID()) {
-                if(str.equalsIgnoreCase(returnId))
-                    forVoid = od;
+        for(OfflineData transaction : transactions) {
+            if(forVoid != null)
+                break;
+            for(String str: transaction.parseReturnID()) {
+                if(str.equalsIgnoreCase(returnId)) {
+                    forVoid = transaction;
+                    break;
+                }
             }
         }
         if(forVoid == null) {
@@ -169,51 +173,58 @@ public class SwableTools {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         try {
-            String dataStr = "";
+            String dataStr;
             if(data instanceof Invoice)
                 dataStr = ((Invoice)data).toJSONString();
             else if(data instanceof Order)
                 dataStr = ((Order)data).toJSONString();
+            else {
+                Log.e("SwableTools", "sendTransactionNow : Class '" + data.getClass().getSimpleName() + "' is not " +
+                        "supported for OfflineData --- Use Order and Invoice");
+                return;
+            }
 
             queue.add(
-                    HTTPRequests.sendPOSTRequest(context, session,
-                            listener != null ? listener : new VolleyRequestListener() {
-                                @Override
-                                public void onStart(Table table, RequestType requestType) {
-                                    Log.e("SwableTools", "sending transaction : " + table.name());
-                                }
+                HTTPRequests.sendPOSTRequest(context, session,
+                    listener != null ? listener : new VolleyRequestListener() {
+                        @Override
+                        public void onStart(Table table, RequestType requestType) {
+                            Log.e("SwableTools", "[default listener] sending transaction : " + table.name());
+                        }
 
-                                @Override
-                                public void onSuccess(Table table, RequestType requestType, Object response) {
-                                    try {
-                                        Log.e("SwableTools", "sending success : " + response.toString());
-                                        if (response instanceof JSONObject) {
-                                            JSONObject responseJson = ((JSONObject) response);
-                                            if (responseJson.has("id")) {
-                                                Log.d("ImonggoSwable", "sending success : return ID : " + responseJson.getString("id"));
-                                                if (data instanceof Invoice)
-                                                    ((Invoice)data).setId(responseJson.getInt("id"));
-                                                else if (data instanceof Order)
-                                                    ((Order)data).setId(responseJson.getInt("id"));
-                                            }
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
+                        @Override
+                        public void onSuccess(Table table, RequestType requestType, Object response) {
+                            try {
+                                Log.e("SwableTools", "[default listener] sending success : " +
+                                        response.toString());
+                                if (response instanceof JSONObject) {
+                                    JSONObject responseJson = ((JSONObject) response);
+                                    if (responseJson.has("id")) {
+                                        Log.d("SwableTools", "[default listener] sending success : return ID : "
+                                            + responseJson.getString("id"));
+                                        if (data instanceof Invoice)
+                                            ((Invoice) data).setId(responseJson.getInt("id"));
+                                        else if (data instanceof Order)
+                                            ((Order) data).setId(responseJson.getInt("id"));
                                     }
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
-                                @Override
-                                public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                                    Log.e("SwableTools", "sending error : hasInternet? " + hasInternet + " [" +
-                                            responseCode + "] " + response.toString());
-                                }
+                        @Override
+                        public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                            Log.e("SwableTools", "[default listener] sending error : hasInternet? " + hasInternet + " [" +
+                                    responseCode + "] " + response.toString());
+                        }
 
-                                @Override
-                                public void onRequestError() {
-                                    Log.e("SwableTools", "sending request error");
-                                }
-                            }, server, table, prepareTransactionJSON(table, dataStr), "?branch=" + branchId +
-                                    parameters)
+                        @Override
+                        public void onRequestError() {
+                            Log.e("SwableTools", "[default listener] sending request error");
+                        }
+                    }, server, table, prepareTransactionJSON(table, dataStr), "?branch=" + branchId +
+                        parameters)
             );
         } catch (JSONException e) {
             e.printStackTrace();

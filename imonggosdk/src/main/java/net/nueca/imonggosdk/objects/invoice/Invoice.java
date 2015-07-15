@@ -76,9 +76,9 @@ public class Invoice extends BaseTable {
         invoice_tax_rates = new BatchList<>(DatabaseOperation.INSERT);
     }
 
-    public void setInvoiceDate(String date) { invoice_date = date; }
+    public void setInvoice_date(String date) { invoice_date = date; }
 
-    public String getInvoiceDate() { return invoice_date; }
+    public String getInvoice_date() { return invoice_date; }
 
     public void setStatus(String status) { this.status = status; }
     public String getStatus() { return status; }
@@ -91,19 +91,19 @@ public class Invoice extends BaseTable {
         this.email = email;
     }
 
-    public int getUserId() {
+    public int getUser_id() {
         return user_id;
     }
 
-    public void setUserId(int user_id) {
+    public void setUser_id(int user_id) {
         this.user_id = user_id;
     }
 
-    public boolean isTaxInclusive() {
+    public boolean isTax_inclusive() {
         return tax_inclusive;
     }
 
-    public void setTaxInclusive(boolean tax_inclusive) {
+    public void setTax_inclusive(boolean tax_inclusive) {
         this.tax_inclusive = tax_inclusive;
     }
 
