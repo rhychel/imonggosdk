@@ -4,7 +4,12 @@ import android.util.Log;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
+import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
+import net.nueca.imonggosdk.objects.invoice.Payment;
+import net.nueca.imonggosdk.objects.order.OrderLine;
 
 import java.util.ArrayList;
 
@@ -13,16 +18,6 @@ import java.util.ArrayList;
  * imonggosdk (c)2015
  */
 public class BatchList<T> extends ArrayList<T> {
-
-    public class BatchListException extends RuntimeException {
-        public BatchListException() {
-            throw new RuntimeException("Error!");
-        }
-
-        public BatchListException(String detailMessage) {
-            throw new RuntimeException("Stub!");
-        }
-    }
 
     private DatabaseOperation databaseOperation = DatabaseOperation.INSERT;
     private ImonggoDBHelper dbHelper;
@@ -55,5 +50,15 @@ public class BatchList<T> extends ArrayList<T> {
         }
         if(get(0) instanceof User)
             dbHelper.batchCreateOrUpdateUsers(this, databaseOperation);
+        if(get(0) instanceof Product)
+            dbHelper.batchCreateOrUpdateProducts(this, databaseOperation);
+        if(get(0) instanceof InvoiceLine)
+            dbHelper.batchCreateOrUpdateInvoiceLines(this, databaseOperation);
+        if(get(0) instanceof InvoiceTaxRate)
+            dbHelper.batchCreateOrUpdateInvoiceTaxRates(this, databaseOperation);
+        if(get(0) instanceof Payment)
+            dbHelper.batchCreateOrUpdatePayments(this, databaseOperation);
+        if(get(0) instanceof OrderLine)
+            dbHelper.batchCreateOrUpdateOrderLines(this, databaseOperation);
     }
 }

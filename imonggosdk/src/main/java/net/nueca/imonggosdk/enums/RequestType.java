@@ -10,7 +10,7 @@ public enum RequestType {
     API_CONTENT,
     APPLICATION_SETTINGS,
     SETTINGS,
-
+    LOGIN,
     DOCUMENT_TYPES,
 
     POST,
