@@ -60,7 +60,7 @@ public class ImonggoSwable extends SwableService {
             try {
                 if(AccountTools.isLoggedIn(getHelper())) {
                     Log.e("ImonggoSwable", "syncModule : trying to sync");
-                    if(!getSession().isHasLoggedIn()) {
+                    if(!getSession().isHas_logged_in()) {
                         setSyncing(false);
                     }
 

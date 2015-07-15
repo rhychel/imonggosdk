@@ -85,7 +85,7 @@ public class AccountTools {
         session.setAccountId("");
         session.setEmail("");
         session.setPassword("");
-        session.setHasLoggedIn(false);
+        session.setHas_logged_in(false);
 
         // update database
         session.updateTo(dbHelper);
@@ -117,6 +117,6 @@ public class AccountTools {
             accountListener.onUnlinkAccount();
         }
 
-        Log.i("Jn-Login", "Unlinking Account");
+        Log.i("Jn-BaseLogin", "Unlinking Account");
     }
 }

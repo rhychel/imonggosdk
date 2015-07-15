@@ -25,7 +25,7 @@ public class TaxSetting {
     @DatabaseField
     private boolean tax_inclusive = true;
     @ForeignCollectionField
-    private transient ForeignCollection<TaxRate> taxRates;
+    private transient ForeignCollection<TaxRate> tax_rates;
 
     public TaxSetting() { }
 
@@ -53,12 +53,12 @@ public class TaxSetting {
         this.tax_inclusive = tax_inclusive;
     }
 
-    public ForeignCollection<TaxRate> getTaxRates() {
-        return taxRates;
+    public ForeignCollection<TaxRate> getTax_rates() {
+        return tax_rates;
     }
 
-    public void setTaxRates(ForeignCollection<TaxRate> taxRates) {
-        this.taxRates = taxRates;
+    public void setTax_rates(ForeignCollection<TaxRate> tax_rates) {
+        this.tax_rates = tax_rates;
     }
 
     public void insertTo(ImonggoDBHelper dbHelper) {
