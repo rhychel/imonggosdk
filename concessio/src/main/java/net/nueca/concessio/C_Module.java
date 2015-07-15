@@ -40,9 +40,7 @@ public class C_Module extends ModuleActivity {
         lvSampleProducts = (ListView) findViewById(R.id.lvSampleProducts);
 
         try {
-            SimpleProductListAdapter simpleProductListAdapter = new SimpleProductListAdapter(this, getHelper().getProducts().queryForAll());
-            simpleProductListAdapter.setDbHelper(getHelper());
-
+            SimpleProductListAdapter simpleProductListAdapter = new SimpleProductListAdapter(this, getHelper(), getHelper().getProducts().queryForAll());
             lvSampleProducts.setAdapter(simpleProductListAdapter);
         } catch (SQLException e) {
             e.printStackTrace();

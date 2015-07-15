@@ -34,11 +34,11 @@ public class Payment extends BaseTable2 {
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
     private transient Invoice invoice;
 
-    public int getPaymentTypeId() {
+    public int getPayment_type_id() {
         return payment_type_id;
     }
 
-    public void setPaymentTypeId(int payment_type_id) {
+    public void setPayment_type_id(int payment_type_id) {
         this.payment_type_id = payment_type_id;
     }
 

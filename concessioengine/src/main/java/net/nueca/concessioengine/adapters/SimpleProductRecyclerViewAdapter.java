@@ -53,6 +53,14 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             if(onItemClickListener != null)
                 onItemClickListener.onItemClicked(view, getLayoutPosition());
         }
+
+
+        @Override
+        public boolean onLongClick(View view) {
+            if(onItemLongClickListener != null)
+                onItemLongClickListener.onItemLongClicked(view, getLayoutPosition());
+            return false;
+        }
     }
 
     @Override
@@ -60,7 +68,7 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem, parent, false);
 
         ListViewHolder lvh = new ListViewHolder(v);
-        return null;
+        return lvh;
     }
 
     @Override
