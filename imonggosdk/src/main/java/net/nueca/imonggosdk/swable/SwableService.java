@@ -9,7 +9,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
-import net.nueca.imonggosdk.operations.ImonggoService;
+import net.nueca.imonggosdk.operations.sync.ImonggoService;
 
 public abstract class SwableService extends ImonggoService implements SwableConnectionHandler.OnConnectionChangedListener {
 

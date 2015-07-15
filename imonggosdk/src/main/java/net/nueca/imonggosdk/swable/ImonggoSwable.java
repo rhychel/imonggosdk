@@ -64,7 +64,7 @@ public class ImonggoSwable extends SwableService {
             try {
                 if(AccountTools.isLoggedIn(getHelper())) {
                     Log.e("ImonggoSwable", "syncModule : trying to sync");
-                    if(!getSession().isHasLoggedIn()) {
+                    if(!getSession().isHas_logged_in()) {
                         setSyncing(false);
                     }
 
@@ -394,8 +394,15 @@ public class ImonggoSwable extends SwableService {
                                 offlineData.setCancelled(true);
                             }
                             else if(responseCode == NOT_FOUND) {
+                                offlineData.setCancelled(false);
                                 Log.e("ImonggoSwable", "deleting failed : transaction not found");
                             }
+                            else {
+                                offlineData.setCancelled(false);
+                            }
+
+                            offlineData.setSynced(offlineData.isCancelled() || responseCode == NOT_FOUND);
+                            offlineData.updateTo(getHelper());
 
                             if(swableStateListener != null) {
                                 swableStateListener.onSyncProblem(offlineData, hasInternet, response, responseCode);
@@ -408,6 +415,7 @@ public class ImonggoSwable extends SwableService {
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);
                             offlineData.setSynced(false);
+                            offlineData.updateTo(getHelper());
                         }
                     }, getSession().getServer(), table, offlineData.getReturnId(), "branch_id=" +
                     offlineData.getBranch_id() + "&reason=" + URLEncoder.encode(offlineData.getDocumentReason(),
@@ -663,7 +671,7 @@ public class ImonggoSwable extends SwableService {
                             offlineData.setSynced(offlineData.isCancelled());
                             offlineData.updateTo(getHelper());
 
-                            list.set(list.indexOf(id),NO_RETURN_ID);
+                            list.set(list.indexOf(id),NO_RETURN_ID); // indicator that this has been cancelled
 
                             if(offlineData.isSynced() && Collections.frequency(list, NO_RETURN_ID) == list.size()) {
                                 if (swableStateListener != null)
@@ -678,21 +686,29 @@ public class ImonggoSwable extends SwableService {
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);
 
-                            if(responseCode == UNPROCESSABLE_ENTRY) {
-                                offlineData.setCancelled(false);
+                            if(responseCode == UNPROCESSABLE_ENTRY) { // Already cancelled
+                                offlineData.setCancelled(true);
+                                list.set(list.indexOf(id),NO_RETURN_ID); // indicator that this has been cancelled
                             }
                             else if(responseCode == NOT_FOUND) {
                                 offlineData.setCancelled(false);
+                                list.set(list.indexOf(id),NO_RETURN_ID); // indicator that this has been processed
                                 Log.e("ImonggoSwable", "deleting failed : transaction not found");
                             }
                             else {
                                 offlineData.setCancelled(false);
                             }
 
-                            offlineData.setSynced(offlineData.isCancelled());
+                            offlineData.setSynced(offlineData.isCancelled() || responseCode == NOT_FOUND);
+                            offlineData.updateTo(getHelper());
 
                             if(swableStateListener != null) {
                                 swableStateListener.onSyncProblem(offlineData, hasInternet, response, responseCode);
+                            }
+
+                            if(offlineData.isSynced() && Collections.frequency(list, NO_RETURN_ID) == list.size()) {
+                                if (swableStateListener != null)
+                                    swableStateListener.onSynced(offlineData);
                             }
                         }
 
@@ -703,6 +719,7 @@ public class ImonggoSwable extends SwableService {
                             offlineData.setQueued(false);
                             offlineData.setSynced(false);
                             offlineData.setCancelled(false);
+                            offlineData.updateTo(getHelper());
                         }
                     }, getSession().getServer(), table, id, "branch_id=" + offlineData.getBranch_id() + "&reason="
                         + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8") + offlineData.getParameters())
