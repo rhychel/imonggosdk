@@ -28,4 +28,5 @@ dependencies {
     compile 'com.afollestad:material-dialogs:0.7.5.5'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'org.apache.commons:commons-lang3:3.4'
+    // samples
 }
