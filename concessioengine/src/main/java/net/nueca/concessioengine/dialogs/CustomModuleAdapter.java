@@ -91,7 +91,7 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
         @Override
         public boolean onLongClick(View v) {
             if(mOnItemClickListener != null) {
-                mOnItemClickListener.onItemLongClicked(v, getLayoutPosition());
+                mOnItemLongClickListener.onItemLongClicked(v, getLayoutPosition());
             }
 
             return true;

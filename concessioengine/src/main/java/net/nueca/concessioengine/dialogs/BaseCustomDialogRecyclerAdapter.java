@@ -18,9 +18,14 @@ public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.Vi
     private List<String> mModuleName;
     private List<Integer> mDownloadProgress;
     protected OnItemClickListener mOnItemClickListener;
+    protected OnItemLongClickListener mOnItemLongClickListener;
+
 
     public interface OnItemClickListener {
         void onItemClicked(View view, int position);
+    }
+
+    public interface OnItemLongClickListener {
         void onItemLongClicked(View view, int position);
     }
 
@@ -83,6 +88,10 @@ public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.Vi
 
     public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener mOnItemLongClickListener) {
+        this.mOnItemLongClickListener = mOnItemLongClickListener;
     }
 
     // View Holder

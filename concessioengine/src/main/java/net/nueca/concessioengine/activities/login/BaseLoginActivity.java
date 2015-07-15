@@ -263,7 +263,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
         // TODO: remove this
         Button test_unlink_button = (Button) findViewById(R.id.test_button_unlink);
-        Button test_alertDialog_button = (Button) findViewById(R.id.test_button_alertDialog);
+        Button test_fetch_button = (Button) findViewById(R.id.test_button_alertDialog);
 
         test_unlink_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,12 +275,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             }
         });
 
-        test_alertDialog_button.setOnClickListener(new View.OnClickListener() {
+        test_fetch_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int[] modules = {Table.BRANCHES.ordinal(), Table.PRODUCTS.ordinal(), Table.CUSTOMERS.ordinal()};
 
-                if(mTestService != null) {
+                if (mTestService != null) {
                     Toast.makeText(BaseLoginActivity.this, mTestService.getTime() + "", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(BaseLoginActivity.this, "null", Toast.LENGTH_SHORT).show();
