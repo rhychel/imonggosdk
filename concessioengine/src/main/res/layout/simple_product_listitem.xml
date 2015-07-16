@@ -34,7 +34,8 @@
         android:maxLines="2"
         android:ellipsize="end"
         autofit:minTextSize="12sp"
-        android:id="@+id/tvProductName"/>
+        android:id="@+id/tvProductName"
+        style="@style/TextView.ProductItem.Name"/>
 
     <me.grantland.widget.AutofitTextView
         android:gravity="center"
@@ -47,7 +48,7 @@
         android:singleLine="true"
         autofit:minTextSize="12sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:id="@+id/tvQuantity"/>
+        android:id="@+id/tvQuantity"
+        style="@style/TextView.ProductItem.Quantity"/>
 
 </LinearLayout>

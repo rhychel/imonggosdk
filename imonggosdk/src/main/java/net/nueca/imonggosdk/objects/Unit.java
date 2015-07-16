@@ -95,6 +95,11 @@ public class Unit extends BaseTable {
     }
 
     @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
         try {
             dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.INSERT);

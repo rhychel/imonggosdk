@@ -9,7 +9,10 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.lists.ProductsList;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.tools.ProductListTools;
+
+import java.util.List;
 
 /**
  * Created by rhymart on 7/13/15.
@@ -31,14 +34,32 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseProductsRecycler
 
     private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
     protected ProductsList productsList;
+    protected List<Product> productsList2;
 
     public BaseProductsRecyclerAdapter(Context context) {
         this.context = context;
     }
 
+    public BaseProductsRecyclerAdapter(Context context, List<Product> productsList) {
+        this.context = context;
+        this.productsList2 = productsList;
+    }
+
     public BaseProductsRecyclerAdapter(Context context, ProductsList productsList) {
         this.productsList = productsList;
         this.context = context;
+    }
+
+    public BaseProductsRecyclerAdapter(Context context, ImonggoDBHelper dbHelper, ProductsList productsList) {
+        this.productsList = productsList;
+        this.context = context;
+        setDbHelper(dbHelper);
+    }
+
+    public BaseProductsRecyclerAdapter(Context context, ImonggoDBHelper dbHelper, List<Product> productsList) {
+        this.productsList2 = productsList;
+        this.context = context;
+        setDbHelper(dbHelper);
     }
 
     public abstract class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -62,6 +83,18 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseProductsRecycler
 
     public void setProductsList(ProductsList productsList) {
         this.productsList = productsList;
+    }
+
+    public void setProductsList(List<Product> productsList) {
+        this.productsList2 = productsList;
+    }
+
+    public ProductsList getProductsList() {
+        return productsList;
+    }
+
+    public List<Product> getProductsList2() {
+        return productsList2;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

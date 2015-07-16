@@ -1,30 +1,11 @@
 package net.nueca.concessio;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-import android.widget.Button;
-import android.widget.ListView;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
-import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.Session;
-import net.nueca.imonggosdk.objects.base.BatchList;
-import net.nueca.imonggosdk.operations.ImonggoTools;
-import net.nueca.imonggosdk.tools.AccountTools;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.sql.SQLException;
-
+import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 
 /**
  * Created by rhymart on 6/4/15.
@@ -32,19 +13,16 @@ import java.sql.SQLException;
  */
 public class C_Module extends ModuleActivity {
 
-    private ListView lvSampleProducts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sample_list);
-        lvSampleProducts = (ListView) findViewById(R.id.lvSampleProducts);
+        setContentView(R.layout.sample_fragment);
 
-        try {
-            SimpleProductListAdapter simpleProductListAdapter = new SimpleProductListAdapter(this, getHelper(), getHelper().getProducts().queryForAll());
-            lvSampleProducts.setAdapter(simpleProductListAdapter);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        SimpleProductsFragment simpleProductsFragment = new SimpleProductsFragment();
+        simpleProductsFragment.setHelper(getHelper());
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.flContent, simpleProductsFragment)
+            .commit();
     }
 
     @Override
