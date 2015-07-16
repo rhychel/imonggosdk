@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -37,9 +38,8 @@ public class SwableTools {
 		activity.startService(service);
 		return service;
 	}
-    public static boolean startAndBindSwable(Activity activity, ImonggoSwable.SwableStateListener listener) {
-        return activity.bindService(startSwable(activity), new ImonggoSwableServiceConnection(listener),
-                Context.BIND_AUTO_CREATE);
+    public static boolean startAndBindSwable(Activity activity, ImonggoSwableServiceConnection swableServiceConnection) {
+        return activity.bindService(startSwable(activity), swableServiceConnection, Context.BIND_AUTO_CREATE);
     }
 	
 	public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
