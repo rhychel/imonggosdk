@@ -2,6 +2,7 @@ package net.nueca.imonggosdk.widgets;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Canvas;
 import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -57,29 +58,33 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
 
     public Numpad(Context context, AttributeSet attrs) {
         super(context, attrs);
-        buttonList = new ArrayList<>();
+
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        keypadView = (ViewGroup)inflater.inflate(R.layout.imonggosdk_numpad, this, true);
-        keypadView.setVisibility(GONE);
-        //vsExtraButtons = (ViewStub)keypadView.findViewById(R.id.vsExtraButton);
-        llControls = (ViewGroup)findViewById(R.id.llControls);
+        keypadView = (ViewGroup) inflater.inflate(R.layout.imonggosdk_numpad, this, true);
 
-        ibtnMore = findViewById(R.id.ibtnMore);
-        ibtnGo = (ImageButton)findViewById(R.id.ibtnGo);
-        ibtnNegative = (ImageButton)findViewById(R.id.ibtnNegative);
+        if(!isInEditMode()) {
+            buttonList = new ArrayList<>();
+            keypadView.setVisibility(GONE);
+            //vsExtraButtons = (ViewStub)keypadView.findViewById(R.id.vsExtraButton);
+            llControls = (ViewGroup) findViewById(R.id.llControls);
 
-        button00 = findViewById(R.id.button00);
-        //buttonDash = findViewById(R.id.buttonDash);
-        buttonDot = findViewById(R.id.buttonDot);
+            ibtnMore = findViewById(R.id.ibtnMore);
+            ibtnGo = (ImageButton) findViewById(R.id.ibtnGo);
+            ibtnNegative = (ImageButton) findViewById(R.id.ibtnNegative);
 
-        initButtons();
-        changeColor(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR,
-                DEFAULT_KEYPAD_BUTTON_BG,
-                DEFAULT_KEYPAD_BUTTON_BG_CIRCLE,
-                DEFAULT_KEYPAD_BG);
+            button00 = findViewById(R.id.button00);
+            //buttonDash = findViewById(R.id.buttonDash);
+            buttonDot = findViewById(R.id.buttonDot);
 
-        setRequireDecimal(false);
+            initButtons();
+            changeColor(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR,
+                    DEFAULT_KEYPAD_BUTTON_BG,
+                    DEFAULT_KEYPAD_BUTTON_BG_CIRCLE,
+                    DEFAULT_KEYPAD_BG);
+
+            setRequireDecimal(false);
+        }
     }
     private void setRequireDecimal(boolean requireDecimal) {
         BEGIN_FROM_DECIMAL = requireDecimal;
@@ -517,16 +522,11 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         private int mDecimalPlace;
         private boolean allowNegative = false;
 
-        private List<ExtraButton> extraButtons;
-
         public TextHolder(View view, String tag, TextHolderHelper helper, boolean requireDecimal, boolean allowNegative)
         {
             this.mTextHolder = view;
             setTag(tag);
             this.helper = helper;
-            if(helper != null) {
-                extraButtons = new ArrayList<>();
-            }
             this.requireDecimal = requireDecimal;
             this.mDecimalPlace = 2;
             this.allowNegative = allowNegative;
@@ -536,9 +536,6 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             this.mTextHolder = view;
             setTag(tag);
             this.helper = helper;
-            if(helper != null) {
-                extraButtons = new ArrayList<>();
-            }
             this.requireDecimal = requireDecimal;
             this.mDecimalPlace = decimalPlace;
             this.allowNegative = allowNegative;
@@ -564,13 +561,27 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         void onMoreButtonClicked();
     }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        // TODO: consider storing these as member variables to reduce
+        // allocations per draw cycle.
+        int paddingLeft = getPaddingLeft();
+        int paddingTop = getPaddingTop();
+        int paddingRight = getPaddingRight();
+        int paddingBottom = getPaddingBottom();
 
-    public static class ExtraButton {
-        public ExtraButton(String text, View.OnClickListener listener) {
-            mText = text;
-            mListener = listener;
-        }
-        private String mText;
-        public OnClickListener mListener;
+        int w = getWidth() - paddingLeft - paddingRight;
+        int h = getHeight() - paddingTop - paddingBottom;
+
+        w = w<h ? w : h;
+        h = w;
+
+        // Draw the example drawable on top of the text.
+        /*if (dieDrawable != null) {
+            dieDrawable.setBounds(paddingLeft, paddingTop,
+                    paddingLeft + w, paddingTop + h);
+            dieDrawable.draw(canvas);
+        }*/
     }
 }
