@@ -1,10 +1,17 @@
 package net.nueca.imonggosdk.swable;
 
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.annotation.DrawableRes;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import net.nueca.imonggosdk.R;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
@@ -18,8 +25,8 @@ import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.NotificationTools;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,7 +48,17 @@ public class ImonggoSwable extends SwableService {
     private static final int UNPROCESSABLE_ENTRY = 422;
     private static final int INTERNAL_SERVER_ERROR = 500;
 
+    public static final String NOTIFICATION_ACTION = "swable_notification_action";
+    private static final int NOTIFICATION_ID = 1000;
+
     private SwableStateListener swableStateListener;
+
+    private int REQUEST_SUCCESS = 0;
+    private int REQUEST_COUNT = 0;
+
+    private int APP_ICON_DRAWABLE = R.drawable.ic_check_circle;
+
+    private IntentFilter notificationFilter = new IntentFilter();
 
     private User user;
     private User getUser() {
@@ -54,6 +71,48 @@ public class ImonggoSwable extends SwableService {
             }
         }
         return user;
+    }
+
+    private PendingIntent pendingIntent = null;
+    private PendingIntent getPendingIntent() {
+        if(pendingIntent == null) {
+            Intent notificationIntent = new Intent();
+            notificationIntent.setAction(NOTIFICATION_ACTION);
+            pendingIntent = PendingIntent.getBroadcast(this, NOTIFICATION_ID, notificationIntent, PendingIntent
+                    .FLAG_CANCEL_CURRENT);
+        }
+        return pendingIntent;
+    }
+
+    private boolean isReceiverAttached = false;
+    private final BroadcastReceiver receiver =
+            new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.e("--- RECEIVER", "called");
+                    String action = intent.getAction();
+                    if(action.equals(NOTIFICATION_ACTION)) {
+                        REQUEST_SUCCESS = 0;
+                        REQUEST_COUNT = 0;
+                    }
+                }
+            };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+        isReceiverAttached = false;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if(!isReceiverAttached) {
+            notificationFilter = new IntentFilter();
+            notificationFilter.addAction(NOTIFICATION_ACTION);
+            registerReceiver(receiver, notificationFilter);
+        }
     }
 
     @Override
@@ -74,6 +133,9 @@ public class ImonggoSwable extends SwableService {
                         stopSelf();
                         return;
                     }*/
+
+                    //REQUEST_SUCCESS = 0;
+                    //NOTIFICATION_ID++;
 
                     List<OfflineData> offlineDataList =
                         getHelper().getOfflineData().queryBuilder().where().
@@ -125,7 +187,8 @@ public class ImonggoSwable extends SwableService {
                                 break;
                         }
                     }
-                    Log.e("ImonggoSwable", "starting sync : " + offlineDataList.size() + " queued");
+                    Log.e("ImonggoSwable", "starting sync : " + offlineDataList.size() + " queued transactions");
+                    REQUEST_COUNT += offlineDataList.size();
                     if(swableStateListener != null)
                         swableStateListener.onSwableStarted();
                     getQueue().start();
@@ -144,6 +207,10 @@ public class ImonggoSwable extends SwableService {
 
     public void setSwableStateListener(SwableStateListener swableStateListener) {
         this.swableStateListener = swableStateListener;
+    }
+
+    public void setNotificationIcon(@DrawableRes int iconResource) {
+        APP_ICON_DRAWABLE = iconResource;
     }
 
     public interface SwableStateListener {
@@ -175,11 +242,11 @@ public class ImonggoSwable extends SwableService {
         try {
             Branch branch = getHelper().getBranches().queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
-            /*if(branch == null || branch.getStatus().equalsIgnoreCase("D")) {
-                Log.e("ImonggoSwable", "sending error : Branch '" + branch.getName() + "', ID:" + branch.getId() + "," +
-                        " was deleted or disabled");
-                return;
-            }*/
+            if(branch == null || branch.getStatus().equalsIgnoreCase("D")) {
+                Log.e("ImonggoSwable", "sending error : Branch '" + (branch == null? "NULL" : branch.getName()) + "'," +
+                        " ID:" + (branch == null? "NULL" : branch.getId()) + "," + " was deleted or disabled");
+                //return;
+            }
             if(table == Table.ORDERS) {
                 Order order = (Order)offlineData.generateObjectFromData();
                 if(order.shouldPageRequest()) {
@@ -241,8 +308,13 @@ public class ImonggoSwable extends SwableService {
                                     break;
                             }
 
-                            if (swableStateListener != null && offlineData.isSynced())
+                            if(swableStateListener != null && offlineData.isSynced())
                                 swableStateListener.onSynced(offlineData);
+
+                            if(offlineData.isSynced() && REQUEST_COUNT == REQUEST_SUCCESS)
+                                NotificationTools.postNotification(ImonggoSwable.this, NOTIFICATION_ID, APP_ICON_DRAWABLE,
+                                        getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transaction"
+                                                + (REQUEST_SUCCESS!=1? "s" : "") + " sent", null, getPendingIntent());
 
                             // TODO Remove
                             //SwableTools.voidTransaction(getHelper(), Integer.parseInt(offlineData.getReturnId()),
@@ -262,7 +334,10 @@ public class ImonggoSwable extends SwableService {
                             e.printStackTrace();
                         }*/
 
-
+                        if(offlineData.isSynced()) {
+                            REQUEST_SUCCESS++;
+                            Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
+                        }
                     }
 
                     @Override
@@ -316,6 +391,11 @@ public class ImonggoSwable extends SwableService {
                         if(swableStateListener != null) {
                             swableStateListener.onSyncProblem(offlineData, hasInternet, response, responseCode);
                         }
+
+                        if(offlineData.isSynced()) {
+                            REQUEST_SUCCESS++;
+                            Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
+                        }
                     }
 
                     @Override
@@ -339,11 +419,11 @@ public class ImonggoSwable extends SwableService {
         try {
             Branch branch = getHelper().getBranches().queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
-            /*if(branch == null || branch.getStatus().equalsIgnoreCase("D")) {
-                Log.e("ImonggoSwable", "deleting error : Branch '" + branch.getName() + "', ID:" + branch.getId() +
-                        ", was deleted or disabled");
-                return;
-            }*/
+            if(branch == null || branch.getStatus().equalsIgnoreCase("D")) {
+                Log.e("ImonggoSwable", "sending error : Branch '" + (branch == null? "NULL" : branch.getName()) + "'," +
+                        " ID:" + (branch == null? "NULL" : branch.getId()) + "," + " was deleted or disabled");
+                //return;
+            }
 
             if(offlineData.parseReturnID().size() > 1) {
                 pagedDelete(table,offlineData);
@@ -380,6 +460,16 @@ public class ImonggoSwable extends SwableService {
 
                             if (swableStateListener != null && offlineData.isSynced())
                                 swableStateListener.onSynced(offlineData);
+
+                            if(offlineData.isSynced() && REQUEST_COUNT == REQUEST_SUCCESS)
+                                NotificationTools.postNotification(ImonggoSwable.this, NOTIFICATION_ID, APP_ICON_DRAWABLE,
+                                        getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transaction"
+                                                + (REQUEST_SUCCESS!=1? "s" : "") + " sent", null, getPendingIntent());
+
+                            if(offlineData.isSynced()) {
+                                REQUEST_SUCCESS++;
+                                Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
+                            }
                         }
 
                         @Override
@@ -406,6 +496,11 @@ public class ImonggoSwable extends SwableService {
 
                             if(swableStateListener != null) {
                                 swableStateListener.onSyncProblem(offlineData, hasInternet, response, responseCode);
+                            }
+
+                            if(offlineData.isSynced()) {
+                                REQUEST_SUCCESS++;
+                                Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
                             }
                         }
 
@@ -484,6 +579,7 @@ public class ImonggoSwable extends SwableService {
 
     private void sendThisPage(Table table, final int page, final int maxpage, final JSONObject jsonObject,
                               final OfflineData parent) throws JSONException {
+
         getQueue().add(
                 HTTPRequests.sendPOSTRequest(this, getSession(), new VolleyRequestListener() {
                     @Override
@@ -548,6 +644,14 @@ public class ImonggoSwable extends SwableService {
                                         " size : " + parent.parseReturnID().size());
                                 if(swableStateListener != null)
                                     swableStateListener.onSynced(parent);
+
+                                REQUEST_SUCCESS++;
+                                Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
+
+                                if(parent.isSynced() && REQUEST_COUNT == REQUEST_SUCCESS)
+                                    NotificationTools.postNotification(ImonggoSwable.this, NOTIFICATION_ID, APP_ICON_DRAWABLE,
+                                            getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transactions" +
+                                                    " sent", null, getPendingIntent());
 
                                 // TODO Remove
                                 SwableTools.voidTransaction(getHelper(),parent.parseReturnID().get(1),
@@ -623,6 +727,12 @@ public class ImonggoSwable extends SwableService {
                         if(swableStateListener != null) {
                             swableStateListener.onSyncProblem(parent, hasInternet, response, responseCode);
                         }
+
+                        if(parent.isSynced() && !parent.getReturnId().contains(NO_RETURN_ID) &&
+                                parent.parseReturnID().size() == maxpage) {
+                            REQUEST_SUCCESS++;
+                            Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
+                        }
                     }
 
                     @Override
@@ -641,6 +751,7 @@ public class ImonggoSwable extends SwableService {
         final List<String> list = offlineData.parseReturnID();
         try {
             for(final String id : list) {
+
                 getQueue().add(
                     HTTPRequests.sendDELETERequest(this, getSession(), new VolleyRequestListener() {
                         @Override
@@ -674,9 +785,16 @@ public class ImonggoSwable extends SwableService {
                             list.set(list.indexOf(id),NO_RETURN_ID); // indicator that this has been cancelled
 
                             if(offlineData.isSynced() && Collections.frequency(list, NO_RETURN_ID) == list.size()) {
+                                REQUEST_SUCCESS++;
+                                Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
                                 if (swableStateListener != null)
                                     swableStateListener.onSynced(offlineData);
                             }
+
+                            if(offlineData.isSynced() && REQUEST_COUNT == REQUEST_SUCCESS)
+                                NotificationTools.postNotification(ImonggoSwable.this, NOTIFICATION_ID, APP_ICON_DRAWABLE,
+                                        getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transaction"
+                                                + (REQUEST_SUCCESS!=1? "s" : "") + " sent", null, getPendingIntent());
                         }
 
                         @Override
@@ -707,9 +825,16 @@ public class ImonggoSwable extends SwableService {
                             }
 
                             if(offlineData.isSynced() && Collections.frequency(list, NO_RETURN_ID) == list.size()) {
+                                REQUEST_SUCCESS++;
+                                Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
                                 if (swableStateListener != null)
                                     swableStateListener.onSynced(offlineData);
                             }
+
+                            if(offlineData.isSynced() && REQUEST_COUNT == REQUEST_SUCCESS)
+                                NotificationTools.postNotification(ImonggoSwable.this, NOTIFICATION_ID, APP_ICON_DRAWABLE,
+                                        getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transaction"
+                                                + (REQUEST_SUCCESS!=1? "s" : "") + " sent", null, getPendingIntent());
                         }
 
                         @Override
