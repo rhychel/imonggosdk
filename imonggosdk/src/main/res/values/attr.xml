@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Keypad">
+        <attr name="handleBackbutton" format="boolean" />
+        <attr name="hasOkayButton" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="Numpad">
+        <attr name="handleBackButton" format="boolean" />
+        <attr name="showGoButton" format="boolean" />
+        <attr name="showMoreButton" format="boolean" />
+        <attr name="showNegativeButton" format="boolean" />
+        <attr name="showControlButtons" format="boolean" />
+        <attr name="requireDecimal" format="boolean" />
+    </declare-styleable>
+
+</resources>
