@@ -60,43 +60,47 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
 
     public Numpad(Context context, AttributeSet attrs) {
         super(context, attrs);
-        buttonList = new ArrayList<>();
+
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        keypadView = (ViewGroup)inflater.inflate(R.layout.imonggosdk_numpad, this, true);
-        keypadView.setVisibility(GONE);
-        //vsExtraButtons = (ViewStub)keypadView.findViewById(R.id.vsExtraButton);
-        llControls = (ViewGroup)findViewById(R.id.llControls);
+        keypadView = (ViewGroup) inflater.inflate(R.layout.imonggosdk_numpad, this, true);
 
-        ibtnMore = findViewById(R.id.ibtnMore);
-        ibtnGo = (ImageButton)findViewById(R.id.ibtnGo);
-        ibtnNegative = (ImageButton)findViewById(R.id.ibtnNegative);
+        if(!isInEditMode()) {
+            buttonList = new ArrayList<>();
+            keypadView.setVisibility(GONE);
+            //vsExtraButtons = (ViewStub)keypadView.findViewById(R.id.vsExtraButton);
+            llControls = (ViewGroup) findViewById(R.id.llControls);
 
-        button00 = findViewById(R.id.button00);
-        //buttonDash = findViewById(R.id.buttonDash);
-        buttonDot = findViewById(R.id.buttonDot);
+            ibtnMore = findViewById(R.id.ibtnMore);
+            ibtnGo = (ImageButton) findViewById(R.id.ibtnGo);
+            ibtnNegative = (ImageButton) findViewById(R.id.ibtnNegative);
 
-        final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Numpad);
-        handleBackButton = typedArray.getBoolean(R.styleable.Numpad_handleBackButton, false);
-        showMoreButton = typedArray.getBoolean(R.styleable.Numpad_showMoreButton, true);
-        showNegativeButton = typedArray.getBoolean(R.styleable.Numpad_showNegativeButton, true);
-        showGoButton = typedArray.getBoolean(R.styleable.Numpad_showGoButton, true);
-        showControlButtons = typedArray.getBoolean(R.styleable.Numpad_showControlButtons, true);
-        requireDecimal = typedArray.getBoolean(R.styleable.Numpad_requireDecimal, false);
+            button00 = findViewById(R.id.button00);
+            //buttonDash = findViewById(R.id.buttonDash);
+            buttonDot = findViewById(R.id.buttonDot);
 
-        initButtons();
+            final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Numpad);
+            handleBackButton = typedArray.getBoolean(R.styleable.Numpad_handleBackButton, false);
+            showMoreButton = typedArray.getBoolean(R.styleable.Numpad_showMoreButton, true);
+            showNegativeButton = typedArray.getBoolean(R.styleable.Numpad_showNegativeButton, true);
+            showGoButton = typedArray.getBoolean(R.styleable.Numpad_showGoButton, true);
+            showControlButtons = typedArray.getBoolean(R.styleable.Numpad_showControlButtons, true);
+            requireDecimal = typedArray.getBoolean(R.styleable.Numpad_requireDecimal, false);
 
-        showMoreButton(showMoreButton);
-        showNegativeButton(showNegativeButton);
-        showGoButton(showGoButton);
-        showControlButtons(showControlButtons);
+            initButtons();
 
-        changeColor(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR,
-                DEFAULT_KEYPAD_BUTTON_BG,
-                DEFAULT_KEYPAD_BUTTON_BG_CIRCLE,
-                DEFAULT_KEYPAD_BG);
+            showMoreButton(showMoreButton);
+            showNegativeButton(showNegativeButton);
+            showGoButton(showGoButton);
+            showControlButtons(showControlButtons);
 
-        setRequireDecimal(requireDecimal);
+            changeColor(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR,
+                    DEFAULT_KEYPAD_BUTTON_BG,
+                    DEFAULT_KEYPAD_BUTTON_BG_CIRCLE,
+                    DEFAULT_KEYPAD_BG);
+
+            setRequireDecimal(requireDecimal);
+        }
     }
     private void setRequireDecimal(boolean requireDecimal) {
         BEGIN_FROM_DECIMAL = requireDecimal;
@@ -535,16 +539,11 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         private int mDecimalPlace;
         private boolean allowNegative = false;
 
-        private List<ExtraButton> extraButtons;
-
         public TextHolder(View view, String tag, TextHolderHelper helper, boolean requireDecimal, boolean allowNegative)
         {
             this.mTextHolder = view;
             setTag(tag);
             this.helper = helper;
-            if(helper != null) {
-                extraButtons = new ArrayList<>();
-            }
             this.requireDecimal = requireDecimal;
             this.mDecimalPlace = 2;
             this.allowNegative = allowNegative;
@@ -554,9 +553,6 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             this.mTextHolder = view;
             setTag(tag);
             this.helper = helper;
-            if(helper != null) {
-                extraButtons = new ArrayList<>();
-            }
             this.requireDecimal = requireDecimal;
             this.mDecimalPlace = decimalPlace;
             this.allowNegative = allowNegative;
@@ -580,15 +576,5 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         void hasFocus(View focused, boolean hasFocus);
         void onConfirmClick(String text);
         void onMoreButtonClicked();
-    }
-
-
-    public static class ExtraButton {
-        public ExtraButton(String text, View.OnClickListener listener) {
-            mText = text;
-            mListener = listener;
-        }
-        private String mText;
-        public OnClickListener mListener;
     }
 }
