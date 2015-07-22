@@ -2,12 +2,13 @@
 <resources>
 
     <style name="AppTheme.Concessio" parent="Theme.AppCompat.Light">
-        <!--<item name="android:windowNoTitle">true</item>-->
-        <!--<item name="windowActionBar">false</item>-->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
-        <item name="android:windowActionBarOverlay">true</item>
+        <!--<item name="android:windowActionBarOverlay">true</item>-->
+        <!--<item name="windowActionBarOverlay">true</item> For the SlidingUpPanel-->
     </style>
 
     <style name="LoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -17,11 +18,16 @@
         <item name="android:button">@color/primary</item>
     </style>
 
-    <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+    <style name="AppCompatDialogStyle.NoTitle" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/accent</item>
         <item name="android:textColorPrimary">@color/primary_text</item>
         <item name="android:background">#FFFFFF</item>
         <item name="windowNoTitle">false</item>
+    </style>
+
+    <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowNoTitle">false</item>
+        <item name="windowActionBar">true</item>
     </style>
 
     <!-- PRODUCTS LIST STYLES -->
@@ -30,4 +36,7 @@
         <item name="android:textColor">@android:color/black</item>
     </style>
 
+    <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:displayOptions">homeAsUp</item>
+    </style>
 </resources>

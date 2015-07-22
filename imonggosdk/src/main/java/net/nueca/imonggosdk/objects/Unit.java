@@ -95,6 +95,11 @@ public class Unit extends BaseTable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        return id == ((Unit)o).getId();
+    }
+
+    @Override
     public String toString() {
         return name;
     }

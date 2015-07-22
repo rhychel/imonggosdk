@@ -1,7 +1,9 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
@@ -44,4 +46,12 @@ public abstract class BaseProductsAdapter extends ArrayAdapter<Product> {
         ProductsAdapterHelper.setDbHelper(dbHelper);
     }
 
+    public void notifyItemChanged(ListView lvList, int position) {
+        View v = lvList.getChildAt(position - lvList.getFirstVisiblePosition());
+
+        if(v == null)
+            return;
+
+        getView(position, v, null);
+    }
 }

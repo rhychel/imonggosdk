@@ -60,10 +60,11 @@ public class Values {
             this.unit_content_quantity = unit.getQuantity();
             this.unit_name = unit.getName();
             this.unit_retail_price = unit.getRetail_price()*Double.valueOf(this.unit_quantity);
+            this.unit = unit;
         }
         else{
             this.quantity = quantity;
-            this.unit = null;
+            this.unit = unit;
         }
     }
 

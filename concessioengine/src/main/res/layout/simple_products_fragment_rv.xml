@@ -1,49 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/suplProduct"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="bottom"
-    sothree:umanoPanelHeight="0dp"
-    sothree:umanoShadowHeight="4dp"
-    sothree:umanoDragView="@+id/llProductDesription">
-    <!--
-    sothree:umanoParalaxOffset="100dp"-->
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        android:id="@+id/suplProduct"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/rvProducts"
-        android:layout_gravity="center_horizontal" />
-
-    <LinearLayout android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/llProductDesription"
-        android:clickable="true">
-
-        <com.android.volley.toolbox.NetworkImageView
+        android:gravity="bottom"
+        sothree:umanoPanelHeight="0dp"
+        sothree:umanoShadowHeight="4dp"
+        sothree:umanoDragView="@+id/llProductDesription">
+        <!-- sothree:umanoParalaxOffset="100dp" -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/no_image"
-            android:id="@+id/ivProductImage" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/tbActionBar"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                sothree:theme="@style/ActionBar"
+                android:layout_width="match_parent"
+                android:elevation="3dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Medium Text"
-            android:id="@+id/tvProductName" />
+            <android.support.v7.widget.RecyclerView
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/rvProducts"
+                android:elevation="1dp"/>
+        </LinearLayout>
 
-        <TextView
+        <LinearLayout android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/tvProductDescription" />
-    </LinearLayout>
-</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+            android:layout_height="match_parent"
+            android:id="@+id/llProductDesription"
+            android:clickable="true"
+            android:focusable="false">
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/no_image"
+                android:id="@+id/ivProductImage" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Medium Text"
+                android:id="@+id/tvProductName" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/tvProductDescription" />
+        </LinearLayout>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+</RelativeLayout>

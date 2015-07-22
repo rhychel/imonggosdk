@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +27,6 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
 
     public SimpleProductRecyclerViewAdapter(Context context) {
         super(context);
-    }
-
-    public SimpleProductRecyclerViewAdapter(Context context, ProductsList productsList) {
-        super(context, productsList);
-    }
-
-    public SimpleProductRecyclerViewAdapter(Context context, ImonggoDBHelper dbHelper, ProductsList productsList) {
-        super(context, dbHelper, productsList);
     }
 
     public SimpleProductRecyclerViewAdapter(Context context, List<Product> productsList) {
@@ -88,17 +81,17 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
 
     @Override
     public void onBindViewHolder(SimpleProductRecyclerViewAdapter.ListViewHolder viewHolder, int position) {
-        Product product = (productsList == null) ? productsList2.get(position) : productsList.get(position);
+        Product product = productsList.get(position);
 
         viewHolder.tvProductName.setText(product.getName());
-        viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product.getId()));
+        viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
         String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
         viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
     }
 
     @Override
     public int getItemCount() {
-        return (productsList == null) ? productsList2.size() : productsList.size();
+        return productsList.size();
     }
 
 }

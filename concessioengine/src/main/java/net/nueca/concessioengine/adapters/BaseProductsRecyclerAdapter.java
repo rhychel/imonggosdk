@@ -33,8 +33,7 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseProductsRecycler
     protected OnItemLongClickListener onItemLongClickListener = null;
 
     private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
-    protected ProductsList productsList;
-    protected List<Product> productsList2;
+    protected List<Product> productsList;
 
     public BaseProductsRecyclerAdapter(Context context) {
         this.context = context;
@@ -42,22 +41,11 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseProductsRecycler
 
     public BaseProductsRecyclerAdapter(Context context, List<Product> productsList) {
         this.context = context;
-        this.productsList2 = productsList;
-    }
-
-    public BaseProductsRecyclerAdapter(Context context, ProductsList productsList) {
         this.productsList = productsList;
-        this.context = context;
-    }
-
-    public BaseProductsRecyclerAdapter(Context context, ImonggoDBHelper dbHelper, ProductsList productsList) {
-        this.productsList = productsList;
-        this.context = context;
-        setDbHelper(dbHelper);
     }
 
     public BaseProductsRecyclerAdapter(Context context, ImonggoDBHelper dbHelper, List<Product> productsList) {
-        this.productsList2 = productsList;
+        this.productsList = productsList;
         this.context = context;
         setDbHelper(dbHelper);
     }
@@ -81,20 +69,12 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseProductsRecycler
         return productsAdapterHelper;
     }
 
-    public void setProductsList(ProductsList productsList) {
+    public void setProductsList(List<Product> productsList) {
         this.productsList = productsList;
     }
 
-    public void setProductsList(List<Product> productsList) {
-        this.productsList2 = productsList;
-    }
-
-    public ProductsList getProductsList() {
+    public List<Product> getProductsList() {
         return productsList;
-    }
-
-    public List<Product> getProductsList2() {
-        return productsList2;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

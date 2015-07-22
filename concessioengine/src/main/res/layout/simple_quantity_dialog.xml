@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:numpad="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -39,12 +41,13 @@
         android:text="Save"
         android:id="@+id/btnSave"
         android:layout_gravity="right"
-        android:layout_below="@+id/linearLayout2"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="8dp"
+        android:layout_below="@+id/npInput"
+        android:layout_alignRight="@+id/npInput"
+        android:layout_alignEnd="@+id/npInput"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        android:minWidth="64dp" />
 
     <Button
         style="?android:attr/borderlessButtonStyle"
@@ -54,6 +57,21 @@
         android:id="@+id/btnCancel"
         android:layout_alignTop="@+id/btnSave"
         android:layout_toLeftOf="@+id/btnSave"
-        android:layout_toStartOf="@+id/btnSave" />
+        android:layout_toStartOf="@+id/btnSave"
+        android:minWidth="64dp" />
+
+    <net.nueca.imonggosdk.widgets.Numpad
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/npInput"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_alignRight="@+id/linearLayout2"
+        android:layout_alignEnd="@+id/linearLayout2"
+        android:layout_alignLeft="@+id/linearLayout2"
+        android:layout_alignStart="@+id/linearLayout2"
+        android:visibility="visible"
+        numpad:showGoButton="false"
+        numpad:showMoreButton="false"
+        numpad:showNegativeButton="false"/>
 
 </RelativeLayout>
