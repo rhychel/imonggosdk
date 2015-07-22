@@ -2,7 +2,7 @@ package net.nueca.imonggosdk.widgets;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Canvas;
+import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -29,6 +29,7 @@ import java.util.List;
 /**
  * Created by gama on 5/16/15.
  *
+ *  xmlns:numpad="http://schemas.android.com/apk/res-auto"
  */
 public class Numpad extends LinearLayout implements View.OnClickListener {
     private ViewGroup keypadView, llControls;
@@ -55,6 +56,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
     private ImageButton ibtnGo, ibtnNegative;
 
     private int buttonTextColor,buttonBackground, keypadBackground, goButtonBackground;
+    private boolean handleBackButton = false, showMoreButton = true, showNegativeButton = true, showGoButton = true, showControlButtons = true, requireDecimal = false;
 
     public Numpad(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -77,11 +79,25 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             //buttonDash = findViewById(R.id.buttonDash);
             buttonDot = findViewById(R.id.buttonDot);
 
-            initButtons();
-            changeColor(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR,
-                    DEFAULT_KEYPAD_BUTTON_BG,
-                    DEFAULT_KEYPAD_BUTTON_BG_CIRCLE,
-                    DEFAULT_KEYPAD_BG);
+        final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Numpad);
+        handleBackButton = typedArray.getBoolean(R.styleable.Numpad_handleBackButton, false);
+        showMoreButton = typedArray.getBoolean(R.styleable.Numpad_showMoreButton, true);
+        showNegativeButton = typedArray.getBoolean(R.styleable.Numpad_showNegativeButton, true);
+        showGoButton = typedArray.getBoolean(R.styleable.Numpad_showGoButton, true);
+        showControlButtons = typedArray.getBoolean(R.styleable.Numpad_showControlButtons, true);
+        requireDecimal = typedArray.getBoolean(R.styleable.Numpad_requireDecimal, false);
+
+        initButtons();
+
+        showMoreButton(showMoreButton);
+        showNegativeButton(showNegativeButton);
+        showGoButton(showGoButton);
+        showControlButtons(showControlButtons);
+
+        changeColor(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR,
+                DEFAULT_KEYPAD_BUTTON_BG,
+                DEFAULT_KEYPAD_BUTTON_BG_CIRCLE,
+                DEFAULT_KEYPAD_BG);
 
             setRequireDecimal(false);
         }
@@ -462,10 +478,11 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
                 @Override
                 public boolean onKey(View view, int i, KeyEvent keyEvent) {
                     if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                        if(getVisibility() == VISIBLE) {
-                            hide();
-                            return true;
-                        }
+                        if(handleBackButton)
+                            if(getVisibility() == VISIBLE) {
+                                hide();
+                                return true;
+                            }
                     }
                     return false;
                 }
@@ -559,29 +576,5 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         void hasFocus(View focused, boolean hasFocus);
         void onConfirmClick(String text);
         void onMoreButtonClicked();
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        // TODO: consider storing these as member variables to reduce
-        // allocations per draw cycle.
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
-
-        int w = getWidth() - paddingLeft - paddingRight;
-        int h = getHeight() - paddingTop - paddingBottom;
-
-        w = w<h ? w : h;
-        h = w;
-
-        // Draw the example drawable on top of the text.
-        /*if (dieDrawable != null) {
-            dieDrawable.setBounds(paddingLeft, paddingTop,
-                    paddingLeft + w, paddingTop + h);
-            dieDrawable.draw(canvas);
-        }*/
     }
 }
