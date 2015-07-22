@@ -79,27 +79,27 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             //buttonDash = findViewById(R.id.buttonDash);
             buttonDot = findViewById(R.id.buttonDot);
 
-        final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Numpad);
-        handleBackButton = typedArray.getBoolean(R.styleable.Numpad_handleBackButton, false);
-        showMoreButton = typedArray.getBoolean(R.styleable.Numpad_showMoreButton, true);
-        showNegativeButton = typedArray.getBoolean(R.styleable.Numpad_showNegativeButton, true);
-        showGoButton = typedArray.getBoolean(R.styleable.Numpad_showGoButton, true);
-        showControlButtons = typedArray.getBoolean(R.styleable.Numpad_showControlButtons, true);
-        requireDecimal = typedArray.getBoolean(R.styleable.Numpad_requireDecimal, false);
+            final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Numpad);
+            handleBackButton = typedArray.getBoolean(R.styleable.Numpad_handleBackButton, false);
+            showMoreButton = typedArray.getBoolean(R.styleable.Numpad_showMoreButton, true);
+            showNegativeButton = typedArray.getBoolean(R.styleable.Numpad_showNegativeButton, true);
+            showGoButton = typedArray.getBoolean(R.styleable.Numpad_showGoButton, true);
+            showControlButtons = typedArray.getBoolean(R.styleable.Numpad_showControlButtons, true);
+            requireDecimal = typedArray.getBoolean(R.styleable.Numpad_requireDecimal, false);
 
-        initButtons();
+            initButtons();
 
-        showMoreButton(showMoreButton);
-        showNegativeButton(showNegativeButton);
-        showGoButton(showGoButton);
-        showControlButtons(showControlButtons);
+            showMoreButton(showMoreButton);
+            showNegativeButton(showNegativeButton);
+            showGoButton(showGoButton);
+            showControlButtons(showControlButtons);
 
-        changeColor(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR,
-                DEFAULT_KEYPAD_BUTTON_BG,
-                DEFAULT_KEYPAD_BUTTON_BG_CIRCLE,
-                DEFAULT_KEYPAD_BG);
+            changeColor(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR,
+                    DEFAULT_KEYPAD_BUTTON_BG,
+                    DEFAULT_KEYPAD_BUTTON_BG_CIRCLE,
+                    DEFAULT_KEYPAD_BG);
 
-            setRequireDecimal(false);
+            setRequireDecimal(requireDecimal);
         }
     }
     private void setRequireDecimal(boolean requireDecimal) {
