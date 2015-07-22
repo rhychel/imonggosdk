@@ -2,17 +2,23 @@ package net.nueca.imonggosdk.widgets;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -48,15 +54,18 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
     public static final int DEFAULT_KEYPAD_BUTTON_BG_CIRCLE = R.drawable.keypad_button_circle;
     public static final int DEFAULT_KEYPAD_BG = R.color.keypad_default_bg;
 
-    private List<View> buttonList;
-    private List<Button> extraButtonList;
+    //private List<View> buttonList;
     private List<TextHolder> textViewList;
 
-    private View button00, buttonDot, ibtnMore;
-    private ImageButton ibtnGo, ibtnNegative;
+    private Button button00, buttonDot;
+    private List<Button> buttonNum;
+    private ImageButton ibtnGo, ibtnNegative, ibtnBksp, ibtnMore;
 
-    private int buttonTextColor,buttonBackground, keypadBackground, goButtonBackground;
-    private boolean handleBackButton = false, showMoreButton = true, showNegativeButton = true, showGoButton = true, showControlButtons = true, requireDecimal = false;
+    private boolean handleBackButton = false, showMoreButton = true, showNegativeButton = true,
+            showGoButton = true, showControlButtons = true, requireDecimal = false;
+    private int fontSize = 20;
+    private ColorStateList fontColor, backgroundColor;
+    private int buttonBgResource, goButtonBgResource;
 
     public Numpad(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -65,19 +74,21 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         keypadView = (ViewGroup) inflater.inflate(R.layout.imonggosdk_numpad, this, true);
 
-        if(!isInEditMode()) {
-            buttonList = new ArrayList<>();
-            keypadView.setVisibility(GONE);
+        //if(!isInEditMode()) {
+            //buttonList = new ArrayList<>();
+            buttonNum = new ArrayList<>();
+
             //vsExtraButtons = (ViewStub)keypadView.findViewById(R.id.vsExtraButton);
             llControls = (ViewGroup) findViewById(R.id.llControls);
 
-            ibtnMore = findViewById(R.id.ibtnMore);
+            ibtnMore = (ImageButton) findViewById(R.id.ibtnMore);
             ibtnGo = (ImageButton) findViewById(R.id.ibtnGo);
             ibtnNegative = (ImageButton) findViewById(R.id.ibtnNegative);
+            ibtnBksp = (ImageButton) keypadView.findViewById(R.id.ibtnBksp);
 
-            button00 = findViewById(R.id.button00);
+            button00 = (Button) findViewById(R.id.button00);
             //buttonDash = findViewById(R.id.buttonDash);
-            buttonDot = findViewById(R.id.buttonDot);
+            buttonDot = (Button) findViewById(R.id.buttonDot);
 
             final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Numpad);
             handleBackButton = typedArray.getBoolean(R.styleable.Numpad_handleBackButton, false);
@@ -86,22 +97,84 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             showGoButton = typedArray.getBoolean(R.styleable.Numpad_showGoButton, true);
             showControlButtons = typedArray.getBoolean(R.styleable.Numpad_showControlButtons, true);
             requireDecimal = typedArray.getBoolean(R.styleable.Numpad_requireDecimal, false);
+            fontSize = typedArray.getInteger(R.styleable.Numpad_fontSize, 20);
+            fontColor = typedArray.getColorStateList(R.styleable.Numpad_fontColor);
+            buttonBgResource = typedArray.getResourceId(R.styleable.Numpad_buttonBgResource, DEFAULT_KEYPAD_BUTTON_BG);
+            goButtonBgResource = typedArray.getResourceId(R.styleable.Numpad_goButtonBgResource,
+                    DEFAULT_KEYPAD_BUTTON_BG_CIRCLE);
+            backgroundColor = typedArray.getColorStateList(R.styleable.Numpad_backgroundColor);
 
-            initButtons();
+            /*if(goButtonBgResource == DEFAULT_KEYPAD_BUTTON_BG && Build.VERSION.SDK_INT >= 21) {
+                TypedValue colorPrimary = new TypedValue();
+                getContext().getTheme().resolveAttribute(android.R.attr.colorPrimary,colorPrimary,true);
+                if(colorPrimary != null)
+                    goButtonBgResource = colorPrimary.resourceId;
+            }*/
+
+            if(fontColor == null)
+                fontColor = getResources().getColorStateList(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR);
+            if(backgroundColor == null)
+                backgroundColor = getResources().getColorStateList(DEFAULT_KEYPAD_BG);
 
             showMoreButton(showMoreButton);
             showNegativeButton(showNegativeButton);
             showGoButton(showGoButton);
             showControlButtons(showControlButtons);
 
-            changeColor(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR,
-                    DEFAULT_KEYPAD_BUTTON_BG,
-                    DEFAULT_KEYPAD_BUTTON_BG_CIRCLE,
-                    DEFAULT_KEYPAD_BG);
-
             setRequireDecimal(requireDecimal);
-        }
+
+        //if(!isInEditMode())
+            initAppearance();
+            if(!isInEditMode()) {
+                initControlButtons();
+                initInputButtons();
+            }
+        //}
     }
+
+    private void initAppearance() {
+        if(buttonNum.size() <= 0) {
+            buttonNum.add((Button) findViewById(R.id.button0));
+            buttonNum.add((Button) findViewById(R.id.button1));
+            buttonNum.add((Button) findViewById(R.id.button2));
+            buttonNum.add((Button) findViewById(R.id.button3));
+            buttonNum.add((Button) findViewById(R.id.button4));
+            buttonNum.add((Button) findViewById(R.id.button5));
+            buttonNum.add((Button) findViewById(R.id.button6));
+            buttonNum.add((Button) findViewById(R.id.button7));
+            buttonNum.add((Button) findViewById(R.id.button8));
+            buttonNum.add((Button) findViewById(R.id.button9));
+        }
+
+        for(int i=0; i<buttonNum.size(); i++) {
+            buttonNum.get(i).setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+            buttonNum.get(i).setTextColor(fontColor);
+            buttonNum.get(i).setBackgroundResource(buttonBgResource);
+        }
+
+        button00.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+        button00.setTextColor(fontColor);
+        button00.setBackgroundResource(buttonBgResource);
+
+        buttonDot.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+        buttonDot.setTextColor(fontColor);
+        buttonDot.setBackgroundResource(buttonBgResource);
+
+        ibtnMore.setColorFilter(fontColor.getDefaultColor());
+        ibtnMore.setBackgroundResource(buttonBgResource);
+
+        ibtnBksp.setColorFilter(fontColor.getDefaultColor());
+        ibtnBksp.setBackgroundResource(buttonBgResource);
+
+        ibtnNegative.setColorFilter(fontColor.getDefaultColor());
+        ibtnNegative.setBackgroundResource(buttonBgResource);
+
+        ibtnGo.setColorFilter(fontColor.getDefaultColor());
+        ibtnGo.setBackgroundResource(goButtonBgResource);
+
+        keypadView.setBackgroundColor(backgroundColor.getDefaultColor());
+    }
+
     private void setRequireDecimal(boolean requireDecimal) {
         BEGIN_FROM_DECIMAL = requireDecimal;
         if(requireDecimal) {
@@ -125,94 +198,44 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
 
     public void setEnable00(boolean isEnabled) {
         button00.setEnabled(isEnabled);
-        //button00.setAlpha(isEnabled? 1f : 0.75f);
     }
     public void setEnableDot(boolean isEnabled) {
         buttonDot.setEnabled(isEnabled);
-        //button00.setAlpha(isEnabled? 1f : 0.75f);
     }
     public void setAllowNegative(boolean allow) {
         ibtnNegative.setEnabled(allow);
-        //button00.setAlpha(isEnabled? 1f : 0.75f);
     }
 
-    public void changeBackgroundDrawable(int resource_keypadBG) {
-        keypadBackground = resource_keypadBG;
-    }
     public void changeBackgroundColor(int resource_keypadBG) {
-        keypadBackground = resource_keypadBG;
+        backgroundColor = getResources().getColorStateList(resource_keypadBG);
+        if(backgroundColor != null)
+            keypadView.setBackgroundColor(backgroundColor.getDefaultColor());
     }
 
     public void changeTextColorResource(int resource_textColor) {
-        buttonTextColor = resource_textColor;
-        changeTextColor();
+        fontColor = getResources().getColorStateList(resource_textColor);
+        initAppearance();
     }
 
-    public void changeButtonBackgroundDrawable(int resource_buttonBG) {
-        buttonBackground = resource_buttonBG;
-        changeBackgroundDrawable();
-    }
-    public void changeButtonBackgroundColor(int resource_buttonBG) {
-        buttonBackground = resource_buttonBG;
-        changeBackgroundColor();
+    public void changeButtonBackgroundResource(int resource_buttonBG) {
+        buttonBgResource = resource_buttonBG;
+        initAppearance();
     }
     public void changeGoBackgroundDrawable(int resource_buttonGoBG) {
-        goButtonBackground = resource_buttonGoBG;
-        ibtnGo.setBackgroundResource(goButtonBackground);
-    }
-    public void changeGoBackgroundColor(int resource_buttonGoBG) {
-        goButtonBackground = resource_buttonGoBG;
-        ibtnGo.setBackgroundColor(goButtonBackground);
+        goButtonBgResource = resource_buttonGoBG;
+        ibtnGo.setBackgroundResource(goButtonBgResource);
     }
 
     private void changeColor(int resource_textColor, int resource_buttonBG,
                              int resource_buttonGoBG, int resource_keypadBG) {
-        buttonTextColor = resource_textColor;
-        buttonBackground = resource_buttonBG;
-        keypadBackground = resource_keypadBG;
-        goButtonBackground = resource_buttonGoBG;
+        changeBackgroundColor(resource_keypadBG);
+        changeGoBackgroundDrawable(resource_buttonGoBG);
 
-        Log.e("changeColor","called");
-        changeBackgroundDrawable();
-        ibtnGo.setBackgroundResource(goButtonBackground);
+        fontColor = getResources().getColorStateList(resource_textColor);
+        buttonBgResource = resource_buttonBG;
+        initAppearance();
     }
 
-    private void colorize(Button button) {
-        button.setTextColor(getResources().getColorStateList(buttonTextColor));
-        button.setBackgroundResource(buttonBackground);
-    }
-    private void changeTextColor() {
-        for(int i=0; i<buttonList.size(); i++) {
-            View child = buttonList.get(i);
-            if(child instanceof Button) {
-                ((Button) child).setTextColor(getResources().getColorStateList(buttonTextColor));
-            }
-            else if(child instanceof ImageButton) {
-                ColorStateList stateList = getResources().getColorStateList(buttonTextColor);
-                if(stateList != null)
-                    ((ImageButton) child).setColorFilter(stateList.getDefaultColor());
-            }
-        }
-    }
-
-    private void changeBackgroundDrawable() {
-        for(int i=0; i<buttonList.size(); i++) {
-            View child = buttonList.get(i);
-            if(child.getId() == R.id.ibtnGo)
-                continue;
-            //child.setBackground(getResources().getDrawable(goButtonBackground));
-            child.setBackgroundResource(buttonBackground);
-        }
-    }
-    private void changeBackgroundColor() {
-        for(int i=0; i<buttonList.size(); i++) {
-            View child = buttonList.get(i);
-            if(child.getId() == R.id.ibtnGo)
-                continue;
-            //child.setBackgroundColor(goButtonBackground);
-            child.setBackgroundColor(buttonBackground);
-        }
-    }
     public void showControlButtons(boolean shouldShow) {
         llControls.setVisibility(shouldShow? VISIBLE : GONE);
     }
@@ -230,9 +253,8 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         mTextHolder = textHolder;
     }
 
-    private void initButtons() {
-        buttonFinder(keypadView, false);
-        setAsBackspaceButton(keypadView.findViewById(R.id.ibtnBksp));
+    private void initControlButtons() {
+        setAsBackspaceButton(ibtnBksp);
         ibtnMore.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -249,6 +271,14 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             }
         });
     }
+    private void initInputButtons() {
+        for(int i=0; i<buttonNum.size(); i++) {
+            buttonNum.get(i).setOnClickListener(getButtonTextClickListener);
+        }
+        buttonDot.setOnClickListener(getButtonTextClickListener);
+        button00.setOnClickListener(getButtonTextClickListener);
+    }
+
     private void toggleNegative() {
         isNegative = !isNegative;
         ibtnNegative.setImageResource(isNegative?
@@ -261,7 +291,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         view.setOnLongClickListener(backspaceLongClickListener);
     }
 
-    private void buttonFinder(ViewGroup viewGroup, boolean isDefaultButtonHolder) {
+    /*private void buttonFinder(ViewGroup viewGroup, boolean isDefaultButtonHolder) {
         for(int i=0; i<viewGroup.getChildCount(); i++) {
             View child = viewGroup.getChildAt(i);
             if(child instanceof ViewGroup) {
@@ -269,12 +299,14 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             }
             else if(child instanceof Button || child instanceof ImageButton) {
                 if(isDefaultButtonHolder || child.getId() == R.id.ibtnMore) //{
-                    if (child instanceof Button)
+                    if (child instanceof Button) {
                         child.setOnClickListener(getButtonTextClickListener);
+                        ((Button) child).setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+                    }
                 buttonList.add(child);
             }
         }
-    }
+    }*/
 
     public final View.OnClickListener getButtonTextClickListener =  new View.OnClickListener() {
         @Override
@@ -524,11 +556,6 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
     }
     public void show() {
         setVisibility(VISIBLE);
-    }
-
-    private int toDP(int dp) {
-        final float scale = getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
     }
 
     public class TextHolder {
