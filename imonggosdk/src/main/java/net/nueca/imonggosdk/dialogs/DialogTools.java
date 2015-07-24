@@ -65,7 +65,9 @@ public class DialogTools {
      * Hides the Indeterminate Progress Dialog and sets it to null
      */
     public static void hideIndeterminateProgressDialog() {
-        mProgressDialog.hide();
-        mProgressDialog = null;
+        if(mProgressDialog != null) {
+            mProgressDialog.hide();
+            mProgressDialog = null;
+        }
     }
 }

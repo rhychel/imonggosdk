@@ -84,9 +84,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * setIsUsingCustomLayout(...)
      * setContentView(...)
      * setLayoutEquipments(..);
-     *
      */
     protected abstract void onCreateLayoutForLogin();
+
     /**
      * If you want to add some logic before fetching data
      */
@@ -349,6 +349,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             return true;
         }
     }
+
     /**
      * Sets the Layout for BaseLogin
      */
@@ -501,7 +502,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     private void deleteUserSessionData() {
-        if(getHelper() != null) {
+        if (getHelper() != null) {
             getHelper().deleteAllDatabaseValues();
         }
     }
@@ -732,10 +733,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     @Override
     public void onDownloadProgress(Table table, int page, int max) {
+        Log.e(TAG, "Downloading " + table + " " + page + " out of " + max);
         String currentTable = "";
         for (Table tableN : Table.values()) {
             if (table == tableN) {
-                switch (table) {
+                switch (tableN) {
                     case USERS:
                         currentTable = "Users";
                         break;
@@ -750,6 +752,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         break;
                     case PRODUCTS:
                         currentTable = "Products";
+                        Log.e(TAG, "Updating progress of " + table + " " + page + " out of " + max);
                         break;
                     case INVENTORIES:
                         currentTable = "Inventories";
@@ -768,8 +771,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 }
             }
         }
+        int progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
         customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(mModulesToDownload.indexOf(currentTable));
-        customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), ((page / max) * 100));
+        customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), progress);
     }
 
     @Override

@@ -101,6 +101,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         if (mCurrentTableSyncing == Table.USERS) { //check if its a User, then resume downloading the user branches on count request and so on...
             if (mModulesToSync[mModulesIndex] == Table.BRANCH_USERS) {
                 mCurrentTableSyncing = Table.BRANCH_USERS;
+
                 Log.e(TAG, "preparing to sync " + mCurrentTableSyncing);
                 page = 1;
                 numberOfPages = 1;
@@ -112,7 +113,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         mModulesIndex++;
 
         if (mModulesIndex >= mModulesToSync.length) {  // this is when there are no left tables to sync
-
+            Log.e(TAG, "finished downloading tables");
             if (mSyncModulesListener != null) {
                 Log.e(TAG, "finished downloading tables");
                 // When the request is successful

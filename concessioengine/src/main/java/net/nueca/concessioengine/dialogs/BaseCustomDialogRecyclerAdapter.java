@@ -57,7 +57,7 @@ public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.Vi
 
     public void setDownloadProgress(int position, int progress) {
         this.mDownloadProgress.set(position, progress);
-        notifyItemChanged(position);
+        notifyDataSetChanged();
     }
 
     public void updateCircularProgressBar(int position, Boolean choice) {
