@@ -130,7 +130,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected void onStart() {
         super.onStart();
         Log.e(TAG, "onStart called");
-        startSyncService();
+
     }
 
     @Override
@@ -341,6 +341,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * Sets the Layout for BaseLogin
      */
     private void setLoginLayout() {
+
         // if you are not using custom layout
         if (!isUsingCustomLayout()) {
             setContentView(R.layout.concessioengine_login);
