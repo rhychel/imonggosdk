@@ -101,7 +101,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         if (mCurrentTableSyncing == Table.USERS) { //check if its a User, then resume downloading the user branches on count request and so on...
             if (mModulesToSync[mModulesIndex] == Table.BRANCH_USERS) {
                 mCurrentTableSyncing = Table.BRANCH_USERS;
-
                 Log.e(TAG, "preparing to sync " + mCurrentTableSyncing);
                 page = 1;
                 numberOfPages = 1;
@@ -113,7 +112,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         mModulesIndex++;
 
         if (mModulesIndex >= mModulesToSync.length) {  // this is when there are no left tables to sync
-            Log.e(TAG, "finished downloading tables");
+
             if (mSyncModulesListener != null) {
                 Log.e(TAG, "finished downloading tables");
                 // When the request is successful
@@ -198,6 +197,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 switch (module) {
                     case USERS:
+                        if (mSyncModulesListener != null) {
+                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
+                        }
+
                         if (size == 0) {
                             syncNext();
                             return;
@@ -229,16 +232,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                             }
                         }
-
                         newUsers.doOperation();
                         updateUsers.doOperation();
                         deleteUsers.doOperation();
-
+                        break;
+                    case BRANCH_USERS:
                         if (mSyncModulesListener != null) {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
                         }
-                        break;
-                    case BRANCH_USERS:
+
                         if (page == 1) {
                             getHelper().dbOperations(null, Table.BRANCHES, DatabaseOperation.DELETE_ALL);
                             getHelper().dbOperations(null, Table.BRANCH_TAGS, DatabaseOperation.DELETE_ALL);
@@ -255,14 +257,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             Branch branch = gson.fromJson(jsonObject.toString(), Branch.class);
                             // TODO: finish this
                         }
-
-                        if (mSyncModulesListener != null) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
-                        }
                         break;
                     case PRODUCTS:
                         Log.e(TAG, "Products | size: " + size + " page: " + page + " max page: " + numberOfPages);
                         Log.e(TAG, "Syncing Page " + page);
+
+                        if (mSyncModulesListener != null) {
+                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
+                        }
 
                         if (size == 0) {
                             syncNext();
@@ -306,10 +308,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         updateProducts.doOperation();
                         deleteProducts.doOperation();
                         productTags.doOperation();
-
-                        if (mSyncModulesListener != null) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
-                        }
                         break;
                     default:
                         break;

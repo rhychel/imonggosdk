@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.enums.Server;
@@ -96,9 +95,7 @@ public class LoginActivity extends BaseLoginActivity {
                 setupLayoutEquipments((EditText) findViewById(R.id.etAccountId),
                         (EditText) findViewById(R.id.etEmail),
                         (EditText) findViewById(R.id.etPassword),
-                        (ProgressBar) findViewById(R.id.pbCircularProgressBar),
-                        (Button) findViewById(R.id.btnSignIn),
-                        (Button) findViewById(R.id.btnUnlink));
+                        (Button) findViewById(R.id.btnSignIn));
 
                 unlinkAccount();
             }
