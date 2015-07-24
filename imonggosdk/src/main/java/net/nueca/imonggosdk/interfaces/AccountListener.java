@@ -5,6 +5,6 @@ package net.nueca.imonggosdk.interfaces;
  * imonggosdk (c)2015
  */
 public interface AccountListener {
-    public void onLogoutAccount();
-    public void onUnlinkAccount();
+    void onLogoutAccount();
+    void onUnlinkAccount();
 }

@@ -35,7 +35,7 @@ public class CustomDialogFrameLayout extends FrameLayout {
             mView = inflater.inflate(R.layout.concessioengine_download_layout, null);
         }
 
-        mRecyclerView = (RecyclerView) mView.findViewById(R.id.cs_recyclerview);
+        mRecyclerView = (RecyclerView) mView.findViewById(R.id.rvModulesToSync);
         mLinearLayoutManager = new org.solovyev.android.views.llm.LinearLayoutManager(context);
         mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mLinearLayoutManager.scrollToPosition(0);
@@ -44,7 +44,7 @@ public class CustomDialogFrameLayout extends FrameLayout {
 
         customModuleAdapter = new CustomModuleAdapter(mContext, R.layout.item_module, mModuleName);
 
-            customModuleAdapter.setOnItemClickListener(new BaseCustomDialogRecyclerAdapter.OnItemClickListener() {
+        customModuleAdapter.setOnItemClickListener(new BaseCustomDialogRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
                 LoggingTools.showToast(context, "OnItemClicked" + getCustomModuleAdapter().getModuleAt(position));
@@ -60,10 +60,7 @@ public class CustomDialogFrameLayout extends FrameLayout {
         });
 
         mRecyclerView.setAdapter(customModuleAdapter);
-
-
         addView(mView);
-
     }
 
 

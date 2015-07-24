@@ -12,7 +12,7 @@ import net.nueca.concessioengine.R;
 import java.util.List;
 
 /**
- * ....Created by Jn on 7/9/2015.
+ * Created by Jn on 7/9/2015.
  * imonggosdk (c)2015
  */
 public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomModuleAdapter.ViewHolder> {
@@ -36,27 +36,36 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
 
     @Override
     public void onBindViewHolderHelper(VH holder, int position) {
+
+        if (getCircularProgressBar(position)) {
+            holder.hideCircularProgressBar();
+        } else {
+            holder.showCircularProgressBar();
+        }
+
         holder.bind(getModuleAt(position), getProgressAt(position));
         holder.itemView.setTag(getModuleAt(position));
     }
 
 
     public class ViewHolder extends BaseCustomDialogRecyclerAdapter.VH {
-        private TextView moduleName;
-        private TextView progressPercentageDownload;
-        private ProgressBar progressBar;
+        private TextView tvModuleName;
+        private TextView tvPercentageDownload;
+        private ProgressBar pbHorizontal;
+        private ProgressBar pbCircular;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            moduleName = (TextView) itemView.findViewById(R.id.module_name);
+            tvModuleName = (TextView) itemView.findViewById(R.id.tvModuleName);
+            pbCircular = (ProgressBar) itemView.findViewById(R.id.pbCircularProgressBar);
 
-            progressPercentageDownload = (TextView) itemView.findViewById(R.id.progress_download);
-            progressPercentageDownload.setText("0%");
+            tvPercentageDownload = (TextView) itemView.findViewById(R.id.tvDownloadProgress);
+            tvPercentageDownload.setText("0%");
 
-            progressBar = (ProgressBar) itemView.findViewById(R.id.module_progress_download);
-            progressBar.setMax(100);
-            progressBar.setProgress(0);
+            pbHorizontal = (ProgressBar) itemView.findViewById(R.id.pbModuleProgress);
+            pbHorizontal.setMax(100);
+            pbHorizontal.setProgress(0);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
@@ -65,49 +74,71 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
         @Override
         public void bind(String name, int progress) {
             getModuleName().setText(name);
-            getProgressPercentageDownload().setText(progress + "%");
-            getProgressBar().setProgress(progress);
+            getPercentageDownload().setText(progress + "%");
+            getHorizontalProgressBar().setProgress(progress);
+        }
+
+        @Override
+        public void hideCircularProgressBar() {
+            getPercentageDownload().setVisibility(View.VISIBLE);
+            getCircularProgressBar().setVisibility(View.GONE);
+        }
+
+        @Override
+        public void showCircularProgressBar() {
+            getPercentageDownload().setVisibility(View.GONE);
+            getCircularProgressBar().setVisibility(View.VISIBLE);
         }
 
         public TextView getModuleName() {
-            return moduleName;
+            return tvModuleName;
         }
 
-        public TextView getProgressPercentageDownload() {
-            return progressPercentageDownload;
+        public TextView getPercentageDownload() {
+            return tvPercentageDownload;
         }
 
-        public ProgressBar getProgressBar() {
-            return progressBar;
+        public ProgressBar getHorizontalProgressBar() {
+            return pbHorizontal;
+        }
+
+        public ProgressBar getCircularProgressBar() {
+            return pbCircular;
         }
 
         @Override
         public void onClick(View v) {
-            if(mOnItemClickListener != null) {
+            if (mOnItemClickListener != null) {
                 mOnItemClickListener.onItemClicked(v, getLayoutPosition());
             }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            if(mOnItemClickListener != null) {
+            if (mOnItemClickListener != null) {
                 mOnItemLongClickListener.onItemLongClicked(v, getLayoutPosition());
             }
-
             return true;
         }
     }
 
     /**
-     * Update the RecyclerView Rows by passing the list
+     * Update the RecyclerView Rows by passing the integer progress
+     *
      * @param progress List of Progress
      */
-    public void updateProgressBar(List<Integer> progress){
-        setDownloadProgress(progress);
+    public void updateProgressBar(int position, int progress) {
+            setDownloadProgress(position, progress);
     }
 
-    public void updateProgressBar(int position, int progress){
-        setDownloadProgress(position, progress);
+    public void hideCircularProgressBar(int position) {
+            updateCircularProgressBar(position, true);
+    }
+
+    public void showCircularProgressBar(int position) {
+        if(!getCircularProgressBar(position)) {
+            updateCircularProgressBar(position, false);
+        }
     }
 
 }

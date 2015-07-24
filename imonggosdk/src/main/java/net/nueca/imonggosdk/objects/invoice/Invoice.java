@@ -271,7 +271,7 @@ public class Invoice extends BaseTable {
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
         if(id < 0) {
-            Log.e("Invoice", "insertTo : Invalid ID : use returned ID from server after sending as this Invoice's ID");
+            Log.e("Invoice", "insertTo : Invalid ID : use returned ID from mServer after sending as this Invoice's ID");
             return;
         }
 

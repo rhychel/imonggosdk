@@ -19,7 +19,6 @@ import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,17 +43,7 @@ public class ImonggoSwable extends SwableService {
     private SwableStateListener swableStateListener;
 
     private User user;
-    private User getUser() {
-        if(user == null) {
-            try {
-                user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
-            }
-            catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return user;
-    }
+
 
     @Override
     public void syncModule() {

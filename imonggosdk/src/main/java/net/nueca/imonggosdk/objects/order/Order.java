@@ -185,7 +185,7 @@ public class Order extends BaseTable {
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
         if(id < 0) {
-            Log.e("Order", "insertTo : Invalid ID : use returned ID from server after sending as this Order's ID");
+            Log.e("Order", "insertTo : Invalid ID : use returned ID from mServer after sending as this Order's ID");
             return;
         }
 

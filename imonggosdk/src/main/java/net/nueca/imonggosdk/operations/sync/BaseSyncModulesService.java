@@ -36,10 +36,9 @@ public abstract class BaseSyncModulesService extends ImonggoService {
     public static final String PARAMS_INITIAL_SYNC = "initial_sync";
     public static final String PARAMS_IS_ACTIVE_ONLY = "is_active_only";
     public static final String PARAMS_TABLES_TO_SYNC = "tables_to_sync"; // array tables/API
-    public static final String PARAMS_SERVER = "server";
+    public static final String PARAMS_SERVER = "mServer";
 
     public static boolean isRequesting = true;
-    private User user;
     protected Server server;
 
     protected int page = 1, responseCode = 200, count = 0, numberOfPages = 1;
@@ -55,15 +54,13 @@ public abstract class BaseSyncModulesService extends ImonggoService {
     protected int branchIndex = 0;
 
     protected Table tableSyncing;
-
     protected ImonggoDBHelper dbHelper;
     private RequestQueue queue;
+
     private Session session;
     protected LastUpdatedAt lastUpdatedAt, newLastUpdatedAt;
     protected String from = "", to = "";
-
     protected Gson gson = new GsonBuilder().serializeNulls().create();
-
     protected IBinder syncModulesLocalBinder = new SyncModulesLocalBinder();
     protected SyncModulesListener syncModulesListener = null;
 
@@ -83,7 +80,7 @@ public abstract class BaseSyncModulesService extends ImonggoService {
         isActiveOnly = bundle.getBoolean(PARAMS_IS_ACTIVE_ONLY, true);
         server = Server.values()[bundle.getInt(PARAMS_SERVER, Server.IMONGGO.ordinal())];
 
-        if(syncAllModules) {
+        if (syncAllModules) {
             /**
              * Application Settings //==> During login
              * Users -- LAST_UPDATED_AT
@@ -100,15 +97,14 @@ public abstract class BaseSyncModulesService extends ImonggoService {
              */
             tablesIndex = 0;
             tablesToSync = new Table[]{Table.USERS, Table.TAX_RATES,
-                                        Table.PRODUCTS, Table.INVENTORIES,
-                                        Table.CUSTOMERS, Table.DOCUMENTS,
-                                        Table.DOCUMENT_TYPES};
+                    Table.PRODUCTS, Table.INVENTORIES,
+                    Table.CUSTOMERS, Table.DOCUMENTS,
+                    Table.DOCUMENT_TYPES};
             /*
             TODO , Table.SALES_PROMOTIONS
              */
             tableSyncing = tablesToSync[tablesIndex];
-        }
-        else {
+        } else {
             int[] forSyncing = bundle.getIntArray(PARAMS_TABLES_TO_SYNC);
             if (forSyncing != null) {
                 tablesIndex = 0;
@@ -116,19 +112,16 @@ public abstract class BaseSyncModulesService extends ImonggoService {
                 for (int i = 0; i < forSyncing.length; i++) {
                     tablesToSync[i] = Table.values()[forSyncing[i]];
                 }
-
                 tableSyncing = tablesToSync[tablesIndex];
             }
         }
-
         startSync();
-
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        if(dbHelper != null) {
+        if (dbHelper != null) {
             OpenHelperManager.releaseHelper();
             dbHelper = null;
         }
@@ -142,31 +135,22 @@ public abstract class BaseSyncModulesService extends ImonggoService {
 
     /**
      * Get the requestqueue
+     *
      * @return
      */
     protected RequestQueue getQueue() {
-        if(queue == null)
+        if (queue == null)
             queue = Volley.newRequestQueue(this);
         return queue;
     }
 
     /**
-     * Get the database helper
-     * @return
-     */
-    protected ImonggoDBHelper getHelper() {
-        if(dbHelper == null)
-            dbHelper = OpenHelperManager.getHelper(this, ImonggoDBHelper.class);
-        return dbHelper;
-
-    }
-
-    /**
      * Get the current session.
+     *
      * @return
      */
     protected Session getSession() {
-        if(session == null) {
+        if (session == null) {
             try {
                 session = getHelper().getSessions().queryBuilder().queryForFirst();
             } catch (SQLException e) {
@@ -176,18 +160,9 @@ public abstract class BaseSyncModulesService extends ImonggoService {
         return session;
     }
 
-    protected User getUser() {
-        if(user == null)
-            try {
-                user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        return user;
-    }
-
     /**
      * Check if the table item is already existing in the database
+     *
      * @param o
      * @param table
      * @return
@@ -196,7 +171,7 @@ public abstract class BaseSyncModulesService extends ImonggoService {
     protected boolean isExisting(Object o, Table table) throws SQLException {
         switch (table) {
             case USERS: {
-                User user = (User)o;
+                User user = (User) o;
                 return getHelper().getUsers().queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
             }
             case PRODUCTS: {

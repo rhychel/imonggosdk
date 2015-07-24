@@ -19,6 +19,7 @@ import java.util.ArrayList;
  */
 public class BatchList<T> extends ArrayList<T> {
 
+    private String TAG = "BatchList";
     private DatabaseOperation databaseOperation = DatabaseOperation.INSERT;
     private ImonggoDBHelper dbHelper;
 
@@ -45,20 +46,32 @@ public class BatchList<T> extends ArrayList<T> {
 
     public void doOperation(ImonggoDBHelper dbHelper) {
         if(size() == 0) {
-            Log.e("BatchList", "Ooops! There's nothing to save.");
+            Log.e(TAG, "Ooops! There's nothing to " + databaseOperation.toString());
             return;
         }
-        if(get(0) instanceof User)
+        if(get(0) instanceof User) {
             dbHelper.batchCreateOrUpdateUsers(this, databaseOperation);
-        if(get(0) instanceof Product)
+            Log.e(TAG, databaseOperation.toString() + "ING to Users tables");
+        }
+        if(get(0) instanceof Product) {
             dbHelper.batchCreateOrUpdateProducts(this, databaseOperation);
-        if(get(0) instanceof InvoiceLine)
+            Log.e(TAG, databaseOperation.toString() + "ING to Product tables");
+        }
+        if(get(0) instanceof InvoiceLine) {
             dbHelper.batchCreateOrUpdateInvoiceLines(this, databaseOperation);
-        if(get(0) instanceof InvoiceTaxRate)
+            Log.e(TAG, databaseOperation.toString() + "ING to Invoiceline Table");
+        }
+        if(get(0) instanceof InvoiceTaxRate) {
             dbHelper.batchCreateOrUpdateInvoiceTaxRates(this, databaseOperation);
-        if(get(0) instanceof Payment)
+            Log.e(TAG, databaseOperation.toString() + "ING to InvoiceTaxRate Table");
+        }
+        if(get(0) instanceof Payment) {
             dbHelper.batchCreateOrUpdatePayments(this, databaseOperation);
-        if(get(0) instanceof OrderLine)
+            Log.e(TAG, databaseOperation.toString() + "ING to Payment Table");
+        }
+        if(get(0) instanceof OrderLine) {
+            Log.e(TAG, databaseOperation.toString() + "ING to OrderLine Table");
             dbHelper.batchCreateOrUpdateOrderLines(this, databaseOperation);
+        }
     }
 }

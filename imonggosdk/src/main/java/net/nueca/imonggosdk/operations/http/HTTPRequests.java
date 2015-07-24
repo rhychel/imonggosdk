@@ -1,7 +1,7 @@
 package net.nueca.imonggosdk.operations.http;
 
 import android.content.Context;
-import android.util.Log;
+
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
@@ -31,6 +31,8 @@ import java.util.Map;
  */
 public class HTTPRequests {
 
+    public static String TAG = "HTTPRequests";
+
     public static JsonObjectRequest sendGETJsonObjectRequest(Context context, final Session session,
                                                              final VolleyRequestListener volleyRequestListener, Server server,
                                                              final Table table, final RequestType requestType, String parameter) {
@@ -38,7 +40,7 @@ public class HTTPRequests {
             volleyRequestListener.onStart(table, requestType);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
-                null, ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
+                ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -74,6 +76,7 @@ public class HTTPRequests {
                                                            final Table table, final RequestType requestType, String parameter) {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
+
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
                 new Response.Listener<JSONArray>() {
@@ -155,7 +158,6 @@ public class HTTPRequests {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.i("postrequestresponse", response.toString());
                         if (volleyRequestListener != null)
                             volleyRequestListener.onSuccess(table, RequestType.POST, response);
                     }
@@ -180,7 +182,6 @@ public class HTTPRequests {
             }
         };
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
-        Log.e("URL",jsonObjectRequest.getUrl());
         return jsonObjectRequest;
     }
 
@@ -257,7 +258,6 @@ public class HTTPRequests {
             }
         };
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
-        Log.e("URL",jsonObjectRequest.getUrl());
         return jsonObjectRequest;
     }
 
