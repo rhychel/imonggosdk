@@ -92,15 +92,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     protected abstract void updateAppData();
 
-    /**
-     * Set the Layout View of Select branches here
-     */
-    protected abstract void showSelectBranchLayout();
-
-    /**
-     * The Welcome Screen
-     */
-    protected abstract void showDashboardScreen();
+    protected abstract void showNextActivity();
 
 
     protected abstract void beforeLogin();
@@ -232,20 +224,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 updateAppData();
             }
 
-            if (!haveDefaultBranch()) {
-                // TODO: show select branches screen dapat isuhay ko ini abstract lang dapat
-                showSelectBranchLayout();
-            } else {
-                // TODO: show welcome screen
-                showDashboardScreen();
-            }
+            showNextActivity();
         }
     }
 
     public void startSyncingImonggoModules() {
 
         if (isSyncServiceBinded()) {
-
             setUpModuleNamesForCustomDialog();
             showSyncModulesCustomDialog();
 
@@ -496,7 +481,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 setUnlinked(true);
 
                 stopLogin();
-
             }
         });
     }
@@ -788,14 +772,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         syncingModulesSuccessful();
         customDialog.hide();
 
-        if (!haveDefaultBranch()) {
-            // TODO: show select branches screen
-            showSelectBranchLayout();
-        } else {
-            // TODO: show welcome screen
-            showDashboardScreen();
-        }
-
+        showNextActivity();
     }
 
     @Override

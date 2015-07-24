@@ -23,6 +23,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".C_Login2"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Concessio">
+        </activity>
+        <activity
             android:name=".C_Module"
             android:label="@string/app_name" >
         </activity>

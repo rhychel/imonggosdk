@@ -23,6 +23,11 @@ public class SimpleLoginActivity extends BaseLoginActivity {
     }
 
     @Override
+    protected void showNextActivity() {
+
+    }
+
+    @Override
     protected void beforeLogin() {
 
     }
@@ -39,16 +44,6 @@ public class SimpleLoginActivity extends BaseLoginActivity {
 
     @Override
     protected void syncingModulesSuccessful() {
-
-    }
-
-    @Override
-    protected void showSelectBranchLayout() {
-
-    }
-
-    @Override
-    protected void showDashboardScreen() {
 
     }
 

@@ -281,6 +281,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             Product product = gson.fromJson(jsonObject.toString(), Product.class);
                             if (initialSync | lastUpdatedAt == null) {
+                                product.setSearchKey(product.getName()+product.getStock_no());
                                 newProducts.add(product);
                             } else if (isExisting(product, Table.PRODUCTS)) {
                                 DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
