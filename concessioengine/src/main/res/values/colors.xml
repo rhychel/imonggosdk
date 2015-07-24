@@ -12,4 +12,9 @@
 
     <color name="login_default_bg">#ffffff</color>
     <color name="login_default_status_bg">#ffffff</color>
+
+    <color name="dialog_field_label">#00A599</color>
+
+    <color name="mdtp_accent_color">#50d2c2</color>
+    <color name="mdtp_accent_color_dark">#41aa9d</color>
 </resources>

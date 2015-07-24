@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +26,12 @@ import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
 import net.nueca.concessioengine.exceptions.ProductsFragmentException;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 6/3/15. <br/>
@@ -136,9 +140,18 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     @Override
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
         try {
+            List<ProductTag> tags = getHelper().getProductTags().queryBuilder().where().eq("product_id", product).query();
+            List<String> brands = new ArrayList<>();
+
+            for(ProductTag productTag : tags)
+                if(productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
+                    brands.add(productTag.getTag().replaceAll("##", ""));
+
             SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
             quantityDialog.setSelectedProductItem(selectedProductItem);
             quantityDialog.setUnitList(getHelper().getUnits().queryForAll(), true);
+            //quantityDialog.setBrandList(brands);
+            quantityDialog.setFragmentManager(getActivity().getFragmentManager());
             quantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
                 @Override
                 public void onSave(SelectedProductItem selectedProductItem) {

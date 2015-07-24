@@ -5,6 +5,7 @@ import android.util.Log;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
@@ -53,6 +54,8 @@ public class BatchList<T> extends ArrayList<T> {
             dbHelper.batchCreateOrUpdateUsers(this, databaseOperation);
         if(get(0) instanceof Product)
             dbHelper.batchCreateOrUpdateProducts(this, databaseOperation);
+        if(get(0) instanceof ProductTag)
+            dbHelper.batchCreateOrUpdateProductTags(this, databaseOperation);
         if(get(0) instanceof InvoiceLine)
             dbHelper.batchCreateOrUpdateInvoiceLines(this, databaseOperation);
         if(get(0) instanceof InvoiceTaxRate)
