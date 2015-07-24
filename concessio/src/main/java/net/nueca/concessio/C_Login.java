@@ -18,11 +18,11 @@ public class C_Login extends LoginActivity {
 
     }
 
-    @Override
+@Override
     protected void showNextActivity() {
-        Intent intent = new Intent(getApplicationContext(), C_Login2.class);
-        startActivity(intent);
         finish();
+        Intent intent = new Intent(this, C_Module.class);
+        startActivity(intent);
     }
 
 }

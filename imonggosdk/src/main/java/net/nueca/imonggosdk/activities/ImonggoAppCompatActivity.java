@@ -14,6 +14,8 @@ import java.sql.SQLException;
  * Created by rhymart on 5/14/15.
  * imonggosdk (c)2015
  */
+
+
 public class ImonggoAppCompatActivity extends AppCompatActivity {
 
     private ImonggoDBHelper dbHelper;

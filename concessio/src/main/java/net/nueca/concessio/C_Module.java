@@ -1,27 +1,15 @@
 package net.nueca.concessio;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-import android.widget.Button;
+import android.view.MenuItem;
 import android.widget.ListView;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.Session;
-import net.nueca.imonggosdk.objects.base.BatchList;
-import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.AccountTools;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.sql.SQLException;
 
@@ -33,6 +21,7 @@ import java.sql.SQLException;
 public class C_Module extends ModuleActivity {
 
     private ListView lvSampleProducts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +40,28 @@ public class C_Module extends ModuleActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.c_module, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        try {
+            switch (item.getItemId()) {
+                case R.id.sample:
+
+                    AccountTools.unlinkAccount(C_Module.this, getHelper(), null);
+                    Intent intent = new Intent(C_Module.this, C_Login.class);
+
+                    startActivity(intent);
+                    finish();
+
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

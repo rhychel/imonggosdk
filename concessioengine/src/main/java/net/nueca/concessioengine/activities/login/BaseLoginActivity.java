@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -318,12 +319,14 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private void showSyncModulesCustomDialog() {
 
         customDialogFrameLayout = new CustomDialogFrameLayout(BaseLoginActivity.this, mModulesToDownload);
-
         customDialog = new CustomDialog(BaseLoginActivity.this, R.style.AppCompatDialogStyle);
-        customDialog.setTitle(getString(R.string.FETCHING_MODULE_TITLE));
-        customDialog.setContentView(customDialogFrameLayout);
-        customDialog.setCancelable(false);
-        customDialog.show();
+
+        if (customDialog != null) {
+            customDialog.setTitle(getString(R.string.FETCHING_MODULE_TITLE));
+            customDialog.setContentView(customDialogFrameLayout);
+            customDialog.setCancelable(false);
+            customDialog.show();
+        }
     }
 
     public Boolean haveDefaultBranch() {
@@ -365,9 +368,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.etEmail = editTextEmail;
         this.etPassword = editTextPassword;
 
-        this.etAccountID.setText("nuecaonly");
-        this.etEmail.setText("nuecaonly@test.com");
-        this.etPassword.setText("nuecaonly");
+        this.etAccountID.setText("retailpos");
+        this.etEmail.setText("retailpos@test.com");
+        this.etPassword.setText("retailpos ");
 
         this.btnSignIn = btnSignIn;
 
@@ -510,6 +513,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void finish() {
+        ViewGroup view = (ViewGroup) getWindow().getDecorView();
+        view.removeAllViews();
+        super.finish();
     }
 
     /**
@@ -686,10 +696,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     private void bindSyncService() {
         Log.e(TAG, "Binding service.........");
-        if (bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_ADJUST_WITH_ACTIVITY)) {
-            Log.e(TAG, "Service binded");
-        } else {
-            Log.e(TAG, "Service is already binded.");
+
+        if (!isSyncServiceBinded()) {
+            if (bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_ADJUST_WITH_ACTIVITY)) {
+                Log.e(TAG, "Service binded");
+            } else {
+                Log.e(TAG, "Service is already binded.");
+            }
         }
     }
 
@@ -770,7 +783,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     public void onFinishDownload() {
         LoggingTools.showToast(this, "Finished Downloading Modules");
         syncingModulesSuccessful();
-        customDialog.hide();
+        if (customDialog != null) {
+            customDialog.dismiss();
+        }
 
         showNextActivity();
     }
@@ -817,6 +832,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mBaseLogin.onStop();
             }
         }
+        DialogTools.hideIndeterminateProgressDialog();
         super.onStop();
     }
 
@@ -828,6 +844,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mBaseLogin.onStop();
             }
         }
+        DialogTools.hideIndeterminateProgressDialog();
         super.onDestroy();
     }
 }
