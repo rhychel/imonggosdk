@@ -93,7 +93,7 @@ public class SettingTools {
      * Returns Current Selected Server
      *
      * @param context current context
-     * @return current server, "" if none
+     * @return current mServer, "" if none
      */
     public static String currentServer(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

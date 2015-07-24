@@ -43,9 +43,7 @@ import java.sql.SQLException;
  * @since 6/8/2015
  */
 public class BaseLogin {
-
     private static final String LOGIN_TAG = "login_tag";
-
     private String mAccountId;
     private String mEmail;
     private String mPassword;
@@ -215,6 +213,7 @@ public class BaseLogin {
 
                 // Insert Session to Database
                 mSession.insertTo(mDBHelper);
+
 
                 // show Toast Message
                 Log.i("Jn-BaseLogin", "Account URL Request Successful");
@@ -413,7 +412,6 @@ public class BaseLogin {
                                     dialog.dismiss();
                                 }
                             });
-
                     // Show Toast Message
                     //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD));
                 } else { // invalid url or not connected to a network

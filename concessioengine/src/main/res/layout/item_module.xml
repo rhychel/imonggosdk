@@ -1,6 +1,5 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linearLayout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="#FFFFFF"
@@ -10,7 +9,7 @@
     android:layout_weight="1">
 
     <TextView
-        android:id="@+id/module_name"
+        android:id="@+id/tvModuleName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1.2"
@@ -21,7 +20,7 @@
         android:textSize="16sp" />
 
     <ProgressBar
-        android:id="@+id/module_progress_download"
+        android:id="@+id/pbModuleProgress"
         style="?android:progressBarStyleHorizontal"
         android:layout_weight="1"
         android:layout_width="fill_parent"
@@ -36,7 +35,7 @@
 
 
     <TextView
-        android:id="@+id/progress_download"
+        android:id="@+id/tvDownloadProgress"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:text="100%"
@@ -44,6 +43,17 @@
         android:textSize="14sp"
         android:paddingLeft="9dp"
         android:paddingTop="9dp"
+        android:paddingBottom="9dp"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/pbCircularProgressBar"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="9dp"
+        android:paddingTop="9dp"
         android:paddingBottom="9dp" />
+
 
 </LinearLayout>
