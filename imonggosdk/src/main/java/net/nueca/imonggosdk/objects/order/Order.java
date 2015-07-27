@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
 import net.nueca.imonggosdk.objects.base.BatchList;
-import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import org.json.JSONArray;
 import org.json.JSONException;

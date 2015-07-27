@@ -5,10 +5,6 @@ import android.util.Log;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.User;
-import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
-import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
-import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
-import net.nueca.imonggosdk.objects.order.OrderLine;
 
 import java.util.ArrayList;
 
@@ -45,7 +41,7 @@ public class BatchList<T> extends ArrayList<T> {
 
     public void doOperation(ImonggoDBHelper dbHelper) {
         if(size() == 0) {
-            Log.e("BatchList", "Ooops! There's nothing to save.");
+            Log.e(TAG, "Ooops! There's nothing to " + databaseOperation.toString());
             return;
         }
         if(get(0) instanceof User)
