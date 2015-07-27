@@ -1,6 +1,5 @@
 package net.nueca.imonggosdk.swable;
 
-import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;

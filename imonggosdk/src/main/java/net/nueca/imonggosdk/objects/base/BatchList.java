@@ -18,16 +18,7 @@ import java.util.ArrayList;
  */
 public class BatchList<T> extends ArrayList<T> {
 
-/*    public class BatchListException //extends RuntimeException {
-        public BatchListException() {
-            throw new RuntimeException("Error!");
-        }
-
-        public BatchListException(String detailMessage) {
-            throw new RuntimeException("Stub!");
-        }
-    }*/
-
+    private String TAG = "BatchList";
     private DatabaseOperation databaseOperation = DatabaseOperation.INSERT;
     private ImonggoDBHelper dbHelper;
 
