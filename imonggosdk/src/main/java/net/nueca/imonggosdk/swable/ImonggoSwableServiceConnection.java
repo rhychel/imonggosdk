@@ -15,10 +15,6 @@ public class ImonggoSwableServiceConnection implements ServiceConnection {
     private boolean isBound;
     private int notificationIcon;
 
-    public ImonggoSwableServiceConnection(ImonggoSwable.SwableStateListener swableStateListener) {
-        this.swableStateListener = swableStateListener;
-        this.notificationIcon = -1;
-    }
     public ImonggoSwableServiceConnection(@DrawableRes int notificationIcon, ImonggoSwable.SwableStateListener
             swableStateListener) {
         this.swableStateListener = swableStateListener;

@@ -11,6 +11,8 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.base.BaseTransaction;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -159,6 +161,22 @@ public class OfflineData extends BaseTable2 {
         this.isPagedRequest = order.shouldPageRequest();
         this.pagedRequestCount = SwableTools.computePagedRequestCount(order.getOrderLines().size(),
                 Order.MAX_ORDERLINES_PER_PAGE);
+    }
+
+    public OfflineData(Document document, OfflineDataType offlineDataType) {
+        String []timestamp = DateTimeTools.getCurrentDateTimeInvoice();
+        String timeId = timestamp[0]+" "+timestamp[1];
+        this.date = timeId;
+        this.dateCreated = Calendar.getInstance().getTime();
+
+        this.offlineDataTransactionType = offlineDataType.getNumericValue();
+        this.type = DOCUMENT;
+        this.data = document.toJSONString();
+        this.reference_no = document.getReference();
+
+        this.isPagedRequest = document.shouldPageRequest();
+        this.pagedRequestCount = SwableTools.computePagedRequestCount(document.getDocument_lines().size(),
+                Document.MAX_DOCUMENTLINES_PER_PAGE);
     }
 
     public String getData() {
@@ -480,13 +498,13 @@ public class OfflineData extends BaseTable2 {
         }
     }
 
-    public Object generateObjectFromData() throws JSONException {
+    public BaseTransaction generateObjectFromData() throws JSONException {
         if(type == INVOICE)
             return Invoice.fromJSONString(data);
         else if(type == ORDER)
             return Order.fromJSONString(data);
         else if(type == DOCUMENT)
-            return null;
+            return Document.fromJSONString(data);
         else
             return null;
     }

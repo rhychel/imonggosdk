@@ -75,7 +75,7 @@ public class Configurations {
 			put(Table.POS_DEVICES, "pos_devices.json");
 
 			put(Table.INVOICES, "invoices.json");
-//			put(Modules.DOCUMENTS, "documents.json");
+			put(Table.DOCUMENTS, "documents.json");
 //            put(Modules.CONCESSIO_SETTINGS, "application_settings/concesio.json");
             put(Table.ORDERS, "orders.json");
 //            put(Modules.POS_DEVICES, "pos_devices.json");
@@ -102,7 +102,7 @@ public class Configurations {
 			put(Table.POS_DEVICES, "pos_devices");
 
             put(Table.INVOICES, "invoices");
-//            put(Modules.DOCUMENTS, "documents");
+            put(Table.DOCUMENTS, "documents");
 			put(Table.ORDERS, "orders");
 //            put(Modules.CONCESSIO_SETTINGS, "application_settings");
 //            put(Modules.DISCOUNTS, "sales_promotions");

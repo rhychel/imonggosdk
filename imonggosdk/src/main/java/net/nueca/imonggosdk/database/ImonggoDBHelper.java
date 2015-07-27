@@ -2,7 +2,6 @@ package net.nueca.imonggosdk.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -33,11 +32,9 @@ import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
-import net.nueca.imonggosdk.objects.invoice.Payment;
+import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
-
-import org.json.JSONException;
 
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
@@ -75,14 +72,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
     // added by gama
     private Dao<OfflineData, Integer> offlineData = null;
-
-    private Dao<Invoice, Integer> invoices = null;
-    private Dao<InvoiceLine, Integer> invoiceLines = null;
-    private Dao<InvoiceTaxRate, Integer> invoiceTaxRates = null;
-    private Dao<Payment, Integer> payments = null;
-
-    private Dao<Order, Integer> orders = null;
-    private Dao<OrderLine, Integer> orderLines = null;
     // end of added
 
     public ImonggoDBHelper(Context context) { super(context, DATABASE_NAME, null, DATABASE_VERSION); }
@@ -112,13 +101,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, LastUpdatedAt.class);
 
             TableUtils.createTable(connectionSource, OfflineData.class);
-            TableUtils.createTable(connectionSource, Invoice.class);
-            TableUtils.createTable(connectionSource, InvoiceLine.class);
-            TableUtils.createTable(connectionSource, InvoiceTaxRate.class);
-            TableUtils.createTable(connectionSource, Payment.class);
 
-            TableUtils.createTable(connectionSource, Order.class);
-            TableUtils.createTable(connectionSource, OrderLine.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -149,13 +132,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, LastUpdatedAt.class, true);
 
             TableUtils.dropTable(connectionSource, OfflineData.class, true);
-            TableUtils.dropTable(connectionSource, Invoice.class, true);
-            TableUtils.dropTable(connectionSource, InvoiceLine.class, true);
-            TableUtils.dropTable(connectionSource, InvoiceTaxRate.class, true);
-            TableUtils.dropTable(connectionSource, Payment.class, true);
-
-            TableUtils.dropTable(connectionSource, Order.class, true);
-            TableUtils.dropTable(connectionSource, OrderLine.class, true);
 
             onCreate(database, connectionSource);
         } catch (SQLException e) {
@@ -274,37 +250,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         return offlineData;
     }
 
-    public Dao<Invoice, Integer> getInvoices() throws SQLException {
-        if(invoices == null)
-            invoices = getDao(Invoice.class);
-        return invoices;
-    }
-    public Dao<InvoiceLine, Integer> getInvoiceLines() throws SQLException {
-        if(invoiceLines == null)
-            invoiceLines = getDao(InvoiceLine.class);
-        return invoiceLines;
-    }
-    public Dao<InvoiceTaxRate, Integer> getInvoiceTaxRates() throws SQLException {
-        if(invoiceTaxRates == null)
-            invoiceTaxRates = getDao(InvoiceTaxRate.class);
-        return invoiceTaxRates;
-    }
-    public Dao<Payment, Integer> getPayments() throws SQLException {
-        if(payments == null)
-            payments = getDao(Payment.class);
-        return payments;
-    }
-    public Dao<Order, Integer> getOrders() throws SQLException {
-        if(orders == null)
-            orders = getDao(Order.class);
-        return orders;
-    }
-    public Dao<OrderLine, Integer> getOrderLines() throws SQLException {
-        if(orderLines == null)
-            orderLines = getDao(OrderLine.class);
-        return orderLines;
-    }
-
     /**
      * DROP Table
      */
@@ -313,7 +258,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             case BRANCHES: {
                 TableUtils.dropTable(getConnectionSource(), Branch.class, true);
             } break;
-            case     BRANCH_PRICES: {
+            case BRANCH_PRICES: {
                 TableUtils.dropTable(getConnectionSource(), BranchPrice.class, true);
             } break;
             case BRANCH_TAGS: {
@@ -358,24 +303,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
             case OFFLINEDATA: {
                 TableUtils.dropTable(getConnectionSource(), OfflineData.class, true);
-            } break;
-            case INVOICES: {
-                TableUtils.dropTable(getConnectionSource(), Invoice.class, true);
-            } break;
-            case INVOICE_LINES: {
-                TableUtils.dropTable(getConnectionSource(), InvoiceLine.class, true);
-            } break;
-            case INVOICE_TAX_RATES: {
-                TableUtils.dropTable(getConnectionSource(), InvoiceTaxRate.class, true);
-            } break;
-            case PAYMENTS: {
-                TableUtils.dropTable(getConnectionSource(), Payment.class, true);
-            } break;
-            case ORDERS: {
-                TableUtils.dropTable(getConnectionSource(), Order.class, true);
-            } break;
-            case ORDER_LINES: {
-                TableUtils.dropTable(getConnectionSource(), OrderLine.class, true);
             } break;
 
             // ASSOCIATIVES
@@ -463,24 +390,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             case OFFLINEDATA:
                 getOfflineData().create((OfflineData)object);
                 break;
-            case INVOICES:
-                getInvoices().create((Invoice)object);
-                break;
-            case INVOICE_LINES:
-                getInvoiceLines().create((InvoiceLine)object);
-                break;
-            case INVOICE_TAX_RATES:
-                getInvoiceTaxRates().create((InvoiceTaxRate)object);
-                break;
-            case PAYMENTS:
-                getPayments().create((Payment)object);
-                break;
-            case ORDERS:
-                getOrders().create((Order)object);
-                break;
-            case ORDER_LINES:
-                getOrderLines().create((OrderLine)object);
-                break;
 
             // ASSOCIATIVES
             case BRANCH_USERS:
@@ -543,24 +452,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
             case OFFLINEDATA:
                 getOfflineData().delete((OfflineData) object);
-                break;
-            case INVOICES:
-                getInvoices().delete((Invoice) object);
-                break;
-            case INVOICE_LINES:
-                getInvoiceLines().delete((InvoiceLine) object);
-                break;
-            case INVOICE_TAX_RATES:
-                getInvoiceTaxRates().delete((InvoiceTaxRate) object);
-                break;
-            case PAYMENTS:
-                getPayments().delete((Payment) object);
-                break;
-            case ORDERS:
-                getOrders().delete((Order) object);
-                break;
-            case ORDER_LINES:
-                getOrderLines().delete((OrderLine) object);
                 break;
 
             // ASSOCIATIVES
@@ -625,24 +516,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             case OFFLINEDATA:
                 getOfflineData().deleteBuilder().delete();
                 break;
-            case INVOICES:
-                getInvoices().deleteBuilder().delete();
-                break;
-            case INVOICE_LINES:
-                getInvoiceLines().deleteBuilder().delete();
-                break;
-            case INVOICE_TAX_RATES:
-                getInvoiceTaxRates().deleteBuilder().delete();
-                break;
-            case PAYMENTS:
-                getPayments().deleteBuilder().delete();
-                break;
-            case ORDERS:
-                getOrders().deleteBuilder().delete();
-                break;
-            case ORDER_LINES:
-                getOrderLines().deleteBuilder().delete();
-                break;
 
             // ASSOCIATIVES
             case BRANCH_USERS:
@@ -705,24 +578,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
             case OFFLINEDATA:
                 getOfflineData().update((OfflineData) object);
-                break;
-            case INVOICES:
-                getInvoices().update((Invoice) object);
-                break;
-            case INVOICE_LINES:
-                getInvoiceLines().update((InvoiceLine) object);
-                break;
-            case INVOICE_TAX_RATES:
-                getInvoiceTaxRates().update((InvoiceTaxRate) object);
-                break;
-            case PAYMENTS:
-                getPayments().update((Payment) object);
-                break;
-            case ORDERS:
-                getOrders().update((Order) object);
-                break;
-            case ORDER_LINES:
-                getOrderLines().update((OrderLine) object);
                 break;
 
             // ASSOCIATIVES
@@ -1008,79 +863,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-
-    public void batchCreateOrUpdateInvoiceLines(final BatchList invoiceLines, final DatabaseOperation databaseOperations) {
-
-        try {
-            Dao<InvoiceLine, Integer> daoInvoiceLines = getInvoiceLines();
-            daoInvoiceLines.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(InvoiceLine invoiceLine : ((BatchList<InvoiceLine>)invoiceLines))
-                        invoiceLine.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateInvoiceTaxRates(final BatchList invoiceTaxRates, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<InvoiceTaxRate, Integer> daoInvoiceTaxRates = getInvoiceTaxRates();
-            daoInvoiceTaxRates.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(InvoiceTaxRate invoiceTaxRate : ((BatchList<InvoiceTaxRate>)invoiceTaxRates))
-                        invoiceTaxRate.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdatePayments(final BatchList payments, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<Payment, Integer> daoPayments = getPayments();
-            daoPayments.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Payment payment : ((BatchList<Payment>)payments))
-                        payment.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void batchCreateOrUpdateOrderLines(final BatchList orderLines, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<OrderLine, Integer> daoOrderLines = getOrderLines();
-            daoOrderLines.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(OrderLine orderLine : ((BatchList<OrderLine>)orderLines))
-                        orderLine.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void deleteAllDatabaseValues() {
         try {
             getBranches().deleteBuilder().delete();
@@ -1100,12 +882,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             getDocumentPurposes().deleteBuilder().delete();
 
             getOfflineData().deleteBuilder().delete();
-            getInvoices().deleteBuilder().delete();
-            getInvoiceLines().deleteBuilder().delete();
-            getInvoiceTaxRates().deleteBuilder().delete();
-            getPayments().deleteBuilder().delete();
-            getOrders().deleteBuilder().delete();
-            getOrderLines().deleteBuilder().delete();
 
             getBranchUserAssocs().deleteBuilder().delete();
             getProductTaxRateAssocs().deleteBuilder().delete();

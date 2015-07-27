@@ -1,39 +1,21 @@
 package net.nueca.imonggosdk.objects.order;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
-import com.j256.ormlite.field.DatabaseField;
-
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.base.BaseTable2;
-import net.nueca.imonggosdk.objects.invoice.Invoice;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.sql.SQLException;
 
 /**
  * Created by rhymart on 5/6/14.
  * NuecaLibrary (c)2014
  */
-public class OrderLine extends BaseTable2 {
-    @Expose
-    @DatabaseField
+public class OrderLine {
     private int line_no = 0;
 
-    @Expose
-    @DatabaseField
     private int product_id = 0;
 
-    @Expose
-    @DatabaseField
     private double retail_price = 0.0;
 
-    @Expose
-    @DatabaseField
     private double quantity = 0.0;
 
     /*@Expose
@@ -59,9 +41,6 @@ public class OrderLine extends BaseTable2 {
     @Expose
     @DatabaseField
     private String brand = "";*/
-
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "order_id")
-    private transient Order order;
 
     public OrderLine() {}
 
@@ -112,18 +91,6 @@ public class OrderLine extends BaseTable2 {
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(this));
-        /*JSONObject jsonObject = new JSONObject();
-        jsonObject.put("line_no", line_no);
-        jsonObject.put("product_id", product_id);
-        jsonObject.put("retail_price", retail_price);
-        jsonObject.put("quantity", quantity);
-        jsonObject.put("unit_id", unit_id);
-        jsonObject.put("unit_quantity", unit_quantity);
-        jsonObject.put("unit_content_quantity", unit_content_quantity);
-        jsonObject.put("unit_name", unit_name);
-        jsonObject.put("unit_id", unit_id);
-        jsonObject.put("brand", brand);
-        return jsonObject;*/
     }
 
     /*public double getUnitQuantity() {
@@ -172,40 +139,5 @@ public class OrderLine extends BaseTable2 {
 
     public void setLine_no(int line_no) {
         this.line_no = line_no;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.ORDER_LINES, DatabaseOperation.INSERT);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.ORDER_LINES, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.ORDER_LINES, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -2,6 +2,7 @@ package net.nueca.imonggosdk.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.v7.app.AppCompatDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -21,7 +22,7 @@ import java.util.List;
  * TODO : More button
  */
 
-public class KeypadDialog extends Dialog {
+public class KeypadDialog extends AppCompatDialog {
     private ImageButton ibtnMore, ibtnCancel, ibtnGo, ibtnBksp;
     private TextView mTextHolder;
     private ViewGroup tlButtonArea;
@@ -38,7 +39,7 @@ public class KeypadDialog extends Dialog {
 
     public KeypadDialog(Context context, boolean cancelable, OnCancelListener onCancelListener, boolean requireDecimal) {
         super(context, cancelable, onCancelListener);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.imonggosdk_keypad_dialog);
 
         mTextHolder = (TextView) findViewById(R.id.tvTextHolder);
