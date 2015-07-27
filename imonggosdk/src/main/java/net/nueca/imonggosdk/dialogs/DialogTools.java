@@ -51,18 +51,16 @@ public class DialogTools {
                                                        String content, Boolean cancelable) {
         mProgressDialog = new ProgressDialog(context);
 
-        if(mProgressDialog != null) {
-            mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setIndeterminate(true);
 
-            if (title != null) {
-                mProgressDialog.setTitle(title);
-            }
-
-            mProgressDialog.setCancelable(cancelable);
-            mProgressDialog.setMessage(content);
-
-            mProgressDialog.show();
+        if (title != null) {
+            mProgressDialog.setTitle(title);
         }
+
+        mProgressDialog.setCancelable(cancelable);
+        mProgressDialog.setMessage(content);
+
+        mProgressDialog.show();
     }
 
     /**

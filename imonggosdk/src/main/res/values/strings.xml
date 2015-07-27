@@ -24,7 +24,7 @@
     <string name="param_login">email=%1$s&amp;password=%2$s</string>
 
     <string name="LOGIN_FAILED_TITLE">Failed to Sign In</string>
-    <string name="LOGIN_FAILED_POSITIVE_BUTTON">Sign In Again</string>
+    <string name="LOGIN_FAILED_POSITIVE_BUTTON">Ok</string>
     <string name="LOGIN_FIELD_REQUIRED">This field is required.</string>
     <string name="LOGIN_INVALID_EMAIL">Invalid email address.</string>
     <string name="LOGIN_INVALID_PASSWORD">Invalid password, the length of Password should be at least 5 characters.</string>

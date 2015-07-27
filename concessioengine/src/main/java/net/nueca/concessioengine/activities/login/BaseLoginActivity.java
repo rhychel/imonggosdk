@@ -240,6 +240,21 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mSyncModules.startFetchingModules();
             } else {
                 Log.e(TAG, "Service Modules is null cannot start sync");
+                if (customDialog != null) {
+                    customDialog.dismiss();
+                }
+                startSyncService();
+
+                DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
+                        "Sync failed. Login Again ",
+                        "Ok", "", false,
+                        new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                super.onPositive(dialog);
+                                bindSyncService();
+                            }
+                        });
             }
         } else {
             Log.e(TAG, "Service is not binded cannot start sync");
@@ -285,6 +300,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             case DOCUMENTS:
                                 mModulesToDownload.add("Documents");
                                 break;
+                            case UNITS:
+                                mModulesToDownload.add("Units");
+                                break;
                             default:
                                 Log.e(TAG, "You have added unsupported module");
                                 break;
@@ -301,6 +319,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     Table.PRODUCTS.ordinal(),
                     Table.INVENTORIES.ordinal(),
                     Table.CUSTOMERS.ordinal(),
+                    Table.UNITS.ordinal(),
                     Table.DOCUMENTS.ordinal(),
                     Table.DOCUMENT_TYPES.ordinal()
             };
@@ -311,6 +330,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             mModulesToDownload.add("Products");
             mModulesToDownload.add("Inventories");
             mModulesToDownload.add("Customers");
+            mModulesToDownload.add("Units");
             mModulesToDownload.add("Documents");
             mModulesToDownload.add("Document Types");
         }
@@ -687,23 +707,22 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private void startSyncService() {
         if (!isSyncServiceRunning(SyncModules.class) || mSyncModules == null) {
             startService(mServiceIntent);
-            Log.i(TAG, "There is no service running, starting service..");
+            Log.e(TAG, "There is no service running, starting service..");
             bindSyncService();
         } else {
-            Log.i(TAG, "Service is already running");
+            Log.e(TAG, "Service is already running");
         }
     }
 
     private void bindSyncService() {
         Log.e(TAG, "Binding service.........");
 
-        if (!isSyncServiceBinded()) {
-            if (bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_ADJUST_WITH_ACTIVITY)) {
-                Log.e(TAG, "Service binded");
-            } else {
-                Log.e(TAG, "Service is already binded.");
-            }
+        if (bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_ADJUST_WITH_ACTIVITY)) {
+            Log.e(TAG, "Service binded");
+        } else {
+            Log.e(TAG, "Service is already binded.");
         }
+
     }
 
     private void doUnbindService() {
@@ -763,6 +782,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     case DOCUMENT_TYPES:
                         currentTable = "Document Type";
                         break;
+                    case UNITS:
+                        currentTable = "Units";
                     default:
                         break;
                 }

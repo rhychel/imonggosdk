@@ -45,7 +45,7 @@ public class LoginActivity extends BaseLoginActivity {
         Log.e(TAG, "Server is " + getServer().toString());
 
         // set the Modules to download
-        int[] modules = {Table.USERS.ordinal(), Table.PRODUCTS.ordinal()};
+        int[] modules = {Table.USERS.ordinal(), Table.PRODUCTS.ordinal(), Table.UNITS.ordinal()};
         setModules(modules);
     }
 
@@ -72,6 +72,7 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Override
     protected void stopLogin() {
+
 
     }
 
