@@ -534,12 +534,10 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
                             setCustomDrawer(customDrawer);
                         }
 
-
                         if (customDrawer == null && (extraButtonList == null || extraButtonList.size() <= 0)) {
                             setEnableDrawer(false);
                             extraButtonList = null;
                         }
-
 
                         textHolder.helper.hasFocus(view, true);
                     } else { // no helper

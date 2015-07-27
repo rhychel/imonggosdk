@@ -83,7 +83,7 @@ public abstract class BaseSyncModulesService extends ImonggoService {
         isActiveOnly = bundle.getBoolean(PARAMS_IS_ACTIVE_ONLY, true);
         server = Server.values()[bundle.getInt(PARAMS_SERVER, Server.IMONGGO.ordinal())];
 
-        if(syncAllModules) {
+        if (syncAllModules) {
             /**
              * Application Settings //==> During login
              * Users -- LAST_UPDATED_AT

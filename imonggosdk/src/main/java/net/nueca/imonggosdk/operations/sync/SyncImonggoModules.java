@@ -152,6 +152,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
             startSyncContents(RequestType.COUNT);
         }
         tablesIndex++;
+
         if(tablesIndex == tablesToSync.length) { // this is when there are no left tables to sync
             if (syncModulesListener != null) {
                 // When the request is successful
@@ -231,6 +232,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                         startSyncContents(RequestType.COUNT);
                 } else if (requestType == RequestType.COUNT) {
                     count = jsonObject.getInt("count");
+
                     if(count == 0)
                         if(!syncNext())
                             return;

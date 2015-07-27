@@ -10,11 +10,9 @@ import android.support.v7.app.AppCompatDialog;
  */
 public class CustomDialog extends AppCompatDialog {
 
-
     public CustomDialog(Context context) {
         super(context);
     }
-
     public CustomDialog(Context context, int theme) {
         super(context, theme);
     }
@@ -22,6 +20,5 @@ public class CustomDialog extends AppCompatDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 }

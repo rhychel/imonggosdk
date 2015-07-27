@@ -16,12 +16,13 @@
         android:layout_height="wrap_content"
         android:measureWithLargestChild="true"
         android:gravity="center"
-        android:id="@+id/llMainContainer">
+        android:id="@+id/llMainContainer"
+        android:weightSum="4">
 
         <TableLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:id="@+id/tlContainer"
             android:layout_weight="1"
             android:stretchColumns="*">
@@ -32,7 +33,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:clipToPadding="false"
-            android:layout_marginRight="5dp">
+            >
 
             <Button
                 android:layout_width="fill_parent"
@@ -67,16 +68,6 @@
                 android:textColor="@color/keypad_button_text"
                 android:layout_weight="1" />
 
-            <ImageButton
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:id="@+id/ibtnMore"
-                android:src="@drawable/ic_menu"
-                android:background="@drawable/keypad_button"
-                android:tintMode="src_atop"
-                android:tint="@color/keypad_default_text"
-                android:layout_weight="1" />
-
         </TableRow>
 
         <TableRow
@@ -84,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp">
+            >
 
             <Button
                 android:layout_width="fill_parent"
@@ -122,16 +113,6 @@
                 android:background="@drawable/keypad_button"
                 android:textColor="@color/keypad_button_text" />
 
-            <ImageButton
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:id="@+id/ibtnBksp"
-                android:src="@drawable/ic_backspace"
-                android:layout_weight="1"
-                android:background="@drawable/keypad_button"
-                android:tintMode="src_atop"
-                android:tint="@color/keypad_default_text" />
-
         </TableRow>
 
         <TableRow
@@ -139,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp">
+            >
 
             <Button
                 android:layout_width="fill_parent"
@@ -177,26 +158,14 @@
                 android:background="@drawable/keypad_button"
                 android:textColor="@color/keypad_button_text" />
 
-            <ImageButton
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:id="@+id/ibtnNegative"
-                android:src="@drawable/ic_positive_scale"
-                android:layout_weight="1"
-                android:background="@drawable/keypad_button"
-                android:tintMode="src_atop"
-                android:tint="@color/keypad_default_text" />
-
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
-            android:weightSum="4"
             android:clipToPadding="false"
             android:clipChildren="false">
 
@@ -237,6 +206,52 @@
                 android:background="@drawable/keypad_button"
                 android:textColor="@color/keypad_button_text" />
 
+        </TableRow>
+
+        </TableLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:paddingBottom="5dp"
+            android:id="@+id/llControls"
+            android:weightSum="4">
+
+            <ImageButton
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:id="@+id/ibtnMore"
+                android:src="@drawable/ic_menu"
+                android:background="@drawable/keypad_button"
+                android:tintMode="src_atop"
+                android:tint="@color/keypad_default_text"
+                android:layout_marginTop="5dp"
+                />
+
+            <ImageButton
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:id="@+id/ibtnBksp"
+                android:src="@drawable/ic_backspace"
+                android:background="@drawable/keypad_button"
+                android:tintMode="src_atop"
+                android:tint="@color/keypad_default_text"
+                android:layout_marginTop="5dp"
+                />
+
+            <ImageButton
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:id="@+id/ibtnNegative"
+                android:src="@drawable/ic_positive_scale"
+                android:background="@drawable/keypad_button"
+                android:tintMode="src_atop"
+                android:tint="@color/keypad_default_text"
+                android:layout_marginTop="5dp"
+                />
+
             <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -245,13 +260,12 @@
                 android:background="@drawable/keypad_button_circle"
                 android:tintMode="src_atop"
                 android:tint="@color/keypad_default_text"
-                android:layout_weight="1"
                 android:adjustViewBounds="true"
-                android:layout_gravity="center_horizontal" />
-
-        </TableRow>
-
-        </TableLayout>
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                />
+        </LinearLayout>
 
     </LinearLayout>
 
