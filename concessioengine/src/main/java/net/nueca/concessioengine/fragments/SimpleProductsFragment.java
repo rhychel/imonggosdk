@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -47,6 +49,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     private SlidingUpPanelLayout suplProduct;
     private NetworkImageView ivProductImage;
     private TextView tvProductName, tvProductDescription;
+    private Spinner spCategories;
 
     private boolean useRecyclerView = true;
 
@@ -59,53 +62,52 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         tvProductDescription = (TextView) view.findViewById(R.id.tvProductDescription);
         ivProductImage = (NetworkImageView) view.findViewById(R.id.ivProductImage);
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
+        spCategories = (Spinner) view.findViewById(R.id.spCategories);
+
+        productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, productCategories);
+        spCategories.setAdapter(productCategoriesAdapter);
+        spCategories.setOnItemSelectedListener(onCategorySelected);
 
         suplProduct.setAnchorPoint(0.5f);
+        offset = 0l;
+//        setCategory("Chicken");
 
         if(useRecyclerView) {
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
-            try {
-                simpleProductRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getHelper().getProducts().queryForAll());
-                simpleProductRecyclerViewAdapter.setOnItemClickListener(new BaseProductsRecyclerAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(View view, int position) {
-                        Product product = simpleProductRecyclerViewAdapter.getProductsList().get(position);
-                        SelectedProductItem selectedProductItem = simpleProductRecyclerViewAdapter.getSelectedProductItems().getSelectedProductItem(product);
-                        if (selectedProductItem == null) {
-                            selectedProductItem = new SelectedProductItem();
-                            selectedProductItem.setProduct(product);
-                        }
-                        showQuantityDialog(position, product, selectedProductItem);
+            simpleProductRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
+            simpleProductRecyclerViewAdapter.setOnItemClickListener(new BaseProductsRecyclerAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClicked(View view, int position) {
+                    Product product = simpleProductRecyclerViewAdapter.getProductsList().get(position);
+                    SelectedProductItem selectedProductItem = simpleProductRecyclerViewAdapter.getSelectedProductItems().getSelectedProductItem(product);
+                    if (selectedProductItem == null) {
+                        selectedProductItem = new SelectedProductItem();
+                        selectedProductItem.setProduct(product);
                     }
-                });
-                simpleProductRecyclerViewAdapter.setOnItemLongClickListener(new BaseProductsRecyclerAdapter.OnItemLongClickListener() {
-                    @Override
-                    public void onItemLongClicked(View view, int position) {
-                        Product product = simpleProductRecyclerViewAdapter.getProductsList().get(position);
-                        showProductDetails(product);
-                    }
-                });
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                    showQuantityDialog(position, product, selectedProductItem);
+                }
+            });
+            simpleProductRecyclerViewAdapter.setOnItemLongClickListener(new BaseProductsRecyclerAdapter.OnItemLongClickListener() {
+                @Override
+                public void onItemLongClicked(View view, int position) {
+                    Product product = simpleProductRecyclerViewAdapter.getProductsList().get(position);
+                    showProductDetails(product);
+                }
+            });
 
             initializeRecyclerView(rvProducts);
             rvProducts.setAdapter(simpleProductRecyclerViewAdapter);
         }
         else {
             lvProducts = (ListView) view.findViewById(R.id.lvProducts);
-            try {
-                simpleProductListAdapter = new SimpleProductListAdapter(getActivity(), getHelper(), getHelper().getProducts().queryForAll());
-                lvProducts.setAdapter(simpleProductListAdapter);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            simpleProductListAdapter = new SimpleProductListAdapter(getActivity(), getHelper(), getProducts());
+            lvProducts.setAdapter(simpleProductListAdapter);
             lvProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                     Product product = simpleProductListAdapter.getItem(position);
                     SelectedProductItem selectedProductItem = simpleProductListAdapter.getSelectedProductItems().getSelectedProductItem(product);
-                    if(selectedProductItem == null) {
+                    if (selectedProductItem == null) {
                         selectedProductItem = new SelectedProductItem();
                         selectedProductItem.setProduct(product);
                     }
@@ -141,6 +143,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
         try {
             List<ProductTag> tags = getHelper().getProductTags().queryBuilder().where().eq("product_id", product).query();
+            Log.e("Tags", tags.size()+" size");
             List<String> brands = new ArrayList<>();
 
             for(ProductTag productTag : tags)
@@ -149,8 +152,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
             SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
             quantityDialog.setSelectedProductItem(selectedProductItem);
+            quantityDialog.setHasUnits(false);
             quantityDialog.setUnitList(getHelper().getUnits().queryForAll(), true);
-            //quantityDialog.setBrandList(brands);
+            quantityDialog.setBrandList(brands);
+            quantityDialog.setHasBrand(true);
             quantityDialog.setFragmentManager(getActivity().getFragmentManager());
             quantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
                 @Override
@@ -191,4 +196,30 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         if(setupActionBar != null)
             setupActionBar.setupActionBar(tbActionBar);
     }
+
+    private AdapterView.OnItemSelectedListener onCategorySelected = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+            Log.e("Category", productCategoriesAdapter.getItem(position).toLowerCase());
+            setCategory(productCategoriesAdapter.getItem(position).toLowerCase());
+            if(useRecyclerView)
+                simpleProductRecyclerViewAdapter.updateList(getProducts());
+            else
+                simpleProductListAdapter.updateList(getProducts());
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+    };
+
+    public void updateListWhenSearch(String searchKey) {
+        setSearchKey(searchKey);
+        if(useRecyclerView)
+            simpleProductRecyclerViewAdapter.updateList(getProducts());
+        else
+            simpleProductListAdapter.updateList(getProducts());
+    }
+
 }

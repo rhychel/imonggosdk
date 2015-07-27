@@ -24,7 +24,12 @@
                 android:background="?attr/colorPrimary"
                 sothree:theme="@style/ActionBar"
                 android:layout_width="match_parent"
-                android:elevation="3dp"/>
+                android:elevation="3dp">
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/spCategories" />
+            </android.support.v7.widget.Toolbar>
 
             <ListView
                 android:layout_weight="1"

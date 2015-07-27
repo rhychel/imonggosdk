@@ -94,4 +94,10 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         return productsList.size();
     }
 
+    public void updateList(List<Product> productList) {
+        this.productsList.clear();
+        this.productsList = productList;
+        notifyDataSetChanged();
+    }
+
 }

@@ -84,23 +84,15 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * setIsUsingCustomLayout(...)
      * setContentView(...)
      * setLayoutEquipments(..);
-     *
      */
     protected abstract void onCreateLayoutForLogin();
+
     /**
      * If you want to add some logic before fetching data
      */
     protected abstract void updateAppData();
 
-    /**
-     * Set the Layout View of Select branches here
-     */
-    protected abstract void showSelectBranchLayout();
-
-    /**
-     * The Welcome Screen
-     */
-    protected abstract void showDashboardScreen();
+    protected abstract void showNextActivity();
 
 
     protected abstract void beforeLogin();
@@ -232,20 +224,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 updateAppData();
             }
 
-            if (!haveDefaultBranch()) {
-                // TODO: show select branches screen dapat isuhay ko ini abstract lang dapat
-                showSelectBranchLayout();
-            } else {
-                // TODO: show welcome screen
-                showDashboardScreen();
-            }
+            showNextActivity();
         }
     }
 
     public void startSyncingImonggoModules() {
 
         if (isSyncServiceBinded()) {
-
             setUpModuleNamesForCustomDialog();
             showSyncModulesCustomDialog();
 
@@ -349,6 +334,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             return true;
         }
     }
+
     /**
      * Sets the Layout for BaseLogin
      */
@@ -495,13 +481,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 setUnlinked(true);
 
                 stopLogin();
-
             }
         });
     }
 
     private void deleteUserSessionData() {
-        if(getHelper() != null) {
+        if (getHelper() != null) {
             getHelper().deleteAllDatabaseValues();
         }
     }
@@ -732,10 +717,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     @Override
     public void onDownloadProgress(Table table, int page, int max) {
+        Log.e(TAG, "Downloading " + table + " " + page + " out of " + max);
         String currentTable = "";
         for (Table tableN : Table.values()) {
             if (table == tableN) {
-                switch (table) {
+                switch (tableN) {
                     case USERS:
                         currentTable = "Users";
                         break;
@@ -750,6 +736,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         break;
                     case PRODUCTS:
                         currentTable = "Products";
+                        Log.e(TAG, "Updating progress of " + table + " " + page + " out of " + max);
                         break;
                     case INVENTORIES:
                         currentTable = "Inventories";
@@ -768,8 +755,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 }
             }
         }
+        int progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
         customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(mModulesToDownload.indexOf(currentTable));
-        customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), ((page / max) * 100));
+        customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), progress);
     }
 
     @Override
@@ -784,14 +772,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         syncingModulesSuccessful();
         customDialog.hide();
 
-        if (!haveDefaultBranch()) {
-            // TODO: show select branches screen
-            showSelectBranchLayout();
-        } else {
-            // TODO: show welcome screen
-            showDashboardScreen();
-        }
-
+        showNextActivity();
     }
 
     @Override

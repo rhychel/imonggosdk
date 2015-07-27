@@ -40,6 +40,8 @@ public class LoginActivity extends BaseLoginActivity {
     protected void initLoginEquipments() {
         // set the mServer choice here
         setServer(Server.IRETAILCLOUD_NET);
+        Log.e(TAG, "Server is " + getServer().toString());
+
 
         // set the Modules to download
         int[] modules = {Table.USERS.ordinal(), Table.PRODUCTS.ordinal()};
@@ -55,6 +57,11 @@ public class LoginActivity extends BaseLoginActivity {
     protected void updateAppData() {
 
         startSyncingImonggoModules();
+    }
+
+    @Override
+    protected void showNextActivity() {
+
     }
 
     @Override
@@ -77,8 +84,8 @@ public class LoginActivity extends BaseLoginActivity {
         Log.e(TAG, "Syncing Modules Successful");
     }
 
-    @Override
-    protected void showSelectBranchLayout() {
+
+    private void showSelectBranchLayout() {
         setContentView(R.layout.concessioengine_select_branches);
 
         // TODO: remove this
@@ -102,11 +109,6 @@ public class LoginActivity extends BaseLoginActivity {
         });
 
         test_fetch_button.setVisibility(View.GONE);
-    }
-
-    @Override
-    protected void showDashboardScreen() {
-
     }
 
     @Override

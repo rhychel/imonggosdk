@@ -23,7 +23,7 @@ import java.util.List;
  * Created by rhymart on 7/16/15.
  * imonggosdk (c)2015
  */
-public class BaseQuantityDialog extends AppCompatDialog {
+public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public interface QuantityDialogListener {
         void onSave(SelectedProductItem selectedProductItem);
@@ -105,20 +105,6 @@ public class BaseQuantityDialog extends AppCompatDialog {
         getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         if(Build.VERSION.SDK_INT < 21)
             spinner.setDropDownVerticalOffset((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, -(spinner.getHeight() + 14), metrics));
-    }
-
-    /**
-     * Configure the width of the dialog to acquire the desired width.
-     */
-    @Override
-    public void show() {
-        super.show();
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int pxPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32, metrics); // Margin
-        int pxP = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, metrics); // Ideal Width
-
-        getWindow().setLayout(pxP + pxPadding, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     /**
