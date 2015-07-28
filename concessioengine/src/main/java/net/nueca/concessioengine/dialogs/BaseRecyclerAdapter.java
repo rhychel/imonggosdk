@@ -92,12 +92,12 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         public VH(View itemView) {
             super(itemView);
 
-            moduleName = (TextView) itemView.findViewById(R.id.module_name);
+            //moduleName = (TextView) itemView.findViewById(R.id.module_name);
 
-            progressPercentageDownload = (TextView) itemView.findViewById(R.id.progress_download);
+            //progressPercentageDownload = (TextView) itemView.findViewById(R.id.progress_download);
             progressPercentageDownload.setText("0%");
 
-            progressBar = (ProgressBar) itemView.findViewById(R.id.module_progress_download);
+            //progressBar = (ProgressBar) itemView.findViewById(R.id.module_progress_download);
             progressBar.setMax(100);
             progressBar.setProgress(0);
         }
