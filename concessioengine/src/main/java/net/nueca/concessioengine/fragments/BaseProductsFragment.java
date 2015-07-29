@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -32,7 +33,7 @@ import java.util.List;
  */
 public abstract class BaseProductsFragment extends ImonggoFragment {
 
-    private static final long LIMIT = 100l;
+    protected static final long LIMIT = 100l;
     protected long offset = 0l;
     private int prevLast = -1;
     private String searchKey = "", category = "";
@@ -45,6 +46,17 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         void setupActionBar(Toolbar toolbar);
     }
 
+    public interface ListScrollListener {
+        void onScrolling();
+        void onScrollStopped();
+    }
+
+    public interface ProductsFragmentListener {
+        void whenItemsSelectedUpdated();
+    }
+
+    protected ProductsFragmentListener productsFragmentListener;
+    protected ListScrollListener listScrollListener;
     protected SetupActionBar setupActionBar;
     protected LinearLayoutManager linearLayoutManager;
     protected RecyclerView rvProducts;
@@ -56,6 +68,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     protected abstract void showQuantityDialog(int position, Product product, SelectedProductItem selectedProductItem);
     protected abstract void showProductDetails(Product product);
+    protected abstract void whenListEndReached(List<Product> productList);
 
     protected void initializeRecyclerView(RecyclerView rvProducts) {
         linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -72,6 +85,14 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setSetupActionBar(SetupActionBar setupActionBar) {
         this.setupActionBar = setupActionBar;
+    }
+
+    public void setListScrollListener(ListScrollListener listScrollListener) {
+        this.listScrollListener = listScrollListener;
+    }
+
+    public void setProductsFragmentListener(ProductsFragmentListener productsFragmentListener) {
+        this.productsFragmentListener = productsFragmentListener;
     }
 
     @Override
@@ -112,12 +133,75 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         return products;
     }
 
+    protected AbsListView.OnScrollListener lvScrollListener = new AbsListView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                if (listScrollListener != null)
+                    listScrollListener.onScrollStopped();
+            } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                if (listScrollListener != null)
+                    listScrollListener.onScrolling();
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            int lastItem = firstVisibleItem + visibleItemCount;
+            if (lastItem == totalItemCount) {
+                if (prevLast != lastItem) {
+                    offset += LIMIT;
+                    whenListEndReached(getProducts());
+                    prevLast = lastItem;
+                }
+            }
+        }
+    };
+
+    protected RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if(newState == RecyclerView.SCROLL_STATE_IDLE) {
+                if (listScrollListener != null)
+                    listScrollListener.onScrollStopped();
+            }
+            else if(newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                if(listScrollListener != null)
+                    listScrollListener.onScrolling();
+            }
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            int visibleItemCount = rvProducts.getChildCount();
+            int totalItemCount = linearLayoutManager.getItemCount();
+            int firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+
+            int lastItem = firstVisibleItem + visibleItemCount;
+
+            if(lastItem == totalItemCount) {
+                if(prevLast != lastItem) {
+                    offset += LIMIT;
+                    whenListEndReached(getProducts());
+                    prevLast = lastItem;
+                }
+            }
+        }
+    };
+
     public void setSearchKey(String searchKey) {
         this.searchKey = searchKey;
     }
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String messageCategory() {
+        return category.toLowerCase().equals("All") ? "" : " in \""+category+"\" category";
     }
 
     public void setProductCategories(List<String> productCategories) {

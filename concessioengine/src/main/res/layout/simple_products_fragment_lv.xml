@@ -21,9 +21,9 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/tbActionBar"
                 android:layout_height="?attr/actionBarSize"
+                android:layout_width="match_parent"
                 android:background="?attr/colorPrimary"
                 sothree:theme="@style/ActionBar"
-                android:layout_width="match_parent"
                 android:elevation="3dp">
                 <Spinner
                     android:layout_width="wrap_content"
@@ -38,6 +38,17 @@
                 android:id="@+id/lvProducts"
                 android:elevation="1dp"
                 android:animateLayoutChanges="true"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="No product results for Beef category"
+                android:id="@+id/tvNoProducts"
+                android:gravity="center"
+                android:layout_margin="50dp"
+                android:visibility="gone"/>
+
         </LinearLayout>
 
         <LinearLayout android:orientation="vertical"

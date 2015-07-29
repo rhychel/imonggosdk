@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -21,6 +22,7 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
@@ -32,16 +34,26 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class SwableTools {
-	public static Intent startSwable(Activity activity) {
-		Log.e("SwableTools", "startSwable in " + activity.getClass().getSimpleName());
-		Intent service = new Intent(activity,ImonggoSwable.class);
-		activity.startService(service);
-		return service;
-	}
+    public static Intent startSwable(Activity activity) {
+        Log.e("SwableTools", "startSwable in " + activity.getClass().getSimpleName());
+        Intent service = new Intent(activity,ImonggoSwable.class);
+        activity.startService(service);
+        return service;
+    }
+    public static Intent stopSwable(Activity activity) {
+        Log.e("SwableTools", "stopSwable in " + activity.getClass().getSimpleName());
+        Intent service = new Intent(activity,ImonggoSwable.class);
+        activity.stopService(service);
+        return service;
+    }
     public static boolean startAndBindSwable(Activity activity, ImonggoSwableServiceConnection swableServiceConnection) {
         return activity.bindService(startSwable(activity), swableServiceConnection, Context.BIND_AUTO_CREATE);
     }
-	
+    public static Intent stopAndUnbindSwable(Activity activity, ImonggoSwableServiceConnection swableServiceConnection) {
+        activity.unbindService(swableServiceConnection);
+        return stopSwable(activity);
+    }
+
 	public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
 	    ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -92,6 +104,8 @@ public class SwableTools {
             offlineData = new OfflineData((Order)o, type);
         else if(o instanceof Invoice)
             offlineData = new OfflineData((Invoice)o, type);
+        else if(o instanceof Document)
+            offlineData = new OfflineData((Document)o, type);
         else {
             Log.e("SwableTools", "sendTransaction : Class '" + o.getClass().getSimpleName() + "' is not supported for " +
                     "OfflineData --- Use Order and Invoice");
@@ -178,9 +192,11 @@ public class SwableTools {
                 dataStr = ((Invoice)data).toJSONString();
             else if(data instanceof Order)
                 dataStr = ((Order)data).toJSONString();
+            else if(data instanceof Document)
+                dataStr = ((Document)data).toJSONString();
             else {
                 Log.e("SwableTools", "sendTransactionNow : Class '" + data.getClass().getSimpleName() + "' is not " +
-                        "supported for OfflineData --- Use Order and Invoice");
+                        "supported for OfflineData --- Use Order, Document and Invoice");
                 return;
             }
 
@@ -202,10 +218,6 @@ public class SwableTools {
                                     if (responseJson.has("id")) {
                                         Log.d("SwableTools", "[default listener] sending success : return ID : "
                                             + responseJson.getString("id"));
-                                        if (data instanceof Invoice)
-                                            ((Invoice) data).setId(responseJson.getInt("id"));
-                                        else if (data instanceof Order)
-                                            ((Order) data).setId(responseJson.getInt("id"));
                                     }
                                 }
                             } catch (JSONException e) {

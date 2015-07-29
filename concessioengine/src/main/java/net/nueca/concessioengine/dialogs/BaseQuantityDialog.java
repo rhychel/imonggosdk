@@ -70,7 +70,13 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     }
 
     public void setBrandList(List<String> brandList) {
+        setBrandList(brandList, false);
+    }
+
+    public void setBrandList(List<String> brandList, boolean addNoBrand) {
         this.brandList = brandList;
+        if(addNoBrand)
+            this.brandList.add(0, "No Brand");
     }
 
     public void setSelectedProductItem(SelectedProductItem selectedProductItem) {

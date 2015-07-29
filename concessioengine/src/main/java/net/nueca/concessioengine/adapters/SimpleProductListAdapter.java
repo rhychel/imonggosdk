@@ -72,9 +72,10 @@ public class SimpleProductListAdapter extends BaseProductsAdapter {
         return convertView;
     }
 
-    public void updateList(List<Product> productList) {
+    public boolean updateList(List<Product> productList) {
         clear();
         addAll(productList);
         notifyDataSetChanged();
+        return getCount() > 0;
     }
 }

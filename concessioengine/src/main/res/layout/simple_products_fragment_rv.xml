@@ -37,6 +37,16 @@
                 android:layout_height="match_parent"
                 android:id="@+id/rvProducts"
                 android:elevation="1dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="No product results for Beef category"
+                android:id="@+id/tvNoProducts"
+                android:gravity="center"
+                android:layout_margin="50dp"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout android:orientation="vertical"

@@ -1,64 +1,44 @@
 package net.nueca.imonggosdk.objects.order;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
-import com.j256.ormlite.dao.ForeignCollection;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTransaction;
 import net.nueca.imonggosdk.objects.base.BatchList;
-import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by rhymart on 5/6/14.
  * NuecaLibrary (c)2014
  */
-public class Order extends BaseTable {
+public class Order extends BaseTransaction {
     public static transient final int MAX_ORDERLINES_PER_PAGE = 1;
 
-    @Expose
-    @DatabaseField
-    private String target_delivery_date = ""; // current_date+2days
+    private String target_delivery_date; // current_date+2days
 
-    @Expose
-    @DatabaseField
-    private String remark = "";
+    private String remark;
 
-    @Expose
-    @DatabaseField
-    private String reference = "";
+    private String order_type_code;
 
-    @Expose
-    @DatabaseField
-    private String order_type_code = "stock_request";
+    private int serving_branch_id;
 
-    @Expose
-    @DatabaseField
-    private int serving_branch_id = 0;
+    private List<OrderLine> order_lines;
 
-    @Expose
-    private BatchList<OrderLine> order_lines = new BatchList<>(DatabaseOperation.INSERT);
+    public Order(Builder builder) {
+        super(builder);
 
-    @ForeignCollectionField
-    private transient ForeignCollection<OrderLine> order_lines_fc;
-
-    public Order() {
-        order_lines = new BatchList<>(DatabaseOperation.INSERT);
+        order_lines = builder.order_lines;
+        target_delivery_date = builder.target_delivery_date;
+        remark = builder.remark;
+        order_type_code = builder.order_type_code;
+        serving_branch_id = builder.serving_branch_id;
     }
 
     public String getTarget_delivery_date() {
@@ -77,22 +57,7 @@ public class Order extends BaseTable {
         this.remark = remark;
     }
 
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    public void generateNewReference(Context context, int deviceId) {
-        this.reference = ReferenceNumberTool.generateRefNo(context,
-                deviceId);
-    }
-
     public List<OrderLine> getOrderLines() {
-        if(order_lines == null || order_lines.size() <= 0)
-            refreshListObjects();
         return order_lines;
     }
 
@@ -102,7 +67,6 @@ public class Order extends BaseTable {
 
     public JSONArray getOrderLineJSONArray() throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        refreshListObjects();
         for (OrderLine orderLine : order_lines) {
             jsonArray.put(orderLine.toJSONObject());
         }
@@ -143,81 +107,41 @@ public class Order extends BaseTable {
         return order;
     }
 
-    public String toJSONString() {
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        refreshListObjects();
-        return (gson.toJson(this));
-    }
-
-    public JSONObject toJSONObject() throws JSONException {
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        refreshListObjects();
-        return new JSONObject(gson.toJson(this));
-    }
-
-    private transient boolean didFinalize = false;
-    // call this to save the OrderLine objects to database
-    public Order finalize(ImonggoDBHelper dbHelper) {
-        if(didFinalize) {
-            Log.e("Order", "finalize : called more than once");
-            return this;
-        }
-        didFinalize = true;
-
-        for(OrderLine orderLine : order_lines)
-            orderLine.setOrder(this);
-        order_lines.doOperation(dbHelper);
-        return this;
-    }
-
-    // call this when using getHelper().getOrders() to re-initialize the list that
-    // was lost when Order was saved to the database
-    public Order refreshListObjects() {
-        if( (order_lines == null || order_lines.size() <= 0) &&
-                (order_lines_fc != null && order_lines_fc.size() > 0)) {
-            for(OrderLine orderLine : order_lines_fc) {
-                order_lines.add(orderLine);
-            }
-        }
-        return this;
-    }
-
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        if(id < 0) {
-            Log.e("Order", "insertTo : Invalid ID : use returned ID from server after sending as this Order's ID");
-            return;
-        }
-
-        try {
-            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.INSERT);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finalize(dbHelper);
-    }
-
-    @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finalize(dbHelper);
-    }
-
-    @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finalize(dbHelper);
-    }
-
     public boolean shouldPageRequest() {
         return order_lines.size() > MAX_ORDERLINES_PER_PAGE;
+    }
+
+    public static class Builder extends BaseTransaction.Builder<Builder> {
+        private String target_delivery_date = ""; // current_date+2days
+        private String remark = "";
+        private String order_type_code = "stock_request";
+        private int serving_branch_id = 0;
+        private List<OrderLine> order_lines = new ArrayList<>();
+
+        public Builder target_delivery_date(String date) {
+            target_delivery_date = date;
+            return this;
+        }
+        public Builder remark(String remark) {
+            this.remark = remark;
+            return this;
+        }
+        public Builder order_type_code(String order_type_code) {
+            this.order_type_code = order_type_code;
+            return this;
+        }
+        public Builder serving_branch_id(int serving_branch_id) {
+            this.serving_branch_id = serving_branch_id;
+            return this;
+        }
+        public Builder order_lines(List<OrderLine> order_lines) {
+            this.order_lines = order_lines;
+            return this;
+        }
+
+        public Order build() {
+            return new Order(this);
+        }
     }
 }

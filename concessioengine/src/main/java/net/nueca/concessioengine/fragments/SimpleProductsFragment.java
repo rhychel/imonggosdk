@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -48,10 +49,11 @@ public class SimpleProductsFragment extends BaseProductsFragment {
      */
     private SlidingUpPanelLayout suplProduct;
     private NetworkImageView ivProductImage;
-    private TextView tvProductName, tvProductDescription;
+    private TextView tvProductName, tvProductDescription, tvNoProducts;
     private Spinner spCategories;
 
     private boolean useRecyclerView = true;
+    private int prevLast = -1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         ivProductImage = (NetworkImageView) view.findViewById(R.id.ivProductImage);
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         spCategories = (Spinner) view.findViewById(R.id.spCategories);
+        tvNoProducts = (TextView) view.findViewById(R.id.tvNoProducts);
 
         productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, productCategories);
         spCategories.setAdapter(productCategoriesAdapter);
@@ -70,7 +73,6 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
         suplProduct.setAnchorPoint(0.5f);
         offset = 0l;
-//        setCategory("Chicken");
 
         if(useRecyclerView) {
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
@@ -97,6 +99,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
             initializeRecyclerView(rvProducts);
             rvProducts.setAdapter(simpleProductRecyclerViewAdapter);
+            rvProducts.addOnScrollListener(rvScrollListener);
+
+            toggleNoProducts("No products available.", (simpleProductRecyclerViewAdapter.getItemCount() > 0));
         }
         else {
             lvProducts = (ListView) view.findViewById(R.id.lvProducts);
@@ -123,6 +128,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     return true;
                 }
             });
+            lvProducts.setOnScrollListener(lvScrollListener);
+
+            toggleNoProducts("No products available.", (simpleProductListAdapter.getCount() > 0));
         }
 
         return view;
@@ -143,7 +151,6 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
         try {
             List<ProductTag> tags = getHelper().getProductTags().queryBuilder().where().eq("product_id", product).query();
-            Log.e("Tags", tags.size()+" size");
             List<String> brands = new ArrayList<>();
 
             for(ProductTag productTag : tags)
@@ -154,7 +161,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             quantityDialog.setSelectedProductItem(selectedProductItem);
             quantityDialog.setHasUnits(false);
             quantityDialog.setUnitList(getHelper().getUnits().queryForAll(), true);
-            quantityDialog.setBrandList(brands);
+            quantityDialog.setBrandList(brands, true);
             quantityDialog.setHasBrand(true);
             quantityDialog.setFragmentManager(getActivity().getFragmentManager());
             quantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
@@ -168,6 +175,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                         simpleProductListAdapter.getSelectedProductItems().add(selectedProductItem);
                         simpleProductListAdapter.notifyItemChanged(lvProducts, position);
                     }
+                    if(productsFragmentListener != null)
+                        productsFragmentListener.whenItemsSelectedUpdated();
                 }
 
                 @Override
@@ -191,6 +200,14 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     }
 
     @Override
+    protected void whenListEndReached(List<Product> productList) {
+        if(useRecyclerView)
+            simpleProductRecyclerViewAdapter.addAll(productList);
+        else
+            simpleProductListAdapter.addAll(productList);
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if(setupActionBar != null)
@@ -200,26 +217,43 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     private AdapterView.OnItemSelectedListener onCategorySelected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-            Log.e("Category", productCategoriesAdapter.getItem(position).toLowerCase());
-            setCategory(productCategoriesAdapter.getItem(position).toLowerCase());
+            String category = productCategoriesAdapter.getItem(position).toLowerCase();
+            setCategory(category);
+            offset = 0l;
+            prevLast = 0;
+
             if(useRecyclerView)
-                simpleProductRecyclerViewAdapter.updateList(getProducts());
+                toggleNoProducts("No results for \""+category+"\".", simpleProductRecyclerViewAdapter.updateList(getProducts()));
             else
-                simpleProductListAdapter.updateList(getProducts());
+                toggleNoProducts("No results for \"" + category + "\".", simpleProductListAdapter.updateList(getProducts()));
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-
-        }
+        public void onNothingSelected(AdapterView<?> adapterView) { }
     };
 
     public void updateListWhenSearch(String searchKey) {
         setSearchKey(searchKey);
+        offset = 0l;
+        prevLast = 0;
+
         if(useRecyclerView)
-            simpleProductRecyclerViewAdapter.updateList(getProducts());
+            toggleNoProducts("No results for \""+searchKey+"\""+messageCategory()+".", simpleProductRecyclerViewAdapter.updateList(getProducts()));
         else
-            simpleProductListAdapter.updateList(getProducts());
+            toggleNoProducts("No results for \"" + searchKey + "\""+messageCategory()+".", simpleProductListAdapter.updateList(getProducts()));
+    }
+
+    private void toggleNoProducts(String msg, boolean show) {
+        if(useRecyclerView) {
+            rvProducts.setVisibility(show ? View.VISIBLE : View.GONE);
+            tvNoProducts.setVisibility(show ? View.GONE : View.VISIBLE);
+            tvNoProducts.setText(msg);
+        }
+        else {
+            lvProducts.setVisibility(show ? View.VISIBLE : View.GONE);
+            tvNoProducts.setVisibility(show ? View.GONE : View.VISIBLE);
+            tvNoProducts.setText(msg);
+        }
     }
 
 }

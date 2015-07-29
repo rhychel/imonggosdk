@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 
+import java.util.Collection;
 import java.util.List;
 
 import me.grantland.widget.AutofitTextView;
@@ -94,9 +95,15 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         return productsList.size();
     }
 
-    public void updateList(List<Product> productList) {
+    public boolean updateList(List<Product> productList) {
         this.productsList.clear();
         this.productsList = productList;
+        notifyDataSetChanged();
+        return productsList.size() > 0;
+    }
+
+    public void addAll(List<Product> productList) {
+        this.productsList.addAll(productList);
         notifyDataSetChanged();
     }
 
