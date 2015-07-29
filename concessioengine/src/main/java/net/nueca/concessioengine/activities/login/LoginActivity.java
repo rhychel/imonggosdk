@@ -40,7 +40,8 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Override
     protected void initLoginEquipments() {
-        // set the mServer choice here
+
+        // set the Server choice here
         setServer(Server.IRETAILCLOUD_COM);
         Log.e(TAG, "Server is " + getServer().toString());
 
