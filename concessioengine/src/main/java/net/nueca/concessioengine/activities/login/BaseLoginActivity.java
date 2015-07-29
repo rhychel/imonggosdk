@@ -68,8 +68,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     protected BaseLogin mBaseLogin;
 
-
-    //----
     private SyncModules mSyncModules;
     private Boolean mBounded;
 
@@ -240,6 +238,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mSyncModules.startFetchingModules();
             } else {
                 Log.e(TAG, "Service Modules is null cannot start sync");
+
                 if (customDialog != null) {
                     customDialog.dismiss();
                 }
@@ -253,6 +252,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             public void onPositive(MaterialDialog dialog) {
                                 super.onPositive(dialog);
                                 bindSyncService();
+                                dialog.dismiss();
+
                             }
                         });
             }
@@ -341,21 +342,15 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         customDialogFrameLayout = new CustomDialogFrameLayout(BaseLoginActivity.this, mModulesToDownload);
         customDialog = new CustomDialog(BaseLoginActivity.this, R.style.AppCompatDialogStyle);
 
-        if (customDialog != null) {
-            customDialog.setTitle(getString(R.string.FETCHING_MODULE_TITLE));
-            customDialog.setContentView(customDialogFrameLayout);
-            customDialog.setCancelable(false);
-            customDialog.show();
-        }
+        customDialog.setTitle(getString(R.string.FETCHING_MODULE_TITLE));
+        customDialog.setContentView(customDialogFrameLayout);
+        customDialog.setCancelable(false);
+        customDialog.show();
     }
 
     public Boolean haveDefaultBranch() {
         // if default branch is not null
-        if (getDefaultBranch().equals("")) {
-            return false;
-        } else {
-            return true;
-        }
+        return !getDefaultBranch().equals("");
     }
 
     /**
@@ -388,9 +383,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.etEmail = editTextEmail;
         this.etPassword = editTextPassword;
 
-        this.etAccountID.setText("carolflower");
-        this.etEmail.setText("carol@me.com");
-        this.etPassword.setText("carolflower");
+        this.etAccountID.setText("nuecaonly");
+        this.etEmail.setText("nuecaonly@test.com");
+        this.etPassword.setText("nuecaonly");
 
         this.btnSignIn = btnSignIn;
 
@@ -717,7 +712,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private void bindSyncService() {
         Log.e(TAG, "Binding service.........");
 
-        if (bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_ADJUST_WITH_ACTIVITY)) {
+        if (!mBounded) {
+            bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
             Log.e(TAG, "Service binded");
         } else {
             Log.e(TAG, "Service is already binded.");
@@ -768,7 +764,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         break;
                     case PRODUCTS:
                         currentTable = "Products";
-                        Log.e(TAG, "Updating progress of " + table + " " + page + " out of " + max);
                         break;
                     case INVENTORIES:
                         currentTable = "Inventories";
@@ -853,6 +848,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mBaseLogin.onStop();
             }
         }
+
         DialogTools.hideIndeterminateProgressDialog();
         super.onStop();
     }
@@ -866,6 +862,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             }
         }
         DialogTools.hideIndeterminateProgressDialog();
+        doUnbindService();
+
+
         super.onDestroy();
     }
 }
