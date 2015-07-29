@@ -27,7 +27,7 @@ public abstract class BaseTransaction {
         this.reference = reference;
     }
 
-    public String generateNewReference(Context context, int deviceId) {
+    public String generateNewReferenceNumber(Context context, int deviceId) {
         this.reference = ReferenceNumberTool.generateRefNo(context,
                 deviceId);
         return this.reference;
@@ -58,8 +58,8 @@ public abstract class BaseTransaction {
             return (T)this;
         }
 
-        public <T extends BaseTransaction> T build() {
-            return null;
+        public <T extends BaseTransaction> T build() throws NoSuchMethodException {
+            throw new NoSuchMethodException("Builder method build() was not implemented");
         }
     }
 

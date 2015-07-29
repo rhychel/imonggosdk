@@ -25,11 +25,17 @@ public class Document extends BaseTransaction {
 
     protected List<DocumentLine> document_lines;
 
+    protected String target_branch_id;
+
+    protected String document_purpose_name;
+
     public Document(Builder builder) {
         super(builder);
         remark = builder.remark;
         document_type_code = builder.document_type_code;
         document_lines = builder.document_lines;
+        target_branch_id = builder.target_branch_id;
+        document_purpose_name = builder.document_purpose_name;
     }
 
     public String getRemark() {
@@ -56,6 +62,22 @@ public class Document extends BaseTransaction {
         this.document_lines = document_lines;
     }
 
+    public String getTarget_branch_id() {
+        return target_branch_id;
+    }
+
+    public void setTarget_branch_id(String target_branch_id) {
+        this.target_branch_id = target_branch_id;
+    }
+
+    public String getDocument_purpose_name() {
+        return document_purpose_name;
+    }
+
+    public void setDocument_purpose_name(String document_purpose_name) {
+        this.document_purpose_name = document_purpose_name;
+    }
+
     public static Document fromJSONString(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         return fromJSONObject(jsonObject);
@@ -79,6 +101,8 @@ public class Document extends BaseTransaction {
         protected String remark;
         protected String document_type_code;
         protected List<DocumentLine> document_lines;
+        protected String target_branch_id;
+        protected String document_purpose_name;
 
         public Builder remark(String remark) {
             this.remark = remark;
@@ -90,6 +114,14 @@ public class Document extends BaseTransaction {
         }
         public Builder document_lines(List<DocumentLine> document_lines) {
             this.document_lines = document_lines;
+            return this;
+        }
+        public Builder target_branch_id(String target_branch_id) {
+            this.target_branch_id = target_branch_id;
+            return this;
+        }
+        public Builder document_purpose_name(String document_purpose_name) {
+            this.document_purpose_name = document_purpose_name;
             return this;
         }
 
