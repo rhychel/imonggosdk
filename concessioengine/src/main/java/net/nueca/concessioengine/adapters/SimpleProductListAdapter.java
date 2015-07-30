@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -64,10 +65,17 @@ public class SimpleProductListAdapter extends BaseProductsAdapter {
         Product product = getItem(position);
 
         lvh.tvProductName.setText(product.getName());
-        lvh.tvQuantity.setText(getSelectedProductItems().getQuantity(product.getId()));
+        lvh.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
         String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId()+"", false, false);
         lvh.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
 
         return convertView;
+    }
+
+    public boolean updateList(List<Product> productList) {
+        clear();
+        addAll(productList);
+        notifyDataSetChanged();
+        return getCount() > 0;
     }
 }

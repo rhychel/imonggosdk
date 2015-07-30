@@ -42,7 +42,12 @@ public class OrderLine {
     @DatabaseField
     private String brand = "";*/
 
-    public OrderLine() {}
+    public OrderLine(Builder builder) {
+        line_no = builder.line_no;
+        product_id = builder.product_id;
+        retail_price = builder.retail_price;
+        quantity = builder.quantity;
+    }
 
     public OrderLine(int product_id, double quantity) {
         this.product_id = product_id;
@@ -139,5 +144,33 @@ public class OrderLine {
 
     public void setLine_no(int line_no) {
         this.line_no = line_no;
+    }
+
+    public static class Builder {
+        private int line_no;
+        private int product_id;
+        private double retail_price;
+        private double quantity;
+
+        public Builder line_no(int line_no) {
+            this.line_no = line_no;
+            return this;
+        }
+        public Builder product_id(int product_id) {
+            this.product_id = product_id;
+            return this;
+        }
+        public Builder retail_price(double retail_price) {
+            this.retail_price = retail_price;
+            return this;
+        }
+        public Builder quantity(double quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public OrderLine build() {
+            return new OrderLine(this);
+        }
     }
 }

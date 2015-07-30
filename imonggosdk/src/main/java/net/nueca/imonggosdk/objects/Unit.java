@@ -95,6 +95,16 @@ public class Unit extends BaseTable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        return id == ((Unit)o).getId();
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
         try {
             dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.INSERT);

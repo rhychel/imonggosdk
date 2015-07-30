@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,7 +21,6 @@ import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 
 import java.sql.SQLException;
@@ -119,10 +119,11 @@ public abstract class BaseSyncService extends ImonggoService {
                     Table.BRANCH_USERS, Table.PRODUCTS,
                     Table.INVENTORIES, Table.CUSTOMERS,
                     Table.DOCUMENTS, Table.DOCUMENT_TYPES,
-                    };
+            };
             mCurrentTableSyncing = mModulesToSync[mModulesIndex];
         }
 
+        Log.e(TAG, mCurrentTableSyncing.toString());
         // We want this service to continue running until it is explicitly
         // stopped, so return sticky.
         return START_STICKY;
@@ -145,10 +146,6 @@ public abstract class BaseSyncService extends ImonggoService {
             case PRODUCTS: {
                 Product product = (Product) o;
                 return getHelper().getProducts().queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
-            }
-            case UNITS: {
-                Unit unit = (Unit) o;
-                return getHelper().getUnits().queryBuilder().where().eq("id", unit.getId()).queryForFirst() != null;
             }
         }
         return false;

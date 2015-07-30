@@ -172,8 +172,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     //TODO: documents?
                     newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module));
 
-                    Log.e(TAG, "Last Updated At: " +  jsonObject.toString());
-
                     // since this is the first
                     page = 1;
                     count = 0;

@@ -28,8 +28,9 @@ public class Product extends BaseTable {
             name = "",
             description = "",
             thumbnail_url = "",
-            status = "",
             barcode_list = "";
+    @DatabaseField
+    protected String status = "";
     @DatabaseField
     protected boolean allow_decimal_quantities = false,
             enable_decimal_quantities = false,

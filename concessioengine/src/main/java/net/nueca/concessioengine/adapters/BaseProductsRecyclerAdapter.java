@@ -9,7 +9,10 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.lists.ProductsList;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.tools.ProductListTools;
+
+import java.util.List;
 
 /**
  * Created by rhymart on 7/13/15.
@@ -30,15 +33,21 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseProductsRecycler
     protected OnItemLongClickListener onItemLongClickListener = null;
 
     private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
-    protected ProductsList productsList;
+    protected List<Product> productsList;
 
     public BaseProductsRecyclerAdapter(Context context) {
         this.context = context;
     }
 
-    public BaseProductsRecyclerAdapter(Context context, ProductsList productsList) {
+    public BaseProductsRecyclerAdapter(Context context, List<Product> productsList) {
+        this.context = context;
+        this.productsList = productsList;
+    }
+
+    public BaseProductsRecyclerAdapter(Context context, ImonggoDBHelper dbHelper, List<Product> productsList) {
         this.productsList = productsList;
         this.context = context;
+        setDbHelper(dbHelper);
     }
 
     public abstract class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -60,8 +69,12 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseProductsRecycler
         return productsAdapterHelper;
     }
 
-    public void setProductsList(ProductsList productsList) {
+    public void setProductsList(List<Product> productsList) {
         this.productsList = productsList;
+    }
+
+    public List<Product> getProductsList() {
+        return productsList;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

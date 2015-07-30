@@ -65,6 +65,7 @@ public class ImonggoSwable extends SwableService {
     private IntentFilter notificationFilter = new IntentFilter();
 
     private User user;
+    @Override
     protected User getUser() {
         if(user == null) {
             try {

@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +11,12 @@ import com.android.volley.toolbox.NetworkImageView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.lists.ProductsList;
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
+
+import java.util.Collection;
+import java.util.List;
 
 import me.grantland.widget.AutofitTextView;
 
@@ -25,10 +30,13 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         super(context);
     }
 
-    public SimpleProductRecyclerViewAdapter(Context context, ProductsList productsList) {
+    public SimpleProductRecyclerViewAdapter(Context context, List<Product> productsList) {
         super(context, productsList);
     }
 
+    public SimpleProductRecyclerViewAdapter(Context context, ImonggoDBHelper dbHelper, List<Product> productsList) {
+        super(context, dbHelper, productsList);
+    }
 
     public class ListViewHolder extends BaseProductsRecyclerAdapter.ViewHolder {
         public NetworkImageView ivProductImage;
@@ -46,6 +54,7 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             ivProductImage.setErrorImageResId(R.drawable.no_image);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
@@ -59,7 +68,7 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         public boolean onLongClick(View view) {
             if(onItemLongClickListener != null)
                 onItemLongClickListener.onItemLongClicked(view, getLayoutPosition());
-            return false;
+            return true;
         }
     }
 
@@ -76,7 +85,7 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         Product product = productsList.get(position);
 
         viewHolder.tvProductName.setText(product.getName());
-        viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product.getId()));
+        viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
         String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
         viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
     }
@@ -84,6 +93,18 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
     @Override
     public int getItemCount() {
         return productsList.size();
+    }
+
+    public boolean updateList(List<Product> productList) {
+        this.productsList.clear();
+        this.productsList = productList;
+        notifyDataSetChanged();
+        return productsList.size() > 0;
+    }
+
+    public void addAll(List<Product> productList) {
+        this.productsList.addAll(productList);
+        notifyDataSetChanged();
     }
 
 }

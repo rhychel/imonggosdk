@@ -53,7 +53,6 @@ public class SwableTools {
         activity.unbindService(swableServiceConnection);
         return stopSwable(activity);
     }
-	
 	public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
 	    ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {

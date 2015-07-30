@@ -33,8 +33,6 @@ public class C_Login2 extends ImonggoAppCompatActivity {
 
                 try {
                     AccountTools.unlinkAccount(C_Login2.this, getHelper(), null);
-                    Intent intent = new Intent(C_Login2.this, C_Login.class);
-                    startActivity(intent);
                     finish();
                 } catch (SQLException e) {
                     e.printStackTrace();

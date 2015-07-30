@@ -95,8 +95,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             fontSize = typedArray.getInteger(R.styleable.Numpad_fontSize, 20);
             fontColor = typedArray.getColorStateList(R.styleable.Numpad_fontColor);
             buttonBgResource = typedArray.getResourceId(R.styleable.Numpad_buttonBgResource, DEFAULT_KEYPAD_BUTTON_BG);
-            goButtonBgResource = typedArray.getResourceId(R.styleable.Numpad_goButtonBgResource,
-                    DEFAULT_KEYPAD_BUTTON_BG_CIRCLE);
+            goButtonBgResource = typedArray.getResourceId(R.styleable.Numpad_goButtonBgResource, DEFAULT_KEYPAD_BUTTON_BG_CIRCLE);
             backgroundColor = typedArray.getColorStateList(R.styleable.Numpad_backgroundColor);
 
             /*if(goButtonBgResource == DEFAULT_KEYPAD_BUTTON_BG && Build.VERSION.SDK_INT >= 21) {

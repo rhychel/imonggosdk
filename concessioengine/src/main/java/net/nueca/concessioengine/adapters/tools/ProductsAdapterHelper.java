@@ -2,6 +2,7 @@ package net.nueca.concessioengine.adapters.tools;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.android.volley.AuthFailureError;
@@ -12,9 +13,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jakewharton.disklrucache.DiskLruCache;
 
 import net.nueca.concessioengine.lists.SelectedProductItemList;
+import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -33,6 +37,7 @@ public class ProductsAdapterHelper {
     private static ImageLoader imageLoader;
     private static ImonggoDBHelper dbHelper;
     private static Session session;
+    private static SelectedProductItemList selectedProductItems = null;
 
     public static ImageLoader getImageLoaderInstance(Context context) {
         return getImageLoaderInstance(context, false);
@@ -73,9 +78,9 @@ public class ProductsAdapterHelper {
         return imageLoader;
     }
 
-    public SelectedProductItemList selectedProductItems = new SelectedProductItemList();
-
-    public SelectedProductItemList getSelectedProductItems() {
+    public static SelectedProductItemList getSelectedProductItems() {
+        if(selectedProductItems == null)
+            selectedProductItems = new SelectedProductItemList();
         return selectedProductItems;
     }
 
@@ -97,10 +102,16 @@ public class ProductsAdapterHelper {
         return session;
     }
 
+    public static void destroySelectedProductItemList() {
+        selectedProductItems.clear();
+        selectedProductItems = null;
+    }
+
     public static void destroyProductAdapterHelper() {
         dbHelper = null;
         session = null;
         imageLoader = null;
         imageRequestQueue = null;
+        selectedProductItems = null;
     }
 }

@@ -14,8 +14,7 @@ public class ProductsList extends ArrayList<Product>{
         super(capacity);
     }
 
-    public ProductsList() {
-    }
+    public ProductsList() { }
 
     public ProductsList(Collection<? extends Product> collection) {
         super(collection);

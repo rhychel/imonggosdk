@@ -1,5 +1,7 @@
 package net.nueca.concessioengine.lists;
 
+import android.util.Log;
+
 import net.nueca.concessioengine.objects.Values;
 
 import java.math.BigDecimal;
@@ -15,8 +17,7 @@ public class ValuesList extends ArrayList<Values> {
         super(capacity);
     }
 
-    public ValuesList() {
-    }
+    public ValuesList() { }
 
     public ValuesList(Collection<? extends Values> collection) {
         super(collection);
@@ -25,8 +26,9 @@ public class ValuesList extends ArrayList<Values> {
     public String getQuantity() {
         String quantity = "0";
         BigDecimal totalQuantity = new BigDecimal(0);
-        for(Values values : this)
-            totalQuantity.add(new BigDecimal(values.getQuantity()));
+        for(Values values : this) {
+            totalQuantity = totalQuantity.add(new BigDecimal(values.getQuantity().replaceAll(",", "")));
+        }
 
         quantity = totalQuantity.toString();
         return quantity;
