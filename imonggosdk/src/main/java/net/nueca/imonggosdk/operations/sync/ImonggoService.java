@@ -64,7 +64,7 @@ public abstract class ImonggoService extends Service {
     protected User getUser() {
         if (mUser == null)
             try {
-                mUser = getHelper().getUsers().queryBuilder().where().eq("email ", getSession().getEmail()).queryForFirst();
+                mUser = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
