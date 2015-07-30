@@ -46,6 +46,7 @@ import java.util.List;
  * Abstract Class BaseLoginActivity
  * created by Jn on 06/16/15
  * imonggosdk (c)2015
+ *
  */
 public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
 
