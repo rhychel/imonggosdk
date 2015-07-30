@@ -34,6 +34,7 @@ public class C_Module extends ModuleActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
