@@ -125,6 +125,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 mSyncModulesListener.onEndDownload(mCurrentTableSyncing);
                 mSyncModulesListener.onFinishDownload();
             }
+
+            User current_user = getUser();
+
+            getSession().setUser(current_user);
+            getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
+
             return false;
         } else { // if there are still tables to sync, then;
             Log.e(TAG, "there are still tables to sync");
@@ -240,11 +246,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         newUsers.doOperation();
                         updateUsers.doOperation();
                         deleteUsers.doOperation();
-
-                        User current_user = getUser();
-
-                        getSession().setUser(current_user);
-                        getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
 
                         if (mSyncModulesListener != null) {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
