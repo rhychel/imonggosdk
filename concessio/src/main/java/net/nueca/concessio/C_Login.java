@@ -28,10 +28,10 @@ public class C_Login extends LoginActivity {
         startActivity(intent);
 
         try {
-            LoggingTools.showToast(C_Login.this, getSession().getUser().getName());
+            if (getSession().getUser() != null)
+                LoggingTools.showToast(C_Login.this, getSession().getUser().getName());
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
 }

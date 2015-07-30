@@ -94,7 +94,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     protected abstract void showNextActivity();
 
-
     protected abstract void beforeLogin();
 
     protected abstract void stopLogin();
@@ -786,6 +785,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 }
             }
         }
+
         int progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
         customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(mModulesToDownload.indexOf(currentTable));
         customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), progress);
@@ -801,6 +801,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     public void onFinishDownload() {
         LoggingTools.showToast(this, "Finished Downloading Modules");
         syncingModulesSuccessful();
+
         if (customDialog != null) {
             customDialog.dismiss();
         }

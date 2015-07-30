@@ -19,148 +19,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="baa2f69b-0587-4d0e-8837-6e384796c840" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_22_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/design_22_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/recyclerview_v7_22_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/support_annotations_22_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/support_v4_22_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$anim.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$anim.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$attr.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$attr.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$bool.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$bool.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$color.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$color.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$dimen.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$dimen.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$drawable.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$drawable.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$id.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$id.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$integer.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$integer.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$layout.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$layout.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$string.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$string.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$style.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$style.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$styleable.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$styleable.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/debug/classes.jar" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/debug/classes.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/intermediates/gradle_project_sync_data.bin" afterPath="$PROJECT_DIR$/build/intermediates/gradle_project_sync_data.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/outputs/aar/imonggosdk-debug.aar" afterPath="$PROJECT_DIR$/imonggosdk/build/outputs/aar/imonggosdk-debug.aar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/resources/resources-debug-androidTest.ap_" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/resources/resources-debug-androidTest.ap_" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Login.java" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Login.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/android/support/v7/appcompat/R.java" afterPath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/android/support/v7/appcompat/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/net/nueca/imonggosdk/R.java" afterPath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/net/nueca/imonggosdk/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/net/nueca/imonggosdk/test/R.java" afterPath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/net/nueca/imonggosdk/test/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/debug/R.txt" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/debug/R.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/symbols/androidTest/debug/R.txt" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/symbols/androidTest/debug/R.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_bar_title_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_bar_title_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_bar_title_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_bar_title_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_bar_up_container.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_bar_up_container.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_bar_up_container.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_bar_up_container.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_bar_view_list_nav_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_bar_view_list_nav_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_bar_view_list_nav_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_bar_view_list_nav_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_menu_item_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_menu_item_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_menu_item_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_menu_item_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_menu_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_menu_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_menu_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_menu_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_mode_bar.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_mode_bar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_mode_bar.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_mode_bar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_mode_close_item_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_action_mode_close_item_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_mode_close_item_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_action_mode_close_item_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_activity_chooser_view.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_activity_chooser_view.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_activity_chooser_view.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_activity_chooser_view.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_activity_chooser_view_list_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_activity_chooser_view_list_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_activity_chooser_view_list_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_activity_chooser_view_list_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_background_cache_hint_selector_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_background_cache_hint_selector_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_background_cache_hint_selector_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_background_cache_hint_selector_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_background_cache_hint_selector_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_background_cache_hint_selector_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_background_cache_hint_selector_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_background_cache_hint_selector_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_btn_check_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_btn_check_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_btn_check_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_btn_check_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_btn_radio_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_btn_radio_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_btn_radio_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_btn_radio_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_cab_background_internal_bg.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_cab_background_internal_bg.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_cab_background_internal_bg.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_cab_background_internal_bg.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_cab_background_top_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_cab_background_top_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_cab_background_top_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_cab_background_top_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_edit_text_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_edit_text_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_edit_text_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_edit_text_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_expanded_menu_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_expanded_menu_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_expanded_menu_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_expanded_menu_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_fade_in.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_fade_in.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_fade_in.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_fade_in.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_fade_out.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_fade_out.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_fade_out.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_fade_out.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_item_background_holo_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_item_background_holo_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_item_background_holo_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_item_background_holo_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_item_background_holo_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_item_background_holo_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_item_background_holo_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_item_background_holo_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_list_menu_item_checkbox.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_list_menu_item_checkbox.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_list_menu_item_checkbox.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_list_menu_item_checkbox.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_list_menu_item_icon.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_list_menu_item_icon.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_list_menu_item_icon.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_list_menu_item_icon.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_list_menu_item_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_list_menu_item_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_list_menu_item_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_list_menu_item_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_list_menu_item_radio.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_list_menu_item_radio.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_list_menu_item_radio.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_list_menu_item_radio.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_list_selector_background_transition_holo_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_list_selector_background_transition_holo_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_list_selector_background_transition_holo_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_list_selector_background_transition_holo_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_list_selector_background_transition_holo_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_list_selector_background_transition_holo_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_list_selector_background_transition_holo_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_list_selector_background_transition_holo_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_list_selector_holo_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_list_selector_holo_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_list_selector_holo_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_list_selector_holo_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_list_selector_holo_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_list_selector_holo_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_list_selector_holo_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_list_selector_holo_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_popup_menu_item_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_popup_menu_item_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_popup_menu_item_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_popup_menu_item_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_primary_text_disable_only_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_primary_text_disable_only_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_primary_text_disable_only_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_primary_text_disable_only_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_primary_text_disable_only_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_primary_text_disable_only_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_primary_text_disable_only_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_primary_text_disable_only_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_primary_text_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_primary_text_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_primary_text_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_primary_text_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_primary_text_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_primary_text_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_primary_text_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_primary_text_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_screen_content_include.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_screen_content_include.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_screen_content_include.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_screen_content_include.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_screen_simple.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_screen_simple.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_screen_simple.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_screen_simple.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_screen_simple_overlay_action_mode.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_screen_simple_overlay_action_mode.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_screen_simple_overlay_action_mode.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_screen_simple_overlay_action_mode.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_screen_toolbar.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_screen_toolbar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_screen_toolbar.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_screen_toolbar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_search_dropdown_item_icons_2line.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_search_dropdown_item_icons_2line.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_search_dropdown_item_icons_2line.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_search_dropdown_item_icons_2line.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_search_url_text.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_search_url_text.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_search_url_text.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_search_url_text.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_search_view.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_search_view.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_search_view.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_search_view.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_secondary_text_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_secondary_text_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_secondary_text_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_secondary_text_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_secondary_text_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/color/abc_secondary_text_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_secondary_text_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/color/abc_secondary_text_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_simple_dropdown_hint.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/abc_simple_dropdown_hint.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_simple_dropdown_hint.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/abc_simple_dropdown_hint.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_slide_in_bottom.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_slide_in_bottom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_slide_in_bottom.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_slide_in_bottom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_slide_in_top.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_slide_in_top.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_slide_in_top.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_slide_in_top.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_slide_out_bottom.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_slide_out_bottom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_slide_out_bottom.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_slide_out_bottom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_slide_out_top.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/anim/abc_slide_out_top.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_slide_out_top.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/anim/abc_slide_out_top.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_switch_thumb_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_switch_thumb_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_switch_thumb_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_switch_thumb_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_tab_indicator_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_tab_indicator_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_tab_indicator_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_tab_indicator_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_textfield_search_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/drawable/abc_textfield_search_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_textfield_search_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/drawable/abc_textfield_search_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/imonggosdk-imonggosdk.iml" afterPath="$PROJECT_DIR$/imonggosdk/imonggosdk-imonggosdk.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/local.properties" afterPath="$PROJECT_DIR$/local.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeAssets/androidTest/debug/merger.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeAssets/androidTest/debug/merger.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeResources/androidTest/debug/merger.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeResources/androidTest/debug/merger.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeResources/debug/merger.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeResources/debug/merger.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/packageResources/debug/merger.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/packageResources/debug/merger.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/support_simple_spinner_dropdown_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/layout/support_simple_spinner_dropdown_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/support_simple_spinner_dropdown_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/layout/support_simple_spinner_dropdown_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/values/values.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/values/values.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/values/values.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/values/values.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="b3afec34-51b6-43af-a6e9-add27f2f24f7" name="don't include" comment="don't include" />
     <manually-removed-from-ignored>
@@ -254,22 +116,38 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="SyncModules.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SyncModules.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
           <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.33275563">
+              <caret line="369" column="8" selection-start-line="369" selection-start-column="8" selection-end-line="369" selection-end-column="8" />
+              <folding>
+                <element signature="e#17617#17618#0" expanded="true" />
+                <element signature="e#17672#17673#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="C_Login.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Login.java">
+          <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="131" column="76" selection-start-line="131" selection-start-column="76" selection-end-line="131" selection-end-column="76" />
+              <caret line="24" column="27" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="C_Login.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Login.java">
+      <file leaf-file-name="BaseLoginActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6759099">
-              <caret line="32" column="12" selection-start-line="32" selection-start-column="12" selection-end-line="32" selection-end-column="32" />
-              <folding />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="804" column="35" selection-start-line="804" selection-start-column="35" selection-end-line="804" selection-end-column="35" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#16618#16667#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -3189,13 +3067,13 @@
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/SimpleLoginActivity.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/swable/ImonggoSwable.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/ImonggoService.java" />
         <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java" />
         <option value="$PROJECT_DIR$/local.properties" />
         <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/KeypadTest.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
         <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Login.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
       </list>
     </option>
   </component>
@@ -3361,7 +3239,7 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
     <property name="android.project.structure.last.selected" value="SDK Location" />
     <property name="android.project.structure.proportion" value="0.15" />
-    <property name="SearchEverywhereHistoryKey" value="SyncMo&#9;FILE&#9;file:///Users/Jan/Documents/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Servi&#9;FILE&#9;file:///Users/Jan/Documents/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/ImonggoService.java" />
+    <property name="SearchEverywhereHistoryKey" value="base&#9;FILE&#9;file:///Users/Jan/Documents/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;SyncMo&#9;FILE&#9;file:///Users/Jan/Documents/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Servi&#9;FILE&#9;file:///Users/Jan/Documents/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/ImonggoService.java" />
   </component>
   <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
     <UpdatedFiles>
@@ -3727,7 +3605,13 @@
       <option name="project" value="LOCAL" />
       <updated>1438249091591</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Jn Branch Backup">
+      <created>1438250497700</created>
+      <option name="number" value="00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1438250497700</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -3798,6 +3682,7 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#16618#16667#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3808,6 +3693,7 @@
           <caret line="719" column="0" selection-start-line="719" selection-start-column="0" selection-end-line="719" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#16618#16667#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3818,6 +3704,7 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#16618#16667#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3971,16 +3858,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="188" column="70" selection-start-line="188" selection-start-column="70" selection-end-line="188" selection-end-column="70" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncImonggoModules.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -4063,19 +3940,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
+    <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Login.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="131" column="76" selection-start-line="131" selection-start-column="76" selection-end-line="131" selection-end-column="76" />
+          <caret line="24" column="27" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Login.java">
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6759099">
-          <caret line="32" column="12" selection-start-line="32" selection-start-column="12" selection-end-line="32" selection-end-column="32" />
-          <folding />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="804" column="35" selection-start-line="804" selection-start-column="35" selection-end-line="804" selection-end-column="35" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#16618#16667#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33275563">
+          <caret line="369" column="8" selection-start-line="369" selection-start-column="8" selection-end-line="369" selection-end-column="8" />
+          <folding>
+            <element signature="e#17617#17618#0" expanded="true" />
+            <element signature="e#17672#17673#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
