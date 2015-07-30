@@ -360,9 +360,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.etEmail = editTextEmail;
         this.etPassword = editTextPassword;
 
-        this.etAccountID.setText("retailpos");
-        this.etEmail.setText("retailpos@test.com");
-        this.etPassword.setText("retailpos ");
+        this.etAccountID.setText("nuecaonly");
+        this.etEmail.setText("nuecaonly@test.com");
+        this.etPassword.setText("nuecaonly");
 
         this.btnSignIn = btnSignIn;
 
