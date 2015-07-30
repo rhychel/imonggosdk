@@ -12,12 +12,26 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name">
         <activity
-            android:name=".C_Login"
+            android:name=".C_Module"
             android:label="@string/app_name"
-            android:theme="@style/LoginTheme">
+            android:theme="@style/AppTheme.Concessio">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity
-            android:name=".C_Module"
+            android:name=".InitializeActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Concessio">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+
+        <activity
+            android:name=".C_SampleLogin"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Concessio">
             <intent-filter>
@@ -26,21 +40,10 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".InitializeActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.Concessio">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
-
         <service android:name="net.nueca.imonggosdk.swable.ImonggoSwable"
             android:enabled="true"/>
 
-        <service android:name=".BindThisService"
+        <service android:name="net.nueca.imonggosdk.operations.sync.SyncModules"
             android:enabled="true"/>
 
     </application>

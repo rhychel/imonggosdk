@@ -108,7 +108,6 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
         boolean includeSearchKey = !searchKey.equals("");
         boolean includeCategory = !category.toLowerCase().equals("all");
-
         try {
             Where<Product, Integer> whereProducts = getHelper().getProducts().queryBuilder().where();
             whereProducts.isNull("status");
