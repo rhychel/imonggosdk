@@ -44,6 +44,7 @@ import java.util.List;
  * Created by gama on 6/22/15.
  */
 public class ImonggoSwable extends SwableService {
+
     private static final String NO_RETURN_ID = "@";
 
     private static final int UNAUTHORIZED_ACCESS = 401;

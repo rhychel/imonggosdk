@@ -7,6 +7,9 @@ import net.nueca.imonggosdk.objects.Unit;
  * imonggosdk (c)2015
  [
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/development
      {
          "product_id": 115509,
          "retail_price": 8769.6,
@@ -35,6 +38,7 @@ import net.nueca.imonggosdk.objects.Unit;
          "quantity": 2,
          "line_no": 3
      }
+<<<<<<< HEAD
 =======
  {
  "product_id": 115509,
@@ -65,6 +69,8 @@ import net.nueca.imonggosdk.objects.Unit;
  "line_no": 3
  }
 >>>>>>> remotes/origin/gama
+=======
+>>>>>>> origin/development
  ]
  */
 public class Values {

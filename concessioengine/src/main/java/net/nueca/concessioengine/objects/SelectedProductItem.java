@@ -83,5 +83,4 @@ public class SelectedProductItem {
     public boolean equals(Object o) {
         return product.getId() == ((SelectedProductItem) o).getProduct().getId();
     }
-
 }

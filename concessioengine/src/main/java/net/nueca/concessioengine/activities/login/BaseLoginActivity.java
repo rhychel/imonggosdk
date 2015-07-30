@@ -46,6 +46,7 @@ import java.util.List;
  * Abstract Class BaseLoginActivity
  * created by Jn on 06/16/15
  * imonggosdk (c)2015
+ *
  */
 public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
 
@@ -68,8 +69,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     protected BaseLogin mBaseLogin;
 
-
-    //----
     private SyncModules mSyncModules;
     private Boolean mBounded;
 
@@ -187,7 +186,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
                         // check if sessions email exist in user's database
                         if (getHelper().getUsers().queryBuilder().where().eq("email", mSession.getEmail()).query().size() == 0) {
-                            Log.e(TAG, "sessions email dont match dont match user's email");
+                            Log.e(TAG, "sessions email dont match don't match user's email");
                             LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
 
                             // TODO: Offline Data in unlinkAccount
@@ -361,9 +360,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.etEmail = editTextEmail;
         this.etPassword = editTextPassword;
 
-        this.etAccountID.setText("nuecaonly");
-        this.etEmail.setText("nuecaonly@test.com");
-        this.etPassword.setText("nuecaonly");
+        this.etAccountID.setText("retailpos");
+        this.etEmail.setText("retailpos@test.com");
+        this.etPassword.setText("retailpos ");
 
         this.btnSignIn = btnSignIn;
 
@@ -672,6 +671,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     private void startSyncService() {
         if (!isSyncServiceRunning(SyncModules.class) || mSyncModules == null) {
+            mBounded = false;
             startService(mServiceIntent);
             Log.i(TAG, "There is no service running, starting service..");
             bindSyncService();
@@ -733,7 +733,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         break;
                     case PRODUCTS:
                         currentTable = "Products";
-                        Log.e(TAG, "Updating progress of " + table + " " + page + " out of " + max);
                         break;
                     case INVENTORIES:
                         currentTable = "Inventories";
@@ -790,7 +789,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             mSyncModules = (SyncModules) mLocalBinder.getService();
             if (mSyncModules != null) {
                 mBounded = true;
-                Log.e(TAG, "Succesfully bind Service and Activity");
+                Log.e(TAG, "Successfully bind Service and Activity");
                 mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
             } else {
                 Log.e(TAG, "Cannot bind Service and Activity");

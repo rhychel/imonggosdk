@@ -114,5 +114,4 @@ public class ProductsAdapterHelper {
         imageRequestQueue = null;
         selectedProductItems = null;
     }
-
 }
