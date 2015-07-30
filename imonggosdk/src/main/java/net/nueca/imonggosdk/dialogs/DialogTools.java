@@ -68,7 +68,7 @@ public class DialogTools {
      */
     public static void hideIndeterminateProgressDialog() {
         if(mProgressDialog != null) {
-            mProgressDialog.hide();
+            mProgressDialog.dismiss();
             mProgressDialog = null;
         }
     }

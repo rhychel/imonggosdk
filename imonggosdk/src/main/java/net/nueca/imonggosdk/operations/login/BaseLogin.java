@@ -1,4 +1,3 @@
-
 package net.nueca.imonggosdk.operations.login;
 
 import android.content.Context;
@@ -492,9 +491,23 @@ public class BaseLogin {
 
             @Override
             public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+
+                DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                        mContext.getString(R.string.LOGIN_NETWORK_ERROR),
+                        mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+                        new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                super.onPositive(dialog);
+                                dialog.dismiss();
+                            }
+                        });
+
+
                 if (mLoginListener != null) {
                     mLoginListener.onStopLogin();
-                }}
+                }
+            }
 
             @Override
             public void onRequestError() {

@@ -21,6 +21,7 @@ import java.sql.SQLException;
 public class LoginActivity extends BaseLoginActivity {
 
     public static String TAG = "LoginActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

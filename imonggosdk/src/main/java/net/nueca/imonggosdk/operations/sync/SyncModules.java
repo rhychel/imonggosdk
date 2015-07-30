@@ -66,8 +66,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing,
                     getSession().getServer(), requestType, getParameters(requestType));
-
-
         }
     }
 
@@ -98,6 +96,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     private boolean syncNext() throws SQLException {
+        mModulesIndex++;
+
+        Log.e(TAG, mModulesIndex + ">= " + mModulesToSync.length);
+
         if (mCurrentTableSyncing == Table.USERS) { //check if its a User, then resume downloading the user branches on count request and so on...
             if (mModulesToSync[mModulesIndex] == Table.BRANCH_USERS) {
                 mCurrentTableSyncing = Table.BRANCH_USERS;
@@ -107,13 +109,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 numberOfPages = 1;
                 count = 0;
                 startSyncModuleContents(RequestType.COUNT);
+                mModulesIndex++;
+                return true;
             }
         }
 
-        mModulesIndex++;
 
-        if (mModulesIndex >= mModulesToSync.length) {  // this is when there are no left tables to sync
-            Log.e(TAG, "finished downloading tables");
+        if (mModulesIndex >= (mModulesToSync.length - 1)) {  // this is when there are no left tables to sync
+
             if (mSyncModulesListener != null) {
                 Log.e(TAG, "finished downloading tables");
                 // When the request is successful
@@ -188,7 +191,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     startSyncModuleContents(RequestType.API_CONTENT);
                     // API CONTENT
                 } else if (requestType == RequestType.API_CONTENT) {
-
                 }
                 // JSONArray
             } else if (response instanceof JSONArray) {
@@ -201,7 +203,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         if (mSyncModulesListener != null) {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
                         }
-
                         if (size == 0) {
                             syncNext();
                             return;
