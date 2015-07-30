@@ -2,14 +2,7 @@ package net.nueca.imonggosdk.widgets;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -31,6 +24,7 @@ import net.nueca.imonggosdk.R;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by gama on 5/16/15.
@@ -43,10 +37,11 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
 
     private String DEFAULT_TEXT = "0";
     private String FORMAT = "%,1.0f";
-    private int MAX_LENGTH = 16;
     private String PREFIX= "";
     private boolean BEGIN_FROM_DECIMAL;
-    private int DECIMAL_LENGTH = 2;
+    private int MAX_DECIMAL_LENGTH = 2;
+    private int MAX_WHOLE_NUM_DIGIT = 12;
+    //private int MAX_LENGTH = 16;
     private boolean isNegative = false;
 
     public static final int DEFAULT_KEYPAD_BUTTON_TEXTCOLOR = R.color.keypad_button_text;
@@ -62,7 +57,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
     private ImageButton ibtnGo, ibtnNegative, ibtnBksp, ibtnMore;
 
     private boolean handleBackButton = false, showMoreButton = true, showNegativeButton = true,
-            showGoButton = true, showControlButtons = true, requireDecimal = false;
+            showGoButton = true, showControlButtons = true, alwaysShowDecimal = false;
     private int fontSize = 20;
     private ColorStateList fontColor, backgroundColor;
     private int buttonBgResource, goButtonBgResource;
@@ -96,7 +91,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             showNegativeButton = typedArray.getBoolean(R.styleable.Numpad_showNegativeButton, true);
             showGoButton = typedArray.getBoolean(R.styleable.Numpad_showGoButton, true);
             showControlButtons = typedArray.getBoolean(R.styleable.Numpad_showControlButtons, true);
-            requireDecimal = typedArray.getBoolean(R.styleable.Numpad_requireDecimal, false);
+            alwaysShowDecimal = typedArray.getBoolean(R.styleable.Numpad_alwaysShowDecimal, false);
             fontSize = typedArray.getInteger(R.styleable.Numpad_fontSize, 20);
             fontColor = typedArray.getColorStateList(R.styleable.Numpad_fontColor);
             buttonBgResource = typedArray.getResourceId(R.styleable.Numpad_buttonBgResource, DEFAULT_KEYPAD_BUTTON_BG);
@@ -120,7 +115,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             showGoButton(showGoButton);
             showControlButtons(showControlButtons);
 
-            setRequireDecimal(requireDecimal);
+            setAlwaysShowDecimal(alwaysShowDecimal);
 
         //if(!isInEditMode())
             initAppearance();
@@ -174,25 +169,28 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         keypadView.setBackgroundColor(backgroundColor.getDefaultColor());
     }
 
-    private void setRequireDecimal(boolean requireDecimal) {
-        BEGIN_FROM_DECIMAL = requireDecimal;
-        if(requireDecimal) {
-            FORMAT = "%,1.0" + DECIMAL_LENGTH + "f";
+    private void setAlwaysShowDecimal(boolean alwaysShowDecimal) {
+        BEGIN_FROM_DECIMAL = alwaysShowDecimal;
+        if(alwaysShowDecimal) {
+            FORMAT = "%,1.0" + MAX_DECIMAL_LENGTH + "f";
             DEFAULT_TEXT = String.format(FORMAT,0f);
             setEnableDot(false);
         }
         else {
             DEFAULT_TEXT = "0";
             FORMAT = "%,1.0f";
-            setEnableDot(DECIMAL_LENGTH > 0);
+            setEnableDot(MAX_DECIMAL_LENGTH > 0);
         }
     }
 
-    public void setMaxLength(int maxLength) {
+    /*public void setMaxLength(int maxLength) {
         MAX_LENGTH = maxLength;
-    }
+    }*/
     public void setDecimalLength(int decimalLength) {
-        DECIMAL_LENGTH = decimalLength;
+        MAX_DECIMAL_LENGTH = decimalLength;
+    }
+    public void setWholeNumberDigitLength(int wholeNumLen) {
+        MAX_WHOLE_NUM_DIGIT = wholeNumLen;
     }
 
     public void setEnable00(boolean isEnabled) {
@@ -321,16 +319,19 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
     private void doWrite(String str) {
         String unparsed = mTextHolder.getTextView().getText().toString();
         unparsed = unparsed.replaceAll("[^0-9.,]", "");
-        if(unparsed.length() >= MAX_LENGTH && str.length() > 0)
-            return;
 
         if(BEGIN_FROM_DECIMAL) {
             String parsed = unparsed.replaceAll("[^0-9]","");
-            parsed += str;
+            for(int i=0; i<str.length();i++) {
+                countDigits(parsed);
+                if(CURRENT_WHOLE_DIGIT+CURRENT_DECIMAL == MAX_WHOLE_NUM_DIGIT+MAX_DECIMAL_LENGTH)
+                    break;
+                parsed += str.charAt(i);
+            }
             BigDecimal number = BigDecimal.ZERO;
             if(parsed.length() > 0)
                 number = new BigDecimal(parsed);
-            String divisor = String.format("%1$-" + (DECIMAL_LENGTH+1) + "s", "1").replaceAll("[^0-9]","0");
+            String divisor = String.format("%1$-" + (MAX_DECIMAL_LENGTH +1) + "s", "1").replaceAll("[^0-9]","0");
             number = number.divide(new BigDecimal(divisor));
 
             String numStr = String.format(FORMAT, number);
@@ -351,14 +352,19 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
                     number = new BigDecimal(parsed);
 
                 String numStr = String.format(FORMAT, number) + ".";
-                if(numStr.replaceAll("[0.,]","").length() > 0)
+                if(numStr.replaceAll("[0.,]","").length() > 0) // check for non-zeroes
                     numStr = (isNegative?"-":"") + numStr;
                 mTextHolder.getTextView().setText(PREFIX + numStr);
             }
             else { // str not decimal point
                 for(int i=0; i<str.length();i++) {
-                    if(unparsed.length() > MAX_LENGTH)
-                        break;
+                    countDigits(unparsed);
+                    if(CURRENT_WHOLE_DIGIT == MAX_WHOLE_NUM_DIGIT) {
+                        if(unparsed.contains(".") && CURRENT_DECIMAL == MAX_DECIMAL_LENGTH)
+                            break;
+                        else if(!unparsed.contains("."))
+                            break;
+                    }
                     unparsed += str.charAt(i);
                 }
                 parsed = unparsed.replaceAll("[^0-9.]", "");
@@ -366,8 +372,8 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
                 String decimalNum = "";
                 if(parsed.contains(".")) {
                     decimalNum = parsed.substring(parsed.indexOf("."));
-                    if(decimalNum.length() > DECIMAL_LENGTH+1)
-                        decimalNum = decimalNum.substring(0, DECIMAL_LENGTH+1);
+                    if(decimalNum.length() > MAX_DECIMAL_LENGTH +1)
+                        decimalNum = decimalNum.substring(0, MAX_DECIMAL_LENGTH +1);
                     parsed = parsed.substring(0, parsed.indexOf("."));
                 }
                 BigDecimal number = BigDecimal.ZERO;
@@ -397,7 +403,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             BigDecimal number = BigDecimal.ZERO;
             if(parsed.length() > 0)
                 number = new BigDecimal(parsed);
-            String divisor = String.format("%1$-" + (DECIMAL_LENGTH+1) + "s", "1").replaceAll("[^0-9]","0");
+            String divisor = String.format("%1$-" + (MAX_DECIMAL_LENGTH +1) + "s", "1").replaceAll("[^0-9]","0");
             number = number.divide(new BigDecimal(divisor));
 
             String numStr = String.format(FORMAT, number);
@@ -416,7 +422,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             String decimalNum = "";
             if(parsed.contains(".")) {
                 decimalNum = parsed.substring(parsed.indexOf("."));
-                if(decimalNum.length() > DECIMAL_LENGTH+1)
+                if(decimalNum.length() > MAX_DECIMAL_LENGTH +1)
                     return;
                 parsed = parsed.substring(0, parsed.indexOf("."));
             }
@@ -429,9 +435,12 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
                 numStr = (isNegative?"-":"") + numStr;
             mTextHolder.getTextView().setText(PREFIX + numStr);
         }
+        countDigits();
     }
     private void doClear() {
         mTextHolder.getTextView().setText(PREFIX + DEFAULT_TEXT);
+        CURRENT_WHOLE_DIGIT = 0;
+        CURRENT_DECIMAL = 0;
     }
     private OnClickListener backspaceClickListener =  new OnClickListener() {
         @Override
@@ -478,21 +487,23 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         return null;
     }
 
-    public void addTextHolder(TextView view, String tag, boolean requireDecimal, boolean allowNegative,
+    public void addTextHolder(TextView view, String tag, boolean alwaysShowDecimal, boolean allowNegative,
                               @Nullable TextHolderHelper listener) {
-        addTextHolder(new TextHolder(view, tag, listener, requireDecimal, allowNegative));
+        addTextHolder(new TextHolder(view, tag, listener, alwaysShowDecimal, allowNegative));
     }
-    public void addTextHolder(EditText view, String tag, boolean requireDecimal, boolean allowNegative,
+    public void addTextHolder(EditText view, String tag, boolean alwaysShowDecimal, boolean allowNegative,
                               @Nullable TextHolderHelper listener) {
-        addTextHolder(new TextHolder(view, tag, listener, requireDecimal, allowNegative));
+        addTextHolder(new TextHolder(view, tag, listener, alwaysShowDecimal, allowNegative));
     }
-    public void addTextHolder(TextView view, String tag, boolean requireDecimal, int decimalPlace,
-                              boolean allowNegative, @Nullable TextHolderHelper listener) {
-        addTextHolder(new TextHolder(view, tag, listener, requireDecimal, decimalPlace, allowNegative));
+    public void addTextHolder(TextView view, String tag, boolean alwaysShowDecimal, int wholeNumDigitCount,
+                              int decimalPlace, boolean allowNegative, @Nullable TextHolderHelper listener) {
+        addTextHolder(new TextHolder(view, tag, listener, alwaysShowDecimal, wholeNumDigitCount, decimalPlace,
+                allowNegative));
     }
-    public void addTextHolder(EditText view, String tag, boolean requireDecimal, int decimalPlace,
-                              boolean allowNegative, @Nullable TextHolderHelper listener) {
-        addTextHolder(new TextHolder(view, tag, listener, requireDecimal, decimalPlace, allowNegative));
+    public void addTextHolder(EditText view, String tag, boolean alwaysShowDecimal, int wholeNumDigitCount,
+                              int decimalPlace, boolean allowNegative, @Nullable TextHolderHelper listener) {
+        addTextHolder(new TextHolder(view, tag, listener, alwaysShowDecimal, wholeNumDigitCount, decimalPlace,
+                allowNegative));
     }
 
     private void addTextHolder(final TextHolder textHolder) {
@@ -533,8 +544,9 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
                     if(isNegative)
                         toggleNegative();
 
+                    setWholeNumberDigitLength(textHolder.getDigitCount());
                     setDecimalLength(textHolder.getDecimalPlace());
-                    setRequireDecimal(textHolder.requireDecimal);
+                    setAlwaysShowDecimal(textHolder.alwaysShowDecimal);
                     setAllowNegative(textHolder.allowNegative);
 
                     if(textHolder.getTextView().getText().toString().contains("-")) {
@@ -545,6 +557,8 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
                     if (textHolder.helper != null) {
                         textHolder.helper.hasFocus(view, true);
                     }
+
+                    countDigits();
                 }
             }
         });
@@ -560,27 +574,30 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
     public class TextHolder {
         public View mTextHolder;
         public TextHolderHelper helper;
-        boolean requireDecimal;
+        boolean alwaysShowDecimal;
         private Object TAG;
         private int mDecimalPlace;
+        private int mDigitCount;
         private boolean allowNegative = false;
 
-        public TextHolder(View view, String tag, TextHolderHelper helper, boolean requireDecimal, boolean allowNegative)
+        public TextHolder(View view, String tag, TextHolderHelper helper, boolean alwaysShowDecimal, boolean allowNegative)
         {
             this.mTextHolder = view;
             setTag(tag);
             this.helper = helper;
-            this.requireDecimal = requireDecimal;
+            this.alwaysShowDecimal = alwaysShowDecimal;
             this.mDecimalPlace = 2;
+            this.mDigitCount = 12;
             this.allowNegative = allowNegative;
         }
-        public TextHolder(View view, String tag, TextHolderHelper helper, boolean requireDecimal, int decimalPlace,
-                          boolean allowNegative) {
+        public TextHolder(View view, String tag, TextHolderHelper helper, boolean alwaysShowDecimal, int digitCount,
+                          int decimalPlace, boolean allowNegative) {
             this.mTextHolder = view;
             setTag(tag);
             this.helper = helper;
-            this.requireDecimal = requireDecimal;
+            this.alwaysShowDecimal = alwaysShowDecimal;
             this.mDecimalPlace = decimalPlace;
+            this.mDigitCount = digitCount;
             this.allowNegative = allowNegative;
         }
 
@@ -589,6 +606,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         public void setTag(Object o) { TAG = o; }
         public void setDecimalPlace(int length) { mDecimalPlace = length; }
         public int getDecimalPlace() { return mDecimalPlace; }
+        public int getDigitCount() { return mDigitCount; }
 
         @Override
         public boolean equals(Object o) {
@@ -602,5 +620,30 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         void hasFocus(View focused, boolean hasFocus);
         void onConfirmClick(String text);
         void onMoreButtonClicked();
+    }
+
+    private int CURRENT_WHOLE_DIGIT = 0, CURRENT_DECIMAL = 0;
+    private void countDigits() {
+        TextView textHolder = mTextHolder.getTextView();
+        String current_text = textHolder.getText().toString();
+        countDigits(current_text);
+    }
+    private void countDigits(String str) {
+        Log.e("str", str);
+        if(str.contains(".")) {
+            StringTokenizer tokens = new StringTokenizer(str,".");
+            Log.e("tokens",tokens.countTokens()+"");
+
+            CURRENT_WHOLE_DIGIT = tokens.nextToken().replaceAll("[^0-9]", "").length();
+            if(tokens.hasMoreTokens())
+                CURRENT_DECIMAL = tokens.nextToken().length();
+            else
+                CURRENT_DECIMAL = 0;
+        }
+        else {
+            CURRENT_WHOLE_DIGIT = str.replaceAll("[^0-9]","").length();
+            CURRENT_DECIMAL = 0;
+        }
+        Log.e("DIGIT",CURRENT_WHOLE_DIGIT + " " + CURRENT_DECIMAL);
     }
 }

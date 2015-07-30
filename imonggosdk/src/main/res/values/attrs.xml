@@ -11,7 +11,7 @@
         <attr name="showMoreButton" format="boolean" />
         <attr name="showNegativeButton" format="boolean" />
         <attr name="showControlButtons" format="boolean" />
-        <attr name="requireDecimal" format="boolean" />
+        <attr name="alwaysShowDecimal" format="boolean" />
 
         <attr name="fontSize" format="integer" />
         <attr name="fontColor" format="color" />

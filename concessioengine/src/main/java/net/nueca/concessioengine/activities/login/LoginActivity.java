@@ -72,6 +72,7 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void stopLogin() {
 
+
     }
 
     @Override
@@ -110,6 +111,7 @@ public class LoginActivity extends BaseLoginActivity {
 
         test_fetch_button.setVisibility(View.GONE);
     }
+
 
     @Override
     public void onLogoutAccount() {

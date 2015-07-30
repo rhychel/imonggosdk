@@ -50,6 +50,7 @@ public class DialogTools {
     public static void showIndeterminateProgressDialog(Context context, String title,
                                                        String content, Boolean cancelable) {
         mProgressDialog = new ProgressDialog(context);
+
         mProgressDialog.setIndeterminate(true);
 
         if (title != null) {
@@ -58,6 +59,7 @@ public class DialogTools {
 
         mProgressDialog.setCancelable(cancelable);
         mProgressDialog.setMessage(content);
+
         mProgressDialog.show();
     }
 

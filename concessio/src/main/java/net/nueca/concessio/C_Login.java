@@ -1,5 +1,6 @@
 package net.nueca.concessio;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,34 +10,18 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 
-import net.nueca.concessioengine.activities.login.BaseLoginActivity;
+import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
 
-public class C_Login extends BaseLoginActivity {
+public class C_Login extends LoginActivity {
 
-    @Override
-    protected void initActivity() {
-        // set the server choice here
-        setServer(Server.IRETAILCLOUD_NET);
-    }
 
     @Override
     protected void updateAppData() {
-
-    }
-
-    @Override
-    protected void updateModules() {
-        int[] modules = {Table.BRANCHES.ordinal(), Table.PRODUCTS.ordinal(), Table.CUSTOMERS.ordinal() };
-        setModules(modules);
-    }
-
-    @Override
-    protected void onCreateSelectBranchLayout() {
 
     }
 
@@ -50,12 +35,9 @@ public class C_Login extends BaseLoginActivity {
 
     }
 
-    @Override
-    protected void loginSuccess() {
-    }
 
     @Override
-    protected void onCreateLoginLayout() {
+    protected void syncingModulesSuccessful() {
 
     }
 
@@ -83,4 +65,12 @@ public class C_Login extends BaseLoginActivity {
     public void onUnlinkAccount() {
 
     }
+
+    @Override
+    protected void showNextActivity() {
+        finish();
+        Intent intent = new Intent(this, C_Module.class);
+        startActivity(intent);
+    }
+
 }

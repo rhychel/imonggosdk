@@ -19,7 +19,7 @@
         <uses-library android:name="android.test.runner" />
 
         <service
-            android:name="net.nueca.imonggosdk.operations.sync.TestService"
+            android:name="net.nueca.imonggosdk.operations.sync.SyncModules"
             android:enabled="true"
             android:exported="false" >
             <intent-filter>

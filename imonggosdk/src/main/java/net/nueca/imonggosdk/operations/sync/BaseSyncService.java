@@ -175,7 +175,7 @@ public abstract class BaseSyncService extends ImonggoService {
         mNotificationManager.cancel(NOTIFICATION_ID);
 
         // Tell the user we stopped.
-        Toast.makeText(this, "Service has stopped", Toast.LENGTH_SHORT).show();
+        Log.e(TAG, "Sync Service has stopped");
     }
 
     /**

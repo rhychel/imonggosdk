@@ -19,10 +19,13 @@ import java.util.List;
 /**
  * Created by rhymart on 6/3/15.
  * imonggosdk (c)2015
+<<<<<<< HEAD
  * /usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rhymart/yes/google-cloud-sdk/bin:/usr/local/apache-maven/apache-maven-3.2.1//bin:/usr/local/mysql/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rhymart/yes/google-cloud-sdk/bin:/usr/local/apache-maven/apache-maven-3.2.1//bin:/usr/local/mysql/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rhymart/yes/google-cloud-sdk/bin:/usr/local/apache-maven/apache-maven-3.2.1//bin:/usr/local/mysql/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rhymart/yes/google-cloud-sdk/bin:/usr/local/apache-maven/apache-maven-3.2.1//bin:/usr/local/mysql/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/Users/rhymart/gradle-all//bin:/Users/rhymart/gradle-1.11//bin:/Users/rhymart/gradle-1.11//bin:/Users/rhymart/gradle-all/bin:/Users/rhymart/gradle-all/bin
  *
  *
  * /usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rhymart/yes/google-cloud-sdk/bin:/usr/local/apache-maven/apache-maven-3.2.1/bin:/usr/local/mysql/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/Users/rhymart/gradle-all/bin
+=======
+>>>>>>> remotes/origin/gama
  */
 public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
@@ -30,7 +33,6 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
     public List<String> getProductCategories(boolean includeAll) {
         List<String> categories = new ArrayList<>();
 

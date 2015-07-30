@@ -65,7 +65,7 @@ public class ImonggoSwable extends SwableService {
 
     private User user;
     @Override
-    public User getUser() {
+    protected User getUser() {
         if(user == null) {
             try {
                 user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();

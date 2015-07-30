@@ -1,7 +1,6 @@
 package net.nueca.concessioengine.objects;
 
 import android.util.Log;
-
 import net.nueca.concessioengine.lists.ValuesList;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;

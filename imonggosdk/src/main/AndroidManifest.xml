@@ -4,11 +4,12 @@
 
     <application
         android:allowBackup="true"
-        android:label="@string/app_name" >
+        android:label="@string/app_name">
+
         <service
-            android:name=".operations.sync.TestService"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false"
+            android:name=".operations.sync.SyncModules">
             <intent-filter>
                 <action android:name="net.nueca.imonggosdk.operations.sync.TestService" />
             </intent-filter>

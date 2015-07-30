@@ -241,7 +241,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         if (mSyncModulesListener != null) {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
                         }
-
                         if (page == 1) {
                             getHelper().dbOperations(null, Table.BRANCHES, DatabaseOperation.DELETE_ALL);
                             getHelper().dbOperations(null, Table.BRANCH_TAGS, DatabaseOperation.DELETE_ALL);
@@ -354,4 +353,3 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing, getSession().getServer(), RequestType.LAST_UPDATED_AT, getParameters(RequestType.LAST_UPDATED_AT));
     }
 }
-

@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -255,6 +256,17 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
+    private void showSyncModulesCustomDialog() {
+
+        customDialogFrameLayout = new CustomDialogFrameLayout(BaseLoginActivity.this, mModulesToDownload);
+
+        customDialog = new CustomDialog(BaseLoginActivity.this, R.style.AppCompatDialogStyle);
+        customDialog.setTitle(getString(R.string.FETCHING_MODULE_TITLE));
+        customDialog.setContentView(customDialogFrameLayout);
+        customDialog.setCancelable(false);
+        customDialog.show();
+    }
+
     private void setUpModuleNamesForCustomDialog() {
         if (getModules() != null) { // manually set modules to download see /**/
             mModulesToDownload.clear();
@@ -284,6 +296,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             case DOCUMENTS:
                                 mModulesToDownload.add("Documents");
                                 break;
+                            case UNITS:
+                                mModulesToDownload.add("Units");
+                                break;
                             default:
                                 Log.e(TAG, "You have added unsupported module");
                                 break;
@@ -300,6 +315,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     Table.PRODUCTS.ordinal(),
                     Table.INVENTORIES.ordinal(),
                     Table.CUSTOMERS.ordinal(),
+                    Table.UNITS.ordinal(),
                     Table.DOCUMENTS.ordinal(),
                     Table.DOCUMENT_TYPES.ordinal()
             };
@@ -310,28 +326,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             mModulesToDownload.add("Products");
             mModulesToDownload.add("Inventories");
             mModulesToDownload.add("Customers");
+            mModulesToDownload.add("Units");
             mModulesToDownload.add("Documents");
             mModulesToDownload.add("Document Types");
-        }
-    }
-
-    private void showSyncModulesCustomDialog() {
-
-        customDialogFrameLayout = new CustomDialogFrameLayout(BaseLoginActivity.this, mModulesToDownload);
-
-        customDialog = new CustomDialog(BaseLoginActivity.this, R.style.AppCompatDialogStyle);
-        customDialog.setTitle(getString(R.string.FETCHING_MODULE_TITLE));
-        customDialog.setContentView(customDialogFrameLayout);
-        customDialog.setCancelable(false);
-        customDialog.show();
-    }
-
-    public Boolean haveDefaultBranch() {
-        // if default branch is not null
-        if (getDefaultBranch().equals("")) {
-            return false;
-        } else {
-            return true;
         }
     }
 
@@ -360,7 +357,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     protected void setupLayoutEquipments(EditText editTextAccountId, EditText
             editTextEmail, EditText editTextPassword, Button btnSignIn) {
-
         this.etAccountID = editTextAccountId;
         this.etEmail = editTextEmail;
         this.etPassword = editTextPassword;
@@ -691,6 +687,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         } else {
             Log.e(TAG, "Service is already binded.");
         }
+
     }
 
     private void doUnbindService() {
@@ -788,11 +785,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.e(TAG, "service is connected");
-
             BaseSyncService.LocalBinder mLocalBinder = (BaseSyncService.LocalBinder) service;
 
             mSyncModules = (SyncModules) mLocalBinder.getService();
-
             if (mSyncModules != null) {
                 mBounded = true;
                 Log.e(TAG, "Succesfully bind Service and Activity");
