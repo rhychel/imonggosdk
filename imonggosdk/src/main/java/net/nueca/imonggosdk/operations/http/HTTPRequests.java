@@ -1,7 +1,7 @@
 package net.nueca.imonggosdk.operations.http;
 
 import android.content.Context;
-import android.util.Log;
+
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
@@ -158,7 +158,6 @@ public class HTTPRequests {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.i("postrequestresponse", response.toString());
                         if (volleyRequestListener != null)
                             volleyRequestListener.onSuccess(table, RequestType.POST, response);
                     }
@@ -183,7 +182,6 @@ public class HTTPRequests {
             }
         };
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
-        Log.e("URL",jsonObjectRequest.getUrl());
         return jsonObjectRequest;
     }
 
@@ -260,7 +258,6 @@ public class HTTPRequests {
             }
         };
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
-        Log.e("URL",jsonObjectRequest.getUrl());
         return jsonObjectRequest;
     }
 

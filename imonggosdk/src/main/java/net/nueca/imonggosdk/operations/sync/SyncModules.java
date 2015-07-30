@@ -67,8 +67,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing,
                     getSession().getServer(), requestType, getParameters(requestType));
-
-
         }
     }
 
@@ -99,8 +97,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     private boolean syncNext() throws SQLException {
+        mModulesIndex++;
+
+        Log.e(TAG, mModulesIndex + ">= " + mModulesToSync.length);
+
         if (mCurrentTableSyncing == Table.USERS) { //check if its a User, then resume downloading the user branches on count request and so on...
-            if (mModulesToSync[mModulesIndex+1] == Table.BRANCH_USERS) {
+            if (mModulesToSync[mModulesIndex] == Table.BRANCH_USERS) {
                 mCurrentTableSyncing = Table.BRANCH_USERS;
 
                 Log.e(TAG, "preparing to sync " + mCurrentTableSyncing);
@@ -113,10 +115,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             }
         }
 
-        mModulesIndex++;
 
-        if (mModulesIndex >= mModulesToSync.length) {  // this is when there are no left tables to sync
-            Log.e(TAG, "finished downloading tables");
+        if (mModulesIndex >= (mModulesToSync.length - 1)) {  // this is when there are no left tables to sync
+
             if (mSyncModulesListener != null) {
                 Log.e(TAG, "finished downloading tables");
                 // When the request is successful
@@ -150,7 +151,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
     @Override
     public void onSuccess(Table module, RequestType requestType, Object response) {
-        Log.e(TAG, "succesfully downloaded " + module.toString());
+        Log.e(TAG, "successfully downloaded " + module.toString());
 
         try {
             // JSONObject
@@ -164,6 +165,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                     //TODO: documents?
                     newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module));
+
+                    Log.e(TAG, "Last Updated At: " +  jsonObject.toString());
 
                     // since this is the first
                     page = 1;
@@ -192,7 +195,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     startSyncModuleContents(RequestType.API_CONTENT);
                     // API CONTENT
                 } else if (requestType == RequestType.API_CONTENT) {
-
+                    Log.e(TAG, "API Content on JSONObject Request");
                 }
                 // JSONArray
             } else if (response instanceof JSONArray) {
@@ -395,3 +398,4 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing, getSession().getServer(), RequestType.LAST_UPDATED_AT, getParameters(RequestType.LAST_UPDATED_AT));
     }
 }
+

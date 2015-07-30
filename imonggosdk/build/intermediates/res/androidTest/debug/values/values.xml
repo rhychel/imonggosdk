@@ -321,7 +321,7 @@
     <string name="LOGIN_DIALOG_POSITIVE_BUTTON"> Ok </string>
     <string name="LOGIN_FAILED_ACCOUNT_ID">Incorrect account id.</string>
     <string name="LOGIN_FAILED_OFFLINE">You are offline.</string>
-    <string name="LOGIN_FAILED_POSITIVE_BUTTON">Sign In Again</string>
+    <string name="LOGIN_FAILED_POSITIVE_BUTTON">Ok</string>
     <string name="LOGIN_FAILED_TITLE">Failed to Sign In</string>
     <string name="LOGIN_FIELD_REQUIRED">This field is required.</string>
     <string name="LOGIN_INVALID_CREDENTIALS">Invalid Credential.</string>

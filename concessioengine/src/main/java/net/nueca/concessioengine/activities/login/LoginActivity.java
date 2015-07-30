@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 /**
  * Created by Jn on 7/12/2015.
- * imonggosdk(2015)
+ * imonggosdk (c)2015
  */
 public class LoginActivity extends BaseLoginActivity {
 
@@ -40,8 +40,9 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Override
     protected void initLoginEquipments() {
-        // set the mServer choice here
-        setServer(Server.IRETAILCLOUD_NET);
+
+        // set the Server choice here
+        setServer(Server.IRETAILCLOUD_COM);
         Log.e(TAG, "Server is " + getServer().toString());
 
         // set the Modules to download

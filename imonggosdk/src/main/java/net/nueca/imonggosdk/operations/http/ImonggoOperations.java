@@ -111,14 +111,11 @@ public class ImonggoOperations {
 
     public static void sendPOSDevice(Context context, RequestQueue queue, Session session,
                                                   VolleyRequestListener volleyRequestListener, Server server) {
-
         sendPOSDevice(context,queue, session, volleyRequestListener, server, null, "");
     }
 
     public static void sendPOSDevice(Context context, RequestQueue queue, Session session,
                                                   VolleyRequestListener volleyRequestListener, Server server, JSONObject jsonObject, String parameter) {
-
-
         queue.add( HTTPRequests.sendPOSTRequest(context,session,volleyRequestListener,server,Table.POS_DEVICES, jsonObject, parameter));
     }
 

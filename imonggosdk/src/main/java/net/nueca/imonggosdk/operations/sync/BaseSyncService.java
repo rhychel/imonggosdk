@@ -119,7 +119,7 @@ public abstract class BaseSyncService extends ImonggoService {
                     Table.BRANCH_USERS, Table.PRODUCTS,
                     Table.INVENTORIES, Table.CUSTOMERS,
                     Table.DOCUMENTS, Table.DOCUMENT_TYPES,
-            };
+                    };
             mCurrentTableSyncing = mModulesToSync[mModulesIndex];
         }
 

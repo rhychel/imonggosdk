@@ -89,7 +89,7 @@
     <color name="highlighted_text_material_light">#66009688</color>
     <color name="hint_foreground_material_dark">@color/bright_foreground_disabled_material_dark</color>
     <color name="hint_foreground_material_light">@color/bright_foreground_disabled_material_light</color>
-    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/color.xml -->
+    <!-- From: file:/E:/Jn/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/keypad_color.xml -->
     <eat-comment/>
     <color name="keypad_default_bg">#096363</color>
     <color name="keypad_default_buttonbg">#096363</color>
@@ -321,7 +321,7 @@
     <string name="LOGIN_DIALOG_POSITIVE_BUTTON"> Ok </string>
     <string name="LOGIN_FAILED_ACCOUNT_ID">Incorrect account id.</string>
     <string name="LOGIN_FAILED_OFFLINE">You are offline.</string>
-    <string name="LOGIN_FAILED_POSITIVE_BUTTON">Sign In Again</string>
+    <string name="LOGIN_FAILED_POSITIVE_BUTTON">Ok</string>
     <string name="LOGIN_FAILED_TITLE">Failed to Sign In</string>
     <string name="LOGIN_FIELD_REQUIRED">This field is required.</string>
     <string name="LOGIN_INVALID_CREDENTIALS">Invalid Credential.</string>

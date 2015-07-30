@@ -71,7 +71,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                     initializeFromTo();
 
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
-                    tableSyncing, server, requestType, getParameters(requestType));
+                    tableSyncing, server, requestType);
 
             if (syncModulesListener != null)
                 syncModulesListener.onDownloadProgress(tableSyncing, page, 1);
@@ -100,15 +100,14 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.BRANCH_ID),
                             String.valueOf(getUser().getId()), String.valueOf(branches[branchIndex]));
                 return ImonggoTools.generateParameter(Parameter.COUNT);
-            }
-            else {
+            } else {
                 if(tableSyncing == Table.BRANCH_USERS) // TODO last_updated_at of this should relay on NOW at the end of the request...
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.USER_ID, Parameter.AFTER),
                             String.valueOf(getUser().getId()), DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 if(tableSyncing == Table.DOCUMENTS)
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.BRANCH_ID, Parameter.AFTER),
                             String.valueOf(getUser().getId()), String.valueOf(branches[branchIndex]),
-                                        DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.AFTER),
                         DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
             }
@@ -126,7 +125,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                 if(tableSyncing == Table.DOCUMENTS) // Get from Past 3 months til today
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.BRANCH_ID, Parameter.FROM, Parameter.TO),
                             String.valueOf(page), String.valueOf(branches[branchIndex]),
-                                        DateTimeTools.convertDateForUrl(from), DateTimeTools.convertDateForUrl(to));
+                            DateTimeTools.convertDateForUrl(from), DateTimeTools.convertDateForUrl(to));
                 return String.format(ImonggoTools.generateParameter(Parameter.PAGE), String.valueOf(page));
             }
             else {
@@ -268,7 +267,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             String branchId = taxRatejson.getString("branch_id");
                             if(!branchId.equals("null")) {
                                 Branch branch = getHelper().getBranches().queryBuilder()
-                                            .where().eq("id", Integer.valueOf(branchId)).queryForFirst(); // Check if the branch is assigned to the USER
+                                        .where().eq("id", Integer.valueOf(branchId)).queryForFirst(); // Check if the branch is assigned to the USER
                                 if(branch != null)
                                     taxRate.setBranch(branch);
                                 else // otherwise, do not add the tax rate
@@ -338,6 +337,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                         BatchList<Branch> newBranches = new BatchList<>(getHelper());
                         BatchList<BranchTag> newBranchTags = new BatchList<>(getHelper());
                         BatchList<BranchUserAssoc> newBranchUserAssocs = new BatchList<>(getHelper());
+
                         for(int i = 0;i < size;i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             Branch branch = gson.fromJson(jsonObject.toString(), Branch.class);

@@ -13,7 +13,7 @@ import java.util.EnumMap;
 public class Configurations {
 	public static String API_AUTHENTICATION = "";
 
-    private static String SERVER_KEY = "server";
+    private static String SERVER_KEY = "mServer";
     private static String ACCOUNT_ID_CACHE = "account_id_cache";
     private static String EMAIL_CACHE = "email_cache";
 

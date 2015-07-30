@@ -68,7 +68,7 @@ public class DiskImageLruCache extends LruCache<String, Bitmap> implements Image
     }
 
     private boolean writeBitmapToFile(Bitmap bitmap, DiskLruCache.Editor editor )
-            throws IOException {
+            throws IOException, FileNotFoundException {
         OutputStream out = null;
         try {
             out = new BufferedOutputStream( editor.newOutputStream(0), IO_BUFFER_SIZE );

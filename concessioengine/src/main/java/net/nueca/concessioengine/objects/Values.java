@@ -1,40 +1,39 @@
 package net.nueca.concessioengine.objects;
 
 import net.nueca.imonggosdk.objects.Unit;
-import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 
 /**
  * Created by rhymart on 7/13/15.
  * imonggosdk (c)2015
  [
- {
- "product_id": 115509,
- "retail_price": 8769.6,
- "quantity": 313.59999999999997, INPUTTED QUANTITY * quantity from the UNIT OBJECT
- "unit_id": 9088,
- "unit_quantity": 28, --- INPUTTED QUANTITY
- "unit_content_quantity": 11.2, -- quantity from the UNIT OBJECT
- "unit_retail_price": 98219.52, -- RETAIL PRICE from UNIT OBJECT * UNIT QUANTITY
- "unit_name": "CUPS",
- "line_no": 1
- },
- {
- "product_id": 115510,
- "retail_price": 430.5,
- "quantity": 50,
- "unit_id": 80,
- "unit_quantity": 5,
- "unit_content_quantity": 10,
- "unit_retail_price": 4305,
- "unit_name": "box",
- "line_no": 2
- },
- {
- "product_id": 115511,
- "retail_price": 261,
- "quantity": 2,
- "line_no": 3
- }
+     {
+         "product_id": 115509,
+         "retail_price": 8769.6,
+         "quantity": 313.59999999999997, INPUTTED QUANTITY * quantity from the UNIT OBJECT
+         "unit_id": 9088,
+         "unit_quantity": 28, --- INPUTTED QUANTITY
+         "unit_content_quantity": 11.2, -- quantity from the UNIT OBJECT
+         "unit_retail_price": 98219.52, -- RETAIL PRICE from UNIT OBJECT * UNIT QUANTITY
+         "unit_name": "CUPS",
+         "line_no": 1
+     },
+     {
+         "product_id": 115510,
+         "retail_price": 430.5,
+         "quantity": 50,
+         "unit_id": 80,
+         "unit_quantity": 5,
+         "unit_content_quantity": 10,
+         "unit_retail_price": 4305,
+         "unit_name": "box",
+         "line_no": 2
+     },
+     {
+         "product_id": 115511,
+         "retail_price": 261,
+         "quantity": 2,
+         "line_no": 3
+     }
  ]
  */
 public class Values {
