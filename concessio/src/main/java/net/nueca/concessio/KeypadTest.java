@@ -25,7 +25,7 @@ public class KeypadTest extends ImonggoActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialogtest);
+//        setContentView(R.layout.dialogtest);
 
         Numpad numpad = (Numpad) findViewById(R.id.npInput);
         numpad.addTextHolder((TextView) findViewById(R.id.etQuantity), "tv", true, 6, 2, true, new Numpad
