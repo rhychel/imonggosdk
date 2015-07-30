@@ -701,6 +701,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     private void startSyncService() {
         if (!isSyncServiceRunning(SyncModules.class) || mSyncModules == null) {
+            mBounded = false;
             startService(mServiceIntent);
             Log.e(TAG, "There is no service running, starting service..");
             bindSyncService();
