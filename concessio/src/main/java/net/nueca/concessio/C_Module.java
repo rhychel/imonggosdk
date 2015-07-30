@@ -99,12 +99,68 @@ public class C_Module extends ModuleActivity implements BaseProductsFragment.Set
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample_fragment);
 
-        try {
-            SimpleProductListAdapter simpleProductListAdapter = new SimpleProductListAdapter(this, getHelper(), getHelper().getProducts().queryForAll());
-            lvSampleProducts.setAdapter(simpleProductListAdapter);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        btnSample = (Button) findViewById(R.id.btnSample);
+        SwableTools.startAndBindSwable(this, swableConnection);
+        btnSample.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Order.Builder order = new Order.Builder();
+                List<OrderLine> orderLines = new ArrayList<>();
+                for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
+                    SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().get(i);
+                    Values value = selectedProductItem.getValues().get(0);
+
+                    OrderLine orderLine = new OrderLine.Builder()
+                            .line_no(value.getLine_no())
+                            .product_id(selectedProductItem.getProduct().getId())
+                            .quantity(Double.valueOf(value.getQuantity()))
+                            .build();
+                    orderLines.add(orderLine);
+                }
+                order.order_lines(orderLines);
+                order.order_type_code("stock_request");
+                try {
+                    User user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).query().get(0);
+                    order.serving_branch_id(user.getHome_branch_id());
+                    order.generateReference(C_Module.this, getSession().getDevice_id());
+                    SwableTools.sendTransaction(getHelper(), user, order.build(), OfflineDataType.SEND_ORDER);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        simpleProductsFragment = new SimpleProductsFragment();
+        simpleProductsFragment.setHelper(getHelper());
+        simpleProductsFragment.setSetupActionBar(this);
+        simpleProductsFragment.setProductCategories(getProductCategories(true));
+        simpleProductsFragment.setListScrollListener(new BaseProductsFragment.ListScrollListener() {
+            @Override
+            public void onScrolling() {
+                ViewCompat.animate(btnSample).translationY(1000.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
+            }
+
+            @Override
+            public void onScrollStopped() {
+                if (ProductsAdapterHelper.getSelectedProductItems().size() > 0)
+                    ViewCompat.animate(btnSample).translationY(0.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
+            }
+        });
+        simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
+            @Override
+            public void whenItemsSelectedUpdated() {
+                if (ProductsAdapterHelper.getSelectedProductItems().size() > 0)
+                    ViewCompat.animate(btnSample).translationY(0.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                else
+                    ViewCompat.animate(btnSample).translationY(1000.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
+            }
+        });
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.flContent, simpleProductsFragment)
+            .commit();
     }
 
     @Override
