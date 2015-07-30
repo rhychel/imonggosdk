@@ -1,6 +1,7 @@
 package net.nueca.imonggosdk.operations.http;
 
 import android.content.Context;
+import android.util.Log;
 
 
 import com.android.volley.AuthFailureError;
@@ -38,6 +39,8 @@ public class HTTPRequests {
                                                              final Table table, final RequestType requestType, String parameter) {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
+
+        Log.e("URL", ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
@@ -77,6 +80,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
+        Log.e("URL", ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
                 new Response.Listener<JSONArray>() {
