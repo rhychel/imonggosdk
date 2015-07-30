@@ -110,19 +110,22 @@ public class C_Module extends ModuleActivity implements BaseProductsFragment.Set
                     SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().get(i);
                     Values value = selectedProductItem.getValues().get(0);
 
-                    OrderLine orderLine = new OrderLine();
-                    orderLine.setLine_no(value.getLine_no());
-                    orderLine.setProduct_id(selectedProductItem.getProduct().getId());
-                    orderLine.setQuantity(Double.valueOf(value.getQuantity()));
+                    OrderLine orderLine = new OrderLine.Builder()
+                            .line_no(value.getLine_no())
+                            .product_id(selectedProductItem.getProduct().getId())
+                            .quantity(Double.valueOf(value.getQuantity()))
+                            .build();
                     orderLines.add(orderLine);
                 }
                 order.order_lines(orderLines);
                 order.order_type_code("stock_request");
                 try {
-                    User user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).query().get(0);
-                    order.serving_branch_id(user.getHome_branch_id());
+                    order.serving_branch_id(getSession().getUser().getHome_branch_id());
                     order.generateReference(C_Module.this, getSession().getDevice_id());
-                    SwableTools.sendTransaction(getHelper(), user, order.build(), OfflineDataType.SEND_ORDER);
+                    SwableTools.sendTransaction(getHelper(),
+                            getSession().getUser().getId(),
+                            order.build(),
+                            OfflineDataType.SEND_ORDER);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
