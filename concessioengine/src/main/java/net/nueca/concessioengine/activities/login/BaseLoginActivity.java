@@ -186,7 +186,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
                         // check if sessions email exist in user's database
                         if (getHelper().getUsers().queryBuilder().where().eq("email", mSession.getEmail()).query().size() == 0) {
-                            Log.e(TAG, "sessions email dont match dont match user's email");
+                            Log.e(TAG, "sessions email dont match don't match user's email");
                             LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
 
                             // TODO: Offline Data in unlinkAccount
@@ -828,7 +828,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
             if (mSyncModules != null) {
                 mBounded = true;
-                Log.e(TAG, "Succesfully bind Service and Activity");
+                Log.e(TAG, "Successfully bind Service and Activity");
                 mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
             } else {
                 Log.e(TAG, "Cannot bind Service and Activity");

@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
@@ -239,6 +240,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         newUsers.doOperation();
                         updateUsers.doOperation();
                         deleteUsers.doOperation();
+
+                        User current_user = getUser();
+
+                        getSession().setUser(current_user);
+                        getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
 
                         if (mSyncModulesListener != null) {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
