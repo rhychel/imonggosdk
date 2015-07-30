@@ -116,7 +116,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         }
 
 
-        if (mModulesIndex >= (mModulesToSync.length - 1)) {  // this is when there are no left tables to sync
+        if (mModulesIndex >= (mModulesToSync.length)) {  // this is when there are no left tables to sync
 
             if (mSyncModulesListener != null) {
                 Log.e(TAG, "finished downloading tables");
