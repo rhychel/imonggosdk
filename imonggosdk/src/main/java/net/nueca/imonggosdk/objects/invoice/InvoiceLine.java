@@ -19,9 +19,14 @@ public class InvoiceLine {
 
     protected String discount_text;
 
-    public InvoiceLine () {}
+    public InvoiceLine (Builder builder) {
+        product_id = builder.product_id;
+        quantity = builder.quantity;
+        retail_price = builder.retail_price;
+        discount_text = builder.discount_text;
+    }
 
-    public InvoiceLine(int product_id, int quantity, int retail_price, String discount_text) {
+    /*public InvoiceLine(int product_id, int quantity, int retail_price, String discount_text) {
         this.product_id = product_id;
         this.quantity = quantity;
         this.retail_price = retail_price;
@@ -33,7 +38,7 @@ public class InvoiceLine {
         this.quantity = quantity;
         this.retail_price = product.getRetail_price();
         this.discount_text = discount_text;
-    }
+    }*/
 
     public int getProduct_id() {
         return product_id;
@@ -78,5 +83,33 @@ public class InvoiceLine {
 
         }
         return total;
+    }
+
+    public static class Builder {
+        protected int product_id;
+        protected int quantity;
+        protected double retail_price;
+        protected String discount_text;
+
+        public Builder product_id(int product_id) {
+            this.product_id = product_id;
+            return this;
+        }
+        public Builder quantity(int quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+        public Builder retail_price(double retail_price) {
+            this.retail_price = retail_price;
+            return this;
+        }
+        public Builder discount_text(String discount_text) {
+            this.discount_text = discount_text;
+            return this;
+        }
+
+        public InvoiceLine build() {
+            return new InvoiceLine(this);
+        }
     }
 }
