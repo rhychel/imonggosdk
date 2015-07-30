@@ -335,6 +335,7 @@ public class ImonggoSwable extends SwableService {
 
                         offlineData.setSyncing(false);
                         offlineData.setQueued(false);
+
                         try {
                             if(responseCode == UNPROCESSABLE_ENTRY) {
                                 if (response instanceof String) {
