@@ -40,7 +40,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
-        Log.e("URL", ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+        Log.e(TAG,  ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
@@ -80,7 +80,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
-        Log.e("URL", ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+        Log.e(TAG,  ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
                 new Response.Listener<JSONArray>() {
@@ -120,7 +120,7 @@ public class HTTPRequests {
             volleyRequestListener.onStart(table, RequestType.GET);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
-                ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
+                null, ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

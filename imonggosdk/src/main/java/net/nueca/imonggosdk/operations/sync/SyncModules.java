@@ -15,7 +15,6 @@ import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
-import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
@@ -33,7 +32,7 @@ import java.sql.SQLException;
 
 /**
  * Created by Jn on 7/15/2015.
- * imonggosdk (c)2015
+ * imonggosdk(2015)
  */
 public class SyncModules extends BaseSyncService implements VolleyRequestListener {
     private static final String TAG = "SyncModules";
@@ -116,7 +115,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             }
         }
 
+
         if (mModulesIndex >= (mModulesToSync.length)) {  // this is when there are no left tables to sync
+
+            User current_user = getUser();
+
+            getSession().setUser(current_user);
+            getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
 
             if (mSyncModulesListener != null) {
                 Log.e(TAG, "finished downloading tables");
@@ -124,11 +129,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 mSyncModulesListener.onEndDownload(mCurrentTableSyncing);
                 mSyncModulesListener.onFinishDownload();
             }
-
-            User current_user = getUser();
-
-            getSession().setUser(current_user);
-            getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
 
             return false;
         } else { // if there are still tables to sync, then;
@@ -143,7 +143,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 startSyncModuleContents(RequestType.LAST_UPDATED_AT);
             }
         }
-
         return true;
     }
 
@@ -171,6 +170,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                     //TODO: documents?
                     newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module));
+
+                    Log.e(TAG, "Last Updated At: " + jsonObject.toString());
 
                     // since this is the first
                     page = 1;
@@ -244,9 +245,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         updateUsers.doOperation();
                         deleteUsers.doOperation();
 
-                        if (mSyncModulesListener != null) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
-                        }
+                        updateNext(requestType, size);
 
                         break;
                     case BRANCH_USERS:
@@ -268,9 +267,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             // TODO: finish this
                         }
 
-                        if (mSyncModulesListener != null) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
-                        }
+                        updateNext(requestType, size);
 
                         break;
                     case PRODUCTS:
@@ -291,7 +288,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             Product product = gson.fromJson(jsonObject.toString(), Product.class);
                             if (initialSync || lastUpdatedAt == null) {
-                                product.setSearchKey(product.getName()+product.getStock_no());
+                                product.setSearchKey(product.getName() + product.getStock_no());
                                 newProducts.add(product);
                             } else if (isExisting(product, Table.PRODUCTS)) {
                                 DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
@@ -310,7 +307,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             // Save tags to the database
                             JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
                             int tagsSize = tagsListArray.length();
-                            for(int tagsI = 0;tagsI < tagsSize;tagsI++) {
+                            for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
                                 ProductTag productTag = new ProductTag(tagsListArray.getString(tagsI), product);
                                 productTags.add(productTag);
                             }
@@ -321,9 +318,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         deleteProducts.doOperation();
                         productTags.doOperation();
 
-                        if (mSyncModulesListener != null) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
-                        }
+                        updateNext(requestType, size);
 
                         break;
                     case UNITS:
@@ -334,15 +329,23 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                         BatchList<Unit> newUnits = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                         BatchList<Unit> updateUnits = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                        BatchList<Unit> deleteUnits = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                        BatchList<Unit> deleteUnits = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
-                        for(int i=0; i<size; i++){
+                        for (int i = 0; i < size; i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            Unit unit = gson.fromJson(jsonObject.toString(),Unit.class);
-                            if(initialSync || lastUpdatedAt == null) {
+                            Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
+
+
+                            Product product = getHelper().getProducts().queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
+
+                            Log.e(TAG, "Unit Product ID: " + jsonObject.getString("product_id") + " name: " + product.getName());
+
+                            unit.setProduct(product);
+
+                            if (initialSync || lastUpdatedAt == null) {
                                 newUnits.add(unit);
-                            } else if(isExisting(unit, Table.UNITS)){
-                                if(unit.getStatus().equals("D")) {
+                            } else if (isExisting(unit, Table.UNITS)) {
+                                if (unit.getStatus().equals("D")) {
                                     deleteUnits.add(unit);
                                 } else {
                                     updateUnits.add(unit);
@@ -354,30 +357,44 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         updateUnits.doOperation();
                         deleteUnits.doOperation();
 
-                        if (mSyncModulesListener != null) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
-                        }
+                        updateNext(requestType, size);
 
                         break;
                     default:
                         break;
                 }
 
-                if (size < 50) {
-                    Log.e(TAG, "Sync Next Table");
-                    syncNext();
-                } else {
-                    page++;
-                    if (page <= numberOfPages) {
-                        startSyncModuleContents(RequestType.API_CONTENT);
-                    }
-                }
 
             }
         } catch (SQLException | JSONException e) {
             e.printStackTrace();
         }
     }
+
+    private void updateNext(RequestType requestType, int size) {
+        if (mSyncModulesListener != null) {
+            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
+        }
+
+        try {
+            if (size < 50) {
+                Log.e(TAG, "Sync Next Table");
+
+                syncNext();
+
+            } else {
+                page++;
+                if (page <= numberOfPages) {
+
+                    startSyncModuleContents(requestType);
+
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
