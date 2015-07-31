@@ -16,22 +16,14 @@ import java.io.IOException;
  */
 public class DocumentLine {
     protected int line_no = 0;
-
     protected int product_id = 0;
-
     protected double quantity;
-
     protected ExtendedAttributes extended_attributes;
-
     protected String discount_text;
-
     protected double price;
-
-    protected double unit_content_quantity;
-
+    protected Double unit_content_quantity;
     protected String unit_name;
-
-    protected double unit_quantity;
+    protected Double unit_quantity;
 
     public DocumentLine(Builder builder) {
         line_no = builder.line_no;
@@ -129,9 +121,9 @@ public class DocumentLine {
         protected ExtendedAttributes extended_attributes;
         protected String discount_text;
         protected double price;
-        protected double unit_content_quantity;
-        protected String unit_name;
-        protected double unit_quantity;
+        protected Double unit_content_quantity = null;
+        protected String unit_name = null;
+        protected Double unit_quantity = null;
 
         public Builder line_no(int line_no) {
             this.line_no = line_no;

@@ -11,11 +11,8 @@ import org.json.JSONObject;
  */
 public class OrderLine {
     private int line_no = 0;
-
     private int product_id = 0;
-
     private double retail_price = 0.0;
-
     private double quantity = 0.0;
 
     /*@Expose

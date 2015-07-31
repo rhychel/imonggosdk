@@ -20,21 +20,13 @@ import java.util.List;
  */
 public class Invoice extends BaseTransaction {
     protected String invoice_date;
-
     protected String status;
-
     protected String email;
-
     protected int user_id;
-
     protected boolean tax_inclusive;
-
     protected String remark;
-
     protected List<InvoiceLine> invoice_lines;
-
     protected List<InvoicePayment> payments;
-
     protected List<InvoiceTaxRate> invoice_tax_rates;
 
     public Invoice(Builder builder) {

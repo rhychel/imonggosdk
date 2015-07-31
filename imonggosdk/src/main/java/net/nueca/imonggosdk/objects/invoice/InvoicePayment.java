@@ -11,9 +11,7 @@ import org.json.JSONObject;
  */
 public class InvoicePayment {
     protected int payment_type_id;
-
     protected double amount;
-
     protected double tender;
 
     public int getPayment_type_id() {

@@ -11,9 +11,7 @@ import org.json.JSONObject;
  */
 public class InvoiceTaxRate {
     protected String tax_rate_id;
-
     protected double amount;
-
     protected double rate;
 
     public InvoiceTaxRate(Builder builder) {
