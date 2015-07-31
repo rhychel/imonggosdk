@@ -306,18 +306,6 @@ public class ImonggoSwable extends SwableService {
                                         getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transaction"
                                                 + (REQUEST_SUCCESS!=1? "s" : "") + " sent", null, getPendingIntent());
 
-                            // TODO Remove
-                            //SwableTools.voidTransaction(getHelper(), Integer.parseInt(offlineData.getReturnId()),
-                            // OfflineDataType.CANCEL_INVOICE, "wrong order");
-                            //SwableTools.voidTransaction(getHelper(),Integer.parseInt(offlineData.getReturnId())+1,
-                            // OfflineDataType.CANCEL_INVOICE, "just because");
-
-                            /*if(offlineData.getType() == OfflineData.ORDER)
-                                SwableTools.voidTransaction(getHelper(),
-                                    getHelper().getOfflineData().queryBuilder().where().eq("type", OfflineData.ORDER)
-                                            .queryForFirst(),
-                                    OfflineDataType.CANCEL_ORDER,
-                                    "basta");*/
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }/* catch (SQLException e) {
@@ -337,6 +325,7 @@ public class ImonggoSwable extends SwableService {
 
                         offlineData.setSyncing(false);
                         offlineData.setQueued(false);
+
                         try {
                             if(responseCode == UNPROCESSABLE_ENTRY) {
                                 if (response instanceof String) {
@@ -688,13 +677,8 @@ public class ImonggoSwable extends SwableService {
                                             getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transactions" +
                                                     " sent", null, getPendingIntent());
 
-                                // TODO Remove
-                                SwableTools.voidTransaction(getHelper(),parent.parseReturnID().get(1),
-                                        OfflineDataType.CANCEL_DOCUMENT,"test");
                             }
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (SQLException e) {
                             e.printStackTrace();
                         }
                     }
