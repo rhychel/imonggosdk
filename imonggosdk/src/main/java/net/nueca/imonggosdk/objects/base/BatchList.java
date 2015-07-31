@@ -56,5 +56,6 @@ public class BatchList<T> extends ArrayList<T> {
         }
         if(get(0) instanceof ProductTag)
             dbHelper.batchCreateOrUpdateProductTags(this, databaseOperation);
+
     }
 }
