@@ -43,11 +43,6 @@ public class SimpleLoginActivity extends BaseLoginActivity {
     }
 
     @Override
-    protected void syncingModulesSuccessful() {
-
-    }
-
-    @Override
     public void onLogoutAccount() {
 
     }

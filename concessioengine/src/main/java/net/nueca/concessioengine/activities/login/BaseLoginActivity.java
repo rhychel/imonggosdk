@@ -46,10 +46,10 @@ import java.util.List;
  * Abstract Class BaseLoginActivity
  * created by Jn on 06/16/15
  * imonggosdk (c)2015
- *
  */
 public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
 
+    protected BaseLogin mBaseLogin;
     private Boolean isUnlinked;
     private Boolean isLoggedIn;
     private Boolean isUsingCustomLayout;
@@ -66,11 +66,36 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private Intent mServiceIntent;
     private List<String> mModulesToDownload;
     private String TAG;
-
-    protected BaseLogin mBaseLogin;
-
     private SyncModules mSyncModules;
     private Boolean mBounded;
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.e(TAG, "service is connected");
+
+            BaseSyncService.LocalBinder mLocalBinder = (BaseSyncService.LocalBinder) service;
+
+            mSyncModules = (SyncModules) mLocalBinder.getService();
+
+            if (mSyncModules != null) {
+                mBounded = true;
+                Log.e(TAG, "Successfully bind Service and Activity");
+                mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
+            } else {
+                Log.e(TAG, "Cannot bind Service and Activity");
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBounded = false;
+            mSyncModules = null;
+        }
+    };
 
     /**
      * If you want to initialize your own logic. method before login checker.
@@ -99,8 +124,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected abstract void stopLogin();
 
     protected abstract void successLogin();
-
-    protected abstract void syncingModulesSuccessful();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,10 +229,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         if (!isLoggedIn()) {
 
             startSyncService();
-
+            setLoginLayout();
             // show login layout
             onCreateLayoutForLogin();
-            setLoginLayout();
+
         }
     }
 
@@ -382,10 +405,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.etAccountID = editTextAccountId;
         this.etEmail = editTextEmail;
         this.etPassword = editTextPassword;
-
-        this.etAccountID.setText("retailpos");
-        this.etEmail.setText("retailpos@test.com");
-        this.etPassword.setText("retailpos ");
 
         this.btnSignIn = btnSignIn;
 
@@ -621,6 +640,45 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
+    public String getEditTextAccountID() {
+        if (this.etAccountID != null) {
+            return this.etAccountID.getText().toString();
+        }
+        return "";
+    }
+
+    public void setEditTextAccountID(String id) {
+        if (this.etAccountID != null) {
+            this.etAccountID.setText(id);
+        }
+    }
+
+    public String getEditTextEmail() {
+        if(this.etEmail != null) {
+            return this.etEmail.getText().toString();
+        }
+        return "";
+    }
+
+    public void setEditTextEmail(String email) {
+        if(this.etEmail != null) {
+            this.etEmail.setText(email);
+        }
+    }
+
+    public String getEditTextPassword() {
+        if(this.etPassword != null) {
+            return this.etPassword.getText().toString();
+        }
+        return "";
+    }
+
+    public void setEditTextPassword(String password) {
+        if(this.etPassword != null) {
+            this.etPassword.setText(password);
+        }
+    }
+
     public Boolean isLoggedIn() {
         return isLoggedIn;
     }
@@ -637,11 +695,20 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return mDefaultBranch;
     }
 
+    public void setDefaultBranch(String branchName) {
+        mDefaultBranch = branchName;
+    }
+
     public Server getServer() {
         return mServer;
     }
 
-    private int[] getModules() {
+    public void setServer(Server server) {
+        this.mServer = server;
+        mServiceIntent.putExtra(SyncModules.PARAMS_SERVER, server.ordinal());
+    }
+
+    public int[] getModules() {
         return mModules;
     }
 
@@ -658,15 +725,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private void setUnlinked(Boolean isUnlinked) {
         this.isUnlinked = isUnlinked;
         AccountTools.updateUnlinked(this, isUnlinked);
-    }
-
-    public void setServer(Server server) {
-        this.mServer = server;
-        mServiceIntent.putExtra(SyncModules.PARAMS_SERVER, server.ordinal());
-    }
-
-    private void setDefaultBranch(String branchName) {
-        mDefaultBranch = branchName;
     }
 
     public Boolean isUsingCustomLayout() {
@@ -800,7 +858,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     @Override
     public void onFinishDownload() {
         LoggingTools.showToast(this, "Finished Downloading Modules");
-        syncingModulesSuccessful();
 
         if (customDialog != null) {
             customDialog.dismiss();
@@ -813,35 +870,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     public void onErrorDownload(Table table, String message) {
         Log.e(TAG, "error downloading " + table + " " + message);
     }
-
-    /**
-     * Defines callbacks for service binding, passed to bindService()
-     */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e(TAG, "service is connected");
-
-            BaseSyncService.LocalBinder mLocalBinder = (BaseSyncService.LocalBinder) service;
-
-            mSyncModules = (SyncModules) mLocalBinder.getService();
-
-            if (mSyncModules != null) {
-                mBounded = true;
-                Log.e(TAG, "Successfully bind Service and Activity");
-                mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
-            } else {
-                Log.e(TAG, "Cannot bind Service and Activity");
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBounded = false;
-            mSyncModules = null;
-        }
-    };
 
     @Override
     public void onStop() {

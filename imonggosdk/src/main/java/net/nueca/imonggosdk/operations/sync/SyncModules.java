@@ -329,11 +329,19 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                         BatchList<Unit> newUnits = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                         BatchList<Unit> updateUnits = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                        BatchList<Unit> deleteUnits = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                        BatchList<Unit> deleteUnits = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
                         for (int i = 0; i < size; i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
+
+
+                            Product product = getHelper().getProducts().queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
+
+                            Log.e(TAG, "Unit Product ID: " + jsonObject.getString("product_id") + " name: " + product.getName());
+
+                            unit.setProduct(product);
+
                             if (initialSync || lastUpdatedAt == null) {
                                 newUnits.add(unit);
                             } else if (isExisting(unit, Table.UNITS)) {

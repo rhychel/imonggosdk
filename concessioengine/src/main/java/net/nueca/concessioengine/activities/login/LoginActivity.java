@@ -41,7 +41,6 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void initLoginEquipments() {
 
-        // set the Server choice here
         setServer(Server.IRETAILCLOUD_COM);
         Log.e(TAG, "Server is " + getServer().toString());
 
@@ -52,7 +51,9 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Override
     protected void onCreateLayoutForLogin() {
-
+        setEditTextAccountID("nuecaonly");
+        setEditTextEmail("nuecaonly@test.com");
+        setEditTextPassword("nuecaonly");
     }
 
     @Override
@@ -80,11 +81,6 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void successLogin() {
 
-    }
-
-    @Override
-    protected void syncingModulesSuccessful() {
-        Log.e(TAG, "Syncing Modules Successful");
     }
 
 
