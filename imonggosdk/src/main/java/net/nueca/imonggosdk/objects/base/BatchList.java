@@ -5,6 +5,7 @@ import android.util.Log;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.User;
 
 import java.util.ArrayList;
@@ -53,5 +54,7 @@ public class BatchList<T> extends ArrayList<T> {
             dbHelper.batchCreateOrUpdateProducts(this, databaseOperation);
             Log.e(TAG, databaseOperation.toString() + "ING to Product tables");
         }
+        if(get(0) instanceof ProductTag)
+            dbHelper.batchCreateOrUpdateProductTags(this, databaseOperation);
     }
 }
