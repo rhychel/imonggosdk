@@ -12,11 +12,8 @@ import org.json.JSONObject;
  */
 public class InvoiceLine {
     protected int product_id;
-
     protected int quantity;
-
     protected double retail_price;
-
     protected String discount_text;
 
     public InvoiceLine (Builder builder) {

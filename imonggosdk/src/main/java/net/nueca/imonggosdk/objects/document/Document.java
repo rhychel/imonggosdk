@@ -20,13 +20,9 @@ public class Document extends BaseTransaction {
     public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 1;
 
     protected String remark;
-
     protected String document_type_code;
-
     protected List<DocumentLine> document_lines;
-
     protected int target_branch_id;
-
     protected String document_purpose_name;
 
     public Document(Builder builder) {

@@ -301,11 +301,6 @@ public class ImonggoSwable extends SwableService {
                             if(swableStateListener != null && offlineData.isSynced())
                                 swableStateListener.onSynced(offlineData);
 
-                            if(offlineData.isSynced() && REQUEST_COUNT == REQUEST_SUCCESS)
-                                NotificationTools.postNotification(ImonggoSwable.this, NOTIFICATION_ID, APP_ICON_DRAWABLE,
-                                        getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transaction"
-                                                + (REQUEST_SUCCESS!=1? "s" : "") + " sent", null, getPendingIntent());
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }/* catch (SQLException e) {
@@ -316,6 +311,11 @@ public class ImonggoSwable extends SwableService {
                             REQUEST_SUCCESS++;
                             Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
                         }
+                        Log.e("REQUEST", REQUEST_COUNT + " " + REQUEST_SUCCESS);
+                        if(offlineData.isSynced() && REQUEST_COUNT == REQUEST_SUCCESS)
+                            NotificationTools.postNotification(ImonggoSwable.this, NOTIFICATION_ID, APP_ICON_DRAWABLE,
+                                    getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transaction"
+                                            + (REQUEST_SUCCESS!=1? "s" : "") + " sent", null, getPendingIntent());
                     }
 
                     @Override
@@ -450,15 +450,15 @@ public class ImonggoSwable extends SwableService {
                             if (swableStateListener != null && offlineData.isSynced())
                                 swableStateListener.onSynced(offlineData);
 
-                            if(offlineData.isSynced() && REQUEST_COUNT == REQUEST_SUCCESS)
-                                NotificationTools.postNotification(ImonggoSwable.this, NOTIFICATION_ID, APP_ICON_DRAWABLE,
-                                        getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transaction"
-                                                + (REQUEST_SUCCESS!=1? "s" : "") + " sent", null, getPendingIntent());
-
                             if(offlineData.isSynced()) {
                                 REQUEST_SUCCESS++;
                                 Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
                             }
+
+                            if(offlineData.isSynced() && REQUEST_COUNT == REQUEST_SUCCESS)
+                                NotificationTools.postNotification(ImonggoSwable.this, NOTIFICATION_ID, APP_ICON_DRAWABLE,
+                                        getResources().getString(R.string.app_name), REQUEST_SUCCESS + " transaction"
+                                                + (REQUEST_SUCCESS!=1? "s" : "") + " sent", null, getPendingIntent());
                         }
 
                         @Override

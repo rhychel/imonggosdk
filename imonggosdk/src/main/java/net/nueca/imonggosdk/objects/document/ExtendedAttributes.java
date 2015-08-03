@@ -10,7 +10,6 @@ import org.json.JSONObject;
  */
 public class ExtendedAttributes {
     protected String delivery_date;
-
     protected String brand;
 
     protected ExtendedAttributes() {}

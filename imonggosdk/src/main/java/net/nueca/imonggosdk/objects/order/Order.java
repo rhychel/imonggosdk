@@ -22,13 +22,9 @@ public class Order extends BaseTransaction {
     public static transient final int MAX_ORDERLINES_PER_PAGE = 1;
 
     private String target_delivery_date; // current_date+2days
-
     private String remark;
-
     private String order_type_code;
-
     private int serving_branch_id;
-
     private List<OrderLine> order_lines;
 
     public Order(Builder builder) {

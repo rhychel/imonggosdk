@@ -2,7 +2,6 @@ package net.nueca.concessio;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -22,7 +21,6 @@ import java.sql.SQLException;
 public class C_Module extends ModuleActivity {
 
     private ListView lvSampleProducts;
-    private String TAG = "C_Module";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +34,6 @@ public class C_Module extends ModuleActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
