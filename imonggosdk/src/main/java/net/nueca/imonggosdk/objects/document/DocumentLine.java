@@ -15,15 +15,18 @@ import java.io.IOException;
  * Created by gama on 7/20/15.
  */
 public class DocumentLine {
-    protected int line_no = 0;
-    protected int product_id = 0;
+    protected int line_no;
+    protected int product_id;
     protected double quantity;
     protected ExtendedAttributes extended_attributes;
     protected String discount_text;
     protected double price;
+    protected Double retail_price;
+    protected Integer unit_id;
     protected Double unit_content_quantity;
     protected String unit_name;
     protected Double unit_quantity;
+    protected Double unit_retail_price;
 
     public DocumentLine(Builder builder) {
         line_no = builder.line_no;
@@ -32,9 +35,12 @@ public class DocumentLine {
         extended_attributes = builder.extended_attributes;
         discount_text = builder.discount_text;
         price = builder.price;
+        retail_price = builder.retail_price;
+        unit_id = builder.unit_id;
         unit_content_quantity = builder.unit_content_quantity;
         unit_name = builder.unit_name;
         unit_quantity = builder.unit_quantity;
+        unit_retail_price = builder.unit_retail_price;
     }
 
     public int getLine_no() {
@@ -85,6 +91,22 @@ public class DocumentLine {
         this.price = price;
     }
 
+    public double getRetail_price() {
+        return retail_price;
+    }
+
+    public void setRetail_price(double retail_price) {
+        this.retail_price = retail_price;
+    }
+
+    public int getUnit_id() {
+        return unit_id;
+    }
+
+    public void setUnit_id(int unit_id) {
+        this.unit_id = unit_id;
+    }
+
     public double getUnit_content_quantity() {
         return unit_content_quantity;
     }
@@ -109,6 +131,14 @@ public class DocumentLine {
         this.unit_quantity = unit_quantity;
     }
 
+    public double getUnit_retail_price() {
+        return unit_retail_price;
+    }
+
+    public void setUnit_retail_price(double unit_retail_price) {
+        this.unit_retail_price = unit_retail_price;
+    }
+
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(this));
@@ -121,9 +151,12 @@ public class DocumentLine {
         protected ExtendedAttributes extended_attributes;
         protected String discount_text;
         protected double price;
+        protected Double retail_price;
+        protected Integer unit_id;
         protected Double unit_content_quantity = null;
         protected String unit_name = null;
         protected Double unit_quantity = null;
+        protected Double unit_retail_price = null;
 
         public Builder line_no(int line_no) {
             this.line_no = line_no;
@@ -149,6 +182,14 @@ public class DocumentLine {
             this.price = price;
             return this;
         }
+        public Builder retail_price(double retail_price) {
+            this.retail_price = retail_price;
+            return this;
+        }
+        public Builder unit_id(int unit_id) {
+            this.unit_id = unit_id;
+            return this;
+        }
         public Builder unit_content_quantity(double unit_content_quantity) {
             this.unit_content_quantity = unit_content_quantity;
             return this;
@@ -159,6 +200,10 @@ public class DocumentLine {
         }
         public Builder unit_quantity(double unit_quantity) {
             this.unit_quantity = unit_quantity;
+            return this;
+        }
+        public Builder unit_retail_price(double unit_retail_price) {
+            this.unit_retail_price = unit_retail_price;
             return this;
         }
 

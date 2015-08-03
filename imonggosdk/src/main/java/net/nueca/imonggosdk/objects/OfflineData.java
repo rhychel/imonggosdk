@@ -62,68 +62,68 @@ public class OfflineData extends BaseTable2 {
     private boolean isForConfirmation = false; // TODO This is new for the data sent with existing reference number
 
     @DatabaseField
-    private boolean isPastCutoff = false;
+    private boolean isPastCutoff = false; // unused
 
     @DatabaseField
-    private boolean isFromManualReceive = true;
+    private boolean isFromManualReceive = true; // unused
 
     @DatabaseField
-    private boolean isPurePullout = false;
+    private boolean isPurePullout = false; // unused
 
     @DatabaseField
     private String returnId = "";
 
     @DatabaseField
-    private String branchName = "";
+    private String branchName = ""; // unused
 
     @DatabaseField
     private String parameters = "";
 
     @DatabaseField
-    private int user_id = 0;
+    private int user_id = 0; // unused
 
     @DatabaseField
     private String reference_no = "";
 
     @DatabaseField
-    private boolean active = true;
+    private boolean active = true; // unused
 
     @DatabaseField
-    private int parent_id = -1;
+    private int parent_id = -1; // unused
 
     @DatabaseField
-    private boolean isChild = false;
+    private boolean isChild = false; // unused
 
     @DatabaseField
-    private boolean isParent = false; // should show buttons
+    private boolean isParent = false; // should show buttons -- unused
 
     @DatabaseField
-    private boolean isChildrenShown = false;
+    private boolean isChildrenShown = false; // unused
 
     @DatabaseField
     private Date dateCreated;
 
     @DatabaseField
-    private String childrenReferences = "";
+    private String childrenReferences = "";  // unused
 
     @DatabaseField
     private int offlineDataTransactionType = 1; // For COUNT ONLY!!!
 
     @DatabaseField
-    private boolean hasExtendedAttributes = false;
+    private boolean hasExtendedAttributes = false; // unused
 
     @DatabaseField
-    private String targetBranchTransfer = "";
+    private String targetBranchTransfer = ""; // unused
 
     @DatabaseField
-    private String category = "";
+    private String category = ""; // unused
 
     @DatabaseField
     private String documentReason = "";
 
-    private SparseArray<String> childrenArray = new SparseArray<String>();
+    private SparseArray<String> childrenArray = new SparseArray<String>(); // unused
 
-    private boolean isExpanded = false;
+    private boolean isExpanded = false; // unused
 
     @DatabaseField
     private boolean isPagedRequest = false;
