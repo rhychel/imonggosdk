@@ -95,18 +95,56 @@ public class ImonggoOperations {
      * ** Special Requests **
      * **********************
      */
+
+    /**
+     * Checkin Customer --- for CityMall
+     * @param context
+     * @param queue
+     * @param session
+     * @param volleyRequestListener
+     * @param server
+     * @param id
+     * @param parameter
+     */
+    public static void checkinCustomer(Context context, RequestQueue queue,
+                                       Session session, VolleyRequestListener volleyRequestListener,
+                                       Server server, String id, String parameter) {
+        checkinCustomer(context, queue, session, volleyRequestListener, server, id, parameter, false);
+    }
+
+    /**
+     * Checkin Customer --- for CityMall
+     * @param context
+     * @param queue
+     * @param session
+     * @param volleyRequestListener
+     * @param server
+     * @param id
+     * @param parameter
+     * @param autoStart
+     */
     public static void checkinCustomer(Context context, RequestQueue queue,
                                                     Session session, VolleyRequestListener volleyRequestListener,
-                                                    Server server, String id, String parameter) {
+                                                    Server server, String id, String parameter, boolean autoStart) {
         queue.add(HTTPRequests.sendGETRequest(context, session, volleyRequestListener, server, Table.CUSTOMERS, id + "/checkin", parameter));
+        if(autoStart)
+            queue.start();
     }
 
     /**
      * GET THE CONCESSIO.JSON APPLICATION SETTINGS.
      */
+
     public static void getConcesioAppSettings(Context context, RequestQueue queue, Session session,
-                                                           VolleyRequestListener volleyRequestListener, Server server) {
+                                              VolleyRequestListener volleyRequestListener, Server server) {
+        getConcesioAppSettings(context, queue, session, volleyRequestListener, server, false);
+    }
+
+    public static void getConcesioAppSettings(Context context, RequestQueue queue, Session session,
+                                                           VolleyRequestListener volleyRequestListener, Server server, boolean autoStart) {
         queue.add(HTTPRequests.sendGETRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", ""));
+        if(autoStart)
+            queue.start();
     }
 
     public static void sendPOSDevice(Context context, RequestQueue queue, Session session,

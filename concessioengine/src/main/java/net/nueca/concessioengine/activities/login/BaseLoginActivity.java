@@ -510,8 +510,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
                                         stopLogin();
                                     }
-                                }, getServer());
-                        mBaseLogin.getRequestQueue().start();
+                                }, getServer(), true);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
