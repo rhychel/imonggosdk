@@ -10,7 +10,6 @@ import android.widget.EditText;
 import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.Server;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.LoggingTools;
@@ -111,9 +110,9 @@ public class LoginActivity extends BaseLoginActivity {
                 (EditText) findViewById(R.id.etPassword),
                 (Button) findViewById(R.id.btnSignIn));
 
-        setEditTextAccountID("nuecaonly");
-        setEditTextEmail("nuecaonly@test.com");
-        setEditTextPassword("nuecaonly");
+        setEditTextAccountID("retailpos");
+        setEditTextEmail("retailpos@test.com");
+        setEditTextPassword("retailpos");
 
     }
 

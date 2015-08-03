@@ -2,14 +2,11 @@ package net.nueca.concessio;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
-import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.tools.LoggingTools;
-import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
 
@@ -26,13 +23,13 @@ public class C_Login extends LoginActivity {
     @Override
     protected void initLoginEquipments() {
         super.initLoginEquipments();
-        setServer(Server.IRETAILCLOUD_COM);
+        setServer(Server.IRETAILCLOUD_NET);
 
         // set the Modules to download
         int[] modules = {Table.USERS.ordinal(), Table.PRODUCTS.ordinal(), Table.UNITS.ordinal()};
         setModules(modules);
 
-        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true, "");
+        //  SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true, "");
     }
 
 
