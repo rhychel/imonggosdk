@@ -575,7 +575,7 @@ public class BaseLogin {
      *
      * Return the request queue object from this class.
      *
-     * @return
+     * @return <i>mRequestQueue</i>
      */
     public RequestQueue getRequestQueue() {
         return mRequestQueue;

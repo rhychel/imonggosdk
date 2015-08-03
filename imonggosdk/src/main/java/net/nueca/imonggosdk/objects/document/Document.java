@@ -25,7 +25,7 @@ public class Document extends BaseTransaction {
 
     protected List<DocumentLine> document_lines;
 
-    protected String target_branch_id;
+    protected int target_branch_id;
 
     protected String document_purpose_name;
 
@@ -62,11 +62,11 @@ public class Document extends BaseTransaction {
         this.document_lines = document_lines;
     }
 
-    public String getTarget_branch_id() {
+    public int getTarget_branch_id() {
         return target_branch_id;
     }
 
-    public void setTarget_branch_id(String target_branch_id) {
+    public void setTarget_branch_id(int target_branch_id) {
         this.target_branch_id = target_branch_id;
     }
 
@@ -101,7 +101,7 @@ public class Document extends BaseTransaction {
         protected String remark;
         protected String document_type_code;
         protected List<DocumentLine> document_lines;
-        protected String target_branch_id;
+        protected int target_branch_id;
         protected String document_purpose_name;
 
         public Builder remark(String remark) {
@@ -116,12 +116,19 @@ public class Document extends BaseTransaction {
             this.document_lines = document_lines;
             return this;
         }
-        public Builder target_branch_id(String target_branch_id) {
+        public Builder target_branch_id(int target_branch_id) {
             this.target_branch_id = target_branch_id;
             return this;
         }
         public Builder document_purpose_name(String document_purpose_name) {
             this.document_purpose_name = document_purpose_name;
+            return this;
+        }
+
+        public Builder addDocumentLine(DocumentLine documentLine) {
+            if(document_lines == null)
+                document_lines = new ArrayList<>();
+            document_lines.add(documentLine);
             return this;
         }
 

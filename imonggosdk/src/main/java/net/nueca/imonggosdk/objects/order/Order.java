@@ -140,6 +140,13 @@ public class Order extends BaseTransaction {
             return this;
         }
 
+        public Builder addOrderLine(OrderLine orderLine) {
+            if(order_lines == null)
+                order_lines = new ArrayList<>();
+            order_lines.add(orderLine);
+            return this;
+        }
+
         public Order build() {
             return new Order(this);
         }

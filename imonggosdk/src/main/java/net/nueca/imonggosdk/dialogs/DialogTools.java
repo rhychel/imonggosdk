@@ -73,6 +73,10 @@ public class DialogTools {
         }
     }
 
+    /**
+     * Update message of dialog
+     * @param message
+     */
     public static void updateMessage(String message) {
         if(mProgressDialog != null)
             mProgressDialog.setMessage(message);
