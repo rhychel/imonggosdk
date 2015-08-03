@@ -1,11 +1,10 @@
 package net.nueca.imonggosdk.objects.order;
 
-import android.content.Context;
-
 import com.google.gson.Gson;
 
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
 import net.nueca.imonggosdk.objects.base.BatchList;
+import net.nueca.imonggosdk.swable.SwableTools;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,7 +18,7 @@ import java.util.List;
  * NuecaLibrary (c)2014
  */
 public class Order extends BaseTransaction {
-    public static transient final int MAX_ORDERLINES_PER_PAGE = 1;
+    public static transient final int MAX_ORDERLINES_PER_PAGE = 50;
 
     private String target_delivery_date; // current_date+2days
     private String remark;
@@ -57,7 +56,7 @@ public class Order extends BaseTransaction {
         return order_lines;
     }
 
-    public void setOrderLines(BatchList<OrderLine> order_lines) {
+    public void setOrderLines(List<OrderLine> order_lines) {
         this.order_lines = order_lines;
     }
 
@@ -108,6 +107,11 @@ public class Order extends BaseTransaction {
         return order_lines.size() > MAX_ORDERLINES_PER_PAGE;
     }
 
+    @Override
+    public int getChildCount() {
+        return SwableTools.computePagedRequestCount(order_lines.size(), MAX_ORDERLINES_PER_PAGE);
+    }
+
     public static class Builder extends BaseTransaction.Builder<Builder> {
         private String target_delivery_date = ""; // current_date+2days
         private String remark = "";
@@ -146,5 +150,26 @@ public class Order extends BaseTransaction {
         public Order build() {
             return new Order(this);
         }
+    }
+
+    public List<OrderLine> getOrderLineAt(int position) {
+        List<OrderLine> list = new ArrayList<>();
+        list.addAll(SwableTools.partition(position,order_lines,MAX_ORDERLINES_PER_PAGE));
+        return list;
+    }
+
+    public Order getChildOrderAt(int position) throws JSONException {
+        Order order = Order.fromJSONString(toJSONString());
+        order.setOrderLines(getOrderLineAt(position));
+        order.setReference(reference+"-"+(position+1));
+        return order;
+    }
+
+    public List<Order> getChildOrders() throws JSONException {
+        List<Order> orderList = new ArrayList<>();
+        for(int i = 0; i < getChildCount(); i++) {
+            orderList.add(getChildOrderAt(i));
+        }
+        return orderList;
     }
 }

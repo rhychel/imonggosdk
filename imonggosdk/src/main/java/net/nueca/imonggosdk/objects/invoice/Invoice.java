@@ -157,6 +157,11 @@ public class Invoice extends BaseTransaction {
         return false;
     }
 
+    @Override
+    public int getChildCount() {
+        return 1;
+    }
+
     public static class Builder extends BaseTransaction.Builder<Builder> {
         protected String invoice_date = "";
         protected String status = "";

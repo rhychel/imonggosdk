@@ -64,4 +64,6 @@ public abstract class BaseTransaction {
     }
 
     public abstract boolean shouldPageRequest();
+
+    public abstract int getChildCount();
 }

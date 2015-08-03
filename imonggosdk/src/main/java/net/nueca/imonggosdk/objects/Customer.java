@@ -376,4 +376,31 @@ public class Customer extends BaseTable {
     public String toString() {
         return name;
     }
+
+    public String getFullAddress() {
+        String address = "";
+
+        if(!street.isEmpty())
+            address += street;
+
+        if(!city.isEmpty()) {
+            if(!address.isEmpty())
+                address += ", ";
+            address += city;
+        }
+
+        if(!zipcode.isEmpty()) {
+            if(!address.isEmpty())
+                address += " ";
+            address += zipcode;
+        }
+
+        if(!country.isEmpty()) {
+            if(!address.isEmpty())
+                address += ", ";
+            address += country;
+        }
+
+        return address;
+    }
 }
