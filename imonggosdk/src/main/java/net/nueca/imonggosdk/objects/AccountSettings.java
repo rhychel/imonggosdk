@@ -12,28 +12,6 @@ import org.json.JSONObject;
 /**
  * Created by rhymart on 3/19/15.
  * ImonggoLibrary (c)2015
- *
-     {
-         "settings": {
-             "has_order": "1",
-             "has_pullout": "1",
-             "has_count": "0",
-             "has_receive": "1",
-             "has_sales": "0",
-             "has_clear_transactions": "0",
-             "has_get_latest_documents": "1",
-             "has_order_cutoff_period": "1",
-             "order_taking_start": "08:00 AM",
-             "order_taking_cutoff": "05:00 PM",
-             "order_allow_limit_orders_to_one_category": "1",
-             "order_allow_require_delivery_date": "0",
-             "count_allow_entering_brand": "0",
-             "count_allow_entering_delivery_date": "0",
-             "receive_allow_outright_input": "1",
-             "receive_allow_discrepancy_input": "1",
-             "pullout_allow_store_transfer": "1"
-         }
-     }
  */
 public class AccountSettings {
 

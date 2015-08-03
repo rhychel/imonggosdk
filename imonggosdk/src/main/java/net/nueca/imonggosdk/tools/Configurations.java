@@ -76,7 +76,6 @@ public class Configurations {
 
 			put(Table.INVOICES, "invoices.json");
 			put(Table.DOCUMENTS, "documents.json");
-//            put(Modules.CONCESSIO_SETTINGS, "application_settings/concesio.json");
             put(Table.ORDERS, "orders.json");
 //            put(Modules.POS_DEVICES, "pos_devices.json");
 //            put(Modules.SALES_PROMOTIONS, "sales_promotions.json");

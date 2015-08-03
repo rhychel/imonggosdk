@@ -7,4 +7,5 @@ import net.nueca.imonggosdk.fragments.ImonggoFragment;
  * imonggosdk2 (c)2015
  */
 public abstract class BaseHistoryFragment extends ImonggoFragment{
+
 }

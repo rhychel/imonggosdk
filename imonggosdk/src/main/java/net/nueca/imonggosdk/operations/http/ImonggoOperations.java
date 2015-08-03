@@ -135,8 +135,7 @@ public class ImonggoOperations {
      * GET THE CONCESSIO.JSON APPLICATION SETTINGS.
      */
 
-    public static void getConcesioAppSettings(Context context, RequestQueue queue, Session session,
-                                              VolleyRequestListener volleyRequestListener, Server server) {
+    public static void getConcesioAppSettings(Context context, RequestQueue queue, Session session, VolleyRequestListener volleyRequestListener, Server server) {
         getConcesioAppSettings(context, queue, session, volleyRequestListener, server, false);
     }
 
