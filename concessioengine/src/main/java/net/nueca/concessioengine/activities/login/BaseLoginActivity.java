@@ -22,13 +22,17 @@ import net.nueca.concessioengine.dialogs.CustomDialog;
 import net.nueca.concessioengine.dialogs.CustomDialogFrameLayout;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.dialogs.DialogTools;
+import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.exception.LoginException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.LoginListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
+import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
+import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.operations.http.ImonggoOperations;
 import net.nueca.imonggosdk.operations.login.BaseLogin;
 import net.nueca.imonggosdk.operations.sync.BaseSyncService;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
@@ -37,6 +41,8 @@ import net.nueca.imonggosdk.tools.LoggingTools;
 import net.nueca.imonggosdk.tools.LoginTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
 import net.nueca.imonggosdk.tools.SettingTools;
+
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -71,6 +77,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     private SyncModules mSyncModules;
     private Boolean mBounded;
+    private Boolean requireConcessioSettings = true;
 
     /**
      * If you want to initialize your own logic. method before login checker.
@@ -457,9 +464,63 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 setLoggedIn(true);
                 setUnlinked(false);
 
-                DialogTools.hideIndeterminateProgressDialog();
-                startSyncingImonggoModules();
-                successLogin();
+                if(requireConcessioSettings) {
+                    try {
+                        ImonggoOperations.getConcesioAppSettings(BaseLoginActivity.this,
+                                mBaseLogin.getRequestQueue(), getSession(), new VolleyRequestListener() {
+                                    @Override
+                                    public void onStart(Table table, RequestType requestType) {
+                                        Log.e(TAG, "Getting the account-settings now...");
+                                        DialogTools.updateMessage("Downloading settings...");
+                                    }
+
+                                    @Override
+                                    public void onSuccess(Table table, RequestType requestType, Object response) {
+                                        JSONObject concesio = (JSONObject) response;
+                                        Log.e(TAG, concesio.toString());
+                                        AccountSettings.initializeApplicationSettings(BaseLoginActivity.this, concesio);
+                                        DialogTools.hideIndeterminateProgressDialog();
+                                        startSyncingImonggoModules();
+                                        successLogin();
+                                    }
+
+                                    @Override
+                                    public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                                        DialogTools.hideIndeterminateProgressDialog();
+
+                                        // delete session data
+                                        deleteUserSessionData();
+
+                                        setLoggedIn(false);
+                                        setUnlinked(true);
+
+                                        stopLogin();
+
+                                    }
+
+                                    @Override
+                                    public void onRequestError() {
+                                        DialogTools.hideIndeterminateProgressDialog();
+
+                                        // delete session data
+                                        deleteUserSessionData();
+
+                                        setLoggedIn(false);
+                                        setUnlinked(true);
+
+                                        stopLogin();
+                                    }
+                                }, getServer());
+                        mBaseLogin.getRequestQueue().start();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    DialogTools.hideIndeterminateProgressDialog();
+                    startSyncingImonggoModules();
+                    successLogin();
+                }
             }
 
             @Override
@@ -823,5 +884,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             }
         }
         super.onDestroy();
+    }
+
+    public void setRequireConcessioSettings(Boolean requireConcessioSettings) {
+        this.requireConcessioSettings = requireConcessioSettings;
     }
 }

@@ -95,18 +95,18 @@ public class ImonggoOperations {
      * ** Special Requests **
      * **********************
      */
-    public static JsonObjectRequest checkinCustomer(Context context, RequestQueue queue,
+    public static void checkinCustomer(Context context, RequestQueue queue,
                                                     Session session, VolleyRequestListener volleyRequestListener,
                                                     Server server, String id, String parameter) {
-        return HTTPRequests.sendGETRequest(context, session, volleyRequestListener, server, Table.CUSTOMERS, id + "/checkin", parameter);
+        queue.add(HTTPRequests.sendGETRequest(context, session, volleyRequestListener, server, Table.CUSTOMERS, id + "/checkin", parameter));
     }
 
     /**
      * GET THE CONCESSIO.JSON APPLICATION SETTINGS.
      */
-    public static JsonObjectRequest getConcesioAppSettings(Context context, RequestQueue queue, Session session,
+    public static void getConcesioAppSettings(Context context, RequestQueue queue, Session session,
                                                            VolleyRequestListener volleyRequestListener, Server server) {
-        return HTTPRequests.sendGETRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", "");
+        queue.add(HTTPRequests.sendGETRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", ""));
     }
 
     public static void sendPOSDevice(Context context, RequestQueue queue, Session session,

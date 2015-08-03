@@ -104,7 +104,7 @@ public class Configurations {
             put(Table.INVOICES, "invoices");
             put(Table.DOCUMENTS, "documents");
 			put(Table.ORDERS, "orders");
-//            put(Modules.CONCESSIO_SETTINGS, "application_settings");
+            put(Table.APPLICATION_SETTINGS, "application_settings");
 //            put(Modules.DISCOUNTS, "sales_promotions");
 //            put(Modules.DOCUMENT_TYPES, "document_types");
 //            put(Modules.DOCUMENT_PURPOSES, "document_purposes");
