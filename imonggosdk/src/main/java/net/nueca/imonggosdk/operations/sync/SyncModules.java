@@ -148,7 +148,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
     @Override
     public void onStart(Table module, RequestType requestType) {
-        Log.e(TAG, "onStart downloading " + module.toString());
+        Log.e(TAG, "onStart downloading " + module.toString() + " " + requestType);
         if (mSyncModulesListener != null) {
             mSyncModulesListener.onStartDownload(module);
         }
@@ -166,12 +166,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 // Last Updated At
                 if (requestType == RequestType.LAST_UPDATED_AT) {
-                    newLastUpdatedAt = gson.fromJson(jsonObject.toString(), LastUpdatedAt.class);
 
+                    Log.e(TAG, "New Last Updated At: " + jsonObject.toString());
+
+                    newLastUpdatedAt = gson.fromJson(jsonObject.toString(), LastUpdatedAt.class);
                     //TODO: documents?
                     newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module));
-
-                    Log.e(TAG, "Last Updated At: " + jsonObject.toString());
 
                     // since this is the first
                     page = 1;
@@ -248,28 +248,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         updateNext(requestType, size);
 
                         break;
-                    case BRANCH_USERS:
-
-                        if (page == 1) {
-                            getHelper().dbOperations(null, Table.BRANCHES, DatabaseOperation.DELETE_ALL);
-                            getHelper().dbOperations(null, Table.BRANCH_TAGS, DatabaseOperation.DELETE_ALL);
-                            getHelper().dbOperations(null, Table.BRANCH_USERS, DatabaseOperation.DELETE_ALL);
-                        }
-
-                        BatchList<Branch> newBranches = new BatchList<>(getHelper());
-                        BatchList<BranchTag> newBranchTags = new BatchList<>(getHelper());
-                        BatchList<BranchUserAssoc> newBranchUserAssocs = new BatchList<>(getHelper());
-
-                        for (int i = 0; i < size; i++) {
-                            //get the object in the array
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            Branch branch = gson.fromJson(jsonObject.toString(), Branch.class);
-                            // TODO: finish this
-                        }
-
-                        updateNext(requestType, size);
-
-                        break;
                     case PRODUCTS:
                         Log.e(TAG, "Products | size: " + size + " page: " + page + " max page: " + numberOfPages);
                         Log.e(TAG, "Syncing Page " + page);
@@ -288,9 +266,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             Product product = gson.fromJson(jsonObject.toString(), Product.class);
                             if (initialSync || lastUpdatedAt == null) {
+                                Log.e(TAG, "initial sync or no last Updated At");
                                 product.setSearchKey(product.getName() + product.getStock_no());
                                 newProducts.add(product);
                             } else if (isExisting(product, Table.PRODUCTS)) {
+                                Log.e(TAG, "table product is existing updating...");
                                 DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
                                 deleteProductsHelper.where().eq("product_id", product);
                                 deleteProductsHelper.delete();
@@ -356,7 +336,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         newUnits.doOperation();
                         updateUnits.doOperation();
                         deleteUnits.doOperation();
-
                         updateNext(requestType, size);
 
                         break;
@@ -414,9 +393,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         Log.e("onRequestError", "Sync Modules");
     }
 
-    public void startFetchingModules() {
-        Log.e(TAG, "LAST UPDATED AT");
-        ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing, getSession().getServer(), RequestType.LAST_UPDATED_AT, getParameters(RequestType.LAST_UPDATED_AT));
+    public void startFetchingModules() throws SQLException {
+        startSyncModuleContents(RequestType.LAST_UPDATED_AT);
+
     }
 }
 

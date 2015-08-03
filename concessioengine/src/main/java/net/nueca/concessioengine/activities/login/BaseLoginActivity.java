@@ -34,13 +34,11 @@ import net.nueca.imonggosdk.operations.login.BaseLogin;
 import net.nueca.imonggosdk.operations.sync.BaseSyncService;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
-import net.nueca.imonggosdk.tools.LoggingTools;
 import net.nueca.imonggosdk.tools.LoginTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -161,7 +159,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private void autoUpdateChecker() {
         // Account is Linked User is logged in
         if (!isUnlinked() && isLoggedIn()) {
-            if (isAutoUpdate()) {
+            if (isAutoUpdate() && NetworkTools.isInternetAvailable(BaseLoginActivity.this)) {
                 updateAppData();
                 new StartSyncServiceAsyncTask().execute();
             } else {
@@ -187,12 +185,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         @Override
         protected void onPostExecute(String result) {
            Log.e(TAG, "This came from doInBackground: " + result);
-            startSyncingImonggoModules();
+            try {
+                startSyncingImonggoModules();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
     }
 
-    public void startSyncingImonggoModules() {
+    public void startSyncingImonggoModules() throws SQLException {
         if (isSyncServiceBinded()) {
             setUpModuleNamesForCustomDialog();
             showSyncModulesCustomDialog();
@@ -427,7 +429,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 setUnlinked(false);
 
                 DialogTools.hideIndeterminateProgressDialog();
-                startSyncingImonggoModules();
+                try {
+                    startSyncingImonggoModules();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override

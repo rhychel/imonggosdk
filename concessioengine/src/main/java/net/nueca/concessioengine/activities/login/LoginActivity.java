@@ -52,7 +52,6 @@ public class LoginActivity extends BaseLoginActivity {
             setDefaultBranch(SettingTools.defaultBranch(this));
             setServer(Server.IMONGGO);
             Log.e(TAG, "Server is " + getServer().toString());
-
             List<String> m = new ArrayList<>();
             setModulesToSync(m);
         } catch (SQLException e) {
@@ -87,10 +86,13 @@ public class LoginActivity extends BaseLoginActivity {
 
                         // check if sessions email exist in user's database
                         if (getHelper().getUsers().queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
-                            Log.e(TAG, "sessions email dont match don't match user's email");
+                            Log.e(TAG, "sessions email don't match don't match user's email");
                             LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
-
+                            setLoggedIn(false);
+                            setUnlinked(true);
                             unlinkAccount();
+                        } else {
+                            getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, true);
                         }
                     }
                 }

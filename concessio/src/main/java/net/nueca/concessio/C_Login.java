@@ -46,7 +46,7 @@ public class C_Login extends LoginActivity {
         try {
             if (getSession().getUser() != null)
                 LoggingTools.showToast(C_Login.this, "Welcome " + getSession().getUser().getName() + "!");
-            Log.e(TAG, getHelper().getUnits().queryForAll().get(0).getProduct().getName());
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
