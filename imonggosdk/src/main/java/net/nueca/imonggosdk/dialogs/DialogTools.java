@@ -72,4 +72,9 @@ public class DialogTools {
             mProgressDialog = null;
         }
     }
+
+    public static void updateMessage(String message) {
+        if(mProgressDialog != null)
+            mProgressDialog.setMessage(message);
+    }
 }

@@ -569,4 +569,15 @@ public class BaseLogin {
             mDBHelper.deleteAllDatabaseValues();
         }
     }
+
+    /**
+     * <i>Added by Rhy<i/>
+     *
+     * Return the request queue object from this class.
+     *
+     * @return
+     */
+    public RequestQueue getRequestQueue() {
+        return mRequestQueue;
+    }
 }
