@@ -11,8 +11,10 @@ import com.google.gson.Gson;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
+import net.nueca.concessioengine.adapters.customer.SimpleCustomerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.imonggosdk.enums.OfflineDataType;
+import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
@@ -27,6 +29,8 @@ import net.nueca.imonggosdk.tools.AccountTools;
 import org.json.JSONException;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -44,9 +48,34 @@ public class C_Module extends ModuleActivity {
         setContentView(R.layout.sample_list);
         lvSampleProducts = (ListView) findViewById(R.id.lvSampleProducts);
 
-        try {
+        /*try {
             SimpleProductListAdapter simpleProductListAdapter = new SimpleProductListAdapter(this, getHelper(), getHelper().getProducts().queryForAll());
             lvSampleProducts.setAdapter(simpleProductListAdapter);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+        try {
+            List<Customer> customerList = new ArrayList<>();
+            for (int i = 1; i <= 100; i++) {
+                Customer customer = new Customer();
+                customer.setId(i);
+                customer.setAlternate_code(String.format("#%011d",(int)(Math.random()*10000000)));
+                customer.setStreet("Unit 403B DECA Corporate Center, Panganiban Drive");
+                customer.setCity("Naga City");
+                customer.setZipcode("4400");
+                customer.setCountry("Philippines");
+                customer.setFirst_name("Pepe");
+                customer.setLast_name("Smith " + i);
+                customer.setName("Pepe Smith " + i);
+                customer.setGender("M");
+                customerList.add(customer);
+            }
+            Log.e("Customers", getHelper().getCustomers().countOf() + "");
+            SimpleCustomerAdapter simpleCustomerAdapter = new SimpleCustomerAdapter(this, customerList);
+            lvSampleProducts.setAdapter(simpleCustomerAdapter);
+            lvSampleProducts.setOnItemClickListener(simpleCustomerAdapter);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
