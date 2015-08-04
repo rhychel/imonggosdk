@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by rhymart on 5/6/14.
- * NuecaLibrary (c)2014
+ * Created by gama on 7/1/15.
  */
 public class Order extends BaseTransaction {
     public static transient final int MAX_ORDERLINES_PER_PAGE = 50;
@@ -160,7 +159,7 @@ public class Order extends BaseTransaction {
     public Order getChildOrderAt(int position) throws JSONException {
         Order order = Order.fromJSONString(toJSONString());
         order.setOrder_lines(getOrderLineAt(position));
-        order.setReference(reference+"-"+(position+1));
+        order.setReference(reference + "-" + (position+1));
         return order;
     }
 

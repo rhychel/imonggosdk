@@ -53,6 +53,10 @@ public class SwableTools {
         activity.unbindService(swableServiceConnection);
         return stopSwable(activity);
     }
+    public static boolean bindSwable(Activity activity, ImonggoSwableServiceConnection swableServiceConnection) {
+        Intent service = new Intent(activity,ImonggoSwable.class);
+        return activity.bindService(service, swableServiceConnection, Context.BIND_AUTO_CREATE);
+    }
 	
 	public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
 	    ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -178,6 +182,10 @@ public class SwableTools {
     public static void sendInvoiceNow(Context context, Session session, Server server, Invoice invoice, int branchId,
                                       String parameters, @Nullable VolleyRequestListener listener) {
         sendTransactionNow(context, session, server, Table.INVOICES, invoice, branchId, parameters, listener);
+    }
+    public static void sendDocumentNow(Context context, Session session, Server server, Document document, int branchId,
+                                      String parameters, @Nullable VolleyRequestListener listener) {
+        sendTransactionNow(context, session, server, Table.INVOICES, document, branchId, parameters, listener);
     }
 
     private static void sendTransactionNow(Context context, Session session, Server server, Table table, final Object

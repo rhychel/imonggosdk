@@ -6,8 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by rhymart on 5/6/14.
- * NuecaLibrary (c)2014
+ * Created by gama on 7/1/15.
  */
 public class OrderLine {
     private int line_no = 0;

@@ -6,7 +6,8 @@
               android:layout_height="wrap_content"
               android:padding="3dp"
               android:measureWithLargestChild="true"
-              android:id="@+id/llCustomerItem">
+              android:id="@+id/llCustomerItem"
+    >
 
     <ImageView
         android:layout_width="30dp"
@@ -18,7 +19,8 @@
         android:cropToPadding="false"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginRight="3dp"/>
+        android:layout_marginRight="3dp"
+        android:layout_gravity="center"/>
 
     <LinearLayout
         android:orientation="vertical"

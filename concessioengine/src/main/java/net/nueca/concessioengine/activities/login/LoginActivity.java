@@ -42,7 +42,7 @@ public class LoginActivity extends BaseLoginActivity {
     protected void initLoginEquipments() {
 
         // set the Server choice here
-        setServer(Server.IRETAILCLOUD_COM);
+        setServer(Server.IRETAILCLOUD_NET);
         Log.e(TAG, "Server is " + getServer().toString());
 
         // set the Modules to download

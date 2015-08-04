@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,20 +18,20 @@ import java.util.List;
 /**
  * Created by gama on 8/3/15.
  */
-public class SimpleCustomerAdapter extends BaseCustomerAdapter implements BaseProductsRecyclerAdapter.OnItemClickListener {
+public class SimpleCustomerAdapter extends BaseCustomerAdapter implements AdapterView.OnItemClickListener {
     public SimpleCustomerAdapter(Context context, List<Customer> objects) {
         super(context, R.layout.simple_customer_listitem, objects);
     }
 
-    private int selectedCustomer = -1;
-    private ImageView selectedCustomer_status = null;
+    private Customer selectedCustomer = null;
+    private View selectedView = null;
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
 
         if(convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(getLayoutResource(), null);
+            convertView = LayoutInflater.from(getContext()).inflate(getLayoutResource(), parent, false);
             viewHolder = new ViewHolder();
 
             viewHolder.llCustomerItem = (LinearLayout) convertView.findViewById(R.id.llCustomerItem);
@@ -47,29 +48,37 @@ public class SimpleCustomerAdapter extends BaseCustomerAdapter implements BasePr
 
         Customer customer = getItem(position);
 
-        if(position == selectedCustomer)
-            viewHolder.ivStatus.setVisibility(View.VISIBLE);
-        else
-            viewHolder.ivStatus.setVisibility(View.INVISIBLE);
-
         viewHolder.tvCustomerName.setText(customer.getName());
         viewHolder.tvAlternateId.setText(customer.getAlternate_code());
         viewHolder.tvAddress.setText(customer.getFullAddress());
 
-        viewHolder.llCustomerItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedCustomer = position;
-                selectedCustomer_status.setVisibility(View.INVISIBLE);
-            }
-        });
+        setAsSelected(convertView, selectedCustomer != null && selectedCustomer.equals(getItem(position)));
 
         return convertView;
     }
 
-    @Override
-    public void onItemClicked(View view, int position) {
+    private void setAsSelected(View view, boolean isSelected) {
+        if(isSelected) {
+            selectedView = view;
+            selectedView.findViewById(R.id.ivStatus).setVisibility(View.VISIBLE);
+        }
+        else {
+            view.findViewById(R.id.ivStatus).setVisibility(View.INVISIBLE);
+        }
+    }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(selectedCustomer != null && selectedCustomer.equals(getItem(position))) {
+            setAsSelected(view, false);
+            selectedCustomer = null;
+            return;
+        }
+
+        if(selectedCustomer != null)
+            setAsSelected(selectedView, false);
+        setAsSelected(view, true);
+        selectedCustomer = getItem(position);
     }
 
     public class ViewHolder {
