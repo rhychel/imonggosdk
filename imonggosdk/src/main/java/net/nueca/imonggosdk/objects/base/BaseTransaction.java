@@ -38,6 +38,11 @@ public abstract class BaseTransaction {
         return (gson.toJson(this));
     }
 
+    @Override
+    public String toString() {
+        return toJSONString();
+    }
+
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(this));

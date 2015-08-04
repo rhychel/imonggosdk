@@ -380,22 +380,22 @@ public class Customer extends BaseTable {
     public String getFullAddress() {
         String address = "";
 
-        if(!street.isEmpty())
+        if(street != null && !street.isEmpty())
             address += street;
 
-        if(!city.isEmpty()) {
+        if(city != null && !city.isEmpty()) {
             if(!address.isEmpty())
                 address += ", ";
             address += city;
         }
 
-        if(!zipcode.isEmpty()) {
+        if(zipcode != null && !zipcode.isEmpty()) {
             if(!address.isEmpty())
                 address += " ";
             address += zipcode;
         }
 
-        if(!country.isEmpty()) {
+        if(country != null && !country.isEmpty()) {
             if(!address.isEmpty())
                 address += ", ";
             address += country;

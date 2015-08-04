@@ -22,7 +22,6 @@ import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
@@ -524,7 +523,7 @@ public class ImonggoSwable extends SwableService {
             if(table == Table.ORDERS) {
                 Order order = (Order)offlineData.generateObjectFromData();
                 List<Object> orderLines = new ArrayList<>();
-                orderLines.addAll(order.getOrderLines());
+                orderLines.addAll(order.getOrder_lines());
 
                 int max_size = Order.MAX_ORDERLINES_PER_PAGE;
                 int max_page = order.getChildCount();
@@ -538,7 +537,7 @@ public class ImonggoSwable extends SwableService {
                         Order t_order = Order.fromJSONString(order.toJSONString());
 
                         Type type = new TypeToken<BatchList<OrderLine>>() {}.getType();
-                        t_order.setOrderLines((BatchList<OrderLine>) gson.fromJson(orderLineN, type));
+                        t_order.setOrder_lines((BatchList<OrderLine>) gson.fromJson(orderLineN, type));
 
                         String paged_ref = t_order.getReference() + "-" + (i + 1);
                         t_order.setReference(paged_ref);
@@ -553,7 +552,7 @@ public class ImonggoSwable extends SwableService {
                         Order t_order = Order.fromJSONString(order.toJSONString());
 
                         Type type = new TypeToken<BatchList<OrderLine>>() {}.getType();
-                        t_order.setOrderLines((BatchList<OrderLine>) gson.fromJson(orderLineN, type));
+                        t_order.setOrder_lines((BatchList<OrderLine>) gson.fromJson(orderLineN, type));
 
                         String paged_ref = t_order.getReference() + "-" + (i + 1);
                         t_order.setReference(paged_ref);

@@ -159,7 +159,7 @@ public class OfflineData extends BaseTable2 {
         this.reference_no = order.getReference();
 
         this.isPagedRequest = order.shouldPageRequest();
-        this.pagedRequestCount = SwableTools.computePagedRequestCount(order.getOrderLines().size(),
+        this.pagedRequestCount = SwableTools.computePagedRequestCount(order.getOrder_lines().size(),
                 Order.MAX_ORDERLINES_PER_PAGE);
     }
 

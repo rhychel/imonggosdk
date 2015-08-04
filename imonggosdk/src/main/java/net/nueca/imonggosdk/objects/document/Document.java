@@ -139,8 +139,6 @@ public class Document extends BaseTransaction {
         }
     }
 
-
-
     public List<DocumentLine> getDocumentLineAt(int position) {
         List<DocumentLine> list = new ArrayList<>();
         list.addAll(SwableTools.partition(position,document_lines,MAX_DOCUMENTLINES_PER_PAGE));

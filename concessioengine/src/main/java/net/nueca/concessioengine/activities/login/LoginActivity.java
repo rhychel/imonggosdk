@@ -41,7 +41,8 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void initLoginEquipments() {
 
-        setServer(Server.IRETAILCLOUD_COM);
+        // set the Server choice here
+        setServer(Server.IRETAILCLOUD_NET);
         Log.e(TAG, "Server is " + getServer().toString());
 
         // set the Modules to download
@@ -81,6 +82,11 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void successLogin() {
 
+    }
+
+    @Override
+    protected void syncingModulesSuccessful() {
+        Log.e(TAG, "Syncing Modules Successful");
     }
 
 

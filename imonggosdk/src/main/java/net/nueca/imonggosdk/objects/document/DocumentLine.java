@@ -152,7 +152,7 @@ public class DocumentLine {
         protected String discount_text;
         protected double price;
         protected Double retail_price;
-        protected Integer unit_id;
+        protected Integer unit_id = null;
         protected Double unit_content_quantity = null;
         protected String unit_name = null;
         protected Double unit_quantity = null;

@@ -3,7 +3,6 @@ package net.nueca.imonggosdk.objects.order;
 import com.google.gson.Gson;
 
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
-import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.swable.SwableTools;
 
 import org.json.JSONArray;
@@ -14,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by rhymart on 5/6/14.
- * NuecaLibrary (c)2014
+ * Created by gama on 7/1/15.
  */
 public class Order extends BaseTransaction {
     public static transient final int MAX_ORDERLINES_PER_PAGE = 50;
@@ -52,11 +50,11 @@ public class Order extends BaseTransaction {
         this.remark = remark;
     }
 
-    public List<OrderLine> getOrderLines() {
+    public List<OrderLine> getOrder_lines() {
         return order_lines;
     }
 
-    public void setOrderLines(List<OrderLine> order_lines) {
+    public void setOrder_lines(List<OrderLine> order_lines) {
         this.order_lines = order_lines;
     }
 
@@ -160,7 +158,7 @@ public class Order extends BaseTransaction {
 
     public Order getChildOrderAt(int position) throws JSONException {
         Order order = Order.fromJSONString(toJSONString());
-        order.setOrderLines(getOrderLineAt(position));
+        order.setOrder_lines(getOrderLineAt(position));
         order.setReference(reference + "-" + (position+1));
         return order;
     }
