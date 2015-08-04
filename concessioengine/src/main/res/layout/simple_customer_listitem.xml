@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:autofit="http://schemas.android.com/apk/res-auto"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="3dp"
+              android:measureWithLargestChild="true"
+              android:id="@+id/llCustomerItem">
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/ivStatus"
+        android:src="@drawable/ic_check_circle"
+        android:tint="@android:color/black"
+        android:adjustViewBounds="true"
+        android:cropToPadding="false"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="3dp"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center">
+
+        <me.grantland.widget.AutofitTextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="John of the Cross"
+            android:textSize="30sp"
+            android:singleLine="false"
+            android:maxLines="2"
+            android:ellipsize="end"
+            autofit:minTextSize="12sp"
+            android:id="@+id/tvCustomerName"
+            android:textStyle="bold"
+            android:layout_weight="0"/>
+
+        <me.grantland.widget.AutofitTextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="# 2000-1-0123"
+            android:singleLine="false"
+            autofit:minTextSize="12sp"
+            android:textColor="@android:color/black"
+            android:id="@+id/tvAlternateId"
+            android:textStyle="italic"
+            android:layout_weight="0"
+            android:layout_marginLeft="3dp"/>
+
+        <me.grantland.widget.AutofitTextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Unit 403B DECA Corporate Center, Panganiban Drive, Barangay Tinago, Naga City, Philippines 4400"
+            android:singleLine="false"
+            autofit:minTextSize="12sp"
+            android:textColor="@android:color/black"
+            android:id="@+id/tvAddress"
+            android:maxLines="2"
+            android:layout_weight="0"
+            android:layout_marginLeft="3dp"/>
+    </LinearLayout>
+
+</LinearLayout>

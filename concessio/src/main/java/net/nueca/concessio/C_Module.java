@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
+
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
@@ -14,6 +16,9 @@ import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.swable.ImonggoSwable;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -92,7 +97,7 @@ public class C_Module extends ModuleActivity {
         SwableTools.startAndBindSwable(this, imonggoSwableServiceConnection);
 
         try {
-            Document document = new Document.Builder()
+            /*Document document = new Document.Builder()
                     .document_type_code("release_branch")
                     .remark("delivery_reference_no=32-100000200,page=1/1")
                     .addDocumentLine(
@@ -115,7 +120,74 @@ public class C_Module extends ModuleActivity {
                     .generateReference(this, getSession().getDevice_id())
                     .build();
             Log.e("DOCUMENT", document.toJSONString());
-            SwableTools.sendTransaction(getHelper(),277,document, OfflineDataType.SEND_DOCUMENT);
+            SwableTools.sendTransaction(getHelper(),277,document, OfflineDataType.SEND_DOCUMENT);*/
+            Order order = new Order.Builder()
+                    .target_delivery_date("2015-06-26")
+                    .order_type_code("stock_request")
+                    .serving_branch_id(357)
+                    .generateReference(this, getSession().getDevice_id())
+                    .addOrderLine(
+                            new OrderLine.Builder()
+                                    .product_id(115552)
+                                    .retail_price(261)
+                                    .quantity(5)
+                                    .line_no(1)
+                                    .build()
+                    )
+                    .addOrderLine(
+                            new OrderLine.Builder()
+                                    .product_id(115553)
+                                    .retail_price(261)
+                                    .quantity(25)
+                                    .line_no(2)
+                                    .build()
+                    )
+                    .addOrderLine(
+                            new OrderLine.Builder()
+                                    .product_id(115556)
+                                    .retail_price(261)
+                                    .quantity(9)
+                                    .line_no(3)
+                                    .build()
+                    )
+                    .build();
+            Gson gson = new Gson();
+            Log.e("ORDERS", gson.toJson(order.getChildOrders()));
+            Document document = new Document.Builder()
+                    .document_type_code("release_branch")
+                    .remark("delivery_reference_no=32-100000200,page=1/1")
+                    .addDocumentLine(
+                            new DocumentLine.Builder()
+                                    .product_id(36151)
+                                    .line_no(1)
+                                    .quantity(5)
+                                    .extended_attributes(
+                                            new ExtendedAttributes.Builder()
+                                                    .brand("Rsrh")
+                                                    .delivery_date("2015-07-20")
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .addDocumentLine(
+                            new DocumentLine.Builder()
+                                    .product_id(36151)
+                                    .line_no(2)
+                                    .quantity(55.5)
+                                    .extended_attributes(
+                                            new ExtendedAttributes.Builder()
+                                                    .brand("Dm")
+                                                    .delivery_date("2015-07-23")
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .document_purpose_name("Transfer to Warehouse")
+                    .target_branch_id(418)
+                    .generateReference(this, getSession().getDevice_id())
+                    .build();
+            Log.e("DOCUMENT", gson.toJson(document.getChildDocuments()));
+
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (JSONException e) {
