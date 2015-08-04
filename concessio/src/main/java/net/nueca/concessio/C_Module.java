@@ -47,7 +47,6 @@ public class C_Module extends ModuleActivity {
         try {
             switch (item.getItemId()) {
                 case R.id.sample:
-
                     AccountTools.unlinkAccount(C_Module.this, getHelper(), null);
                     Intent intent = new Intent(C_Module.this, C_Login.class);
 
