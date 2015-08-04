@@ -15,29 +15,12 @@ public class OrderLine {
     private double retail_price = 0.0;
     private double quantity = 0.0;
 
-    /*@Expose
-    @DatabaseField
-    private int unit_id = -1;
-
-    @Expose
-    @DatabaseField
-    private double unit_quantity = 0.0;
-
-    @Expose
-    @DatabaseField
-    private double unit_content_quantity = 0.0;
-
-    @Expose
-    @DatabaseField
-    private double unit_retail_price = 0.0;
-
-    @Expose
-    @DatabaseField
-    private String unit_name = "";
-
-    @Expose
-    @DatabaseField
-    private String brand = "";*/
+    private Integer unit_id = null;
+    private Double unit_quantity = null;
+    private Double unit_content_quantity = null;
+    private Double unit_retail_price = null;
+    private String unit_name = null;
+    private String brand = null;
 
     public OrderLine(Builder builder) {
         line_no = builder.line_no;
@@ -82,20 +65,20 @@ public class OrderLine {
         this.quantity = quantity;
     }
 
-    /*public void setUnitId(int unit_id) {
+    public void setUnitId(int unit_id) {
         this.unit_id = unit_id;
     }
 
     public int getUnitId() {
         return unit_id;
-    }*/
+    }
 
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(this));
     }
 
-    /*public double getUnitQuantity() {
+    public double getUnitQuantity() {
         return unit_quantity;
     }
 
@@ -133,7 +116,7 @@ public class OrderLine {
 
     public void setBrand(String brand) {
         this.brand = brand;
-    }*/
+    }
 
     public int getLine_no() {
         return line_no;
@@ -149,6 +132,13 @@ public class OrderLine {
         private double retail_price;
         private double quantity;
 
+        private Integer unit_id = null;
+        private Double unit_quantity = null;
+        private Double unit_content_quantity = null;
+        private Double unit_retail_price = null;
+        private String unit_name = null;
+        private String brand = null;
+
         public Builder line_no(int line_no) {
             this.line_no = line_no;
             return this;
@@ -163,6 +153,30 @@ public class OrderLine {
         }
         public Builder quantity(double quantity) {
             this.quantity = quantity;
+            return this;
+        }
+        public Builder unit_id(int unit_id) {
+            this.unit_id = unit_id;
+            return this;
+        }
+        public Builder unit_quantity(double unit_quantity) {
+            this.unit_quantity = unit_quantity;
+            return this;
+        }
+        public Builder unit_content_quantity(double unit_content_quantity) {
+            this.unit_content_quantity = unit_content_quantity;
+            return this;
+        }
+        public Builder unit_retail_price(double unit_retail_price) {
+            this.unit_retail_price = unit_retail_price;
+            return this;
+        }
+        public Builder unit_name(String unit_name) {
+            this.unit_name = unit_name;
+            return this;
+        }
+        public Builder brand(String brand) {
+            this.brand = brand;
             return this;
         }
 

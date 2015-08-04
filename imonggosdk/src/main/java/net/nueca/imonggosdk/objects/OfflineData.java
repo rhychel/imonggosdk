@@ -527,4 +527,17 @@ public class OfflineData extends BaseTable2 {
 
         this.returnId = StringUtils.join(retIds, ',');
     }
+
+    public String getChildReferenceNo() {
+        if(!isPagedRequest())
+            return reference_no;
+
+        String childRefs = "";
+        for(int i = 0; i < pagedRequestCount; i++) {
+            if(i != 0)
+                childRefs += ",";
+            childRefs += reference_no + "-" + (i+1);
+        }
+        return childRefs;
+    }
 }

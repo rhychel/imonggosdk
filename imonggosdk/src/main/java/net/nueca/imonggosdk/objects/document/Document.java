@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
+import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import org.json.JSONException;
@@ -17,7 +18,7 @@ import java.util.List;
  * Created by gama on 7/20/15.
  */
 public class Document extends BaseTransaction {
-    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 1;
+    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 50;
 
     protected String remark;
     protected String document_type_code;
@@ -93,6 +94,11 @@ public class Document extends BaseTransaction {
         return document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
     }
 
+    @Override
+    public int getChildCount() {
+        return SwableTools.computePagedRequestCount(document_lines.size(), MAX_DOCUMENTLINES_PER_PAGE);
+    }
+
     public static class Builder extends BaseTransaction.Builder<Builder> {
         protected String remark;
         protected String document_type_code;
@@ -131,5 +137,28 @@ public class Document extends BaseTransaction {
         public Document build() {
             return new Document(this);
         }
+    }
+
+
+
+    public List<DocumentLine> getDocumentLineAt(int position) {
+        List<DocumentLine> list = new ArrayList<>();
+        list.addAll(SwableTools.partition(position,document_lines,MAX_DOCUMENTLINES_PER_PAGE));
+        return list;
+    }
+
+    public Document getChildDocumentAt(int position) throws JSONException {
+        Document document = Document.fromJSONString(toJSONString());
+        document.setDocument_lines(getDocumentLineAt(position));
+        document.setReference(reference+"-"+(position+1));
+        return document;
+    }
+
+    public List<Document> getChildDocuments() throws JSONException {
+        List<Document> documentList = new ArrayList<>();
+        for(int i = 0; i < getChildCount(); i++) {
+            documentList.add(getChildDocumentAt(i));
+        }
+        return documentList;
     }
 }
