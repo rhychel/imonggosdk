@@ -161,7 +161,7 @@ public class Order extends BaseTransaction {
     public Order getChildOrderAt(int position) throws JSONException {
         Order order = Order.fromJSONString(toJSONString());
         order.setOrderLines(getOrderLineAt(position));
-        order.setReference(reference+"-"+(position+1));
+        order.setReference(reference + "-" + (position+1));
         return order;
     }
 

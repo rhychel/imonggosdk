@@ -150,7 +150,7 @@ public class Document extends BaseTransaction {
     public Document getChildDocumentAt(int position) throws JSONException {
         Document document = Document.fromJSONString(toJSONString());
         document.setDocument_lines(getDocumentLineAt(position));
-        document.setReference(reference+"-"+(position+1));
+        document.setReference(reference + "-" + (position+1));
         return document;
     }
 
