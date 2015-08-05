@@ -18,14 +18,6 @@ public class C_SampleLogin extends LoginActivity {
     }
 
     @Override
-    protected void syncingModulesSuccessful() {
-        super.syncingModulesSuccessful();
-        finish();
-        Intent intent = new Intent(this, C_Module.class);
-        startActivity(intent);
-    }
-
-    @Override
     protected void showNextActivity() {
         finish();
         Intent intent = new Intent(this, C_Module.class);

@@ -32,7 +32,7 @@ public class CustomDialogFrameLayout extends FrameLayout {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater != null) {
-            mView = inflater.inflate(R.layout.concessioengine_download_layout, null);
+            mView = inflater.inflate(R.layout.concessioengine_download_layout, null, false);
         }
 
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.rvModulesToSync);

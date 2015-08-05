@@ -21,6 +21,7 @@ import java.sql.SQLException;
 public class C_Module extends ModuleActivity {
 
     private ListView lvSampleProducts;
+    private String TAG = "C_Module";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class C_Module extends ModuleActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
@@ -46,7 +48,8 @@ public class C_Module extends ModuleActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         try {
             switch (item.getItemId()) {
-                case R.id.sample:
+                case R.id.mGo:
+
                     AccountTools.unlinkAccount(C_Module.this, getHelper(), null);
                     Intent intent = new Intent(C_Module.this, C_Login.class);
 
