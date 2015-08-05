@@ -135,8 +135,11 @@ public class ImonggoSwable extends SwableService {
                     //NOTIFICATION_ID++;
 
                     List<OfflineData> offlineDataList =
-                        getHelper().getOfflineData().queryBuilder().where().
-                        eq("isSynced", false).and().eq("isPastCutoff", false).query();
+                        getHelper().getOfflineData().queryBuilder().where()
+                                .eq("isSynced", false).and()
+                                .eq("isSyncing", false).and()
+                                .eq("isQueued", false).and()
+                                .eq("isPastCutoff", false).query();
 
                     if(offlineDataList.size() <= 0) {
                         setSyncing(false);
@@ -183,6 +186,8 @@ public class ImonggoSwable extends SwableService {
                                 delete(Table.DOCUMENTS, offlineData);
                                 break;
                         }
+
+                        offlineData.updateTo(getHelper());
                     }
                     Log.e("ImonggoSwable", "starting sync : " + offlineDataList.size() + " queued transactions");
                     REQUEST_COUNT += offlineDataList.size();

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 
+import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.ReferenceNumberTool;
@@ -43,12 +44,12 @@ public class Document extends BaseTransaction {
         this.remark = remark;
     }
 
-    public String getDocument_type_code() {
-        return document_type_code;
+    public DocumentTypeCode getDocument_type_code() {
+        return DocumentTypeCode.identify(document_type_code);
     }
 
-    public void setDocument_type_code(String document_type_code) {
-        this.document_type_code = document_type_code;
+    public void setDocument_type_code(DocumentTypeCode document_type_code) {
+        this.document_type_code = document_type_code.toString();
     }
 
     public List<DocumentLine> getDocument_lines() {
@@ -110,8 +111,8 @@ public class Document extends BaseTransaction {
             this.remark = remark;
             return this;
         }
-        public Builder document_type_code(String document_type_code) {
-            this.document_type_code = document_type_code;
+        public Builder document_type_code(DocumentTypeCode document_type_code) {
+            this.document_type_code = document_type_code.toString();
             return this;
         }
         public Builder document_lines(List<DocumentLine> document_lines) {
