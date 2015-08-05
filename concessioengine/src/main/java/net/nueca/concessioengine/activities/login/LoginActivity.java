@@ -91,7 +91,8 @@ public class LoginActivity extends BaseLoginActivity {
                             setUnlinked(true);
                             unlinkAccount();
                         } else {
-                            getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, true);
+                            Log.e(TAG, "Setting Initial sync to false");
+                            getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, false);
                         }
                     }
                 }

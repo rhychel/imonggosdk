@@ -10,14 +10,11 @@ import net.nueca.imonggosdk.enums.Parameter;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
-import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
-import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
@@ -48,12 +45,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             Log.e(TAG, "COUNT");
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
                     mCurrentTableSyncing, getSession().getServer(), requestType, getParameters(requestType));
+
         } else if (requestType == RequestType.API_CONTENT) {
             // TODO: Documents
             Log.e(TAG, "API CONTENT");
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
                     mCurrentTableSyncing, getSession().getServer(), requestType, getParameters(requestType));
         } else if (requestType == RequestType.LAST_UPDATED_AT) {
+            Log.e(TAG, "LAST UPDATED AT");
             newLastUpdatedAt = null;
             lastUpdatedAt = null;
 
@@ -81,6 +80,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.USER_ID),
                             String.valueOf(page), String.valueOf(getUser().getId()));
                 }
+                // TODO: Documents
                 Log.e(TAG, String.format(ImonggoTools.generateParameter(Parameter.PAGE), String.valueOf(page)));
                 return String.format(ImonggoTools.generateParameter(Parameter.PAGE), String.valueOf(page));
             } else {
@@ -88,9 +88,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         String.valueOf(page), DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
             }
         } else if (requestType == RequestType.COUNT) {
+            // TODO 1. Support ACTIVE_ONLY
             if (initialSync || lastUpdatedAt == null) {
-
+                // TODO 2. BRANCH USERS 3. DOCUMENTS
                 return ImonggoTools.generateParameter(Parameter.COUNT);
+            } else {
+                // TODO 4. BRANCH USERS 5. DOCUMENTS
+                return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.AFTER),
+                        DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
             }
         }
         return "";
@@ -166,29 +171,34 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 // Last Updated At
                 if (requestType == RequestType.LAST_UPDATED_AT) {
-
-                    Log.e(TAG, "New Last Updated At: " + jsonObject.toString());
-
-                    newLastUpdatedAt = gson.fromJson(jsonObject.toString(), LastUpdatedAt.class);
-                    //TODO: documents?
-                    newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module));
-
                     // since this is the first
                     page = 1;
                     count = 0;
+
+                    // get the response TODO: documents?
+                    newLastUpdatedAt = gson.fromJson(jsonObject.toString(), LastUpdatedAt.class);
+                    newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module));
+
+                    if (lastUpdatedAt != null) {
+                        Log.e(TAG, "Last Updated At: " + lastUpdatedAt.getLast_updated_at().toString());
+                        Log.e(TAG, "New Last Updated At: " + jsonObject.toString());
+
+                        newLastUpdatedAt.updateTo(getHelper());
+                    } else {
+                        newLastUpdatedAt.insertTo(getHelper());
+                        Log.e(TAG, "New Last Updated At: " + jsonObject.toString());
+                    }
 
                     // USERS and  TAX SETTINGS DON'T SUPPORT COUNT
                     if (mCurrentTableSyncing == Table.USERS || mCurrentTableSyncing == Table.TAX_SETTINGS) {
                         startSyncModuleContents(RequestType.API_CONTENT);
                     } else {
                         startSyncModuleContents(RequestType.COUNT);
-                        Log.e(TAG, "COUNT");
                     }
 
-                    // COUNT
-                } else if (requestType == RequestType.COUNT) {
+                } else if (requestType == RequestType.COUNT) { // COUNT
                     count = jsonObject.getInt("count");
-
+                    Log.e(TAG, "Response: count is " + count);
                     // if table don't have data
                     if (count == 0) {
                         if (!syncNext()) {
@@ -225,17 +235,26 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             User user = gson.fromJson(jsonObject.toString(), User.class);
                             if (initialSync || lastUpdatedAt == null) {
+                                if (initialSync)
+                                    Log.e(TAG, "initial sync users");
+                                if (lastUpdatedAt == null)
+                                    Log.e(TAG, "last Updated At users ");
+
                                 newUsers.add(user);
                             } else {
                                 // check if the user tables exist in the database
                                 if (isExisting(user, Table.USERS)) {
+
                                     // check is status is D
                                     if (user.getStatus().equals("D")) {
+                                        Log.e(TAG, "adding user entry to be deleted ");
                                         deleteUsers.add(user);
                                     } else {
+                                        Log.e(TAG, "adding user entry to be updated");
                                         updateUsers.add(user);
                                     }
                                 } else {  // if not then add it
+                                    Log.e(TAG, "adding user entry to be inserted");
                                     newUsers.add(user);
                                 }
 
@@ -266,23 +285,30 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             Product product = gson.fromJson(jsonObject.toString(), Product.class);
                             if (initialSync || lastUpdatedAt == null) {
-                                Log.e(TAG, "initial sync or no last Updated At");
+                                if (initialSync)
+                                    Log.e(TAG, "initial sync products");
+                                if (lastUpdatedAt == null)
+                                    Log.e(TAG, "last Updated At products");
                                 product.setSearchKey(product.getName() + product.getStock_no());
                                 newProducts.add(product);
-                            } else if (isExisting(product, Table.PRODUCTS)) {
-                                Log.e(TAG, "table product is existing updating...");
-                                DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
-                                deleteProductsHelper.where().eq("product_id", product);
-                                deleteProductsHelper.delete();
-
-                                if (product.getStatus().equals("D")) {
-                                    deleteProducts.add(product);
-                                } else {
-                                    updateProducts.add(product);
-                                }
-
                             } else {
-                                newProducts.add(product);
+                                Log.e(TAG, "This not initial sync " + product.toString());
+                                if (isExisting(product, Table.PRODUCTS)) {
+                                    DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
+                                    deleteProductsHelper.where().eq("product_id", product);
+                                    deleteProductsHelper.delete();
+
+                                    if (product.getStatus().equals("D")) {
+                                        Log.e(TAG, "adding user entry to be deleted");
+                                        deleteProducts.add(product);
+                                    } else {
+                                        Log.e(TAG, "adding user entry to be updated");
+                                        updateProducts.add(product);
+                                    }
+                                } else {
+                                    Log.e(TAG, "adding user entry to be deleted ");
+                                    newProducts.add(product);
+                                }
                             }
                             // Save tags to the database
                             JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
@@ -323,12 +349,23 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             unit.setProduct(product);
 
                             if (initialSync || lastUpdatedAt == null) {
+                                if (initialSync)
+                                    Log.e(TAG, "initial sync units");
+                                if (lastUpdatedAt == null)
+                                    Log.e(TAG, "last Updated At units");
                                 newUnits.add(unit);
-                            } else if (isExisting(unit, Table.UNITS)) {
-                                if (unit.getStatus().equals("D")) {
-                                    deleteUnits.add(unit);
+                            } else {
+                                if (isExisting(unit, Table.UNITS)) {
+                                    if (unit.getStatus().equals("D")) {
+                                        Log.e(TAG, "adding user entry to be deleted");
+                                        deleteUnits.add(unit);
+                                    } else {
+                                        Log.e(TAG, "adding user entry to be updated");
+                                        updateUnits.add(unit);
+                                    }
                                 } else {
-                                    updateUnits.add(unit);
+                                    Log.e(TAG, "adding user entry to be inserted");
+                                    newUnits.add(unit);
                                 }
                             }
                         }
@@ -351,23 +388,34 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     private void updateNext(RequestType requestType, int size) {
+        Log.e(TAG, requestType + "next table");
+
         if (mSyncModulesListener != null) {
-            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
+            if (size != 0) {
+                Log.e(TAG, "Size is not 0");
+                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
+            } else {
+                Log.e(TAG, "Size is 0");
+                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+            }
         }
-
         try {
-            if (size < 50) {
-                Log.e(TAG, "Sync Next Table");
+            if (size != 0) {
 
-                syncNext();
+                if (size < 50) {
+                    Log.e(TAG, "Syncing next table");
+                    syncNext();
+                } else {
+                    Log.e(TAG, "Downloading next page");
+                    page++;
+                    if (page <= numberOfPages) {
+                        startSyncModuleContents(requestType);
+                    }
+                }
 
             } else {
-                page++;
-                if (page <= numberOfPages) {
-
-                    startSyncModuleContents(requestType);
-
-                }
+                Log.e(TAG, "Size is 0 syncing next");
+                syncNext();
             }
         } catch (SQLException e) {
             e.printStackTrace();

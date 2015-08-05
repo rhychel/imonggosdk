@@ -136,7 +136,7 @@ public abstract class BaseSyncService extends ImonggoService {
      * @return
      * @throws SQLException
      */
-    protected boolean isExisting(Object o, Table table) throws SQLException {
+    public boolean isExisting(Object o, Table table) throws SQLException {
         switch (table) {
             case USERS: {
                 User user = (User) o;
