@@ -13,6 +13,11 @@ public class SimpleLoginActivity extends BaseLoginActivity {
     }
 
     @Override
+    protected void loginChecker() {
+
+    }
+
+    @Override
     protected void onCreateLayoutForLogin() {
 
     }
