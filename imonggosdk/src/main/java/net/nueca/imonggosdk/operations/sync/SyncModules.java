@@ -282,7 +282,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                         BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
                         BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-                        BatchList<ProductTag> productTags = new BatchList<>(getHelper());
+                        BatchList<ProductTag> productTags = new BatchList<>(DatabaseOperation.INSERT, getHelper());
 
                         for (int i = 0; i < size; i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);

@@ -18,29 +18,17 @@ public class OrderLine {
 
     private double quantity = 0.0;
 
-    /*@Expose
-    @DatabaseField
-    private int unit_id = -1;
+    private Integer unit_id = null;
 
-    @Expose
-    @DatabaseField
-    private double unit_quantity = 0.0;
+    private Double unit_quantity = null;
 
-    @Expose
-    @DatabaseField
-    private double unit_content_quantity = 0.0;
+    private Double unit_content_quantity = null;
 
-    @Expose
-    @DatabaseField
-    private double unit_retail_price = 0.0;
+    private Double unit_retail_price = null;
 
-    @Expose
-    @DatabaseField
-    private String unit_name = "";
+    private String unit_name = null;
 
-    @Expose
-    @DatabaseField
-    private String brand = "";*/
+//    private String brand = "";
 
     public OrderLine(Builder builder) {
         line_no = builder.line_no;
@@ -85,20 +73,20 @@ public class OrderLine {
         this.quantity = quantity;
     }
 
-    /*public void setUnitId(int unit_id) {
+    public void setUnitId(int unit_id) {
         this.unit_id = unit_id;
     }
 
-    public int getUnitId() {
+    public Integer getUnitId() {
         return unit_id;
-    }*/
+    }
 
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(this));
     }
 
-    /*public double getUnitQuantity() {
+    public double getUnitQuantity() {
         return unit_quantity;
     }
 
@@ -130,6 +118,7 @@ public class OrderLine {
         this.unit_name = unit_name;
     }
 
+    /*
     public String getBrand() {
         return brand;
     }

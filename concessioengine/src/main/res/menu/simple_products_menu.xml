@@ -9,9 +9,15 @@
         android:orderInCategory="100"
         app:actionViewClass="net.nueca.concessioengine.views.SearchViewEx" />
 
+    <item android:id="@+id/mHistory"
+        android:title="History"
+        app:showAsAction="never"
+        android:orderInCategory="200"
+        />
+
     <item android:id="@+id/mLogout"
         android:title="Logout"
         app:showAsAction="never"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         />
 </menu>

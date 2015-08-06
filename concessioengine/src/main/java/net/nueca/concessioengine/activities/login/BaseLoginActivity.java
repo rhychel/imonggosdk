@@ -918,11 +918,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     @Override
     public void onFinishDownload() {
         LoggingTools.showToast(this, "Finished Downloading Modules");
-
-        if (customDialog != null) {
-            customDialog.dismiss();
-        }
-
         showNextActivity();
     }
 

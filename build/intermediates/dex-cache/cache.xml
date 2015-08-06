@@ -2,116 +2,11 @@
 <items version="2" >
 
     <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.github.traex.rippleeffect/library/1.3/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="ee17feb34ce104bc17d1a1e64346d7f779ebb066">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-ce7934a8f7e8cd8368d8966fad424cb1faa817f6.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.sothree.slidinguppanel/library/3.0.0/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c1200ab3b93b8f42c0878b00eb79a84c1f112cf7">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-620b54889e6825f9bd925f5ba79a415aed6943a9.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-bda5fb154ced57178c6d5608c93ca17edbcd5075.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.android.support/design/22.2.1/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="1821601ddbec5ff125653097812823388700af74">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-e6fc0b6c593f349432d5d566d2e119a179d4b7d7.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.mcxiaoke.volley/library/1.0.17/f417d7f776d1ee5858fc04d9362aa45e9bedd26b/library-1.0.17.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="f417d7f776d1ee5858fc04d9362aa45e9bedd26b">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/library-1.0.17-88369b52ffbc6ec2b2d9556882817d284b5785fc.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/imonggosdk2/concessioengine/unspecified/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="b6edc09fed2e2462dd171b685ddc1c0bd65d9be4">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-2e4232d5328639975e3397f5ed6d64691a33073e.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/libs/internal_impl-22.2.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/internal_impl-22.2.1-5d99615c6b3a2b08adabcf21086e24be9bbf755e.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/org.solovyev.android.views/linear-layout-manager/0.4/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="594eab441ab5cac8007ab3fd49a24338f415b83f">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-dd788a45b5d1c9a663b5a76b5d6bf9a0ac83b6f9.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.wdullaer/materialdatetimepicker/1.4.2/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="10f66556026320088327e814108d0a8e80111130">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-d81d42c01405afdb9c95c61574cfdea1c074fd42.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.wdullaer/materialdatetimepicker/1.4.2/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="10f66556026320088327e814108d0a8e80111130">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-ec2e2e00e1ddc9583d3e71c9a00b40ed27f91d2d.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/me.grantland/autofittextview/0.2.1/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="972ca945f0cf5ff0765ab94fa8e1a90661ea197a">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-15604b093ff905fcdab9ac3be57296dc42de3b33.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/library-2.4.0-0ad6561275ffb67977257034ce2c80b2b518d608.jar" />
-    </item>
-    <item
         jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.sothree.slidinguppanel/library/3.0.0/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="c1200ab3b93b8f42c0878b00eb79a84c1f112cf7">
         <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-aebc0f20f5ce54c178fb054a1a82adc39076ab92.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3.1/ecb6e1f8e4b0e84c4b886c2f14a1500caf309757/gson-2.3.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="ecb6e1f8e4b0e84c4b886c2f14a1500caf309757">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/gson-2.3.1-0f961b7bb5f4a07ccaf5df5afc634911c4f988d5.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.4/5fe28b9518e58819180a43a850fbc0dd24b7c050/commons-lang3-3.4.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="5fe28b9518e58819180a43a850fbc0dd24b7c050">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/commons-lang3-3.4-685271d04fd294d6f60d75b81cfe96a10881e5f5.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/libs/internal_impl-22.2.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/internal_impl-22.2.1-fce33350248354f9a50224dcf3122b2eb17a254a.jar" />
     </item>
     <item
         jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/me.grantland/autofittextview/0.2.1/jars/classes.jar"
@@ -121,76 +16,6 @@
         <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-2ee03adebcce15443c96743f5eea4565ce6d0f0c.jar" />
     </item>
     <item
-        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-core/4.48/e579bd2905d0399af5029aaaf9817d5fa0ca88a5/ormlite-core-4.48.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="e579bd2905d0399af5029aaaf9817d5fa0ca88a5">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/ormlite-core-4.48-4d336a3487bc5dcf9519b50324186eeceeaf7c13.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.cocosw/bottomsheet/1.1.1/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="3a993e50d32f510babac974a7e26b03e29790458">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-dabf815ecad4700c544a5a6fc58adbc38193183c.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.android.support/design/22.2.1/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="1821601ddbec5ff125653097812823388700af74">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-8696466b032255c3058e7e1c96512d85cf94180f.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="42d4b437a706703e0fbc4be51fc3935ee3c477ca">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-9bb6220a39bed610e07ce90c4f0ce8f6cf5b464d.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/imonggosdk/concessioengine/unspecified/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="391411399ffe7f17cc10f25ce829431828ca09c3">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-2b8abbf9c39a3dcf2064c710f01aef2cd4f41eba.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/org.solovyev.android.views/linear-layout-manager/0.4/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="594eab441ab5cac8007ab3fd49a24338f415b83f">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-beb8d346850c63211a168e9123c2dcd98913ef8f.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.github.traex.rippleeffect/library/1.3/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="ee17feb34ce104bc17d1a1e64346d7f779ebb066">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-02065b583cdaea0be5b035f47de6c0b1187f7115.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/imonggosdk/imonggosdk/unspecified/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="9bdd3d67f9726216897c7a764ec80fcc45999378">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-f6e3fddaf0e174f655353c6630f7687f603bcfb9.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-854c4459a6edba9f182a66e96a8c93ef59dcd54f.jar" />
-    </item>
-    <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="f8efd0096475e0daf054267b61544e10dc776503">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-2dadd70452b89591bc432eb033ee7b0640b46cb6.jar" />
-    </item>
-    <item
         jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
@@ -198,11 +23,11 @@
         <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-1b88bb97e898efa3d117f0d52c730846ef3b68bc.jar" />
     </item>
     <item
-        jar="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/support-annotations/22.2.1/support-annotations-22.2.1.jar"
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/support-annotations-22.2.1-b01d88b9dc46cea694ee09339298a2b7c355c595.jar" />
+        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-bda5fb154ced57178c6d5608c93ca17edbcd5075.jar" />
     </item>
     <item
         jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.1/jars/classes.jar"
@@ -212,6 +37,62 @@
         <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-e5653b8bc8dcf97506c50f211183b0a7e15ea590.jar" />
     </item>
     <item
+        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.mcxiaoke.volley/library/1.0.17/f417d7f776d1ee5858fc04d9362aa45e9bedd26b/library-1.0.17.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="f417d7f776d1ee5858fc04d9362aa45e9bedd26b">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/library-1.0.17-88369b52ffbc6ec2b2d9556882817d284b5785fc.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3.1/ecb6e1f8e4b0e84c4b886c2f14a1500caf309757/gson-2.3.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="ecb6e1f8e4b0e84c4b886c2f14a1500caf309757">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/gson-2.3.1-0f961b7bb5f4a07ccaf5df5afc634911c4f988d5.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/org.solovyev.android.views/linear-layout-manager/0.4/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="594eab441ab5cac8007ab3fd49a24338f415b83f">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-beb8d346850c63211a168e9123c2dcd98913ef8f.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/org.solovyev.android.views/linear-layout-manager/0.4/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="594eab441ab5cac8007ab3fd49a24338f415b83f">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-dd788a45b5d1c9a663b5a76b5d6bf9a0ac83b6f9.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="3abb4b88f5a8a0584a9b01d3170d7165f12f8588">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-f1072ffd8df216c1aa08a27b339e0075a09f5f77.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.github.traex.rippleeffect/library/1.3/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="ee17feb34ce104bc17d1a1e64346d7f779ebb066">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-ce7934a8f7e8cd8368d8966fad424cb1faa817f6.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-android/4.48/afa06f539a4026c10b247386312aa67404b80a16/ormlite-android-4.48.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="afa06f539a4026c10b247386312aa67404b80a16">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/ormlite-android-4.48-27c4a8a72e6e48940b4547c0a47a2fcb55caa954.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/me.grantland/autofittextview/0.2.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="972ca945f0cf5ff0765ab94fa8e1a90661ea197a">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-15604b093ff905fcdab9ac3be57296dc42de3b33.jar" />
+    </item>
+    <item
         jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.jakewharton/disklrucache/2.0.2/93b399470e72c0bc8cb52379943b63c9aa586cd8/disklrucache-2.0.2.jar"
         jumboMode="false"
         revision="22.0.1"
@@ -219,17 +100,31 @@
         <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/disklrucache-2.0.2-7474cd5f97e6d8ca8f6d3b0233b794ec44926f25.jar" />
     </item>
     <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.cocosw/bottomsheet/1.1.1/jars/classes.jar"
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="3a993e50d32f510babac974a7e26b03e29790458">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-6aaded060a13c7c76b798278f1a490927f001f09.jar" />
+        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-854c4459a6edba9f182a66e96a8c93ef59dcd54f.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.android.support/design/22.2.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="1821601ddbec5ff125653097812823388700af74">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-8696466b032255c3058e7e1c96512d85cf94180f.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="f8efd0096475e0daf054267b61544e10dc776503">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-2dadd70452b89591bc432eb033ee7b0640b46cb6.jar" />
     </item>
     <item
         jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/imonggosdk2/imonggosdk/unspecified/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="49d8360c5d4d0ef4de9954dccb5f97a1fd9ba751">
+        sha1="434ecd9469369c0111f71566ab40bd4f30a41b41">
         <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-d2b74526f071e3fd7f9985ac16ae78a10175b805.jar" />
     </item>
     <item
@@ -240,18 +135,123 @@
         <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-0cdfa0a8bdc6bb6fd03ff4b2afed907eff2f602d.jar" />
     </item>
     <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.1/jars/classes.jar"
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.android.support/design/22.2.1/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="3abb4b88f5a8a0584a9b01d3170d7165f12f8588">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-f1072ffd8df216c1aa08a27b339e0075a09f5f77.jar" />
+        sha1="1821601ddbec5ff125653097812823388700af74">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-e6fc0b6c593f349432d5d566d2e119a179d4b7d7.jar" />
     </item>
     <item
-        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-android/4.48/afa06f539a4026c10b247386312aa67404b80a16/ormlite-android-4.48.jar"
+        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.4/5fe28b9518e58819180a43a850fbc0dd24b7c050/commons-lang3-3.4.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="afa06f539a4026c10b247386312aa67404b80a16">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/ormlite-android-4.48-27c4a8a72e6e48940b4547c0a47a2fcb55caa954.jar" />
+        sha1="5fe28b9518e58819180a43a850fbc0dd24b7c050">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/commons-lang3-3.4-685271d04fd294d6f60d75b81cfe96a10881e5f5.jar" />
+    </item>
+    <item
+        jar="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/support-annotations/22.2.1/support-annotations-22.2.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/support-annotations-22.2.1-b01d88b9dc46cea694ee09339298a2b7c355c595.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.cocosw/bottomsheet/1.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="3a993e50d32f510babac974a7e26b03e29790458">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-dabf815ecad4700c544a5a6fc58adbc38193183c.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/imonggosdk/imonggosdk/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="9bdd3d67f9726216897c7a764ec80fcc45999378">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-f6e3fddaf0e174f655353c6630f7687f603bcfb9.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/imonggosdk2/concessioengine/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="2b171c3d3078a6e8eb5fa6b2f39435df75b59884">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-2e4232d5328639975e3397f5ed6d64691a33073e.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/imonggosdk/concessioengine/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="391411399ffe7f17cc10f25ce829431828ca09c3">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-2b8abbf9c39a3dcf2064c710f01aef2cd4f41eba.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.sothree.slidinguppanel/library/3.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="c1200ab3b93b8f42c0878b00eb79a84c1f112cf7">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-620b54889e6825f9bd925f5ba79a415aed6943a9.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.wdullaer/materialdatetimepicker/1.4.2/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="10f66556026320088327e814108d0a8e80111130">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-d81d42c01405afdb9c95c61574cfdea1c074fd42.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/libs/internal_impl-22.2.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/internal_impl-22.2.1-5d99615c6b3a2b08adabcf21086e24be9bbf755e.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.cocosw/bottomsheet/1.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="3a993e50d32f510babac974a7e26b03e29790458">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-6aaded060a13c7c76b798278f1a490927f001f09.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="42d4b437a706703e0fbc4be51fc3935ee3c477ca">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-9bb6220a39bed610e07ce90c4f0ce8f6cf5b464d.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/library-2.4.0-0ad6561275ffb67977257034ce2c80b2b518d608.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/com.github.traex.rippleeffect/library/1.3/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="ee17feb34ce104bc17d1a1e64346d7f779ebb066">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-02065b583cdaea0be5b035f47de6c0b1187f7115.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-core/4.48/e579bd2905d0399af5029aaaf9817d5fa0ca88a5/ormlite-core-4.48.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="e579bd2905d0399af5029aaaf9817d5fa0ca88a5">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/ormlite-core-4.48-4d336a3487bc5dcf9519b50324186eeceeaf7c13.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/libs/internal_impl-22.2.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/internal_impl-22.2.1-fce33350248354f9a50224dcf3122b2eb17a254a.jar" />
+    </item>
+    <item
+        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.wdullaer/materialdatetimepicker/1.4.2/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="10f66556026320088327e814108d0a8e80111130">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-ec2e2e00e1ddc9583d3e71c9a00b40ed27f91d2d.jar" />
     </item>
 
 </items>

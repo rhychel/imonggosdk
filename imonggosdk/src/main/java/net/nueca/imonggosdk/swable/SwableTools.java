@@ -25,12 +25,15 @@ import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class SwableTools {

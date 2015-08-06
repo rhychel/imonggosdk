@@ -45,7 +45,7 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
 
     public SelectedProductItem getSelectedProductItem(Product product) {
         for(SelectedProductItem selectedProductItem : this)
-            if(selectedProductItem.getProduct().getId() == product.getId())
+            if (selectedProductItem.getProduct().getId() == product.getId())
                 return selectedProductItem;
         return null;
     }
@@ -55,6 +55,13 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         if(selectedProductItem == null)
             return "0";
         return selectedProductItem.getQuantity();
+    }
+
+    public String getUnitName(Product product) {
+        SelectedProductItem selectedProductItem = getSelectedProductItem(product);
+        if(selectedProductItem == null)
+            return "";
+        return "<i>["+selectedProductItem.getValues().get(0).getUnit().getName()+"]</i>";
     }
 
     public void renderToJson() {

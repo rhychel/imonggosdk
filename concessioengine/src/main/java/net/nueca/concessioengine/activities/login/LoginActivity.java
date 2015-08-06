@@ -51,9 +51,9 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Override
     protected void onCreateLayoutForLogin() {
-        setEditTextAccountID("nuecaonly");
-        setEditTextEmail("nuecaonly@test.com");
-        setEditTextPassword("nuecaonly");
+        setEditTextAccountID("retailpos");
+        setEditTextEmail("retailpos@test.com");
+        setEditTextPassword("retailpos");
     }
 
     @Override

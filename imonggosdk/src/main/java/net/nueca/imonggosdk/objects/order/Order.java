@@ -19,7 +19,7 @@ import java.util.List;
  * NuecaLibrary (c)2014
  */
 public class Order extends BaseTransaction {
-    public static transient final int MAX_ORDERLINES_PER_PAGE = 1;
+    public static transient final int MAX_ORDERLINES_PER_PAGE = 3;
 
     private String target_delivery_date; // current_date+2days
 

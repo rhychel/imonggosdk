@@ -14,12 +14,16 @@
         <activity
             android:name=".C_Module"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.Concessio">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
+            android:theme="@style/AppTheme.Concessio"/>
+        <activity
+            android:name=".C_History"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Concessio.NoActionBar"/>
+        <activity
+            android:name=".C_HistoryDetails"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Concessio.NoActionBar"/>
+
         <activity
             android:name=".InitializeActivity"
             android:label="@string/app_name"
@@ -33,7 +37,7 @@
         <activity
             android:name="net.nueca.concessio.C_SampleLogin"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.Concessio">
+            android:theme="@style/LoginTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

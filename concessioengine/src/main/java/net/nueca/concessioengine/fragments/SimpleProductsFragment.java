@@ -141,6 +141,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             simpleProductRecyclerViewAdapter.notifyDataSetChanged();
         else
             simpleProductListAdapter.notifyDataSetChanged();
+        if(productsFragmentListener != null)
+            productsFragmentListener.whenItemsSelectedUpdated();
     }
 
     public void setUseRecyclerView(boolean useRecyclerView) {
@@ -150,19 +152,23 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     @Override
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
         try {
-            List<ProductTag> tags = getHelper().getProductTags().queryBuilder().where().eq("product_id", product).query();
-            List<String> brands = new ArrayList<>();
-
-            for(ProductTag productTag : tags)
-                if(productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
-                    brands.add(productTag.getTag().replaceAll("##", ""));
-
             SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
             quantityDialog.setSelectedProductItem(selectedProductItem);
-            quantityDialog.setHasUnits(false);
-            quantityDialog.setUnitList(getHelper().getUnits().queryForAll(), true);
-            quantityDialog.setBrandList(brands, true);
-            quantityDialog.setHasBrand(true);
+            if(hasUnits) {
+                quantityDialog.setHasUnits(true);
+                quantityDialog.setUnitList(getHelper().getUnits().queryBuilder().where().eq("product_id", product).query(), true);
+            }
+            if(hasBrand) {
+                List<ProductTag> tags = getHelper().getProductTags().queryBuilder().where().eq("product_id", product).query();
+                List<String> brands = new ArrayList<>();
+
+                for(ProductTag productTag : tags)
+                    if(productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
+                        brands.add(productTag.getTag().replaceAll("##", ""));
+                quantityDialog.setBrandList(brands, true);
+                quantityDialog.setHasBrand(true);
+            }
+            quantityDialog.setHasDeliveryDate(hasDeliveryDate);
             quantityDialog.setFragmentManager(getActivity().getFragmentManager());
             quantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
                 @Override
