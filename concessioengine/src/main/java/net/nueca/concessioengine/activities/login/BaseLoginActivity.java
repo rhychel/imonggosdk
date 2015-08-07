@@ -184,7 +184,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
         @Override
         protected void onPostExecute(String result) {
-           Log.e(TAG, "This came from doInBackground: " + result);
+            Log.e(TAG, "This came from doInBackground: " + result);
             try {
                 startSyncingImonggoModules();
             } catch (SQLException e) {
@@ -209,7 +209,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     customDialog.dismiss();
                 }
                 startSyncService();
-
                 DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
                         "Sync failed. Login Again ",
                         "Ok", "", false,
@@ -305,6 +304,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private void showSyncModulesCustomDialog() {
 
         customDialogFrameLayout = new CustomDialogFrameLayout(BaseLoginActivity.this, mModulesToDownload);
+
         customDialog = new CustomDialog(BaseLoginActivity.this, R.style.AppCompatDialogStyle);
 
         customDialog.setTitle(getString(R.string.FETCHING_MODULE_TITLE));
@@ -570,11 +570,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
-    protected void setLoginSession(Session session){
+    protected void setLoginSession(Session session) {
         this.mSession = session;
     }
 
-    protected Session getLoginSession(){
+    protected Session getLoginSession() {
         return this.mSession;
     }
 
@@ -598,7 +598,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return mBaseLogin;
     }
 
-    protected CustomDialog getCustomDialog(){
+    protected CustomDialog getCustomDialog() {
         return this.customDialog;
     }
 
@@ -693,7 +693,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return mConnection;
     }
 
-    protected void setSyncServiceBinded(Boolean bind){
+    protected void setSyncServiceBinded(Boolean bind) {
         this.mBounded = bind;
     }
 
@@ -701,11 +701,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return mBounded;
     }
 
-    protected Intent getSyncServiceIntent(){
+    protected Intent getSyncServiceIntent() {
         return this.mServiceIntent;
     }
 
-    protected void setSyncServiceIntent(Intent intent){
+    protected void setSyncServiceIntent(Intent intent) {
         this.mServiceIntent = intent;
     }
 
@@ -765,7 +765,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     @Override
     public void onStartDownload(Table table) {
-        Log.e(TAG, "started downloading " + table);
+
     }
 
     @Override
@@ -823,11 +823,55 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     @Override
     public void onFinishDownload() {
+        if (customDialog != null) {
+            Log.e(TAG, "Custom dialog is showing");
+            customDialog.dismiss();
+            customDialog = null;
+        }
         showNextActivity();
     }
 
     @Override
     public void onErrorDownload(Table table, String message) {
         Log.e(TAG, "error downloading " + table + " " + message);
+    }
+
+
+    @Override
+    public void onStop() {
+
+        if (customDialog != null) {
+            Log.e(TAG, "Custom dialog is showing");
+            customDialog.dismiss();
+            customDialog = null;
+        }
+
+        super.onStop();
+        stopLogin();
+
+        if (isUnlinked() && !isLoggedIn()) {
+            if (getBaseLogin() != null) {
+                getBaseLogin().onStop();
+            }
+        }
+
+        DialogTools.hideIndeterminateProgressDialog();
+
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (isUnlinked() && !isLoggedIn()) {
+            if (getBaseLogin() != null) {
+                getBaseLogin().onStop();
+            }
+        }
+
+        DialogTools.hideIndeterminateProgressDialog();
+
+        doUnbindService();
     }
 }
