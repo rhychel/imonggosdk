@@ -116,7 +116,7 @@ public class Unit extends BaseTable {
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.INSERT);
+            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.DELETE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -125,7 +125,7 @@ public class Unit extends BaseTable {
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.INSERT);
+            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
         }

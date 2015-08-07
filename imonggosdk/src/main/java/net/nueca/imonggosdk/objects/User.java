@@ -95,7 +95,16 @@ public class User extends BaseTable {
 
     @Override
     public String toString() {
-        return name;
+        return "User{" +
+                "home_branch_id=" + home_branch_id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", role_code='" + role_code + '\'' +
+                ", status='" + status + '\'' +
+                ", sequenceNumber=" + sequenceNumber +
+                ", session=" + session +
+                ", isSelected=" + isSelected +
+                '}';
     }
 
     @Override

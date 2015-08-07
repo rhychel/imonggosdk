@@ -209,7 +209,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     customDialog.dismiss();
                 }
                 startSyncService();
-
                 DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
                         "Sync failed. Login Again ",
                         "Ok", "", false,
@@ -766,7 +765,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     @Override
     public void onStartDownload(Table table) {
-        Log.e(TAG, "started downloading " + table);
+
     }
 
     @Override
@@ -829,9 +828,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             customDialog.dismiss();
             customDialog = null;
         }
-
         showNextActivity();
-
     }
 
     @Override

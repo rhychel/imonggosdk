@@ -102,7 +102,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     private boolean syncNext() throws SQLException {
-        mModulesIndex++;
+
 
         Log.e(TAG, mModulesIndex + ">= " + mModulesToSync.length);
 
@@ -120,8 +120,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             }
         }
 
-
-        if (mModulesIndex >= (mModulesToSync.length)) {  // this is when there are no left tables to sync
+        if (mModulesIndex == (mModulesToSync.length - 1)) {  // this is when there are no left tables to sync
 
             User current_user = getUser();
 
@@ -137,6 +136,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
             return false;
         } else { // if there are still tables to sync, then;
+            mModulesIndex++;
             Log.e(TAG, "there are still tables to sync");
             page = 1;
             numberOfPages = 1;
@@ -201,9 +201,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     Log.e(TAG, "Response: count is " + count);
                     // if table don't have data
                     if (count == 0) {
-                        if (!syncNext()) {
-                            return;
-                        }
+                        syncNext();
+                        return;
+
                     }
                     numberOfPages = ((int) Math.ceil(count / 50.0));
                     Log.e(TAG, "number of pages: " + numberOfPages);
@@ -223,49 +223,51 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         if (size == 0) {
                             syncNext();
                             return;
-                        }
+                        } else {
 
-                        // batch list object holder
-                        BatchList<User> newUsers = new BatchList<>(DatabaseOperation.INSERT, getHelper()); // container for the new users
-                        BatchList<User> updateUsers = new BatchList<>(DatabaseOperation.UPDATE, getHelper()); // container for the updated users
-                        BatchList<User> deleteUsers = new BatchList<>(DatabaseOperation.DELETE, getHelper()); // container for the deleted users
+                            // batch list object holder
+                            BatchList<User> newUsers = new BatchList<>(DatabaseOperation.INSERT, getHelper()); // container for the new users
+                            BatchList<User> updateUsers = new BatchList<>(DatabaseOperation.UPDATE, getHelper()); // container for the updated users
+                            BatchList<User> deleteUsers = new BatchList<>(DatabaseOperation.DELETE, getHelper()); // container for the deleted users
 
-                        for (int i = 0; i < size; i++) {
-                            //get the object in the array
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            User user = gson.fromJson(jsonObject.toString(), User.class);
-                            if (initialSync || lastUpdatedAt == null) {
-                                if (initialSync)
-                                    Log.e(TAG, "initial sync users");
-                                if (lastUpdatedAt == null)
-                                    Log.e(TAG, "last Updated At users ");
+                            for (int i = 0; i < size; i++) {
+                                //get the object in the array
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                User user = gson.fromJson(jsonObject.toString(), User.class);
+                                if (initialSync || lastUpdatedAt == null) {
+                                    if (initialSync)
+                                        Log.e(TAG, "initial sync users");
+                                    if (lastUpdatedAt == null)
+                                        Log.e(TAG, "last Updated At users ");
 
-                                newUsers.add(user);
-                            } else {
-                                // check if the user tables exist in the database
-                                if (isExisting(user, Table.USERS)) {
-
-                                    // check is status is D
-                                    if (user.getStatus().equals("D")) {
-                                        Log.e(TAG, "adding user entry to be deleted ");
-                                        deleteUsers.add(user);
-                                    } else {
-                                        Log.e(TAG, "adding user entry to be updated");
-                                        updateUsers.add(user);
-                                    }
-                                } else {  // if not then add it
-                                    Log.e(TAG, "adding user entry to be inserted");
                                     newUsers.add(user);
+                                } else {
+                                    // check if the user tables exist in the database
+                                    if (isExisting(user, Table.USERS)) {
+                                        if (user.getStatus() == null) {
+                                            Log.e(TAG, "adding user entry to be updated");
+                                            updateUsers.add(user);
+
+                                            if(user.getId() == getSession().getUser().getId()) {
+                                                Log.e(TAG, "Updating sessions user from " + getSession().getUser().getName() + " to " + user.getName());
+                                            }
+                                        } else {
+                                            Log.e(TAG, "adding user entry to be deleted ");
+                                            deleteUsers.add(user);
+                                        }
+                                    } else {  // if not then add it
+                                        Log.e(TAG, "adding user entry to be inserted");
+                                        newUsers.add(user);
+                                    }
+
                                 }
-
                             }
+                            newUsers.doOperation();
+                            updateUsers.doOperation();
+                            deleteUsers.doOperation();
+
+                            updateNext(requestType, size);
                         }
-                        newUsers.doOperation();
-                        updateUsers.doOperation();
-                        deleteUsers.doOperation();
-
-                        updateNext(requestType, size);
-
                         break;
                     case PRODUCTS:
                         Log.e(TAG, "Products | size: " + size + " page: " + page + " max page: " + numberOfPages);
@@ -274,107 +276,104 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         if (size == 0) {
                             syncNext();
                             return;
-                        }
+                        } else {
 
-                        BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                        BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                        BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-                        BatchList<ProductTag> productTags = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                            BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
+                            BatchList<ProductTag> productTags = new BatchList<>(DatabaseOperation.INSERT, getHelper());
 
-                        for (int i = 0; i < size; i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            Product product = gson.fromJson(jsonObject.toString(), Product.class);
-                            if (initialSync || lastUpdatedAt == null) {
-                                if (initialSync)
-                                    Log.e(TAG, "initial sync products");
-                                if (lastUpdatedAt == null)
-                                    Log.e(TAG, "last Updated At products");
-                                product.setSearchKey(product.getName() + product.getStock_no());
-                                newProducts.add(product);
-                            } else {
-                                Log.e(TAG, "This not initial sync " + product.toString());
-                                if (isExisting(product, Table.PRODUCTS)) {
-                                    DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
-                                    deleteProductsHelper.where().eq("product_id", product);
-                                    deleteProductsHelper.delete();
-
-                                    if (product.getStatus().equals("D")) {
-                                        Log.e(TAG, "adding user entry to be deleted");
-                                        deleteProducts.add(product);
-                                    } else {
-                                        Log.e(TAG, "adding user entry to be updated");
-                                        updateProducts.add(product);
-                                    }
-                                } else {
-                                    Log.e(TAG, "adding user entry to be deleted ");
+                            for (int i = 0; i < size; i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                Product product = gson.fromJson(jsonObject.toString(), Product.class);
+                                if (initialSync || lastUpdatedAt == null) {
+                                    product.setSearchKey(product.getName() + product.getStock_no());
                                     newProducts.add(product);
+                                } else {
+                                    Log.e(TAG, "This not initial sync " + product.toString());
+                                    if (isExisting(product, Table.PRODUCTS)) {
+                                        DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
+                                        deleteProductsHelper.where().eq("product_id", product);
+                                        deleteProductsHelper.delete();
+
+                                        if (product.getStatus() == null) {
+                                            Log.e(TAG, "adding product entry to be updated");
+                                            updateProducts.add(product);
+                                        } else {
+                                            Log.e(TAG, "adding product entry to be deleted");
+                                            deleteProducts.add(product);
+                                        }
+                                    } else {
+                                        Log.e(TAG, "adding product entry to be deleted ");
+                                        newProducts.add(product);
+                                    }
+                                }
+                                // Save tags to the database
+                                JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
+                                int tagsSize = tagsListArray.length();
+                                for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
+                                    ProductTag productTag = new ProductTag(tagsListArray.getString(tagsI), product);
+                                    productTags.add(productTag);
                                 }
                             }
-                            // Save tags to the database
-                            JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
-                            int tagsSize = tagsListArray.length();
-                            for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
-                                ProductTag productTag = new ProductTag(tagsListArray.getString(tagsI), product);
-                                productTags.add(productTag);
-                            }
+
+                            newProducts.doOperation();
+                            updateProducts.doOperation();
+                            deleteProducts.doOperation();
+                            productTags.doOperation();
+
+                            updateNext(requestType, size);
                         }
-
-                        newProducts.doOperation();
-                        updateProducts.doOperation();
-                        deleteProducts.doOperation();
-                        productTags.doOperation();
-
-                        updateNext(requestType, size);
-
                         break;
                     case UNITS:
                         if (size == 0) {
                             syncNext();
                             return;
-                        }
+                        } else {
+                            BatchList<Unit> newUnits = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<Unit> updateUnits = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                            BatchList<Unit> deleteUnits = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
-                        BatchList<Unit> newUnits = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                        BatchList<Unit> updateUnits = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                        BatchList<Unit> deleteUnits = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-
-                        for (int i = 0; i < size; i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
+                            for (int i = 0; i < size; i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
 
 
-                            Product product = getHelper().getProducts().queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
+                                Product product = getHelper().getProducts().queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
 
-                            Log.e(TAG, "Unit Product ID: " + jsonObject.getString("product_id") + " name: " + product.getName());
+                                Log.e(TAG, "Unit Product ID: " + jsonObject.getString("product_id") + " name: " + product.getName());
 
-                            unit.setProduct(product);
+                                unit.setProduct(product);
 
-                            if (initialSync || lastUpdatedAt == null) {
-                                if (initialSync)
-                                    Log.e(TAG, "initial sync units");
-                                if (lastUpdatedAt == null)
-                                    Log.e(TAG, "last Updated At units");
-                                newUnits.add(unit);
-                            } else {
-                                if (isExisting(unit, Table.UNITS)) {
-                                    if (unit.getStatus().equals("D")) {
-                                        Log.e(TAG, "adding user entry to be deleted");
-                                        deleteUnits.add(unit);
-                                    } else {
-                                        Log.e(TAG, "adding user entry to be updated");
-                                        updateUnits.add(unit);
-                                    }
-                                } else {
-                                    Log.e(TAG, "adding user entry to be inserted");
+                                Log.e(TAG, unit.getName());
+
+                                if (initialSync || lastUpdatedAt == null) {
+                                    if (initialSync)
+                                        Log.e(TAG, "initial sync units");
+                                    if (lastUpdatedAt == null)
+                                        Log.e(TAG, "last Updated At units");
                                     newUnits.add(unit);
+                                } else {
+                                    if (isExisting(unit, Table.UNITS)) {
+                                        if (unit.getStatus() == null) {
+                                            Log.e(TAG, "adding user entry to be updated");
+                                            updateUnits.add(unit);
+                                        } else {
+                                            Log.e(TAG, "adding user entry to be deleted");
+                                            deleteUnits.add(unit);
+                                        }
+                                    } else {
+                                        Log.e(TAG, "adding user entry to be inserted");
+                                        newUnits.add(unit);
+                                    }
                                 }
                             }
+
+                            newUnits.doOperation();
+                            updateUnits.doOperation();
+                            deleteUnits.doOperation();
+                            updateNext(requestType, size);
                         }
-
-                        newUnits.doOperation();
-                        updateUnits.doOperation();
-                        deleteUnits.doOperation();
-                        updateNext(requestType, size);
-
                         break;
                     default:
                         break;
@@ -400,23 +399,18 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             }
         }
         try {
-            if (size != 0) {
 
-                if (size < 50) {
-                    Log.e(TAG, "Syncing next table");
-                    syncNext();
-                } else {
-                    Log.e(TAG, "Downloading next page");
-                    page++;
-                    if (page <= numberOfPages) {
-                        startSyncModuleContents(requestType);
-                    }
-                }
-
-            } else {
-                Log.e(TAG, "Size is 0 syncing next");
+            if (size < 50) {
+                Log.e(TAG, "Syncing next table");
                 syncNext();
+            } else {
+                Log.e(TAG, "Downloading next page");
+                page++;
+                if (page <= numberOfPages) {
+                    startSyncModuleContents(requestType);
+                }
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -446,4 +440,3 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
     }
 }
-

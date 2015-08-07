@@ -329,6 +329,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             getHelper().dbOperations(null, Table.BRANCH_TAGS, DatabaseOperation.DELETE_ALL);
                             getHelper().dbOperations(null, Table.BRANCHES, DatabaseOperation.DELETE_ALL);
                         }
+
                         if(size == 0) {
                             syncNext();
                             return;
