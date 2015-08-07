@@ -509,14 +509,16 @@ public class OfflineData extends BaseTable2 {
             return null;
     }
 
-    public List<String> parseReturnID() {
-        //if(returnId.length() <= 0)
-        //    return new ArrayList<>();
+    public List<String> getReturnIdList() {
         return Arrays.asList(returnId.split(","));
     }
 
     public void insertReturnIdAt(int index, String returnId) {
-        ArrayList<String> retIds = new ArrayList<>(parseReturnID());
+        if(!isPagedRequest()) {
+            Log.e("OfflineData", "insertReturnIdAt : not a paged transaction, invalid action");
+            return;
+        }
+        ArrayList<String> retIds = new ArrayList<>(getReturnIdList());
         if(retIds.size() >= index+1 )
             retIds.set(index, returnId);
         else {
@@ -529,8 +531,10 @@ public class OfflineData extends BaseTable2 {
     }
 
     public String getChildReferenceNo() {
-        if(!isPagedRequest())
+        if(!isPagedRequest()) {
+            Log.e("OfflineData", "getChildReferenceNo : not a paged transaction, use getReference_no() instead");
             return reference_no;
+        }
 
         String childRefs = "";
         for(int i = 0; i < pagedRequestCount; i++) {

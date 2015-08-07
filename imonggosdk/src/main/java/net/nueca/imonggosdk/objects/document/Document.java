@@ -19,12 +19,12 @@ import java.util.List;
  * Created by gama on 7/20/15.
  */
 public class Document extends BaseTransaction {
-    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 50;
+    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 2;
 
     protected String remark;
     protected String document_type_code;
     protected List<DocumentLine> document_lines;
-    protected int target_branch_id;
+    protected Integer target_branch_id;
     protected String document_purpose_name;
 
     public Document(Builder builder) {
@@ -104,7 +104,7 @@ public class Document extends BaseTransaction {
         protected String remark;
         protected String document_type_code;
         protected List<DocumentLine> document_lines;
-        protected int target_branch_id;
+        protected Integer target_branch_id;
         protected String document_purpose_name;
 
         public Builder remark(String remark) {

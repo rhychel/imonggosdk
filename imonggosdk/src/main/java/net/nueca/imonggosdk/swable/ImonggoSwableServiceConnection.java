@@ -19,6 +19,10 @@ public class ImonggoSwableServiceConnection implements ServiceConnection {
         this.swableStateListener = swableStateListener;
         this.notificationIcon = notificationIcon;
     }
+    public ImonggoSwableServiceConnection(int notificationIcon, ImonggoSwable.SwableStateListener swableStateListener) {
+        this.swableStateListener = swableStateListener;
+        this.notificationIcon = notificationIcon;
+    }
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -41,5 +45,15 @@ public class ImonggoSwableServiceConnection implements ServiceConnection {
 
     public boolean isBound() {
         return isBound;
+    }
+
+    public boolean forceStart() {
+        if(!isBound || imonggoSwableService == null) {
+            Log.e(this.getClass().getSimpleName(), "not yet bound to a service");
+            return false;
+        }
+        Log.e(this.getClass().getSimpleName(), "Force Starting Swable Service method syncModule()");
+        imonggoSwableService.syncModule();
+        return true;
     }
 }
