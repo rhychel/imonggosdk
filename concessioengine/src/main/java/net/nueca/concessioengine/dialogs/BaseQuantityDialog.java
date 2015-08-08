@@ -3,11 +3,8 @@ package net.nueca.concessioengine.dialogs;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Build;
-import android.support.v7.app.AppCompatDialog;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Spinner;
 
@@ -27,6 +24,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public interface QuantityDialogListener {
         void onSave(SelectedProductItem selectedProductItem);
+
         void onDismiss();
     }
 
@@ -65,7 +63,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setUnitList(List<Unit> unitList, boolean addBaseUnit) {
         this.unitList = unitList;
-        if(addBaseUnit)
+        if (addBaseUnit)
             addBaseUnit(selectedProductItem.getProduct().getBase_unit_name());
     }
 
@@ -75,7 +73,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setBrandList(List<String> brandList, boolean addNoBrand) {
         this.brandList = brandList;
-        if(addNoBrand)
+        if (addNoBrand)
             this.brandList.add(0, "No Brand");
     }
 
@@ -109,24 +107,25 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected void offsetSpinnerBelowv21(Spinner spinner) {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        if(Build.VERSION.SDK_INT < 21)
+        if (Build.VERSION.SDK_INT < 21)
             spinner.setDropDownVerticalOffset((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, -(spinner.getHeight() + 14), metrics));
     }
 
     /**
      * Show the delivery date picker. You need to pass the button where to set the new date.
+     *
      * @param button
      */
     protected void showDeliveryDatePicker(final Button button) {
-        String []date = deliveryDate.split("-");
+        String[] date = deliveryDate.split("-");
         final DatePickerDialog deliveryDatePicker = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
-                String date = year+"-"+(monthOfYear+1)+"-"+dayOfMonth;
+                String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
                 deliveryDate = DateTimeTools.convertToDate(date, "yyyy-M-d", "yyyy-MM-dd");
                 button.setText(deliveryDate);
             }
-        }, Integer.valueOf(date[0]), Integer.valueOf(date[1])-1, Integer.valueOf(date[2]));
+        }, Integer.valueOf(date[0]), Integer.valueOf(date[1]) - 1, Integer.valueOf(date[2]));
         deliveryDatePicker.show(fragmentManager, "delivery_date_picker");
     }
 }
