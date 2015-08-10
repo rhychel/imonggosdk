@@ -55,7 +55,7 @@ public class C_Module extends ModuleActivity {
         try {
             Document document = new Document.Builder()
                     .generateReference(this, getSession().getDevice_id())
-                    .document_type_code(DocumentTypeCode.RECEIVE_ADJUSTMENT)
+                    .document_type_code(DocumentTypeCode.PHYSICAL_COUNT)
                     .addDocumentLine(
                             new DocumentLine.Builder()
                                     .product_id(179215)
@@ -110,10 +110,34 @@ public class C_Module extends ModuleActivity {
                     )
                     .build();
             new SwableTools.Transaction(getHelper())
-                    .toSend()
-                    .object(document)
-                    .forBranch(getSession().getUser().getHome_branch_id())
-                    .queue();
+                    .toCancel()
+                    .object(getHelper().getOfflineData().queryForAll().get(4))
+                    .withReason("Testing again")
+                    .directCancel()
+                    .withServer(getSession().getServer())
+                    .withSession(getSession())
+                    .withListener(new VolleyRequestListener() {
+                        @Override
+                        public void onStart(Table table, RequestType requestType) {
+                            Log.e("onStart", "called");
+                        }
+
+                        @Override
+                        public void onSuccess(Table table, RequestType requestType, Object response) {
+                            Log.e("onSuccess", "called - " + table.name() + " " + response.toString());
+                        }
+
+                        @Override
+                        public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                            Log.e("onError", "called - " + table.name() + " " + response.toString());
+                        }
+
+                        @Override
+                        public void onRequestError() {
+                            Log.e("onRequestError", "called");
+                        }
+                    })
+                    .begin(this);
             /*new SwableTools.Transaction(getHelper())
                     .toCancel()
                     .objectContainingReturnId("46827") // or .object(<OfflineData object>)
@@ -127,6 +151,8 @@ public class C_Module extends ModuleActivity {
                     OfflineDataType.CANCEL_DOCUMENT, "test");*/
             //Log.e("DOCUMENT", document.toString());
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
