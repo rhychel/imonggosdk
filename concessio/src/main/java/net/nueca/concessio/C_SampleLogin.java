@@ -14,12 +14,12 @@ public class C_SampleLogin extends LoginActivity {
     @Override
     protected void initLoginEquipments() {
         super.initLoginEquipments();
-        setServer(Server.IRETAILCLOUD_COM);
+        setServer(Server.IRETAILCLOUD_NET);
     }
 
-    @Override
+    //@Override
     protected void syncingModulesSuccessful() {
-        super.syncingModulesSuccessful();
+        //super.syncingModulesSuccessful();
         finish();
         Intent intent = new Intent(this, C_Module.class);
         startActivity(intent);
