@@ -19,8 +19,8 @@ public abstract class BaseAdapter<T> extends ArrayAdapter<T> {
 
     /**
      * Update a specific list item only.
-     * @param lvList
-     * @param position
+     * @param lvList listview
+     * @param position index of on the listview
      */
     public void notifyItemChanged(ListView lvList, int position) {
         View v = lvList.getChildAt(position - lvList.getFirstVisiblePosition());

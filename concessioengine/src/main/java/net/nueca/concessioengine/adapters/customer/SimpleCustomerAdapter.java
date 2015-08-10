@@ -10,13 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
-import net.nueca.concessioengine.adapters.BaseProductsRecyclerAdapter;
 import net.nueca.imonggosdk.objects.Customer;
 
 import java.util.List;
 
 /**
  * Created by gama on 8/3/15.
+ * imonggosdk (c)2015
  */
 public class SimpleCustomerAdapter extends BaseCustomerAdapter implements AdapterView.OnItemClickListener {
     public SimpleCustomerAdapter(Context context, List<Customer> objects) {
