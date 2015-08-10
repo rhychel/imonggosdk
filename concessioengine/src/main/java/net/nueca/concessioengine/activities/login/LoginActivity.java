@@ -84,7 +84,7 @@ public class LoginActivity extends BaseLoginActivity {
 
     }
 
-    @Override
+    //@Override
     protected void syncingModulesSuccessful() {
         Log.e(TAG, "Syncing Modules Successful");
     }
