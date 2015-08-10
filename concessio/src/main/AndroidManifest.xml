@@ -46,7 +46,7 @@
         <activity
             android:name="net.nueca.concessio.C_Module"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.Concessio">
+            android:theme="@style/AppTheme.Concessio.NoActionBar">
         </activity>
 
         <service android:name="net.nueca.imonggosdk.swable.ImonggoSwable"
