@@ -63,15 +63,15 @@ public class TransactionsAdapterHelper {
                     Unit unit = new Unit();
                     unit.setId(-1);
                     unit.setName(product.getBase_unit_name());
-                    if(orderLine.getUnitId() != null) {
+                    if(orderLine.getUnit_id() != null) {
                         unit = new Unit();
-                        unit.setName(orderLine.getUnitName());
-                        unit.setId(orderLine.getUnitId());
+                        unit.setName(orderLine.getUnit_name());
+                        unit.setId(orderLine.getUnit_id());
 
-                        values.setUnit_content_quantity(orderLine.getUnitContentQuantity());
-                        values.setUnit_name(orderLine.getUnitName());
-                        values.setUnit_quantity(String.valueOf(orderLine.getUnitQuantity()));
-                        values.setUnit_retail_price(orderLine.getUnitRetailPrice());
+                        values.setUnit_content_quantity(orderLine.getUnit_content_quantity());
+                        values.setUnit_name(orderLine.getUnit_name());
+                        values.setUnit_quantity(String.valueOf(orderLine.getUnit_quantity()));
+                        values.setUnit_retail_price(orderLine.getUnit_retail_price());
                     }
 
                     values.setUnit(unit);
