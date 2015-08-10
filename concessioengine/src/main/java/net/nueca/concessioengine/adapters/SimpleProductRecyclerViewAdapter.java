@@ -2,7 +2,6 @@ package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +9,15 @@ import android.view.ViewGroup;
 import com.android.volley.toolbox.NetworkImageView;
 
 import net.nueca.concessioengine.R;
+import net.nueca.concessioengine.adapters.base.BaseAdapter;
+import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
+import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.lists.ProductsList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 
-import java.util.Collection;
 import java.util.List;
 
 import me.grantland.widget.AutofitTextView;
@@ -39,7 +40,33 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         super(context, dbHelper, productsList);
     }
 
-    public class ListViewHolder extends BaseProductsRecyclerAdapter.ViewHolder {
+    @Override
+    public SimpleProductRecyclerViewAdapter.ListViewHolder onCreateViewHolder(ViewGroup parent, int viewtype) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem, parent, false);
+
+        ListViewHolder lvh = new ListViewHolder(v);
+        return lvh;
+    }
+
+    @Override
+    public void onBindViewHolder(SimpleProductRecyclerViewAdapter.ListViewHolder viewHolder, int position) {
+        Product product = getItem(position);
+
+        viewHolder.tvProductName.setText(Html.fromHtml(product.getName()+getSelectedProductItems().getUnitName(product).toLowerCase()));
+        viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
+        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
+        viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
+    }
+
+    @Override
+    public int getItemCount() {
+        return getCount();
+    }
+
+    /**
+     * ViewHolder
+     */
+    public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {
         public NetworkImageView ivProductImage;
         public AutofitTextView tvProductName, tvQuantity;
         public View root;
@@ -71,41 +98,6 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
                 onItemLongClickListener.onItemLongClicked(view, getLayoutPosition());
             return true;
         }
-    }
-
-    @Override
-    public SimpleProductRecyclerViewAdapter.ListViewHolder onCreateViewHolder(ViewGroup parent, int viewtype) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem, parent, false);
-
-        ListViewHolder lvh = new ListViewHolder(v);
-        return lvh;
-    }
-
-    @Override
-    public void onBindViewHolder(SimpleProductRecyclerViewAdapter.ListViewHolder viewHolder, int position) {
-        Product product = productsList.get(position);
-
-        viewHolder.tvProductName.setText(Html.fromHtml(product.getName()+getSelectedProductItems().getUnitName(product).toLowerCase()));
-        viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
-        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
-        viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
-    }
-
-    @Override
-    public int getItemCount() {
-        return productsList.size();
-    }
-
-    public boolean updateList(List<Product> productList) {
-        this.productsList.clear();
-        this.productsList = productList;
-        notifyDataSetChanged();
-        return productsList.size() > 0;
-    }
-
-    public void addAll(List<Product> productList) {
-        this.productsList.addAll(productList);
-        notifyDataSetChanged();
     }
 
 }

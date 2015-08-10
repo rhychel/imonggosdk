@@ -5,15 +5,12 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ListView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
 import net.nueca.concessioengine.R;
+import net.nueca.concessioengine.adapters.base.BaseProductsAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;

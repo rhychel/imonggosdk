@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
+import net.nueca.concessioengine.adapters.base.BaseTransactionsAdapter;
 import net.nueca.concessioengine.adapters.tools.TransactionsAdapterHelper;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.tools.DateTimeTools;

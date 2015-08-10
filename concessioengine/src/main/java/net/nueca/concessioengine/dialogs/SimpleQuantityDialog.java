@@ -109,8 +109,8 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
         }
 
         etQuantity.setText(selectedProductItem.getQuantity());
-        npInput.addTextHolder(etQuantity, "etQuantity", false, false, null);
-        npInput.setEnableDot(false);
+        npInput.addTextHolder(etQuantity, "etQuantity", false, 6, 2, false, null);
+        npInput.getTextHolderWithTag("etQuantity").setEnableDot(selectedProductItem.getProduct().isAllow_decimal_quantities());
 
         btnSave.setOnClickListener(onSaveClicked);
         btnCancel.setOnClickListener(new View.OnClickListener() {

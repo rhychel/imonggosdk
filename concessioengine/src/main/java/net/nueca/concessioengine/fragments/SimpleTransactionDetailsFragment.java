@@ -50,4 +50,9 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
 
     }
 
+    @Override
+    protected void toggleNoItems(String msg, boolean show) {
+        // NO USE
+    }
+
 }

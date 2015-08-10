@@ -22,64 +22,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a71be3db-8a9a-4921-b542-6697931e1aa0" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseTransactionsAdapter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseTransactionsFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_History.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_HistoryDetails.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Summary.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/interfaces/ListScrollListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/interfaces/SetupActionBar.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionDetailsFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleTransactionListAdapter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionsFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/TransactionsAdapterHelper.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/anim/rotate_forever.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_listview.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_recyclerview.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_transaction_listitem.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_transactions_fragment_lv.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_transactions_fragment_rv.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/concessio.iml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseHistoryFragment.java" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseAdapter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseRecyclerAdapter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseTransactionsRecyclerAdapter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/interfaces/OnItemClickListener.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/interfaces/OnItemLongClickListener.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleTransactionRecyclerViewAdapter.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseProductsAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseProductsAdapter.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseProductsRecyclerAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseProductsRecyclerAdapter.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseTransactionsAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseTransactionsAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.2.1/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.2.1/taskArtifacts/cache.properties.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/debug/classes.jar" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/debug/classes.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.2.1/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/2.2.1/taskArtifacts/fileHashes.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.2.1/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.2.1/taskArtifacts/fileSnapshots.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/intermediates/gradle_project_sync_data.bin" afterPath="$PROJECT_DIR$/build/intermediates/gradle_project_sync_data.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/outputs/aar/imonggosdk-debug.aar" afterPath="$PROJECT_DIR$/imonggosdk/build/outputs/aar/imonggosdk-debug.aar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.2.1/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/2.2.1/taskArtifacts/outputFileStates.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.2.1/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.2.1/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/concessio/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseProductsFragment.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseProductsFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BatchList.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BatchList.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_SampleLogin.java" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_SampleLogin.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/DateTimeTools.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/DateTimeTools.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/swable/ImonggoSwable.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/swable/ImonggoSwable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/ModuleActivity.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/ModuleActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/order/Order.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/order/Order.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/order/OrderLine.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/order/OrderLine.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/lists/SelectedProductItemList.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/lists/SelectedProductItemList.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseTransactionsFragment.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseTransactionsFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Summary.java" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Summary.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/widgets/Numpad.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/widgets/Numpad.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/ProductsAdapterHelper.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/ProductsAdapterHelper.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductListAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductListAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductRecyclerViewAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductRecyclerViewAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleProductsFragment.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleProductsFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SimpleQuantityDialog.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SimpleQuantityDialog.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/swable/SwableTools.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/swable/SwableTools.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/Values.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/Values.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionDetailsFragment.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionDetailsFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleTransactionListAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleTransactionListAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionsFragment.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionsFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" afterPath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk.iml" afterPath="$PROJECT_DIR$/imonggosdk.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/local.properties" afterPath="$PROJECT_DIR$/local.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/res/layout/sample_fragment.xml" afterPath="$PROJECT_DIR$/concessio/src/main/res/layout/sample_fragment.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings.gradle" afterPath="$PROJECT_DIR$/settings.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_products_fragment_lv.xml" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_products_fragment_lv.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_products_fragment_rv.xml" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_products_fragment_rv.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_products_menu.xml" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_products_menu.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/res/values/styles.xml" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/values/styles.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="imonggosdk2.iws" />
@@ -95,83 +64,6 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="DockManager">
-    <window id="1">
-      <content type="file-editors">
-        <state>
-          <leaf>
-            <file leaf-file-name="SimpleTransactionsFragment.java" pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionsFragment.java">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state vertical-scroll-proportion="0.34026745">
-                    <caret line="124" column="0" selection-start-line="124" selection-start-column="0" selection-end-line="124" selection-end-column="0" />
-                    <folding>
-                      <element signature="e#2655#3034#0" expanded="true" />
-                      <element signature="e#3033#3034#0" expanded="true" />
-                    </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="simple_transactions_fragment_lv.xml" pinned="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_transactions_fragment_lv.xml">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state vertical-scroll-proportion="-5.793103">
-                    <caret line="14" column="32" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
-                    <folding />
-                  </state>
-                </provider>
-                <provider editor-type-id="android-designer">
-                  <state />
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="BaseTransactionsFragment.java" pinned="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseTransactionsFragment.java">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state vertical-scroll-proportion="0.0">
-                    <caret line="36" column="32" selection-start-line="36" selection-start-column="32" selection-end-line="36" selection-end-column="32" />
-                    <folding>
-                      <element signature="e#2879#2880#0" expanded="true" />
-                      <element signature="e#2933#2934#0" expanded="true" />
-                      <element signature="e#3098#3099#0" expanded="true" />
-                      <element signature="e#3138#3139#0" expanded="true" />
-                      <element signature="e#3754#3755#0" expanded="true" />
-                      <element signature="e#3794#3795#0" expanded="true" />
-                    </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="SimpleTransactionListAdapter.java" pinned="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleTransactionListAdapter.java">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state vertical-scroll-proportion="0.0">
-                    <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
-                    <folding>
-                      <element signature="imports" expanded="true" />
-                    </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="TransactionsAdapterHelper.java" pinned="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/TransactionsAdapterHelper.java">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state vertical-scroll-proportion="0.0">
-                    <caret line="52" column="56" selection-start-line="52" selection-start-column="56" selection-end-line="52" selection-end-column="56" />
-                    <folding>
-                      <element signature="imports" expanded="true" />
-                    </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
-  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
@@ -185,55 +77,77 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="C_History.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_History.java">
+      <file leaf-file-name="BaseRecyclerAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseRecyclerAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="C_Summary.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Summary.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="C_Module.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="80" column="48" selection-start-line="80" selection-start-column="48" selection-end-line="80" selection-end-column="48" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ModuleActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/ModuleActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="57" column="40" selection-start-line="57" selection-start-column="40" selection-end-line="57" selection-end-column="40" />
+              <caret line="81" column="13" selection-start-line="81" selection-start-column="13" selection-end-line="81" selection-end-column="13" />
               <folding>
-                <element signature="e#2716#2717#0" expanded="true" />
-                <element signature="e#2764#2765#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#2433#2434#0" expanded="true" />
+                <element signature="e#2473#2474#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SelectedProductItem.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/SelectedProductItem.java">
+      <file leaf-file-name="BaseProductsRecyclerAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseProductsRecyclerAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="82" column="37" selection-start-line="82" selection-start-column="37" selection-end-line="82" selection-end-column="37" />
+              <caret line="30" column="23" selection-start-line="30" selection-start-column="23" selection-end-line="30" selection-end-column="23" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BaseTransactionsRecyclerAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseTransactionsRecyclerAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#423#424#0" expanded="true" />
+                <element signature="e#453#454#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SimpleTransactionRecyclerViewAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleTransactionRecyclerViewAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="62" column="17" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="17" />
+              <folding>
+                <element signature="e#1037#1038#0" expanded="true" />
+                <element signature="e#1067#1068#0" expanded="true" />
+                <element signature="e#2527#2528#0" expanded="true" />
+                <element signature="e#2560#2561#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SimpleProductRecyclerViewAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductRecyclerViewAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="57" column="76" selection-start-line="57" selection-start-column="76" selection-end-line="57" selection-end-column="76" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BaseAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -242,21 +156,33 @@
         <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleProductsFragment.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="154" column="65" selection-start-line="154" selection-start-column="65" selection-end-line="154" selection-end-column="65" />
+              <caret line="128" column="15" selection-start-line="128" selection-start-column="15" selection-end-line="128" selection-end-column="15" />
+              <folding>
+                <element signature="e#3563#4256#0" expanded="true" />
+                <element signature="e#4255#4256#0" expanded="true" />
+                <element signature="e#4331#4632#0" expanded="true" />
+                <element signature="e#4631#4632#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BaseProductsFragment.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseProductsFragment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="62" column="4" selection-start-line="62" selection-start-column="4" selection-end-line="62" selection-end-column="13" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SimpleQuantityDialog.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SimpleQuantityDialog.java">
+      <file leaf-file-name="SimpleTransactionDetailsFragment.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionDetailsFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.70185447">
-              <caret line="139" column="18" selection-start-line="139" selection-start-column="18" selection-end-line="139" selection-end-column="18" />
-              <folding>
-                <element signature="e#1693#1694#0" expanded="true" />
-                <element signature="e#1730#1731#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="0.55172414">
+              <caret line="19" column="76" selection-start-line="19" selection-start-column="76" selection-end-line="19" selection-end-column="76" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -268,8 +194,8 @@
       <list>
         <option value="layoutResourceFile" />
         <option value="layoutResourceFile_vertical" />
-        <option value="Interface" />
         <option value="resourceFile" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -3119,26 +3045,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BatchList.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/order/Order.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseHistoryFragment.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleProductsFragment.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleHistoryFragment.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_history_fragment_lv.xml" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_history_fragment_rv.xml" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_history_listitem.xml" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/interfaces/SetupActionBar.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/interfaces/ListScrollListener.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_products_menu.xml" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/res/values/styles.xml" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_transaction_listitem.xml" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/DateTimeTools.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/res/anim/rotate_forever.xml" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/swable/ImonggoSwable.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductRecyclerViewAdapter.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductListAdapter.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseTransactionsAdapter.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/HistoryAdapterHelper.java" />
@@ -3147,13 +3056,10 @@
         <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_recyclerview.xml" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleHistoryDetailsFragment.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_listview.xml" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseProductsFragment.java" />
         <option value="$PROJECT_DIR$/concessio/src/main/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionDetailsFragment.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/order/OrderLine.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/Values.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/lists/SelectedProductItemList.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseTransactionsFragment.java" />
         <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_HistoryDetails.java" />
         <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_History.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_transactions_fragment_lv.xml" />
@@ -3161,15 +3067,35 @@
         <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_products_fragment_rv.xml" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_products_fragment_lv.xml" />
         <option value="$PROJECT_DIR$/concessio/src/main/res/layout/sample_fragment.xml" />
-        <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Summary.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/TransactionTools.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/swable/SwableTools.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/swable/TransactionTools.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/TransactionsAdapterHelper.java" />
         <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/ModuleActivity.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionsFragment.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_quantity_dialog.xml" />
+        <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Summary.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/widgets/Numpad.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SimpleQuantityDialog.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/interfaces/OnItemClickListener.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/interfaces/OnItemLongClickListener.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseTransactionsRecyclerAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseRecyclerAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseProductsRecyclerAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/ProductsAdapterHelper.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseProductsAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseTransactionsAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseTransactionsRecyclerAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseProductsRecyclerAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductRecyclerViewAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleTransactionRecyclerViewAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseProductsFragment.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseTransactionsFragment.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleProductsFragment.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseRecyclerAdapter.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionsFragment.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionDetailsFragment.java" />
       </list>
     </option>
   </component>
@@ -3180,12 +3106,16 @@
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="MavenProjectNavigator">
+    <treeState />
+  </component>
   <component name="NamedScopeManager">
     <order />
   </component>
   <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
     <option name="width" value="1280" />
-    <option name="height" value="800" />
+    <option name="height" value="773" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -3336,6 +3266,10 @@
               <option name="myItemId" value="imonggosdk" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="widgets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -3474,6 +3408,36 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="sync" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3646,6 +3610,10 @@
               <option name="myItemId" value="concessioengine" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -3712,6 +3680,36 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="objects" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="concessioengine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="concessioengine" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3856,6 +3854,82 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="tools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="concessioengine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="concessioengine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="adapters" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="interfaces" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="concessioengine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="concessioengine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="adapters" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="base" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -4157,13 +4231,13 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Java" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
     <property name="SearchEverywhereHistoryKey" value="MAX&#9;PSI&#9;JAVA://net.nueca.imonggosdk.objects.order.Order#MAX_ORDERLINES_PER_PAGE&#10;ImonggoSe&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.sync.ImonggoService" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="ZX1D22NNTZ" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="emulator-5554" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Android_L_5.0_Nx5" />
-    <property name="FullScreen" value="true" />
+    <property name="FullScreen" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="android.project.structure.last.selected" value="concessio" />
     <property name="android.project.structure.proportion" value="0.15" />
@@ -4396,17 +4470,23 @@
       <option name="project" value="LOCAL" />
       <updated>1438580466083</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="What's new:&#10;1. Initial implementations of Transaction History[SimpleTransactionDetailsFragment, SimpleTransactionsFragment].&#10;2. Added history related methods on ModuleActivity&#10;3. Created a SimpleTransactionListAdapter for ease of use.">
+      <created>1438843881620</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1438843881620</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="800" extended-state="6" />
-    <editor active="false" />
+    <frame x="0" y="23" width="1280" height="773" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956383" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32921812" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -4416,14 +4496,14 @@
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.65569276" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.7029412" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956383" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21163167" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32921812" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21163167" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32794118" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -4449,7 +4529,8 @@
     <MESSAGE value="Updated C_Module for testing the SimpleProductsFragment" />
     <MESSAGE value="Fix to merge rhy -&gt; development" />
     <MESSAGE value="Integrated AccountSettings module" />
-    <option name="LAST_COMMIT_MESSAGE" value="Integrated AccountSettings module" />
+    <MESSAGE value="What's new:&#10;1. Initial implementations of Transaction History[SimpleTransactionDetailsFragment, SimpleTransactionsFragment].&#10;2. Added history related methods on ModuleActivity&#10;3. Created a SimpleTransactionListAdapter for ease of use." />
+    <option name="LAST_COMMIT_MESSAGE" value="What's new:&#10;1. Initial implementations of Transaction History[SimpleTransactionDetailsFragment, SimpleTransactionsFragment].&#10;2. Added history related methods on ModuleActivity&#10;3. Created a SimpleTransactionListAdapter for ease of use." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -4458,76 +4539,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/activities/ImonggoAppCompatActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.18404908">
-          <caret line="18" column="13" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_product_listitem.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.62069">
-          <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="30" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseProductsAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="23" column="22" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/interfaces/SetupActionBar.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="9" column="41" selection-start-line="9" selection-start-column="41" selection-end-line="9" selection-end-column="41" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/interfaces/ListScrollListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3106796">
-          <caret line="8" column="27" selection-start-line="8" selection-start-column="27" selection-end-line="8" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/fragments/ImonggoFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.31270358">
-          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_products_menu.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="14" column="37" selection-start-line="14" selection-start-column="37" selection-end-line="14" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar:///Applications/Android Tools/sdk/platforms/android-22/android.jar!/java/util/Calendar.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.36287627">
-          <caret line="128" column="40" selection-start-line="128" selection-start-column="40" selection-end-line="128" selection-end-column="40" />
-          <folding>
-            <element signature="e#3897#3898#0" expanded="true" />
-            <element signature="e#3948#3949#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/values/styles.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33128834">
@@ -4589,45 +4600,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseProductsRecyclerAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.44785276">
-          <caret line="64" column="49" selection-start-line="64" selection-start-column="49" selection-end-line="64" selection-end-column="49" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/lists/ValuesList.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.14723927">
           <caret line="14" column="45" selection-start-line="14" selection-start-column="45" selection-end-line="14" selection-end-column="45" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/ProductsAdapterHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="80" column="42" selection-start-line="80" selection-start-column="42" selection-end-line="80" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductRecyclerViewAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5766871">
-          <caret line="87" column="133" selection-start-line="87" selection-start-column="133" selection-end-line="87" selection-end-column="133" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/BaseTransactionsAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4690,14 +4667,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductListAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="68" column="63" selection-start-line="68" selection-start-column="63" selection-end-line="68" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/Values.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -4715,16 +4684,6 @@
             <element signature="e#3234#3235#0" expanded="false" />
             <element signature="e#3492#3493#0" expanded="false" />
             <element signature="e#3532#3533#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleTransactionListAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -4751,56 +4710,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseTransactionsFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="36" column="32" selection-start-line="36" selection-start-column="32" selection-end-line="36" selection-end-column="32" />
-          <folding>
-            <element signature="e#2879#2880#0" expanded="true" />
-            <element signature="e#2933#2934#0" expanded="true" />
-            <element signature="e#3098#3099#0" expanded="true" />
-            <element signature="e#3138#3139#0" expanded="true" />
-            <element signature="e#3754#3755#0" expanded="true" />
-            <element signature="e#3794#3795#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionDetailsFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3152639">
-          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseProductsFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="33" column="22" selection-start-line="33" selection-start-column="22" selection-end-line="33" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_HistoryDetails.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.13694721">
           <caret line="29" column="62" selection-start-line="29" selection-start-column="62" selection-end-line="29" selection-end-column="62" />
           <folding />
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_transactions_fragment_rv.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.616">
-          <caret line="34" column="37" selection-start-line="34" selection-start-column="37" selection-end-line="34" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_products_fragment_rv.xml">
@@ -4836,25 +4751,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Summary.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_transactions_fragment_lv.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.793103">
-          <caret line="14" column="32" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/swable/ConcessioSwable.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.13694721">
@@ -4879,24 +4775,80 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/TransactionsAdapterHelper.java">
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/ModuleActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="52" column="56" selection-start-line="52" selection-start-column="56" selection-end-line="52" selection-end-column="56" />
+          <caret line="57" column="40" selection-start-line="57" selection-start-column="40" selection-end-line="57" selection-end-column="40" />
+          <folding>
+            <element signature="e#2716#2717#0" expanded="false" />
+            <element signature="e#2764#2765#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_quantity_dialog.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2857143">
+          <caret line="32" column="52" selection-start-line="32" selection-start-column="45" selection-end-line="32" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Summary.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="26" column="5" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/widgets/Numpad.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="612" column="9" selection-start-line="612" selection-start-column="9" selection-end-line="612" selection-end-column="9" />
+          <folding>
+            <element signature="e#25268#25269#0" expanded="true" />
+            <element signature="e#25316#25317#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/TransactionsAdapterHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7164179">
+          <caret line="45" column="98" selection-start-line="45" selection-start-column="98" selection-end-line="45" selection-end-column="98" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/ModuleActivity.java">
+    <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="57" column="40" selection-start-line="57" selection-start-column="40" selection-end-line="57" selection-end-column="40" />
-          <folding>
-            <element signature="e#2716#2717#0" expanded="true" />
-            <element signature="e#2764#2765#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.053731345">
+          <caret line="76" column="0" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/interfaces/OnItemClickListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.16564417">
+          <caret line="9" column="48" selection-start-line="9" selection-start-column="48" selection-end-line="9" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/interfaces/OnItemLongClickListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.11042945">
+          <caret line="6" column="22" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4908,52 +4860,203 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java">
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SimpleQuantityDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.82822084">
+          <caret line="112" column="127" selection-start-line="112" selection-start-column="127" selection-end-line="112" selection-end-column="127" />
+          <folding>
+            <element signature="e#1693#1694#0" expanded="false" />
+            <element signature="e#1730#1731#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseTransactionsAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2392638">
+          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductListAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.80981594">
+          <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleTransactionListAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.68208957">
+          <caret line="61" column="52" selection-start-line="61" selection-start-column="52" selection-end-line="61" selection-end-column="52" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="80" column="48" selection-start-line="80" selection-start-column="48" selection-end-line="80" selection-end-column="48" />
+          <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseProductsAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.10489511">
+          <caret line="23" column="56" selection-start-line="23" selection-start-column="56" selection-end-line="23" selection-end-column="56" />
+          <folding>
+            <element signature="e#1314#1315#0" expanded="false" />
+            <element signature="e#1358#1359#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseTransactionsRecyclerAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#423#424#0" expanded="true" />
+            <element signature="e#453#454#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseProductsFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="62" column="4" selection-start-line="62" selection-start-column="4" selection-end-line="62" selection-end-column="13" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseTransactionsFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.50149256">
+          <caret line="41" column="13" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
+          <folding>
+            <element signature="e#2949#2950#0" expanded="true" />
+            <element signature="e#3003#3004#0" expanded="true" />
+            <element signature="e#3168#3169#0" expanded="true" />
+            <element signature="e#3208#3209#0" expanded="true" />
+            <element signature="e#3824#3825#0" expanded="true" />
+            <element signature="e#3864#3865#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/tools/ProductsAdapterHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.558209">
+          <caret line="107" column="41" selection-start-line="107" selection-start-column="41" selection-end-line="107" selection-end-column="41" />
+          <folding>
+            <element signature="e#3693#3694#0" expanded="true" />
+            <element signature="e#3724#3725#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_transactions_fragment_lv.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7675507">
+          <caret line="41" column="41" selection-start-line="41" selection-start-column="25" selection-end-line="41" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_transactions_fragment_rv.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6365055">
+          <caret line="34" column="37" selection-start-line="34" selection-start-column="37" selection-end-line="34" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseRecyclerAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="81" column="13" selection-start-line="81" selection-start-column="13" selection-end-line="81" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2433#2434#0" expanded="true" />
+            <element signature="e#2473#2474#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleTransactionRecyclerViewAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="62" column="17" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="17" />
+          <folding>
+            <element signature="e#1037#1038#0" expanded="true" />
+            <element signature="e#1067#1068#0" expanded="true" />
+            <element signature="e#2527#2528#0" expanded="true" />
+            <element signature="e#2560#2561#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleProductsFragment.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="154" column="65" selection-start-line="154" selection-start-column="65" selection-end-line="154" selection-end-column="65" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/widgets/Numpad.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33238232">
-          <caret line="198" column="16" selection-start-line="198" selection-start-column="16" selection-end-line="198" selection-end-column="16" />
+          <caret line="128" column="15" selection-start-line="128" selection-start-column="15" selection-end-line="128" selection-end-column="15" />
           <folding>
-            <element signature="e#8381#8382#0" expanded="true" />
-            <element signature="e#8428#8429#0" expanded="true" />
+            <element signature="e#3563#4256#0" expanded="true" />
+            <element signature="e#4255#4256#0" expanded="true" />
+            <element signature="e#4331#4632#0" expanded="true" />
+            <element signature="e#4631#4632#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionsFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.34026745">
-          <caret line="124" column="0" selection-start-line="124" selection-start-column="0" selection-end-line="124" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.7164179">
+          <caret line="86" column="49" selection-start-line="86" selection-start-column="49" selection-end-line="86" selection-end-column="49" />
           <folding>
-            <element signature="e#2655#3034#0" expanded="true" />
-            <element signature="e#3033#3034#0" expanded="true" />
+            <element signature="e#2994#3326#0" expanded="true" />
+            <element signature="e#3325#3326#0" expanded="true" />
+            <element signature="e#4330#4331#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SimpleQuantityDialog.java">
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleTransactionDetailsFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.70185447">
-          <caret line="139" column="18" selection-start-line="139" selection-start-column="18" selection-end-line="139" selection-end-column="18" />
-          <folding>
-            <element signature="e#1693#1694#0" expanded="true" />
-            <element signature="e#1730#1731#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.55172414">
+          <caret line="19" column="76" selection-start-line="19" selection-start-column="76" selection-end-line="19" selection-end-column="76" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleProductRecyclerViewAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="57" column="76" selection-start-line="57" selection-start-column="76" selection-end-line="57" selection-end-column="76" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseProductsRecyclerAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="30" column="23" selection-start-line="30" selection-start-column="23" selection-end-line="30" selection-end-column="23" />
+          <folding />
         </state>
       </provider>
     </entry>

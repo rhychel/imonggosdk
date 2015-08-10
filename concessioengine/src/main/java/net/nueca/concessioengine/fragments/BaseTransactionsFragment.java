@@ -39,6 +39,8 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
 
     protected SetupActionBar setupActionBar;
 
+    protected abstract void toggleNoItems(String msg, boolean show);
+
     protected List<OfflineData> getTransactions() {
         List<OfflineData> transactions = new ArrayList<>();
         try {

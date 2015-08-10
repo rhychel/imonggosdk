@@ -1,14 +1,11 @@
 package net.nueca.concessioengine.fragments;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -19,14 +16,14 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import net.nueca.concessioengine.R;
-import net.nueca.concessioengine.adapters.BaseProductsRecyclerAdapter;
+import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
-import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.concessioengine.adapters.interfaces.OnItemLongClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
-import net.nueca.concessioengine.exceptions.ProductsFragmentException;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
@@ -67,9 +64,11 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         spCategories = (Spinner) view.findViewById(R.id.spCategories);
         tvNoProducts = (TextView) view.findViewById(R.id.tvNoProducts);
 
-        productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, productCategories);
-        spCategories.setAdapter(productCategoriesAdapter);
-        spCategories.setOnItemSelectedListener(onCategorySelected);
+        if(hasCategories) {
+            productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, productCategories);
+            spCategories.setAdapter(productCategoriesAdapter);
+            spCategories.setOnItemSelectedListener(onCategorySelected);
+        }
 
         suplProduct.setAnchorPoint(0.5f);
         offset = 0l;
@@ -77,10 +76,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         if(useRecyclerView) {
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
             simpleProductRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
-            simpleProductRecyclerViewAdapter.setOnItemClickListener(new BaseProductsRecyclerAdapter.OnItemClickListener() {
+            simpleProductRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClicked(View view, int position) {
-                    Product product = simpleProductRecyclerViewAdapter.getProductsList().get(position);
+                    Product product = simpleProductRecyclerViewAdapter.getItem(position);
                     SelectedProductItem selectedProductItem = simpleProductRecyclerViewAdapter.getSelectedProductItems().getSelectedProductItem(product);
                     if (selectedProductItem == null) {
                         selectedProductItem = new SelectedProductItem();
@@ -89,19 +88,19 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     showQuantityDialog(position, product, selectedProductItem);
                 }
             });
-            simpleProductRecyclerViewAdapter.setOnItemLongClickListener(new BaseProductsRecyclerAdapter.OnItemLongClickListener() {
+            simpleProductRecyclerViewAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
                 @Override
                 public void onItemLongClicked(View view, int position) {
-                    Product product = simpleProductRecyclerViewAdapter.getProductsList().get(position);
+                    Product product = simpleProductRecyclerViewAdapter.getItem(position);
                     showProductDetails(product);
                 }
             });
 
-            initializeRecyclerView(rvProducts);
+            simpleProductRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
             rvProducts.setAdapter(simpleProductRecyclerViewAdapter);
             rvProducts.addOnScrollListener(rvScrollListener);
 
-            toggleNoProducts("No products available.", (simpleProductRecyclerViewAdapter.getItemCount() > 0));
+            toggleNoItems("No products available.", (simpleProductRecyclerViewAdapter.getItemCount() > 0));
         }
         else {
             lvProducts = (ListView) view.findViewById(R.id.lvProducts);
@@ -130,7 +129,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             });
             lvProducts.setOnScrollListener(lvScrollListener);
 
-            toggleNoProducts("No products available.", (simpleProductListAdapter.getCount() > 0));
+            toggleNoItems("No products available.", (simpleProductListAdapter.getCount() > 0));
         }
 
         return view;
@@ -229,9 +228,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             prevLast = 0;
 
             if(useRecyclerView)
-                toggleNoProducts("No results for \""+category+"\".", simpleProductRecyclerViewAdapter.updateList(getProducts()));
+                toggleNoItems("No results for \"" + category + "\".", simpleProductRecyclerViewAdapter.updateList(getProducts()));
             else
-                toggleNoProducts("No results for \"" + category + "\".", simpleProductListAdapter.updateList(getProducts()));
+                toggleNoItems("No results for \"" + category + "\".", simpleProductListAdapter.updateList(getProducts()));
         }
 
         @Override
@@ -244,12 +243,13 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         prevLast = 0;
 
         if(useRecyclerView)
-            toggleNoProducts("No results for \""+searchKey+"\""+messageCategory()+".", simpleProductRecyclerViewAdapter.updateList(getProducts()));
+            toggleNoItems("No results for \""+searchKey+"\""+messageCategory()+".", simpleProductRecyclerViewAdapter.updateList(getProducts()));
         else
-            toggleNoProducts("No results for \"" + searchKey + "\""+messageCategory()+".", simpleProductListAdapter.updateList(getProducts()));
+            toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", simpleProductListAdapter.updateList(getProducts()));
     }
 
-    private void toggleNoProducts(String msg, boolean show) {
+    @Override
+    protected void toggleNoItems(String msg, boolean show) {
         if(useRecyclerView) {
             rvProducts.setVisibility(show ? View.VISIBLE : View.GONE);
             tvNoProducts.setVisibility(show ? View.GONE : View.VISIBLE);

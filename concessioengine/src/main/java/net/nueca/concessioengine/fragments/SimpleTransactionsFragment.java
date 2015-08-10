@@ -11,9 +11,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleTransactionListAdapter;
+import net.nueca.concessioengine.adapters.SimpleTransactionRecyclerViewAdapter;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.swable.ImonggoSwable;
@@ -34,8 +37,10 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     private RecyclerView rvTransactions;
     private Spinner spTransactionType;
     private Spinner spBranches;
+    private TextView tvNoTransactions;
 
     private SimpleTransactionListAdapter simpleTransactionListAdapter;
+    private SimpleTransactionRecyclerViewAdapter simpleTransactionRecyclerViewAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,6 +49,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         spBranches = (Spinner) view.findViewById(R.id.spBranches);
         spTransactionType = (Spinner) view.findViewById(R.id.spTransactionType);
+        tvNoTransactions = (TextView) view.findViewById(R.id.tvNoTransactions);
 
         if(hasFilterByBranch) {
             spBranches.setVisibility(View.VISIBLE);
@@ -57,7 +63,20 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
         }
 
         if(useRecyclerView) {
+            rvTransactions = (RecyclerView) view.findViewById(R.id.rvTransactions);
+            simpleTransactionRecyclerViewAdapter = new SimpleTransactionRecyclerViewAdapter(getActivity(), getTransactions());
+            simpleTransactionRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClicked(View view, int position) {
+                    if(transactionsListener != null)
+                        transactionsListener.showTransactionDetails(simpleTransactionListAdapter.getItem(position).getId());
+                }
+            });
 
+            simpleTransactionRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvTransactions);
+            rvTransactions.setAdapter(simpleTransactionRecyclerViewAdapter);
+
+            toggleNoItems("No transactions", (simpleTransactionRecyclerViewAdapter.getItemCount() > 0));
         }
         else {
             lvTransactions = (ListView) view.findViewById(R.id.lvTransactions);
@@ -70,6 +89,8 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                         transactionsListener.showTransactionDetails(simpleTransactionListAdapter.getItem(position).getId());
                 }
             });
+
+            toggleNoItems("No transactions", (simpleTransactionListAdapter.getCount() > 0));
         }
         return view;
     }
@@ -83,6 +104,20 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
 
     public void setUseRecyclerView(boolean useRecyclerView) {
         this.useRecyclerView = useRecyclerView;
+    }
+
+    @Override
+    protected void toggleNoItems(String msg, boolean show) {
+        if(useRecyclerView) {
+            rvTransactions.setVisibility(show ? View.VISIBLE : View.GONE);
+            tvNoTransactions.setVisibility(show ? View.GONE : View.VISIBLE);
+            tvNoTransactions.setText(msg);
+        }
+        else {
+            lvTransactions.setVisibility(show ? View.VISIBLE : View.GONE);
+            tvNoTransactions.setVisibility(show ? View.GONE : View.VISIBLE);
+            tvNoTransactions.setText(msg);
+        }
     }
 
     // *** THESE ARE FOR SWABLE ***
@@ -153,4 +188,5 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     public void onSwableStopping() {
 
     }
+
 }
