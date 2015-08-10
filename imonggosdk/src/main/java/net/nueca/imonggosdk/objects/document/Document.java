@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 
+import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.ReferenceNumberTool;
@@ -18,12 +19,12 @@ import java.util.List;
  * Created by gama on 7/20/15.
  */
 public class Document extends BaseTransaction {
-    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 50;
+    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 2;
 
     protected String remark;
     protected String document_type_code;
     protected List<DocumentLine> document_lines;
-    protected int target_branch_id;
+    protected Integer target_branch_id;
     protected String document_purpose_name;
 
     public Document(Builder builder) {
@@ -43,12 +44,12 @@ public class Document extends BaseTransaction {
         this.remark = remark;
     }
 
-    public String getDocument_type_code() {
-        return document_type_code;
+    public DocumentTypeCode getDocument_type_code() {
+        return DocumentTypeCode.identify(document_type_code);
     }
 
-    public void setDocument_type_code(String document_type_code) {
-        this.document_type_code = document_type_code;
+    public void setDocument_type_code(DocumentTypeCode document_type_code) {
+        this.document_type_code = document_type_code.toString();
     }
 
     public List<DocumentLine> getDocument_lines() {
@@ -103,15 +104,15 @@ public class Document extends BaseTransaction {
         protected String remark;
         protected String document_type_code;
         protected List<DocumentLine> document_lines;
-        protected int target_branch_id;
+        protected Integer target_branch_id;
         protected String document_purpose_name;
 
         public Builder remark(String remark) {
             this.remark = remark;
             return this;
         }
-        public Builder document_type_code(String document_type_code) {
-            this.document_type_code = document_type_code;
+        public Builder document_type_code(DocumentTypeCode document_type_code) {
+            this.document_type_code = document_type_code.toString();
             return this;
         }
         public Builder document_lines(List<DocumentLine> document_lines) {
