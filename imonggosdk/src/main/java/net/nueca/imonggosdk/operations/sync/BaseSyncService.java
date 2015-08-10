@@ -123,7 +123,7 @@ public abstract class BaseSyncService extends ImonggoService {
             mCurrentTableSyncing = mModulesToSync[mModulesIndex];
         }
 
-        Log.e(TAG, mCurrentTableSyncing.toString());
+//        Log.e(TAG, mCurrentTableSyncing.toString());
         // We want this service to continue running until it is explicitly
         // stopped, so return sticky.
         return START_STICKY;

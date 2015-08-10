@@ -4,6 +4,8 @@ import android.content.Intent;
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.SettingsName;
+import net.nueca.imonggosdk.tools.SettingTools;
 
 /**
  * Created by rhymart on 7/24/15.
@@ -15,6 +17,7 @@ public class C_SampleLogin extends LoginActivity {
     protected void initLoginEquipments() {
         super.initLoginEquipments();
         setServer(Server.IRETAILCLOUD_NET);
+        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true, "");
     }
 
     @Override
