@@ -114,7 +114,6 @@ public class LoginActivity extends BaseLoginActivity {
         setEditTextAccountID("retailpos");
         setEditTextEmail("retailpos@test.com");
         setEditTextPassword("retailpos");
-
     }
 
     @Override

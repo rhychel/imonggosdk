@@ -12,7 +12,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Checkout"
+        android:text="Summary"
         android:id="@+id/btnSample"
         android:layout_gravity="right|bottom"
         android:layout_marginRight="36dp"

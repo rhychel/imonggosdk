@@ -14,7 +14,7 @@ public class C_SampleLogin extends LoginActivity {
     @Override
     protected void initLoginEquipments() {
         super.initLoginEquipments();
-        setServer(Server.IRETAILCLOUD_COM);
+        setServer(Server.IRETAILCLOUD_NET);
     }
 
     @Override

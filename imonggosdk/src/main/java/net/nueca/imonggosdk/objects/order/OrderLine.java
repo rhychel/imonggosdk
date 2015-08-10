@@ -68,7 +68,7 @@ public class OrderLine {
         this.unit_id = unit_id;
     }
 
-    public int getUnitId() {
+    public Integer getUnitId() {
         return unit_id;
     }
 

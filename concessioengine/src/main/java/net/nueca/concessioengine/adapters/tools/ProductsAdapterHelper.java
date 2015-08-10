@@ -22,6 +22,7 @@ import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.ProductListTools;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -100,6 +101,11 @@ public class ProductsAdapterHelper {
             e.printStackTrace();
         }
         return session;
+    }
+
+    public static void clearSelectedProductItemList() {
+        selectedProductItems.clear();
+        ProductListTools.restartLineNo();
     }
 
     public static void destroySelectedProductItemList() {

@@ -36,7 +36,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/rvProducts"
-                android:elevation="1dp"/>
+                android:elevation="1dp"
+                android:paddingBottom="100dp"
+                android:clipToPadding="false"/>
 
             <TextView
                 android:layout_width="match_parent"

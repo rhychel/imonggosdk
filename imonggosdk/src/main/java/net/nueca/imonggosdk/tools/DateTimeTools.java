@@ -211,4 +211,19 @@ public class DateTimeTools {
         return currentDate;
     }
 
+    public static String convertFromTo(String datetime, TimeZone from, TimeZone to) {
+        String convertedTime = datetime;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        simpleDateFormat.setTimeZone(from);
+        try {
+            Date dateCreated = simpleDateFormat.parse(datetime);
+            simpleDateFormat.setTimeZone(to);
+
+            convertedTime = simpleDateFormat.format(dateCreated);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return convertedTime;
+    }
+
 }

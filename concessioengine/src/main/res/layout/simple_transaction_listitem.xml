@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp">
+    <ImageView
+        android:layout_marginRight="4dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/ivStatus"
+        android:src="@drawable/ic_readytosync_black"
+        android:layout_gravity="center_vertical" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <me.grantland.widget.AutofitTextView
+            android:paddingTop="8dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="8dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="100000000000-1"
+            android:textSize="24sp"
+            android:singleLine="true"
+            autofit:minTextSize="12sp"
+            android:id="@+id/tvTransactionRefNo"
+            style="@style/TextView.ProductItem.Name"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="2015 September 30 - 23:59:59"
+            android:id="@+id/tvTransactionDate"
+            android:textColor="@android:color/black"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="140dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="4dp">
+
+        <me.grantland.widget.AutofitTextView
+            android:paddingTop="8dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="8dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical|right"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:singleLine="true"
+            autofit:minTextSize="12sp"
+            android:id="@+id/tvTransactionBranch"
+            style="@style/TextView.ProductItem.Name"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Receive"
+            android:layout_gravity="right"
+            android:id="@+id/tvTransactionType"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:textStyle="italic"/>
+    </LinearLayout>
+
+</LinearLayout>

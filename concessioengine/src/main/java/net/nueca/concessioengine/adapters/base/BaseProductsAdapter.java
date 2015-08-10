@@ -1,4 +1,4 @@
-package net.nueca.concessioengine.adapters;
+package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 import android.view.View;
@@ -21,7 +21,7 @@ import java.util.List;
  * 2. create a simple product list item layout
  * 3. prepare the fields
  */
-public abstract class BaseProductsAdapter extends ArrayAdapter<Product> {
+public abstract class BaseProductsAdapter extends BaseAdapter<Product> {
 
     private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
 
@@ -46,12 +46,4 @@ public abstract class BaseProductsAdapter extends ArrayAdapter<Product> {
         ProductsAdapterHelper.setDbHelper(dbHelper);
     }
 
-    public void notifyItemChanged(ListView lvList, int position) {
-        View v = lvList.getChildAt(position - lvList.getFirstVisiblePosition());
-
-        if(v == null)
-            return;
-
-        getView(position, v, null);
-    }
 }

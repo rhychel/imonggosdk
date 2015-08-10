@@ -1,14 +1,11 @@
 package net.nueca.concessioengine.fragments;
 
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
@@ -18,6 +15,8 @@ import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.exceptions.ProductsFragmentException;
+import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
+import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
@@ -36,21 +35,13 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     protected static final long LIMIT = 100l;
     protected long offset = 0l;
+    protected boolean hasUnits = true, hasBrand = false, hasDeliveryDate = false, hasCategories = true;
     private int prevLast = -1;
     private String searchKey = "", category = "";
     private List<Product> filterProductsBy = new ArrayList<>();
 
     protected ArrayAdapter<String> productCategoriesAdapter;
     protected List<String> productCategories = new ArrayList<>();
-
-    public interface SetupActionBar {
-        void setupActionBar(Toolbar toolbar);
-    }
-
-    public interface ListScrollListener {
-        void onScrolling();
-        void onScrollStopped();
-    }
 
     public interface ProductsFragmentListener {
         void whenItemsSelectedUpdated();
@@ -59,7 +50,6 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     protected ProductsFragmentListener productsFragmentListener;
     protected ListScrollListener listScrollListener;
     protected SetupActionBar setupActionBar;
-    protected LinearLayoutManager linearLayoutManager;
     protected RecyclerView rvProducts;
     protected ListView lvProducts;
     protected Toolbar tbActionBar;
@@ -70,13 +60,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     protected abstract void showQuantityDialog(int position, Product product, SelectedProductItem selectedProductItem);
     protected abstract void showProductDetails(Product product);
     protected abstract void whenListEndReached(List<Product> productList);
-
-    protected void initializeRecyclerView(RecyclerView rvProducts) {
-        linearLayoutManager = new LinearLayoutManager(getActivity());
-        rvProducts.setLayoutManager(linearLayoutManager);
-        rvProducts.setHasFixedSize(true);
-        rvProducts.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-    }
+    protected abstract void toggleNoItems(String msg, boolean show);
 
     public String renderProducts() {
         String jsonSelected = "{}";
@@ -177,8 +161,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             super.onScrolled(recyclerView, dx, dy);
 
             int visibleItemCount = rvProducts.getChildCount();
-            int totalItemCount = linearLayoutManager.getItemCount();
-            int firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+            int totalItemCount = simpleProductRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
+            int firstVisibleItem = simpleProductRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
 
             int lastItem = firstVisibleItem + visibleItemCount;
 
@@ -208,4 +192,23 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         this.productCategories = productCategories;
     }
 
+    public void setHasUnits(boolean hasUnits) {
+        this.hasUnits = hasUnits;
+    }
+
+    public void setHasBrand(boolean hasBrand) {
+        this.hasBrand = hasBrand;
+    }
+
+    public void setHasDeliveryDate(boolean hasDeliveryDate) {
+        this.hasDeliveryDate = hasDeliveryDate;
+    }
+
+    public void setHasCategories(boolean hasCategories) {
+        this.hasCategories = hasCategories;
+    }
+
+    public void setFilterProductsBy(List<Product> filterProductsBy) {
+        this.filterProductsBy = filterProductsBy;
+    }
 }

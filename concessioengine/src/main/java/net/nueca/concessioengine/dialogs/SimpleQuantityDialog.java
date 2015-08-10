@@ -109,9 +109,8 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
         }
 
         etQuantity.setText(selectedProductItem.getQuantity());
-        npInput.addTextHolder(etQuantity, "etQuantity", false, false, null);
-        npInput.setEnableDot(!selectedProductItem.getProduct().isAllow_decimal_quantities());
-
+        npInput.addTextHolder(etQuantity, "etQuantity", false, 6, 2, false, null);
+        npInput.getTextHolderWithTag("etQuantity").setEnableDot(selectedProductItem.getProduct().isAllow_decimal_quantities());
 
         btnSave.setOnClickListener(onSaveClicked);
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +134,7 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
     private View.OnClickListener onSaveClicked = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            String quantity = etQuantity.getText().toString();
+            String quantity = etQuantity.getText().toString().replace(",","");
             if(quantity.equals("0") && !selectedProductItem.isMultiline())
                 selectedProductItem.removeAll();
             else {
