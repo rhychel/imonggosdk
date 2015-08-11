@@ -298,6 +298,24 @@ public class SwableTools {
         return list.subList(start, end);
     }
 
+    /**
+     * Adding OfflineData and Direct Sending/Voiding using the Builder structure
+     *
+     * eg.
+     * Sending:
+     *  new SwableTools.Transaction(getHelper())
+     *      .toSend()
+     *      .object(document)
+     *      .forBranch(getSession().getUser().getHome_branch_id())
+     *      .queue();
+     *
+     * Voiding:
+     *  new SwableTools.Transaction(getHelper())
+     *      .toCancel()
+     *      .objectContainingReturnId(<return_id string>) OR .object(<OfflineData object>)
+     *      .withReason("REASON")
+     *      .queue();
+     */
     public static class Transaction {
         private ImonggoDBHelper helper;
         public Transaction(ImonggoDBHelper helper) {

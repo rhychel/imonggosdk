@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.BaseProductsFragment;
+import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
@@ -27,6 +28,7 @@ import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.interfaces.AccountListener;
+import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.User;
@@ -50,6 +52,7 @@ import java.util.List;
 public class C_Module extends ModuleActivity implements SetupActionBar {
 
     public SimpleProductsFragment simpleProductsFragment;
+    public SimpleCustomersFragment simpleCustomersFragment;
     public SearchViewEx mSearch;
     private Button btnSample;
 
@@ -102,14 +105,41 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                     ViewCompat.animate(btnSample).translationY(1000.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
             }
         });
+
+        try {
+            if(getHelper().getCustomers().queryForAll().size() == 0) {
+                String fname[] = {"John","Pepe","Sid","Mark","Jimmy","Zed","Paul","Charles","Markus"};
+                String lname[] = {"Doe","Smith","Meier","Wane","Turner","Wong","Reed","Darwin","Snow"};
+                for (int i = 1; i <= 100; i++) {
+                    Customer customer = new Customer();
+                    customer.setId(i);
+                    customer.setFirst_name(fname[((int) (Math.random() * 100 % fname.length))]);
+                    customer.setLast_name(lname[((int) (Math.random() * 100 % lname.length))]);
+                    customer.setName(customer.getFirst_name() + " " + customer.getLast_name());
+                    customer.setStreet("Unit " + (i + 400) + " DECA Corporate Center, Panganiban Drive, Barangay Tinago");
+                    customer.setCity("Naga City");
+                    customer.setCountry("Philippines");
+                    customer.setZipcode("4400");
+                    customer.setGender("M");
+                    customer.insertTo(getHelper());
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        simpleCustomersFragment = new SimpleCustomersFragment();
+        simpleCustomersFragment.setHelper(getHelper());
+        simpleCustomersFragment.setSetupActionBar(this);
+
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.flContent, simpleProductsFragment)
+                .add(R.id.flContent, simpleCustomersFragment)
                 .commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.simple_products_menu, menu);
+        getMenuInflater().inflate(R.menu.simple_customers_menu, menu);
         mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
 
         if(mSearch != null) {
@@ -124,7 +154,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             SearchViewCompat.setOnQueryTextListener(mSearch, new SearchViewCompat.OnQueryTextListenerCompat() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    simpleProductsFragment.updateListWhenSearch(newText);
+                    //simpleProductsFragment.updateListWhenSearch(newText);
+                    simpleCustomersFragment.updateListWhenSearch(newText);
                     return true;
                 }
 
@@ -191,7 +222,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     protected void onResume() {
         super.onResume();
-        simpleProductsFragment.refreshList();
+        simpleCustomersFragment.refreshList();
     }
 
     @Override
