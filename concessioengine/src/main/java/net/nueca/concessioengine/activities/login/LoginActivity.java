@@ -13,7 +13,6 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.LoggingTools;
-import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -48,11 +47,11 @@ public class LoginActivity extends BaseLoginActivity {
             setModules(null);
             setUnlinked(AccountTools.isUnlinked(this));
             setLoggedIn(AccountTools.isLoggedIn(getHelper()));
-            setDefaultBranch(SettingTools.defaultBranch(this));
             setServer(Server.IMONGGO);
             Log.e(TAG, "Server is " + getServer().toString());
             List<String> m = new ArrayList<>();
             setModulesToSync(m);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -75,24 +74,34 @@ public class LoginActivity extends BaseLoginActivity {
                 }
                 // if User is Logged In
                 if (AccountTools.isLoggedIn(getHelper())) {
-                    setUnlinked(false);
-                    getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, false);
-                    // user is logged in set up data
-                    setLoginSession(getSession());
 
-                    if (!getLoginSession().getApiAuthentication().equals("")) { // User is authenticated
-                        setLoggedIn(true);
+                    if(!isSyncFinished()) { // TODO: Change this autoupdate
+                        getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, true);
+                        setLoggedIn(false);
+                        setUnlinked(true);
+                        unlinkAccount();
+                    } else {
 
-                        // check if sessions email exist in user's database
-                        if (getHelper().getUsers().queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
-                            Log.e(TAG, "sessions email don't match don't match user's email");
-                            LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
-                            setLoggedIn(false);
-                            setUnlinked(true);
-                            unlinkAccount();
-                        } else {
-                            Log.e(TAG, "Setting Initial sync to false");
-                            getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, false);
+                        setUnlinked(false);
+                        getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, false);
+                        // user is logged in set up data
+                        setLoginSession(getSession());
+
+                        if (!getLoginSession().getApiAuthentication().equals("")) { // User is authenticated
+                            setLoggedIn(true);
+
+
+                            // check if sessions email exist in user's database
+                            if (getHelper().getUsers().queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
+                                Log.e(TAG, "sessions email don't match don't match user's email");
+                                LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
+                                setLoggedIn(false);
+                                setUnlinked(true);
+                                unlinkAccount();
+                            } else {
+                                Log.e(TAG, "Setting Initial sync to false");
+                                getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, false);
+                            }
                         }
                     }
                 }
@@ -114,7 +123,6 @@ public class LoginActivity extends BaseLoginActivity {
         setEditTextAccountID("retailpos");
         setEditTextEmail("retailpos@test.com");
         setEditTextPassword("retailpos");
-
     }
 
     @Override

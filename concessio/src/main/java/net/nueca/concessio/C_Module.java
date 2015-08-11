@@ -10,9 +10,11 @@ import android.widget.ListView;
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
+import java.util.List;
 
 
 /**
@@ -33,6 +35,12 @@ public class C_Module extends ModuleActivity {
         try {
             SimpleProductListAdapter simpleProductListAdapter = new SimpleProductListAdapter(this, getHelper(), getHelper().getProducts().queryForAll());
             lvSampleProducts.setAdapter(simpleProductListAdapter);
+
+            List<Branch> branchList = getHelper().getBranches().queryForAll();
+            Log.e(TAG, "branch size is " + branchList.size());
+            for(Branch branch : branchList) {
+                Log.e(TAG, branch.getName());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

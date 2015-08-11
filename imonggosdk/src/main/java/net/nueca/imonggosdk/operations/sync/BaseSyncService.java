@@ -18,8 +18,13 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchTag;
+import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 
@@ -149,6 +154,26 @@ public abstract class BaseSyncService extends ImonggoService {
             case UNITS: {
                 Unit unit = (Unit) o;
                 return getHelper().getUnits().queryBuilder().where().eq("id", unit.getId()).queryForFirst() != null;
+            }
+            case BRANCHES: {
+                Branch branch = (Branch) o;
+                return getHelper().getBranches().queryBuilder().where().eq("name", branch.getName()).queryForFirst() != null;
+            }
+            case BRANCH_TAGS: {
+                BranchTag branchTag = (BranchTag) o;
+                return getHelper().getBranchTags().queryBuilder().where().eq("id", branchTag.getId()).queryForFirst() != null;
+            }
+            case CUSTOMERS: {
+                Customer customer = (Customer) o;
+                return getHelper().getCustomers().queryBuilder().where().eq("id", customer.getId()).queryForFirst() != null;
+            }
+            case INVENTORIES: {
+                Inventory inventory = (Inventory) o;
+                return getHelper().getInventories().queryBuilder().where().eq("id", inventory.getId()).queryForFirst() != null;
+            }
+            case TAX_SETTINGS: {
+                TaxSetting taxSetting = (TaxSetting) o;
+                return getHelper().getTaxSettings().queryBuilder().where().eq("id", taxSetting.getId()).queryForFirst() != null;
             }
         }
         return false;

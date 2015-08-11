@@ -4,10 +4,16 @@ import android.util.Log;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchTag;
+import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 
 import java.util.ArrayList;
 
@@ -49,19 +55,43 @@ public class BatchList<T> extends ArrayList<T> {
         }
         if(get(0) instanceof User) {
             dbHelper.batchCreateOrUpdateUsers(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Users tables");
+            Log.e(TAG, databaseOperation.toString() + "ING to Users table");
         }
         if(get(0) instanceof Product) {
             dbHelper.batchCreateOrUpdateProducts(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Product tables");
-        }
-        if(get(0) instanceof Unit) {
-            dbHelper.batchCreateOrUpdateUnits(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Unit tables");
+            Log.e(TAG, databaseOperation.toString() + "ING to Product table");
         }
         if(get(0) instanceof ProductTag) {
             dbHelper.batchCreateOrUpdateProductTags(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to ProductTag tables");
+            Log.e(TAG, databaseOperation.toString() + "ING to ProductTag table");
+        }
+        if(get(0) instanceof Unit) {
+            dbHelper.batchCreateOrUpdateUnits(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Unit table");
+        }
+        if(get(0) instanceof Branch) {
+            dbHelper.batchCreateOrUpdateBranches(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Branch table");
+        }
+        if(get(0) instanceof BranchTag) {
+            dbHelper.batchCreateOrUpdateBranchTags(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to BranchTag table");
+        }
+        if(get(0) instanceof BranchUserAssoc) {
+            dbHelper.batchCreateOrUpdateBranchUsers(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to BranchUser Assoc table");
+        }
+        if(get(0) instanceof Customer) {
+            dbHelper.batchCreateOrUpdateCustomers(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Customer table");
+        }
+        if(get(0) instanceof Inventory) {
+            dbHelper.batchCreateOrUpdateInventories(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Inventory table");
+        }
+        if(get(0) instanceof TaxSetting) {
+            dbHelper.batchCreateOrUpdateTaxSettings(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to TaxSetting table");
         }
     }
 }
