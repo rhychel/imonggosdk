@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="keypad_default_bg">#fff</color>
+    <color name="keypad_default_buttonbg">#00c0c0c0</color>
+    <color name="keypad_default_buttonbg_pressed">#4dc0c0c0</color>
+    <color name="keypad_default_buttonbg_disabled">#4d404040</color>
+
+    <color name="keypad_default_cbuttonbg">#404040</color>
+    <color name="keypad_default_cbuttonbg_pressed">#7f404040</color>
+    <color name="keypad_default_cbuttonbg_disabled">#40404040</color>
+
+    <color name="keypad_default_text">#a0a0a0</color>
+    <color name="keypad_default_text_pressed">#c0c0c0c0</color>
+    <color name="keypad_default_text_disabled">#74404040</color>
+</resources>

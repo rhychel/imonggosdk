@@ -1,0 +1,32 @@
+package net.nueca.imonggosdk.tools;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.support.v7.app.AlertDialog;
+
+/**
+ * Created by rhymart on 7/14/15.
+ * imonggosdk (c)2015
+ */
+public class NetworkTools {
+
+    public static boolean isInternetAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null ? cm.getActiveNetworkInfo().isConnectedOrConnecting() : false;
+    }
+
+    public static void networkConnectionRequired(final Activity activity) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(activity);
+        alert.setTitle("Network Connection Error");
+        alert.setMessage("This app requires internet connection.");
+        alert.setCancelable(false);
+        alert.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                activity.finish();
+            }
+        });
+        alert.show();
+    }
+}

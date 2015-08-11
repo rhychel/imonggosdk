@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="4">
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/no_image"
+        android:id="@+id/ivProductImage" />
+    <!--<ImageView-->
+        <!--android:layout_width="58dp"-->
+        <!--android:layout_height="58dp"-->
+        <!--android:adjustViewBounds="true"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--android:src="@drawable/no_image"-->
+        <!--android:id="@+id/ivProductImage"/>-->
+
+    <me.grantland.widget.AutofitTextView
+        android:padding="3dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:layout_weight="3"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:text="Avocado Hass Imported"
+        android:textSize="20sp"
+        android:singleLine="false"
+        android:maxLines="2"
+        android:ellipsize="end"
+        autofit:minTextSize="12sp"
+        android:id="@+id/tvProductName"/>
+
+    <me.grantland.widget.AutofitTextView
+        android:gravity="center"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:text="1000"
+        android:textSize="30sp"
+        android:singleLine="true"
+        autofit:minTextSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:id="@+id/tvQuantity"/>
+
+</LinearLayout>
