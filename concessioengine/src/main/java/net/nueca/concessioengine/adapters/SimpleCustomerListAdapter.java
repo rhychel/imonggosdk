@@ -3,6 +3,8 @@ package net.nueca.concessioengine.adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +26,17 @@ import java.util.List;
  */
 public class SimpleCustomerListAdapter extends BaseCustomersAdapter {
     private String highlightColor;
+    private int circleColor = Color.WHITE;
 
-    public SimpleCustomerListAdapter(Context context, List<Customer> objects, String highlightColor) {
-        super(context, R.layout.simple_customer_listitem, objects);
+    public SimpleCustomerListAdapter(Context context, List<Customer> objects, boolean isMultiSelect, String
+                                     highlightColor) {
+        super(context, R.layout.simple_customer_listitem, objects, isMultiSelect);
         this.highlightColor = highlightColor;
+    }
+
+    public void setCircleColor(int color) {
+        circleColor = color;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -78,20 +87,15 @@ public class SimpleCustomerListAdapter extends BaseCustomersAdapter {
         else
             viewHolder.tvAddress.setVisibility(View.GONE);
 
+        StateListDrawable bgShape = (StateListDrawable)viewHolder.tvFirstLetter.getBackground();
+        bgShape.setColorFilter(circleColor, PorterDuff.Mode.SRC);
 
-        setAsSelected(convertView, selectedCustomer != null && selectedCustomer.equals(getItem(position)));
-
-        return convertView;
-    }
-
-    @Override
-    protected void setAsSelected(View convertView, boolean isSelected) {
-        super.setAsSelected(convertView, isSelected);
-        ViewHolder viewHolder = (ViewHolder)convertView.getTag();
-        if(isSelected)
+        if(selectedCustomer.contains(customer))
             viewHolder.llCustomerItem.setBackgroundColor(Color.parseColor(highlightColor));
         else
             viewHolder.llCustomerItem.setBackgroundColor(Color.TRANSPARENT);
+
+        return convertView;
     }
 
     public boolean updateList(List<Customer> customers) {
