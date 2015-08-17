@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -27,6 +28,7 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 
 import java.sql.SQLException;
 
@@ -133,6 +135,13 @@ public abstract class BaseSyncService extends ImonggoService {
         return START_STICKY;
     }
 
+    public boolean isExisting(Object o, Table table) throws SQLException {
+        return isExisting(o, 0, table);
+    }
+    public boolean isExisting(int id, Table table) throws SQLException {
+        return isExisting(null, id, table);
+    }
+
     /**
      * Check if the table item is already existing in the database
      *
@@ -141,7 +150,7 @@ public abstract class BaseSyncService extends ImonggoService {
      * @return
      * @throws SQLException
      */
-    public boolean isExisting(Object o, Table table) throws SQLException {
+    public boolean isExisting(Object o, int id, Table table) throws SQLException {
         switch (table) {
             case USERS: {
                 User user = (User) o;
@@ -157,7 +166,11 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case BRANCHES: {
                 Branch branch = (Branch) o;
-                return getHelper().getBranches().queryBuilder().where().eq("name", branch.getName()).queryForFirst() != null;
+                return getHelper().getBranches().queryBuilder().where().eq("id", branch.getId()).queryForFirst() != null;
+            }
+            case BRANCH_PRICES: {
+                BranchPrice branchPrice = (BranchPrice) o;
+                return getHelper().getBranchPrices().queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
             }
             case BRANCH_TAGS: {
                 BranchTag branchTag = (BranchTag) o;
@@ -174,6 +187,13 @@ public abstract class BaseSyncService extends ImonggoService {
             case TAX_SETTINGS: {
                 TaxSetting taxSetting = (TaxSetting) o;
                 return getHelper().getTaxSettings().queryBuilder().where().eq("id", taxSetting.getId()).queryForFirst() != null;
+            }
+            case TAX_RATES: {
+                return getHelper().getTaxRates().queryBuilder().where().eq("tax_rate_id", id).queryForFirst() != null;
+            }
+            case PRODUCT_TAX_RATES: {
+                ProductTaxRateAssoc productTaxRateAssoc = (ProductTaxRateAssoc) o;
+                return getHelper().getProductTaxRateAssocs().queryBuilder().where().eq("id", productTaxRateAssoc.getId()).queryForFirst() != null;
             }
         }
         return false;

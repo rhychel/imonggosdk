@@ -10,10 +10,12 @@ import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 
 import java.util.ArrayList;
 
@@ -92,6 +94,14 @@ public class BatchList<T> extends ArrayList<T> {
         if(get(0) instanceof TaxSetting) {
             dbHelper.batchCreateOrUpdateTaxSettings(this, databaseOperation);
             Log.e(TAG, databaseOperation.toString() + "ING to TaxSetting table");
+        }
+        if(get(0) instanceof TaxRate) {
+            dbHelper.batchCreateOrUpdateTaxRates(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to TaxRate table");
+        }
+        if(get(0) instanceof ProductTaxRateAssoc) {
+            dbHelper.batchCreateOrUpdateProductTaxRates(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to ProductTaxRate Assoc table");
         }
     }
 }

@@ -12,6 +12,7 @@ import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -23,6 +24,7 @@ import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
@@ -34,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by Jn on 7/15/2015.
@@ -121,7 +124,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
 
 
-
                 if (mCurrentTableSyncing == Table.UNITS) {
                     if (lastUpdatedAt.getLast_updated_at() == null)
                         return ImonggoTools.generateParameter(Parameter.COUNT);
@@ -142,12 +144,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
         if (mModulesIndex == (mModulesToSync.length - 1)) {  // this is when there are no left tables to sync
 
-            User current_user = getUser();
-
-            getSession().setUser(current_user);
-            getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
-
-            Thread sleepFor3Seconds = new Thread() {
+            Thread sleepFor1Second = new Thread() {
                 @Override
                 public void run() {
                     try {
@@ -155,12 +152,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             wait(1000);
                         }
                     } catch (InterruptedException ex) {
+
                     }
-
-
                 }
             };
-            sleepFor3Seconds.start();
+            sleepFor1Second.start();
 
 
             Handler handler = new Handler();
@@ -255,9 +251,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         TaxSetting taxSetting = gson.fromJson(jsonObject.toString(), TaxSetting.class);
 
                         if (initialSync || lastUpdatedAt == null) {
+                            Log.e(TAG, "Initial Sync Tax Settings");
                             taxSetting.dbOperation(getHelper(), DatabaseOperation.INSERT);
                         } else {
                             if (isExisting(taxSetting, Table.TAX_SETTINGS)) {
+                                Log.e(TAG, "Table Tax Setting is existing...");
                                 taxSetting.dbOperation(getHelper(), DatabaseOperation.UPDATE);
                             } else {
                                 taxSetting.dbOperation(getHelper(), DatabaseOperation.INSERT);
@@ -274,45 +272,63 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                         int size = jsonArray.length();
                         if (size == 0) { // Check if there are tax_rates
+
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                             syncNext();
                             return;
                         }
 
                         BatchList<TaxRate> newTaxRates = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                        BatchList<TaxRate> updateTaxRates = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                        BatchList<TaxRate> deleteTaxRates = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
                         JSONArray taxRateArray = jsonObject.getJSONArray("tax_rates");
+                        List<ProductTaxRateAssoc> productTaxRateAssocList = getHelper().getProductTaxRateAssocs().queryForAll();
 
-                        if (taxRateArray.length() != 0) {
+                        if (taxRateArray.length() == 0) {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                             syncNext();
                             return;
                         } else {
+
+                            getHelper().dbOperations(null, Table.TAX_RATES, DatabaseOperation.DELETE_ALL);
+                            Log.e(TAG, "Tax rate array has values.. ");
                             for (int x = 0; x < taxRateArray.length(); x++) {
                                 JSONObject jsonObject2 = taxRateArray.getJSONObject(x);
                                 TaxRate taxRate = gson.fromJson(jsonObject2.toString(), TaxRate.class);
 
-                                if (initialSync || lastUpdatedAt == null) {
-                                    newTaxRates.add(taxRate);
-                                } else {
-                                    if (isExisting(taxRate, Table.TAX_RATES)) {
-                                        if (taxRate.getStatus() == null) {
-                                            updateTaxRates.add(taxRate);
-                                        } else {
-                                            deleteTaxRates.add(taxRate);
-                                        }
-                                    } else {
-                                        newTaxRates.add(taxRate);
-                                    }
+                                Log.e(TAG, "current tax rate: " + taxRate.getName());
+
+                                newTaxRates.add(taxRate);
+                            }
+                        }
+
+                        newTaxRates.doOperation();
+
+
+                        List<TaxRate> taxRateList = getHelper().getTaxRates().queryForAll();
+
+                        if (productTaxRateAssocList.size() == 0) {
+                            Log.e(TAG, "Product Tax Rate is 0");
+                        } else {
+                            Log.e(TAG, "Product Tax Rates has values");
+                        }
+
+                        if (taxRateList.size() == 0) {
+                            Log.e(TAG, "Tax Rate is 0");
+                        } else {
+                            Log.e(TAG, "Tax Rates has values");
+                        }
+
+                        for (int i = 0; i < taxRateList.size(); i++) {
+                            if (productTaxRateAssocList.size() != 0) {
+                                Log.e(TAG, taxRateList.get(i).getId() + " " + productTaxRateAssocList.get(i).getTaxRate().getId());
+                                if (taxRateList.get(i).getId() == productTaxRateAssocList.get(i).getTaxRate().getId()) {
+
                                 }
                             }
-
-                            newTaxRates.doOperation();
-                            updateTaxRates.doOperation();
-                            deleteTaxRates.doOperation();
                         }
+
+                        DeleteBuilder<ProductTaxRateAssoc, Integer> deleteBuilder = getHelper().getProductTaxRateAssocs().deleteBuilder();
+
 
                         mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                         syncNext();
@@ -373,6 +389,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             updateUsers.doOperation();
                             deleteUsers.doOperation();
 
+                            User current_user = getUser();
+
+                            getSession().setUser(current_user);
+                            getSession().setCurrent_branch_id(current_user.getHome_branch_id());
+                            Log.e(TAG, "User Home Branch ID: " + current_user.getHome_branch_id());
+                            getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
+
                             updateNext(requestType, size);
                         }
                         break;
@@ -384,50 +407,131 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             syncNext();
                             return;
                         } else {
+                            int current_branch_id = getSession().getCurrent_branch_id();
+                            Branch current_branch = getHelper().getBranches().queryForId(current_branch_id);
 
                             BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
                             BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
                             BatchList<ProductTag> productTags = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<ProductTaxRateAssoc> newProductTaxRates = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<ProductTaxRateAssoc> updateProductTaxRates = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                            BatchList<ProductTaxRateAssoc> deleteProductTaxRates = new BatchList<>(DatabaseOperation.DELETE, getHelper());
+
 
                             for (int i = 0; i < size; i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Product product = gson.fromJson(jsonObject.toString(), Product.class);
+
                                 if (initialSync || lastUpdatedAt == null) {
                                     product.setSearchKey(product.getName() + product.getStock_no());
                                     newProducts.add(product);
                                 } else {
-                                    Log.e(TAG, "This not initial sync " + product.toString());
                                     if (isExisting(product, Table.PRODUCTS)) {
                                         DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
                                         deleteProductsHelper.where().eq("product_id", product);
                                         deleteProductsHelper.delete();
 
                                         if (product.getStatus() == null) {
-                                            Log.e(TAG, "adding product entry to be updated");
                                             updateProducts.add(product);
                                         } else {
-                                            Log.e(TAG, "adding product entry to be deleted");
                                             deleteProducts.add(product);
                                         }
                                     } else {
-                                        Log.e(TAG, "adding product entry to be deleted ");
                                         newProducts.add(product);
                                     }
                                 }
-                                // Save tags to the database
-                                JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
-                                int tagsSize = tagsListArray.length();
-                                for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
-                                    ProductTag productTag = new ProductTag(tagsListArray.getString(tagsI), product);
-                                    productTags.add(productTag);
+
+                                int tax_branch_id;
+                                int tax_rate_id;
+                                if (jsonObject.has("tax_rates")) {
+                                    Log.e(TAG, "Product have " +
+                                            "0tax rate");
+                                    JSONArray taxRatesArray = jsonObject.getJSONArray("tax_rates");
+                                    int taxRateSize = taxRatesArray.length();
+                                    for (int x = 0; x < taxRateSize; x++) {
+                                        JSONObject jsonTaxRateObject = taxRatesArray.getJSONObject(x);
+
+                                        tax_rate_id = jsonTaxRateObject.getInt("id");
+                                        if (!jsonTaxRateObject.getString("branch_id").equals("null")) {
+                                            tax_branch_id = jsonTaxRateObject.getInt("branch_id");
+                                        } else {
+                                            tax_branch_id = 0;
+                                        }
+
+                                        if (isExisting(tax_rate_id, Table.TAX_RATES)) {
+                                            // get the tax rate from database
+                                            TaxRate current_taxRate = getHelper().getTaxRates().queryForId(tax_rate_id);
+
+                                            Log.e(TAG, "Product " + product.getName() + " tax is " + current_taxRate.getName());
+
+                                            current_taxRate.setUtc_created_at(jsonTaxRateObject.getString("utc_created_at")); // Created At
+                                            current_taxRate.setUtc_updated_at(jsonTaxRateObject.getString("utc_updated_at")); // Updated At
+
+                                            if (tax_branch_id != 0) {
+                                                if (tax_branch_id == current_branch_id) {
+                                                    current_taxRate.setBranch(current_branch);
+                                                    ProductTaxRateAssoc productTaxRate = new ProductTaxRateAssoc(product, current_taxRate);
+
+                                                    if (isExisting(productTaxRate, Table.PRODUCT_TAX_RATES)) {
+                                                        updateProductTaxRates.add(productTaxRate);
+                                                    } else {
+                                                        newProductTaxRates.add(productTaxRate);
+                                                    }
+                                                } else {
+                                                    Log.e(TAG, "The product tax rate is not for your branch");
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Log.e(TAG, "Product don't have tax rate");
                                 }
+
+
+                                if (jsonObject.has("branch_prices")) {
+                                    JSONArray branchPricesArray = jsonObject.getJSONArray("branch_prices");
+                                    int branchPriceSize = branchPricesArray.length();
+                                    for (int y = 0; y < branchPriceSize; y++) {
+                                        JSONObject jsonBranchPriceObject = branchPricesArray.getJSONObject(y);
+                                        BranchPrice branchPrice = gson.fromJson(jsonBranchPriceObject.toString(), BranchPrice.class);
+
+                                        if (isExisting(current_branch, Table.BRANCHES)) {
+                                            branchPrice.setBranch(current_branch);
+                                            branchPrice.setProduct(product);
+                                            // check if current branch matches with this branch price
+                                            if (branchPrice.getBranch().getId() == current_branch_id) {
+                                                Log.e(TAG, "Product " + branchPrice.getProduct().getName() +
+                                                        " Content: " + branchPrice.toString());
+                                                getHelper().dbOperations(branchPrice, Table.BRANCH_PRICES, DatabaseOperation.DELETE);
+                                                branchPrice.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                            }
+                                        } else {
+                                            Log.e(TAG, "Branch ID " + current_branch_id + "does not exist. Skipping Branch Prices");
+                                        }
+                                    }
+                                }
+
+                                if (jsonObject.has("tag_list")) {
+                                    // Save tags to the database
+                                    JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
+                                    int tagsSize = tagsListArray.length();
+                                    getHelper().dbOperations(null, Table.PRODUCT_TAGS, DatabaseOperation.DELETE_ALL);
+                                    for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
+
+                                        ProductTag productTag = new ProductTag(tagsListArray.getString(tagsI), product);
+                                        productTags.add(productTag);
+                                    }
+                                }
+
+
                             }
 
+                            newProductTaxRates.doOperation();
+                            productTags.doOperation();
                             newProducts.doOperation();
                             updateProducts.doOperation();
                             deleteProducts.doOperation();
-                            productTags.doOperation();
 
                             updateNext(requestType, size);
                         }
@@ -594,7 +698,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             for (int i = 0; i < size; i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Inventory inventory = gson.fromJson(jsonObject.toString(), Inventory.class);
-
+                                //inventory.setProduct();
                                 if (initialSync || lastUpdatedAt == null) {
                                     newInventories.add(inventory);
                                 } else {

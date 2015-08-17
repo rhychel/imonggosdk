@@ -75,13 +75,14 @@ public class LoginActivity extends BaseLoginActivity {
                 // if User is Logged In
                 if (AccountTools.isLoggedIn(getHelper())) {
 
-                    if(!isSyncFinished()) { // TODO: Change this autoupdate
+                    if(!isSyncFinished()) { //
+                        Log.e(TAG, "Sync is not finished, unlinking account");
                         getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, true);
                         setLoggedIn(false);
                         setUnlinked(true);
                         unlinkAccount();
                     } else {
-
+                        Log.e(TAG, "Sync is finished, Owryt!");
                         setUnlinked(false);
                         getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, false);
                         // user is logged in set up data

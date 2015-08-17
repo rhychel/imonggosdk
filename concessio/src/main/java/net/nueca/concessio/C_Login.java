@@ -25,12 +25,12 @@ public class C_Login extends LoginActivity {
     @Override
     protected void initLoginEquipments() {
         super.initLoginEquipments();
-        setServer(Server.IRETAILCLOUD_COM);
+        setServer(Server.IRETAILCLOUD_NET);
 
         // set the Modules to download
         setModules(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(),
                 Table.TAX_SETTINGS.ordinal(), Table.PRODUCTS.ordinal(),
-                Table.UNITS.ordinal(), Table.INVENTORIES.ordinal(), Table.CUSTOMERS.ordinal());
+                Table.INVENTORIES.ordinal());
 
         SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true);
     }
