@@ -15,10 +15,14 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -117,7 +121,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     public Order generateOrder(Context context, int branchId) {
         Order.Builder order = new Order.Builder();
-        List<OrderLine> orderLines = new ArrayList<>();
+//        List<OrderLine> orderLines = new ArrayList<>();
         for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().get(i);
             Values value = selectedProductItem.getValues().get(0);
@@ -134,9 +138,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 orderLine.setUnitQuantity(Double.valueOf(value.getUnit_quantity()));
                 orderLine.setUnitRetailPrice(value.getUnit_retail_price());
             }
-            orderLines.add(orderLine);
+            order.addOrderLine(orderLine);
+//            orderLines.add(orderLine);
         }
-        order.order_lines(orderLines);
+//        order.order_lines(orderLines);
         order.order_type_code("stock_request");
         try {
             order.serving_branch_id(branchId);
@@ -147,5 +152,30 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return order.build();
     }
 
+    public Document generatePCount(Context context, int branchId) {
+        Document.Builder pcount = new Document.Builder();
+
+        for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
+            SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().get(i);
+            for(Values value : selectedProductItem.getValues()) {
+                DocumentLine.Builder builder = new DocumentLine.Builder()
+                        .line_no(value.getLine_no())
+                        .product_id(selectedProductItem.getProduct().getId())
+                        .quantity(Double.valueOf(value.getQuantity()));
+                if(value.getExtendedAttributes() != null)
+                        builder.extended_attributes(value.getExtendedAttributes().convertForDocumentLine());
+
+                pcount.addDocumentLine(builder.build());
+            }
+        }
+        pcount.document_type_code("physical_count");
+        try {
+//            pcount.target_branch_id(branchId);
+            pcount.generateReference(context, getSession().getDevice_id());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pcount.build();
+    }
 
 }

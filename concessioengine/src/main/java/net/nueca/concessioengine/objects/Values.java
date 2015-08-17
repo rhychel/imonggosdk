@@ -43,7 +43,7 @@ public class Values {
     private String unit_quantity = null, unit_name = null;
     private double unit_retail_price = 0.0, unit_content_quantity = 0.0;
     private String quantity = "1";
-    private ExtendedAttributes extendedAttributes;
+    private ExtendedAttributes extendedAttributes = null;
 
     public Values() { }
 

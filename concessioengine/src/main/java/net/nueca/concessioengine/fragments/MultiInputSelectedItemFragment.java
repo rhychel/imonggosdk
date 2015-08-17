@@ -111,8 +111,6 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
             }
         });
 
-//        rvProducts.setVisibility(View.GONE);
-
         return view;
     }
 

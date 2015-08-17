@@ -42,7 +42,7 @@ public class TestMultiInput extends ModuleActivity implements SetupActionBar {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                onBackPressed();
             }
         });
         getSupportActionBar().setDisplayShowTitleEnabled(true);
