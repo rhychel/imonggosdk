@@ -4,6 +4,7 @@ import android.content.Context;
 
 import net.nueca.imonggosdk.objects.Customer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,12 +12,17 @@ import java.util.List;
  */
 public abstract class BaseCustomersRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHolder> extends
         BaseRecyclerAdapter<T, Customer> {
-    public BaseCustomersRecyclerAdapter(Context context) {
-        super(context);
+
+    protected List<Customer> selectedCustomer = new ArrayList<>();
+    protected boolean isMultiSelect = false;
+
+    public List<Customer> getSelectedCustomers() {
+        return selectedCustomer;
     }
 
-    public BaseCustomersRecyclerAdapter(Context context, List<Customer> customers) {
+    public BaseCustomersRecyclerAdapter(Context context, List<Customer> customers, boolean isMultiSelect) {
         super(context);
         setList(customers);
+        this.isMultiSelect = isMultiSelect;
     }
 }

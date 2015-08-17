@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.fragments;
 
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +30,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
     private String searchKey;
 
     protected ListView lvCustomers;
+    protected RecyclerView rvCustomers;
     protected Toolbar tbActionBar;
     protected SetupActionBar setupActionBar;
 
@@ -97,11 +99,8 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
     protected AbsListView.OnScrollListener lvScrollListener = new AbsListView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
-            Log.e("SCROLLSTATE", scrollState + " " + AbsListView.OnScrollListener.SCROLL_STATE_IDLE + " " +
-                    AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL);
             switch(scrollState) {
                 case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                    Log.e("SCROLL IDLE","---");
                     if (listScrollListener != null)
                         listScrollListener.onScrollStopped();
                     break;
@@ -122,6 +121,28 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
                     prevLast = lastItem;
                 }
             }*/
+        }
+    };
+    protected RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView view, int scrollState) {
+            switch(scrollState) {
+                case RecyclerView.SCROLL_STATE_IDLE:
+                    Log.e("SCROLL IDLE","---");
+                    if (listScrollListener != null)
+                        listScrollListener.onScrollStopped();
+                    break;
+                case RecyclerView.SCROLL_STATE_DRAGGING:
+                    if (listScrollListener != null)
+                        listScrollListener.onScrolling();
+                    break;
+            }
+        }
+
+        @Override
+        public void onScrolled(RecyclerView view, int dx, int dy) {
+            super.onScrolled(view, dx, dy);
+
         }
     };
 }

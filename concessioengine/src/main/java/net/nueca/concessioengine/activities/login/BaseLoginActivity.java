@@ -749,7 +749,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected void doUnbindService() {
         if (isSyncServiceBinded()) {
             mBounded = false;
-            unbindService(getServiceConnection());
+            if(mBounded)
+                unbindService(getServiceConnection());
         }
     }
 

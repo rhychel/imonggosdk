@@ -1,12 +1,17 @@
 package net.nueca.concessio;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +19,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
@@ -55,6 +61,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     public SimpleCustomersFragment simpleCustomersFragment;
     public SearchViewEx mSearch;
     private Button btnSample;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,25 +69,33 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         setContentView(R.layout.sample_fragment);
 
         btnSample = (Button) findViewById(R.id.btnSample);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
         SwableTools.startSwable(this);
 
         btnSample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
+                /*try {
                     User user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).query().get(0);
                     SwableTools.sendTransaction(getHelper(), user.getHome_branch_id(), generateOrder(C_Module.this, user.getHome_branch_id()), OfflineDataType.SEND_ORDER);
                     ProductsAdapterHelper.getSelectedProductItems().clear();
                     simpleProductsFragment.refreshList();
                 } catch (SQLException | JSONException e) {
                     e.printStackTrace();
-                }
+                }*/
+                Log.e("BUTTON", simpleCustomersFragment.getSelectedCustomers().get(0).toString());
 
             }
         });
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("BUTTON", simpleCustomersFragment.getSelectedCustomers().get(0).toString());
+            }
+        });
 
-        simpleProductsFragment = new SimpleProductsFragment();
+        /*simpleProductsFragment = new SimpleProductsFragment();
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
         simpleProductsFragment.setProductCategories(getProductCategories(true));
@@ -92,8 +107,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
             @Override
             public void onScrollStopped() {
-                if (ProductsAdapterHelper.getSelectedProductItems().size() > 0)
-                    ViewCompat.animate(btnSample).translationY(0.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                ViewCompat.animate(btnSample).translationY(0.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
             }
         });
         simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
@@ -101,10 +115,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             public void whenItemsSelectedUpdated() {
                 if (ProductsAdapterHelper.getSelectedProductItems().size() > 0)
                     ViewCompat.animate(btnSample).translationY(0.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
-                else
-                    ViewCompat.animate(btnSample).translationY(1000.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                else {
+                    if (ProductsAdapterHelper.getSelectedProductItems().size() > 0)
+                        ViewCompat.animate(btnSample).translationY(1000.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                }
             }
-        });
+        });*/
 
         try {
             if(getHelper().getCustomers().queryForAll().size() == 0) {
@@ -121,6 +137,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                     customer.setCountry("Philippines");
                     customer.setZipcode("4400");
                     customer.setGender("M");
+                    if(((int)(Math.random()*100) % 2) == 0) {
+                        customer.setAlternate_code((int) (Math.random() * 100000000) + "");
+                        Log.e("Customer " + i, customer.getAlternate_code());
+                    }
                     customer.insertTo(getHelper());
                 }
             }
@@ -129,12 +149,40 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         }
 
         simpleCustomersFragment = new SimpleCustomersFragment();
+        simpleCustomersFragment.setMultiSelect(true);
         simpleCustomersFragment.setHelper(getHelper());
         simpleCustomersFragment.setSetupActionBar(this);
+        simpleCustomersFragment.setUseRecyclerView(true);
+        simpleCustomersFragment.setListScrollListener(new ListScrollListener() {
+            @Override
+            public void onScrolling() {
+                ViewCompat.animate(fab).translationY(1000.0f).setDuration(400)
+                        .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+            }
+
+            @Override
+            public void onScrollStopped() {
+                ViewCompat.animate(fab).translationY(0.0f).setDuration(400)
+                        .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+            }
+        });
+
+        simpleCustomersFragment.setColor(fetchAccentColor(this));
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.flContent, simpleCustomersFragment)
                 .commit();
+    }
+
+    private int fetchAccentColor(Context context) {
+        TypedValue typedValue = new TypedValue();
+
+        TypedArray a = context.obtainStyledAttributes(typedValue.data, new int[] { R.attr.colorAccent });
+        int color = a.getColor(0, 0);
+
+        a.recycle();
+
+        return color;
     }
 
     @Override
