@@ -81,8 +81,15 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
             brandsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, brandList);
             spBrands.setAdapter(brandsAdapter);
 
-            if(selectedProductItem.getValues().size() > 0)
-                spBrands.setSelection(brandList.indexOf(selectedProductItem.getValues().get(0).getExtendedAttributes().getBrand()));
+            // Check if there are existing values
+            if(selectedProductItem.getValues().size() > 0) {
+                if(isMultiValue) {
+                    if(valuePosition > -1) // check if you are editing a value from the list
+                        spBrands.setSelection(brandList.indexOf(selectedProductItem.getValues().get(valuePosition).getExtendedAttributes().getBrand()));
+                }
+                else
+                    spBrands.setSelection(brandList.indexOf(selectedProductItem.getValues().get(0).getExtendedAttributes().getBrand()));
+            }
         }
         if(hasDeliveryDate) {
             llDeliveryDate.setVisibility(View.VISIBLE);
@@ -94,13 +101,25 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
             deliveryDate = DateTimeTools.convertToDate(deliveryDate, "yyyy-M-d", "yyyy-MM-dd");
             btnDeliveryDate.setText(deliveryDate);
 
-            if(selectedProductItem.getValues().size() > 0)
-                btnDeliveryDate.setText(selectedProductItem.getValues().get(0).getExtendedAttributes().getDelivery_date());
+            if(selectedProductItem.getValues().size() > 0) {
+                if(isMultiValue) {
+                    if(valuePosition > -1)
+                        btnDeliveryDate.setText(selectedProductItem.getValues().get(valuePosition).getExtendedAttributes().getDelivery_date());
+                }
+                else
+                    btnDeliveryDate.setText(selectedProductItem.getValues().get(0).getExtendedAttributes().getDelivery_date());
+            }
         }
         if(hasUnits) {
             spUnits.setAdapter(unitsAdapter);
-            if(selectedProductItem.getValues().size() > 0)
-                spUnits.setSelection(unitList.indexOf(selectedProductItem.getValues().get(0).getUnit()));
+            if(selectedProductItem.getValues().size() > 0) {
+                if(isMultiValue) {
+                    if(valuePosition > -1)
+                        spUnits.setSelection(unitList.indexOf(selectedProductItem.getValues().get(valuePosition).getUnit()));
+                }
+                else
+                    spUnits.setSelection(unitList.indexOf(selectedProductItem.getValues().get(0).getUnit()));
+            }
         }
         else {
             spUnits.setVisibility(View.GONE);
@@ -108,7 +127,12 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
             tilQuantity.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
         }
 
-        etQuantity.setText(selectedProductItem.getQuantity());
+        if(isMultiValue) {
+            if(valuePosition > -1)
+                etQuantity.setText(selectedProductItem.getQuantity(valuePosition));
+        }
+        else
+            etQuantity.setText(selectedProductItem.getQuantity());
         npInput.addTextHolder(etQuantity, "etQuantity", false, 6, 2, false, null);
         npInput.getTextHolderWithTag("etQuantity").setEnableDot(selectedProductItem.getProduct().isAllow_decimal_quantities());
 
@@ -135,11 +159,21 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
         @Override
         public void onClick(View view) {
             String quantity = etQuantity.getText().toString().replace(",","");
-            if(quantity.equals("0") && !selectedProductItem.isMultiline())
-                selectedProductItem.removeAll();
+            if(quantity.equals("0") && !isMultiValue)
+                selectedProductItem.removeAll(); // TODO handle this
+            else if(quantity.equals("0") && isMultiValue) {
+                if(multiQuantityDialogListener != null)
+                    multiQuantityDialogListener.onSave(null);
+                dismiss();
+                return;
+            }
             else {
                 Unit unit = hasUnits ? ((Unit) spUnits.getSelectedItem()) : null;
                 Values values = new Values(unit, quantity);
+                if(valuePosition > -1) {
+                    values = selectedProductItem.getValues().get(valuePosition);
+                    values.setValue(quantity, unit);
+                }
                 if(hasBrand || hasDeliveryDate) {
                     ExtendedAttributes extendedAttributes = new ExtendedAttributes();
                     if (hasBrand)
@@ -148,7 +182,14 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                         extendedAttributes.setDelivery_date(btnDeliveryDate.getText().toString());
                     values.setExtendedAttributes(extendedAttributes);
                 }
-                selectedProductItem.addValues(values);
+                if(isMultiValue) {
+                    if (multiQuantityDialogListener != null)
+                        multiQuantityDialogListener.onSave(values);
+                    dismiss();
+                    return;
+                }
+                else
+                    selectedProductItem.addValues(values);
             }
 
             if(quantityDialogListener != null)

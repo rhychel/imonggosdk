@@ -19,6 +19,8 @@ public class ExtendedAttributes {
     }
 
     public String getBrand() {
+        if(brand.equals(""))
+            return "No Brand";
         return brand;
     }
 
