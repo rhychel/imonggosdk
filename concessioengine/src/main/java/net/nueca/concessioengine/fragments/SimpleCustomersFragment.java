@@ -24,12 +24,9 @@ import java.util.List;
  * Created by gama on 8/11/15.
  */
 public class SimpleCustomersFragment extends BaseCustomersFragment {
-    private SimpleCustomerListAdapter simpleCustomerListAdapter;
-    private SimpleCustomerRecyclerViewAdapter simpleCustomerRecyclerViewAdapter;
-
     private TextView tvNoCustomers;
     private boolean isMultiSelect = false;
-    private Integer color;
+    private Integer color, highlightColor;
     private boolean useRecyclerView = true;
 
     public void setMultiSelect(boolean isMultiSelect) {
@@ -57,13 +54,13 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
         if(useRecyclerView) {
             rvCustomers = (RecyclerView) view.findViewById(R.id.rvCustomers);
             simpleCustomerRecyclerViewAdapter = new SimpleCustomerRecyclerViewAdapter(getActivity(), getCustomers(),
-                    isMultiSelect, "#22000000");
+                    isMultiSelect, highlightColor);
 
             if (color != null) {
                 simpleCustomerRecyclerViewAdapter.setCircleColor(color);
                 tbActionBar.setBackgroundColor(color);
             }
-            simpleCustomerRecyclerViewAdapter.initializeRecyclerView(getActivity(),rvCustomers);
+            simpleCustomerRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvCustomers);
             rvCustomers.setAdapter(simpleCustomerRecyclerViewAdapter);
             rvCustomers.addOnScrollListener(rvScrollListener);
 
@@ -72,7 +69,7 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
         else {
             lvCustomers = (ListView) view.findViewById(R.id.lvCustomers);
             simpleCustomerListAdapter = new SimpleCustomerListAdapter(getActivity(), getCustomers(), isMultiSelect,
-                    "#22000000");
+                    highlightColor);
 
             if (color != null) {
                 simpleCustomerListAdapter.setCircleColor(color);
@@ -94,10 +91,22 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
         tvNoCustomers.setVisibility(show ? View.GONE : View.VISIBLE);
         tvNoCustomers.setText(msg);
 
-        if(useRecyclerView)
+        if(useRecyclerView) {
             rvCustomers.setVisibility(show ? View.VISIBLE : View.GONE);
-        else
+            rvCustomers.smoothScrollToPosition(0);
+        }
+        else {
             lvCustomers.setVisibility(show ? View.VISIBLE : View.GONE);
+            lvCustomers.smoothScrollToPosition(0);
+        }
+    }
+
+    @Override
+    protected void whenListEndReached(List<Customer> customers) {
+        if(useRecyclerView)
+            simpleCustomerRecyclerViewAdapter.addAll(customers);
+        else
+            simpleCustomerListAdapter.addAll(customers);
     }
 
     public void refreshList() {
@@ -117,19 +126,5 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
         else
             toggleNoItems("No results for \"" + searchKey + "\"" + ".",
                     simpleCustomerListAdapter.updateList(getCustomers()));
-    }
-
-    public SimpleCustomerListAdapter getListAdapter() {
-        return simpleCustomerListAdapter;
-    }
-    public SimpleCustomerRecyclerViewAdapter getRecyclerAdapter() {
-        return simpleCustomerRecyclerViewAdapter;
-    }
-
-    public List<Customer> getSelectedCustomers() {
-        if(useRecyclerView)
-            return simpleCustomerRecyclerViewAdapter.getSelectedCustomers();
-        else
-            return simpleCustomerListAdapter.getSelectedCustomers();
     }
 }

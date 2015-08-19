@@ -27,6 +27,7 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.ListTools;
 import net.nueca.imonggosdk.tools.NotificationTools;
 
 import org.json.JSONException;
@@ -284,18 +285,7 @@ public class SwableTools {
     }
 
     public static List partition(int nthPartition, List list, int size) {
-        if(nthPartition < 0)
-            throw new IllegalArgumentException("nthPartition can't be negative");
-        if(size < 0)
-            throw new IllegalArgumentException("size can't be negative");
-
-        if(nthPartition > list.size()/size)
-            throw new IndexOutOfBoundsException("can't create partition " + nthPartition + " of " + list.size()/size +
-                    " allowed partitions for list with size " + list.size());
-
-        int start = nthPartition * size;
-        int end = Math.min(start + size, list.size());
-        return list.subList(start, end);
+        return ListTools.partition(nthPartition, list, size);
     }
 
     /**

@@ -25,17 +25,24 @@ import java.util.List;
  */
 public class SimpleCustomerRecyclerViewAdapter extends
         BaseCustomersRecyclerAdapter<SimpleCustomerRecyclerViewAdapter.ListViewHolder> {
-    private String highlightColor;
+    private int highlightColor;
     private int circleColor = Color.WHITE;
 
     public SimpleCustomerRecyclerViewAdapter(Context context, List<Customer> customers, boolean isMultiSelect,
-                                             String highlightColor) {
+                                             Integer highlightColor) {
         super(context, customers, isMultiSelect);
-        this.highlightColor = highlightColor;
+        if(highlightColor != null)
+            this.highlightColor = highlightColor;
+        else
+            this.highlightColor = Color.parseColor("#22000000");
     }
 
     public void setCircleColor(int color) {
         circleColor = color;
+        notifyDataSetChanged();
+    }
+    public void setHighlightColor(int color) {
+        highlightColor = color;
         notifyDataSetChanged();
     }
 
@@ -85,7 +92,7 @@ public class SimpleCustomerRecyclerViewAdapter extends
 
         Log.e("SelectedCustomer", selectedCustomer.size()+"");
         if(selectedCustomer.contains(customer))
-            listViewHolder.llCustomerItem.setBackgroundColor(Color.parseColor(highlightColor));
+            listViewHolder.llCustomerItem.setBackgroundColor(highlightColor);
         else
             listViewHolder.llCustomerItem.setBackgroundColor(Color.TRANSPARENT);
     }

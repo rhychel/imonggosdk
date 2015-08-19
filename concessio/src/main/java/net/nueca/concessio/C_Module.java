@@ -123,10 +123,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         });*/
 
         try {
-            if(getHelper().getCustomers().queryForAll().size() == 0) {
-                String fname[] = {"John","Pepe","Sid","Mark","Jimmy","Zed","Paul","Charles","Markus"};
-                String lname[] = {"Doe","Smith","Meier","Wane","Turner","Wong","Reed","Darwin","Snow"};
-                for (int i = 1; i <= 100; i++) {
+            if(getHelper().getCustomers().queryForAll().size() <= 0) {
+                Log.e("CUSTOMERS", " ------------------------- adding");
+                String fname[] = {"John","Pepe","Sid","Mark","Jimmy","Zed","Paul","Charles","Markus","Albert",
+                    "Peter","Donald"};
+                String lname[] = {"Doe","Smith","Meier","Wane","Turner","Wong","Reed","Darwin","Snow","Einstein",
+                    "Griffin","Trump"};
+                for (int i = 1; i <= 1000; i++) {
                     Customer customer = new Customer();
                     customer.setId(i);
                     customer.setFirst_name(fname[((int) (Math.random() * 100 % fname.length))]);

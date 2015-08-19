@@ -11,10 +11,14 @@ import android.widget.ListView;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import net.nueca.concessioengine.adapters.SimpleCustomerListAdapter;
+import net.nueca.concessioengine.adapters.SimpleCustomerRecyclerViewAdapter;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.tools.ListTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -26,6 +30,11 @@ import java.util.List;
 public abstract class BaseCustomersFragment extends ImonggoFragment {
     protected static final long LIMIT = 100l;
     protected long offset = 0l;
+    private int prevLast = -1;
+    protected boolean useRecyclerView = true;
+
+    protected SimpleCustomerListAdapter simpleCustomerListAdapter;
+    protected SimpleCustomerRecyclerViewAdapter simpleCustomerRecyclerViewAdapter;
 
     private String searchKey;
 
@@ -45,22 +54,25 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
 
         try {
             Log.e("CUSTOMERS",getHelper().getCustomers().queryForAll().size()+"");
+            Where<Customer, Integer> whereCustomers = getHelper().getCustomers().queryBuilder().where();
+            whereCustomers.isNull("status");
             if(hasSearchKey) {
-                Where<Customer, Integer> whereCustomers = getHelper().getCustomers().queryBuilder().where();
+                whereCustomers.and();
                 whereCustomers.like("name", "%" + searchKey + "%");
                 whereCustomers.or().like("alternate_code", "%" + searchKey + "%");
-
-                QueryBuilder<Customer, Integer> resultCustomers = getHelper().getCustomers().queryBuilder()
-                        .orderByRaw("name COLLATE NOCASE ASC").limit(LIMIT).offset(offset);
-                resultCustomers.setWhere(whereCustomers);
-
-                customers = resultCustomers.query();
             }
-            else
-                customers = getHelper().getCustomers().queryForAll();
+
+            QueryBuilder<Customer, Integer> resultCustomers = getHelper().getCustomers().queryBuilder()
+                    .orderByRaw("name COLLATE NOCASE ASC").limit(LIMIT).offset(offset);
+            resultCustomers.setWhere(whereCustomers);
+
+            customers = resultCustomers.query();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        // TODO: Paging of customers using ListTools.partition method
+        /** customers = ListTools.partition(PAGE, customers, SIZE); **/
 
         return customers;
     }
@@ -113,16 +125,19 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            /*int lastItem = firstVisibleItem + visibleItemCount;
+            int lastItem = firstVisibleItem + visibleItemCount;
             if (lastItem == totalItemCount) {
                 if (prevLast != lastItem) {
                     offset += LIMIT;
-                    whenListEndReached(getProducts());
+                    whenListEndReached(getCustomers());
                     prevLast = lastItem;
                 }
-            }*/
+            }
         }
     };
+
+    protected abstract void whenListEndReached(List<Customer> customers);
+
     protected RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView view, int scrollState) {
@@ -140,9 +155,37 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
         }
 
         @Override
-        public void onScrolled(RecyclerView view, int dx, int dy) {
-            super.onScrolled(view, dx, dy);
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
 
+            int visibleItemCount = rvCustomers.getChildCount();
+            int totalItemCount = simpleCustomerRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
+            int firstVisibleItem = simpleCustomerRecyclerViewAdapter.getLinearLayoutManager()
+                    .findFirstVisibleItemPosition();
+
+            int lastItem = firstVisibleItem + visibleItemCount;
+
+            if(lastItem == totalItemCount) {
+                if(prevLast != lastItem) {
+                    offset += LIMIT;
+                    whenListEndReached(getCustomers());
+                    prevLast = lastItem;
+                }
+            }
         }
     };
+
+    public SimpleCustomerListAdapter getListAdapter() {
+        return simpleCustomerListAdapter;
+    }
+    public SimpleCustomerRecyclerViewAdapter getRecyclerAdapter() {
+        return simpleCustomerRecyclerViewAdapter;
+    }
+
+    public List<Customer> getSelectedCustomers() {
+        if(useRecyclerView)
+            return simpleCustomerRecyclerViewAdapter.getSelectedCustomers();
+        else
+            return simpleCustomerListAdapter.getSelectedCustomers();
+    }
 }

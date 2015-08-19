@@ -25,13 +25,16 @@ import java.util.List;
  * imonggosdk (c)2015
  */
 public class SimpleCustomerListAdapter extends BaseCustomersAdapter {
-    private String highlightColor;
+    private int highlightColor;
     private int circleColor = Color.WHITE;
 
-    public SimpleCustomerListAdapter(Context context, List<Customer> objects, boolean isMultiSelect, String
+    public SimpleCustomerListAdapter(Context context, List<Customer> objects, boolean isMultiSelect, Integer
                                      highlightColor) {
         super(context, R.layout.simple_customer_listitem, objects, isMultiSelect);
-        this.highlightColor = highlightColor;
+        if(highlightColor != null)
+            this.highlightColor = highlightColor;
+        else
+            this.highlightColor = Color.parseColor("#22000000");
     }
 
     public void setCircleColor(int color) {
@@ -91,7 +94,7 @@ public class SimpleCustomerListAdapter extends BaseCustomersAdapter {
         bgShape.setColorFilter(circleColor, PorterDuff.Mode.SRC);
 
         if(selectedCustomer.contains(customer))
-            viewHolder.llCustomerItem.setBackgroundColor(Color.parseColor(highlightColor));
+            viewHolder.llCustomerItem.setBackgroundColor(highlightColor);
         else
             viewHolder.llCustomerItem.setBackgroundColor(Color.TRANSPARENT);
 
