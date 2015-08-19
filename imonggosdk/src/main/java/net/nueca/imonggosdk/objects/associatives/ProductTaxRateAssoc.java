@@ -92,4 +92,13 @@ public class ProductTaxRateAssoc {
         else if(databaseOperation == DatabaseOperation.DELETE)
             deleteTo(dbHelper);
     }
+
+    @Override
+    public String toString() {
+        return "ProductTaxRateAssoc{" +
+                "id=" + id +
+                ", product=" + product.getName() +
+                ", taxRate=" + taxRate.getName() +
+                '}';
+    }
 }

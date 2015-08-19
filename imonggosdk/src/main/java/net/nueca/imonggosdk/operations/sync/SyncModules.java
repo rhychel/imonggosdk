@@ -36,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -283,28 +284,67 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         JSONArray taxRateArray = jsonObject.getJSONArray("tax_rates");
                         List<ProductTaxRateAssoc> productTaxRateAssocList = getHelper().getProductTaxRateAssocs().queryForAll();
 
+                        List<TaxRate> oldTaxRateList = getHelper().getTaxRates().queryForAll();
+                        List<TaxRate> newTaxRateList = new ArrayList<>();
+                        List<TaxRate> deletedTaxRateList = new ArrayList<>();
+
                         if (taxRateArray.length() == 0) {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                             syncNext();
                             return;
                         } else {
 
-                            getHelper().dbOperations(null, Table.TAX_RATES, DatabaseOperation.DELETE_ALL);
-                            Log.e(TAG, "Tax rate array has values.. ");
+                            Log.e(TAG, "List of New Tax Rates");
                             for (int x = 0; x < taxRateArray.length(); x++) {
                                 JSONObject jsonObject2 = taxRateArray.getJSONObject(x);
                                 TaxRate taxRate = gson.fromJson(jsonObject2.toString(), TaxRate.class);
 
-                                Log.e(TAG, "current tax rate: " + taxRate.getName());
+                                Log.e(TAG, taxRate.getName());
 
                                 newTaxRates.add(taxRate);
+                                newTaxRateList.add(taxRate);
                             }
+
+                            if (oldTaxRateList.size() != 0) {
+                                Log.e(TAG, "Matching New Tax Rates to Old Tax Rates");
+                                for (TaxRate oldTaxRate : oldTaxRateList) {
+
+                                    int count = 0;
+                                    for (int i = 0; i < newTaxRateList.size(); i++) {
+
+                                        TaxRate newTaxRate = newTaxRateList.get(i);
+
+                                        if (oldTaxRate.getId() == newTaxRate.getId()) {
+                                            count++;
+                                            Log.e(TAG, oldTaxRate.getName() + " matched.");
+                                        }
+                                    }
+
+                                    if (count == 0) {
+                                        Log.e(TAG, oldTaxRate.getName() + " don't matched the new tax rates, adding it to be deleted.");
+                                        deletedTaxRateList.add(oldTaxRate);
+                                    }
+                                }
+
+                                if (deletedTaxRateList.size() == 0) {
+                                    Log.e(TAG, "There's no deleted tax rates");
+                                } else {
+                                    Log.e(TAG, "There's " + deletedTaxRateList.size() + " to be deleted tax rates");
+
+                                    for (TaxRate taxRate : deletedTaxRateList) {
+                                        Log.e(TAG, "Deleting " + taxRate.getName());
+                                        getHelper().getTaxRates().deleteById(taxRate.getId());
+                                    }
+
+                                }
+                            }
+
+                            getHelper().dbOperations(null, Table.TAX_RATES, DatabaseOperation.DELETE_ALL);
                         }
+
 
                         newTaxRates.doOperation();
 
-
-                        List<TaxRate> taxRateList = getHelper().getTaxRates().queryForAll();
 
                         if (productTaxRateAssocList.size() == 0) {
                             Log.e(TAG, "Product Tax Rate is 0");
@@ -312,22 +352,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             Log.e(TAG, "Product Tax Rates has values");
                         }
 
-                        if (taxRateList.size() == 0) {
-                            Log.e(TAG, "Tax Rate is 0");
-                        } else {
-                            Log.e(TAG, "Tax Rates has values");
-                        }
+                        for (int i = 0; i < productTaxRateAssocList.size(); i++) {
 
-                        for (int i = 0; i < taxRateList.size(); i++) {
-                            if (productTaxRateAssocList.size() != 0) {
-                                Log.e(TAG, taxRateList.get(i).getId() + " " + productTaxRateAssocList.get(i).getTaxRate().getId());
-                                if (taxRateList.get(i).getId() == productTaxRateAssocList.get(i).getTaxRate().getId()) {
-
+                            for (int y = 0; y < deletedTaxRateList.size(); y++) {
+                                if (productTaxRateAssocList.get(i).getTaxRate().getId() == deletedTaxRateList.get(y).getId()) {
+                                    Log.e(TAG, productTaxRateAssocList.get(i).getTaxRate().getName() + " matched! deleting it.");
+                                    getHelper().getProductTaxRateAssocs().deleteById(productTaxRateAssocList.get(i).getId());
                                 }
                             }
                         }
-
-                        DeleteBuilder<ProductTaxRateAssoc, Integer> deleteBuilder = getHelper().getProductTaxRateAssocs().deleteBuilder();
 
 
                         mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
@@ -358,24 +391,16 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 User user = gson.fromJson(jsonObject.toString(), User.class);
                                 if (initialSync || lastUpdatedAt == null) {
-                                    if (initialSync)
-                                        Log.e(TAG, "initial sync users");
-                                    if (lastUpdatedAt == null)
-                                        Log.e(TAG, "last Updated At users ");
-
                                     newUsers.add(user);
                                 } else {
                                     // check if the user tables exist in the database
                                     if (isExisting(user, Table.USERS)) {
                                         if (user.getStatus() == null) {
-                                            Log.e(TAG, "adding user entry to be updated");
                                             updateUsers.add(user);
-
                                             if (user.getId() == getSession().getUser().getId()) {
                                                 Log.e(TAG, "Updating sessions user from " + getSession().getUser().getName() + " to " + user.getName());
                                             }
                                         } else {
-                                            Log.e(TAG, "adding user entry to be deleted ");
                                             deleteUsers.add(user);
                                         }
                                     } else {  // if not then add it
@@ -415,8 +440,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
                             BatchList<ProductTag> productTags = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<ProductTaxRateAssoc> newProductTaxRates = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                            BatchList<ProductTaxRateAssoc> updateProductTaxRates = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                            BatchList<ProductTaxRateAssoc> deleteProductTaxRates = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
 
                             for (int i = 0; i < size; i++) {
@@ -442,52 +465,74 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     }
                                 }
 
+                                Log.e(TAG, "checking tax rates...");
+
                                 int tax_branch_id;
                                 int tax_rate_id;
                                 if (jsonObject.has("tax_rates")) {
-                                    Log.e(TAG, "Product have " +
-                                            "0tax rate");
+
+                                    Log.e(TAG, "deleting product tax rates");
+                                    List<ProductTaxRateAssoc> pTaxRateList = getHelper().getProductTaxRateAssocs().queryForAll();
+
+                                    // Deleting Product's ProducTaxRate Entry
+                                    for (ProductTaxRateAssoc pTaxRate : pTaxRateList) {
+                                        if (product.getId() == pTaxRate.getProduct().getId()) {
+                                            Log.e(TAG, "Deleting " + pTaxRate.getProduct().getName() + " Tax Rate is " + pTaxRate.getTaxRate().getName());
+                                            getHelper().getProductTaxRateAssocs().deleteById(pTaxRate.getId());
+                                        }
+                                    }
+
                                     JSONArray taxRatesArray = jsonObject.getJSONArray("tax_rates");
                                     int taxRateSize = taxRatesArray.length();
                                     for (int x = 0; x < taxRateSize; x++) {
                                         JSONObject jsonTaxRateObject = taxRatesArray.getJSONObject(x);
 
                                         tax_rate_id = jsonTaxRateObject.getInt("id");
+
                                         if (!jsonTaxRateObject.getString("branch_id").equals("null")) {
                                             tax_branch_id = jsonTaxRateObject.getInt("branch_id");
                                         } else {
                                             tax_branch_id = 0;
                                         }
 
+                                        ProductTaxRateAssoc productTaxRate;
+                                        TaxRate current_taxRate = getHelper().getTaxRates().queryForId(tax_rate_id);
+
                                         if (isExisting(tax_rate_id, Table.TAX_RATES)) {
                                             // get the tax rate from database
-                                            TaxRate current_taxRate = getHelper().getTaxRates().queryForId(tax_rate_id);
 
                                             Log.e(TAG, "Product " + product.getName() + " tax is " + current_taxRate.getName());
 
                                             current_taxRate.setUtc_created_at(jsonTaxRateObject.getString("utc_created_at")); // Created At
                                             current_taxRate.setUtc_updated_at(jsonTaxRateObject.getString("utc_updated_at")); // Updated At
+                                            Log.e(TAG, "tax branch id = " + tax_branch_id + ". current branch id " + current_branch_id);
 
-                                            if (tax_branch_id != 0) {
-                                                if (tax_branch_id == current_branch_id) {
-                                                    current_taxRate.setBranch(current_branch);
-                                                    ProductTaxRateAssoc productTaxRate = new ProductTaxRateAssoc(product, current_taxRate);
 
-                                                    if (isExisting(productTaxRate, Table.PRODUCT_TAX_RATES)) {
-                                                        updateProductTaxRates.add(productTaxRate);
-                                                    } else {
+                                            if (!jsonObject.getBoolean("tax_exempt")) {
+                                                Log.e(TAG, "Product is not tax exempted");
+                                                if (tax_branch_id != 0) {
+                                                    // check if the tax rate is for you branch
+                                                    if (tax_branch_id == current_branch_id) {
+                                                        Log.e(TAG, "The product tax rate is for your branch inserting it to database...");
+                                                        current_taxRate.setBranch(current_branch);
+                                                        productTaxRate = new ProductTaxRateAssoc(product, current_taxRate);
                                                         newProductTaxRates.add(productTaxRate);
+                                                    } else {
+                                                        Log.e(TAG, "The product tax rate is not for your branch. skipping...");
                                                     }
                                                 } else {
-                                                    Log.e(TAG, "The product tax rate is not for your branch");
+                                                    productTaxRate = new ProductTaxRateAssoc(product, current_taxRate);
+                                                    Log.e(TAG, "new product tax rate, inserting it to database...");
+                                                    newProductTaxRates.add(productTaxRate);
                                                 }
+                                            } else {
+                                                Log.e(TAG, "Product is tax excempted");
                                             }
                                         }
                                     }
                                 } else {
                                     Log.e(TAG, "Product don't have tax rate");
                                 }
-
 
                                 if (jsonObject.has("branch_prices")) {
                                     JSONArray branchPricesArray = jsonObject.getJSONArray("branch_prices");
@@ -523,8 +568,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         productTags.add(productTag);
                                     }
                                 }
-
-
                             }
 
                             newProductTaxRates.doOperation();

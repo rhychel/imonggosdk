@@ -2,6 +2,7 @@ package net.nueca.concessio;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -9,9 +10,11 @@ import android.widget.ListView;
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
+import java.util.List;
 
 
 /**
@@ -37,20 +40,15 @@ public class C_Module extends ModuleActivity {
             e.printStackTrace();
         }
 
-/*        try {
+       try {
             List<ProductTaxRateAssoc> productTaxRateAssocList = getHelper().getProductTaxRateAssocs().queryForAll();
-            List<TaxRate> taxRateList = getHelper().getTaxRates().queryForAll();
 
-            for(ProductTaxRateAssoc productTaxRateAssoc : productTaxRateAssocList) {
-                Log.e(TAG, "Product: " + productTaxRateAssoc.getProduct().getName() + " TaxRate: " + productTaxRateAssoc.getTaxRate().getName());
-            }
+           Log.e(TAG, "size: " + productTaxRateAssocList.size() + " " + productTaxRateAssocList.toString() + "");
 
-            for(TaxRate taxRate : taxRateList) {
-                Log.e(TAG, "Tax Rates: " + taxRate.getName());
-            }
+
         } catch (SQLException e) {
             e.printStackTrace();
-        }*/
+        }
 
 
     }
