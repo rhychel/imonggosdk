@@ -4,29 +4,53 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.j256.ormlite.field.DatabaseField;
+
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Created by gama on 7/20/15.
  */
-public class DocumentLine {
-    protected int line_no;
-    protected int product_id;
-    protected double quantity;
-    protected ExtendedAttributes extended_attributes;
-    protected String discount_text;
+public class DocumentLine extends BaseTable2 {
 
+    @DatabaseField
+    protected int line_no;
+    @DatabaseField
+    protected int product_id;
+    @DatabaseField
+    protected double quantity;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
+    protected Document document;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extended_attributes")
+    protected ExtendedAttributes extended_attributes;
+
+    @DatabaseField
+    protected String discount_text;
+    @DatabaseField
     protected Double price;
+    @DatabaseField
     protected Double retail_price;
+    @DatabaseField
     protected Integer unit_id;
+    @DatabaseField
     protected Double unit_content_quantity;
+    @DatabaseField
     protected String unit_name;
+    @DatabaseField
     protected Double unit_quantity;
+    @DatabaseField
     protected Double unit_retail_price;
 
     public DocumentLine(Builder builder) {
@@ -140,9 +164,44 @@ public class DocumentLine {
         this.unit_retail_price = unit_retail_price;
     }
 
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
+
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(this));
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static class Builder {

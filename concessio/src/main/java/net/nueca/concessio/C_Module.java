@@ -23,6 +23,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
+
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.BaseProductsFragment;
@@ -36,13 +38,6 @@ import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Customer;
-import net.nueca.imonggosdk.objects.OfflineData;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.User;
-import net.nueca.imonggosdk.objects.order.Order;
-import net.nueca.imonggosdk.objects.order.OrderLine;
-import net.nueca.imonggosdk.swable.ImonggoSwable;
-import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 

@@ -48,7 +48,7 @@ public abstract class BaseTransaction {
         return new JSONObject(gson.toJson(this));
     }
 
-    public static class Builder <T extends Builder> {
+    protected static class Builder <T extends Builder> {
         private String reference = "";
 
         public Builder() {}

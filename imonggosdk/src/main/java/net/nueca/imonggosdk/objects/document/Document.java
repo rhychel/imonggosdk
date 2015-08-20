@@ -1,30 +1,45 @@
 package net.nueca.imonggosdk.objects.document;
 
-import android.content.Context;
-
 import com.google.gson.Gson;
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
-import net.nueca.imonggosdk.objects.base.BaseTransaction;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
 import net.nueca.imonggosdk.swable.SwableTools;
-import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by gama on 7/20/15.
  */
-public class Document extends BaseTransaction {
+public class Document extends BaseTransactionDB {
     public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 2;
 
+    @DatabaseField
     protected String remark;
+
+    @DatabaseField
     protected String document_type_code;
+
     protected List<DocumentLine> document_lines;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<DocumentLine> document_lines_fc;
+
+    @DatabaseField
     protected Integer target_branch_id;
+
+    @DatabaseField
     protected String document_purpose_name;
 
     public Document(Builder builder) {
@@ -100,7 +115,34 @@ public class Document extends BaseTransaction {
         return SwableTools.computePagedRequestCount(document_lines.size(), MAX_DOCUMENTLINES_PER_PAGE);
     }
 
-    public static class Builder extends BaseTransaction.Builder<Builder> {
+    @Override
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static class Builder extends BaseTransactionDB.Builder {
         protected String remark;
         protected String document_type_code;
         protected List<DocumentLine> document_lines;
