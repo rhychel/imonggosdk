@@ -271,10 +271,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                 mModulesToDownload.add("Documents");
                                 break;
                             case DOCUMENT_TYPES:
-                                mModulesToDownload.add("Doc Type");
+                                mModulesToDownload.add("Document Types");
                                 break;
                             case DOCUMENT_PURPOSES:
-                                mModulesToDownload.add("Doc Purposes");
+                                mModulesToDownload.add("Document Purposes");
                                 break;
                             default:
                                 Log.e(TAG, "You have added unsupported module");
@@ -305,6 +305,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             mModulesToDownload.add("Units");
             mModulesToDownload.add("Documents");
             mModulesToDownload.add("Document Types");
+            mModulesToDownload.add("Document Purposes");
         }
     }
 
@@ -833,7 +834,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         currentTable = "Document Types";
                         break;
                     case DOCUMENT_PURPOSES:
-                        currentTable = "Document Types";
+                        currentTable = "Document Purposes";
                         break;
                     case UNITS:
                         currentTable = "Units";
