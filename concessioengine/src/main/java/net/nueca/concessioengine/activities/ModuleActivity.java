@@ -13,6 +13,7 @@ import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
@@ -152,10 +153,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     }
 
     public Document generateDocument(Context context) {
-        return generateDocument(context, -1, "physical_count");
+        return generateDocument(context, -1, DocumentTypeCode.PHYSICAL_COUNT);
     }
 
-    public Document generateDocument(Context context, int targetBranchId, String documentTypeCode) {
+    public Document generateDocument(Context context, int targetBranchId, DocumentTypeCode documentTypeCode) {
         Document.Builder pcount = new Document.Builder();
         for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().get(i);
