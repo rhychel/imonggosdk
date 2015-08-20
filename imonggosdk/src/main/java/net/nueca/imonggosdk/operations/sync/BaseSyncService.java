@@ -30,6 +30,8 @@ import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.document.DocumentType;
 
 import java.sql.SQLException;
 
@@ -48,8 +50,6 @@ public abstract class BaseSyncService extends ImonggoService {
     protected SyncModulesListener mSyncModulesListener = null;
     protected VolleyRequestListener mVolleyRequestListener = null;
 
-    protected Table mCurrentTableSyncing;
-    protected Table[] mModulesToSync;
     protected Server mServer;
 
     protected int page = 1;
@@ -59,9 +59,16 @@ public abstract class BaseSyncService extends ImonggoService {
 
     protected LastUpdatedAt lastUpdatedAt;
     protected LastUpdatedAt newLastUpdatedAt;
+    protected String from = "", to = "";
     protected Gson gson = new GsonBuilder().serializeNulls().create();
 
+    protected Table mCurrentTableSyncing;
+
+    protected Table[] mModulesToSync;
+    protected int[] branches;
+    protected int branchIndex = 0;
     protected int mModulesIndex = 0;
+
     protected boolean syncAllModules;
     protected boolean initialSync;
 
@@ -195,6 +202,14 @@ public abstract class BaseSyncService extends ImonggoService {
             case PRODUCT_TAX_RATES: {
                 ProductTaxRateAssoc productTaxRateAssoc = (ProductTaxRateAssoc) o;
                 return getHelper().getProductTaxRateAssocs().queryBuilder().where().eq("id", productTaxRateAssoc.getId()).queryForFirst() != null;
+            }
+            case DOCUMENT_PURPOSES: {
+                DocumentPurpose documentPurpose= (DocumentPurpose) o;
+                return getHelper().getDocumentPurposes().queryBuilder().where().eq("id", documentPurpose.getId()).queryForFirst() != null;
+            }
+            case DOCUMENT_TYPES: {
+                DocumentType documentType= (DocumentType) o;
+                return getHelper().getDocumentTypes().queryBuilder().where().eq("id", documentType.getId()).queryForFirst() != null;
             }
         }
         return false;

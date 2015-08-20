@@ -54,6 +54,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(tableSyncing, String.valueOf(branches[branchIndex])));
             else
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(tableSyncing));
+
             lastUpdatedAt = getHelper().getLastUpdatedAts().queryForFirst(queryBuilder.prepare());
 
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
