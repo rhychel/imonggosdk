@@ -271,7 +271,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                 mModulesToDownload.add("Documents");
                                 break;
                             case DOCUMENT_TYPES:
-                                mModulesToDownload.add("Doc Types");
+                                mModulesToDownload.add("Doc Type");
                                 break;
                             case DOCUMENT_PURPOSES:
                                 mModulesToDownload.add("Doc Purposes");
@@ -293,8 +293,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     Table.CUSTOMERS.ordinal(),
                     Table.UNITS.ordinal(),
                     Table.DOCUMENTS.ordinal(),
-                    Table.DOCUMENT_TYPES.ordinal(),
-                    Table.DOCUMENT_PURPOSES.ordinal()
+                    Table.DOCUMENT_TYPES.ordinal()
             };
 
             mModulesToDownload.add("Users");
@@ -305,8 +304,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             mModulesToDownload.add("Customers");
             mModulesToDownload.add("Units");
             mModulesToDownload.add("Documents");
-            mModulesToDownload.add("Doc Types");
-            mModulesToDownload.add("Doc Purposes");
+            mModulesToDownload.add("Document Types");
         }
     }
 
@@ -832,10 +830,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         currentTable = "Documents";
                         break;
                     case DOCUMENT_TYPES:
-                        currentTable = "Doc Types";
+                        currentTable = "Document Types";
                         break;
                     case DOCUMENT_PURPOSES:
-                        currentTable = "Doc Purposes";
+                        currentTable = "Document Types";
                         break;
                     case UNITS:
                         currentTable = "Units";

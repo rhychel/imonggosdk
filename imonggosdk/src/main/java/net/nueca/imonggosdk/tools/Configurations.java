@@ -75,13 +75,12 @@ public class Configurations {
             put(Table.DOCUMENTS, "documents.json");
             put(Table.DOCUMENT_TYPES, "document_types.json");
             put(Table.DOCUMENT_PURPOSES, "document_purposes.json");
-
 			put(Table.INVOICES, "invoices.json");
 			put(Table.DOCUMENTS, "documents.json");
             put(Table.ORDERS, "orders.json");
-			/*put(Modules.CONCESSIO_SETTINGS, "application_settings/concesio.json");
-			put(Modules.POS_DEVICES, "pos_devices.json");
-			put(Modules.SALES_PROMOTIONS, "sales_promotions.json");*/
+            /*put(Modules.CONCESSIO_SETTINGS, "application_settings/concesio.json");
+            put(Modules.POS_DEVICES, "pos_devices.json");
+            put(Modules.SALES_PROMOTIONS, "sales_promotions.json");*/
 
         }
     };
@@ -91,17 +90,25 @@ public class Configurations {
         private static final long serialVersionUID = 9136022492409598128L;
 
         {
-            put(Table.BRANCHES, "branches");
-            put(Table.USERS, "users");
-            put(Table.BRANCH_USERS, "users");
-            put(Table.CUSTOMERS, "customers");
-            put(Table.UNITS, "units");
-            put(Table.TAX_SETTINGS, "tax_settings");
-            put(Table.PRODUCTS, "products");
-            put(Table.INVENTORIES, "inventories");
-            put(Table.SETTINGS, "settings");
-            put(Table.TOKENS, "tokens");
-            put(Table.POS_DEVICES, "pos_devices");
+            put(Table.BRANCHES, "branches.json");
+            put(Table.USERS, "users.json");
+            put(Table.BRANCH_USERS, "branches.json");
+            put(Table.CUSTOMERS, "customers.json");
+            put(Table.UNITS, "units.json");
+            put(Table.TAX_SETTINGS, "tax_settings.json");
+            put(Table.PRODUCTS, "products.json");
+            put(Table.INVENTORIES, "inventories.json");
+            put(Table.SETTINGS, "settings.json");
+            put(Table.TOKENS, "tokens.json");
+            put(Table.POS_DEVICES, "pos_devices.json");
+            put(Table.INVOICES, "invoices.json");
+            put(Table.DOCUMENTS, "documents.json");
+            put(Table.DOCUMENT_TYPES, "document_types.json");
+            put(Table.DOCUMENT_PURPOSES, "document_purposes.json");
+            put(Table.ORDERS, "orders.json");
+            /*put(Modules.CONCESSIO_SETTINGS, "application_settings/concesio.json");
+            put(Modules.POS_DEVICES, "pos_devices.json");
+            put(Modules.SALES_PROMOTIONS, "sales_promotions.json");*/
 
             put(Table.INVOICES, "invoices");
             put(Table.DOCUMENTS, "documents");
