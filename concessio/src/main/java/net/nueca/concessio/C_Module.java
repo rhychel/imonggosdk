@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
@@ -171,6 +172,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         });
 
         simpleCustomersFragment.setColor(fetchAccentColor(this));
+        simpleCustomersFragment.setHighlightColor(Color.parseColor("#22ffaa00"));
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.flContent, simpleCustomersFragment)

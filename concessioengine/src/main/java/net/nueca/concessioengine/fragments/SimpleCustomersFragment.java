@@ -36,6 +36,9 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
     public void setColor(Integer color) {
         this.color = color;
     }
+    public void setHighlightColor(Integer highlightColor) {
+        this.highlightColor = highlightColor;
+    }
 
     public void setUseRecyclerView(boolean useRecyclerView) {
         this.useRecyclerView = useRecyclerView;
