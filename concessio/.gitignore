@@ -2,4 +2,5 @@
 *.idea
 *.gradle
 *.iml
+*.pro
 local.properties
