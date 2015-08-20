@@ -24,6 +24,7 @@ import net.nueca.concessioengine.dialogs.CustomDialogFrameLayout;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.exception.LoginException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
@@ -52,7 +53,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private Boolean isUnlinked;
     private Boolean isLoggedIn;
     private Session mSession = null;
-    private String mDefaultBranch;
     private Server mServer;
     private int[] mModules;
     private EditText etAccountID;
@@ -146,10 +146,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected void onCreateLoginLayout() {
         Log.e(TAG, "onCreateLoginLayout called");
 
-        // if user is logout
+        // if user is logout show login layout
         if (!isLoggedIn()) {
             startSyncService();
             onCreateLayoutForLogin();
+            getHelper().deleteAllDatabaseValues();
         }
     }
 
@@ -247,27 +248,30 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             case USERS:
                                 mModulesToDownload.add("Users");
                                 break;
-                            case BRANCH_USERS:
-                                mModulesToDownload.add("Branches");
-                                break;
-                            case TAX_SETTINGS:
-                                mModulesToDownload.add("Tax Settings");
-                                break;
                             case PRODUCTS:
                                 mModulesToDownload.add("Products");
-                                break;
-                            case INVENTORIES:
-                                mModulesToDownload.add("Inventories");
-                                break;
-                            case CUSTOMERS:
-                                mModulesToDownload.add("Customers");
-                                break;
-                            case DOCUMENTS:
-                                mModulesToDownload.add("Documents");
                                 break;
                             case UNITS:
                                 mModulesToDownload.add("Units");
                                 break;
+                            case BRANCH_USERS:
+                                mModulesToDownload.add("Branches");
+                                break;
+                            case CUSTOMERS:
+                                mModulesToDownload.add("Customers");
+                                break;
+                            case INVENTORIES:
+                                mModulesToDownload.add("Inventories");
+                                break;
+                            case TAX_SETTINGS:
+                                mModulesToDownload.add("Tax Settings");
+                                break;
+
+/*
+                            case DOCUMENTS:
+                                mModulesToDownload.add("Documents");
+                                break;
+*/
                             default:
                                 Log.e(TAG, "You have added unsupported module");
                                 break;
@@ -276,7 +280,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 }
             }
         } else { // if you don't set custom modules to download. Sync All
-
             mModules = new int[]{
                     Table.USERS.ordinal(),
                     Table.BRANCH_USERS.ordinal(),
@@ -315,7 +318,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     public Boolean haveDefaultBranch() {
         // if default branch is not null
-        return !getDefaultBranch().equals("");
+        return !getDefaultBranch(BaseLoginActivity.this).equals("");
     }
 
 
@@ -528,7 +531,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 AccountTools.unlinkAccount(this, getHelper(), this);
                 setUnlinked(true);
                 setLoggedIn(false);
-                setDefaultBranch("");
+                setDefaultBranch(BaseLoginActivity.this, "");
                 startSyncService();
             }
         } catch (SQLException e) {
@@ -653,12 +656,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return SettingTools.isAutoUpdate(this);
     }
 
-    protected String getDefaultBranch() {
-        return mDefaultBranch;
+    protected String getDefaultBranch(Context context) {
+        return SettingTools.defaultBranch(context);
     }
 
-    protected void setDefaultBranch(String branchName) {
-        mDefaultBranch = branchName;
+    protected void setDefaultBranch(Context context, String branchName) {
+        SettingTools.updateSettings(context, SettingsName.DEFAULT_BRANCH, branchName);
     }
 
     protected Server getServer() {
@@ -670,11 +673,23 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         getSyncServiceIntent().putExtra(SyncModules.PARAMS_SERVER, server.ordinal());
     }
 
+    public Boolean isSyncFinished() {
+        return SettingTools.isSyncFinished(this);
+    }
+
+    public void setSyncFinished(Context context, Boolean choice) {
+        SettingTools.updateSettings(context, SettingsName.SYNC_FINISHED, choice);
+    }
+
     protected int[] getModules() {
         return mModules;
     }
 
-    protected void setModules(int[] mModules) {
+    protected void setModules(int ... mModules){
+        setModule(mModules);
+    }
+
+    protected void setModule(int[] mModules) {
         this.mModules = mModules;
         mServiceIntent.putExtra(SyncModules.PARAMS_SYNC_ALL_MODULES, false);
         mServiceIntent.putExtra(SyncModules.PARAMS_TABLES_TO_SYNC, mModules);
@@ -765,7 +780,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     @Override
     public void onStartDownload(Table table) {
-
+        setSyncFinished(BaseLoginActivity.this, false);
+        if(!isSyncFinished()) {
+            Log.e(TAG, "Sync setting is false");
+        } else {
+            Log.e(TAG, "Sync setting is true");
+        }
     }
 
     @Override
@@ -782,7 +802,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         currentTable = "Branches";
                         break;
                     case BRANCH_USERS:
-                        currentTable = "User Branches";
+                        currentTable = "Branches";
                         break;
                     case TAX_SETTINGS:
                         currentTable = "Tax Settings";
@@ -811,6 +831,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
 
         int progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
+
         customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(mModulesToDownload.indexOf(currentTable));
         customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), progress);
     }
@@ -819,6 +840,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     public void onEndDownload(Table table) {
         Log.e(TAG, "finished downloading " + table);
         stopService();
+        setSyncFinished(BaseLoginActivity.this, true);
+
+        if(isSyncFinished()) {
+            Log.e(TAG, "Sync is finished");
+        } else {
+            Log.e(TAG, "Sync is not finished");
+        }
     }
 
     @Override

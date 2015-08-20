@@ -42,7 +42,7 @@ public class Session {
     @DatabaseField
     private Server server;
     @DatabaseField
-    private String current_branch;
+    private int current_branch_id;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private User user;
 
@@ -156,12 +156,12 @@ public class Session {
         this.user = user;
     }
 
-    public String getCurrent_branch() {
-        return current_branch;
+    public int getCurrent_branch_id() {
+        return current_branch_id;
     }
 
-    public void setCurrent_branch(String current_branch) {
-        this.current_branch = current_branch;
+    public void setCurrent_branch_id(int current_branch_id) {
+        this.current_branch_id = current_branch_id;
     }
 
     public void insertTo(ImonggoDBHelper dbHelper) {
