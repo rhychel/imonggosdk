@@ -16,7 +16,8 @@
         android:id="@+id/fab"
         android:layout_gravity="bottom|right"
         android:src="@drawable/ic_check_white"
-        android:tint="@color/hint_foreground_material_light"/>
+        android:tint="@color/hint_foreground_material_light"
+        style="@style/FloatingActionButton.Margin"/>
 
     <Button
         android:layout_width="wrap_content"
