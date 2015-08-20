@@ -40,7 +40,7 @@ public class C_Login extends LoginActivity {
     protected void showNextActivity() {
 
         finish();
-        Intent intent = new Intent(this, C_Module.class);
+        Intent intent = new Intent(this, C_Module2.class);
         startActivity(intent);
 
         try {

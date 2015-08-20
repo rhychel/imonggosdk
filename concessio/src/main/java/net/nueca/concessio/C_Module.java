@@ -17,9 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
-import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
@@ -42,16 +40,14 @@ import net.nueca.imonggosdk.tools.AccountTools;
 import org.json.JSONException;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.ArrayList;
-
-
+import java.util.List;
 
 /**
  * Created by rhymart on 6/4/15.
  * imonggosdk (c)2015
  */
-public class C_Module extends ModuleActivity {
+public class C_Module extends ModuleActivity implements SetupActionBar {
 
     public SimpleProductsFragment simpleProductsFragment;
     public SearchViewEx mSearch;
@@ -60,21 +56,9 @@ public class C_Module extends ModuleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sample_list);
-        lvSampleProducts = (ListView) findViewById(R.id.lvSampleProducts);
+        setContentView(R.layout.sample_fragment);
 
         btnSample = (Button) findViewById(R.id.btnSample);
-  
-       try {
-            List<ProductTaxRateAssoc> productTaxRateAssocList = getHelper().getProductTaxRateAssocs().queryForAll();
-
-           Log.e(TAG, "size: " + productTaxRateAssocList.size() + " " + productTaxRateAssocList.toString() + "");
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
 
         SwableTools.startSwable(this);
 
