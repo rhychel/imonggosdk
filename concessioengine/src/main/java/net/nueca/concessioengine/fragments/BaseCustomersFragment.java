@@ -49,11 +49,9 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
 
     protected List<Customer> getCustomers() {
         List<Customer> customers = new ArrayList<>();
-
         boolean hasSearchKey = searchKey != null && !searchKey.isEmpty();
 
         try {
-            Log.e("CUSTOMERS",getHelper().getCustomers().queryForAll().size()+"");
             Where<Customer, Integer> whereCustomers = getHelper().getCustomers().queryBuilder().where();
             whereCustomers.isNull("status");
             if(hasSearchKey) {
