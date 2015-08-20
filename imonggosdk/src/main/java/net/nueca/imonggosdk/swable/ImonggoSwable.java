@@ -44,15 +44,15 @@ import java.util.List;
  */
 public class ImonggoSwable extends SwableService {
 
-    private static final String NO_RETURN_ID = "@";
+    public static final String NO_RETURN_ID = "@";
 
-    private static final int UNAUTHORIZED_ACCESS = 401;
-    private static final int NOT_FOUND = 404;
-    private static final int UNPROCESSABLE_ENTRY = 422;
-    private static final int INTERNAL_SERVER_ERROR = 500;
+    public static final int UNAUTHORIZED_ACCESS = 401;
+    public static final int NOT_FOUND = 404;
+    public static final int UNPROCESSABLE_ENTRY = 422;
+    public static final int INTERNAL_SERVER_ERROR = 500;
 
     public static final String NOTIFICATION_ACTION = "swable_notification_action";
-    private static final int NOTIFICATION_ID = 1000;
+    public static final int NOTIFICATION_ID = 1000;
 
     private SwableStateListener swableStateListener;
 
@@ -139,6 +139,7 @@ public class ImonggoSwable extends SwableService {
                                 .eq("isSynced", false).and()
                                 .eq("isSyncing", false).and()
                                 .eq("isQueued", false).and()
+                                .eq("isCancelled", false).and()
                                 .eq("isPastCutoff", false).query();
 
                     if(offlineDataList.size() <= 0) {
@@ -152,9 +153,10 @@ public class ImonggoSwable extends SwableService {
                         Log.e("OfflineDataList", offlineData.getOfflineDataTransactionType().toString() + " " +
                                 count + " " + offlineDataList.size());
 
-                        Log.e("inserting OfflineData", offlineData.getId() + " | Ref.No.: " + offlineData.getReference_no());
                         if(offlineData.isCancelled()) {
-                            swableStateListener.onAlreadyCancelled(offlineData);
+                            Log.e("ImonggoSwable", "syncModule : already cancelled " + offlineData.getReference_no());
+                            if(swableStateListener != null)
+                                swableStateListener.onAlreadyCancelled(offlineData);
                             continue;
                         }
                         if(offlineData.isQueued()) {
@@ -246,7 +248,7 @@ public class ImonggoSwable extends SwableService {
         return new JSONObject(jsonString);
     }
 
-    private void send(Table table, final OfflineData offlineData) {
+    public void send(Table table, final OfflineData offlineData) {
         try {
             Branch branch = getHelper().getBranches().queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
@@ -405,7 +407,7 @@ public class ImonggoSwable extends SwableService {
         }
     }
 
-    private void delete(Table table, final OfflineData offlineData) {
+    public void delete(Table table, final OfflineData offlineData) {
         try {
             Branch branch = getHelper().getBranches().queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
@@ -415,7 +417,7 @@ public class ImonggoSwable extends SwableService {
                 //return;
             }
 
-            if(offlineData.parseReturnID().size() > 1) {
+            if(offlineData.getReturnIdList().size() > 1) {
                 pagedDelete(table,offlineData);
                 return;
             }
@@ -473,6 +475,7 @@ public class ImonggoSwable extends SwableService {
                             offlineData.setSynced(true);
 
                             if(responseCode == UNPROCESSABLE_ENTRY) {
+                                Log.e("ImonggoSwable", "deleting failed : transaction already cancelled");
                                 offlineData.setCancelled(true);
                             }
                             else if(responseCode == NOT_FOUND) {
@@ -524,91 +527,50 @@ public class ImonggoSwable extends SwableService {
     }
 
     public void pagedSend(Table table, final OfflineData offlineData) {
-        Gson gson = new Gson();
         try {
             if(table == Table.ORDERS) {
                 Order order = (Order)offlineData.generateObjectFromData();
-                List<Object> orderLines = new ArrayList<>();
-                orderLines.addAll(order.getOrder_lines());
 
-                int max_size = Order.MAX_ORDERLINES_PER_PAGE;
                 int max_page = order.getChildCount();
 
                 if(offlineData.getReturnId().length() > 0) { // for retry sending
-                    List<String> returnIds = offlineData.parseReturnID();
-                    for (int i = 0; i < max_page; i++) {
+                    List<String> returnIds = offlineData.getReturnIdList();
+
+                    List<Order> childOrders = order.getChildOrders();
+                    for(int i = 0; i < childOrders.size(); i++) {
                         if(returnIds.get(i).length() <= 0 || !returnIds.get(i).equals(NO_RETURN_ID))
                             continue;
-                        String orderLineN = gson.toJson(SwableTools.partition(i, orderLines, max_size));
-                        Order t_order = Order.fromJSONString(order.toJSONString());
-
-                        Type type = new TypeToken<BatchList<OrderLine>>() {}.getType();
-                        t_order.setOrder_lines((BatchList<OrderLine>) gson.fromJson(orderLineN, type));
-
-                        String paged_ref = t_order.getReference() + "-" + (i + 1);
-                        t_order.setReference(paged_ref);
-
-                        //Log.e("PAGEDSEND " + (i+1) + " of " + max_page, t_order.toJSONString());
-                        sendThisPage(table, i + 1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
-                                (), t_order.toJSONString()), offlineData);
+                        sendThisPage(table, i+1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                                (), childOrders.get(i).toJSONString()), offlineData);
                     }
                 } else {
-                    for (int i = 0; i < max_page; i++) {
-                        String orderLineN = gson.toJson(SwableTools.partition(i, orderLines, max_size));
-                        Order t_order = Order.fromJSONString(order.toJSONString());
-
-                        Type type = new TypeToken<BatchList<OrderLine>>() {}.getType();
-                        t_order.setOrder_lines((BatchList<OrderLine>) gson.fromJson(orderLineN, type));
-
-                        String paged_ref = t_order.getReference() + "-" + (i + 1);
-                        t_order.setReference(paged_ref);
-
-                        //Log.e("PAGEDSEND " + (i+1) + " of " + max_page, t_order.toJSONString());
-                        sendThisPage(table, i + 1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
-                                (), t_order.toJSONString()), offlineData);
+                    List<Order> childOrders = order.getChildOrders();
+                    for(int i = 0; i < childOrders.size(); i++) {
+                        sendThisPage(table, i+1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                                (), childOrders.get(i).toJSONString()), offlineData);
                     }
                 }
             }
             else if(table == Table.DOCUMENTS) {
                 Document document = (Document)offlineData.generateObjectFromData();
-                List<Object> documentLine = new ArrayList<>();
-                documentLine.addAll(document.getDocument_lines());
 
-                int max_size = Document.MAX_DOCUMENTLINES_PER_PAGE;
                 int max_page = document.getChildCount();
 
                 if(offlineData.getReturnId().length() > 0) { // for retry sending
-                    List<String> returnIds = offlineData.parseReturnID();
-                    for (int i = 0; i < max_page; i++) {
+                    List<String> returnIds = offlineData.getReturnIdList();
+
+                    List<Document> childDocuments = document.getChildDocuments();
+                    for(int i = 0; i < childDocuments.size(); i++) {
                         if(returnIds.get(i).length() <= 0 || !returnIds.get(i).equals(NO_RETURN_ID))
                             continue;
-                        String documentLineN = gson.toJson(SwableTools.partition(i, documentLine, max_size));
-                        Document t_docu = Document.fromJSONString(document.toJSONString());
-
-                        Type type = new TypeToken<BatchList<DocumentLine>>() {}.getType();
-                        t_docu.setDocument_lines((BatchList<DocumentLine>) gson.fromJson(documentLineN, type));
-
-                        String paged_ref = t_docu.getReference() + "-" + (i + 1);
-                        t_docu.setReference(paged_ref);
-
-                        //Log.e("PAGEDSEND " + (i+1) + " of " + max_page, t_order.toJSONString());
-                        sendThisPage(table, i + 1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
-                                (), t_docu.toJSONString()), offlineData);
+                        sendThisPage(table, i+1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                                (), childDocuments.get(i).toJSONString()), offlineData);
                     }
                 } else {
-                    for (int i = 0; i < max_page; i++) {
-                        String documentLineN = gson.toJson(SwableTools.partition(i, documentLine, max_size));
-                        Document t_docu = Document.fromJSONString(document.toJSONString());
-
-                        Type type = new TypeToken<BatchList<DocumentLine>>() {}.getType();
-                        t_docu.setDocument_lines((BatchList<DocumentLine>) gson.fromJson(documentLineN, type));
-
-                        String paged_ref = t_docu.getReference() + "-" + (i + 1);
-                        t_docu.setReference(paged_ref);
-
-                        //Log.e("PAGEDSEND " + (i+1) + " of " + max_page, t_order.toJSONString());
-                        sendThisPage(table, i + 1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
-                                (), t_docu.toJSONString()), offlineData);
+                    List<Document> childDocuments = document.getChildDocuments();
+                    for(int i = 0; i < childDocuments.size(); i++) {
+                        sendThisPage(table, i+1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                                (), childDocuments.get(i).toJSONString()), offlineData);
                     }
                 }
             }
@@ -666,9 +628,9 @@ public class ImonggoSwable extends SwableService {
                             parent.updateTo(getHelper());
 
                             if (parent.isSynced() && !parent.getReturnId().contains(NO_RETURN_ID) &&
-                                    parent.parseReturnID().size() == maxpage) {
+                                    parent.getReturnIdList().size() == maxpage) {
                                 Log.e("ImonggoSwable", "paged sending : returned ID's : " + parent.getReturnId() +
-                                        " size : " + parent.parseReturnID().size());
+                                        " size : " + parent.getReturnIdList().size());
                                 if(swableStateListener != null)
                                     swableStateListener.onSynced(parent);
 
@@ -756,7 +718,7 @@ public class ImonggoSwable extends SwableService {
                         }
 
                         if(parent.isSynced() && !parent.getReturnId().contains(NO_RETURN_ID) &&
-                                parent.parseReturnID().size() == maxpage && responseCode != UNAUTHORIZED_ACCESS) {
+                                parent.getReturnIdList().size() == maxpage && responseCode != UNAUTHORIZED_ACCESS) {
                             REQUEST_SUCCESS++;
                             Log.e("--- Request Success +1", ""+REQUEST_SUCCESS);
                         }
@@ -775,7 +737,7 @@ public class ImonggoSwable extends SwableService {
     }
 
     public void pagedDelete(Table table, final OfflineData offlineData) {
-        final List<String> list = offlineData.parseReturnID();
+        final List<String> list = offlineData.getReturnIdList();
         try {
             for(final String id : list) {
 

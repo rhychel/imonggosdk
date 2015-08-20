@@ -372,6 +372,14 @@ public class Customer extends BaseTable {
         return (o instanceof Customer) && ((Customer)o).getId() == id;
     }
 
+    /** Overriding equals() requires an Overridden hashCode() **/
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + id;
+        return result;
+    }
+
     @Override
     public String toString() {
         return name;

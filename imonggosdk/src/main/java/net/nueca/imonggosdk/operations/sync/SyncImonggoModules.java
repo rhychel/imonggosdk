@@ -206,12 +206,15 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                  * Application Settings //==> During login
                  * Users -- LAST_UPDATED_AT
                  * User Branches -- COUNT
-                 * Tax Settings -- LAST_UPDATED_AT <--- NON SENSE
                  * Products -- LAST_UPDATED_AT, COUNT
-                 * Inventory -- LAST_UPDATED_AT, COUNT
                  * Customers -- LAST_UPDATED_AT, COUNT
-                 * Documents -- LAST_UPDATED_AT, COUNT
+                 * Inventory -- LAST_UPDATED_AT, COUNT
+                 * Tax Settings -- LAST_UPDATED_AT <--- NON SENSE
                  *
+                 *
+                 *
+
+                 * Documents -- LAST_UPDATED_AT, COUNT
                  * Document Types -- #CONSTANT
                  * Document Purposes -- LAST_UPDATED_AT, COUNT
                  * Sales Promotion
@@ -253,7 +256,9 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             syncNext();
                             return;
                         }
+
                         JSONArray jsonArray = jsonObject.getJSONArray("tax_rates");
+
                         int size = jsonArray.length();
                         if(size == 0) { // Check if there are tax_rates
                             syncNext();

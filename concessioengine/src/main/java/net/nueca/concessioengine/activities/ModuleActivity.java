@@ -133,11 +133,11 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     .quantity(Double.valueOf(value.getQuantity()))
                     .build();
             if(value.isValidUnit()) {
-                orderLine.setUnitId(value.getUnit().getId());
-                orderLine.setUnitName(value.getUnit_name());
-                orderLine.setUnitContentQuantity(value.getUnit_content_quantity());
-                orderLine.setUnitQuantity(Double.valueOf(value.getUnit_quantity()));
-                orderLine.setUnitRetailPrice(value.getUnit_retail_price());
+                orderLine.setUnit_id(value.getUnit().getId());
+                orderLine.setUnit_name(value.getUnit_name());
+                orderLine.setUnit_content_quantity(value.getUnit_content_quantity());
+                orderLine.setUnit_quantity(Double.valueOf(value.getUnit_quantity()));
+                orderLine.setUnit_retail_price(value.getUnit_retail_price());
             }
             order.addOrderLine(orderLine);
         }

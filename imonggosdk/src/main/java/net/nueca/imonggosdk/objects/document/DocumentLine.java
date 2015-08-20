@@ -20,7 +20,8 @@ public class DocumentLine {
     protected double quantity;
     protected ExtendedAttributes extended_attributes;
     protected String discount_text;
-    protected double price;
+
+    protected Double price;
     protected Double retail_price;
     protected Integer unit_id;
     protected Double unit_content_quantity;
@@ -83,35 +84,35 @@ public class DocumentLine {
         this.discount_text = discount_text;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public double getRetail_price() {
+    public Double getRetail_price() {
         return retail_price;
     }
 
-    public void setRetail_price(double retail_price) {
+    public void setRetail_price(Double retail_price) {
         this.retail_price = retail_price;
     }
 
-    public int getUnit_id() {
+    public Integer getUnit_id() {
         return unit_id;
     }
 
-    public void setUnit_id(int unit_id) {
+    public void setUnit_id(Integer unit_id) {
         this.unit_id = unit_id;
     }
 
-    public double getUnit_content_quantity() {
+    public Double getUnit_content_quantity() {
         return unit_content_quantity;
     }
 
-    public void setUnit_content_quantity(double unit_content_quantity) {
+    public void setUnit_content_quantity(Double unit_content_quantity) {
         this.unit_content_quantity = unit_content_quantity;
     }
 
@@ -123,19 +124,19 @@ public class DocumentLine {
         this.unit_name = unit_name;
     }
 
-    public double getUnit_quantity() {
+    public Double getUnit_quantity() {
         return unit_quantity;
     }
 
-    public void setUnit_quantity(double unit_quantity) {
+    public void setUnit_quantity(Double unit_quantity) {
         this.unit_quantity = unit_quantity;
     }
 
-    public double getUnit_retail_price() {
+    public Double getUnit_retail_price() {
         return unit_retail_price;
     }
 
-    public void setUnit_retail_price(double unit_retail_price) {
+    public void setUnit_retail_price(Double unit_retail_price) {
         this.unit_retail_price = unit_retail_price;
     }
 
@@ -150,7 +151,7 @@ public class DocumentLine {
         protected double quantity;
         protected ExtendedAttributes extended_attributes;
         protected String discount_text;
-        protected double price;
+        protected Double price;
         protected Double retail_price;
         protected Integer unit_id = null;
         protected Double unit_content_quantity = null;

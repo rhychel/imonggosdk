@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Session;
 
@@ -116,6 +117,7 @@ public class AccountTools {
 
         updateUnlinked(context, true);
         dbHelper.deleteAllDatabaseValues();
+        SettingTools.updateSettings(context, SettingsName.SYNC_FINISHED, false);
 
         // update the account listener
         if (accountListener != null) {

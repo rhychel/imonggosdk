@@ -7,7 +7,6 @@ import org.json.JSONObject;
 
 /**
  * Created by gama on 7/1/15.
- * imonggosdk (c)2015
  */
 public class OrderLine {
     private int line_no = 0;
@@ -65,11 +64,11 @@ public class OrderLine {
         this.quantity = quantity;
     }
 
-    public void setUnitId(int unit_id) {
+    public void setUnit_id(Integer unit_id) {
         this.unit_id = unit_id;
     }
 
-    public Integer getUnitId() {
+    public Integer getUnit_id() {
         return unit_id;
     }
 
@@ -78,35 +77,35 @@ public class OrderLine {
         return new JSONObject(gson.toJson(this));
     }
 
-    public double getUnitQuantity() {
+    public Double getUnit_quantity() {
         return unit_quantity;
     }
 
-    public void setUnitQuantity(double unit_quantity) {
+    public void setUnit_quantity(Double unit_quantity) {
         this.unit_quantity = unit_quantity;
     }
 
-    public double getUnitContentQuantity() {
+    public Double getUnit_content_quantity() {
         return unit_content_quantity;
     }
 
-    public void setUnitContentQuantity(double unit_content_quantity) {
+    public void setUnit_content_quantity(Double unit_content_quantity) {
         this.unit_content_quantity = unit_content_quantity;
     }
 
-    public double getUnitRetailPrice() {
+    public Double getUnit_retail_price() {
         return unit_retail_price;
     }
 
-    public void setUnitRetailPrice(double unit_retail_price) {
+    public void setUnit_retail_price(Double unit_retail_price) {
         this.unit_retail_price = unit_retail_price;
     }
 
-    public String getUnitName() {
+    public String getUnit_name() {
         return unit_name;
     }
 
-    public void setUnitName(String unit_name) {
+    public void setUnit_name(String unit_name) {
         this.unit_name = unit_name;
     }
 

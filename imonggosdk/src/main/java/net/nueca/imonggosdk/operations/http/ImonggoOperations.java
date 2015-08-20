@@ -17,7 +17,7 @@ import org.json.JSONObject;
 /**
  * Created by rhymart on 5/13/15.
  * Modified by Jn on 6/9/15
- *
+ * <p/>
  * imonggosdk (c)2015
  */
 public class ImonggoOperations {
@@ -84,10 +84,12 @@ public class ImonggoOperations {
     public static void getAPIModule(Context context, RequestQueue queue, Session session,
                                     VolleyRequestListener volleyRequestListener, Table table,
                                     Server server, RequestType requestType, String parameter) {
-        if (requestType == RequestType.LAST_UPDATED_AT || requestType == RequestType.COUNT)
+
+        if (requestType == RequestType.LAST_UPDATED_AT || requestType == RequestType.COUNT || table == Table.TAX_SETTINGS)
             queue.add(HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, server, table, requestType, parameter));
         else if (requestType == RequestType.API_CONTENT)
             queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, table, requestType, parameter));
+
     }
 
     /**
@@ -147,13 +149,13 @@ public class ImonggoOperations {
     }
 
     public static void sendPOSDevice(Context context, RequestQueue queue, Session session,
-                                                  VolleyRequestListener volleyRequestListener, Server server) {
-        sendPOSDevice(context,queue, session, volleyRequestListener, server, null, "");
+                                     VolleyRequestListener volleyRequestListener, Server server) {
+        sendPOSDevice(context, queue, session, volleyRequestListener, server, null, "");
     }
 
     public static void sendPOSDevice(Context context, RequestQueue queue, Session session,
-                                                  VolleyRequestListener volleyRequestListener, Server server, JSONObject jsonObject, String parameter) {
-        queue.add( HTTPRequests.sendPOSTRequest(context,session,volleyRequestListener,server,Table.POS_DEVICES, jsonObject, parameter));
+                                     VolleyRequestListener volleyRequestListener, Server server, JSONObject jsonObject, String parameter) {
+        queue.add(HTTPRequests.sendPOSTRequest(context, session, volleyRequestListener, server, Table.POS_DEVICES, jsonObject, parameter));
     }
 
 }

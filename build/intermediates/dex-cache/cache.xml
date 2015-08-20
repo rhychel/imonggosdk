@@ -156,11 +156,11 @@
         <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/library-2.4.0-0ad6561275ffb67977257034ce2c80b2b518d608.jar" />
     </item>
     <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/jars/classes.jar"
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\com.github.traex.rippleeffect\library\1.3\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk/concessio/build/intermediates/pre-dexed/debug/classes-bda5fb154ced57178c6d5608c93ca17edbcd5075.jar" />
+        sha1="ee17feb34ce104bc17d1a1e64346d7f779ebb066">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-7ac156e52b3d144d40d613edeea5798481d5fcd7.jar" />
     </item>
     <item
         jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/imonggosdk2/imonggosdk/unspecified/jars/classes.jar"

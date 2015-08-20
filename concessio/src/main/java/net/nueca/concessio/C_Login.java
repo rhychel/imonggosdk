@@ -5,8 +5,10 @@ import android.os.Bundle;
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.tools.LoggingTools;
+import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
 
@@ -26,10 +28,11 @@ public class C_Login extends LoginActivity {
         setServer(Server.IRETAILCLOUD_NET);
 
         // set the Modules to download
-        int[] modules = {Table.USERS.ordinal(), Table.PRODUCTS.ordinal(), Table.UNITS.ordinal()};
-        setModules(modules);
+        setModules(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(),
+                Table.TAX_SETTINGS.ordinal(), Table.PRODUCTS.ordinal(),
+                Table.INVENTORIES.ordinal());
 
-        //SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true, "");
+        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true, "");
     }
 
 
@@ -37,7 +40,7 @@ public class C_Login extends LoginActivity {
     protected void showNextActivity() {
 
         finish();
-        Intent intent = new Intent(this, C_Module.class);
+        Intent intent = new Intent(this, C_Module2.class);
         startActivity(intent);
 
         try {

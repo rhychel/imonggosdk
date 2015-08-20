@@ -141,4 +141,19 @@ public class TaxRate {
         else if(databaseOperation == DatabaseOperation.DELETE)
             deleteTo(dbHelper);
     }
+
+    @Override
+    public String toString() {
+        return "TaxRate{" +
+                "id=" + id +
+                ", status='" + status + '\'' +
+                ", name='" + name + '\'' +
+                ", branch=" + branch +
+                ", value=" + value +
+                ", tax_rate_type=" + tax_rate_type +
+                ", utc_created_at='" + utc_created_at + '\'' +
+                ", utc_updated_at='" + utc_updated_at + '\'' +
+                ", taxSetting=" + taxSetting +
+                '}';
+    }
 }
