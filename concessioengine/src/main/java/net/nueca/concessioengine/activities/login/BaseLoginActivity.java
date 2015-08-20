@@ -266,12 +266,15 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             case TAX_SETTINGS:
                                 mModulesToDownload.add("Tax Settings");
                                 break;
-
-/*
                             case DOCUMENTS:
                                 mModulesToDownload.add("Documents");
                                 break;
-*/
+                            case DOCUMENT_TYPES:
+                                mModulesToDownload.add("Doc Types");
+                                break;
+                            case DOCUMENT_PURPOSES:
+                                mModulesToDownload.add("Doc Purposes");
+                                break;
                             default:
                                 Log.e(TAG, "You have added unsupported module");
                                 break;
@@ -289,7 +292,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     Table.CUSTOMERS.ordinal(),
                     Table.UNITS.ordinal(),
                     Table.DOCUMENTS.ordinal(),
-                    Table.DOCUMENT_TYPES.ordinal()
+                    Table.DOCUMENT_TYPES.ordinal(),
+                    Table.DOCUMENT_PURPOSES.ordinal()
             };
 
             mModulesToDownload.add("Users");
@@ -300,7 +304,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             mModulesToDownload.add("Customers");
             mModulesToDownload.add("Units");
             mModulesToDownload.add("Documents");
-            mModulesToDownload.add("Document Types");
+            mModulesToDownload.add("Doc Types");
+            mModulesToDownload.add("Doc Purposes");
         }
     }
 
@@ -685,7 +690,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return mModules;
     }
 
-    protected void setModules(int ... mModules){
+    protected void setModules(int... mModules) {
         setModule(mModules);
     }
 
@@ -781,7 +786,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     @Override
     public void onStartDownload(Table table) {
         setSyncFinished(BaseLoginActivity.this, false);
-        if(!isSyncFinished()) {
+        if (!isSyncFinished()) {
             Log.e(TAG, "Sync setting is false");
         } else {
             Log.e(TAG, "Sync setting is true");
@@ -820,7 +825,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         currentTable = "Documents";
                         break;
                     case DOCUMENT_TYPES:
-                        currentTable = "Document Type";
+                        currentTable = "Doc Types";
+                        break;
+                    case DOCUMENT_PURPOSES:
+                        currentTable = "Doc Purposes";
                         break;
                     case UNITS:
                         currentTable = "Units";
@@ -842,7 +850,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         stopService();
         setSyncFinished(BaseLoginActivity.this, true);
 
-        if(isSyncFinished()) {
+        if (isSyncFinished()) {
             Log.e(TAG, "Sync is finished");
         } else {
             Log.e(TAG, "Sync is not finished");
