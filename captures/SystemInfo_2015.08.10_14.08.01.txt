@@ -1,0 +1,37 @@
+Applications Memory Usage (kB):
+Uptime: 44607870 Realtime: 44607870
+
+** MEMINFO in pid 29650 [net.nueca.concessio] **
+                   Pss  Private  Private  Swapped     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------
+  Native Heap     4878     4696        0        0    18148    18148     1307
+  Dalvik Heap     3342     3268        0        0     3991     3078      913
+ Dalvik Other      404      404        0        0                           
+        Stack      176      176        0        0                           
+    Other dev        4        0        4        0                           
+     .so mmap     1396      152        4        0                           
+    .apk mmap      172        0       12        0                           
+    .ttf mmap       47        0        0        0                           
+    .dex mmap     3372        0     3368        0                           
+    code mmap     1483        0      200        0                           
+   image mmap     1272      736        4        0                           
+   Other mmap       58        4       32        0                           
+      Unknown      127      124        0        0                           
+        TOTAL    16731     9560     3624        0    22139    21226     2220
+ 
+ Objects
+               Views:       26         ViewRootImpl:        1
+         AppContexts:        4           Activities:        1
+              Assets:        2        AssetManagers:        2
+       Local Binders:       13        Proxy Binders:       18
+    Death Recipients:        0
+     OpenSSL Sockets:        0
+ 
+ SQL
+         MEMORY_USED:      161
+  PAGECACHE_OVERFLOW:       52          MALLOC_SIZE:       62
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b)          cache  Dbname
+         4      100             68         9/18/4  /data/data/net.nueca.concessio/databases/imonggosdk.db

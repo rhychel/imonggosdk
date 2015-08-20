@@ -61,7 +61,9 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         SelectedProductItem selectedProductItem = getSelectedProductItem(product);
         if(selectedProductItem == null)
             return "";
-        return "<i>["+selectedProductItem.getValues().get(0).getUnit().getName()+"]</i>";
+        if(selectedProductItem.getValues().get(0).getUnit() != null)
+            return "<i>["+selectedProductItem.getValues().get(0).getUnit().getName()+"]</i>";
+        return "";
     }
 
     public void renderToJson() {

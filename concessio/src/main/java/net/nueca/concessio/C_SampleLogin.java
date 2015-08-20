@@ -17,10 +17,12 @@ public class C_SampleLogin extends LoginActivity {
     @Override
     protected void initLoginEquipments() {
         super.initLoginEquipments();
+        setModules(new int[]{Table.USERS.ordinal(), Table.PRODUCTS.ordinal(), Table.UNITS.ordinal()});
         setServer(Server.IRETAILCLOUD_NET);
         SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, false, "");
         int[] modules = {Table.USERS.ordinal(), Table.PRODUCTS.ordinal(), Table.UNITS.ordinal()};
         setModules(modules);
+        setRequireConcessioSettings(true);
     }
 
     @Override

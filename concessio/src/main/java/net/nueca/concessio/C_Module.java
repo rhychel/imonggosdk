@@ -28,6 +28,7 @@ import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
+import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
@@ -78,7 +79,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             public void onClick(View view) {
                 /*try {
                     User user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).query().get(0);
-                    SwableTools.sendTransaction(getHelper(), user.getHome_branch_id(), generateOrder(C_Module.this, user.getHome_branch_id()), OfflineDataType.SEND_ORDER);
+                    if (SwableTools.sendTransaction(getHelper(), user.getHome_branch_id(), generateOrder(C_Module.this, user.getHome_branch_id()), OfflineDataType.SEND_ORDER) == null)
+                        Log.e("Error", "not adding to the OfflineData");
+                    else
+                        Log.e("Added", "YES");
                     ProductsAdapterHelper.getSelectedProductItems().clear();
                     simpleProductsFragment.refreshList();
                 } catch (SQLException | JSONException e) {
@@ -99,6 +103,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
         simpleProductsFragment.setProductCategories(getProductCategories(true));
+        simpleProductsFragment.setMultipleInput(true);
+        simpleProductsFragment.setMultiInputListener(new MultiInputListener() {
+            @Override
+            public void showInputScreen(Product product) {
+                Intent intent = new Intent(C_Module.this, TestMultiInput.class);
+                intent.putExtra(MultiInputSelectedItemFragment.PRODUCT_ID, product.getId());
+                startActivity(intent);
+            }
+        });
         simpleProductsFragment.setListScrollListener(new ListScrollListener() {
             @Override
             public void onScrolling() {

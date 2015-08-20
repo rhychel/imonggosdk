@@ -51,6 +51,11 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         return objectList.size() > 0;
     }
 
+    public void add(Obj obj) {
+        this.objectList.add(obj);
+        notifyDataSetChanged();
+    }
+
     public void addAll(List<Obj> objList) {
         this.objectList.addAll(objList);
         notifyDataSetChanged();
@@ -65,6 +70,11 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
     public void remove(int index) {
         this.objectList.remove(index);
         notifyItemRemoved(index);
+    }
+
+    public void removeAll() {
+        this.objectList.clear();
+        notifyDataSetChanged();
     }
 
     public List<Obj> getList() {

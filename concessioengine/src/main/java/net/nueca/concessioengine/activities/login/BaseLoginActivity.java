@@ -52,6 +52,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private BaseLogin mBaseLogin;
     private Boolean isUnlinked;
     private Boolean isLoggedIn;
+    private Boolean requireConcessioSettings = false; // added by rhy
     private Session mSession = null;
     private Server mServer;
     private int[] mModules;
@@ -549,6 +550,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             throw new LoginException(context.getString(R.string.LOGIN_INVALID_PASSWORD));
         } else {
             mBaseLogin = new BaseLogin(BaseLoginActivity.this, getHelper(), accountId, email, password);
+            mBaseLogin.setConcessioSettings(requireConcessioSettings);
         }
     }
 
@@ -603,6 +605,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     protected CustomDialog getCustomDialog() {
         return this.customDialog;
+    }
+
+    public void setRequireConcessioSettings(Boolean requireConcessioSettings) {
+        this.requireConcessioSettings = requireConcessioSettings;
     }
 
     protected String getEditTextAccountID() {

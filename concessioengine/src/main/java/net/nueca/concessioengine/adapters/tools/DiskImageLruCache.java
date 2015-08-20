@@ -9,6 +9,7 @@ import android.util.LruCache;
 import com.android.volley.toolbox.ImageLoader;
 import com.jakewharton.disklrucache.DiskLruCache;
 
+import net.nueca.concessioengine.adapters.interfaces.ImageLoaderListener;
 import net.nueca.imonggosdk.tools.NetworkTools;
 import net.nueca.imonggosdk.tools.ProductListTools;
 
@@ -38,8 +39,10 @@ public class DiskImageLruCache extends LruCache<String, Bitmap> implements Image
     private Context context;
 
     private static DiskImageLruCache diskImageLruCache = null;
+    private static ImageLoaderListener imageLoaderListener = null;
 
-    public static DiskImageLruCache getInstance(Context context) {
+    public static DiskImageLruCache getInstance(Context context, ImageLoaderListener imageLoaderListener) {
+        DiskImageLruCache.imageLoaderListener = imageLoaderListener;
         if(diskImageLruCache == null)
             diskImageLruCache = new DiskImageLruCache(context);
         return diskImageLruCache;
@@ -129,8 +132,12 @@ public class DiskImageLruCache extends LruCache<String, Bitmap> implements Image
     public Bitmap getBitmap( String key ) {
         if (context == null)
             return null;
-        if (NetworkTools.isInternetAvailable(context))
-            return get(key);
+        if (NetworkTools.isInternetAvailable(context)) {
+            Bitmap bitmap = get(key);
+            if(imageLoaderListener != null)
+                imageLoaderListener.imageLoaded(bitmap);
+            return bitmap;
+        }
         else {
             Bitmap bitmap = null;
             DiskLruCache.Snapshot snapshot = null;
@@ -155,6 +162,8 @@ public class DiskImageLruCache extends LruCache<String, Bitmap> implements Image
                     snapshot.close();
                 }
             }
+            if(imageLoaderListener != null)
+                imageLoaderListener.imageLoaded(bitmap);
             Log.d("cache_test_DISK_", bitmap == null ? "" : "image read from disk " + key);
             return bitmap;
         }

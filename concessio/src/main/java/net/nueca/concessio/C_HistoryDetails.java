@@ -45,6 +45,7 @@ public class C_HistoryDetails extends ImonggoAppCompatActivity {
                     .where()
                         .eq("id", getIntent().getIntExtra(SimpleTransactionDetailsFragment.TRANSACTION_ID, -1))
                     .queryForFirst();
+
             List<Product> orderedItems = new ArrayList<>();
             if(offlineData != null) {
                 Log.e("Data", offlineData.getData());

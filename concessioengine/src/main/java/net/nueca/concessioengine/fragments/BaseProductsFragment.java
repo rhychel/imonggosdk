@@ -16,6 +16,7 @@ import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.exceptions.ProductsFragmentException;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
+import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -35,7 +36,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     protected static final long LIMIT = 100l;
     protected long offset = 0l;
-    protected boolean hasUnits = true, hasBrand = false, hasDeliveryDate = false, hasCategories = true;
+    protected boolean hasUnits = true, hasBrand = false, hasDeliveryDate = false, hasCategories = true, multipleInput = false;
     private int prevLast = -1;
     private String searchKey = "", category = "";
     private List<Product> filterProductsBy = new ArrayList<>();
@@ -50,6 +51,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     protected ProductsFragmentListener productsFragmentListener;
     protected ListScrollListener listScrollListener;
     protected SetupActionBar setupActionBar;
+    protected MultiInputListener multiInputListener;
     protected RecyclerView rvProducts;
     protected ListView lvProducts;
     protected Toolbar tbActionBar;
@@ -78,6 +80,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setProductsFragmentListener(ProductsFragmentListener productsFragmentListener) {
         this.productsFragmentListener = productsFragmentListener;
+    }
+
+    public void setMultiInputListener(MultiInputListener multiInputListener) {
+        this.multiInputListener = multiInputListener;
     }
 
     @Override
@@ -202,6 +208,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setHasDeliveryDate(boolean hasDeliveryDate) {
         this.hasDeliveryDate = hasDeliveryDate;
+    }
+
+    public void setMultipleInput(boolean multipleInput) {
+        this.multipleInput = multipleInput;
     }
 
     public void setHasCategories(boolean hasCategories) {
