@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.SearchView;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SearchViewEx;
@@ -79,9 +80,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public List<Branch> getBranches() {
         List<Branch> assignedBranches = new ArrayList<>();
         try {
-            List<BranchUserAssoc> branchUserAssocs = getHelper().getBranchUserAssocs().queryBuilder().where().eq("user_id", getSession().getUser()).query();
-            for(BranchUserAssoc branchUser : branchUserAssocs)
-                assignedBranches.add(branchUser.getBranch());
+            assignedBranches = getHelper().getBranches().queryBuilder().where().in("id", getHelper().getBranchUserAssocs().queryBuilder().where().eq("user_id", getSession().getUser())).query();
+//            List<BranchUserAssoc> branchUserAssocs = getHelper().getBranchUserAssocs().queryBuilder().where().eq("user_id", getSession().getUser()).query();
+//            for(BranchUserAssoc branchUser : branchUserAssocs)
+//                assignedBranches.add(branchUser.getBranch());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -116,12 +118,11 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     /**
      *
      * @param context
-     * @param branchId --- Pass the serving branch id of the order. Preferably, this should be the warehouse branch id
+     * @param servingBranchId --- Pass the serving branch id of the order. Preferably, this should be the warehouse branch id
      * @return
      */
-    public Order generateOrder(Context context, int branchId) {
+    public Order generateOrder(Context context, int servingBranchId) {
         Order.Builder order = new Order.Builder();
-//        List<OrderLine> orderLines = new ArrayList<>();
         for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().get(i);
             Values value = selectedProductItem.getValues().get(0);
@@ -139,12 +140,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 orderLine.setUnitRetailPrice(value.getUnit_retail_price());
             }
             order.addOrderLine(orderLine);
-//            orderLines.add(orderLine);
         }
-//        order.order_lines(orderLines);
         order.order_type_code("stock_request");
         try {
-            order.serving_branch_id(branchId);
+            order.serving_branch_id(servingBranchId);
             order.generateReference(context, getSession().getDevice_id());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -152,9 +151,12 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return order.build();
     }
 
-    public Document generatePCount(Context context, int branchId) {
-        Document.Builder pcount = new Document.Builder();
+    public Document generateDocument(Context context) {
+        return generateDocument(context, -1, "physical_count");
+    }
 
+    public Document generateDocument(Context context, int targetBranchId, String documentTypeCode) {
+        Document.Builder pcount = new Document.Builder();
         for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().get(i);
             for(Values value : selectedProductItem.getValues()) {
@@ -162,20 +164,33 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                         .line_no(value.getLine_no())
                         .product_id(selectedProductItem.getProduct().getId())
                         .quantity(Double.valueOf(value.getQuantity()));
-                if(value.getExtendedAttributes() != null)
-                        builder.extended_attributes(value.getExtendedAttributes().convertForDocumentLine());
+                if(value.getExtendedAttributes() != null) {
+                    ExtendedAttributes extendedAttributes = value.getExtendedAttributes();
+                    // if pcount
+//                    extendedAttributes.setBatch_no("0");
+                    builder.extended_attributes(extendedAttributes.convertForDocumentLine());
+                }
 
-                pcount.addDocumentLine(builder.build());
+                DocumentLine documentLine = builder.build();
+                if(value.isValidUnit()) {
+                    documentLine.setUnit_id(value.getUnit().getId());
+                    documentLine.setUnit_name(value.getUnit_name());
+                    documentLine.setUnit_content_quantity(value.getUnit_content_quantity());
+                    documentLine.setUnit_quantity(Double.valueOf(value.getUnit_quantity()));
+                    documentLine.setUnit_retail_price(value.getUnit_retail_price());
+                }
+
+                pcount.addDocumentLine(documentLine);
             }
         }
-        pcount.document_type_code("physical_count");
+        pcount.document_type_code(documentTypeCode);
+        if(targetBranchId > -1)
+            pcount.target_branch_id(targetBranchId);
         try {
-//            pcount.target_branch_id(branchId);
             pcount.generateReference(context, getSession().getDevice_id());
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return pcount.build();
     }
-
 }
