@@ -31,7 +31,7 @@ public class C_Login extends LoginActivity {
         setModules(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(),
                 Table.TAX_SETTINGS.ordinal(), Table.PRODUCTS.ordinal(),
                 Table.INVENTORIES.ordinal(), Table.DOCUMENT_TYPES.ordinal(),
-                Table.DOCUMENT_PURPOSES.ordinal(), Table.DOCUMENTS.ordinal());
+                Table.DOCUMENT_PURPOSES.ordinal());
 
         SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true);
     }
