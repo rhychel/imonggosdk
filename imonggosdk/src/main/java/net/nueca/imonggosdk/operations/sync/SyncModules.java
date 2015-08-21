@@ -814,6 +814,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     public void startFetchingModules() throws SQLException {
+        Log.e(TAG, "syncAllModules?="+syncAllModules+" || Items to sync="+mModulesToSync.length);
         startSyncModuleContents(RequestType.LAST_UPDATED_AT);
 
     }

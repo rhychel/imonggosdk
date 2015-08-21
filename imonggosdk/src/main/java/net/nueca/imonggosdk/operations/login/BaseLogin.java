@@ -30,6 +30,7 @@ import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.LoginTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -488,9 +489,13 @@ public class BaseLogin {
 
                                     @Override
                                     public void onSuccess(Table table, RequestType requestType, Object response) {
-                                        JSONObject concesio = (JSONObject) response;
+                                        JSONArray concesio = (JSONArray) response;
                                         Log.e("Rhy-BaseLogin", concesio.toString());
-                                        AccountSettings.initializeApplicationSettings(mContext, concesio);
+                                        try {
+                                            AccountSettings.initializeApplicationSettings(mContext, concesio.getJSONObject(0));
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
                                         DialogTools.hideIndeterminateProgressDialog();
                                         if (mLoginListener != null)
                                             mLoginListener.onLoginSuccess(mSession);
@@ -499,6 +504,7 @@ public class BaseLogin {
                                     @Override
                                     public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
                                         DialogTools.hideIndeterminateProgressDialog();
+                                        Log.e("Rhy-BaseLogin["+responseCode+"]", (response == null) ? "null" : ((String) response));
 
                                         DialogTools.showBasicWithTitle(mContext,
                                                 mContext.getString(R.string.LOGIN_FAILED_TITLE),

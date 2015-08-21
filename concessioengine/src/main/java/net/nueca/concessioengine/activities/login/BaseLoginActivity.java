@@ -730,6 +730,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.mServiceIntent = intent;
     }
 
+    protected SyncModules getSyncModules() {
+        return mSyncModules;
+    }
+
     protected void stopService() {
         Log.e(TAG, "Stopping sync service");
         doUnbindService();
@@ -897,13 +901,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
         if (isUnlinked() && !isLoggedIn()) {
             if (getBaseLogin() != null) {
                 getBaseLogin().onStop();
             }
         }
+        super.onDestroy(); // This should be the last to call after onStop();
 
         DialogTools.hideIndeterminateProgressDialog();
 

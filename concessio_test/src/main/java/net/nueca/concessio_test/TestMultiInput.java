@@ -1,8 +1,7 @@
-package net.nueca.concessio;
+package net.nueca.concessio_test;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.View;
 
 import net.nueca.concessioengine.activities.ModuleActivity;

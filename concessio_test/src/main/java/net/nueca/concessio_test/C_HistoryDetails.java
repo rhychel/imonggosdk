@@ -1,23 +1,15 @@
-package net.nueca.concessio;
+package net.nueca.concessio_test;
 
 import android.os.Bundle;
 import android.util.Log;
 
-import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.adapters.tools.TransactionsAdapterHelper;
 import net.nueca.concessioengine.fragments.SimpleTransactionDetailsFragment;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
-import net.nueca.concessioengine.objects.SelectedProductItem;
-import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.Unit;
-import net.nueca.imonggosdk.objects.order.Order;
-import net.nueca.imonggosdk.objects.order.OrderLine;
-
-import org.json.JSONException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
