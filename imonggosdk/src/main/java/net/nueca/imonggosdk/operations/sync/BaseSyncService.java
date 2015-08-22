@@ -86,7 +86,7 @@ public abstract class BaseSyncService extends ImonggoService {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotificationBuilder = new NotificationCompat.Builder(this);
         // Display a notification about us starting.  We put an icon in the status bar.
-        showNotification();
+//        showNotification();
     }
 
     @Override
@@ -102,17 +102,7 @@ public abstract class BaseSyncService extends ImonggoService {
         initialSync = bundle.getBoolean(PARAMS_INITIAL_SYNC, false);
 
         if (!syncAllModules) { // if custom modules where selected to be download
-            int[] forSyncing = bundle.getIntArray(PARAMS_TABLES_TO_SYNC);
-
-            if (forSyncing != null) {
-                mModulesIndex = 0;
-                mModulesToSync = new Table[forSyncing.length];
-                for (int i = 0; i < mModulesToSync.length; i++) {
-                    mModulesToSync[i] = Table.values()[forSyncing[i]];
-                }
-
-                mCurrentTableSyncing = mModulesToSync[mModulesIndex];
-            }
+            initializeTablesToSync(bundle.getIntArray(PARAMS_TABLES_TO_SYNC));
         } else { // Sync All Modules
             /**
              * Application Settings //==> During login
@@ -141,6 +131,25 @@ public abstract class BaseSyncService extends ImonggoService {
         // We want this service to continue running until it is explicitly
         // stopped, so return sticky.
         return START_STICKY;
+    }
+
+    public void setSyncAllModules(boolean syncAllModules) {
+        this.syncAllModules = syncAllModules;
+    }
+
+    public void initializeTablesToSync(int[] forSyncing) {
+//        int[] forSyncing = bundle.getIntArray(PARAMS_TABLES_TO_SYNC);
+        if (forSyncing != null) {
+            Log.e("initializeTablesToSync", "--"+forSyncing.length);
+
+            mModulesIndex = 0;
+            mModulesToSync = new Table[forSyncing.length];
+            for (int i = 0; i < mModulesToSync.length; i++) {
+                mModulesToSync[i] = Table.values()[forSyncing[i]];
+            }
+
+            mCurrentTableSyncing = mModulesToSync[mModulesIndex];
+        }
     }
 
     public boolean isExisting(Object o, Table table) throws SQLException {

@@ -12,7 +12,7 @@ import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.AccountSettings;
@@ -40,12 +40,11 @@ import java.util.List;
 /**
  * Created by rhymart on 6/3/15.
  * imonggosdk (c)2015
- * /usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rhymart/yes/google-cloud-sdk/bin:/usr/local/apache-maven/apache-maven-3.2.1//bin:/usr/local/mysql/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rhymart/yes/google-cloud-sdk/bin:/usr/local/apache-maven/apache-maven-3.2.1//bin:/usr/local/mysql/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rhymart/yes/google-cloud-sdk/bin:/usr/local/apache-maven/apache-maven-3.2.1//bin:/usr/local/mysql/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rhymart/yes/google-cloud-sdk/bin:/usr/local/apache-maven/apache-maven-3.2.1//bin:/usr/local/mysql/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/Users/rhymart/gradle-all//bin:/Users/rhymart/gradle-1.11//bin:/Users/rhymart/gradle-1.11//bin:/Users/rhymart/gradle-all/bin:/Users/rhymart/gradle-all/bin
- *
- *
- * /usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rhymart/yes/google-cloud-sdk/bin:/usr/local/apache-maven/apache-maven-3.2.1/bin:/usr/local/mysql/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/Users/rhymart/gradle-all/bin
  */
 public abstract class ModuleActivity extends ImonggoAppCompatActivity {
+
+    public static final String CONCESSIO_MODULE = "concessio_module";
+    protected ConcessioModule concessioModule = ConcessioModule.ORDERS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +80,13 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public List<Branch> getBranches() {
         List<Branch> assignedBranches = new ArrayList<>();
         try {
-            assignedBranches = getHelper().getBranches().queryBuilder().where().in("id", getHelper().getBranchUserAssocs().queryBuilder().where().eq("user_id", getSession().getUser())).query();
-//            List<BranchUserAssoc> branchUserAssocs = getHelper().getBranchUserAssocs().queryBuilder().where().eq("user_id", getSession().getUser()).query();
-//            for(BranchUserAssoc branchUser : branchUserAssocs)
-//                assignedBranches.add(branchUser.getBranch());
+            List<BranchUserAssoc> branchUserAssocs = getHelper().getBranchUserAssocs().queryBuilder().where().eq("user_id", getUser()).query();
+            for(BranchUserAssoc branchUser : branchUserAssocs) {
+                if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
+                    assignedBranches.add(0, branchUser.getBranch());
+                else
+                    assignedBranches.add(branchUser.getBranch());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

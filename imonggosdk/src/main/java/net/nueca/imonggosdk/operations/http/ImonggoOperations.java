@@ -36,18 +36,24 @@ public class ImonggoOperations {
      * @return String URL for the id
      */
     public static String getAPIModuleIDURL(Context context, Session session, Table table, Server server, String id, String parameter) {
+        String URL = "";
         switch (server) {
             case IMONGGO:
-                return ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, true);
+                URL = ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, true);
+                break;
             case IRETAILCLOUD_COM:
-                return ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, false);
+                URL = ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, false);
+                break;
             case IRETAILCLOUD_NET:
-                return ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, false);
+                URL = ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, false);
+                break;
             case PLDTRETAILCLOUD:
-                return ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, false);
+                URL = ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, false);
+                break;
             default:
                 return "";
         }
+        return (parameter == null || parameter.equals("")) ? URL.replace("?", "") : URL;
     }
 
     /**
@@ -143,7 +149,7 @@ public class ImonggoOperations {
 
     public static void getConcesioAppSettings(Context context, RequestQueue queue, Session session,
                                                            VolleyRequestListener volleyRequestListener, Server server, boolean autoStart) {
-        queue.add(HTTPRequests.sendGETRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", ""));
+        queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", ""));
         if(autoStart)
             queue.start();
     }

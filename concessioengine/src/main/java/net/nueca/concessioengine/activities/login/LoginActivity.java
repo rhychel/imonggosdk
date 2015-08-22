@@ -154,7 +154,6 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void stopLogin() {
 
-
     }
 
     @Override

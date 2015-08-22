@@ -15,6 +15,7 @@ import java.sql.SQLException;
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 public class ImonggoFragmentActivity extends FragmentActivity {
 
     private ImonggoDBHelper dbHelper;
