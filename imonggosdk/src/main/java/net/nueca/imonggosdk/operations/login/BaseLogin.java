@@ -527,7 +527,6 @@ public class BaseLogin {
                                     @Override
                                     public void onRequestError() {
                                         DialogTools.hideIndeterminateProgressDialog();
-
                                         if (mLoginListener != null) {
                                             mLoginListener.onStopLogin();
                                         }

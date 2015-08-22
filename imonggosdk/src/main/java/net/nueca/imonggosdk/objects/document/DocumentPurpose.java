@@ -100,4 +100,15 @@ public class DocumentPurpose extends BaseTable {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String toString() {
+        return "DocumentPurpose{" +
+                "status='" + status + '\'' +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", documentType=" + documentType +
+                ", id=" + id +
+                '}';
+    }
 }

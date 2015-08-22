@@ -12,7 +12,6 @@ import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
