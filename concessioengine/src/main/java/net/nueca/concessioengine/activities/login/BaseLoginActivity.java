@@ -766,7 +766,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected void bindSyncService() {
         Log.e(TAG, "Binding service.........");
 
-        if (!mBounded) {
+        if (!mBounded || mSyncModules == null) {
             bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
             Log.e(TAG, "Service binded");
         } else {
@@ -778,8 +778,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected void doUnbindService() {
         if (isSyncServiceBinded()) {
             mBounded = false;
-            if(mBounded)
-                unbindService(getServiceConnection());
+            unbindService(getServiceConnection());
         }
     }
 

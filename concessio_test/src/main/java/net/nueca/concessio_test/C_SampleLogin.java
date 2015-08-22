@@ -19,7 +19,7 @@ public class C_SampleLogin extends LoginActivity {
         super.initLoginEquipments();
         setModules(new int[]{Table.USERS.ordinal(), Table.PRODUCTS.ordinal(), Table.UNITS.ordinal()});
         setServer(Server.IRETAILCLOUD_NET);
-        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, false, "");
+        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true, "");
         int[] modules = {Table.USERS.ordinal(), Table.PRODUCTS.ordinal(), Table.UNITS.ordinal()};
         setModules(modules);
         setRequireConcessioSettings(true);
@@ -28,7 +28,7 @@ public class C_SampleLogin extends LoginActivity {
     @Override
     protected void showNextActivity() {
         finish();
-        Intent intent = new Intent(this, C_Module.class);
+        Intent intent = new Intent(this, C_Module2.class);
         startActivity(intent);
     }
 

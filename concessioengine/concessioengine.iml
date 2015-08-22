@@ -108,6 +108,6 @@
     <orderEntry type="library" exported="" name="commons-lang3-3.4" level="project" />
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.1" level="project" />
-    <orderEntry type="module" module-name="imonggosdk" exported="" />
+    <orderEntry type="module" module-name="imonggosdk-imonggosdk" exported="" />
   </component>
 </module>

@@ -18,7 +18,6 @@ public class Configurations {
     private static String EMAIL_CACHE = "email_cache";
 
     private static SharedPreferences imonggoPreference;
-
     public static void initializePreference(Context context) {
         imonggoPreference = PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -76,6 +75,8 @@ public class Configurations {
             put(Table.DOCUMENTS, "documents.json");
             put(Table.DOCUMENT_TYPES, "document_types.json");
             put(Table.DOCUMENT_PURPOSES, "document_purposes.json");
+			put(Table.INVOICES, "invoices.json");
+			put(Table.DOCUMENTS, "documents.json");
             put(Table.ORDERS, "orders.json");
             /*put(Modules.CONCESSIO_SETTINGS, "application_settings/concesio.json");
             put(Modules.POS_DEVICES, "pos_devices.json");
@@ -109,6 +110,10 @@ public class Configurations {
             put(Modules.POS_DEVICES, "pos_devices.json");
             put(Modules.SALES_PROMOTIONS, "sales_promotions.json");*/
 
+            put(Table.INVOICES, "invoices");
+            put(Table.DOCUMENTS, "documents");
+			put(Table.ORDERS, "orders");
+            put(Table.APPLICATION_SETTINGS, "application_settings");
 //            put(Modules.CONCESSIO_SETTINGS, "application_settings");
 //            put(Modules.DISCOUNTS, "sales_promotions");
 //            put(Modules.DOCUMENT_TYPES, "document_types");

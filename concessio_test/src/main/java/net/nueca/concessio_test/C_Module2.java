@@ -64,7 +64,7 @@ public class C_Module2 extends ModuleActivity {
                 case R.id.mGo:
 
                     AccountTools.unlinkAccount(C_Module2.this, getHelper(), null);
-                    Intent intent = new Intent(C_Module2.this, C_Login.class);
+                    Intent intent = new Intent(C_Module2.this, C_SampleLogin.class);
 
                     startActivity(intent);
                     finish();
