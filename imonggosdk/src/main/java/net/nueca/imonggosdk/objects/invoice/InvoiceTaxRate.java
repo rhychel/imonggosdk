@@ -11,12 +11,14 @@ import org.json.JSONObject;
  */
 public class InvoiceTaxRate {
     protected String tax_rate_id;
-
     protected double amount;
-
     protected double rate;
 
-    public InvoiceTaxRate() {}
+    public InvoiceTaxRate(Builder builder) {
+        tax_rate_id = builder.tax_rate_id;
+        amount = builder.amount;
+        rate = builder.rate;
+    }
 
     public InvoiceTaxRate(String tax_rate_id, double amount, double rate) {
         this.tax_rate_id = tax_rate_id;
@@ -51,5 +53,28 @@ public class InvoiceTaxRate {
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return new JSONObject(gson.toJson(this));
+    }
+
+    public static class Builder {
+        protected String tax_rate_id;
+        protected double amount;
+        protected double rate;
+
+        public Builder tax_rate_id(String tax_rate_id) {
+            this.tax_rate_id = tax_rate_id;
+            return this;
+        }
+        public Builder amount(double amount) {
+            this.amount = amount;
+            return this;
+        }
+        public Builder rate(double rate) {
+            this.rate = rate;
+            return this;
+        }
+
+        public InvoiceTaxRate build() {
+            return new InvoiceTaxRate(this);
+        }
     }
 }

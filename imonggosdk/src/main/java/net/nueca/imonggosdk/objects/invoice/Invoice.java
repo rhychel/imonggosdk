@@ -20,21 +20,13 @@ import java.util.List;
  */
 public class Invoice extends BaseTransaction {
     protected String invoice_date;
-
     protected String status;
-
     protected String email;
-
     protected int user_id;
-
     protected boolean tax_inclusive;
-
     protected String remark;
-
     protected List<InvoiceLine> invoice_lines;
-
     protected List<InvoicePayment> payments;
-
     protected List<InvoiceTaxRate> invoice_tax_rates;
 
     public Invoice(Builder builder) {
@@ -165,6 +157,11 @@ public class Invoice extends BaseTransaction {
         return false;
     }
 
+    @Override
+    public int getChildCount() {
+        return 1;
+    }
+
     public static class Builder extends BaseTransaction.Builder<Builder> {
         protected String invoice_date = "";
         protected String status = "";
@@ -210,6 +207,25 @@ public class Invoice extends BaseTransaction {
         }
         public Builder payments(List<InvoicePayment> payments) {
             this.payments = payments;
+            return this;
+        }
+
+        public Builder addInvoiceLine(InvoiceLine invoiceLine) {
+            if(invoice_lines == null)
+                invoice_lines = new ArrayList<>();
+            invoice_lines.add(invoiceLine);
+            return this;
+        }
+        public Builder addInvoiceTaxRate(InvoiceTaxRate invoiceTaxRate) {
+            if(invoice_tax_rates == null)
+                invoice_tax_rates = new ArrayList<>();
+            invoice_tax_rates.add(invoiceTaxRate);
+            return this;
+        }
+        public Builder addPayment(InvoicePayment payment) {
+            if(payments == null)
+                payments = new ArrayList<>();
+            payments.add(payment);
             return this;
         }
 

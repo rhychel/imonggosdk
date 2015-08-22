@@ -62,68 +62,68 @@ public class OfflineData extends BaseTable2 {
     private boolean isForConfirmation = false; // TODO This is new for the data sent with existing reference number
 
     @DatabaseField
-    private boolean isPastCutoff = false;
+    private boolean isPastCutoff = false; // unused
 
     @DatabaseField
-    private boolean isFromManualReceive = true;
+    private boolean isFromManualReceive = true; // unused
 
     @DatabaseField
-    private boolean isPurePullout = false;
+    private boolean isPurePullout = false; // unused
 
     @DatabaseField
     private String returnId = "";
 
     @DatabaseField
-    private String branchName = "";
+    private String branchName = ""; // unused
 
     @DatabaseField
     private String parameters = "";
 
     @DatabaseField
-    private int user_id = 0;
+    private int user_id = 0; // unused
 
     @DatabaseField
     private String reference_no = "";
 
     @DatabaseField
-    private boolean active = true;
+    private boolean active = true; // unused
 
     @DatabaseField
-    private int parent_id = -1;
+    private int parent_id = -1; // unused
 
     @DatabaseField
-    private boolean isChild = false;
+    private boolean isChild = false; // unused
 
     @DatabaseField
-    private boolean isParent = false; // should show buttons
+    private boolean isParent = false; // should show buttons -- unused
 
     @DatabaseField
-    private boolean isChildrenShown = false;
+    private boolean isChildrenShown = false; // unused
 
     @DatabaseField
     private Date dateCreated;
 
     @DatabaseField
-    private String childrenReferences = "";
+    private String childrenReferences = "";  // unused
 
     @DatabaseField
     private int offlineDataTransactionType = 1; // For COUNT ONLY!!!
 
     @DatabaseField
-    private boolean hasExtendedAttributes = false;
+    private boolean hasExtendedAttributes = false; // unused
 
     @DatabaseField
-    private String targetBranchTransfer = "";
+    private String targetBranchTransfer = ""; // unused
 
     @DatabaseField
-    private String category = "";
+    private String category = ""; // unused
 
     @DatabaseField
     private String documentReason = "";
 
-    private SparseArray<String> childrenArray = new SparseArray<String>();
+    private SparseArray<String> childrenArray = new SparseArray<String>(); // unused
 
-    private boolean isExpanded = false;
+    private boolean isExpanded = false; // unused
 
     @DatabaseField
     private boolean isPagedRequest = false;
@@ -159,7 +159,7 @@ public class OfflineData extends BaseTable2 {
         this.reference_no = order.getReference();
 
         this.isPagedRequest = order.shouldPageRequest();
-        this.pagedRequestCount = SwableTools.computePagedRequestCount(order.getOrderLines().size(),
+        this.pagedRequestCount = SwableTools.computePagedRequestCount(order.getOrder_lines().size(),
                 Order.MAX_ORDERLINES_PER_PAGE);
     }
 
@@ -509,14 +509,16 @@ public class OfflineData extends BaseTable2 {
             return null;
     }
 
-    public List<String> parseReturnID() {
-        //if(returnId.length() <= 0)
-        //    return new ArrayList<>();
+    public List<String> getReturnIdList() {
         return Arrays.asList(returnId.split(","));
     }
 
     public void insertReturnIdAt(int index, String returnId) {
-        ArrayList<String> retIds = new ArrayList<>(parseReturnID());
+        if(!isPagedRequest()) {
+            Log.e("OfflineData", "insertReturnIdAt : not a paged transaction, invalid action");
+            return;
+        }
+        ArrayList<String> retIds = new ArrayList<>(getReturnIdList());
         if(retIds.size() >= index+1 )
             retIds.set(index, returnId);
         else {
@@ -526,5 +528,20 @@ public class OfflineData extends BaseTable2 {
         }
 
         this.returnId = StringUtils.join(retIds, ',');
+    }
+
+    public String getChildReferenceNo() {
+        if(!isPagedRequest()) {
+            Log.e("OfflineData", "getChildReferenceNo : not a paged transaction, use getReference_no() instead");
+            return reference_no;
+        }
+
+        String childRefs = "";
+        for(int i = 0; i < pagedRequestCount; i++) {
+            if(i != 0)
+                childRefs += ",";
+            childRefs += reference_no + "-" + (i+1);
+        }
+        return childRefs;
     }
 }

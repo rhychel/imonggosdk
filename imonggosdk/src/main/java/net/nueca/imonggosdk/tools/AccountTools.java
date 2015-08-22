@@ -100,6 +100,10 @@ public class AccountTools {
         }
     }
 
+    public static void unlinkAccount(Context context, ImonggoDBHelper dbHelper) throws SQLException {
+        unlinkAccount(context,dbHelper, null);
+    }
+
     /**
      * Deletes Account Details from the database
      *
@@ -109,8 +113,8 @@ public class AccountTools {
      * @param accountListener
      * @throws SQLException
      */
-
     public static void unlinkAccount(Context context, ImonggoDBHelper dbHelper, AccountListener accountListener) throws SQLException {
+
         updateUnlinked(context, true);
         dbHelper.deleteAllDatabaseValues();
         SettingTools.updateSettings(context, SettingsName.SYNC_FINISHED, false);

@@ -133,9 +133,6 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Override
     protected void showNextActivity() {
-        if (getCustomDialog() != null) {
-            getCustomDialog().dismiss();
-        }
     }
 
     @Override
@@ -157,7 +154,6 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void stopLogin() {
 
-
     }
 
     @Override
@@ -171,36 +167,5 @@ public class LoginActivity extends BaseLoginActivity {
         DialogTools.hideIndeterminateProgressDialog();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        stopLogin();
 
-        if (isUnlinked() && !isLoggedIn()) {
-            if (getBaseLogin() != null) {
-                getBaseLogin().onStop();
-            }
-        }
-
-        DialogTools.hideIndeterminateProgressDialog();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if (isUnlinked() && !isLoggedIn()) {
-            if (getBaseLogin() != null) {
-                getBaseLogin().onStop();
-            }
-        }
-
-        DialogTools.hideIndeterminateProgressDialog();
-
-        if (getCustomDialog() != null) {
-            getCustomDialog().dismiss();
-        }
-
-        doUnbindService();
-    }
 }

@@ -38,12 +38,14 @@ import net.nueca.imonggosdk.objects.Unit;
  */
 public class Values {
 
-    private int line_no = 1;
+    private int line_no = -1;
     private Unit unit;
     private String unit_quantity = null, unit_name = null;
     private double unit_retail_price = 0.0, unit_content_quantity = 0.0;
     private String quantity = "1";
-    private ExtendedAttributes extendedAttributes;
+    private ExtendedAttributes extendedAttributes = null;
+
+    public Values() { }
 
     public Values(Unit unit, String quantity) {
         setValue(quantity, unit);
@@ -54,16 +56,23 @@ public class Values {
     }
 
     public void setValue(String quantity, Unit unit) {
+        setValue(quantity, unit, null);
+    }
+
+    public void setValue(String quantity, Unit unit, ExtendedAttributes extendedAttributes) {
+        if(extendedAttributes != null)
+            this.extendedAttributes = extendedAttributes;
         if(unit != null && unit.getId() != -1) {
             this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_quantity = quantity;
             this.unit_content_quantity = unit.getQuantity();
             this.unit_name = unit.getName();
             this.unit_retail_price = unit.getRetail_price()*Double.valueOf(this.unit_quantity);
+            this.unit = unit;
         }
         else{
             this.quantity = quantity;
-            this.unit = null;
+            this.unit = unit;
         }
     }
 
@@ -121,9 +130,22 @@ public class Values {
         this.extendedAttributes = extendedAttributes;
     }
 
+    public void setUnit(Unit unit) {
+        this.unit = unit;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+
+    public boolean isValidUnit() {
+        return (unit != null && unit.getId() != -1);
+    }
+
     @Override
     public boolean equals(Object o) {
-        return unit.getId() == ((Values)o).getUnit().getId();
+//        return unit.getId() == ((Values)o).getUnit().getId();
+        return line_no == ((Values)o).line_no;
     }
 
     @Override

@@ -372,8 +372,43 @@ public class Customer extends BaseTable {
         return (o instanceof Customer) && ((Customer)o).getId() == id;
     }
 
+    /** Overriding equals() requires an Overridden hashCode() **/
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + id;
+        return result;
+    }
+
     @Override
     public String toString() {
         return name;
+    }
+
+    public String getFullAddress() {
+        String address = "";
+
+        if(street != null && !street.isEmpty())
+            address += street;
+
+        if(city != null && !city.isEmpty()) {
+            if(!address.isEmpty())
+                address += ", ";
+            address += city;
+        }
+
+        if(zipcode != null && !zipcode.isEmpty()) {
+            if(!address.isEmpty())
+                address += " ";
+            address += zipcode;
+        }
+
+        if(country != null && !country.isEmpty()) {
+            if(!address.isEmpty())
+                address += ", ";
+            address += country;
+        }
+
+        return address;
     }
 }

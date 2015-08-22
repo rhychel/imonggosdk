@@ -109,6 +109,10 @@ public class Configurations {
             put(Modules.POS_DEVICES, "pos_devices.json");
             put(Modules.SALES_PROMOTIONS, "sales_promotions.json");*/
 
+//            put(Modules.CONCESSIO_SETTINGS, "application_settings");
+//            put(Modules.DISCOUNTS, "sales_promotions");
+//            put(Modules.DOCUMENT_TYPES, "document_types");
+//            put(Modules.DOCUMENT_PURPOSES, "document_purposes");
         }
     };
 

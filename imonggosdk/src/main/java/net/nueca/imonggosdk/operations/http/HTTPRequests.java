@@ -5,6 +5,7 @@ import android.util.Log;
 
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -70,6 +71,7 @@ public class HTTPRequests {
                 return params;
             }
         };
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -109,6 +111,7 @@ public class HTTPRequests {
                 return params;
             }
         };
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonArrayRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonArrayRequest;
     }
@@ -119,8 +122,10 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, RequestType.GET);
 
+        Log.e("Request-URL", ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
-                null, ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
+                ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -147,8 +152,49 @@ public class HTTPRequests {
                 return params;
             }
         };
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
+    }
+
+    public static JsonArrayRequest sendGETJsonArrayRequest(Context context, final Session session,
+                                                           final VolleyRequestListener volleyRequestListener, Server server,
+                                                           final Table table, String id, String parameter) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(table, RequestType.GET);
+
+        Log.e("Request-URL", ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (volleyRequestListener != null)
+                            volleyRequestListener.onSuccess(table, RequestType.GET, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null)
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                String auth = "Basic " + session.getApiAuthentication();
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonArrayRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        return jsonArrayRequest;
     }
 
     public static JsonObjectRequest sendPOSTRequest(Context context, final Session session,
@@ -185,6 +231,7 @@ public class HTTPRequests {
                 return params;
             }
         };
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -223,6 +270,7 @@ public class HTTPRequests {
                 return params;
             }
         };
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -261,6 +309,7 @@ public class HTTPRequests {
                 return params;
             }
         };
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }

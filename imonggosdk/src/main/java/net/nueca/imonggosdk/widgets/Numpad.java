@@ -95,8 +95,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             fontSize = typedArray.getInteger(R.styleable.Numpad_fontSize, 20);
             fontColor = typedArray.getColorStateList(R.styleable.Numpad_fontColor);
             buttonBgResource = typedArray.getResourceId(R.styleable.Numpad_buttonBgResource, DEFAULT_KEYPAD_BUTTON_BG);
-            goButtonBgResource = typedArray.getResourceId(R.styleable.Numpad_goButtonBgResource,
-                    DEFAULT_KEYPAD_BUTTON_BG_CIRCLE);
+            goButtonBgResource = typedArray.getResourceId(R.styleable.Numpad_goButtonBgResource, DEFAULT_KEYPAD_BUTTON_BG_CIRCLE);
             backgroundColor = typedArray.getColorStateList(R.styleable.Numpad_backgroundColor);
 
             /*if(goButtonBgResource == DEFAULT_KEYPAD_BUTTON_BG && Build.VERSION.SDK_INT >= 21) {
@@ -480,7 +479,14 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             show();
     }
 
-    public View getTextHolderWithTag(String tag) {
+    public TextHolder getTextHolderWithTag(String tag) {
+        for(int i=0 ;i< textViewList.size(); i++) {
+            if(textViewList.get(i).getTag().equals(tag))
+                return textViewList.get(i);
+        }
+        return null;
+    }
+    public View getTextHolderViewWithTag(String tag) {
         for(int i=0 ;i< textViewList.size(); i++) {
             if(textViewList.get(i).getTag().equals(tag))
                 return textViewList.get(i).mTextHolder;
@@ -549,6 +555,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
                     setDecimalLength(textHolder.getDecimalPlace());
                     setAlwaysShowDecimal(textHolder.alwaysShowDecimal);
                     setAllowNegative(textHolder.allowNegative);
+                    setEnableDot(textHolder.enableDot);
 
                     if(textHolder.getTextView().getText().toString().contains("-")) {
                         ibtnNegative.callOnClick();
@@ -580,6 +587,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         private int mDecimalPlace;
         private int mDigitCount;
         private boolean allowNegative = false;
+        private boolean enableDot;
 
         public TextHolder(View view, String tag, TextHolderHelper helper, boolean alwaysShowDecimal, boolean allowNegative)
         {
@@ -590,6 +598,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             this.mDecimalPlace = 2;
             this.mDigitCount = 12;
             this.allowNegative = allowNegative;
+            enableDot = !alwaysShowDecimal;
         }
         public TextHolder(View view, String tag, TextHolderHelper helper, boolean alwaysShowDecimal, int digitCount,
                           int decimalPlace, boolean allowNegative) {
@@ -600,6 +609,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             this.mDecimalPlace = decimalPlace;
             this.mDigitCount = digitCount;
             this.allowNegative = allowNegative;
+            enableDot = !alwaysShowDecimal;
         }
 
         public TextView getTextView() { return (TextView)mTextHolder; }
@@ -608,6 +618,9 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         public void setDecimalPlace(int length) { mDecimalPlace = length; }
         public int getDecimalPlace() { return mDecimalPlace; }
         public int getDigitCount() { return mDigitCount; }
+        public void setEnableDot(boolean shouldEnable) {
+            enableDot = shouldEnable;
+        }
 
         @Override
         public boolean equals(Object o) {

@@ -52,6 +52,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private BaseLogin mBaseLogin;
     private Boolean isUnlinked;
     private Boolean isLoggedIn;
+    private Boolean requireConcessioSettings = false; // added by rhy
     private Session mSession = null;
     private Server mServer;
     private int[] mModules;
@@ -553,6 +554,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             throw new LoginException(context.getString(R.string.LOGIN_INVALID_PASSWORD));
         } else {
             mBaseLogin = new BaseLogin(BaseLoginActivity.this, getHelper(), accountId, email, password);
+            mBaseLogin.setConcessioSettings(requireConcessioSettings);
         }
     }
 
@@ -607,6 +609,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     protected CustomDialog getCustomDialog() {
         return this.customDialog;
+    }
+
+    public void setRequireConcessioSettings(Boolean requireConcessioSettings) {
+        this.requireConcessioSettings = requireConcessioSettings;
     }
 
     protected String getEditTextAccountID() {
@@ -728,6 +734,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.mServiceIntent = intent;
     }
 
+    protected SyncModules getSyncModules() {
+        return mSyncModules;
+    }
+
     protected void stopService() {
         Log.e(TAG, "Stopping sync service");
         doUnbindService();
@@ -768,7 +778,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected void doUnbindService() {
         if (isSyncServiceBinded()) {
             mBounded = false;
-            unbindService(getServiceConnection());
+            if(mBounded)
+                unbindService(getServiceConnection());
         }
     }
 
@@ -897,13 +908,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
         if (isUnlinked() && !isLoggedIn()) {
             if (getBaseLogin() != null) {
                 getBaseLogin().onStop();
             }
         }
+        super.onDestroy(); // This should be the last to call after onStop();
 
         DialogTools.hideIndeterminateProgressDialog();
 
