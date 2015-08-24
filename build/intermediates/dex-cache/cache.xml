@@ -2,235 +2,11 @@
 <items version="2" >
 
     <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\com.sothree.slidinguppanel\library\3.0.0\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c1200ab3b93b8f42c0878b00eb79a84c1f112cf7">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-6c23293410b6afa78232c5061e5bb0d3ce2a5173.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="3abb4b88f5a8a0584a9b01d3170d7165f12f8588">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-50925d7fb12a75088cc8184c9f5f112e3d5cb0a7.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.sothree.slidinguppanel\library\3.0.0\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c1200ab3b93b8f42c0878b00eb79a84c1f112cf7">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-901daec860cc2881b360ab285a3330c7702fae22.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-c6f0af66782d4453db3664e721cec3a59f7437ed.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.github.traex.rippleeffect\library\1.3\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="ee17feb34ce104bc17d1a1e64346d7f779ebb066">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-1f5773581b40efe8293ac27dcd9d16309619f57a.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\libs\internal_impl-22.2.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\internal_impl-22.2.1-f4e1cadc3de45e880c5eb65505b0d5c146b311bc.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\imonggosdk\concessioengine\unspecified\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c882608637d92fc0a6e432d1de2ca37c58a938bd">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-14112f87ca473002f0385629fd18defb53e9dd17.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\com.afollestad\material-dialogs\0.7.5.5\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="42d4b437a706703e0fbc4be51fc3935ee3c477ca">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-b1a49796fd1f292f22c2644f12e16f15263453a1.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="3abb4b88f5a8a0584a9b01d3170d7165f12f8588">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-87b5423096a08807cbd7d3a44e706c870e9ff25c.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\com.github.traex.rippleeffect\library\1.3\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="ee17feb34ce104bc17d1a1e64346d7f779ebb066">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-7ac156e52b3d144d40d613edeea5798481d5fcd7.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\me.grantland\autofittextview\0.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="972ca945f0cf5ff0765ab94fa8e1a90661ea197a">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-ef88dece032d18ce016e65f78f7a37c6cb2e1f15.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\imonggosdk\concessioengine\unspecified\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="ac07ea99cf47f4099975fd5f2ef997200019cca4">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-400053f6425622f19874b5889cb696c172bc1747.jar" />
-    </item>
-    <item
-        jar="C:\Users\rarwkk\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.1\support-annotations-22.2.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\support-annotations-22.2.1-7216767c9c32181606203f6bd282a4e0ed444cf4.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\org.solovyev.android.views\linear-layout-manager\0.4\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="594eab441ab5cac8007ab3fd49a24338f415b83f">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-f9f433f081730488055679f06add6b788eb9a015.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\imonggosdk\imonggosdk\unspecified\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="da32b65e89da4f2e501bb6474c3a1cb6cc1a4eee">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-623bba54195f148e03fdfbdf0829c3675ec709b8.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\org.solovyev.android.views\linear-layout-manager\0.4\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="594eab441ab5cac8007ab3fd49a24338f415b83f">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-d46b763f0c715b9329a8c8fd7207fd95d0fa5fcc.jar" />
-    </item>
-    <item
         jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.jakewharton\disklrucache\2.0.2\93b399470e72c0bc8cb52379943b63c9aa586cd8\disklrucache-2.0.2.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="93b399470e72c0bc8cb52379943b63c9aa586cd8">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\disklrucache-2.0.2-d1d1fbdc6fd1cbbaa93b70b43cc98f01065e8823.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\libs\internal_impl-22.2.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\internal_impl-22.2.1-aeec74aade84ad4c9cb1341ded865d31eb5bc167.jar" />
-    </item>
-    <item
-        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.3.1\ecb6e1f8e4b0e84c4b886c2f14a1500caf309757\gson-2.3.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="ecb6e1f8e4b0e84c4b886c2f14a1500caf309757">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\gson-2.3.1-d91f679942d05cdf8203fd73bd9a6f7fee3a6d3f.jar" />
-    </item>
-    <item
-        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-lang3\3.4\5fe28b9518e58819180a43a850fbc0dd24b7c050\commons-lang3-3.4.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="5fe28b9518e58819180a43a850fbc0dd24b7c050">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\commons-lang3-3.4-0b379bbd9b99ebe979b5dbcddb68c5cf331e0b15.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\com.cocosw\bottomsheet\1.1.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="3a993e50d32f510babac974a7e26b03e29790458">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-9a72a8f46e688ca3262c34714878221c76ea3c23.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\com.android.support\design\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="1821601ddbec5ff125653097812823388700af74">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-cad6384bb16e15a3ad8d730948d95a419472c3a8.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-aabd5ada243b22902d4786bb8db3f0475f27caa2.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\palette-v7\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="d3aba1c188fea5ee83ebbcb458be29d1cc0ef483">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-51c4904c9201e6ef2974d47958a8a794b852858e.jar" />
-    </item>
-    <item
-        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\library-2.4.0-9112769cf4179d39b3de896f05bf73718603df08.jar" />
-    </item>
-    <item
-        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.j256.ormlite\ormlite-android\4.48\afa06f539a4026c10b247386312aa67404b80a16\ormlite-android-4.48.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="afa06f539a4026c10b247386312aa67404b80a16">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\ormlite-android-4.48-6f71f2b17fac8caa5f4fda49641178ff21d50266.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\design\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="1821601ddbec5ff125653097812823388700af74">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-4b637ce62a2076782a0c080fcb3becc60d6f9c83.jar" />
-    </item>
-    <item
-        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.mcxiaoke.volley\library\1.0.17\f417d7f776d1ee5858fc04d9362aa45e9bedd26b\library-1.0.17.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="f417d7f776d1ee5858fc04d9362aa45e9bedd26b">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\library-1.0.17-3929ef986be7e8bb49ca23b5b3b90b4ae7394961.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.wdullaer\materialdatetimepicker\1.4.2\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="10f66556026320088327e814108d0a8e80111130">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-8177728acac9cc18c64f244980427833447d6d66.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\imonggosdk\imonggosdk\unspecified\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="1f377497a6f55150a73abb1e60be7ae7344c8612">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-9ab7af008a2b6d65dba3f2170b9c8eb26452b802.jar" />
-    </item>
-    <item
-        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.j256.ormlite\ormlite-core\4.48\e579bd2905d0399af5029aaaf9817d5fa0ca88a5\ormlite-core-4.48.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="e579bd2905d0399af5029aaaf9817d5fa0ca88a5">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\ormlite-core-4.48-fc8b9ad8dab24f18c9a5803baa5959d8553112b4.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\me.grantland\autofittextview\0.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="972ca945f0cf5ff0765ab94fa8e1a90661ea197a">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-12b4da274fdc312acbd8ba5c2cf653517a9916f2.jar" />
-    </item>
-    <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.afollestad\material-dialogs\0.7.5.5\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="42d4b437a706703e0fbc4be51fc3935ee3c477ca">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-f74d162cc44d625c8ddc95d8471d18a52e726384.jar" />
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\disklrucache-2.0.2-d1d1fbdc6fd1cbbaa93b70b43cc98f01065e8823.jar" />
     </item>
     <item
         jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.cocosw\bottomsheet\1.1.1\jars\classes.jar"
@@ -240,6 +16,132 @@
         <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-bd6cde4e5fa1d32eadb248953c10796252b203d2.jar" />
     </item>
     <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\design\22.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="1821601ddbec5ff125653097812823388700af74">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-4b637ce62a2076782a0c080fcb3becc60d6f9c83.jar" />
+    </item>
+    <item
+        jar="C:\Users\rarwkk\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.1\support-annotations-22.2.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\support-annotations-22.2.1-7216767c9c32181606203f6bd282a4e0ed444cf4.jar" />
+    </item>
+    <item
+        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.j256.ormlite\ormlite-core\4.48\e579bd2905d0399af5029aaaf9817d5fa0ca88a5\ormlite-core-4.48.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="e579bd2905d0399af5029aaaf9817d5fa0ca88a5">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\ormlite-core-4.48-fc8b9ad8dab24f18c9a5803baa5959d8553112b4.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.github.traex.rippleeffect\library\1.3\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="ee17feb34ce104bc17d1a1e64346d7f779ebb066">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-1f5773581b40efe8293ac27dcd9d16309619f57a.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\palette-v7\22.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="d3aba1c188fea5ee83ebbcb458be29d1cc0ef483">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-51c4904c9201e6ef2974d47958a8a794b852858e.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\me.grantland\autofittextview\0.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="972ca945f0cf5ff0765ab94fa8e1a90661ea197a">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-12b4da274fdc312acbd8ba5c2cf653517a9916f2.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\org.solovyev.android.views\linear-layout-manager\0.4\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="594eab441ab5cac8007ab3fd49a24338f415b83f">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-d46b763f0c715b9329a8c8fd7207fd95d0fa5fcc.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.sothree.slidinguppanel\library\3.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="c1200ab3b93b8f42c0878b00eb79a84c1f112cf7">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-901daec860cc2881b360ab285a3330c7702fae22.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.afollestad\material-dialogs\0.7.5.5\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="42d4b437a706703e0fbc4be51fc3935ee3c477ca">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-f74d162cc44d625c8ddc95d8471d18a52e726384.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.wdullaer\materialdatetimepicker\1.4.2\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="10f66556026320088327e814108d0a8e80111130">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-8177728acac9cc18c64f244980427833447d6d66.jar" />
+    </item>
+    <item
+        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.mcxiaoke.volley\library\1.0.17\f417d7f776d1ee5858fc04d9362aa45e9bedd26b\library-1.0.17.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="f417d7f776d1ee5858fc04d9362aa45e9bedd26b">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\library-1.0.17-3929ef986be7e8bb49ca23b5b3b90b4ae7394961.jar" />
+    </item>
+    <item
+        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.3.1\ecb6e1f8e4b0e84c4b886c2f14a1500caf309757\gson-2.3.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="ecb6e1f8e4b0e84c4b886c2f14a1500caf309757">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\gson-2.3.1-d91f679942d05cdf8203fd73bd9a6f7fee3a6d3f.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\22.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="3abb4b88f5a8a0584a9b01d3170d7165f12f8588">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-50925d7fb12a75088cc8184c9f5f112e3d5cb0a7.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\imonggosdk\concessioengine\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="43d4d5b9a4e63a32f89d9daf33a4845fc1b039cb">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-400053f6425622f19874b5889cb696c172bc1747.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\imonggosdk\imonggosdk\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="1b1ac6588ecabb50048ef2a4131f556d682f6d1b">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-9ab7af008a2b6d65dba3f2170b9c8eb26452b802.jar" />
+    </item>
+    <item
+        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-lang3\3.4\5fe28b9518e58819180a43a850fbc0dd24b7c050\commons-lang3-3.4.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="5fe28b9518e58819180a43a850fbc0dd24b7c050">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\commons-lang3-3.4-0b379bbd9b99ebe979b5dbcddb68c5cf331e0b15.jar" />
+    </item>
+    <item
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-aabd5ada243b22902d4786bb8db3f0475f27caa2.jar" />
+    </item>
+    <item
+        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\library-2.4.0-9112769cf4179d39b3de896f05bf73718603df08.jar" />
+    </item>
+    <item
         jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
@@ -247,11 +149,18 @@
         <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-8a25ee5c44e8a71762b8a9e9b8d44e6a57fc3280.jar" />
     </item>
     <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\classes.jar"
+        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\libs\internal_impl-22.2.1.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="f8efd0096475e0daf054267b61544e10dc776503">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio\build\intermediates\pre-dexed\debug\classes-92741615ab6a9763c6a0305c03648e0ed6e60987.jar" />
+        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\internal_impl-22.2.1-aeec74aade84ad4c9cb1341ded865d31eb5bc167.jar" />
+    </item>
+    <item
+        jar="C:\Users\rarwkk\.gradle\caches\modules-2\files-2.1\com.j256.ormlite\ormlite-android\4.48\afa06f539a4026c10b247386312aa67404b80a16\ormlite-android-4.48.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="afa06f539a4026c10b247386312aa67404b80a16">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\ormlite-android-4.48-6f71f2b17fac8caa5f4fda49641178ff21d50266.jar" />
     </item>
 
 </items>

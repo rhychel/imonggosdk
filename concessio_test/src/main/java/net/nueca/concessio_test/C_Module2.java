@@ -10,7 +10,7 @@ import android.widget.ListView;
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -41,9 +41,12 @@ public class C_Module2 extends ModuleActivity {
         }
 
         try {
-            List<ProductTaxRateAssoc> productTaxRateAssocList = getHelper().getProductTaxRateAssocs().queryForAll();
+            List<BranchUserAssoc> branchUserAssoc = getHelper().getBranchUserAssocs().queryForAll();
 
-            Log.e(TAG, "size: " + productTaxRateAssocList.size() + " " + productTaxRateAssocList.toString() + "");
+            //Log.e(TAG, "size: " + productTags.size() + " " + productTags.toString() + "");
+            for(BranchUserAssoc b : branchUserAssoc) {
+                Log.e(TAG, b.getBranch().getId() + "");
+            }
 
 
         } catch (SQLException e) {
