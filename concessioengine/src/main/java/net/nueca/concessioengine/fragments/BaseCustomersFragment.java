@@ -69,9 +69,6 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
             e.printStackTrace();
         }
 
-        // TODO: Paging of customers using ListTools.partition method
-        /** customers = ListTools.partition(PAGE, customers, SIZE); **/
-
         return customers;
     }
 

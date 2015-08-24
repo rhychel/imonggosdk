@@ -36,13 +36,13 @@ public abstract class BaseCustomersAdapter extends BaseAdapter<Customer> {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Customer tapped = getItem(position);
-            if(selectedCustomer != null && selectedCustomer.contains(tapped)) {
+            if(selectedCustomer == null)
+                selectedCustomer = new ArrayList<>();
+
+            if(selectedCustomer.contains(tapped)) {
                 selectedCustomer.remove(tapped);
             }
             else {
-                if(selectedCustomer == null)
-                    selectedCustomer = new ArrayList<>();
-
                 if(isMultiSelect) {
                     selectedCustomer.add(tapped);
                 }

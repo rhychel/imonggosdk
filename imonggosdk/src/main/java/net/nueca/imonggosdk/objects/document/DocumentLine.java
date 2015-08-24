@@ -4,30 +4,56 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.j256.ormlite.field.DatabaseField;
+
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Created by gama on 7/20/15.
  */
-public class DocumentLine {
-    protected int line_no;
-    protected int product_id;
-    protected double quantity;
-    protected ExtendedAttributes extended_attributes;
-    protected String discount_text;
+public class DocumentLine extends BaseTable2 {
 
+    @DatabaseField
+    protected int line_no;
+    @DatabaseField
+    protected int product_id;
+    @DatabaseField
+    protected double quantity;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
+    protected transient Document document;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extended_attributes")
+    protected ExtendedAttributes extended_attributes;
+
+    @DatabaseField
+    protected String discount_text;
+    @DatabaseField
     protected Double price;
+    @DatabaseField
     protected Double retail_price;
+    @DatabaseField
     protected Integer unit_id;
+    @DatabaseField
     protected Double unit_content_quantity;
+    @DatabaseField
     protected String unit_name;
+    @DatabaseField
     protected Double unit_quantity;
+    @DatabaseField
     protected Double unit_retail_price;
+
+    public DocumentLine() {}
 
     public DocumentLine(Builder builder) {
         line_no = builder.line_no;
@@ -42,6 +68,7 @@ public class DocumentLine {
         unit_name = builder.unit_name;
         unit_quantity = builder.unit_quantity;
         unit_retail_price = builder.unit_retail_price;
+        document = builder.document;
     }
 
     public int getLine_no() {
@@ -140,9 +167,56 @@ public class DocumentLine {
         this.unit_retail_price = unit_retail_price;
     }
 
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
+
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(this));
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        if(extended_attributes != null)
+            extended_attributes.insertTo(dbHelper);
+
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if(extended_attributes == null)
+            return;
+        extended_attributes.setDocumentLine(this);
+        extended_attributes.updateTo(dbHelper);
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if(extended_attributes == null)
+            return;
+        extended_attributes.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static class Builder {
@@ -158,6 +232,12 @@ public class DocumentLine {
         protected String unit_name = null;
         protected Double unit_quantity = null;
         protected Double unit_retail_price = null;
+        protected Document document;
+
+        public Builder document(Document document) {
+            this.document = document;
+            return this;
+        }
 
         public Builder line_no(int line_no) {
             this.line_no = line_no;
@@ -211,5 +291,18 @@ public class DocumentLine {
         public DocumentLine build() {
             return new DocumentLine(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof DocumentLine) && ((DocumentLine)o).getId() == id;
+    }
+
+    /** Overriding equals() requires an Overridden hashCode() **/
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + id;
+        return result;
     }
 }

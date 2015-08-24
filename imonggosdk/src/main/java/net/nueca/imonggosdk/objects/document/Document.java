@@ -1,31 +1,51 @@
 package net.nueca.imonggosdk.objects.document;
 
-import android.content.Context;
-
 import com.google.gson.Gson;
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
+import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
 import net.nueca.imonggosdk.swable.SwableTools;
-import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by gama on 7/20/15.
  */
-public class Document extends BaseTransaction {
+public class Document extends BaseTransactionDB {
     public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 2;
 
+    @DatabaseField
     protected String remark;
+
+    @DatabaseField
     protected String document_type_code;
+
     protected List<DocumentLine> document_lines;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<DocumentLine> document_lines_fc;
+
+    @DatabaseField
     protected Integer target_branch_id;
+
+    @DatabaseField
     protected String document_purpose_name;
+
+    public Document() {
+        super(null);
+    }
 
     public Document(Builder builder) {
         super(builder);
@@ -34,6 +54,7 @@ public class Document extends BaseTransaction {
         document_lines = builder.document_lines;
         target_branch_id = builder.target_branch_id;
         document_purpose_name = builder.document_purpose_name;
+        id = builder.id;
     }
 
     public String getRemark() {
@@ -76,6 +97,12 @@ public class Document extends BaseTransaction {
         this.document_purpose_name = document_purpose_name;
     }
 
+    public void addDocumentLine(DocumentLine documentLine) {
+        if(document_lines == null)
+            document_lines = new ArrayList<>();
+        document_lines.add(documentLine);
+    }
+
     public static Document fromJSONString(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         return fromJSONObject(jsonObject);
@@ -92,12 +119,56 @@ public class Document extends BaseTransaction {
 
     @Override
     public boolean shouldPageRequest() {
+        refresh();
         return document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
     }
 
     @Override
     public int getChildCount() {
+        refresh();
         return SwableTools.computePagedRequestCount(document_lines.size(), MAX_DOCUMENTLINES_PER_PAGE);
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        refresh();
+        if(document_lines == null)
+            return;
+        for(DocumentLine documentLine : document_lines) {
+            documentLine.setDocument(this);
+            documentLine.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        refresh();
+        if(document_lines == null)
+            return;
+        for(DocumentLine documentLine : document_lines) {
+            documentLine.deleteTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static class Builder extends BaseTransaction.Builder<Builder> {
@@ -106,6 +177,12 @@ public class Document extends BaseTransaction {
         protected List<DocumentLine> document_lines;
         protected Integer target_branch_id;
         protected String document_purpose_name;
+        protected int id;
+
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder remark(String remark) {
             this.remark = remark;
@@ -135,21 +212,24 @@ public class Document extends BaseTransaction {
             return this;
         }
 
+        @Override
         public Document build() {
             return new Document(this);
         }
     }
 
     public List<DocumentLine> getDocumentLineAt(int position) {
+        refresh();
+
         List<DocumentLine> list = new ArrayList<>();
-        list.addAll(SwableTools.partition(position,document_lines,MAX_DOCUMENTLINES_PER_PAGE));
+        list.addAll(SwableTools.partition(position, document_lines, MAX_DOCUMENTLINES_PER_PAGE));
         return list;
     }
 
     public Document getChildDocumentAt(int position) throws JSONException {
         Document document = Document.fromJSONString(toJSONString());
         document.setDocument_lines(getDocumentLineAt(position));
-        document.setReference(reference + "-" + (position+1));
+        document.setReference(reference + "-" + (position + 1));
         return document;
     }
 
@@ -159,5 +239,38 @@ public class Document extends BaseTransaction {
             documentList.add(getChildDocumentAt(i));
         }
         return documentList;
+    }
+
+    @Override
+    public String toJSONString() {
+        refresh();
+        return super.toJSONString();
+    }
+
+    @Override
+    public JSONObject toJSONObject() throws JSONException {
+        refresh();
+        return super.toJSONObject();
+    }
+
+    public void refresh() {
+        if(document_lines_fc != null && document_lines == null) {
+            for(DocumentLine documentLine : document_lines_fc) {
+                    addDocumentLine(documentLine);
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Document) && ((Document)o).getId() == id;
+    }
+
+    /** Overriding equals() requires an Overridden hashCode() **/
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + id;
+        return result;
     }
 }

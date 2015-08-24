@@ -3,6 +3,7 @@ package net.nueca.imonggosdk.objects.base;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
@@ -13,10 +14,12 @@ import org.json.JSONObject;
  * Created by gama on 7/21/15.
  */
 public abstract class BaseTransaction {
+    @DatabaseField
     protected String reference;
 
     public BaseTransaction(Builder builder) {
-        reference = builder.reference;
+        if(builder != null)
+            reference = builder.reference;
     }
 
     public String getReference() {
@@ -48,7 +51,7 @@ public abstract class BaseTransaction {
         return new JSONObject(gson.toJson(this));
     }
 
-    public static class Builder <T extends Builder> {
+    protected static class Builder <T extends Builder> {
         private String reference = "";
 
         public Builder() {}
