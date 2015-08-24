@@ -34,6 +34,16 @@
             android:layout_gravity="left"
             android:layout_weight="1"
             android:gravity="center_vertical" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="No Batch Number"
+            android:id="@+id/tvBatchNo"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:gravity="center_vertical" />
     </LinearLayout>
 
     <me.grantland.widget.AutofitTextView
@@ -41,7 +51,7 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="58dp"
+        android:layout_height="88dp"
         android:text="1000"
         android:textSize="30sp"
         android:singleLine="true"

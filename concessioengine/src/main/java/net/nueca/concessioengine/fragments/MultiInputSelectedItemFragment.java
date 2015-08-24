@@ -21,6 +21,7 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.RVArrayAdapter;
 import net.nueca.concessioengine.adapters.SimpleMultiInputAdapter;
 import net.nueca.concessioengine.adapters.interfaces.ImageLoaderListener;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
@@ -55,7 +56,7 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
     private SetupActionBar setupActionBar;
     private FloatingActionButton fabAddValue;
 
-    private boolean hasUnits = false, hasBrand = true, hasDeliveryDate = true;
+    private boolean hasUnits = false, hasBrand = true, hasDeliveryDate = true, hasBatchNo = false;
     private Product product;
     private SelectedProductItem selectedProductItem;
 
@@ -80,6 +81,8 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
         try {
             product = getHelper().getProducts().queryBuilder().where().eq("id", productId).queryForFirst();
+            hasBatchNo = product.getExtras().isBatch_maintained();
+
             ctlActionBar.setTitle(product.getName());
             String imageUrl = ImonggoTools.buildProductImageUrl(getActivity(), getSession().getApiToken(),
                     getSession().getAcctUrlWithoutProtocol(), product.getId() + "", true, false);
@@ -101,6 +104,12 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
         simpleMultiInputAdapter.initializeRecyclerView(getActivity(), rvProducts);
         simpleMultiInputAdapter.setHasDeliveryDate(hasDeliveryDate);
         simpleMultiInputAdapter.setHasBrand(hasBrand);
+        simpleMultiInputAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClicked(View view, int position) {
+                showQuantityDialog(selectedProductItem, position);
+            }
+        });
 
         rvProducts.setAdapter(simpleMultiInputAdapter);
 
@@ -148,7 +157,9 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
                 quantityDialog.setBrandList(brands, true);
                 quantityDialog.setHasBrand(true);
             }
+            quantityDialog.setHasBrand(hasBrand);
             quantityDialog.setHasDeliveryDate(hasDeliveryDate);
+            quantityDialog.setHasBatchNo(hasBatchNo);
             quantityDialog.setIsMultiValue(true);
             quantityDialog.setValuePosition(valuePosition);
             quantityDialog.setFragmentManager(getActivity().getFragmentManager());
@@ -186,5 +197,21 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
     public void setProductId(int productId) {
         this.productId = productId;
+    }
+
+    public void setHasUnits(boolean hasUnits) {
+        this.hasUnits = hasUnits;
+    }
+
+    public void setHasBrand(boolean hasBrand) {
+        this.hasBrand = hasBrand;
+    }
+
+    public void setHasDeliveryDate(boolean hasDeliveryDate) {
+        this.hasDeliveryDate = hasDeliveryDate;
+    }
+
+    public void setHasBatchNo(boolean hasBatchNo) {
+        this.hasBatchNo = hasBatchNo;
     }
 }

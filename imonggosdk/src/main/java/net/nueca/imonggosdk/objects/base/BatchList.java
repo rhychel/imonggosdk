@@ -7,6 +7,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.Extras;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
@@ -66,6 +67,10 @@ public class BatchList<T> extends ArrayList<T> {
         if(get(0) instanceof ProductTag) {
             dbHelper.batchCreateOrUpdateProductTags(this, databaseOperation);
             Log.e(TAG, databaseOperation.toString() + "ING to ProductTag table");
+        }
+        if(get(0) instanceof Extras) {
+            dbHelper.batchCreateOrUpdateProductExtras(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to ProductExtras table");
         }
         if(get(0) instanceof Unit) {
             dbHelper.batchCreateOrUpdateUnits(this, databaseOperation);

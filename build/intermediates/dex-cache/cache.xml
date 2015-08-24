@@ -2,11 +2,11 @@
 <items version="2" >
 
     <item
-        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/imonggosdk2/imonggosdk/unspecified/jars/classes.jar"
+        jar="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/exploded-aar/imonggosdk2/concessioengine/unspecified/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="e3ed1f9a7f177412872b44cdca34aac092769381">
-        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-d2b74526f071e3fd7f9985ac16ae78a10175b805.jar" />
+        sha1="21d7a721bd5bb7db769d22d9d3a5521bd2f9c0c5">
+        <dex dex="/Users/rhymart/Documents/workspace/imonggosdk2/concessio/build/intermediates/pre-dexed/debug/classes-2e4232d5328639975e3397f5ed6d64691a33073e.jar" />
     </item>
 
 </items>

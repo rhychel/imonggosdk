@@ -64,8 +64,10 @@ public class SwableTools {
         Intent service = new Intent(activity,ImonggoSwable.class);
         return activity.bindService(service, swableServiceConnection, Context.BIND_AUTO_CREATE);
     }
-	
-	public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+	public static boolean isImonggoSwableRunning(Context context) {
+        return isMyServiceRunning(context, ImonggoSwable.class);
+    }
+	private static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
 	    ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
 	        if (serviceClass.getName().equals(service.service.getClassName())) {

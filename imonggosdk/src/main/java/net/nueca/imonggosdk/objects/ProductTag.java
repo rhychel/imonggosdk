@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects;
 
+import android.util.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -24,6 +26,8 @@ public class ProductTag {
     private String searchKey = "";
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_id")
     private Product product;
+
+    public static String TAG = "ProductTag";
 
     public ProductTag() { }
 
@@ -94,11 +98,23 @@ public class ProductTag {
     }
 
     public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
+        if(databaseOperation == DatabaseOperation.INSERT) {
+            Log.e(TAG, databaseOperation + "ING to database");
             insertTo(dbHelper);
+        }
         else if(databaseOperation == DatabaseOperation.UPDATE)
             updateTo(dbHelper);
         else if(databaseOperation == DatabaseOperation.DELETE)
             deleteTo(dbHelper);
+    }
+
+    @Override
+    public String toString() {
+        return "ProductTag{" +
+                "id=" + id +
+                ", tag='" + tag + '\'' +
+                ", searchKey='" + searchKey + '\'' +
+                ", product=" + product +
+                '}';
     }
 }

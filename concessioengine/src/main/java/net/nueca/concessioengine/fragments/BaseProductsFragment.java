@@ -3,6 +3,7 @@ package net.nueca.concessioengine.fragments;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -97,7 +98,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         List<Product> products = new ArrayList<>();
 
         boolean includeSearchKey = !searchKey.equals("");
-        boolean includeCategory = !category.toLowerCase().equals("all");
+        boolean includeCategory = (!category.toLowerCase().equals("all") && hasCategories);
+        Log.e("includeCategory", includeCategory + "");
         try {
             Where<Product, Integer> whereProducts = getHelper().getProducts().queryBuilder().where();
             whereProducts.isNull("status");
@@ -188,6 +190,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public String messageCategory() {

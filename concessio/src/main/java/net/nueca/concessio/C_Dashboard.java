@@ -8,6 +8,11 @@ import android.widget.Button;
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.interfaces.AccountListener;
+import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.imonggosdk.tools.AccountTools;
+
+import java.sql.SQLException;
 
 /**
  * Created by rhymart on 8/21/15.
@@ -15,16 +20,43 @@ import net.nueca.imonggosdk.enums.ConcessioModule;
  */
 public class C_Dashboard extends ImonggoAppCompatActivity {
 
-    private Button btnOrder;
+    private Button btnOrder, btnCount, btnUnlink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
 
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.startSwable(this);
+
         btnOrder = (Button) findViewById(R.id.btnOrder);
+        btnCount = (Button) findViewById(R.id.btnCount);
+        btnUnlink = (Button) findViewById(R.id.btnUnlink);
 
         btnOrder.setOnClickListener(onChooseModule);
+        btnCount.setOnClickListener(onChooseModule  );
+        btnUnlink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    AccountTools.unlinkAccount(C_Dashboard.this, getHelper(), new AccountListener() {
+                        @Override
+                        public void onLogoutAccount() {
+                        }
+
+                        @Override
+                        public void onUnlinkAccount() {
+                            finish();
+                            Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+                            startActivity(intent);
+                        }
+                    });
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private View.OnClickListener onChooseModule = new View.OnClickListener() {
@@ -34,6 +66,9 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
             switch(view.getId()) {
                 case R.id.btnOrder: {
                     intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.ORDERS.ordinal());
+                } break;
+                case R.id.btnCount: {
+                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.PHYSICAL_COUNT.ordinal());
                 } break;
             }
             startActivity(intent);

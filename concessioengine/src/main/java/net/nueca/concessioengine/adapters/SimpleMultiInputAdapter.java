@@ -20,7 +20,7 @@ import me.grantland.widget.AutofitTextView;
  */
 public class SimpleMultiInputAdapter extends BaseRecyclerAdapter<SimpleMultiInputAdapter.ListViewHolder, Values> {
 
-    private boolean hasDeliveryDate = true, hasBrand = true;
+    private boolean hasDeliveryDate = true, hasBrand = true, hasBatchNo = true;
 
     public SimpleMultiInputAdapter(Context context) {
         super(context);
@@ -38,6 +38,7 @@ public class SimpleMultiInputAdapter extends BaseRecyclerAdapter<SimpleMultiInpu
         holder.tvQuantity.setText(getItem(position).getQuantity());
         holder.tvBrand.setText(getItem(position).getExtendedAttributes().getBrand());
         holder.tvDeliveryDate.setText(getItem(position).getExtendedAttributes().getDelivery_date());
+        holder.tvBatchNo.setText(getItem(position).getExtendedAttributes().getBatch_no());
     }
 
     @Override
@@ -53,27 +54,37 @@ public class SimpleMultiInputAdapter extends BaseRecyclerAdapter<SimpleMultiInpu
         this.hasDeliveryDate = hasDeliveryDate;
     }
 
+    public void setHasBatchNo(boolean hasBatchNo) {
+        this.hasBatchNo = hasBatchNo;
+    }
+
     public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {
 
         private AutofitTextView tvQuantity;
-        private TextView tvBrand, tvDeliveryDate;
+        private TextView tvBrand, tvDeliveryDate, tvBatchNo;
 
         public ListViewHolder(View itemView) {
             super(itemView);
 
             tvBrand = (TextView) itemView.findViewById(R.id.tvBrand);
             tvDeliveryDate = (TextView) itemView.findViewById(R.id.tvDeliveryDate);
+            tvBatchNo = (TextView) itemView.findViewById(R.id.tvBatchNo);
             tvQuantity = (AutofitTextView) itemView.findViewById(R.id.tvQuantity);
 
             if(!hasDeliveryDate)
                 tvDeliveryDate.setVisibility(View.GONE);
             if(!hasBrand)
                 tvBrand.setVisibility(View.GONE);
+            if(!hasBatchNo)
+                tvBatchNo.setVisibility(View.GONE);
+
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-
+            if(onItemClickListener != null)
+                onItemClickListener.onItemClicked(view, getLayoutPosition());
         }
 
         @Override

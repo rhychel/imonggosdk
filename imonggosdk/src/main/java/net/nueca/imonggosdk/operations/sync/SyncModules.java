@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.Extras;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
@@ -66,12 +67,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         } else if (requestType == RequestType.API_CONTENT) {
             Log.e(TAG, "API CONTENT");
 
-            if (mCurrentTableSyncing == Table.DOCUMENTS) {
-                if (branchIndex == 0) {
-                    initializeFromTo();
-                }
-            }
-
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
                     mCurrentTableSyncing, getSession().getServer(), requestType, getParameters(requestType));
 
@@ -84,7 +79,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().getLastUpdatedAts().queryBuilder();
 
             if (mCurrentTableSyncing == Table.DOCUMENTS) {
-                queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(mCurrentTableSyncing, String.valueOf(branches[branchIndex])));
+                document_type = "transfer_out";
+                intransit_status = "1";
+
+                initializeFromTo();
+
+                branchUserAssoc = getHelper().getBranchUserAssocs().queryForAll();
+                queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(mCurrentTableSyncing, branchUserAssoc.get(branchIndex).getBranch().getId() + ""));
             } else {
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(mCurrentTableSyncing));
             }
@@ -97,15 +98,18 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     protected void initializeFromTo() {
-        SimpleDateFormat convertStringToDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
-        Calendar now = Calendar.getInstance();
-        now.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        TimeZone timeZone = TimeZone.getTimeZone("UTC");
+        SimpleDateFormat convertStringToDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        convertStringToDate.setTimeZone(timeZone);
+        Calendar now = Calendar.getInstance(timeZone);
+        now.setTimeZone(timeZone);
         from = convertStringToDate.format(now.getTime());
         now.add(Calendar.MONTH, -3);
         now.set(Calendar.HOUR_OF_DAY, 23);
         now.set(Calendar.MINUTE, 59);
         now.set(Calendar.SECOND, 59);
         to = convertStringToDate.format(now.getTime());
+        Log.e(TAG, "From: " + from + " - To: " + to );
     }
 
 
@@ -113,8 +117,20 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         if (requestType == RequestType.LAST_UPDATED_AT) {
 
             if (mCurrentTableSyncing == Table.DOCUMENTS) {// This is when the module syncing is DOCUMENTS
-                return String.format(ImonggoTools.generateParameter(Parameter.LAST_UPDATED_AT, Parameter.BRANCH_ID),
-                        String.valueOf(branches[branchIndex]));
+
+                if (initialSync || lastUpdatedAt == null) {
+                    return String.format(ImonggoTools.generateParameter(Parameter.LAST_UPDATED_AT, Parameter.DOCUMENT_TYPE,
+                                    Parameter.FROM, Parameter.TO, Parameter.INTRANSIT,
+                                    Parameter.TARGET_BRANCH_ID ),
+                            document_type, from, to, intransit_status, branchUserAssoc.get(branchIndex).getBranch().getId());
+                } else {
+                    return String.format(ImonggoTools.generateParameter(Parameter.DOCUMENT_TYPE,
+                                    Parameter.INTRANSIT, Parameter.LAST_UPDATED_AT, Parameter.TARGET_BRANCH_ID,
+                                    Parameter.AFTER),
+                            document_type, intransit_status, branchUserAssoc.get(branchIndex).getBranch().getId(),
+                            lastUpdatedAt);
+                }
+
             }
 
             return ImonggoTools.generateParameter(Parameter.LAST_UPDATED_AT);
@@ -128,10 +144,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.USER_ID),
                             String.valueOf(page), String.valueOf(getUser().getId()));
 
-                if (mCurrentTableSyncing
-                        == Table.DOCUMENTS) {// Get from Past 3 months til today
+                if (mCurrentTableSyncing == Table.DOCUMENTS) {// Get from Past 3 months til today
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.BRANCH_ID, Parameter.FROM, Parameter.TO),
-                            String.valueOf(page), String.valueOf(branches[branchIndex]),
+                            String.valueOf(page), branchUserAssoc.get(branchIndex).getBranch().getId(),
                             DateTimeTools.convertDateForUrl(from), DateTimeTools.convertDateForUrl(to));
                 }
 
@@ -146,7 +161,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 if (mCurrentTableSyncing == Table.DOCUMENTS) {
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.BRANCH_ID, Parameter.AFTER),
-                            String.valueOf(page), String.valueOf(branches[branchIndex]), DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                            String.valueOf(page), branchUserAssoc.get(branchIndex).getBranch().getId(), DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 }
 
                 return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.AFTER),
@@ -157,7 +172,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             if (initialSync || lastUpdatedAt == null) {
                 if (mCurrentTableSyncing == Table.DOCUMENTS) {
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.BRANCH_ID),
-                            String.valueOf(getUser().getId()), String.valueOf(branches[branchIndex]));
+                            String.valueOf(getUser().getId()), branchUserAssoc.get(branchIndex).getBranch().getId());
                 }
                 if (mCurrentTableSyncing == Table.BRANCH_USERS) {// This is when the module syncing is the User Branches
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.USER_ID),
@@ -172,7 +187,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
                 if (mCurrentTableSyncing == Table.DOCUMENTS) {
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.BRANCH_ID, Parameter.AFTER),
-                            String.valueOf(getUser().getId()), String.valueOf(branches[branchIndex]),
+                            String.valueOf(getUser().getId()), branchUserAssoc.get(branchIndex).getBranch().getId(),
                             DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 }
                 if (mCurrentTableSyncing == Table.UNITS) {
@@ -205,7 +220,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
             };
             sleepFor1Second.start();
-
 
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -263,7 +277,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     newLastUpdatedAt = gson.fromJson(jsonObject.toString(), LastUpdatedAt.class);
 
                     if (mCurrentTableSyncing == Table.DOCUMENTS) {
-                        newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module, String.valueOf(branches[branchIndex])));
+                        newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module, branchUserAssoc.get(branchIndex).getBranch().getId() + ""));
                     } else {
                         newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module));
                     }
@@ -489,7 +503,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
                             BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-                            BatchList<ProductTag> productTags = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<ProductTaxRateAssoc> newProductTaxRates = new BatchList<>(DatabaseOperation.INSERT, getHelper());
 
 
@@ -500,6 +513,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 if (initialSync || lastUpdatedAt == null) {
                                     product.setSearchKey(product.getName() + product.getStock_no());
                                     newProducts.add(product);
+                                    product.doOperationsForExtras(getHelper(), DatabaseOperation.INSERT);
                                 } else {
                                     if (isExisting(product, Table.PRODUCTS)) {
                                         DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
@@ -508,11 +522,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         if (product.getStatus() == null) {
                                             updateProducts.add(product);
+                                            product.doOperationsForExtras(getHelper(), DatabaseOperation.UPDATE);
                                         } else {
                                             deleteProducts.add(product);
+                                            product.doOperationsForExtras(getHelper(), DatabaseOperation.DELETE);
                                         }
                                     } else {
+                                        product.setSearchKey(product.getName() + product.getStock_no());
                                         newProducts.add(product);
+                                        product.doOperationsForExtras(getHelper(), DatabaseOperation.INSERT);
                                     }
                                 }
 
@@ -612,21 +630,26 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     // Save tags to the database
                                     JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
                                     int tagsSize = tagsListArray.length();
-                                    getHelper().dbOperations(null, Table.PRODUCT_TAGS, DatabaseOperation.DELETE_ALL);
                                     for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
-
+                                        Log.e(TAG, tagsListArray.getString(tagsI));
                                         ProductTag productTag = new ProductTag(tagsListArray.getString(tagsI), product);
-                                        productTags.add(productTag);
+                                        if (initialSync || lastUpdatedAt == null) {
+                                            productTag.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                        } else {
+                                            if (isExisting(productTag, Table.PRODUCT_TAGS)) {
+                                                productTag.dbOperation(getHelper(), DatabaseOperation.UPDATE);
+                                            } else {
+                                                productTag.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                            }
+                                        }
                                     }
                                 }
                             }
 
                             newProductTaxRates.doOperation();
-                            productTags.doOperation();
                             newProducts.doOperation();
                             updateProducts.doOperation();
                             deleteProducts.doOperation();
-
                             updateNext(requestType, size);
                         }
                         break;
@@ -847,10 +870,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 int document_id = jsonObject.getInt("document_type_id");
                                 DocumentType documentType = getHelper().getDocumentTypes().queryForId(document_id);
 
-                                if(isExisting(documentType, Table.DOCUMENT_TYPES)) {
+                                if (isExisting(documentType, Table.DOCUMENT_TYPES)) {
                                     documentPurpose.setDocumentType(documentType);
                                 } else {
-                                    Log.e(TAG,"Document Type's don't have Doc Type");
+                                    Log.e(TAG, "Document Type's don't have Doc Type");
                                 }
 
                                 if (initialSync || lastUpdatedAt == null) {
@@ -925,7 +948,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     public void startFetchingModules() throws SQLException {
-        Log.e(TAG, "syncAllModules?="+syncAllModules+" || Items to sync="+mModulesToSync.length);
+        Log.e(TAG, "syncAllModules?=" + syncAllModules + " || Items to sync=" + mModulesToSync.length);
         startSyncModuleContents(RequestType.LAST_UPDATED_AT);
 
     }

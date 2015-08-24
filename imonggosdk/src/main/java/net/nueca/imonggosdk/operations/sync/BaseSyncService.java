@@ -26,14 +26,17 @@ import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by Jn on 7/14/2015.
@@ -63,7 +66,7 @@ public abstract class BaseSyncService extends ImonggoService {
     protected Gson gson = new GsonBuilder().serializeNulls().create();
 
     protected Table mCurrentTableSyncing;
-
+    protected List<BranchUserAssoc> branchUserAssoc;
     protected Table[] mModulesToSync;
     protected int[] branches;
     protected int branchIndex = 0;
@@ -71,6 +74,9 @@ public abstract class BaseSyncService extends ImonggoService {
 
     protected boolean syncAllModules;
     protected boolean initialSync;
+
+    protected String document_type;
+    protected String intransit_status;
 
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
@@ -219,6 +225,10 @@ public abstract class BaseSyncService extends ImonggoService {
             case DOCUMENT_TYPES: {
                 DocumentType documentType= (DocumentType) o;
                 return getHelper().getDocumentTypes().queryBuilder().where().eq("id", documentType.getId()).queryForFirst() != null;
+            }
+            case PRODUCT_TAGS: {
+                ProductTag productTag = (ProductTag) o;
+                return getHelper().getProductTags().queryBuilder().where().eq("id", productTag.getId()).queryForFirst() != null;
             }
         }
         return false;

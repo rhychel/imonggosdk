@@ -39,7 +39,8 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
 
     private Spinner spUnits, spBrands;
     private Button btnDeliveryDate;
-    private EditText etQuantity;
+    private EditText etQuantity, etBatchNo;
+    private TextInputLayout tilBatchNumber;
     private Numpad npInput;
     private LinearLayout llBrand, llDeliveryDate;
 
@@ -61,7 +62,7 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setContentView(R.layout.simple_quantity_dialog);
+        super.setContentView(hasBatchNo ? R.layout.simple_quantity_scroll_dialog : R.layout.simple_quantity_dialog);
 
         super.setTitle(selectedProductItem.getProduct().getName());
 
@@ -69,12 +70,27 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
         llBrand = (LinearLayout) super.findViewById(R.id.llBrand);
         llDeliveryDate = (LinearLayout) super.findViewById(R.id.llDeliveryDate);
         etQuantity = (EditText) super.findViewById(R.id.etQuantity);
+        etBatchNo = (EditText) super.findViewById(R.id.etBatchNumber);
         npInput = (Numpad) super.findViewById(R.id.npInput);
         btnSave = (Button) super.findViewById(R.id.btnSave);
         btnCancel = (Button) super.findViewById(R.id.btnCancel);
 
         unitsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, unitList);
 
+        if(hasBatchNo) {
+            tilBatchNumber = (TextInputLayout) super.findViewById(R.id.tilBatchNumber);
+            tilBatchNumber.setVisibility(View.VISIBLE);
+
+            // Check if there are existing values
+            if(selectedProductItem.getValues().size() > 0) {
+                if(isMultiValue) {
+                    if(valuePosition > -1) // check if you are editing a value from the list
+                        etBatchNo.setText(selectedProductItem.getValues().get(valuePosition).getExtendedAttributes().getBatch_no());
+                }
+                else
+                    etBatchNo.setText(selectedProductItem.getValues().get(0).getExtendedAttributes().getBatch_no());
+            }
+        }
         if(hasBrand) {
             llBrand.setVisibility(View.VISIBLE);
             spBrands = (Spinner) super.findViewById(R.id.spBrands);
@@ -180,6 +196,8 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                         extendedAttributes.setBrand(((String) spBrands.getSelectedItem()));
                     if (hasDeliveryDate)
                         extendedAttributes.setDelivery_date(btnDeliveryDate.getText().toString());
+                    if (hasBatchNo)
+                        extendedAttributes.setBatch_no(etBatchNo.getText().toString().trim());
                     values.setExtendedAttributes(extendedAttributes);
                 }
                 if(isMultiValue) {
@@ -204,5 +222,4 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
             showDeliveryDatePicker(btnDeliveryDate);
         }
     };
-
 }

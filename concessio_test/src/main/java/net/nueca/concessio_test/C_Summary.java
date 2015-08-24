@@ -28,6 +28,5 @@ public class C_Summary extends ModuleActivity implements SetupActionBar {
 
     @Override
     public void setupActionBar(Toolbar toolbar) {
-
     }
 }

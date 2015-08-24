@@ -1,12 +1,10 @@
 <component name="libraryTable">
-  <library name="recyclerview-v7-22.2.0">
+  <library name="materialdatetimepicker-1.4.2">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/imonggosdk/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.0/res" />
-      <root url="jar://$PROJECT_DIR$/imonggosdk/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.0/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/concessio/build/intermediates/exploded-aar/com.wdullaer/materialdatetimepicker/1.4.2/res" />
+      <root url="jar://$PROJECT_DIR$/concessio/build/intermediates/exploded-aar/com.wdullaer/materialdatetimepicker/1.4.2/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="jar://$USER_HOME$/AppData/Local/Android/sdk/extras/android/m2repository/com/android/support/recyclerview-v7/22.2.0/recyclerview-v7-22.2.0-sources.jar!/" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>
