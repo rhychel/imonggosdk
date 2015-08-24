@@ -292,4 +292,17 @@ public class DocumentLine extends BaseTable2 {
             return new DocumentLine(this);
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof DocumentLine) && ((DocumentLine)o).getId() == id;
+    }
+
+    /** Overriding equals() requires an Overridden hashCode() **/
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + id;
+        return result;
+    }
 }

@@ -150,8 +150,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 }
             }*/
 
-            for(Document document : getHelper().getDocuments().queryForAll())
+            for(Document document : getHelper().getDocuments().queryForAll()) {
+                Log.e("DELETE",document.getId()+"");
                 document.deleteTo(getHelper());
+            }
 
 
             Document document = new Document.Builder()
@@ -194,9 +196,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             document.insertTo(getHelper());
             Gson gson = new Gson();
 
-            Log.e("DOCUMENT LINE " + getHelper().getDocumentLines().queryForAll().size(),
+            List<Document> documents = getHelper().getDocuments().queryForAll();
+            for(Document docu : documents)
+                Log.e("--DOCU " + docu.getId(), docu.toString());
+
+            Log.e("--DOCUMENT LINE " + getHelper().getDocumentLines().queryForAll().size(),
                     gson.toJson(getHelper().getDocumentLines().queryForAll()));
-            Log.e("EXTENDED ATTRIB " + getHelper().getExtendedAttributes().queryForAll().size(),
+            Log.e("--EXTENDED ATTRIB " + getHelper().getExtendedAttributes().queryForAll().size(),
                     gson.toJson(getHelper().getExtendedAttributes().queryForAll()));
         } catch (SQLException e) {
             e.printStackTrace();

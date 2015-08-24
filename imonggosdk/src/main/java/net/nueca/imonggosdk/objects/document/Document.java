@@ -222,7 +222,7 @@ public class Document extends BaseTransactionDB {
         refresh();
 
         List<DocumentLine> list = new ArrayList<>();
-        list.addAll(SwableTools.partition(position,document_lines,MAX_DOCUMENTLINES_PER_PAGE));
+        list.addAll(SwableTools.partition(position, document_lines, MAX_DOCUMENTLINES_PER_PAGE));
         return list;
     }
 
@@ -254,9 +254,23 @@ public class Document extends BaseTransactionDB {
     }
 
     public void refresh() {
-        if(document_lines_fc != null) {
-            for(DocumentLine documentLine : document_lines_fc)
-                addDocumentLine(documentLine);
+        if(document_lines_fc != null && document_lines == null) {
+            for(DocumentLine documentLine : document_lines_fc) {
+                    addDocumentLine(documentLine);
+            }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Document) && ((Document)o).getId() == id;
+    }
+
+    /** Overriding equals() requires an Overridden hashCode() **/
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + id;
+        return result;
     }
 }
