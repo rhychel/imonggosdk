@@ -20,9 +20,6 @@ public abstract class BaseTransactionDB extends BaseTransaction {
     @DatabaseField(id=true)
     protected int id = -1;
 
-    @DatabaseField
-    protected String reference;
-
     public BaseTransactionDB(Builder builder) {
         super(builder);
     }
@@ -33,25 +30,6 @@ public abstract class BaseTransactionDB extends BaseTransaction {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    protected static class Builder extends BaseTransaction.Builder<Builder> {
-        protected int id;
-
-        public Builder id(int id) {
-            this.id = id;
-            return this;
-        }
     }
 
     public abstract void insertTo(ImonggoDBHelper dbHelper);

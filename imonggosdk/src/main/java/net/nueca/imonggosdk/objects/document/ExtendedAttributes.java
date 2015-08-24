@@ -23,7 +23,9 @@ public class ExtendedAttributes extends BaseTable2 {
     protected String brand;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_line_id")
-    protected DocumentLine documentLine;
+    protected transient DocumentLine documentLine;
+
+    public ExtendedAttributes() {}
 
     protected ExtendedAttributes(Builder builder) {
         delivery_date = builder.delivery_date;
@@ -89,6 +91,12 @@ public class ExtendedAttributes extends BaseTable2 {
     public static class Builder {
         protected String delivery_date;
         protected String brand;
+        protected DocumentLine documentLine;
+
+        public Builder document_line(DocumentLine documentLine) {
+            this.documentLine = documentLine;
+            return this;
+        }
 
         public Builder delivery_date(String delivery_date) {
             this.delivery_date = delivery_date;

@@ -9,6 +9,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.BaseTransaction;
 import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
 import net.nueca.imonggosdk.swable.SwableTools;
 
@@ -42,6 +43,10 @@ public class Document extends BaseTransactionDB {
     @DatabaseField
     protected String document_purpose_name;
 
+    public Document() {
+        super(null);
+    }
+
     public Document(Builder builder) {
         super(builder);
         remark = builder.remark;
@@ -49,6 +54,7 @@ public class Document extends BaseTransactionDB {
         document_lines = builder.document_lines;
         target_branch_id = builder.target_branch_id;
         document_purpose_name = builder.document_purpose_name;
+        id = builder.id;
     }
 
     public String getRemark() {
@@ -91,6 +97,12 @@ public class Document extends BaseTransactionDB {
         this.document_purpose_name = document_purpose_name;
     }
 
+    public void addDocumentLine(DocumentLine documentLine) {
+        if(document_lines == null)
+            document_lines = new ArrayList<>();
+        document_lines.add(documentLine);
+    }
+
     public static Document fromJSONString(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         return fromJSONObject(jsonObject);
@@ -107,11 +119,13 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public boolean shouldPageRequest() {
+        refresh();
         return document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
     }
 
     @Override
     public int getChildCount() {
+        refresh();
         return SwableTools.computePagedRequestCount(document_lines.size(), MAX_DOCUMENTLINES_PER_PAGE);
     }
 
@@ -122,6 +136,14 @@ public class Document extends BaseTransactionDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        refresh();
+        if(document_lines == null)
+            return;
+        for(DocumentLine documentLine : document_lines) {
+            documentLine.setDocument(this);
+            documentLine.insertTo(dbHelper);
+        }
     }
 
     @Override
@@ -130,6 +152,13 @@ public class Document extends BaseTransactionDB {
             dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.DELETE);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        refresh();
+        if(document_lines == null)
+            return;
+        for(DocumentLine documentLine : document_lines) {
+            documentLine.deleteTo(dbHelper);
         }
     }
 
@@ -142,12 +171,18 @@ public class Document extends BaseTransactionDB {
         }
     }
 
-    public static class Builder extends BaseTransactionDB.Builder {
+    public static class Builder extends BaseTransaction.Builder<Builder> {
         protected String remark;
         protected String document_type_code;
         protected List<DocumentLine> document_lines;
         protected Integer target_branch_id;
         protected String document_purpose_name;
+        protected int id;
+
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder remark(String remark) {
             this.remark = remark;
@@ -177,12 +212,15 @@ public class Document extends BaseTransactionDB {
             return this;
         }
 
+        @Override
         public Document build() {
             return new Document(this);
         }
     }
 
     public List<DocumentLine> getDocumentLineAt(int position) {
+        refresh();
+
         List<DocumentLine> list = new ArrayList<>();
         list.addAll(SwableTools.partition(position,document_lines,MAX_DOCUMENTLINES_PER_PAGE));
         return list;
@@ -191,7 +229,7 @@ public class Document extends BaseTransactionDB {
     public Document getChildDocumentAt(int position) throws JSONException {
         Document document = Document.fromJSONString(toJSONString());
         document.setDocument_lines(getDocumentLineAt(position));
-        document.setReference(reference + "-" + (position+1));
+        document.setReference(reference + "-" + (position + 1));
         return document;
     }
 
@@ -201,5 +239,24 @@ public class Document extends BaseTransactionDB {
             documentList.add(getChildDocumentAt(i));
         }
         return documentList;
+    }
+
+    @Override
+    public String toJSONString() {
+        refresh();
+        return super.toJSONString();
+    }
+
+    @Override
+    public JSONObject toJSONObject() throws JSONException {
+        refresh();
+        return super.toJSONObject();
+    }
+
+    public void refresh() {
+        if(document_lines_fc != null) {
+            for(DocumentLine documentLine : document_lines_fc)
+                addDocumentLine(documentLine);
+        }
     }
 }

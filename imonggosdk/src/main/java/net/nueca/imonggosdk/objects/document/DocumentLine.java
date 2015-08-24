@@ -31,7 +31,7 @@ public class DocumentLine extends BaseTable2 {
     protected double quantity;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
-    protected Document document;
+    protected transient Document document;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extended_attributes")
     protected ExtendedAttributes extended_attributes;
@@ -53,6 +53,8 @@ public class DocumentLine extends BaseTable2 {
     @DatabaseField
     protected Double unit_retail_price;
 
+    public DocumentLine() {}
+
     public DocumentLine(Builder builder) {
         line_no = builder.line_no;
         product_id = builder.product_id;
@@ -66,6 +68,7 @@ public class DocumentLine extends BaseTable2 {
         unit_name = builder.unit_name;
         unit_quantity = builder.unit_quantity;
         unit_retail_price = builder.unit_retail_price;
+        document = builder.document;
     }
 
     public int getLine_no() {
@@ -179,11 +182,19 @@ public class DocumentLine extends BaseTable2 {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
+        if(extended_attributes != null)
+            extended_attributes.insertTo(dbHelper);
+
         try {
             dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.INSERT);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        if(extended_attributes == null)
+            return;
+        extended_attributes.setDocumentLine(this);
+        extended_attributes.updateTo(dbHelper);
     }
 
     @Override
@@ -193,6 +204,10 @@ public class DocumentLine extends BaseTable2 {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        if(extended_attributes == null)
+            return;
+        extended_attributes.deleteTo(dbHelper);
     }
 
     @Override
@@ -217,6 +232,12 @@ public class DocumentLine extends BaseTable2 {
         protected String unit_name = null;
         protected Double unit_quantity = null;
         protected Double unit_retail_price = null;
+        protected Document document;
+
+        public Builder document(Document document) {
+            this.document = document;
+            return this;
+        }
 
         public Builder line_no(int line_no) {
             this.line_no = line_no;

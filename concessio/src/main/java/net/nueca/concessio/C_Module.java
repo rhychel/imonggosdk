@@ -35,9 +35,15 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SearchViewEx;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 
@@ -119,7 +125,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         });*/
 
         try {
-            if(getHelper().getCustomers().queryForAll().size() <= 0) {
+            /*if(getHelper().getCustomers().queryForAll().size() <= 0) {
                 Log.e("CUSTOMERS", " ------------------------- adding");
                 String fname[] = {"John","Pepe","Sid","Mark","Jimmy","Zed","Paul","Charles","Markus","Albert",
                     "Peter","Donald"};
@@ -142,7 +148,56 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                     }
                     customer.insertTo(getHelper());
                 }
-            }
+            }*/
+
+            for(Document document : getHelper().getDocuments().queryForAll())
+                document.deleteTo(getHelper());
+
+
+            Document document = new Document.Builder()
+                    .id(1)
+                    .document_type_code(DocumentTypeCode.PHYSICAL_COUNT)
+                    .target_branch_id(457)
+                    .generateReference(this, getSession().getDevice_id())
+                    .addDocumentLine(
+                            new DocumentLine.Builder()
+                                    .line_no(1)
+                                    .product_id(36151)
+                                    .price(0)
+                                    .quantity(5)
+                                    .extended_attributes(
+                                            new ExtendedAttributes.Builder()
+                                                    .brand("Rsrh")
+                                                    .delivery_date("2015-07-20")
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .addDocumentLine(
+                            new DocumentLine.Builder()
+                                    .line_no(2)
+                                    .product_id(36152)
+                                    .price(30)
+                                    .quantity(1)
+                                    .extended_attributes(
+                                            new ExtendedAttributes.Builder()
+                                                    .brand("Bsa")
+                                                    .delivery_date("2015-07-20")
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .build();
+
+
+            Log.e("O Docu ------- " + document.getId(), document.toString());
+            document.insertTo(getHelper());
+            Gson gson = new Gson();
+
+            Log.e("DOCUMENT LINE " + getHelper().getDocumentLines().queryForAll().size(),
+                    gson.toJson(getHelper().getDocumentLines().queryForAll()));
+            Log.e("EXTENDED ATTRIB " + getHelper().getExtendedAttributes().queryForAll().size(),
+                    gson.toJson(getHelper().getExtendedAttributes().queryForAll()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
