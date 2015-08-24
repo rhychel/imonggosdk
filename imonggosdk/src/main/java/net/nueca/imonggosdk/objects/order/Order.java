@@ -29,7 +29,8 @@ public class Order extends BaseTransaction {
 
         order_lines = builder.order_lines;
         target_delivery_date = builder.target_delivery_date;
-        remark = builder.remark;
+        //remark = builder.remark;
+        remark = "page=1/1";
         order_type_code = builder.order_type_code;
         serving_branch_id = builder.serving_branch_id;
     }
@@ -159,7 +160,8 @@ public class Order extends BaseTransaction {
     public Order getChildOrderAt(int position) throws JSONException {
         Order order = Order.fromJSONString(toJSONString());
         order.setOrder_lines(getOrderLineAt(position));
-        order.setReference(reference + "-" + (position+1));
+        order.setReference(reference + "-" + (position + 1));
+        order.setRemark("page=" + (position+1) + "/" + getChildCount());
         return order;
     }
 
