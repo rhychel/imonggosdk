@@ -52,7 +52,6 @@ public class Document extends BaseTransactionDB {
         super(builder);
         //remark = builder.remark;
         remark = "page=1/1";
-
         document_type_code = builder.document_type_code;
         document_lines = builder.document_lines;
         target_branch_id = builder.target_branch_id;
