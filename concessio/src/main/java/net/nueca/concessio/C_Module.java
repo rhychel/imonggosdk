@@ -43,6 +43,7 @@ import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;

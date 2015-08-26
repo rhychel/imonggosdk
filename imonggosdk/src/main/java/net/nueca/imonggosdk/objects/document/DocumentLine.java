@@ -53,6 +53,13 @@ public class DocumentLine extends BaseTable2 {
     @DatabaseField
     protected Double unit_retail_price;
 
+    @DatabaseField
+    protected String product_name;
+    @DatabaseField
+    protected String product_stock_no;
+    @DatabaseField
+    protected Double subtotal;
+
     public DocumentLine() {}
 
     public DocumentLine(Builder builder) {
@@ -175,6 +182,30 @@ public class DocumentLine extends BaseTable2 {
         this.document = document;
     }
 
+    public String getProduct_name() {
+        return product_name;
+    }
+
+    public void setProduct_name(String product_name) {
+        this.product_name = product_name;
+    }
+
+    public String getProduct_stock_no() {
+        return product_stock_no;
+    }
+
+    public void setProduct_stock_no(String product_stock_no) {
+        this.product_stock_no = product_stock_no;
+    }
+
+    public Double getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(Double subtotal) {
+        this.subtotal = subtotal;
+    }
+
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(this));
@@ -233,6 +264,23 @@ public class DocumentLine extends BaseTable2 {
         protected Double unit_quantity = null;
         protected Double unit_retail_price = null;
         protected Document document;
+
+        protected String product_name;
+        protected String product_stock_no;
+        protected Double subtotal;
+
+        public Builder product_name(String product_name) {
+            this.product_name = product_name;
+            return this;
+        }
+        public Builder product_stock_no(String product_stock_no) {
+            this.product_stock_no = product_stock_no;
+            return this;
+        }
+        public Builder subtotal(Double subtotal) {
+            this.subtotal = subtotal;
+            return this;
+        }
 
         public Builder document(Document document) {
             this.document = document;
