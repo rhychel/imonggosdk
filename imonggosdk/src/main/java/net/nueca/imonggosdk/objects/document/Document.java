@@ -41,7 +41,17 @@ public class Document extends BaseTransactionDB {
     protected Integer target_branch_id;
 
     @DatabaseField
+    protected Integer document_purpose_id;
+    @DatabaseField
     protected String document_purpose_name;
+
+    @DatabaseField
+    protected String intransit_status;
+    @DatabaseField
+    protected Integer user_id;
+    @DatabaseField
+    protected String status;
+
 
     public Document() {
         super(null);
@@ -55,6 +65,15 @@ public class Document extends BaseTransactionDB {
         target_branch_id = builder.target_branch_id;
         document_purpose_name = builder.document_purpose_name;
         id = builder.id;
+        intransit_status = builder.intransit_status;
+
+        document_purpose_id = builder.document_purpose_id;
+        user_id = builder.user_id;
+        status = builder.status;
+        utc_created_at = builder.utc_created_at;
+        utc_updated_at = builder.utc_updated_at;
+        utc_document_date = builder.utc_document_date;
+        intransit_status = builder.intransit_status;
     }
 
     public String getRemark() {
@@ -85,7 +104,7 @@ public class Document extends BaseTransactionDB {
         return target_branch_id;
     }
 
-    public void setTarget_branch_id(int target_branch_id) {
+    public void setTarget_branch_id(Integer target_branch_id) {
         this.target_branch_id = target_branch_id;
     }
 
@@ -95,6 +114,42 @@ public class Document extends BaseTransactionDB {
 
     public void setDocument_purpose_name(String document_purpose_name) {
         this.document_purpose_name = document_purpose_name;
+    }
+
+    public String getIntransit_status() {
+        return intransit_status;
+    }
+
+    public void setIntransit_status(String intransit_status) {
+        this.intransit_status = intransit_status;
+    }
+
+    public void setDocument_type_code(String document_type_code) {
+        this.document_type_code = document_type_code;
+    }
+
+    public Integer getDocument_purpose_id() {
+        return document_purpose_id;
+    }
+
+    public void setDocument_purpose_id(Integer document_purpose_id) {
+        this.document_purpose_id = document_purpose_id;
+    }
+
+    public Integer getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void addDocumentLine(DocumentLine documentLine) {
@@ -178,6 +233,45 @@ public class Document extends BaseTransactionDB {
         protected Integer target_branch_id;
         protected String document_purpose_name;
         protected int id;
+        protected String intransit_status;
+        protected Integer document_purpose_id;
+        protected Integer user_id;
+        protected String status;
+        protected String utc_created_at;
+        protected String utc_updated_at;
+        protected String utc_document_date;
+
+        public Builder utc_created_at(String utc_created_at) {
+            this.utc_created_at = utc_created_at;
+            return this;
+        }
+        public Builder utc_updated_at(String utc_updated_at) {
+            this.utc_updated_at = utc_updated_at;
+            return this;
+        }
+        public Builder utc_document_date(String utc_document_date) {
+            this.utc_document_date = utc_document_date;
+            return this;
+        }
+
+        public Builder user_id(Integer user_id) {
+            this.user_id = user_id;
+            return this;
+        }
+
+        public Builder status(String status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder document_purpose_id(Integer document_purpose_id) {
+            this.document_purpose_id = document_purpose_id;
+            return this;
+        }
+        public Builder intransit(String intransit_status) {
+            this.intransit_status = intransit_status;
+            return this;
+        }
 
         public Builder id(int id) {
             this.id = id;
@@ -230,6 +324,7 @@ public class Document extends BaseTransactionDB {
         Document document = Document.fromJSONString(toJSONString());
         document.setDocument_lines(getDocumentLineAt(position));
         document.setReference(reference + "-" + (position + 1));
+        document.setRemark("page=" + (position + 1) + "/" + getChildCount());
         return document;
     }
 

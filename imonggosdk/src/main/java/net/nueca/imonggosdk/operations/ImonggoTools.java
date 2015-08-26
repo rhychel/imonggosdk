@@ -71,7 +71,7 @@ public class ImonggoTools {
                     stringInputCount++;
                     break;
                 case INTRANSIT:
-                    parameterStr += "intransit=%"+stringInputCount+"$s&";
+                    parameterStr += "intransit_status=%"+stringInputCount+"$s&";
                     stringInputCount++;
                     break;
             }
