@@ -17,12 +17,13 @@ public class C_SampleLogin extends LoginActivity {
     @Override
     protected void initLoginEquipments() {
         super.initLoginEquipments();
+        setServer(Server.IRETAILCLOUD_NET);
+        setRequireConcessioSettings(true);
+        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true, "");
         setModules(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(),
                 Table.PRODUCTS.ordinal(),
                 Table.DOCUMENTS.ordinal());
-        setServer(Server.IRETAILCLOUD_NET);
-        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true, "");
-        setRequireConcessioSettings(true);
+
     }
 
     @Override
@@ -31,5 +32,4 @@ public class C_SampleLogin extends LoginActivity {
         Intent intent = new Intent(this, C_Module2.class);
         startActivity(intent);
     }
-
 }

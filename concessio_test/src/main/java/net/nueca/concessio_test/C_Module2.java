@@ -11,6 +11,7 @@ import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -42,10 +43,15 @@ public class C_Module2 extends ModuleActivity {
 
         try {
             List<BranchUserAssoc> branchUserAssoc = getHelper().getBranchUserAssocs().queryForAll();
+            List<Document> documentList = getHelper().getDocuments().queryForAll();
 
-            //Log.e(TAG, "size: " + productTags.size() + " " + productTags.toString() + "");
             for(BranchUserAssoc b : branchUserAssoc) {
                 Log.e(TAG, b.getBranch().getId() + "");
+            }
+
+            Log.e(TAG, "Document Size: " + documentList.size());
+            for(Document document : documentList) {
+                Log.e(TAG, document.toString());
             }
 
 
