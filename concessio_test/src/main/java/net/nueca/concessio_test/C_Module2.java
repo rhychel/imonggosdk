@@ -10,7 +10,8 @@ import android.widget.ListView;
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -41,9 +42,17 @@ public class C_Module2 extends ModuleActivity {
         }
 
         try {
-            List<ProductTaxRateAssoc> productTaxRateAssocList = getHelper().getProductTaxRateAssocs().queryForAll();
+            List<BranchUserAssoc> branchUserAssoc = getHelper().getBranchUserAssocs().queryForAll();
+            List<Document> documentList = getHelper().getDocuments().queryForAll();
 
-            Log.e(TAG, "size: " + productTaxRateAssocList.size() + " " + productTaxRateAssocList.toString() + "");
+            for(BranchUserAssoc b : branchUserAssoc) {
+                Log.e(TAG, b.getBranch().getId() + "");
+            }
+
+            Log.e(TAG, "Document Size: " + documentList.size());
+            for(Document document : documentList) {
+                Log.e(TAG, document.toString());
+            }
 
 
         } catch (SQLException e) {
@@ -64,7 +73,7 @@ public class C_Module2 extends ModuleActivity {
                 case R.id.mGo:
 
                     AccountTools.unlinkAccount(C_Module2.this, getHelper(), null);
-                    Intent intent = new Intent(C_Module2.this, C_Login.class);
+                    Intent intent = new Intent(C_Module2.this, C_SampleLogin.class);
 
                     startActivity(intent);
                     finish();

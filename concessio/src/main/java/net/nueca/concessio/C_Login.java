@@ -1,7 +1,6 @@
 package net.nueca.concessio;
 
 import android.content.Intent;
-import android.util.Log;
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;

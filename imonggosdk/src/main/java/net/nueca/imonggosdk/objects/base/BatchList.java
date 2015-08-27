@@ -17,6 +17,9 @@ import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 
 import java.util.ArrayList;
 
@@ -107,6 +110,21 @@ public class BatchList<T> extends ArrayList<T> {
         if(get(0) instanceof ProductTaxRateAssoc) {
             dbHelper.batchCreateOrUpdateProductTaxRates(this, databaseOperation);
             Log.e(TAG, databaseOperation.toString() + "ING to ProductTaxRate Assoc table");
+        }
+
+
+        /** Documents -- gama **/
+        if(get(0) instanceof Document) {
+            dbHelper.batchCreateOrUpdateDocuments(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Document table");
+        }
+        if(get(0) instanceof DocumentLine) {
+            dbHelper.batchCreateOrUpdateDocumentLines(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Document Line table");
+        }
+        if(get(0) instanceof ExtendedAttributes) {
+            dbHelper.batchCreateOrUpdateExtendedAttributes(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Extended Attributes table");
         }
     }
 }
