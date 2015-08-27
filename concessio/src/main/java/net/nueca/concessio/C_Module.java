@@ -130,6 +130,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     public boolean onCreateOptionsMenu(Menu menu) {
         if(hasMenu) {
             getMenuInflater().inflate(R.menu.simple_products_menu, menu);
+            menu.findItem(R.id.mHistory).setVisible(false);
+            menu.findItem(R.id.mLogout).setVisible(false);
+
             mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
             initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
                 @Override
