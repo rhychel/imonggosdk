@@ -31,6 +31,7 @@ public class ExtendedAttributes extends BaseTable2 {
     protected ExtendedAttributes(Builder builder) {
         delivery_date = builder.delivery_date;
         brand = builder.brand;
+        batch_no = builder.batch_no;
     }
 
     public String getDelivery_date() {

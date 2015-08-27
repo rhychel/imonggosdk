@@ -9,4 +9,6 @@
     <color name="keypad_default_text">#727272</color>
     <color name="keypad_default_text_pressed">#9E9E9E</color>
     <color name="keypad_default_text_disabled">#c6c6c6</color>
+
+    <color name="products_bgcolor">@android:color/white</color>
 </resources>

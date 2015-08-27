@@ -236,9 +236,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                     try {
                         AccountTools.unlinkAccount(C_Module.this, getHelper(), new AccountListener() {
                             @Override
-                            public void onLogoutAccount() {
-
-                            }
+                            public void onLogoutAccount() { }
 
                             @Override
                             public void onUnlinkAccount() {

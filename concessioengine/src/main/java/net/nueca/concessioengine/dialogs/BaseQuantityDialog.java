@@ -42,7 +42,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected FragmentManager fragmentManager;
     protected String deliveryDate;
 
-    protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, isMultiValue = false;
+    protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, hasBatchNo = false, isMultiValue = false;
     protected int valuePosition = -1;
 
     public BaseQuantityDialog(Context context) {
@@ -110,6 +110,10 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setHasDeliveryDate(boolean hasDeliveryDate) {
         this.hasDeliveryDate = hasDeliveryDate;
+    }
+
+    public void setHasBatchNo(boolean hasBatchNo) {
+        this.hasBatchNo = hasBatchNo;
     }
 
     public void setIsMultiValue(boolean isMultiValue) {

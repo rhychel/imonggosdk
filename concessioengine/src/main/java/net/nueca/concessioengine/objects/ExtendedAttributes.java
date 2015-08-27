@@ -14,6 +14,12 @@ public class ExtendedAttributes {
 
     public ExtendedAttributes() { }
 
+    public ExtendedAttributes(String batch_no, String delivery_date, String brand) {
+        this.batch_no = batch_no;
+        this.delivery_date = delivery_date;
+        this.brand = brand;
+    }
+
     public ExtendedAttributes(String brand, String delivery_date) {
         this.brand = brand;
         this.delivery_date = delivery_date;
@@ -23,6 +29,12 @@ public class ExtendedAttributes {
         if(brand.equals(""))
             return "No Brand";
         return brand;
+    }
+
+    public String getBatchNo() {
+        if(batch_no.equals(""))
+            return "No Batch Number";
+        return batch_no;
     }
 
     public net.nueca.imonggosdk.objects.document.ExtendedAttributes convertForDocumentLine() {

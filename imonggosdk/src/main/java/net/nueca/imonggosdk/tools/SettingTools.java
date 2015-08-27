@@ -55,7 +55,7 @@ public class SettingTools {
                 Log.e("Key[updateIsAutoUpdate]", pinfo.packageName + IS_AUTOUPDATE);
                 editor.putBoolean(pinfo.packageName + IS_AUTOUPDATE, bool);
                 editor.apply();
-            } else if (settingsName == SettingsName.BRANCH_NAME) {
+            } else if (settingsName == SettingsName.DEFAULT_BRANCH) {
                 Log.e("Key[defaultBranch]", pinfo.packageName + DEFAULT_BRANCH);
                 editor.putString(pinfo.packageName + DEFAULT_BRANCH, value);
                 editor.apply();

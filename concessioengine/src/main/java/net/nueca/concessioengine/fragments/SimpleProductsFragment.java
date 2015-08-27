@@ -52,6 +52,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     private boolean useRecyclerView = true;
     private int prevLast = -1;
 
+    public static SimpleProductsFragment newInstance() {
+        return new SimpleProductsFragment();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         View view = inflater.inflate(useRecyclerView ? R.layout.simple_products_fragment_rv : R.layout.simple_products_fragment_lv, container, false);
@@ -68,7 +72,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, productCategories);
             spCategories.setAdapter(productCategoriesAdapter);
             spCategories.setOnItemSelectedListener(onCategorySelected);
+            setCategory(productCategories.get(0));
         }
+        else
+            spCategories.setVisibility(View.GONE);
 
         suplProduct.setAnchorPoint(0.5f);
         offset = 0l;

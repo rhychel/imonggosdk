@@ -10,6 +10,7 @@ import net.nueca.imonggosdk.objects.Product;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by rhymart on 7/13/15.
@@ -41,6 +42,15 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         if(selectedProductItem.getValues().size() > 0)
             return super.add(selectedProductItem);
         return true;
+    }
+
+    public List<Product> getSelectedProducts() {
+        List<Product> selectedProducts = new ArrayList<>();
+
+        for(SelectedProductItem selectedProductItem : this)
+            selectedProducts.add(selectedProductItem.getProduct());
+
+        return selectedProducts;
     }
 
     public SelectedProductItem getSelectedProductItem(Product product) {

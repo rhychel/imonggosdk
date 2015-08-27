@@ -4,7 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.SearchViewCompat;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.SearchView;
+
+import com.j256.ormlite.dao.CloseableIterator;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
@@ -17,6 +20,7 @@ import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.Session;
@@ -45,14 +49,49 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     public static final String CONCESSIO_MODULE = "concessio_module";
     protected ConcessioModule concessioModule = ConcessioModule.ORDERS;
+    protected boolean isMultiInput = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        concessioModule = ConcessioModule.values()[getIntent().getIntExtra(CONCESSIO_MODULE, ConcessioModule.ORDERS.ordinal())];
     }
 
     public List<String> getTransactionTypes() {
         return getTransactionTypes(true);
+    }
+    protected SearchViewEx mSearch;
+
+    protected void initializeSearchViewEx(SearchViewCompat.OnQueryTextListenerCompat queryTextListenerCompat) {
+        if(mSearch != null) {
+            mSearch.setSearchViewExListener(new SearchViewEx.SearchViewExListener() {
+                @Override
+                public void whenBackPressed() {
+                    if(!mSearch.isIconified())
+                        mSearch.setIconified(true);
+                }
+            });
+            mSearch.setIconifiedByDefault(true);
+            SearchViewCompat.setOnQueryTextListener(mSearch, queryTextListenerCompat);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mSearch != null) {
+            if(!SearchViewCompat.isIconified(mSearch))
+                closeSearchField(mSearch);
+            else
+                super.onBackPressed();
+        }
+        else
+            super.onBackPressed();
+    }
+
+    // TODO Search the document
+    public List<Document> getDocument(int branchId, String referenceNumber) {
+        List<Document> documents = new ArrayList<>();
+        return documents;
     }
 
     /**
@@ -77,6 +116,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return transactionTypes;
     }
 
+    /**
+     * Generate the user's branches.
+     * @return
+     */
     public List<Branch> getBranches() {
         List<Branch> assignedBranches = new ArrayList<>();
         try {
@@ -93,6 +136,42 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return assignedBranches;
     }
 
+    /**
+     * Search branches wih tag.
+     * @param tag
+     * @return
+     */
+    public List<Branch> getBranchesByTag(String tag) {
+        List<Branch> branches = new ArrayList<>();
+        try {
+            List<BranchTag> branchTags = getHelper().getBranchTags().queryBuilder().where().in("branch_id", getBranches()).and().like("tag", "#"+tag).query();
+            for(BranchTag branchTag : branchTags) {
+                branches.add(branchTag.getBranch());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return branches;
+    }
+
+    /**
+     * Returns the warehouse branch if any.
+     * @return
+     */
+    public Branch getWarehouse() {
+        try {
+            return getHelper().getBranches().queryBuilder().where().eq("site_type", "warehouse").queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Generate the list of product categories.
+     * @param includeAll
+     * @return
+     */
     public List<String> getProductCategories(boolean includeAll) {
         List<String> categories = new ArrayList<>();
 
@@ -113,6 +192,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return categories;
     }
 
+    /**
+     * Close-iconify SearchView.
+     * @param searchView
+     */
     protected void closeSearchField(SearchViewEx searchView) {
         SearchViewCompat.setQuery(searchView, "", false);
         SearchViewCompat.setIconified(searchView, true);
@@ -154,10 +237,22 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return order.build();
     }
 
+    /**
+     * Simple generateDocument to create a Document object for PHYSICAL_COUNT.
+     * @param context
+     * @return
+     */
     public Document generateDocument(Context context) {
         return generateDocument(context, -1, DocumentTypeCode.PHYSICAL_COUNT);
     }
 
+    /**
+     * Generate a Document object for sending.
+     * @param context
+     * @param targetBranchId
+     * @param documentTypeCode
+     * @return
+     */
     public Document generateDocument(Context context, int targetBranchId, DocumentTypeCode documentTypeCode) {
         Document.Builder pcount = new Document.Builder();
         for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {

@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.Extras;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
@@ -258,7 +259,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 } else {
                     endSyncNext();
                 }
-
             } else {
                 endSyncNext();
             }
@@ -594,6 +594,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 if (initialSync || lastUpdatedAt == null) {
                                     product.setSearchKey(product.getName() + product.getStock_no());
                                     newProducts.add(product);
+                                    product.doOperationsForExtras(getHelper(), DatabaseOperation.INSERT);
                                 } else {
                                     if (isExisting(product, Table.PRODUCTS)) {
                                         DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
@@ -602,11 +603,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         if (product.getStatus() == null) {
                                             updateProducts.add(product);
+                                            product.doOperationsForExtras(getHelper(), DatabaseOperation.UPDATE);
                                         } else {
                                             deleteProducts.add(product);
+                                            product.doOperationsForExtras(getHelper(), DatabaseOperation.DELETE);
                                         }
                                     } else {
+                                        product.setSearchKey(product.getName() + product.getStock_no());
                                         newProducts.add(product);
+                                        product.doOperationsForExtras(getHelper(), DatabaseOperation.INSERT);
                                     }
                                 }
 
