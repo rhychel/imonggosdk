@@ -55,11 +55,13 @@ public class Document extends BaseTransactionDB {
 
     public Document() {
         super(null);
+        remark = "page=1/1";
     }
 
     public Document(Builder builder) {
         super(builder);
-        remark = builder.remark;
+        //remark = builder.remark;
+        remark = "page=1/1";
         document_type_code = builder.document_type_code;
         document_lines = builder.document_lines;
         target_branch_id = builder.target_branch_id;
@@ -73,7 +75,6 @@ public class Document extends BaseTransactionDB {
         utc_created_at = builder.utc_created_at;
         utc_updated_at = builder.utc_updated_at;
         utc_document_date = builder.utc_document_date;
-        intransit_status = builder.intransit_status;
     }
 
     public String getRemark() {
@@ -186,6 +187,17 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
+        if(shouldPageRequest()) {
+            try {
+                List<Document> documents = getChildDocuments();
+                for (Document child : documents)
+                    child.insertTo(dbHelper);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         try {
             dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.INSERT);
         } catch (SQLException e) {
@@ -203,6 +215,17 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
+        if(shouldPageRequest()) {
+            try {
+                List<Document> documents = getChildDocuments();
+                for (Document child : documents)
+                    child.deleteTo(dbHelper);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         try {
             dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.DELETE);
         } catch (SQLException e) {
@@ -219,6 +242,17 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
+        if(shouldPageRequest()) {
+            try {
+                List<Document> documents = getChildDocuments();
+                for (Document child : documents)
+                    child.updateTo(dbHelper);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         try {
             dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
@@ -268,7 +302,8 @@ public class Document extends BaseTransactionDB {
             this.document_purpose_id = document_purpose_id;
             return this;
         }
-        public Builder intransit(String intransit_status) {
+
+        public Builder intransit_status(String intransit_status) {
             this.intransit_status = intransit_status;
             return this;
         }
@@ -322,6 +357,7 @@ public class Document extends BaseTransactionDB {
 
     public Document getChildDocumentAt(int position) throws JSONException {
         Document document = Document.fromJSONString(toJSONString());
+        document.setId(id + position);
         document.setDocument_lines(getDocumentLineAt(position));
         document.setReference(reference + "-" + (position + 1));
         document.setRemark("page=" + (position + 1) + "/" + getChildCount());
@@ -351,7 +387,7 @@ public class Document extends BaseTransactionDB {
     public void refresh() {
         if(document_lines_fc != null && document_lines == null) {
             for(DocumentLine documentLine : document_lines_fc) {
-                    addDocumentLine(documentLine);
+                addDocumentLine(documentLine);
             }
         }
     }
