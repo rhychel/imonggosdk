@@ -2,7 +2,6 @@ package net.nueca.concessioengine.adapters.tools;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.android.volley.AuthFailureError;
@@ -12,13 +11,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.jakewharton.disklrucache.DiskLruCache;
 
+import net.nueca.concessioengine.adapters.interfaces.ImageLoaderListener;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
-import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -39,6 +34,7 @@ public class ProductsAdapterHelper {
     private static ImonggoDBHelper dbHelper;
     private static Session session;
     private static SelectedProductItemList selectedProductItems = null;
+    public static ImageLoaderListener imageLoaderListener = null;
 
     public static ImageLoader getImageLoaderInstance(Context context) {
         return getImageLoaderInstance(context, false);
@@ -49,12 +45,14 @@ public class ProductsAdapterHelper {
             imageRequestQueue = ImageVolley.newRequestQueue(context);
         if(imageLoader == null)
             imageLoader = new ImageLoader(imageRequestQueue,
-                    DiskImageLruCache.getInstance(context)){
+                    DiskImageLruCache.getInstance(context, imageLoaderListener)){
                 @Override
                 protected Request<Bitmap> makeImageRequest(String requestUrl, int maxWidth, int maxHeight, ImageView.ScaleType scaleType, final String cacheKey) {
                     return new ImageRequest(requestUrl, new Response.Listener<Bitmap>() {
                         @Override
                         public void onResponse(Bitmap response) {
+                            if(imageLoaderListener != null)
+                                imageLoaderListener.imageLoaded(response);
                             onGetImageSuccess(cacheKey, response);
                         }
                     }, maxWidth, maxHeight, scaleType, Bitmap.Config.RGB_565, new Response.ErrorListener() {
@@ -91,6 +89,10 @@ public class ProductsAdapterHelper {
 
     public ImonggoDBHelper getDbHelper() {
         return dbHelper;
+    }
+
+    public static void setImageLoaderListener(ImageLoaderListener imageLoaderListener) {
+        ProductsAdapterHelper.imageLoaderListener = imageLoaderListener;
     }
 
     public static Session getSession() {

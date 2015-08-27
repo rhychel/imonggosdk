@@ -52,6 +52,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     private boolean useRecyclerView = true;
     private int prevLast = -1;
 
+    public static SimpleProductsFragment newInstance() {
+        return new SimpleProductsFragment();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         View view = inflater.inflate(useRecyclerView ? R.layout.simple_products_fragment_rv : R.layout.simple_products_fragment_lv, container, false);
@@ -68,7 +72,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, productCategories);
             spCategories.setAdapter(productCategoriesAdapter);
             spCategories.setOnItemSelectedListener(onCategorySelected);
+            setCategory(productCategories.get(0));
         }
+        else
+            spCategories.setVisibility(View.GONE);
 
         suplProduct.setAnchorPoint(0.5f);
         offset = 0l;
@@ -80,12 +87,18 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 @Override
                 public void onItemClicked(View view, int position) {
                     Product product = simpleProductRecyclerViewAdapter.getItem(position);
-                    SelectedProductItem selectedProductItem = simpleProductRecyclerViewAdapter.getSelectedProductItems().getSelectedProductItem(product);
-                    if (selectedProductItem == null) {
-                        selectedProductItem = new SelectedProductItem();
-                        selectedProductItem.setProduct(product);
+                    if(multipleInput) {
+                        if(multiInputListener != null)
+                            multiInputListener.showInputScreen(product);
                     }
-                    showQuantityDialog(position, product, selectedProductItem);
+                    else {
+                        SelectedProductItem selectedProductItem = simpleProductRecyclerViewAdapter.getSelectedProductItems().getSelectedProductItem(product);
+                        if (selectedProductItem == null) {
+                            selectedProductItem = new SelectedProductItem();
+                            selectedProductItem.setProduct(product);
+                        }
+                        showQuantityDialog(position, product, selectedProductItem);
+                    }
                 }
             });
             simpleProductRecyclerViewAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -110,13 +123,19 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                     Product product = simpleProductListAdapter.getItem(position);
-                    SelectedProductItem selectedProductItem = simpleProductListAdapter.getSelectedProductItems().getSelectedProductItem(product);
-                    if (selectedProductItem == null) {
-                        selectedProductItem = new SelectedProductItem();
-                        selectedProductItem.setProduct(product);
+                    if(multipleInput) {
+                        if(multiInputListener != null)
+                            multiInputListener.showInputScreen(product);
                     }
+                    else {
+                        SelectedProductItem selectedProductItem = simpleProductListAdapter.getSelectedProductItems().getSelectedProductItem(product);
+                        if (selectedProductItem == null) {
+                            selectedProductItem = new SelectedProductItem();
+                            selectedProductItem.setProduct(product);
+                        }
 
-                    showQuantityDialog(position, product, selectedProductItem);
+                        showQuantityDialog(position, product, selectedProductItem);
+                    }
                 }
             });
             lvProducts.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

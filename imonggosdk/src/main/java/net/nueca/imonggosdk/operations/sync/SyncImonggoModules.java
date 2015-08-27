@@ -36,6 +36,7 @@ import java.sql.SQLException;
  * Created by rhymart on 5/14/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 public class SyncImonggoModules extends BaseSyncModulesService implements VolleyRequestListener {
     private static final String TAG = "SyncImonggoModules";
 
@@ -54,6 +55,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(tableSyncing, String.valueOf(branches[branchIndex])));
             else
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(tableSyncing));
+
             lastUpdatedAt = getHelper().getLastUpdatedAts().queryForFirst(queryBuilder.prepare());
 
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,

@@ -21,6 +21,7 @@ public class ExtendedAttributes extends BaseTable2 {
     protected String delivery_date;
     @DatabaseField
     protected String brand;
+    protected String batch_no;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_line_id")
     protected transient DocumentLine documentLine;
@@ -30,6 +31,7 @@ public class ExtendedAttributes extends BaseTable2 {
     protected ExtendedAttributes(Builder builder) {
         delivery_date = builder.delivery_date;
         brand = builder.brand;
+        batch_no = builder.batch_no;
     }
 
     public String getDelivery_date() {
@@ -46,6 +48,14 @@ public class ExtendedAttributes extends BaseTable2 {
 
     public void setBrand(String brand) {
         this.brand = brand;
+    }
+
+    public String getBatch_no() {
+        return batch_no;
+    }
+
+    public void setBatch_no(String batch_no) {
+        this.batch_no = batch_no;
     }
 
     public JSONObject toJSONObject() throws JSONException {
@@ -91,6 +101,7 @@ public class ExtendedAttributes extends BaseTable2 {
     public static class Builder {
         protected String delivery_date;
         protected String brand;
+        protected String batch_no;
         protected DocumentLine documentLine;
 
         public Builder document_line(DocumentLine documentLine) {
@@ -104,6 +115,10 @@ public class ExtendedAttributes extends BaseTable2 {
         }
         public Builder brand(String brand) {
             this.brand = brand;
+            return this;
+        }
+        public Builder batch_no(String batch_no) {
+            this.batch_no = batch_no;
             return this;
         }
 

@@ -1,5 +1,6 @@
 package net.nueca.concessioengine.fragments;
 
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -41,10 +42,11 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
 
     protected abstract void toggleNoItems(String msg, boolean show);
 
-    protected List<OfflineData> getTransactions() {
+    protected List<OfflineData> getTransactions() { // TODO BUGGED!
         List<OfflineData> transactions = new ArrayList<>();
         try {
             Where<OfflineData, Integer> whereOfflineData = getHelper().getOfflineData().queryBuilder().where();
+            boolean hasOne = false;
 //            whereOfflineData.eq("user_id", getSession().getUser().getId());
             if(transactionType > 0)
                 whereOfflineData.eq("type", transactionType); //.and()
@@ -52,14 +54,24 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
                 List<Integer> transactionTypes = new ArrayList<>();
                 if(AccountSettings.hasCount(getActivity()) || AccountSettings.hasPullout(getActivity()) || AccountSettings.hasReceive(getActivity()))
                     transactionTypes.add(OfflineData.DOCUMENT);
+                Log.e("hasOrder", AccountSettings.hasOrder(getActivity()) + "");
                 if(AccountSettings.hasOrder(getActivity()))
                     transactionTypes.add(OfflineData.ORDER);
-                if(AccountSettings.hasSales(getActivity()))
+                if (AccountSettings.hasSales(getActivity()))
                     transactionTypes.add(OfflineData.INVOICE);
-                whereOfflineData.in("type", transactionTypes);//.and()
+                if(hasOne)
+                    whereOfflineData.and().in("type", transactionTypes);
+                else {
+                    whereOfflineData.in("type", transactionTypes);//.and()
+                    hasOne = true;
+                }
             }
-            if(branchId > 0)
-                whereOfflineData.eq("branch_id", branchId);//.and()
+            if(branchId > 0) {
+                if(hasOne)
+                    whereOfflineData.and().eq("branch_id", branchId);//.and()
+                else
+                    whereOfflineData.eq("branch_id", branchId);
+            }
 
             QueryBuilder<OfflineData, Integer> resultTransactions = getHelper().getOfflineData().queryBuilder();
             resultTransactions.orderBy("dateCreated", false);

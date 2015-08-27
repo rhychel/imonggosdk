@@ -1,20 +1,14 @@
 package net.nueca.imonggosdk.operations.sync;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.nueca.imonggosdk.R;
-import net.nueca.imonggosdk.activities.ImonggoActivity;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
@@ -26,12 +20,18 @@ import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.document.DocumentType;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by Jn on 7/14/2015.
@@ -43,45 +43,45 @@ public abstract class BaseSyncService extends ImonggoService {
     public static final String PARAMS_INITIAL_SYNC = "initial_sync";
     public static final String PARAMS_SERVER = "mServer";
     public static final String TAG = "BaseSyncService";
-
     protected IBinder mLocalBinder = new LocalBinder();
     protected SyncModulesListener mSyncModulesListener = null;
     protected VolleyRequestListener mVolleyRequestListener = null;
-
-    protected Table mCurrentTableSyncing;
-    protected Table[] mModulesToSync;
     protected Server mServer;
-
     protected int page = 1;
-    protected int responseCode = 200;
     protected int count = 0;
     protected int numberOfPages = 1;
-
     protected LastUpdatedAt lastUpdatedAt;
     protected LastUpdatedAt newLastUpdatedAt;
+    protected String from = "", to = "";
     protected Gson gson = new GsonBuilder().serializeNulls().create();
-
+    protected Table mCurrentTableSyncing;
+    protected List<BranchUserAssoc> branchUserAssoc;
+    protected Table[] mModulesToSync;
+    protected int[] branches;
+    protected int branchIndex = 0;
     protected int mModulesIndex = 0;
     protected boolean syncAllModules;
     protected boolean initialSync;
-
-    private NotificationManager mNotificationManager;
-    private NotificationCompat.Builder mNotificationBuilder;
-
+    protected String document_type;
+    protected String intransit_status;
+    protected int responseCode = 200;
     private int NOTIFICATION_ID = 200;
 
+    /**
+     * Empty Constructor
+     */
     public BaseSyncService() {
 
     }
 
-    @Override
-    public void onCreate() {
-        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mNotificationBuilder = new NotificationCompat.Builder(this);
-        // Display a notification about us starting.  We put an icon in the status bar.
-        showNotification();
-    }
-
+    /**
+     * OnStartCommand runs after starService() on is called
+     *
+     * @param intent Intent
+     * @param flags  Additional data about this start request
+     * @param startId A unique integer representing this specific request to start
+     * @return START_STICKY
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
@@ -95,38 +95,19 @@ public abstract class BaseSyncService extends ImonggoService {
         initialSync = bundle.getBoolean(PARAMS_INITIAL_SYNC, false);
 
         if (!syncAllModules) { // if custom modules where selected to be download
-            int[] forSyncing = bundle.getIntArray(PARAMS_TABLES_TO_SYNC);
-
-            if (forSyncing != null) {
-                mModulesIndex = 0;
-                mModulesToSync = new Table[forSyncing.length];
-                for (int i = 0; i < mModulesToSync.length; i++) {
-                    mModulesToSync[i] = Table.values()[forSyncing[i]];
-                }
-
-                mCurrentTableSyncing = mModulesToSync[mModulesIndex];
-            }
+            initializeTablesToSync(bundle.getIntArray(PARAMS_TABLES_TO_SYNC));
         } else { // Sync All Modules
-            /**
-             * Application Settings //==> During login
-             * Users -- LAST_UPDATED_AT
-             * User Branches -- COUNT
-             * Tax Settings -- LAST_UPDATED_AT
-             * Products -- LAST_UPDATED_AT, COUNT
-             * Inventory -- LAST_UPDATED_AT, COUNT
-             * Customers -- LAST_UPDATED_AT, COUNT
-             * Documents -- LAST_UPDATED_AT, COUNT
-             *
-             * Document Types -- #CONSTANT
-             * Document Purposes -- LAST_UPDATED_AT, COUNT
-             * Sales Promotion
-             */
             mModulesIndex = 0;
             mModulesToSync = new Table[]{
-                    Table.USERS, Table.TAX_RATES,
-                    Table.BRANCH_USERS, Table.PRODUCTS,
-                    Table.INVENTORIES, Table.CUSTOMERS,
-                    Table.DOCUMENTS, Table.DOCUMENT_TYPES,
+                    Table.USERS,
+                    Table.BRANCH_USERS,
+                    Table.TAX_SETTINGS,
+                    Table.PRODUCTS,
+                    Table.CUSTOMERS,
+                    Table.UNITS,
+                    Table.DOCUMENTS,
+                    Table.DOCUMENT_TYPES,
+                    Table.DOCUMENT_PURPOSES
             };
             mCurrentTableSyncing = mModulesToSync[mModulesIndex];
         }
@@ -136,9 +117,31 @@ public abstract class BaseSyncService extends ImonggoService {
         return START_STICKY;
     }
 
+    /**
+     *
+     * @param syncAllModules boolean of choice if you want to sync all modules
+     */
+    public void setSyncAllModules(boolean syncAllModules) {
+        this.syncAllModules = syncAllModules;
+    }
+
+    public void initializeTablesToSync(int[] forSyncing) {
+        if (forSyncing != null) {
+            Log.e("initializeTablesToSync", "--" + forSyncing.length);
+
+            mModulesIndex = 0;
+            mModulesToSync = new Table[forSyncing.length];
+            for (int i = 0; i < mModulesToSync.length; i++) {
+                mModulesToSync[i] = Table.values()[forSyncing[i]];
+            }
+            mCurrentTableSyncing = mModulesToSync[mModulesIndex];
+        }
+    }
+
     public boolean isExisting(Object o, Table table) throws SQLException {
         return isExisting(o, 0, table);
     }
+
     public boolean isExisting(int id, Table table) throws SQLException {
         return isExisting(null, id, table);
     }
@@ -196,6 +199,22 @@ public abstract class BaseSyncService extends ImonggoService {
                 ProductTaxRateAssoc productTaxRateAssoc = (ProductTaxRateAssoc) o;
                 return getHelper().getProductTaxRateAssocs().queryBuilder().where().eq("id", productTaxRateAssoc.getId()).queryForFirst() != null;
             }
+            case DOCUMENT_PURPOSES: {
+                DocumentPurpose documentPurpose = (DocumentPurpose) o;
+                return getHelper().getDocumentPurposes().queryBuilder().where().eq("id", documentPurpose.getId()).queryForFirst() != null;
+            }
+            case DOCUMENT_TYPES: {
+                DocumentType documentType = (DocumentType) o;
+                return getHelper().getDocumentTypes().queryBuilder().where().eq("id", documentType.getId()).queryForFirst() != null;
+            }
+            case PRODUCT_TAGS: {
+                ProductTag productTag = (ProductTag) o;
+                return getHelper().getProductTags().queryBuilder().where().eq("id", productTag.getId()).queryForFirst() != null;
+            }
+            case DOCUMENTS: {
+                Document document = (Document) o;
+                return getHelper().getDocuments().queryBuilder().where().eq("id", document.getId()).queryForFirst() != null;
+            }
         }
         return false;
     }
@@ -220,8 +239,6 @@ public abstract class BaseSyncService extends ImonggoService {
 
     @Override
     public void onDestroy() {
-        // Cancel the persistent notification.
-        mNotificationManager.cancel(NOTIFICATION_ID);
 
         // Tell the user we stopped.
         Log.e(TAG, "Sync Service has stopped");
@@ -238,31 +255,6 @@ public abstract class BaseSyncService extends ImonggoService {
         }
     }
 
-    /**
-     * Show a notification while this service is running.
-     */
-    private void showNotification() {
-        // Set the icon, scrolling text and timestamp
-        mNotificationBuilder
-                .setSmallIcon(R.drawable.notification_template_icon_bg)
-                .setContentTitle("Test Service")
-                .setContentText("Service is starting");
-
-        Intent resultIntent = new Intent(this, ImonggoActivity.class);
-
-        // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        this,
-                        0,
-                        resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-        mNotificationBuilder.setContentIntent(resultPendingIntent);
-        // Send the notification.
-        mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
-    }
 
     public void setSyncModulesListener(SyncModulesListener syncModulesListener) {
         this.mSyncModulesListener = syncModulesListener;

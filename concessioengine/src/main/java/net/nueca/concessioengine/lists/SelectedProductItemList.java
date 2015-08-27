@@ -10,6 +10,7 @@ import net.nueca.imonggosdk.objects.Product;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by rhymart on 7/13/15.
@@ -43,6 +44,15 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         return true;
     }
 
+    public List<Product> getSelectedProducts() {
+        List<Product> selectedProducts = new ArrayList<>();
+
+        for(SelectedProductItem selectedProductItem : this)
+            selectedProducts.add(selectedProductItem.getProduct());
+
+        return selectedProducts;
+    }
+
     public SelectedProductItem getSelectedProductItem(Product product) {
         for(SelectedProductItem selectedProductItem : this)
             if (selectedProductItem.getProduct().getId() == product.getId())
@@ -61,7 +71,9 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         SelectedProductItem selectedProductItem = getSelectedProductItem(product);
         if(selectedProductItem == null)
             return "";
-        return "<i>["+selectedProductItem.getValues().get(0).getUnit().getName()+"]</i>";
+        if(selectedProductItem.getValues().get(0).getUnit() != null)
+            return "<i>["+selectedProductItem.getValues().get(0).getUnit().getName()+"]</i>";
+        return "";
     }
 
     public void renderToJson() {

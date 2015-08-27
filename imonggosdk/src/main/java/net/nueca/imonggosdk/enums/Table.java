@@ -12,6 +12,7 @@ public enum Table {
     INVENTORIES,
     PRODUCTS,
     PRODUCT_TAGS,
+    PRODUCT_EXTRAS,
     SESSIONS,
     TAX_RATES,
     TAX_SETTINGS,

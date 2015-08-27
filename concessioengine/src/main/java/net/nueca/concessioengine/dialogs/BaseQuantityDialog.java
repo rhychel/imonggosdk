@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
@@ -24,7 +25,11 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public interface QuantityDialogListener {
         void onSave(SelectedProductItem selectedProductItem);
+        void onDismiss();
+    }
 
+    public interface MultiQuantityDialogListener {
+        void onSave(Values values);
         void onDismiss();
     }
 
@@ -33,10 +38,12 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected List<Unit> unitList;
     protected List<String> brandList;
     protected QuantityDialogListener quantityDialogListener;
+    protected MultiQuantityDialogListener multiQuantityDialogListener;
     protected FragmentManager fragmentManager;
     protected String deliveryDate;
 
-    protected boolean hasUnits = true, hasBrand = false, hasDeliveryDate = false;
+    protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, hasBatchNo = false, isMultiValue = false;
+    protected int valuePosition = -1;
 
     public BaseQuantityDialog(Context context) {
         super(context);
@@ -85,6 +92,10 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
         this.quantityDialogListener = quantityDialogListener;
     }
 
+    public void setMultiQuantityDialogListener(MultiQuantityDialogListener multiQuantityDialogListener) {
+        this.multiQuantityDialogListener = multiQuantityDialogListener;
+    }
+
     public void setFragmentManager(FragmentManager fragmentManager) {
         this.fragmentManager = fragmentManager;
     }
@@ -99,6 +110,27 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setHasDeliveryDate(boolean hasDeliveryDate) {
         this.hasDeliveryDate = hasDeliveryDate;
+    }
+
+    public void setHasBatchNo(boolean hasBatchNo) {
+        this.hasBatchNo = hasBatchNo;
+    }
+
+    public void setIsMultiValue(boolean isMultiValue) {
+        this.isMultiValue = isMultiValue;
+    }
+
+    public void setValuePosition(int valuePosition) {
+        this.valuePosition = valuePosition;
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        if(multiQuantityDialogListener != null)
+            multiQuantityDialogListener.onDismiss();
+        if(quantityDialogListener != null)
+            quantityDialogListener.onDismiss();
     }
 
     /**

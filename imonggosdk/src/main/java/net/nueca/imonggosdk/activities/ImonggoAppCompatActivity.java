@@ -1,11 +1,13 @@
 package net.nueca.imonggosdk.activities;
 
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -37,9 +39,16 @@ public class ImonggoAppCompatActivity extends AppCompatActivity {
 
     public Session getSession() throws SQLException {
         Session session = null;
+        Log.e("isLoggedIn", AccountTools.isLoggedIn(getHelper())+"");
         if(AccountTools.isLoggedIn(getHelper()))
             session = getHelper().getSessions().queryForAll().get(0);
         return session;
+    }
+
+    public User getUser() throws SQLException {
+        if(getSession() == null)
+            return null;
+        return getSession().getUser();
     }
 
 }

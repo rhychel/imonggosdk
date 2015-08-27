@@ -1,6 +1,8 @@
 package net.nueca.imonggosdk.objects.document;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -28,6 +30,8 @@ public class DocumentType extends BaseTable {
     private String name;
     @DatabaseField
     private String code;
+    @ForeignCollectionField
+    private transient ForeignCollection<DocumentPurpose> document_purposes;
 
     public DocumentType() { }
 
@@ -45,6 +49,14 @@ public class DocumentType extends BaseTable {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public ForeignCollection<DocumentPurpose> getDocument_purposes() {
+        return document_purposes;
+    }
+
+    public void setDocument_purposes(ForeignCollection<DocumentPurpose> document_purposes) {
+        this.document_purposes = document_purposes;
     }
 
     @Override
@@ -73,5 +85,14 @@ public class DocumentType extends BaseTable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "DocumentType{" +
+                "name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", id='" + id + '\'' +
+                '}';
     }
 }
