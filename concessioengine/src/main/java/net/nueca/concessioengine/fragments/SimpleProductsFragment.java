@@ -3,6 +3,7 @@ package net.nueca.concessioengine.fragments;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,6 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import net.nueca.concessioengine.R;
-import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
@@ -122,6 +122,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     }
                     else {
                         SelectedProductItem selectedProductItem = simpleProductListAdapter.getSelectedProductItems().getSelectedProductItem(product);
+
                         if (selectedProductItem == null) {
                             selectedProductItem = new SelectedProductItem();
                             selectedProductItem.setProduct(product);
@@ -136,6 +137,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
                     Product product = simpleProductListAdapter.getItem(position);
                     showProductDetails(product);
+
                     return true;
                 }
             });
@@ -162,6 +164,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
     @Override
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
+        Log.e("SimpleProductFragment", selectedProductItem.toString());
+        Log.e("SimpleProductFragment", "RetailPrice: " + selectedProductItem.getRetailPriceWithTax());
+
         try {
             SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
             quantityDialog.setSelectedProductItem(selectedProductItem);

@@ -19,7 +19,7 @@ public class C_SampleLogin extends LoginActivity {
         super.initLoginEquipments();
         setServer(Server.IRETAILCLOUD_NET);
         setRequireConcessioSettings(true);
-        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true, "");
+        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, false, "");
         setModules(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(),
                 Table.PRODUCTS.ordinal(),
                 Table.DOCUMENTS.ordinal());

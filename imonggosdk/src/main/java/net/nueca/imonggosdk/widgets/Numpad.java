@@ -643,7 +643,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         countDigits(current_text);
     }
     private void countDigits(String str) {
-        Log.e("str", str);
+        //Log.e("str", str);
         if(str.contains(".")) {
             StringTokenizer tokens = new StringTokenizer(str,".");
             Log.e("tokens",tokens.countTokens()+"");
@@ -658,6 +658,6 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             CURRENT_WHOLE_DIGIT = str.replaceAll("[^0-9]","").length();
             CURRENT_DECIMAL = 0;
         }
-        Log.e("DIGIT",CURRENT_WHOLE_DIGIT + " " + CURRENT_DECIMAL);
+        //Log.e("DIGIT",CURRENT_WHOLE_DIGIT + " " + CURRENT_DECIMAL);
     }
 }
