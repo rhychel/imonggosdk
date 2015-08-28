@@ -150,6 +150,15 @@ public class Values {
 
     @Override
     public String toString() {
-        return quantity;
+        return "Values{" +
+                "line_no=" + line_no +
+                ", unit=" + unit +
+                ", unit_quantity='" + unit_quantity + '\'' +
+                ", unit_name='" + unit_name + '\'' +
+                ", unit_retail_price=" + unit_retail_price +
+                ", unit_content_quantity=" + unit_content_quantity +
+                ", quantity='" + quantity + '\'' +
+                ", extendedAttributes=" + extendedAttributes +
+                '}';
     }
 }

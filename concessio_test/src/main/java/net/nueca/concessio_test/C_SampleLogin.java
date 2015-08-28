@@ -5,6 +5,7 @@ import android.content.Intent;
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.tools.SettingTools;
 
 /**
@@ -18,10 +19,10 @@ public class C_SampleLogin extends LoginActivity {
         super.initLoginEquipments();
         setServer(Server.IRETAILCLOUD_NET);
         setRequireConcessioSettings(true);
-        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, true, "");
-        /*setModules(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(),
+        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, false, "");
+        setModules(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(),
                 Table.PRODUCTS.ordinal(),
-                Table.DOCUMENTS.ordinal());*/
+                Table.DOCUMENTS.ordinal());
 
     }
 
