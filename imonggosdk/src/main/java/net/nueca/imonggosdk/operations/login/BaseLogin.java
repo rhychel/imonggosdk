@@ -88,6 +88,7 @@ public class BaseLogin {
         this.mPassword = password;
 
         try {
+            Log.e("isLoggedIn", ""+AccountTools.isLoggedIn(dbHelper));
             if (AccountTools.isLoggedIn(dbHelper)) {
                 mSession = dbHelper.getSessions().queryForAll().get(0);
             }
@@ -296,6 +297,11 @@ public class BaseLogin {
      * @param server
      */
     private void requestForApiToken(final Server server) {
+        Log.e("Context", "is NULL? " + (mContext == null));
+        Log.e("Session", "is NULL? " + (getSession() == null));
+        Log.e("Acct URL", "is NULL? " + (getSession().getAccountUrl() == null));
+        Log.e("Email", "is NULL? " + (getEmail() == null));
+        Log.e("Pwd", "is NULL? " + (getPassword() == null));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoTools.buildAPITokenUrl(mContext, getSession().getAccountUrl(), Table.TOKENS,

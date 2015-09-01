@@ -33,7 +33,7 @@ import java.util.StringTokenizer;
  */
 public class Numpad extends LinearLayout implements View.OnClickListener {
     private ViewGroup keypadView, llControls;
-    private TextHolder mTextHolder;
+    protected TextHolder mTextHolder;
 
     private String DEFAULT_TEXT = "0";
     private String FORMAT = "%,1.0f";
@@ -52,7 +52,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
     //private List<View> buttonList;
     private List<TextHolder> textViewList;
 
-    private Button button00, buttonDot;
+    protected Button button00, buttonDot;
     private List<Button> buttonNum;
     private ImageButton ibtnGo, ibtnNegative, ibtnBksp, ibtnMore;
 
@@ -316,7 +316,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         }
     };
 
-    private void doWrite(String str) {
+    protected void doWrite(String str) {
         String unparsed = mTextHolder.getTextView().getText().toString();
         unparsed = unparsed.replaceAll("[^0-9.,]", "");
 
@@ -387,7 +387,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             }
         }
     }
-    private void doBackspace() {
+    protected void doBackspace() {
         String unparsed = mTextHolder.getTextView().getText().toString();
         if(unparsed.equals(DEFAULT_TEXT))
             return;
@@ -437,7 +437,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
         }
         countDigits();
     }
-    private void doClear() {
+    protected void doClear() {
         mTextHolder.getTextView().setText(PREFIX + DEFAULT_TEXT);
         CURRENT_WHOLE_DIGIT = 0;
         CURRENT_DECIMAL = 0;
@@ -557,7 +557,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
                     setAllowNegative(textHolder.allowNegative);
                     setEnableDot(textHolder.enableDot);
 
-                    if(textHolder.getTextView().getText().toString().contains("-")) {
+                    if(textHolder.getTextView().getText().toString().contains("-") && textHolder.allowNegative) {
                         ibtnNegative.callOnClick();
                     }
                     doWrite("");

@@ -38,12 +38,11 @@ public class ExtendedAttributes {
     }
 
     public net.nueca.imonggosdk.objects.document.ExtendedAttributes convertForDocumentLine() {
-        net.nueca.imonggosdk.objects.document.ExtendedAttributes extendedAttributes = new net.nueca.imonggosdk.objects.document.ExtendedAttributes.Builder()
+        return new net.nueca.imonggosdk.objects.document.ExtendedAttributes.Builder()
                 .brand(getBrand())
                 .delivery_date(delivery_date)
                 .batch_no(batch_no)
                 .build();
-        return extendedAttributes;
     }
 
     public void setBrand(String brand) {
