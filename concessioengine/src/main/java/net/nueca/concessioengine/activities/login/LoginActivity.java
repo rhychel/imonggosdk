@@ -2,7 +2,6 @@ package net.nueca.concessioengine.activities.login;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -17,8 +16,6 @@ import net.nueca.imonggosdk.tools.LoggingTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Jn on 7/12/2015.
@@ -27,68 +24,56 @@ import java.util.List;
 public class LoginActivity extends BaseLoginActivity {
 
     public static String TAG = "LoginActivity";
-
-    /**
-     * Calling required methods for login.
-     * you can Override this method as long
-     * as you call super.onCreate
-     * @param savedInstanceState bundle
-     */
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initLoginEquipments();
-        loginChecker();
-        onCreateLoginLayout();
-        autoUpdateChecker();
-    }
+    private boolean isUsingDefaultLoginLayout = true;
 
     /**
      * Shows login layout if the user is logged out
+     *
+     * if you want to customize login layout
+     * you should extend this class and
+     * override this method and call this
+     * functions inside:
+     *
+     * 1. setContentView( your custom layout)
+     * 2. setLayoutEquipments( fill in the ids in your layout)
      */
+    @Override
     protected void onCreateLoginLayout() {
-        if (!isLoggedIn()) {
+        if (!isLoggedIn() && isUnlinked()) {
             startSyncService();
-            onCreateLayoutForLogin();
+            if(isUsingDefaultLoginLayout()) {
+                setContentView(R.layout.concessioengine_login);
+                setupLayoutEquipments((EditText) findViewById(R.id.etAccountId),
+                        (EditText) findViewById(R.id.etEmail),
+                        (EditText) findViewById(R.id.etPassword),
+                        (Button) findViewById(R.id.btnSignIn));
+
+                setIsUsingDefaultCustomDialogForSync(true);
+            }
+
+            // TODO: Delete this autofill login data
+            setEditTextAccountID("retailpos");      // ACCOUNT ID
+            setEditTextEmail("retailpos@test.com"); // EMAIL
+            setEditTextPassword("retailpos");       // PASSWORD
+
             getHelper().deleteAllDatabaseValues();
         }
     }
 
     /**
-     * if you want to customize login layout
-     * you should override this method.
-     * and call these function inside.
-     *
-     * 1. setContentView(...)
-     * 2. setLayoutEquipments(...)
-     *
-     * Note: don't call super.onCreateLoginLayout
-     */
-    @Override
-    protected void onCreateLayoutForLogin() {
-        setContentView(R.layout.concessioengine_login);
-        setupLayoutEquipments((EditText) findViewById(R.id.etAccountId),
-                (EditText) findViewById(R.id.etEmail),
-                (EditText) findViewById(R.id.etPassword),
-                (Button) findViewById(R.id.btnSignIn));
-        setEditTextAccountID("retailpos");
-        setEditTextEmail("retailpos@test.com");
-        setEditTextPassword("retailpos");
-    }
-
-    /**
      * Checks if AutoUpdate is on.
      * If True Update the data,
-     * else skip to welcome screen
+     * else skip to method showNextActivityAfterLogin()
      */
-    private void autoUpdateChecker() {
+    @Override
+    protected void autoUpdateChecker() {
         // Account is Linked User is logged in
         if (!isUnlinked() && isLoggedIn()) {
             if (isAutoUpdate() && NetworkTools.isInternetAvailable(LoginActivity.this)) {
                 updateAppData();
                 new StartSyncServiceAsyncTask().execute();
             } else {
-                showNextActivity();
+                showNextActivityAfterLogin();
             }
         }
     }
@@ -105,18 +90,13 @@ public class LoginActivity extends BaseLoginActivity {
             intent.putExtra(SyncModules.PARAMS_INITIAL_SYNC, true);
             intent.putExtra(SyncModules.PARAMS_SYNC_ALL_MODULES, true);
             setSyncServiceIntent(intent);
+            setModulesToSync(null);
             setSyncAllModules(true);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            setTag("BaseLoginActivity");
             setSyncServiceBinded(isSyncServiceRunning(SyncModules.class));
-            setModules(null);
             setRequireConcessioSettings(false);
             setUnlinked(AccountTools.isUnlinked(this));
             setLoggedIn(AccountTools.isLoggedIn(getHelper()));
-            setServer(Server.IMONGGO);
-            Log.e(TAG, "Server is " + getServer().toString());
-            List<String> m = new ArrayList<>();
-            setModulesToSync(m);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -179,7 +159,7 @@ public class LoginActivity extends BaseLoginActivity {
     }
 
     @Override
-    protected void showNextActivity() {
+    protected void showNextActivityAfterLogin() {
 
     }
 
@@ -206,6 +186,16 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void successLogin() {
 
+    }
+
+    @Override
+    protected void showCustomDownloadDialog() {
+        createNewCustomDialogFrameLayout(LoginActivity.this, getModulesToSync());
+        createNewCustomDialog(LoginActivity.this, R.style.AppCompatDialogStyle);
+        setCustomDialogTitle(getString(R.string.FETCHING_MODULE_TITLE));
+        setCustomDialogContentView(getCustomDialogFrameLayout());
+        setCustomDialogCancelable(false);
+        showCustomDialog();
     }
 
     @Override
@@ -237,5 +227,13 @@ public class LoginActivity extends BaseLoginActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean isUsingDefaultLoginLayout() {
+        return isUsingDefaultLoginLayout;
+    }
+
+    public void setIsUsingDefaultLoginLatyout(boolean isUsingDefaultLoginLatyout) {
+        this.isUsingDefaultLoginLayout = isUsingDefaultLoginLatyout;
     }
 }

@@ -25,7 +25,7 @@ public class C_Login extends LoginActivity {
     protected void successLogin() {
         super.successLogin();
         int []modulesToDownload = generateModules(true);
-        setModules(generateModules(true));
+        setModulesToSync(generateModules(true));
         getSyncModules().initializeTablesToSync(modulesToDownload);
     }
 
@@ -33,13 +33,13 @@ public class C_Login extends LoginActivity {
     protected void updateAppData() {
         super.updateAppData();
         int []modulesToDownload = generateModules(true);
-        setModules(generateModules(false));
+        setModulesToSync(generateModules(false));
 
         getSyncModules().initializeTablesToSync(modulesToDownload);
     }
 
     @Override
-    protected void showNextActivity() {
+    protected void showNextActivityAfterLogin() {
         finish();
         Intent intent = new Intent(this, C_Welcome.class);
         startActivity(intent);
