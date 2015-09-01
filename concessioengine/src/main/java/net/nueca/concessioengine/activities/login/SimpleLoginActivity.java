@@ -18,17 +18,12 @@ public class SimpleLoginActivity extends BaseLoginActivity {
     }
 
     @Override
-    protected void onCreateLayoutForLogin() {
-
-    }
-
-    @Override
     protected void updateAppData() {
 
     }
 
     @Override
-    protected void showNextActivity() {
+    protected void showNextActivityAfterLogin() {
 
     }
 
@@ -44,6 +39,21 @@ public class SimpleLoginActivity extends BaseLoginActivity {
 
     @Override
     protected void successLogin() {
+
+    }
+
+    @Override
+    protected void showCustomDownloadDialog() {
+
+    }
+
+    @Override
+    protected void onCreateLoginLayout() {
+
+    }
+
+    @Override
+    protected void autoUpdateChecker() {
 
     }
 

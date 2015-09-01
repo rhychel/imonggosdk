@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,6 +39,7 @@ import net.nueca.imonggosdk.tools.NetworkTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,28 +49,30 @@ import java.util.List;
  */
 public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
 
-    private BaseLogin mBaseLogin;
-    private Boolean isUnlinked;
-    private Boolean isLoggedIn;
-    private Boolean requireConcessioSettings = false; // added by rhy
+    private BaseLogin mBaseLogin = null;
+    private Boolean isUnlinked = true;
+    private Boolean isLoggedIn = false;
+    private Boolean requireConcessioSettings = false;
     private Session mSession = null;
-    private Server mServer;
-    private int[] mModules;
-    private EditText etAccountID;
-    private EditText etEmail;
-    private EditText etPassword;
-    private Button btnSignIn;
-    private CustomDialog customDialog;
-    private CustomDialogFrameLayout customDialogFrameLayout;
-    private Intent mServiceIntent;
-    private List<String> mModulesToDownload;
-    private String TAG;
-    private SyncModules mSyncModules;
-    private Boolean mBounded;
+    private Server mServer = Server.IMONGGO;
+    private Boolean isUsingDefaultCustomDialogForSync = false;
+    private int[] mModules = null;
+    private EditText etAccountID = null;
+    private EditText etEmail = null;
+    private EditText etPassword = null;
+    private Button btnSignIn = null;
+    private CustomDialog customDialog = null;
+    private CustomDialogFrameLayout customDialogFrameLayout = null;
+    private Intent mServiceIntent = null;
+    private List<String> mModulesToDownload = null;
+    private String TAG = "BaseLoginActivity";
+    private SyncModules mSyncModules = null;
+    private Boolean mBounded = false;
+
 
     /**
      * If you want to initialize your own logic. method before login checker.
-     * you should implement this methods: setServer(...) and setModules(...)
+     * you should implement this methods: setServer(...) and setModulesToSync(...)
      * if not then the default server and modules is set.
      */
     protected abstract void initLoginEquipments();
@@ -77,14 +81,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * Checks if someone is logged in
      */
     protected abstract void loginChecker();
-
-    /**
-     * if you want to customize login you use call the method
-     * setIsUsingCustomLayout(...)
-     * setContentView(...)
-     * setLayoutEquipments(...);
-     */
-    protected abstract void onCreateLayoutForLogin();
 
     /**
      * If you want to add some logic before fetching data
@@ -96,7 +92,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * You should @Override this method and the activity you want
      * to show next
      */
-    protected abstract void showNextActivity();
+    protected abstract void showNextActivityAfterLogin();
 
     /**
      * Override this method if you want to add
@@ -116,8 +112,51 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     protected abstract void successLogin();
 
+    /**
+     * This method is called before downloading any modules
+     * this is where you will builds the custom downloading
+     * progress dialogs and etc.
+     */
+    protected abstract void showCustomDownloadDialog();
 
     /**
+     * This is where you will create your login layout
+     * setContentView and align the ids in your layout
+     * to this class.
+     *
+     * if you want to customize login layout
+     * you should extend this class and
+     * override this method and call this
+     * functions inside:
+     *
+     * 1. setContentView( your custom layout)
+     * 2. setLayoutEquipments( fill in the ids in your layout)
+     */
+    protected abstract void onCreateLoginLayout();
+
+    /**
+     * This is where you should check if existing user is currently logged in
+     * logged out or the user has unlinked the credentials in the device
+     */
+    protected abstract void autoUpdateChecker();
+
+    /**
+     * Calling required methods for login.
+     * you can Override this method as long
+     * as you call super.onCreate
+     * @param savedInstanceState bundle
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initLoginEquipments();
+        loginChecker();
+        onCreateLoginLayout();
+        autoUpdateChecker();
+    }
+
+    /**
+     * For Sync Service only
      * Defines callbacks for service binding, passed to bindService()
      */
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -147,14 +186,14 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     };
 
     /**
-     * This methods downloads and updates all the modules.
+     * This method starts handles the downloads and updates of all modules.
      *
      * @throws SQLException
      */
     public void startSyncingImonggoModules() throws SQLException {
         if (isSyncServiceBinded()) {
             setUpModuleNamesForCustomDialog();
-            showSyncModulesCustomDialog();
+            showCustomDownloadDialog();
 
             Log.e(TAG, "Starting Module Download");
             if (mSyncModules != null) {
@@ -194,11 +233,17 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     /**
-     * This populates list of module names that the custom dialog needs.
+     * This populates list of module names that
+     * the custom dialog needs based on your list.
      */
     private void setUpModuleNamesForCustomDialog() {
         if (getModules() != null) { // manually set modules to download see /**/
-            mModulesToDownload.clear();
+            if(mModulesToDownload != null) {
+                mModulesToDownload.clear();
+            } else {
+                mModulesToDownload = new ArrayList<>();
+            }
+
             for (int module : getModules()) {
 
                 for (Table table : Table.values()) {
@@ -254,17 +299,57 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
-    /**
-     * This method is called when modules are downloading
-     */
-    private void showSyncModulesCustomDialog() {
+    public void createNewCustomDialogFrameLayout(Context context, List<String> moduleName) {
+        customDialogFrameLayout = new CustomDialogFrameLayout(context, moduleName);
+    }
 
-        customDialogFrameLayout = new CustomDialogFrameLayout(BaseLoginActivity.this, mModulesToDownload);
-        customDialog = new CustomDialog(BaseLoginActivity.this, R.style.AppCompatDialogStyle);
-        customDialog.setTitle(getString(R.string.FETCHING_MODULE_TITLE));
-        customDialog.setContentView(customDialogFrameLayout);
-        customDialog.setCancelable(false);
-        customDialog.show();
+    public CustomDialogFrameLayout getCustomDialogFrameLayout(){
+        return customDialogFrameLayout;
+    }
+
+
+    public void setCustomDialogContentView(CustomDialogFrameLayout customDialogContentView) {
+        customDialog.setContentView(customDialogContentView);
+    }
+
+    public void setCustomDialogTitle(String title) {
+        customDialog.setTitle(title);
+    }
+
+    public void createNewCustomDialog(Context context){
+        customDialog = new CustomDialog(context);
+    }
+
+    public void createNewCustomDialog(Context context, int theme) {
+        customDialog = new CustomDialog(context, theme);
+    }
+
+    public void setCustomDialogCancelable(Boolean choice) {
+        customDialog.setCancelable(choice);
+    }
+
+    public void hideCustomDialog() {
+        showOrHideCustomDialog(false);
+    }
+
+    public void showCustomDialog() {
+        showOrHideCustomDialog(true);
+    }
+
+    private void showOrHideCustomDialog(boolean choice) {
+        if(choice) {
+            customDialog.show();
+        } else {
+            customDialog.hide();
+        }
+    }
+
+    public void setIsUsingDefaultCustomDialogForSync(boolean choice){
+        isUsingDefaultCustomDialogForSync = choice;
+    }
+
+    public boolean isUsingDefaultCustomDialogForSync(){
+        return isUsingDefaultCustomDialogForSync;
     }
 
     /**
@@ -516,13 +601,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
-    protected void LogInUser(Server server) throws LoginException {
+    private void LogInUser(Server server) throws LoginException {
         if (mBaseLogin != null) {
             mBaseLogin.startLoginUser(server);
         }
     }
 
-    protected void LogOutUser() {
+    private void LogOutUser() {
         try {
             AccountTools.logoutUser(this, getHelper(), this);
         } catch (SQLException e) {
@@ -540,10 +625,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     protected List<String> getModulesToSync() {
         return this.mModulesToDownload;
-    }
-
-    protected void setModulesToSync(List<String> modules) {
-        this.mModulesToDownload = modules;
     }
 
     protected String getTag() {
@@ -565,7 +646,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     /**
      * setRequireConcessioSettings
      *
-     * @param requireConcessioSettings
+     * @param requireConcessioSettings your choice
      */
     public void setRequireConcessioSettings(Boolean requireConcessioSettings) {
         this.requireConcessioSettings = requireConcessioSettings;
@@ -651,7 +732,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return mModules;
     }
 
-    protected void setModules(int... mModules) {
+    protected void setModulesToSync(int... mModules) {
         setModule(mModules);
     }
 
@@ -829,7 +910,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             customDialog.dismiss();
             customDialog = null;
         }
-        showNextActivity();
+        showNextActivityAfterLogin();
     }
 
     @Override
