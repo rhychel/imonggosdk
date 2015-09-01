@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">CS:TAO</string>
-    <string name="title_activity_login">Login</string>
-
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-</resources>
