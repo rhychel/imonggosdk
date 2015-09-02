@@ -56,6 +56,7 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         try {
             List<BranchUserAssoc> branchUserAssocs = dbHelper.getBranchUserAssocs().queryBuilder().where()
                     .eq("user_id", user).query();
+
             for(BranchUserAssoc branchUser : branchUserAssocs) {
                 if(branchUser.getBranch().getSite_type() != null &&
                     branchUser.getBranch().getSite_type().toLowerCase().equals("warehouse"))
