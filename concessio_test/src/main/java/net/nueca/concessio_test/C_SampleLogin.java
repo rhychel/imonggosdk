@@ -29,7 +29,7 @@ public class C_SampleLogin extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, C_Module2.class);
+        Intent intent = new Intent(this, Receive.class);
         startActivity(intent);
     }
 }

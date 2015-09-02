@@ -21,6 +21,7 @@ public class ExtendedAttributes extends BaseTable2 {
     protected String delivery_date;
     @DatabaseField
     protected String brand;
+    @DatabaseField
     protected String batch_no;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_line_id")
