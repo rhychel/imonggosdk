@@ -94,6 +94,7 @@ public class Document extends BaseTransactionDB {
     }
 
     public List<DocumentLine> getDocument_lines() {
+        refresh();
         return document_lines;
     }
 
@@ -176,7 +177,8 @@ public class Document extends BaseTransactionDB {
     @Override
     public boolean shouldPageRequest() {
         refresh();
-        return document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
+        //return document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
+        return false;
     }
 
     @Override
