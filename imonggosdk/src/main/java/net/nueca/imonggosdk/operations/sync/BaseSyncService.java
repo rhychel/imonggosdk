@@ -9,6 +9,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import net.nueca.imonggosdk.enums.DailySalesEnums;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
@@ -17,6 +18,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
@@ -31,6 +33,9 @@ import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -77,8 +82,8 @@ public abstract class BaseSyncService extends ImonggoService {
     /**
      * OnStartCommand runs after starService() on is called
      *
-     * @param intent Intent
-     * @param flags  Additional data about this start request
+     * @param intent  Intent
+     * @param flags   Additional data about this start request
      * @param startId A unique integer representing this specific request to start
      * @return START_STICKY
      */
@@ -118,7 +123,6 @@ public abstract class BaseSyncService extends ImonggoService {
     }
 
     /**
-     *
      * @param syncAllModules boolean of choice if you want to sync all modules
      */
     public void setSyncAllModules(boolean syncAllModules) {
@@ -139,11 +143,15 @@ public abstract class BaseSyncService extends ImonggoService {
     }
 
     public boolean isExisting(Object o, Table table) throws SQLException {
-        return isExisting(o, 0, table);
+        return isExisting(o, 0, table, null);
     }
 
     public boolean isExisting(int id, Table table) throws SQLException {
-        return isExisting(null, id, table);
+        return isExisting(null, id, table, null);
+    }
+
+    public boolean checkFetchDailySales(Object o, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
+        return isExisting(o, 0, table, dailySalesEnums);
     }
 
     /**
@@ -154,7 +162,7 @@ public abstract class BaseSyncService extends ImonggoService {
      * @return
      * @throws SQLException
      */
-    public boolean isExisting(Object o, int id, Table table) throws SQLException {
+    public boolean isExisting(Object o, int id, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
         switch (table) {
             case USERS: {
                 User user = (User) o;
@@ -214,6 +222,50 @@ public abstract class BaseSyncService extends ImonggoService {
             case DOCUMENTS: {
                 Document document = (Document) o;
                 return getHelper().getDocuments().queryBuilder().where().eq("id", document.getId()).queryForFirst() != null;
+            }
+            case DAILY_SALES: {
+
+                DailySales dailySales = (DailySales) o;
+
+                if (dailySalesEnums == DailySalesEnums.DATE) {
+                    return getHelper().getDailySales().queryBuilder().where().eq("date_updated_at", dailySales.getDate_updated_at()).queryForFirst() != null;
+                } else if (dailySalesEnums == DailySalesEnums.TIME) {
+
+                    DailySales dailySalesDB = getHelper().getDailySales().queryBuilder().where().eq("date_updated_at", dailySales.getDate_updated_at()).queryForFirst();
+
+                    if (dailySalesDB != null) {
+
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                        Calendar calendar1 = Calendar.getInstance();
+                        Calendar calendar2 = Calendar.getInstance();
+
+
+                        try {
+                            String dateparse1 = dailySales.getDate_updated_at() + " " + dailySales.getTime_updated_at();
+                            String dateparse2 = dailySalesDB.getDate_updated_at() + " " + dailySalesDB.getTime_updated_at();
+
+                            java.util.Date date1 = dateFormat.parse(dateparse1);
+                            java.util.Date date2 = dateFormat.parse(dateparse2);
+
+                            calendar1.setTime(date1);
+                            calendar2.setTime(date2);
+
+                            int comparison_result = calendar1.compareTo(calendar2);
+                            Log.e(TAG, "Compare Result : " + comparison_result);
+                            Log.e(TAG, dateparse2 + " < " + dateparse1);
+
+                            if (comparison_result == 1) {
+                                return true;
+                            } else if (comparison_result == 0 || comparison_result == -1) {
+                                return false;
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    return false;
+                }
             }
         }
         return false;

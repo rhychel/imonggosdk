@@ -50,6 +50,8 @@ public class LoginTools {
                 return ImonggoTools.buildAPIUrlIRetailCloudCom(context, accountId);
             case IRETAILCLOUD_NET:
                 return ImonggoTools.buildAPIUrlIRetailCloudNet(context, accountId);
+            case IMONGGO_NET:
+                return ImonggoTools.buildAPIUrlImonggoNet(context, accountId);
             default:
                 return "";
         }

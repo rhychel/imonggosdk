@@ -74,6 +74,11 @@ public class ImonggoTools {
                     parameterStr += "intransit_status=%"+stringInputCount+"$s&";
                     stringInputCount++;
                     break;
+                case CURRENT_DATE:
+                    parameterStr = "";
+                    parameterStr += "%"+stringInputCount+"$s.json?";
+                    stringInputCount++;
+                    break;
             }
         }
         if(!parameterStr.equals("?"))
@@ -105,6 +110,18 @@ public class ImonggoTools {
 	public static String buildAPIUrlImonggo(Context context, String accountId) {
 		return String.format(context.getString(R.string.API_URL_IMONGGO), accountId);
 	}
+
+    /**
+     *
+     * Build URL for getting Account URL on Imonggo.
+     *
+     * @param context
+     * @param accountId
+     * @return
+     */
+    public static String buildAPIUrlImonggoNet(Context context, String accountId) {
+        return String.format(context.getString(R.string.API_URL_IMONGGO_NET), accountId);
+    }
 	
 	/**
 	 * 

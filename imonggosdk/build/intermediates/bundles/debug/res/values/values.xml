@@ -24,6 +24,7 @@
     <string name="API_URL_CUSTOM">%1$s/system/api_url?account_id=%2$s</string>
     <string name="API_URL_CUSTOM_SECURED">%1$s/system/api_url?account_id=%2$s</string>
     <string name="API_URL_IMONGGO">http://www.imonggo.com/system/api_url?account_id=%s</string>
+    <string name="API_URL_IMONGGO_NET">http://www.imonggo.net:8888/system/api_url?account_id=%s</string>
     <string name="API_URL_IRETAILCLOUD_COM">http://www.iretailcloud.com/system/api_url?account_id=%s</string>
     <string name="API_URL_IRETAILCLOUD_NET">http://www.iretailcloud.net/system/api_url?account_id=%s</string>
     <string name="API_URL_PLDTRETAILCLOUD">http://www.pldtretailcloud.com/system/api_url?account_id=%s</string>

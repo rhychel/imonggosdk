@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import net.nueca.concessioengine.R;
-import net.nueca.imonggosdk.tools.LoggingTools;
 
 import java.util.List;
 
@@ -47,15 +46,15 @@ public class CustomDialogFrameLayout extends FrameLayout {
         customModuleAdapter.setOnItemClickListener(new BaseCustomDialogRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                LoggingTools.showToast(context, "OnItemClicked" + getCustomModuleAdapter().getModuleAt(position));
-                view.setBackgroundColor(mContext.getResources().getColor(android.R.color.darker_gray));
+                /*LoggingTools.showToast(context, "OnItemClicked" + getCustomModuleAdapter().getModuleAt(position));
+                view.setBackgroundColor(mContext.getResources().getColor(android.R.color.darker_gray));*/
             }
         });
 
         customModuleAdapter.setOnItemLongClickListener(new BaseCustomDialogRecyclerAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClicked(View view, int position) {
-                LoggingTools.showToast(context, "OnItemLongClicked" + getCustomModuleAdapter().getModuleAt(position));
+                /*LoggingTools.showToast(context, "OnItemLongClicked" + getCustomModuleAdapter().getModuleAt(position));*/
             }
         });
 

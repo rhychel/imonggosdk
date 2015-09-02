@@ -52,9 +52,9 @@ public class LoginActivity extends BaseLoginActivity {
             }
 
             // TODO: Delete this autofill login data
-            setEditTextAccountID("retailpos");      // ACCOUNT ID
-            setEditTextEmail("retailpos@test.com"); // EMAIL
-            setEditTextPassword("retailpos");       // PASSWORD
+            setEditTextAccountID("ourlovelybotique");                   // ACCOUNT ID
+            setEditTextEmail("owner@ourlovelybotique.com"); // EMAIL
+            setEditTextPassword("ourlovelybotique");                    // PASSWORD
 
             getHelper().deleteAllDatabaseValues();
         }
@@ -93,7 +93,6 @@ public class LoginActivity extends BaseLoginActivity {
             setModulesToSync(null);
             setSyncAllModules(true);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            setSyncServiceBinded(isSyncServiceRunning(SyncModules.class));
             setRequireConcessioSettings(false);
             setUnlinked(AccountTools.isUnlinked(this));
             setLoggedIn(AccountTools.isLoggedIn(getHelper()));
