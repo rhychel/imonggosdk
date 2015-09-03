@@ -17,41 +17,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import com.google.gson.Gson;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
-import net.nueca.concessioengine.objects.SelectedProductItem;
-import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SearchViewEx;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
-import net.nueca.imonggosdk.enums.OfflineDataType;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.AccountListener;
-import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 
-import org.json.JSONException;
-
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,10 +54,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sample_fragment);
+        setContentView(R.layout.simple_customers_fragment_lv);
 
-        btnSample = (Button) findViewById(R.id.btnSample);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+    /*    btnSample = (Button) findViewById(R.id.btnSample);
+        fab = (FloatingActionButton) findViewById(R.id.fab);*/
 
         SwableTools.startSwable(this);
 
@@ -289,7 +274,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mHistory) {
-            Intent intent = new Intent(this, C_History.class);
+            Intent intent = new Intent(this, C_Login.class);
             startActivity(intent);
         }
         else if(item.getItemId() == R.id.mLogout) {
@@ -308,7 +293,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
                             @Override
                             public void onUnlinkAccount() {
-                                Intent intent = new Intent(C_Module.this, C_SampleLogin.class);
+                                Intent intent = new Intent(C_Module.this, C_Login.class);
                                 finish();
                                 startActivity(intent);
                             }
