@@ -6,6 +6,7 @@ import android.util.Log;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 
+import net.nueca.imonggosdk.enums.DailySalesEnums;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Parameter;
 import net.nueca.imonggosdk.enums.RequestType;
@@ -15,7 +16,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
-import net.nueca.imonggosdk.objects.Extras;
+import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
@@ -72,6 +73,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     mCurrentTableSyncing, getSession().getServer(), requestType, getParameters(requestType));
 
         } else if (requestType == RequestType.LAST_UPDATED_AT) {
+
+            if (mCurrentTableSyncing == Table.DAILY_SALES) {
+                ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing,
+                        getSession().getServer(), RequestType.DAILY_SALES, getParameters(RequestType.DAILY_SALES));
+                return;
+            }
+
+
             Log.e(TAG, "LAST UPDATED AT");
             newLastUpdatedAt = null;
             lastUpdatedAt = null;
@@ -93,10 +102,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             // get the last updated at
             lastUpdatedAt = getHelper().getLastUpdatedAts().queryForFirst(queryBuilder.prepare());
 
-            if(lastUpdatedAt != null) {
+            if (lastUpdatedAt != null) {
                 Log.e(TAG, "TABLE NAME: " + lastUpdatedAt.getTableName());
             }
 
+            ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing,
+                    getSession().getServer(), requestType, getParameters(requestType));
+        } else if (requestType == RequestType.DAILY_SALES) {
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing,
                     getSession().getServer(), requestType, getParameters(requestType));
         }
@@ -130,6 +142,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     private String getParameters(RequestType requestType) {
+
+        if (requestType == RequestType.DAILY_SALES) {
+            Log.e(TAG, "parameter" + String.format(ImonggoTools.generateParameter(Parameter.CURRENT_DATE, Parameter.BRANCH_ID),
+                    DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd"), getSession().getCurrent_branch_id()) + "");
+
+            return String.format(ImonggoTools.generateParameter(Parameter.CURRENT_DATE, Parameter.BRANCH_ID),
+                    DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd"), getSession().getCurrent_branch_id() + "");
+        }
+
         if (requestType == RequestType.LAST_UPDATED_AT) {
 
             if (mCurrentTableSyncing == Table.DOCUMENTS) {// This is when the module syncing is DOCUMENTS
@@ -227,11 +248,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Parameter.AFTER,
                                     Parameter.TARGET_BRANCH_ID,
                                     Parameter.COUNT
-                                    ),
-                                    document_type,
-                                    DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()),
-                                    getTargetBranchId(branchIndex)
-                                    );
+                            ),
+                            document_type,
+                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()),
+                            getTargetBranchId(branchIndex)
+                    );
                 }
                 if (mCurrentTableSyncing == Table.UNITS) {
                     if (lastUpdatedAt.getLast_updated_at() == null)
@@ -259,6 +280,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 } else {
                     endSyncNext();
                 }
+
             } else {
                 endSyncNext();
             }
@@ -379,7 +401,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     Log.e(TAG, "Response: count is " + count);
                     // if table don't have data
                     if (count == 0) {
-                        if(mCurrentTableSyncing == Table.DOCUMENTS) {
+                        if (mCurrentTableSyncing == Table.DOCUMENTS) {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, branchIndex, getUserBranchesSize());
                         } else {
                             mSyncModulesListener.onDownloadProgress(module, 1, 1);
@@ -506,11 +528,35 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
                             }
                         }
-
-
                         mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                         syncNext();
                     }
+                } else if (requestType == RequestType.DAILY_SALES) {
+                    mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                    String date_updated_at = DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd");
+                    String date_requested_at = DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd HH:mm:ss");
+
+
+                    DailySales dailySales = gson.fromJson(jsonObject.toString(), DailySales.class);
+                    dailySales.setDate_of_sales(date_updated_at);
+                    dailySales.setDate_requested_at(date_requested_at);
+
+                    dailySales.setBranch_id(getSession().getCurrent_branch_id());
+
+                    if (!checkDailySales(dailySales, Table.DAILY_SALES, DailySalesEnums.DATE_OF_DAILY_SALES)) {
+                        dailySales.insertTo(getHelper());
+                    } else {
+                        Log.e(TAG, "DailySale is existing checking for time");
+
+                        if (checkDailySales(dailySales, Table.DAILY_SALES, DailySalesEnums.DATE_REQUESTED)) {
+                            Log.e(TAG, "Fetched date time is the most recent... updating databse");
+                            dailySales.updateTo(getHelper());
+                        } else {
+                            Log.e(TAG, "database data is up to date");
+                        }
+                    }
+
+                    syncNext();
                 }
                 // JSONArray
             } else if (response instanceof JSONArray) {
@@ -526,7 +572,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             syncNext();
                             return;
                         } else {
-
                             // batch list object holder
                             BatchList<User> newUsers = new BatchList<>(DatabaseOperation.INSERT, getHelper()); // container for the new users
                             BatchList<User> updateUsers = new BatchList<>(DatabaseOperation.UPDATE, getHelper()); // container for the updated users
@@ -594,7 +639,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 if (initialSync || lastUpdatedAt == null) {
                                     product.setSearchKey(product.getName() + product.getStock_no());
                                     newProducts.add(product);
-                                    product.doOperationsForExtras(getHelper(), DatabaseOperation.INSERT);
                                 } else {
                                     if (isExisting(product, Table.PRODUCTS)) {
                                         DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
@@ -603,15 +647,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         if (product.getStatus() == null) {
                                             updateProducts.add(product);
-                                            product.doOperationsForExtras(getHelper(), DatabaseOperation.UPDATE);
                                         } else {
                                             deleteProducts.add(product);
-                                            product.doOperationsForExtras(getHelper(), DatabaseOperation.DELETE);
                                         }
                                     } else {
-                                        product.setSearchKey(product.getName() + product.getStock_no());
                                         newProducts.add(product);
-                                        product.doOperationsForExtras(getHelper(), DatabaseOperation.INSERT);
                                     }
                                 }
 
@@ -999,13 +1039,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 Document document = gson.fromJson(jsonObject.toString(), Document.class);
 
                                 if (initialSync || lastUpdatedAt == null) {
-                                    if(!document.getIntransit_status().equalsIgnoreCase("received")) {
+                                    if (!document.getIntransit_status().equalsIgnoreCase("received")) {
                                         newDocument.add(document);
                                     }
                                 } else {
                                     if (isExisting(document, Table.DOCUMENTS)) {
 
-                                        if(document.getIntransit_status().equalsIgnoreCase("received")) {
+                                        if (document.getIntransit_status().equalsIgnoreCase("received")) {
                                             deleteDocument.add(document);
                                         } else {
                                             updateDocument.add(document);
@@ -1024,6 +1064,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         updateNext(requestType, size);
                         break;
                     default:
+                        updateNext(requestType, size);
                         break;
                 }
             }
@@ -1083,11 +1124,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
     public void startFetchingModules() throws SQLException {
         Log.e(TAG, "syncAllModules?=" + syncAllModules + " || Items to sync=" + mModulesToSync.length);
-        for(Table t :mModulesToSync) {
+        for (Table t : mModulesToSync) {
             Log.e(TAG, t.toString());
         }
-        startSyncModuleContents(RequestType.LAST_UPDATED_AT);
-
+        if (mCurrentTableSyncing == Table.DAILY_SALES) {
+            startSyncModuleContents(RequestType.DAILY_SALES);
+        } else {
+            startSyncModuleContents(RequestType.LAST_UPDATED_AT);
+        }
 
     }
 }
