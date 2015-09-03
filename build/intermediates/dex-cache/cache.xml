@@ -2,17 +2,10 @@
 <items version="2" >
 
     <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\imonggosdk\concessioengine\unspecified\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="e2e2c78df18f7a3240d8ef4952929b9fac48ce90">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-400053f6425622f19874b5889cb696c172bc1747.jar" />
-    </item>
-    <item
         jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\imonggosdk\imonggosdk\unspecified\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="acb6d12320efca6107b65d1997e4714ad8c94ed3">
+        sha1="8e31fe6f6b3a6fa07ceae4f617a37477b1f90235">
         <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-9ab7af008a2b6d65dba3f2170b9c8eb26452b802.jar" />
     </item>
 

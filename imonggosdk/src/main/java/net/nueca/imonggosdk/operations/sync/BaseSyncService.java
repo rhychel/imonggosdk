@@ -150,7 +150,7 @@ public abstract class BaseSyncService extends ImonggoService {
         return isExisting(null, id, table, null);
     }
 
-    public boolean checkFetchDailySales(Object o, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
+    public boolean checkDailySales(Object o, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
         return isExisting(o, 0, table, dailySalesEnums);
     }
 
@@ -227,22 +227,22 @@ public abstract class BaseSyncService extends ImonggoService {
 
                 DailySales dailySales = (DailySales) o;
 
-                if (dailySalesEnums == DailySalesEnums.DATE) {
-                    return getHelper().getDailySales().queryBuilder().where().eq("date_updated_at", dailySales.getDate_updated_at()).queryForFirst() != null;
-                } else if (dailySalesEnums == DailySalesEnums.TIME) {
+                if (dailySalesEnums == DailySalesEnums.DATE_OF_DAILY_SALES) {
+                    return getHelper().getDailySales().queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst() != null;
+                } else if (dailySalesEnums == DailySalesEnums.DATE_REQUESTED) {
 
-                    DailySales dailySalesDB = getHelper().getDailySales().queryBuilder().where().eq("date_updated_at", dailySales.getDate_updated_at()).queryForFirst();
+                    DailySales dailySalesDB = getHelper().getDailySales().queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst();
 
                     if (dailySalesDB != null) {
+                        Log.e(TAG, "daily sales db: " + dailySalesDB.toString());
 
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                         Calendar calendar1 = Calendar.getInstance();
                         Calendar calendar2 = Calendar.getInstance();
 
-
                         try {
-                            String dateparse1 = dailySales.getDate_updated_at() + " " + dailySales.getTime_updated_at();
-                            String dateparse2 = dailySalesDB.getDate_updated_at() + " " + dailySalesDB.getTime_updated_at();
+                            String dateparse1 = dailySales.getDate_requested_at();
+                            String dateparse2 = dailySalesDB.getDate_requested_at();
 
                             java.util.Date date1 = dateFormat.parse(dateparse1);
                             java.util.Date date2 = dateFormat.parse(dateparse2);
@@ -262,8 +262,9 @@ public abstract class BaseSyncService extends ImonggoService {
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
+                    } else {
+                        Log.e(TAG, "dailysalesDB is null");
                     }
-
                     return false;
                 }
             }

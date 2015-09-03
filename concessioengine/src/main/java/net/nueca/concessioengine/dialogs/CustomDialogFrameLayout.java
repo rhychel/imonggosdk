@@ -46,7 +46,7 @@ public class CustomDialogFrameLayout extends FrameLayout {
         customModuleAdapter.setOnItemClickListener(new BaseCustomDialogRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                /*LoggingTools.showToast(context, "OnItemClicked" + getCustomModuleAdapter().getModuleAt(position));
+                /*LoggingTools.showToast(context, "OnItemClicked" + getCustomModuleAdapter[().getModuleAt(position));
                 view.setBackgroundColor(mContext.getResources().getColor(android.R.color.darker_gray));*/
             }
         });
@@ -61,7 +61,6 @@ public class CustomDialogFrameLayout extends FrameLayout {
         mRecyclerView.setAdapter(customModuleAdapter);
         addView(mView);
     }
-
 
     public CustomModuleAdapter getCustomModuleAdapter() {
         return customModuleAdapter;

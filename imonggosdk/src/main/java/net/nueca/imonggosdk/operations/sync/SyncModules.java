@@ -534,24 +534,25 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 } else if (requestType == RequestType.DAILY_SALES) {
                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                     String date_updated_at = DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd");
-                    String time_updated_at = DateTimeTools.getCurrentDateTimeWithFormat("HH:mm:ss");
+                    String date_requested_at = DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd HH:mm:ss");
+
 
                     DailySales dailySales = gson.fromJson(jsonObject.toString(), DailySales.class);
-                    dailySales.setDate_updated_at(date_updated_at);
-                    dailySales.setTime_updated_at(time_updated_at);
+                    dailySales.setDate_of_sales(date_updated_at);
+                    dailySales.setDate_requested_at(date_requested_at);
 
                     dailySales.setBranch_id(getSession().getCurrent_branch_id());
 
-
-                    if (!checkFetchDailySales(dailySales, Table.DAILY_SALES, DailySalesEnums.DATE)) {
+                    if (!checkDailySales(dailySales, Table.DAILY_SALES, DailySalesEnums.DATE_OF_DAILY_SALES)) {
                         dailySales.insertTo(getHelper());
                     } else {
                         Log.e(TAG, "DailySale is existing checking for time");
-                        if (checkFetchDailySales(dailySales, Table.DAILY_SALES, DailySalesEnums.TIME)) {
-                            Log.e(TAG, "Fetched date time is the most recent...");
+
+                        if (checkDailySales(dailySales, Table.DAILY_SALES, DailySalesEnums.DATE_REQUESTED)) {
+                            Log.e(TAG, "Fetched date time is the most recent... updating databse");
                             dailySales.updateTo(getHelper());
                         } else {
-                            Log.e(TAG, "Fetched data is outdated");
+                            Log.e(TAG, "database data is up to date");
                         }
                     }
 
@@ -571,7 +572,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             syncNext();
                             return;
                         } else {
-
                             // batch list object holder
                             BatchList<User> newUsers = new BatchList<>(DatabaseOperation.INSERT, getHelper()); // container for the new users
                             BatchList<User> updateUsers = new BatchList<>(DatabaseOperation.UPDATE, getHelper()); // container for the updated users

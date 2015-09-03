@@ -10,142 +10,19 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="fix login bug">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-hdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-mdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xhdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xxhdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/AndroidManifest.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/androidTest/java/nueca/net/salesdashboard/ApplicationTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/D_Login.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DailySalesEnums.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/build.gradle" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values/colors.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values/dimens.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values-w820dp/dimens.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/login_layout.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/menu/menu_sd__login.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/proguard-rules.pro" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values/strings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values/styles.xml" />
-      <change type="DELETED" beforePath="E:\Bitbucket\Android Projects\imonggosdk\salesdashboard\salesdashboard.iml" afterPath="" />
+    <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="fixed service connection bug">
+      <change type="DELETED" beforePath="E:\Bitbucket\Android Projects\imonggosdk\concessio\concessio.iml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/BaseSyncService$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/BaseSyncService$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/BaseSyncService$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/BaseSyncService$1.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/BaseSyncService$LocalBinder.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/BaseSyncService$LocalBinder.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/BaseSyncService$LocalBinder.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/BaseSyncService$LocalBinder.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/BaseSyncService.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/BaseSyncService.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/BaseSyncService.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/BaseSyncService.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/objects/base/BatchList.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/objects/base/BatchList.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/Configurations$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/Configurations$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/Configurations$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/Configurations$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/Configurations$2.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/Configurations$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/Configurations$2.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/Configurations$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/Configurations$3.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/Configurations$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/Configurations$3.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/Configurations$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/Configurations.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/Configurations.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/Configurations.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/Configurations.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/DateTimeTools.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/DateTimeTools.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/DateTimeTools.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/DateTimeTools.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/objects/document/ExtendedAttributes$Builder.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/objects/document/ExtendedAttributes$Builder.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/objects/document/ExtendedAttributes.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/objects/document/ExtendedAttributes.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$10.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$10.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$11.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$11.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$12.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$12.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$13.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$13.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$14.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$14.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$15.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$15.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$16.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$16.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$17.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$17.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$18.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$18.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$2.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$3.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$4.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$5.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$5.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$6.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$6.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$7.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$7.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$8.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$8.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$9.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests$9.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/HTTPRequests.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$10.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$10.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$10.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$10.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$11.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$11.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$11.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$11.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$12.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$12.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$13.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$13.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$14.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$14.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$15.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$15.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$16.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$16.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$2.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$2.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$3.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$3.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$4.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$4.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$5.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$5.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$5.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$5.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$6.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$6.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$6.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$6.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$7.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$7.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$7.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$7.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$8.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$8.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$8.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$8.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$9.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper$9.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/database/ImonggoDBHelper.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/ImonggoOperations$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/ImonggoOperations$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/http/ImonggoOperations$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/http/ImonggoOperations$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/ImonggoOperations.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/http/ImonggoOperations.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/http/ImonggoOperations.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/http/ImonggoOperations.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/ImonggoTools$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/ImonggoTools$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/ImonggoTools$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/ImonggoTools$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/ImonggoTools.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/ImonggoTools.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/ImonggoTools.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/ImonggoTools.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/objects/LastUpdatedAt.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/objects/LastUpdatedAt.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/objects/LastUpdatedAt.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/objects/LastUpdatedAt.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/LoginTools$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/LoginTools$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/LoginTools$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/LoginTools$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/LoginTools.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/LoginTools.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/LoginTools.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/tools/LoginTools.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/enums/Parameter.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/enums/Parameter.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/enums/Parameter.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/enums/Parameter.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/objects/Product.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/objects/Product.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$string.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$string.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/R$string.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/R$string.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$style.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$style.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/R$style.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/R$style.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$styleable.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R$styleable.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/R$styleable.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/R$styleable.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/R.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/R.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/R.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/enums/RequestType.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/enums/RequestType.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/enums/RequestType.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/enums/RequestType.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/enums/Server.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/enums/Server.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/enums/Server.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/enums/Server.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/SettingTools.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/tools/SettingTools.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$2.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$CancelTransaction.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$CancelTransaction.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$DirectTransaction$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$DirectTransaction$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$DirectTransaction$2.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$DirectTransaction$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$DirectTransaction$3.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$DirectTransaction$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$DirectTransaction$4.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$DirectTransaction$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$DirectTransaction.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$DirectTransaction.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$SendTransaction.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction$SendTransaction.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools$Transaction.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/swable/SwableTools.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/SyncModules$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/SyncModules$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/SyncModules$1.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/SyncModules$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/SyncModules$2.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/SyncModules$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/SyncModules$2.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/SyncModules$2.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/SyncModules$3.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/SyncModules$3.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/SyncModules$3.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/SyncModules$3.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/SyncModules.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/operations/sync/SyncModules.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/SyncModules.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/operations/sync/SyncModules.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/enums/Table.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/enums/Table.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/enums/Table.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/release/net/nueca/imonggosdk/enums/Table.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/annotations/debug/annotations.zip" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/annotations/debug/annotations.zip" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/annotations/release/annotations.zip" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/annotations/release/annotations.zip" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/cache.properties.lock" />
@@ -156,282 +33,18 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/intermediates/gradle_project_sync_data.bin" afterPath="$PROJECT_DIR$/build/intermediates/gradle_project_sync_data.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/outputs/aar/imonggosdk-debug.aar" afterPath="$PROJECT_DIR$/imonggosdk/build/outputs/aar/imonggosdk-debug.aar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/outputs/aar/imonggosdk-release.aar" afterPath="$PROJECT_DIR$/imonggosdk/build/outputs/aar/imonggosdk-release.aar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/outputFileStates.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/resources/resources-debug-androidTest.ap_" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/resources/resources-debug-androidTest.ap_" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java" afterPath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/Configurations.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/Configurations.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/CustomDialogFrameLayout.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/CustomDialogFrameLayout.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/DateTimeTools.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/DateTimeTools.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DailySalesEnums.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DailySalesEnums.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/ImonggoOperations.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/ImonggoOperations.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/ImonggoTools.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/ImonggoTools.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/LastUpdatedAt.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/LastUpdatedAt.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/LoginTools.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/LoginTools.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Parameter.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Parameter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/android/support/design/R.java" afterPath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/android/support/design/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/android/support/v7/appcompat/R.java" afterPath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/android/support/v7/appcompat/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/com/afollestad/materialdialogs/R.java" afterPath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/com/afollestad/materialdialogs/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/net/nueca/imonggosdk/R.java" afterPath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/net/nueca/imonggosdk/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/net/nueca/imonggosdk/test/R.java" afterPath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/androidTest/debug/net/nueca/imonggosdk/test/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/debug/net/nueca/imonggosdk/R.java" afterPath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/debug/net/nueca/imonggosdk/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/release/net/nueca/imonggosdk/R.java" afterPath="$PROJECT_DIR$/imonggosdk/build/generated/source/r/release/net/nueca/imonggosdk/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/debug/R.txt" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/debug/R.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/release/R.txt" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/release/R.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/symbols/androidTest/debug/R.txt" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/symbols/androidTest/debug/R.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/RequestType.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/RequestType.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Server.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Server.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Table.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Table.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_bar_title_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_bar_title_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_bar_up_container.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_bar_up_container.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_bar_view_list_nav_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_bar_view_list_nav_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_menu_item_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_menu_item_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_menu_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_menu_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_mode_bar.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_mode_bar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_mode_close_item_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_action_mode_close_item_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_activity_chooser_view.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_activity_chooser_view.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_activity_chooser_view_list_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_activity_chooser_view_list_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_alert_dialog_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_alert_dialog_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_background_cache_hint_selector_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_background_cache_hint_selector_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color-v11/abc_background_cache_hint_selector_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color-v11/abc_background_cache_hint_selector_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_background_cache_hint_selector_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_background_cache_hint_selector_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color-v11/abc_background_cache_hint_selector_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color-v11/abc_background_cache_hint_selector_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_btn_borderless_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_btn_borderless_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_btn_check_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_btn_check_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_btn_default_mtrl_shape.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_btn_default_mtrl_shape.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_btn_radio_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_btn_radio_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_cab_background_internal_bg.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_cab_background_internal_bg.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_cab_background_top_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_cab_background_top_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_dialog_material_background_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_dialog_material_background_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_dialog_material_background_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_dialog_material_background_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_dialog_title_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_dialog_title_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_edit_text_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_edit_text_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_expanded_menu_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_expanded_menu_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_fade_in.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_fade_in.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_fade_out.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_fade_out.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_grow_fade_in_from_bottom.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_grow_fade_in_from_bottom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_item_background_holo_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_item_background_holo_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_item_background_holo_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_item_background_holo_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_list_menu_item_checkbox.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_list_menu_item_checkbox.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_list_menu_item_icon.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_list_menu_item_icon.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_list_menu_item_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_list_menu_item_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_list_menu_item_radio.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_list_menu_item_radio.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_list_selector_background_transition_holo_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_list_selector_background_transition_holo_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_list_selector_background_transition_holo_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_list_selector_background_transition_holo_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_list_selector_holo_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_list_selector_holo_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_list_selector_holo_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_list_selector_holo_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_popup_enter.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_popup_enter.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_popup_exit.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_popup_exit.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_popup_menu_item_layout.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_popup_menu_item_layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_primary_text_disable_only_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_primary_text_disable_only_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_primary_text_disable_only_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_primary_text_disable_only_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_primary_text_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_primary_text_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_primary_text_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_primary_text_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_ratingbar_full_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_ratingbar_full_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_screen_content_include.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_screen_content_include.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_screen_simple.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_screen_simple.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_screen_simple_overlay_action_mode.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_screen_simple_overlay_action_mode.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_screen_toolbar.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_screen_toolbar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_search_dropdown_item_icons_2line.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_search_dropdown_item_icons_2line.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_search_url_text.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_search_url_text.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_search_view.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_search_view.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_secondary_text_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_secondary_text_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_secondary_text_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/abc_secondary_text_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_select_dialog_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_select_dialog_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_shrink_fade_out_from_bottom.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_shrink_fade_out_from_bottom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_simple_dropdown_hint.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/abc_simple_dropdown_hint.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_slide_in_bottom.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_slide_in_bottom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_slide_in_top.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_slide_in_top.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_slide_out_bottom.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_slide_out_bottom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_slide_out_top.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/abc_slide_out_top.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_spinner_textfield_background_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_spinner_textfield_background_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_switch_thumb_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_switch_thumb_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_tab_indicator_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_tab_indicator_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_textfield_search_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/abc_textfield_search_material.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" afterPath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio_test/concessio_test.iml" afterPath="$PROJECT_DIR$/concessio_test/concessio_test.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/decelerate_cubic.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/decelerate_cubic.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/design_navigation_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/design_navigation_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/design_navigation_item_header.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/design_navigation_item_header.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/design_navigation_item_separator.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/design_navigation_item_separator.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/design_navigation_item_subheader.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/design_navigation_item_subheader.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/design_navigation_menu.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/design_navigation_menu.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/fab_background.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/fab_background.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/fab_in.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/fab_in.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/fab_out.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/fab_out.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/imonggosdk-imonggosdk.iml" afterPath="$PROJECT_DIR$/imonggosdk/imonggosdk-imonggosdk.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/layout_snackbar.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/layout_snackbar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout-sw600dp/layout_snackbar.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout-sw600dp/layout_snackbar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/layout_snackbar_include.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/layout_snackbar_include.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/layout_tab_icon.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/layout_tab_icon.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/layout_tab_text.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/layout_tab_text.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/local.properties" afterPath="$PROJECT_DIR$/local.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_btn_selected.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_btn_selected.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_btn_selected_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_btn_selected_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_btn_selector.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_btn_selector.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_btn_selector_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_btn_selector_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable-v21/md_btn_selector_ripple.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable-v21/md_btn_selector_ripple.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable-v21/md_btn_selector_ripple_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable-v21/md_btn_selector_ripple_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable-v21/md_btn_shape.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable-v21/md_btn_shape.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_basic.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_basic.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_custom.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_custom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_input.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_input.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_list.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_list.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_progress.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_progress.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_progress_indeterminate.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_dialog_progress_indeterminate.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_item_selected.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_item_selected.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_item_selected_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_item_selected_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_listitem.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_listitem.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_listitem_multichoice.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_listitem_multichoice.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout-ldrtl/md_listitem_multichoice.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout-ldrtl/md_listitem_multichoice.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_listitem_singlechoice.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_listitem_singlechoice.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout-ldrtl/md_listitem_singlechoice.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout-ldrtl/md_listitem_singlechoice.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_selector.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_selector.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_selector_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_selector_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_simplelist_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_simplelist_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout-ldrtl/md_simplelist_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout-ldrtl/md_simplelist_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_stub_actionbuttons.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_stub_actionbuttons.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_stub_inputpref.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_stub_inputpref.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_stub_progress.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_stub_progress.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_stub_progress_indeterminate.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_stub_progress_indeterminate.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_stub_titleframe.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/md_stub_titleframe.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_transparent.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/md_transparent.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeAssets/release/merger.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeAssets/release/merger.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeResources/androidTest/debug/merger.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeResources/androidTest/debug/merger.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeResources/debug/merger.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeResources/debug/merger.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeResources/release/merger.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/mergeResources/release/merger.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/packageResources/debug/merger.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/packageResources/debug/merger.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/packageResources/release/merger.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/incremental/packageResources/release/merger.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_media_action.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_media_action.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_media_cancel_action.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_media_cancel_action.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_big_media.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_big_media.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_big_media_narrow.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_big_media_narrow.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_lines.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_lines.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_media.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_media.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_part_chronometer.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_part_chronometer.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_part_time.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/notification_template_part_time.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/popup_enter.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/popup_enter.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/popup_exit.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/popup_exit.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/select_dialog_item_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/select_dialog_item_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/select_dialog_multichoice_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/select_dialog_multichoice_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/select_dialog_singlechoice_material.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/select_dialog_singlechoice_material.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings.gradle" afterPath="$PROJECT_DIR$/settings.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/snackbar_background.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/drawable/snackbar_background.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/snackbar_in.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/snackbar_in.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/snackbar_out.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/anim/snackbar_out.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/imonggosdk/src/main/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/support_simple_spinner_dropdown_item.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/layout/support_simple_spinner_dropdown_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/switch_thumb_material_dark.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/switch_thumb_material_dark.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/switch_thumb_material_light.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/color/switch_thumb_material_light.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-af/values-af.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-af/values-af.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-am/values-am.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-am/values-am.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ar/values-ar.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ar/values-ar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-bg/values-bg.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-bg/values-bg.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-bn-rBD/values-bn-rBD.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-bn-rBD/values-bn-rBD.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ca/values-ca.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ca/values-ca.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-cs/values-cs.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-cs/values-cs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-da/values-da.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-da/values-da.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-de/values-de.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-de/values-de.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-el/values-el.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-el/values-el.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-en-rGB/values-en-rGB.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-en-rGB/values-en-rGB.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-en-rIN/values-en-rIN.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-en-rIN/values-en-rIN.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-es-rUS/values-es-rUS.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-es-rUS/values-es-rUS.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-es/values-es.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-es/values-es.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-et-rEE/values-et-rEE.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-et-rEE/values-et-rEE.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-eu-rES/values-eu-rES.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-eu-rES/values-eu-rES.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-fa/values-fa.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-fa/values-fa.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-fi/values-fi.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-fi/values-fi.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-fr-rCA/values-fr-rCA.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-fr-rCA/values-fr-rCA.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-fr/values-fr.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-fr/values-fr.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-gl-rES/values-gl-rES.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-gl-rES/values-gl-rES.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-h720dp/values-h720dp.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-h720dp/values-h720dp.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-hdpi/values-hdpi.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-hdpi/values-hdpi.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-hi/values-hi.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-hi/values-hi.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-hr/values-hr.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-hr/values-hr.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-hu/values-hu.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-hu/values-hu.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-hy-rAM/values-hy-rAM.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-hy-rAM/values-hy-rAM.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-in/values-in.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-in/values-in.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-is-rIS/values-is-rIS.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-is-rIS/values-is-rIS.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-it/values-it.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-it/values-it.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-iw/values-iw.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-iw/values-iw.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ja/values-ja.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ja/values-ja.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ka-rGE/values-ka-rGE.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ka-rGE/values-ka-rGE.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-kk-rKZ/values-kk-rKZ.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-kk-rKZ/values-kk-rKZ.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-km-rKH/values-km-rKH.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-km-rKH/values-km-rKH.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-kn-rIN/values-kn-rIN.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-kn-rIN/values-kn-rIN.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ko/values-ko.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ko/values-ko.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ky-rKG/values-ky-rKG.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ky-rKG/values-ky-rKG.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-land/values-land.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-land/values-land.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-large/values-large.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-large/values-large.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-lo-rLA/values-lo-rLA.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-lo-rLA/values-lo-rLA.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-lt/values-lt.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-lt/values-lt.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-lv/values-lv.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-lv/values-lv.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-mk-rMK/values-mk-rMK.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-mk-rMK/values-mk-rMK.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ml-rIN/values-ml-rIN.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ml-rIN/values-ml-rIN.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-mn-rMN/values-mn-rMN.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-mn-rMN/values-mn-rMN.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-mr-rIN/values-mr-rIN.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-mr-rIN/values-mr-rIN.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ms-rMY/values-ms-rMY.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ms-rMY/values-ms-rMY.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-my-rMM/values-my-rMM.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-my-rMM/values-my-rMM.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-nb/values-nb.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-nb/values-nb.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ne-rNP/values-ne-rNP.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ne-rNP/values-ne-rNP.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-nl/values-nl.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-nl/values-nl.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-pl/values-pl.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-pl/values-pl.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-port/values-port.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-port/values-port.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-pt-rPT/values-pt-rPT.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-pt-rPT/values-pt-rPT.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-pt/values-pt.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-pt/values-pt.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ro/values-ro.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ro/values-ro.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ru/values-ru.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ru/values-ru.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-si-rLK/values-si-rLK.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-si-rLK/values-si-rLK.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sk/values-sk.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sk/values-sk.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sl/values-sl.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sl/values-sl.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sr/values-sr.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sr/values-sr.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sv/values-sv.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sv/values-sv.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sw/values-sw.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sw/values-sw.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sw600dp/values-sw600dp.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-sw600dp/values-sw600dp.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ta-rIN/values-ta-rIN.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ta-rIN/values-ta-rIN.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-te-rIN/values-te-rIN.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-te-rIN/values-te-rIN.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-th/values-th.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-th/values-th.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-tl/values-tl.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-tl/values-tl.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-tr/values-tr.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-tr/values-tr.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-uk/values-uk.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-uk/values-uk.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ur-rPK/values-ur-rPK.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-ur-rPK/values-ur-rPK.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-uz-rUZ/values-uz-rUZ.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-uz-rUZ/values-uz-rUZ.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v11/values-v11.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v11/values-v11.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v12/values-v12.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v12/values-v12.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v14/values-v14.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v14/values-v14.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v17/values-v17.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v17/values-v17.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v18/values-v18.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v18/values-v18.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v21/values-v21.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-v21/values-v21.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-vi/values-vi.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-vi/values-vi.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-w360dp/values-w360dp.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-w360dp/values-w360dp.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-w480dp/values-w480dp.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-w480dp/values-w480dp.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-w500dp/values-w500dp.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-w500dp/values-w500dp.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-w600dp/values-w600dp.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-w600dp/values-w600dp.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-w720dp/values-w720dp.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-w720dp/values-w720dp.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-xlarge-land/values-xlarge-land.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-xlarge-land/values-xlarge-land.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-xlarge/values-xlarge.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-xlarge/values-xlarge.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-zh-rCN/values-zh-rCN.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-zh-rCN/values-zh-rCN.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-zh-rHK/values-zh-rHK.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-zh-rHK/values-zh-rHK.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-zh-rTW/values-zh-rTW.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-zh-rTW/values-zh-rTW.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-zu/values-zu.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values-zu/values-zu.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/debug/res/values/values.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/debug/res/values/values.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/release/res/values/values.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/bundles/release/res/values/values.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/values/values.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/androidTest/debug/values/values.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/values/values.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/debug/values/values.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values/values.xml" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/res/release/values/values.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MOVED" beforePath="E:\Bitbucket\Android Projects\imonggosdk\imonggosdk\build\intermediates\classes\debug\net\nueca\imonggosdk\database\ImonggoDBHelper$10.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$12.class" />
-      <change type="MOVED" beforePath="E:\Bitbucket\Android Projects\imonggosdk\imonggosdk\build\intermediates\classes\debug\net\nueca\imonggosdk\database\ImonggoDBHelper$12.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$13.class" />
-      <change type="MOVED" beforePath="E:\Bitbucket\Android Projects\imonggosdk\imonggosdk\build\intermediates\classes\debug\net\nueca\imonggosdk\database\ImonggoDBHelper$13.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$14.class" />
-      <change type="MOVED" beforePath="E:\Bitbucket\Android Projects\imonggosdk\imonggosdk\build\intermediates\classes\debug\net\nueca\imonggosdk\database\ImonggoDBHelper$14.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$15.class" />
-      <change type="MOVED" beforePath="E:\Bitbucket\Android Projects\imonggosdk\imonggosdk\build\intermediates\classes\debug\net\nueca\imonggosdk\database\ImonggoDBHelper$15.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$16.class" />
-      <change type="MOVED" beforePath="E:\Bitbucket\Android Projects\imonggosdk\imonggosdk\build\intermediates\classes\debug\net\nueca\imonggosdk\database\ImonggoDBHelper$8.class" afterPath="$PROJECT_DIR$/imonggosdk/build/intermediates/classes/debug/net/nueca/imonggosdk/database/ImonggoDBHelper$9.class" />
     </list>
     <ignored path="imonggosdk.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -461,11 +74,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="SyncModules.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SyncModules.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="551" column="48" selection-start-line="551" selection-start-column="48" selection-end-line="551" selection-end-column="48" />
+            <state vertical-scroll-proportion="0.5">
+              <caret line="551" column="96" selection-start-line="551" selection-start-column="96" selection-end-line="551" selection-end-column="96" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -473,11 +86,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LoginActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java">
+      <file leaf-file-name="ImonggoDBHelper.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="194" column="39" selection-start-line="194" selection-start-column="39" selection-end-line="194" selection-end-column="39" />
+              <caret line="295" column="15" selection-start-line="295" selection-start-column="15" selection-end-line="295" selection-end-column="15" />
               <folding />
             </state>
           </provider>
@@ -487,44 +100,29 @@
         <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="229" column="62" selection-start-line="229" selection-start-column="62" selection-end-line="229" selection-end-column="62" />
+              <caret line="241" column="0" selection-start-line="241" selection-start-column="0" selection-end-line="241" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#4811#4812#0" expanded="true" />
                 <element signature="e#4863#4864#0" expanded="true" />
-                <element signature="e#11921#11922#0" expanded="true" />
-                <element signature="e#11972#11973#0" expanded="true" />
+                <element signature="e#12024#12025#0" expanded="true" />
+                <element signature="e#12075#12076#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BaseLoginActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java">
+      <file leaf-file-name="DailySales.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="905" column="58" selection-start-line="905" selection-start-column="36" selection-end-line="905" selection-end-column="58" />
+              <caret line="110" column="18" selection-start-line="110" selection-start-column="18" selection-end-line="110" selection-end-column="18" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#11651#11652#0" expanded="true" />
-                <element signature="e#11697#11698#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CustomDialogFrameLayout.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/CustomDialogFrameLayout.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.45259392">
-              <caret line="48" column="90" selection-start-line="48" selection-start-column="90" selection-end-line="48" selection-end-column="90" />
-              <folding>
-                <element signature="e#1692#2085#0" expanded="true" />
-                <element signature="e#2084#2085#0" expanded="true" />
-                <element signature="e#2144#2445#0" expanded="true" />
-                <element signature="e#2444#2445#0" expanded="true" />
-                <element signature="e#2592#2593#0" expanded="true" />
-                <element signature="e#2634#2635#0" expanded="true" />
+                <element signature="e#2602#2603#0" expanded="true" />
+                <element signature="e#2638#2639#0" expanded="true" />
+                <element signature="e#2696#2697#0" expanded="true" />
+                <element signature="e#2746#2747#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -4374,9 +3972,7 @@
         <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/DateTimeTools.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DailSalesEnums.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DailySalesEnums.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/LastUpdatedAt.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Server.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/ImonggoOperations.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/res/values/strings.xml" />
@@ -4384,11 +3980,14 @@
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/LoginTools.java" />
         <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/CustomDialogFrameLayout.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DailySalesEnums.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/CustomDialogFrameLayout.java" />
+        <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/D_Login.java" />
       </list>
     </option>
   </component>
@@ -4403,10 +4002,10 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
+    <option name="x" value="70" />
     <option name="y" value="-8" />
-    <option name="width" value="1382" />
-    <option name="height" value="744" />
+    <option name="width" value="1378" />
+    <option name="height" value="876" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -4541,131 +4140,12 @@
         </subPane>
       </pane>
       <pane id="PackagesPane" />
-      <pane id="Scratches" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="imonggosdk" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk-imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk-imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk-imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk-imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tools" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk-imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="objects" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk-imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="enums" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="concessioengine" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -4712,6 +4192,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -4720,7 +4201,7 @@
     <property name="recentsLimit" value="5" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="HKE5C395" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Lollipopable" />
-    <property name="SearchEverywhereHistoryKey" value="login&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;Sync&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;LoginA&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;BaseL&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;BaseS&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java&#10;LoginAc&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;BaseLO&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;dbH&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;SYNC&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;bA&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTable.java&#10;Login&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;bASE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;BaseLogin&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;Simple&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/SimpleLoginActivity.java&#10;C_Samp&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java&#10;Selec&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/objects/SelectedProductItem.java&#10;C_Module2&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_Module2.java&#10;Sele&#9;PSI&#9;JAVA://net.nueca.concessioengine.objects.SelectedProductItem&#10;SyncMo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;BaseLo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;DB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;BaseLOgin&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;DBHE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Document&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;DBHe&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;C_Module&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_Module.java&#10;Sync\&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Base&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;SyncM&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Configu&#9;PSI&#9;JAVA://net.nueca.imonggosdk.tools.Configurations" />
+    <property name="SearchEverywhereHistoryKey" value="Imongg&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Dail&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java&#10;login&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;Sync&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;LoginA&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;BaseL&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;BaseS&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java&#10;LoginAc&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;BaseLO&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;dbH&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;SYNC&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;bA&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTable.java&#10;Login&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;bASE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;BaseLogin&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;Simple&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/SimpleLoginActivity.java&#10;C_Samp&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java&#10;Selec&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/objects/SelectedProductItem.java&#10;C_Module2&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_Module2.java&#10;Sele&#9;PSI&#9;JAVA://net.nueca.concessioengine.objects.SelectedProductItem&#10;SyncMo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;BaseLo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;DB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;BaseLOgin&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;DBHE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Document&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;DBHe&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;C_Module&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_Module.java&#10;Sync\&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Base&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;SyncM&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Configu&#9;PSI&#9;JAVA://net.nueca.imonggosdk.tools.Configurations" />
     <property name="last_opened_file_path" value="$USER_HOME$/Downloads/Document_-_additional_fields.patch" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
@@ -5017,7 +4498,13 @@
       <option name="project" value="LOCAL" />
       <updated>1440411030631</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="fixed service connection bug">
+      <created>1441188964599</created>
+      <option name="number" value="00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1441188964599</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TodoView">
@@ -5030,12 +4517,13 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="70" y="-8" width="1378" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43441227" sideWeight="0.49678457" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32823366" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.63202727" sideWeight="0.5128617" order="6" side_tool="true" content_ui="tabs" />
@@ -5043,21 +4531,20 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.49544764" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32197616" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.48040885" sideWeight="0.48713827" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32127956" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.45757997" sideWeight="0.48713827" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14372164" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5008518" sideWeight="0.49196142" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14339909" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5006954" sideWeight="0.49196142" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -5065,15 +4552,15 @@
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.63202727" sideWeight="0.5128617" order="6" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.49544764" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.49544764" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14372164" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5008518" sideWeight="0.49196142" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -5086,8 +4573,8 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32197616" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.63202727" sideWeight="0.48713827" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
@@ -5113,7 +4600,8 @@
     <MESSAGE value="fixed product tags issue.&#10;in development: documents." />
     <MESSAGE value="Jn Backup Before Checking out Dev" />
     <MESSAGE value="fix login bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix login bug" />
+    <MESSAGE value="fixed service connection bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed service connection bug" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -5123,13 +4611,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/concessio/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/salesdashboard/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -5225,7 +4706,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5233,7 +4713,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5265,7 +4744,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.15205725">
           <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5302,7 +4780,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="105" column="82" selection-start-line="105" selection-start-column="77" selection-end-line="105" selection-end-column="82" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5326,13 +4803,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.1824687">
           <caret line="6" column="12" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DailySalesEnums.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.15205725">
-          <caret line="5" column="27" selection-start-line="5" selection-start-column="12" selection-end-line="5" selection-end-column="27" />
         </state>
       </provider>
     </entry>
@@ -5390,9 +4860,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-3.135957">
           <caret line="57" column="41" selection-start-line="57" selection-start-column="41" selection-end-line="57" selection-end-column="41" />
-          <folding>
-            <element signature="e#1844#1859#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -5400,7 +4867,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-5.037037">
           <caret line="8" column="33" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5419,7 +4885,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="29" column="7" selection-start-line="29" selection-start-column="7" selection-end-line="29" selection-end-column="7" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5484,54 +4949,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="295" column="17" selection-start-line="295" selection-start-column="17" selection-end-line="295" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.29516995">
-          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="25" selection-end-column="35" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/CustomDialogFrameLayout.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="551" column="48" selection-start-line="551" selection-start-column="48" selection-end-line="551" selection-end-column="48" />
+          <caret line="62" column="5" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="5" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#1692#2086#0" expanded="false" />
+            <element signature="e#2085#2086#0" expanded="false" />
+            <element signature="e#2145#2446#0" expanded="false" />
+            <element signature="e#2445#2446#0" expanded="false" />
+            <element signature="e#2592#2593#0" expanded="false" />
+            <element signature="e#2634#2635#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java">
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="229" column="62" selection-start-line="229" selection-start-column="62" selection-end-line="229" selection-end-column="62" />
+          <caret line="229" column="21" selection-start-line="229" selection-start-column="21" selection-end-line="229" selection-end-column="21" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4811#4812#0" expanded="true" />
-            <element signature="e#4863#4864#0" expanded="true" />
-            <element signature="e#11921#11922#0" expanded="true" />
-            <element signature="e#11972#11973#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -5544,29 +4992,56 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java">
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DailySalesEnums.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.36503068">
+          <caret line="7" column="18" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="905" column="58" selection-start-line="905" selection-start-column="36" selection-end-line="905" selection-end-column="58" />
+          <caret line="110" column="18" selection-start-line="110" selection-start-column="18" selection-end-line="110" selection-end-column="18" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#11651#11652#0" expanded="true" />
-            <element signature="e#11697#11698#0" expanded="true" />
+            <element signature="e#2602#2603#0" expanded="true" />
+            <element signature="e#2638#2639#0" expanded="true" />
+            <element signature="e#2696#2697#0" expanded="true" />
+            <element signature="e#2746#2747#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/CustomDialogFrameLayout.java">
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.45259392">
-          <caret line="48" column="90" selection-start-line="48" selection-start-column="90" selection-end-line="48" selection-end-column="90" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="295" column="15" selection-start-line="295" selection-start-column="15" selection-end-line="295" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="241" column="0" selection-start-line="241" selection-start-column="0" selection-end-line="241" selection-end-column="0" />
           <folding>
-            <element signature="e#1692#2085#0" expanded="true" />
-            <element signature="e#2084#2085#0" expanded="true" />
-            <element signature="e#2144#2445#0" expanded="true" />
-            <element signature="e#2444#2445#0" expanded="true" />
-            <element signature="e#2592#2593#0" expanded="true" />
-            <element signature="e#2634#2635#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#4811#4812#0" expanded="true" />
+            <element signature="e#4863#4864#0" expanded="true" />
+            <element signature="e#12024#12025#0" expanded="true" />
+            <element signature="e#12075#12076#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5">
+          <caret line="551" column="96" selection-start-line="551" selection-start-column="96" selection-end-line="551" selection-end-column="96" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -13,6 +13,7 @@ import java.sql.SQLException;
 
 /**
  * Created by jN on 9/2/2015.
+ * imonggosdk (c)2015
  */
 @DatabaseTable
 public class DailySales {
@@ -21,9 +22,9 @@ public class DailySales {
     @DatabaseField(generatedId = true)
     private transient int id;
     @DatabaseField
-    private String date_updated_at;
+    private String date_of_sales;
     @DatabaseField
-    private String time_updated_at;
+    private String date_requested_at;
     @DatabaseField
     private double average_amount_per_invoice = 0.0;
     @DatabaseField
@@ -107,12 +108,12 @@ public class DailySales {
         this.amount_without_tax = amount_without_tax;
     }
 
-    public String getDate_updated_at() {
-        return date_updated_at;
+    public String getDate_of_sales() {
+        return date_of_sales;
     }
 
-    public void setDate_updated_at(String date_updated_at) {
-        this.date_updated_at = date_updated_at;
+    public void setDate_of_sales(String date_of_sales) {
+        this.date_of_sales = date_of_sales;
     }
 
     public int getBranch_id() {
@@ -123,12 +124,12 @@ public class DailySales {
         this.branch_id = branch_id;
     }
 
-    public String getTime_updated_at() {
-        return time_updated_at;
+    public String getDate_requested_at() {
+        return date_requested_at;
     }
 
-    public void setTime_updated_at(String time_updated_at) {
-        this.time_updated_at = time_updated_at;
+    public void setDate_requested_at(String date_requested_at) {
+        this.date_requested_at = date_requested_at;
     }
 
     public void insertTo(ImonggoDBHelper dbHelper) {
@@ -171,8 +172,8 @@ public class DailySales {
     public String toString() {
         return "DailySales{" +
                 "id=" + id +
-                ", date_updated_at='" + date_updated_at + '\'' +
-                ", time_updated_at='" + time_updated_at + '\'' +
+                ", date_of_sales='" + date_of_sales + '\'' +
+                ", date_requested_at='" + date_requested_at + '\'' +
                 ", average_amount_per_invoice=" + average_amount_per_invoice +
                 ", tax=" + tax +
                 ", quantity=" + quantity +
