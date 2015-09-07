@@ -157,6 +157,10 @@ public class Document extends BaseTransactionDB {
     public void addDocumentLine(DocumentLine documentLine) {
         if(document_lines == null)
             document_lines = new ArrayList<>();
+
+        if(documentLine.autoLine_no)
+            documentLine.setLine_no(document_lines.size()+1);
+
         document_lines.add(documentLine);
     }
 
@@ -339,6 +343,10 @@ public class Document extends BaseTransactionDB {
         public Builder addDocumentLine(DocumentLine documentLine) {
             if(document_lines == null)
                 document_lines = new ArrayList<>();
+
+            if(documentLine.autoLine_no)
+                documentLine.setLine_no(document_lines.size()+1);
+
             document_lines.add(documentLine);
             return this;
         }

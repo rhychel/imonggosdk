@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DatabaseField;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 
 import org.json.JSONException;
@@ -55,9 +56,13 @@ public class DocumentLine extends BaseTable2 {
     @DatabaseField
     protected Double subtotal;
 
+    protected transient boolean autoLine_no = false;
+
     public DocumentLine() {}
 
     public DocumentLine(Builder builder) {
+        autoLine_no = builder.autoLine_no;
+
         line_no = builder.line_no;
         product_id = builder.product_id;
         quantity = builder.quantity;
@@ -263,6 +268,25 @@ public class DocumentLine extends BaseTable2 {
         protected String product_name;
         protected String product_stock_no;
         protected Double subtotal;
+
+        protected boolean autoLine_no;
+
+        public Builder autoLine_no() {
+            autoLine_no = true;
+            return this;
+        }
+
+        public Builder useProductDetails(Product product) {
+            product_id = product.getId();
+            product_name = product.getName();
+            product_stock_no = product.getStock_no();
+            retail_price = product.getRetail_price();
+            unit_id = product.getUnit_id();
+            unit_content_quantity = product.getUnit_content_quantity();
+            unit_name = product.getUnit();
+            unit_quantity = product.getUnit_quantity();
+            return this;
+        }
 
         public Builder product_name(String product_name) {
             this.product_name = product_name;

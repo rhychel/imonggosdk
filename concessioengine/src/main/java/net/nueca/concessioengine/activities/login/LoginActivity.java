@@ -40,6 +40,7 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void onCreateLoginLayout() {
         if (!isLoggedIn() && isUnlinked()) {
+            Log.e("onCreateLoginLayout","starting Service");
             startSyncService();
             if(isUsingDefaultLoginLayout()) {
                 setContentView(R.layout.concessioengine_login);
@@ -58,6 +59,8 @@ public class LoginActivity extends BaseLoginActivity {
 
             getHelper().deleteAllDatabaseValues();
         }
+        /*else
+            setSyncServiceBinded(false);*/
     }
 
     /**
@@ -93,7 +96,7 @@ public class LoginActivity extends BaseLoginActivity {
             setModulesToSync(null);
             setSyncAllModules(true);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            setSyncServiceBinded(isSyncServiceRunning(SyncModules.class));
+            //setSyncServiceBinded(isSyncServiceRunning(SyncModules.class));
             setRequireConcessioSettings(false);
             setUnlinked(AccountTools.isUnlinked(this));
             setLoggedIn(AccountTools.isLoggedIn(getHelper()));
@@ -208,6 +211,7 @@ public class LoginActivity extends BaseLoginActivity {
 
         @Override
         protected String doInBackground(String... strings) {
+            Log.e("doInBackground","starting Service");
             startSyncService();
             setSyncModules(null);
 

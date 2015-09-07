@@ -272,6 +272,13 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", simpleProductListAdapter.updateList(getProducts()));
     }
 
+    public void forceUpdateProductList(List<Product> productList) {
+        if(useRecyclerView)
+            simpleProductRecyclerViewAdapter.updateList(productList);
+        else
+            simpleProductListAdapter.updateList(productList);
+    }
+
     @Override
     protected void toggleNoItems(String msg, boolean show) {
         if(useRecyclerView) {
@@ -285,5 +292,4 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             tvNoProducts.setText(msg);
         }
     }
-
 }

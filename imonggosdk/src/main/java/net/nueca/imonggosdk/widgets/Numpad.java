@@ -44,6 +44,8 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
     //private int MAX_LENGTH = 16;
     private boolean isNegative = false;
 
+    protected boolean isFirstErase = false;
+
     public static final int DEFAULT_KEYPAD_BUTTON_TEXTCOLOR = R.color.keypad_button_text;
     public static final int DEFAULT_KEYPAD_BUTTON_BG = R.drawable.keypad_button;
     public static final int DEFAULT_KEYPAD_BUTTON_BG_CIRCLE = R.drawable.keypad_button_circle;
@@ -317,6 +319,7 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
     };
 
     protected void doWrite(String str) {
+        isFirstErase = false;
         String unparsed = mTextHolder.getTextView().getText().toString();
         unparsed = unparsed.replaceAll("[^0-9.,]", "");
 
@@ -448,7 +451,12 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             if(getVisibility() != VISIBLE)
                 return;
             //view.startAnimation(ANIM_CLICK);
-            doBackspace();
+            if(isFirstErase) {
+                doClear();
+                isFirstErase = false;
+            }
+            else
+                doBackspace();
         }
     };
     private OnLongClickListener backspaceLongClickListener =  new OnLongClickListener() {
@@ -567,6 +575,8 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
                     }
 
                     countDigits();
+
+                    isFirstErase = true;
                 }
             }
         });
@@ -659,5 +669,9 @@ public class Numpad extends LinearLayout implements View.OnClickListener {
             CURRENT_DECIMAL = 0;
         }
         //Log.e("DIGIT",CURRENT_WHOLE_DIGIT + " " + CURRENT_DECIMAL);
+    }
+
+    public void setIsFirstErase(boolean isFirstErase) {
+        this.isFirstErase = isFirstErase;
     }
 }
