@@ -30,4 +30,4 @@
         android:textSize="@dimen/md_content_textsize"
         tools:text="Title" />
 
-</LinearLayout><!-- From: file:/Users/afollestad/Projects/material-dialogs/library/src/main/res/layout/md_simplelist_item.xml --><!-- From: file:/E:/Bitbucket/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/layout/md_simplelist_item.xml -->
+</LinearLayout><!-- From: file:/Users/afollestad/Projects/material-dialogs/library/src/main/res/layout/md_simplelist_item.xml --><!-- From: file:/Users/gama/AndroidStudioProjects/gamaBranch/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/layout/md_simplelist_item.xml -->
