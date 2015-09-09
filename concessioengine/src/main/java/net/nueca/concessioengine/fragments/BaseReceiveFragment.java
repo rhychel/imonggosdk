@@ -5,6 +5,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
@@ -14,6 +15,8 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.Where;
 
+import net.nueca.concessioengine.adapters.SimpleReceiveListAdapter;
+import net.nueca.concessioengine.adapters.SimpleReceiveRecyclerViewAdapter;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
@@ -31,7 +34,7 @@ import java.util.List;
  * Created by gama on 9/3/15.
  */
 public abstract class BaseReceiveFragment extends ImonggoFragment {
-    protected static final long LIMIT = 15l;
+    protected static final long LIMIT = 100l;
     protected long offset = 0l;
     protected int prevLast = -1;
 
@@ -46,15 +49,21 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
     protected RecyclerView rvProducts;
     protected ListView lvProducts;
 
+    private Integer parentDocumentId;
     private String deliveryReceiptNo = "";
 
     protected ArrayAdapter<String> productCategoriesAdapter;
     protected List<String> productCategories = new ArrayList<>();
 
+    protected SimpleReceiveListAdapter simpleReceiveListAdapter;
+    protected SimpleReceiveRecyclerViewAdapter simpleReceiveRecyclerViewAdapter;
+
     protected FloatingActionButton fabContinue;
 
     protected abstract void whenListEndReached(List<DocumentLine> documentLines);
     protected abstract void toggleNoItems(String msg, boolean show);
+    protected abstract Document generateReceiveDocument();
+    protected abstract boolean shouldContinue();
 
     public String getDeliveryReceiptNo() {
         return deliveryReceiptNo;
@@ -62,6 +71,14 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
 
     public void setDeliveryReceiptNo(String deliveryReceiptNo) {
         this.deliveryReceiptNo = deliveryReceiptNo;
+    }
+
+    public Integer getParentDocumentId() {
+        return parentDocumentId;
+    }
+
+    public void setParentDocumentId(Integer parentDocumentId) {
+        this.parentDocumentId = parentDocumentId;
     }
 
     public void setSetupActionBar(SetupActionBar setupActionBar) {
@@ -117,7 +134,7 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
             for(Product product : resultProducts.query()) {
                 documentLines.add(
                         new DocumentLine.Builder()
-                                .line_no((int)offset + documentLines.size() + 1)
+                                .line_no((int) offset + documentLines.size() + 1)
                                 .useProductDetails(product)
                                 .build()
                 );
@@ -130,7 +147,7 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
     }
 
     protected List<DocumentLine> getDocumentLines() {
-        if(deliveryReceiptNo == null)
+        if(parentDocumentId == null)
             return getAllProducts();
 
         List<DocumentLine> documentLines = new ArrayList<>();
@@ -181,8 +198,6 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
         return documentLines;
     }
 
-
-
     protected AbsListView.OnScrollListener lvScrollListener = new AbsListView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -190,17 +205,19 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
                 if (listScrollListener != null)
                     listScrollListener.onScrollStopped();
 
-                if(fabContinue != null)
+                if(fabContinue != null) {
                     ViewCompat.animate(fabContinue).translationY(0.0f).setDuration(400)
                             .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                }
 
             } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                 if (listScrollListener != null)
                     listScrollListener.onScrolling();
 
-                if(fabContinue != null)
+                if(fabContinue != null) {
                     ViewCompat.animate(fabContinue).translationY(1000.0f).setDuration(400)
                             .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                }
             }
         }
 
@@ -225,17 +242,19 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
                 if (listScrollListener != null)
                     listScrollListener.onScrollStopped();
 
-                if(fabContinue != null)
-                ViewCompat.animate(fabContinue).translationY(0.0f).setDuration(400)
-                        .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                if(fabContinue != null) {
+                    ViewCompat.animate(fabContinue).translationY(0.0f).setDuration(400)
+                            .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                }
             }
             else if(newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                 if(listScrollListener != null)
                     listScrollListener.onScrolling();
 
-                if(fabContinue != null)
-                ViewCompat.animate(fabContinue).translationY(1000.0f).setDuration(400)
-                        .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                if(fabContinue != null) {
+                    ViewCompat.animate(fabContinue).translationY(1000.0f).setDuration(400)
+                            .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                }
             }
         }
 
@@ -243,9 +262,9 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
 
-            /*int visibleItemCount = rvProducts.getChildCount();
-            int totalItemCount = simpleProductRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
-            int firstVisibleItem = simpleProductRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
+            int visibleItemCount = rvProducts.getChildCount();
+            int totalItemCount = simpleReceiveRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
+            int firstVisibleItem = simpleReceiveRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
 
             int lastItem = firstVisibleItem + visibleItemCount;
 
@@ -255,7 +274,7 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
                     whenListEndReached(getDocumentLines());
                     prevLast = lastItem;
                 }
-            }*/
+            }
         }
     };
 }

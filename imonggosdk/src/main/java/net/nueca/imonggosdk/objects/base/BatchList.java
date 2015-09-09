@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
 import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 
 import java.util.ArrayList;
@@ -125,6 +126,10 @@ public class BatchList<T> extends ArrayList<T> {
         if(get(0) instanceof ExtendedAttributes) {
             dbHelper.batchCreateOrUpdateExtendedAttributes(this, databaseOperation);
             Log.e(TAG, databaseOperation.toString() + "ING to Extended Attributes table");
+        }
+        if(get(0) instanceof DocumentLineExtras) {
+            dbHelper.batchCreateOrUpdateDocumentLineExtras(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Document Line Extras table");
         }
     }
 }

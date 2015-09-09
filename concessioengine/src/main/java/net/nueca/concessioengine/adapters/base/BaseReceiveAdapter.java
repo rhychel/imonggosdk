@@ -3,16 +3,13 @@ package net.nueca.concessioengine.adapters.base;
 import android.content.Context;
 import android.util.Log;
 
-import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.tools.ProductListTools;
+import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
+import net.nueca.imonggosdk.tools.NumberTools;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,12 +17,32 @@ import java.util.List;
  */
 public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
     private ImonggoDBHelper dbHelper;
-    private List<Product> productList;
+    protected List<Product> productList;
+    protected boolean isManual = false;
+    private int listItemRes;
 
     public BaseReceiveAdapter(Context context, int resource, ImonggoDBHelper dbHelper, List<DocumentLine> objects) {
         super(context, resource, objects);
+        listItemRes = resource;
         setHelper(dbHelper);
         updateProductList(objects);
+    }
+
+    public abstract List<DocumentLine> generateDocumentLines();
+
+    public void setListItemResource(int resource) {
+        listItemRes = resource;
+    }
+    public int getListItemResource() {
+        return listItemRes;
+    }
+
+    public boolean isManual() {
+        return isManual;
+    }
+
+    public void setIsManual(boolean isManual) {
+        this.isManual = isManual;
     }
 
     public void addAll(List<DocumentLine> documentLines) {
@@ -33,12 +50,29 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
         if(productList == null)
             productList = new ArrayList<>();
 
-        try {
+        //try {
             for(DocumentLine documentLine : documentLines) {
-                Product t_product = getHelper().getProducts().queryBuilder().where()
-                        .eq("id", documentLine.getProduct_id()).queryForFirst();
+                Product t_product = documentLine.getProduct();
 
-                t_product.setUnit(documentLine.getUnit_name());
+                if(productList.contains(t_product)) {
+                    t_product = productList.get(productList.indexOf(t_product));
+
+                    double orig_qty = NumberTools.toDouble(t_product.getOrig_quantity());
+                    double dsc_qty = NumberTools.toDouble(t_product.getDsc_quantity());
+
+                    t_product.setOrig_quantity("" + ( orig_qty + documentLine.getQuantity() ));
+                    t_product.setRcv_quantity("0");
+                    t_product.setRet_quantity("0");
+                    t_product.setDsc_quantity("" + ( dsc_qty + documentLine.getQuantity() ));
+
+                    continue;
+                }
+
+                if(t_product == null)
+                    continue;
+
+                if(documentLine.getUnit_name() != null)
+                    t_product.setUnit(documentLine.getUnit_name());
 
                 if(documentLine.getUnit_id() != null)
                     t_product.setUnit_id(documentLine.getUnit_id());
@@ -49,16 +83,16 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
                 if(documentLine.getUnit_content_quantity() != null)
                     t_product.setUnit_content_quantity(documentLine.getUnit_content_quantity());
 
-                t_product.setOrig_quantity(""+documentLine.getQuantity());
+                t_product.setOrig_quantity( NumberTools.separateInCommasHideZeroDecimals(documentLine.getQuantity()) );
                 t_product.setRcv_quantity("0");
                 t_product.setRet_quantity("0");
-                t_product.setDsc_quantity(""+documentLine.getQuantity());
+                t_product.setDsc_quantity( NumberTools.separateInCommasHideZeroDecimals(documentLine.getQuantity()) );
 
                 productList.add(t_product);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        //} catch (SQLException e) {
+        //    e.printStackTrace();
+        //}
     }
 
     @Override
@@ -78,6 +112,13 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
         return productList.get(position);
     }
 
+    @Override
+    public int getCount() {
+        if(productList == null)
+            return 0;
+        return productList.size();
+    }
+
     public ImonggoDBHelper getHelper() {
         return dbHelper;
     }
@@ -85,5 +126,6 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
     public void setHelper(ImonggoDBHelper dbHelper) {
         this.dbHelper = dbHelper;
     }
+
 
 }

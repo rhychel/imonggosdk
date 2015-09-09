@@ -9,10 +9,12 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
 import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
 import net.nueca.imonggosdk.swable.SwableTools;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,6 +54,8 @@ public class Document extends BaseTransactionDB {
     @DatabaseField
     protected String status;
 
+    @DatabaseField
+    protected Integer parent_document_id;
 
     public Document() {
         super(null);
@@ -60,8 +64,14 @@ public class Document extends BaseTransactionDB {
 
     public Document(Builder builder) {
         super(builder);
-        //remark = builder.remark;
-        remark = "page=1/1";
+        remark = builder.remark;
+        if(remark != null && !StringUtils.containsIgnoreCase(remark, "page")) {
+            if(!remark.isEmpty())
+                remark += ",";
+            remark += "page=1/1";
+        }
+        else if(remark == null)
+            remark = "page=1/1";
         document_type_code = builder.document_type_code;
         document_lines = builder.document_lines;
         target_branch_id = builder.target_branch_id;
@@ -75,6 +85,8 @@ public class Document extends BaseTransactionDB {
         utc_created_at = builder.utc_created_at;
         utc_updated_at = builder.utc_updated_at;
         utc_document_date = builder.utc_document_date;
+
+        parent_document_id = builder.parent_document_id;
     }
 
     public String getRemark() {
@@ -83,6 +95,10 @@ public class Document extends BaseTransactionDB {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public void appendRemark(String moreRemark) {
+        this.remark += moreRemark;
     }
 
     public DocumentTypeCode getDocument_type_code() {
@@ -154,6 +170,14 @@ public class Document extends BaseTransactionDB {
         this.status = status;
     }
 
+    public Integer getParent_document_id() {
+        return parent_document_id;
+    }
+
+    public void setParent_document_id(Integer parent_document_id) {
+        this.parent_document_id = parent_document_id;
+    }
+
     public void addDocumentLine(DocumentLine documentLine) {
         if(document_lines == null)
             document_lines = new ArrayList<>();
@@ -215,6 +239,14 @@ public class Document extends BaseTransactionDB {
             return;
         for(DocumentLine documentLine : document_lines) {
             documentLine.setDocument(this);
+            try {
+                Product product = dbHelper.getProducts().queryBuilder().where().eq("id", documentLine.getProduct_id())
+                        .queryForFirst();
+                if(product != null)
+                    documentLine.setProduct(product);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             documentLine.insertTo(dbHelper);
         }
     }
@@ -280,6 +312,12 @@ public class Document extends BaseTransactionDB {
         protected String utc_created_at;
         protected String utc_updated_at;
         protected String utc_document_date;
+        protected Integer parent_document_id;
+
+        public Builder parent_document_id(Integer parent_document_id) {
+            this.parent_document_id = parent_document_id;
+            return this;
+        }
 
         public Builder utc_created_at(String utc_created_at) {
             this.utc_created_at = utc_created_at;

@@ -20,35 +20,85 @@
             android:singleLine="true"
             android:layout_marginBottom="5dp"/>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tilReceive"
-            >
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Receive"
-                android:gravity="center_horizontal"
-                android:textSize="20sp"
-                android:id="@+id/etReceive"
-                android:inputType="number|numberDecimal"/>
-        </android.support.design.widget.TextInputLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tilReturn"
-            >
-            <EditText
-                android:layout_width="match_parent"
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="Return"
-                android:gravity="center_horizontal"
-                android:textSize="20sp"
-                android:id="@+id/etReturn"
-                android:inputType="number|numberDecimal"/>
-        </android.support.design.widget.TextInputLayout>
+                android:id="@+id/tilQuantity"
+                android:layout_weight="1">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Quantity"
+                    android:gravity="center_horizontal"
+                    android:textSize="20sp"
+                    android:id="@+id/etQuantity"
+                    android:inputType="number|numberDecimal"
+                    android:text="0"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tilDiscrepancy"
+                android:layout_weight="1">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Discrepancy"
+                    android:gravity="center_horizontal"
+                    android:textSize="20sp"
+                    android:id="@+id/etDiscrepancy"
+                    android:inputType="number|numberDecimal"
+                    android:text="0"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tilReceive"
+                android:layout_weight="1">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Receive"
+                    android:gravity="center_horizontal"
+                    android:textSize="20sp"
+                    android:id="@+id/etReceive"
+                    android:inputType="number|numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tilReturn"
+                android:layout_weight="1">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Return"
+                    android:gravity="center_horizontal"
+                    android:textSize="20sp"
+                    android:id="@+id/etReturn"
+                    android:inputType="number|numberDecimal"/>
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

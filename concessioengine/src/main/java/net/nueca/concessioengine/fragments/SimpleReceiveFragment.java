@@ -14,22 +14,23 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.toolbox.NetworkImageView;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleReceiveListAdapter;
+import net.nueca.concessioengine.adapters.SimpleReceiveRecyclerViewAdapter;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.concessioengine.adapters.interfaces.OnItemLongClickListener;
 import net.nueca.concessioengine.dialogs.SearchDRDialog;
 import net.nueca.concessioengine.dialogs.SimpleReceiveDialog;
-import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.views.SimpleReceiveToolbarExt;
+import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.RemarkBuilder;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -51,14 +52,62 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
     private SearchDRDialog searchDRDialog;
     private SimpleReceiveToolbarExt simpleReceiveToolbarExt;
 
-    private SimpleReceiveListAdapter simpleReceiveListAdapter;
+    private SimpleReceiveDialog simpleReceiveDialog;
 
     private TextView tvDRNo, tvQuantityLabel, tvDiscrepancyLabel;
+
+    private Branch targetBranch;
 
     public User getUser() throws SQLException {
         if(getSession() == null)
             return null;
         return getSession().getUser();
+    }
+
+    @Override
+    protected boolean shouldContinue() {
+        if(!isManual)
+            return true;
+
+        List<DocumentLine> documentLines = new ArrayList<>();
+        if(useRecyclerView)
+            documentLines = simpleReceiveRecyclerViewAdapter.generateDocumentLines();
+        else
+            documentLines = simpleReceiveListAdapter.generateDocumentLines();
+
+        return documentLines.size() > 0;
+    }
+
+    @Override
+    protected Document generateReceiveDocument() {
+        List<DocumentLine> documentLines = new ArrayList<>();
+        if(useRecyclerView)
+            documentLines = simpleReceiveRecyclerViewAdapter.generateDocumentLines();
+        else
+            documentLines = simpleReceiveListAdapter.generateDocumentLines();
+
+        Document document = null;
+        try {
+            document = new Document.Builder()
+                    .generateReference(getActivity(), getSession().getDevice_id())
+                    .target_branch_id(targetBranch.getId())
+                    .document_type_code(DocumentTypeCode.RECEIVE_BRANCH)
+                    .document_lines(documentLines)
+                    .remark(
+                            new RemarkBuilder()
+                                    .isManual(isManual)
+                                    .page(1,1)
+                                    .delivery_reference_no(isManual? getDeliveryReceiptNo() : null)
+                                    .build()
+                    )
+                    .build();
+            if (!isManual)
+                document.setParent_document_id(getParentDocumentId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return document;
     }
 
     @Nullable
@@ -89,6 +138,21 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
 
         if(useRecyclerView) {
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
+            simpleReceiveRecyclerViewAdapter = new SimpleReceiveRecyclerViewAdapter(getActivity(), getHelper(),
+                    new ArrayList<DocumentLine>());
+            simpleReceiveRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClicked(View view, int position) {
+                    onProductClick(position);
+                }
+            });
+            simpleReceiveRecyclerViewAdapter.setOnItemLongClickListener(null);
+            simpleReceiveRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
+
+            rvProducts.setAdapter(simpleReceiveRecyclerViewAdapter);
+            rvProducts.addOnScrollListener(rvScrollListener);
+
+            toggleNoItems("No items to display.", simpleReceiveRecyclerViewAdapter.getItemCount() > 0);
         }
         else {
             lvProducts = (ListView) view.findViewById(R.id.lvProducts);
@@ -100,42 +164,8 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
 
             lvProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                    final SimpleReceiveDialog simpleReceiveDialog = new SimpleReceiveDialog(getActivity());
-
-                    simpleReceiveDialog.setProductName(
-                            simpleReceiveListAdapter.getProductItem(position).getName());
-                    simpleReceiveDialog.setReceiveText(
-                            simpleReceiveListAdapter.getProductItem(position).getRcv_quantity());
-                    simpleReceiveDialog.setReturnText(
-                            simpleReceiveListAdapter.getProductItem(position).getRet_quantity());
-
-                    simpleReceiveDialog.setDialogListener(new SimpleReceiveDialog.SimpleReceiveDialogListener() {
-                        @Override
-                        public boolean onCancel() {
-                            return true;
-                        }
-
-                        @Override
-                        public void onSearch(String receivetxt, String returntxt) {
-                            simpleReceiveListAdapter.getProductItem(position).setRcv_quantity(receivetxt);
-                            simpleReceiveListAdapter.getProductItem(position).setRet_quantity(returntxt);
-
-                            Product product = simpleReceiveListAdapter.getProductItem(position);
-                            BigDecimal orig_qty = new BigDecimal(product.getOrig_quantity().replaceAll("[^0-9.]",""));
-                            BigDecimal rcv_qty = new BigDecimal(product.getRcv_quantity().replaceAll("[^0-9.]", ""));
-                            BigDecimal ret_qty = new BigDecimal(product.getRet_quantity().replaceAll("[^0-9.]", ""));
-
-                            Log.e(">>>>", orig_qty + " - " + rcv_qty + " + " + ret_qty);
-
-                            simpleReceiveListAdapter.getProductItem(position).setDsc_quantity(String.format("%,1.0f",
-                                    orig_qty.subtract(rcv_qty.add(ret_qty))));
-
-                            simpleReceiveListAdapter.notifyDataSetChanged();
-                        }
-                    });
-
-                    simpleReceiveDialog.show();
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    onProductClick(position);
                 }
             });
 
@@ -153,9 +183,12 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
                 }
 
                 @Override
-                public void onSearch(String deliveryReceiptNo, Branch target_branch, List<DocumentLine> documentLines) {
-                    Log.e("Search " + deliveryReceiptNo,""+documentLines.size());
-                    simpleReceiveListAdapter.setIsManual(false);
+                public void onSearch(String deliveryReceiptNo, Branch target_branch, Document document) {
+                    targetBranch = target_branch;
+
+                    Log.e("Search " + deliveryReceiptNo, "" + document.getDocument_lines().size());
+
+                    setIsManual(false);
                     showQtyDscLabel(true);
                     /*for(DocumentLine documentLine : documentLines) {
                         try {
@@ -172,6 +205,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
                     prevLast = 0;
 
                     setDeliveryReceiptNo(deliveryReceiptNo);
+                    setParentDocumentId(document.getId());
                     forceUpdateProductList();
 
                     if (tvDRNo == null && simpleReceiveToolbarExt != null)
@@ -183,13 +217,16 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
 
                 @Override
                 public void onManualReceive(String deliveryReceiptNo, Branch target_branch) {
-                    simpleReceiveListAdapter.setIsManual(true);
+                    targetBranch = target_branch;
+
+                    setIsManual(true);
                     showQtyDscLabel(false);
 
                     offset = 0l;
                     prevLast = 0;
 
-                    setDeliveryReceiptNo(null);
+                    setDeliveryReceiptNo(deliveryReceiptNo);
+                    setParentDocumentId(null);
                     forceUpdateProductList();
 
                     if (tvDRNo == null && simpleReceiveToolbarExt != null)
@@ -207,8 +244,9 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         fabContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(fabListener != null)
-                    fabListener.onClick();
+                if(shouldContinue())
+                    if(fabListener != null)
+                        fabListener.onClick(generateReceiveDocument());
             }
         });
 
@@ -220,21 +258,42 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         tvDiscrepancyLabel.setVisibility(show? View.VISIBLE : View.GONE);
     }
 
-    public void forceUpdateProductList() {
-        if(useRecyclerView)
-            ;//simpleProductRecyclerViewAdapter.updateList(getDocumentLines());
-        else
-            simpleReceiveListAdapter.updateList(getDocumentLines());
+    private boolean isManual = false;
 
-        toggleNoItems("No items to display.", simpleReceiveListAdapter.getCount() > 0);
+    public boolean isManual() {
+        return isManual;
+    }
+
+    public void setIsManual(boolean isManual) {
+        this.isManual = isManual;
+    }
+
+    public void forceUpdateProductList() {
+        if(useRecyclerView) {
+            simpleReceiveRecyclerViewAdapter.setIsManual(isManual);
+            simpleReceiveRecyclerViewAdapter.updateList(getDocumentLines());
+            toggleNoItems("No items to display.", simpleReceiveRecyclerViewAdapter.getCount() > 0);
+        }
+        else {
+            simpleReceiveListAdapter.setIsManual(isManual);
+            simpleReceiveListAdapter.updateList(getDocumentLines());
+            toggleNoItems("No items to display.", simpleReceiveListAdapter.getCount() > 0);
+        }
+
+        if(fabContinue != null)
+            fabContinue.setVisibility(shouldContinue()? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
     protected void whenListEndReached(List<DocumentLine> documentLines) {
-        if(useRecyclerView)
-            ;//simpleProductRecyclerViewAdapter.addAll(productList);
-        else
+        if(useRecyclerView) {
+            simpleReceiveRecyclerViewAdapter.addAll(documentLines);
+            simpleReceiveRecyclerViewAdapter.notifyDataSetChanged();
+        }
+        else {
             simpleReceiveListAdapter.addAll(documentLines);
+            simpleReceiveListAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -261,8 +320,8 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         prevLast = 0;
 
         if(useRecyclerView)
-            ;//toggleNoItems("No results for \""+searchKey+"\""+messageCategory()+".", simpleProductRecyclerViewAdapter
-            //    .updateList(getProducts()));
+            toggleNoItems("No results for \""+searchKey+"\""+messageCategory()+".", simpleReceiveRecyclerViewAdapter
+                .updateList(getDocumentLines()));
         else
             toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".",
                     simpleReceiveListAdapter.updateList(getDocumentLines()));
@@ -297,8 +356,8 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
             prevLast = 0;
 
             if(useRecyclerView)
-                ;//toggleNoItems("No results for \"" + category + "\".",
-                //        simpleProductRecyclerViewAdapter.updateList(getProducts()));
+                toggleNoItems("No results for \"" + category + "\".",
+                        simpleReceiveRecyclerViewAdapter.updateList(getDocumentLines()));
             else
                 toggleNoItems("No results for \"" + category + "\".",
                         simpleReceiveListAdapter.updateList(getDocumentLines()));
@@ -317,6 +376,75 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
     }
 
     public interface FloatingActionButtonListener {
-        void onClick();
+        void onClick(Document document);
+    }
+
+    private void onProductClick(final int position) {
+        if(simpleReceiveDialog == null)
+            simpleReceiveDialog = new SimpleReceiveDialog(getActivity());
+
+        simpleReceiveDialog.setProductName(useRecyclerView ?
+                simpleReceiveRecyclerViewAdapter.getProductItem(position).getName() :
+                simpleReceiveListAdapter.getProductItem(position).getName());
+
+        simpleReceiveDialog.setQuantity(useRecyclerView ?
+                simpleReceiveRecyclerViewAdapter.getProductItem(position).getOrig_quantity() :
+                simpleReceiveListAdapter.getProductItem(position).getOrig_quantity());
+
+        simpleReceiveDialog.setReceiveText(useRecyclerView ?
+                simpleReceiveRecyclerViewAdapter.getProductItem(position).getRcv_quantity() :
+                simpleReceiveListAdapter.getProductItem(position).getRcv_quantity());
+
+        simpleReceiveDialog.setReturnText(useRecyclerView ?
+                simpleReceiveRecyclerViewAdapter.getProductItem(position).getRet_quantity() :
+                simpleReceiveListAdapter.getProductItem(position).getRet_quantity());
+
+        simpleReceiveDialog.setDiscrepancy(useRecyclerView ?
+                simpleReceiveRecyclerViewAdapter.getProductItem(position).getDsc_quantity() :
+                simpleReceiveListAdapter.getProductItem(position).getDsc_quantity());
+
+        simpleReceiveDialog.setIsManual(isManual);
+
+        simpleReceiveDialog.setDialogListener(new SimpleReceiveDialog.SimpleReceiveDialogListener() {
+            @Override
+            public boolean onCancel() {
+                fabContinue.setVisibility(shouldContinue()? View.VISIBLE : View.INVISIBLE);
+                return true;
+            }
+
+            @Override
+            public void onSearch(String receivetxt, String returntxt) {
+                Product product = null;
+                if (useRecyclerView) {
+                    simpleReceiveRecyclerViewAdapter.getProductItem(position).setRcv_quantity(receivetxt);
+                    simpleReceiveRecyclerViewAdapter.getProductItem(position).setRet_quantity(returntxt);
+
+                    product = simpleReceiveRecyclerViewAdapter.getProductItem(position);
+                } else {
+                    simpleReceiveListAdapter.getProductItem(position).setRcv_quantity(receivetxt);
+                    simpleReceiveListAdapter.getProductItem(position).setRet_quantity(returntxt);
+
+                    product = simpleReceiveListAdapter.getProductItem(position);
+                }
+
+                BigDecimal orig_qty = NumberTools.toBigDecimal(product.getOrig_quantity());
+                BigDecimal rcv_qty = NumberTools.toBigDecimal(product.getRcv_quantity());
+                BigDecimal ret_qty = NumberTools.toBigDecimal(product.getRet_quantity());
+
+                if (useRecyclerView) {
+                    simpleReceiveRecyclerViewAdapter.getProductItem(position).setDsc_quantity(
+                            NumberTools.separateInCommas(orig_qty.subtract(rcv_qty.add(ret_qty))));
+                    simpleReceiveRecyclerViewAdapter.notifyDataSetChanged();
+                } else {
+                    simpleReceiveListAdapter.getProductItem(position).setDsc_quantity(
+                            NumberTools.separateInCommas(orig_qty.subtract(rcv_qty.add(ret_qty))));
+                    simpleReceiveListAdapter.notifyDataSetChanged();
+                }
+
+                fabContinue.setVisibility(shouldContinue()? View.VISIBLE : View.INVISIBLE);
+            }
+        });
+
+        simpleReceiveDialog.show();
     }
 }

@@ -11,7 +11,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 public abstract class BaseTable2 {
 
     @DatabaseField(generatedId = true)
-    protected int id = -1;
+    protected transient int id = -1;
 
     public int getId() {
         return id;

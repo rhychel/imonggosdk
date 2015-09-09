@@ -138,6 +138,8 @@ public class SearchDRDialog extends BaseAppCompatDialog {
                 btnManual.setVisibility(isNotFound && etDeliveryReceipt.getText().length() > 0 ?
                         View.VISIBLE : View.INVISIBLE);
                 tvNotFound.setVisibility(isNotFound ? View.VISIBLE : View.INVISIBLE);
+
+                Log.e("isNotFound", "" + isNotFound);
                 if (isNotFound) {
                     tvNotFound.startAnimation(animation);
                     return;
@@ -145,7 +147,7 @@ public class SearchDRDialog extends BaseAppCompatDialog {
 
                 if (dialogListener != null)
                     dialogListener.onSearch(etDeliveryReceipt.getText().toString(),
-                            (Branch) spnBranch.getSelectedItem(), document.getDocument_lines());
+                            (Branch) spnBranch.getSelectedItem(), document);
                 dismiss();
             }
         });
@@ -194,7 +196,7 @@ public class SearchDRDialog extends BaseAppCompatDialog {
     public interface SearchDRDialogListener {
         /** return true if should dismiss dialog **/
         boolean onCancel();
-        void onSearch(String deliveryReceiptNo, Branch target_branch, List<DocumentLine> documentLines);
+        void onSearch(String deliveryReceiptNo, Branch target_branch, Document document);
         void onManualReceive(String deliveryReceiptNo, Branch target_branch);
     }
 

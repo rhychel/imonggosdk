@@ -1,12 +1,15 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
-import net.nueca.concessioengine.adapters.base.BaseReceiveAdapter;
+import net.nueca.concessioengine.adapters.base.BaseReceiveRecyclerAdapter;
+import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
@@ -19,41 +22,25 @@ import java.util.List;
 import me.grantland.widget.AutofitTextView;
 
 /**
- * Created by gama on 9/3/15.
+ * Created by gama on 9/9/15.
  */
-public class SimpleReceiveListAdapter extends BaseReceiveAdapter {
+public class SimpleReceiveRecyclerViewAdapter extends BaseReceiveRecyclerAdapter<SimpleReceiveRecyclerViewAdapter
+        .ListViewHolder> {
 
-    public SimpleReceiveListAdapter(Context context, ImonggoDBHelper dbHelper, List<DocumentLine> objects) {
+    public SimpleReceiveRecyclerViewAdapter(Context context, ImonggoDBHelper dbHelper, List<DocumentLine> objects) {
         super(context, R.layout.simple_receive_listitem, dbHelper, objects);
     }
 
-    private static class ListViewHolder {
-        AutofitTextView tvProductName, tvNum, tvQuantity,
-                tvReceive, tvReturn, tvDiscrepancy;
+    @Override
+    public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(getListItemResource(), parent, false);
+
+        ListViewHolder lvh = new ListViewHolder(v);
+        return lvh;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        ListViewHolder lvh;
-
-        if(convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(getListItemResource(), null);
-            lvh = new ListViewHolder();
-
-            lvh.tvProductName = (AutofitTextView) convertView.findViewById(R.id.tvProductName);
-            lvh.tvNum = (AutofitTextView) convertView.findViewById(R.id.tvNum);
-            lvh.tvQuantity = (AutofitTextView) convertView.findViewById(R.id.tvQuantity);
-
-            lvh.tvReceive = (AutofitTextView) convertView.findViewById(R.id.tvReceive);
-            lvh.tvReturn = (AutofitTextView) convertView.findViewById(R.id.tvReturn);
-            lvh.tvDiscrepancy = (AutofitTextView) convertView.findViewById(R.id.tvDiscrepancy);
-
-            convertView.setTag(lvh);
-        }
-        else
-            lvh = (ListViewHolder) convertView.getTag();
-
+    public void onBindViewHolder(ListViewHolder lvh, int position) {
         Product product = getProductItem(position);
 
         lvh.tvProductName.setText(product.getName() + (!isManual && product.getUnit() != null?
@@ -67,7 +54,48 @@ public class SimpleReceiveListAdapter extends BaseReceiveAdapter {
 
         lvh.tvQuantity.setVisibility(isManual? View.GONE : View.VISIBLE);
         lvh.tvDiscrepancy.setVisibility(isManual? View.GONE : View.VISIBLE);
-        return convertView;
+    }
+
+    @Override
+    public int getItemCount() {
+        return getCount();
+    }
+
+    public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {
+        public AutofitTextView tvProductName, tvNum, tvQuantity,
+                tvReceive, tvReturn, tvDiscrepancy;
+
+        public ListViewHolder(View itemView) {
+            super(itemView);
+            tvProductName = (AutofitTextView) itemView.findViewById(R.id.tvProductName);
+            tvNum = (AutofitTextView) itemView.findViewById(R.id.tvNum);
+            tvQuantity = (AutofitTextView) itemView.findViewById(R.id.tvQuantity);
+            tvReceive = (AutofitTextView) itemView.findViewById(R.id.tvReceive);
+            tvReturn = (AutofitTextView) itemView.findViewById(R.id.tvReturn);
+            tvDiscrepancy = (AutofitTextView) itemView.findViewById(R.id.tvDiscrepancy);
+
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(onItemClickListener != null)
+                onItemClickListener.onItemClicked(v, getLayoutPosition());
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if(onItemLongClickListener != null)
+                onItemLongClickListener.onItemLongClicked(v, getLayoutPosition());
+            return true;
+        }
+    }
+
+    public boolean updateList(List<DocumentLine> documentLines) {
+        updateProductList(documentLines);
+        notifyDataSetChanged();
+        return getCount() > 0;
     }
 
     @Override
@@ -100,11 +128,5 @@ public class SimpleReceiveListAdapter extends BaseReceiveAdapter {
             );
         }
         return documentLines;
-    }
-
-    public boolean updateList(List<DocumentLine> documentLines) {
-        updateProductList(documentLines);
-        notifyDataSetChanged();
-        return getCount() > 0;
     }
 }

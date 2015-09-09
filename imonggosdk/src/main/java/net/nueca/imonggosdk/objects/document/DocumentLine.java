@@ -21,6 +21,8 @@ public class DocumentLine extends BaseTable2 {
 
     @DatabaseField
     protected int line_no;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_obj_id")
+    protected transient Product product;
     @DatabaseField
     protected int product_id;
     @DatabaseField
@@ -31,6 +33,9 @@ public class DocumentLine extends BaseTable2 {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extended_attributes")
     protected ExtendedAttributes extended_attributes;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
+    protected DocumentLineExtras extras;
 
     @DatabaseField
     protected String discount_text;
@@ -67,6 +72,8 @@ public class DocumentLine extends BaseTable2 {
         product_id = builder.product_id;
         quantity = builder.quantity;
         extended_attributes = builder.extended_attributes;
+        if(extended_attributes != null)
+            extended_attributes.setDocumentLine(this);
         discount_text = builder.discount_text;
         price = builder.price;
         retail_price = builder.retail_price;
@@ -76,6 +83,12 @@ public class DocumentLine extends BaseTable2 {
         unit_quantity = builder.unit_quantity;
         unit_retail_price = builder.unit_retail_price;
         document = builder.document;
+
+        extras = builder.extras;
+        if(extras != null)
+            extras.setDocumentLine(this);
+
+        product = builder.product;
     }
 
     public int getLine_no() {
@@ -108,6 +121,14 @@ public class DocumentLine extends BaseTable2 {
 
     public void setExtended_attributes(ExtendedAttributes extended_attributes) {
         this.extended_attributes = extended_attributes;
+    }
+
+    public DocumentLineExtras getExtras() {
+        return extras;
+    }
+
+    public void setExtras(DocumentLineExtras extras) {
+        this.extras = extras;
     }
 
     public String getDiscount_text() {
@@ -206,6 +227,14 @@ public class DocumentLine extends BaseTable2 {
         this.subtotal = subtotal;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(this));
@@ -216,16 +245,24 @@ public class DocumentLine extends BaseTable2 {
         if(extended_attributes != null)
             extended_attributes.insertTo(dbHelper);
 
+        if(extras != null)
+            extras.insertTo(dbHelper);
+
         try {
             dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.INSERT);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        if(extended_attributes == null)
-            return;
-        extended_attributes.setDocumentLine(this);
-        extended_attributes.updateTo(dbHelper);
+        if(extended_attributes != null) {
+            extended_attributes.setDocumentLine(this);
+            extended_attributes.updateTo(dbHelper);
+        }
+
+        if(extras != null) {
+            extras.setDocumentLine(this);
+            extras.updateTo(dbHelper);
+        }
     }
 
     @Override
@@ -236,9 +273,13 @@ public class DocumentLine extends BaseTable2 {
             e.printStackTrace();
         }
 
-        if(extended_attributes == null)
-            return;
-        extended_attributes.deleteTo(dbHelper);
+        if(extended_attributes != null) {
+            extended_attributes.deleteTo(dbHelper);
+        }
+
+        if(extras != null) {
+            extras.deleteTo(dbHelper);
+        }
     }
 
     @Override
@@ -268,8 +309,21 @@ public class DocumentLine extends BaseTable2 {
         protected String product_name;
         protected String product_stock_no;
         protected Double subtotal;
+        protected Product product;
+
+        protected DocumentLineExtras extras;
 
         protected boolean autoLine_no;
+
+        public Builder product(Product product) {
+            this.product = product;
+            return this;
+        }
+
+        public Builder extras(DocumentLineExtras extras) {
+            this.extras = extras;
+            return this;
+        }
 
         public Builder autoLine_no() {
             autoLine_no = true;
@@ -277,6 +331,8 @@ public class DocumentLine extends BaseTable2 {
         }
 
         public Builder useProductDetails(Product product) {
+            this.product = product;
+
             product_id = product.getId();
             product_name = product.getName();
             product_stock_no = product.getStock_no();
@@ -285,6 +341,10 @@ public class DocumentLine extends BaseTable2 {
             unit_content_quantity = product.getUnit_content_quantity();
             unit_name = product.getUnit();
             unit_quantity = product.getUnit_quantity();
+
+            if(product.getRcv_quantity() != null && product.getRcv_quantity().length() > 0)
+                quantity = Double.parseDouble(product.getRcv_quantity().replaceAll("[^0-9.,]", ""));
+
             return this;
         }
 
