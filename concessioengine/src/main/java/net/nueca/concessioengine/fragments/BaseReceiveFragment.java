@@ -5,27 +5,27 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.Where;
 
-import net.nueca.concessioengine.adapters.SimpleReceiveListAdapter;
-import net.nueca.concessioengine.adapters.SimpleReceiveRecyclerViewAdapter;
+import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.concessioengine.lists.ReceivedProductItemList;
+import net.nueca.concessioengine.lists.SelectedProductItemList;
+import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +34,16 @@ import java.util.List;
  * Created by gama on 9/3/15.
  */
 public abstract class BaseReceiveFragment extends ImonggoFragment {
-    protected static final long LIMIT = 100l;
+    protected static final long LIMIT = 15l;
     protected long offset = 0l;
     protected int prevLast = -1;
 
     private String searchKey = "", category = "";
+    protected boolean hasCategories = true;
 
     protected ListScrollListener listScrollListener;
+    protected boolean useRecyclerView = true;
 
-    protected boolean hasCategories = true;
     protected Toolbar tbActionBar;
     protected SetupActionBar setupActionBar;
 
@@ -50,27 +51,37 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
     protected ListView lvProducts;
 
     private Integer parentDocumentId;
-    private String deliveryReceiptNo = "";
+    protected String deliveryReceiptNo;
 
     protected ArrayAdapter<String> productCategoriesAdapter;
     protected List<String> productCategories = new ArrayList<>();
-
-    protected SimpleReceiveListAdapter simpleReceiveListAdapter;
-    protected SimpleReceiveRecyclerViewAdapter simpleReceiveRecyclerViewAdapter;
 
     protected FloatingActionButton fabContinue;
 
     protected abstract void whenListEndReached(List<DocumentLine> documentLines);
     protected abstract void toggleNoItems(String msg, boolean show);
-    protected abstract Document generateReceiveDocument();
     protected abstract boolean shouldContinue();
+    protected abstract void clearSelectedItems();
+    public abstract ReceivedProductItemList getReceivedProductItemList();
+    public abstract ReceivedProductItemList getDisplayProductItemList();
+
+    public User getUser() throws SQLException {
+        if(getSession() == null)
+            return null;
+        return getSession().getUser();
+    }
 
     public String getDeliveryReceiptNo() {
         return deliveryReceiptNo;
     }
 
     public void setDeliveryReceiptNo(String deliveryReceiptNo) {
+        clearSelectedItems();
         this.deliveryReceiptNo = deliveryReceiptNo;
+    }
+
+    public void setUseRecyclerView(boolean useRecyclerView) {
+        this.useRecyclerView = useRecyclerView;
     }
 
     public Integer getParentDocumentId() {
@@ -109,7 +120,7 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
         this.productCategories = productCategories;
     }
 
-    protected List<DocumentLine> getAllProducts() {
+    protected List<DocumentLine> getReceivedProducts() {
         List<DocumentLine> documentLines = new ArrayList<>();
 
         boolean includeSearchKey = !searchKey.equals("");
@@ -148,7 +159,7 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
 
     protected List<DocumentLine> getDocumentLines() {
         if(parentDocumentId == null)
-            return getAllProducts();
+            return getReceivedProducts();
 
         List<DocumentLine> documentLines = new ArrayList<>();
 
@@ -162,10 +173,6 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
             whereProducts.isNull("status");
             if(includeSearchKey) {
                 whereProducts.and().like("searchKey", "%" + searchKey + "%");
-                /*QueryBuilder<Product, Integer> product = getHelper().getProducts().queryBuilder();
-                product.selectColumns("name").where().like("searchKey", "#"+searchKey+"%");
-
-                whereProducts.and().in("id", product);*/
             }
             if(includeCategory) {
                 QueryBuilder<ProductTag, Integer> productWithTag = getHelper().getProductTags().queryBuilder();
@@ -263,8 +270,10 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
             super.onScrolled(recyclerView, dx, dy);
 
             int visibleItemCount = rvProducts.getChildCount();
-            int totalItemCount = simpleReceiveRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
-            int firstVisibleItem = simpleReceiveRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
+            int totalItemCount = ((BaseRecyclerAdapter)rvProducts.getAdapter())
+                    .getLinearLayoutManager().getItemCount();
+            int firstVisibleItem = ((BaseRecyclerAdapter)rvProducts.getAdapter())
+                    .getLinearLayoutManager().findFirstVisibleItemPosition();
 
             int lastItem = firstVisibleItem + visibleItemCount;
 

@@ -158,7 +158,9 @@ public class Values {
                 ", unit_retail_price=" + unit_retail_price +
                 ", unit_content_quantity=" + unit_content_quantity +
                 ", quantity='" + quantity + '\'' +
-                ", extendedAttributes=" + extendedAttributes +
+                ", extendedAttributes=" + (extendedAttributes != null? extendedAttributes.toString():"null") +
                 '}';
     }
+
+
 }

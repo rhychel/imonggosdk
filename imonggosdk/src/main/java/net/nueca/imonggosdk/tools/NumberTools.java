@@ -18,6 +18,17 @@ public class NumberTools {
 
         return Double.parseDouble(dblString);
     }
+    public static Double toNullableDouble(String dblString) {
+        if(dblString == null)
+            return null;
+
+        dblString = dblString.replaceAll("[^0-9.-]","");
+
+        if(dblString.length() == 0)
+            return null;
+
+        return Double.parseDouble(dblString);
+    }
     public static BigDecimal toBigDecimal(String bigDecimalString) {
         if(bigDecimalString == null)
             return BigDecimal.ZERO;

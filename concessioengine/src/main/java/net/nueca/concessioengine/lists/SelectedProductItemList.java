@@ -44,6 +44,10 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         return true;
     }
 
+    protected boolean addNullable(SelectedProductItem selectedProductItem) {
+        return super.add(selectedProductItem);
+    }
+
     public List<Product> getSelectedProducts() {
         List<Product> selectedProducts = new ArrayList<>();
 
@@ -79,5 +83,10 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     public void renderToJson() {
         Gson gson = new GsonBuilder().serializeNulls().create();
         Log.e("Json", gson.toJson(this));
+    }
+
+    @Override
+    public List<SelectedProductItem> subList(int start, int end) {
+        return super.subList(start, end);
     }
 }

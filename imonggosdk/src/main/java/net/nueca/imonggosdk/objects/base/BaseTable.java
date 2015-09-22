@@ -14,7 +14,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 public abstract class BaseTable {
 
     @DatabaseField(id=true)
-    protected transient int id = -1;
+    protected int id = -1;
 
     @DatabaseField
     protected String searchKey = "";

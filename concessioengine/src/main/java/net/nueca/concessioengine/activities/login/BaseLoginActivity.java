@@ -34,6 +34,7 @@ import net.nueca.imonggosdk.operations.login.BaseLogin;
 import net.nueca.imonggosdk.operations.sync.BaseSyncService;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.LoggingTools;
 import net.nueca.imonggosdk.tools.LoginTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
 import net.nueca.imonggosdk.tools.SettingTools;
@@ -280,6 +281,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                 mModulesToDownload.add("Document Purposes");
                                 break;
                             default:
+                                LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module");
                                 Log.e(TAG, "You have added unsupported module");
                                 break;
                         }
@@ -895,15 +897,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         int progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
 
         Log.e(TAG, table + " progress: " + progress);
-        customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(mModulesToDownload.indexOf(currentTable));
-        customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), progress);
+        if(isUsingDefaultCustomDialogForSync()) {
+            customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(mModulesToDownload.indexOf(currentTable));
+            customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), progress);
+        }
     }
 
     @Override
     public void onEndDownload(Table table) {
         stopService();
         setSyncFinished(BaseLoginActivity.this, true);
-
     }
 
     @Override
@@ -940,6 +943,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         DialogTools.hideIndeterminateProgressDialog();
     }
 
+    public void setAutoUpdateApp(Boolean choice) {
+        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, choice, "");
+    }
 
     @Override
     public void onDestroy() {

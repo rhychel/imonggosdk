@@ -11,7 +11,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 public abstract class BaseTable2 {
 
     @DatabaseField(generatedId = true)
-    protected transient int id = -1;
+    protected int id = -1;
 
     public int getId() {
         return id;
@@ -31,5 +31,10 @@ public abstract class BaseTable2 {
             updateTo(dbHelper);
         else if(databaseOperation == DatabaseOperation.DELETE)
             deleteTo(dbHelper);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

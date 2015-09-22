@@ -94,7 +94,8 @@
             android:elevation="1dp"
             android:paddingBottom="100dp"
             android:clipToPadding="false"
-            tools:listitem="@layout/simple_receive_listitem"/>
+            tools:listitem="@layout/simple_receive_listitem"
+            />
 
         <TextView
             android:layout_width="match_parent"

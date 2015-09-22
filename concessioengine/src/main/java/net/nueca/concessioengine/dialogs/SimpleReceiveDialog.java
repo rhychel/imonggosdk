@@ -81,7 +81,7 @@ public class SimpleReceiveDialog extends BaseAppCompatDialog {
             @Override
             public void onClick(View v) {
                 if(dialogListener != null)
-                    dialogListener.onSearch(getReceiveText(), getReturnText());
+                    dialogListener.onSave(getReceiveText(), getReturnText(), getDiscrepancyText());
                 dismiss();
             }
         });
@@ -96,6 +96,23 @@ public class SimpleReceiveDialog extends BaseAppCompatDialog {
                     cancel();
             }
         });
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        if(!isManual) {
+            etQuantity.setText(quantityText);
+            etDiscrepancy.setText(discrepancyText);
+            etQuantity.setVisibility(View.VISIBLE);
+            etDiscrepancy.setVisibility(View.VISIBLE);
+        }
+        else {
+            etQuantity.setVisibility(View.GONE);
+            etDiscrepancy.setVisibility(View.GONE);
+        }
+        etReceive.requestFocus();
+        npInput.setIsFirstErase(true);
     }
 
     private TextWatcher fieldChanged = new TextWatcher() {
@@ -151,6 +168,13 @@ public class SimpleReceiveDialog extends BaseAppCompatDialog {
         if(etDiscrepancy != null)
             etDiscrepancy.setText(discrepancyText);
     }
+    public void autoDiscrepancy() {
+        Double dsc = NumberTools.toDouble(quantityText) - (NumberTools.toDouble(receiveText) + NumberTools.toDouble
+                (returnText));
+        discrepancyText = NumberTools.separateInCommas(dsc);
+        if(etDiscrepancy != null)
+            etDiscrepancy.setText(discrepancyText);
+    }
 
     public String getReceiveText() {
         return etReceive.getText().toString();
@@ -180,6 +204,6 @@ public class SimpleReceiveDialog extends BaseAppCompatDialog {
     public interface SimpleReceiveDialogListener {
         /** return true if should dismiss dialog **/
         boolean onCancel();
-        void onSearch(String receivetxt, String returntxt);
+        void onSave(String receivetxt, String returntxt, String discrepancytxt);
     }
 }

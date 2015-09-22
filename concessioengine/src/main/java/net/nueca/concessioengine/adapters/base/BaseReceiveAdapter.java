@@ -3,12 +3,17 @@ package net.nueca.concessioengine.adapters.base;
 import android.content.Context;
 import android.util.Log;
 
+import net.nueca.concessioengine.lists.ReceivedProductItemList;
+import net.nueca.concessioengine.objects.ExtendedAttributes;
+import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 import net.nueca.imonggosdk.tools.NumberTools;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,18 +22,30 @@ import java.util.List;
  */
 public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
     private ImonggoDBHelper dbHelper;
-    protected List<Product> productList;
-    protected boolean isManual = false;
+    protected boolean isManual = false, isReview = false;//, isMultiline = false;
     private int listItemRes;
+    protected ReceivedProductItemList displayProductListItem = new ReceivedProductItemList();
+    protected ReceivedProductItemList receivedProductListItem = new ReceivedProductItemList();
 
-    public BaseReceiveAdapter(Context context, int resource, ImonggoDBHelper dbHelper, List<DocumentLine> objects) {
-        super(context, resource, objects);
+    public BaseReceiveAdapter(Context context, int resource, ImonggoDBHelper dbHelper) {
+        super(context, resource, new ArrayList<DocumentLine>());
         listItemRes = resource;
         setHelper(dbHelper);
-        updateProductList(objects);
     }
 
-    public abstract List<DocumentLine> generateDocumentLines();
+    public ReceivedProductItemList getDisplayProductListItem() {
+        if(displayProductListItem == null)
+            displayProductListItem = new ReceivedProductItemList();
+        return displayProductListItem;
+    }
+
+    public ReceivedProductItemList getReceivedProductListItem() {
+        return receivedProductListItem;
+    }
+
+    public void setReceivedProductListItem(ReceivedProductItemList receivedProductListItem) {
+        this.receivedProductListItem = receivedProductListItem;
+    }
 
     public void setListItemResource(int resource) {
         listItemRes = resource;
@@ -45,78 +62,99 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
         this.isManual = isManual;
     }
 
+    public boolean isReview() {
+        return isReview;
+    }
+
+    public void setIsReview(boolean isReview) {
+        this.isReview = isReview;
+    }
+
+    /*public boolean isMultiline() {
+        return isMultiline;
+    }
+
+    public void setIsMultiline(boolean isMultiline) {
+        this.isMultiline = isMultiline;
+    }*/
+
     public void addAll(List<DocumentLine> documentLines) {
         super.addAll(documentLines);
-        if(productList == null)
-            productList = new ArrayList<>();
 
-        //try {
-            for(DocumentLine documentLine : documentLines) {
-                Product t_product = documentLine.getProduct();
+        if(displayProductListItem == null)
+            displayProductListItem = new ReceivedProductItemList();
 
-                if(productList.contains(t_product)) {
-                    t_product = productList.get(productList.indexOf(t_product));
+        for(DocumentLine documentLine : documentLines) {
+            Product product = documentLine.getProduct();
 
-                    double orig_qty = NumberTools.toDouble(t_product.getOrig_quantity());
-                    double dsc_qty = NumberTools.toDouble(t_product.getDsc_quantity());
+            product.setUnit(documentLine.getUnit_name());
+            if(documentLine.getUnit_content_quantity() != null)
+                product.setUnit_content_quantity(documentLine.getUnit_content_quantity());
+            if(documentLine.getUnit_id() != null)
+                product.setUnit_id(documentLine.getUnit_id());
+            if(documentLine.getUnit_quantity() != null)
+                product.setUnit_quantity(documentLine.getUnit_quantity());
 
-                    t_product.setOrig_quantity("" + ( orig_qty + documentLine.getQuantity() ));
-                    t_product.setRcv_quantity("0");
-                    t_product.setRet_quantity("0");
-                    t_product.setDsc_quantity("" + ( dsc_qty + documentLine.getQuantity() ));
+            SelectedProductItem selectedProductItem = receivedProductListItem.getSelectedProductItem(product);
 
-                    continue;
-                }
+            if(selectedProductItem == null) {
+                selectedProductItem = new SelectedProductItem();
+                selectedProductItem.setProduct(product);
+                if(product.getExtras() != null)
+                    selectedProductItem.setIsMultiline(product.getExtras().isBatch_maintained());
 
-                if(t_product == null)
-                    continue;
+                /*Log.e("Adding", product.getName() + " " + displayProductListItem.add(selectedProductItem));
+                Log.e("Size", displayProductListItem.size() + "");*/
 
-                if(documentLine.getUnit_name() != null)
-                    t_product.setUnit(documentLine.getUnit_name());
-
-                if(documentLine.getUnit_id() != null)
-                    t_product.setUnit_id(documentLine.getUnit_id());
-
-                if(documentLine.getUnit_quantity() != null)
-                    t_product.setUnit_quantity(documentLine.getUnit_quantity());
-
-                if(documentLine.getUnit_content_quantity() != null)
-                    t_product.setUnit_content_quantity(documentLine.getUnit_content_quantity());
-
-                t_product.setOrig_quantity( NumberTools.separateInCommasHideZeroDecimals(documentLine.getQuantity()) );
-                t_product.setRcv_quantity("0");
-                t_product.setRet_quantity("0");
-                t_product.setDsc_quantity( NumberTools.separateInCommasHideZeroDecimals(documentLine.getQuantity()) );
-
-                productList.add(t_product);
+                displayProductListItem.add(selectedProductItem);
             }
-        //} catch (SQLException e) {
-        //    e.printStackTrace();
-        //}
+            else {
+                displayProductListItem.add(selectedProductItem);
+                continue;
+            }
+
+
+            Unit unit = null;
+            try {
+                unit = getHelper().getUnits().queryBuilder().where().eq("id", product.getUnit_id()).queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            Values values = new Values();
+            ExtendedAttributes extendedAttributes = new ExtendedAttributes(0d, documentLine.getQuantity());
+            if(documentLine.getExtras() != null) {
+                extendedAttributes.setBatch_no(documentLine.getExtras().getBatch_no());
+            }
+            if(documentLine.getExtended_attributes() != null) {
+                extendedAttributes.setDelivery_date(documentLine.getExtended_attributes().getDelivery_date());
+                extendedAttributes.setBrand(documentLine.getExtended_attributes().getBrand());
+            }
+            values.setValue("0", unit, extendedAttributes);
+
+            values.setLine_no(documentLine.getLine_no());
+            selectedProductItem.addValues(values);
+        }
     }
 
-    @Override
     public void clear() {
         super.clear();
-        productList = new ArrayList<>();
+        if(displayProductListItem == null)
+            displayProductListItem = new ReceivedProductItemList();
+        else
+            displayProductListItem.clear();
     }
 
-    public void updateProductList(List<DocumentLine> documentLines) {
+    public void updateSelectedProduct(List<DocumentLine> documentLines) {
         clear();
         addAll(documentLines);
     }
 
-    public Product getProductItem(int position) {
-        if(productList == null || productList.size() <= position)
-            return null;
-        return productList.get(position);
-    }
-
     @Override
     public int getCount() {
-        if(productList == null)
+        if(displayProductListItem == null)
             return 0;
-        return productList.size();
+        return displayProductListItem.size();
     }
 
     public ImonggoDBHelper getHelper() {

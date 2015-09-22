@@ -38,7 +38,6 @@
                     android:textSize="20sp"
                     android:id="@+id/etQuantity"
                     android:inputType="number|numberDecimal"
-                    android:text="0"
                     android:enabled="false"
                     android:focusable="false"
                     android:focusableInTouchMode="false"/>
@@ -57,7 +56,6 @@
                     android:textSize="20sp"
                     android:id="@+id/etDiscrepancy"
                     android:inputType="number|numberDecimal"
-                    android:text="0"
                     android:enabled="false"
                     android:focusable="false"
                     android:focusableInTouchMode="false"/>

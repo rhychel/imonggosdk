@@ -11,7 +11,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 public abstract class BaseTransactionDB extends BaseTransaction {
 
     @DatabaseField(id=true)
-    protected transient int id = -1;
+    protected int id = -1;
 
     @DatabaseField
     protected String utc_created_at;

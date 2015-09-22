@@ -87,6 +87,10 @@ public class Document extends BaseTransactionDB {
         utc_document_date = builder.utc_document_date;
 
         parent_document_id = builder.parent_document_id;
+
+        if(document_lines != null)
+            for(DocumentLine documentLine : document_lines)
+                documentLine.setDocument(this);
     }
 
     public String getRemark() {

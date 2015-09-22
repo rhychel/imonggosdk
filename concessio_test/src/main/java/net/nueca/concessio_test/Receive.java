@@ -2,6 +2,7 @@ package net.nueca.concessio_test;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -10,15 +11,19 @@ import android.view.MenuItem;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
+import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class Receive extends ModuleActivity implements SetupActionBar {
 
@@ -32,6 +37,12 @@ public class Receive extends ModuleActivity implements SetupActionBar {
 
         try {
             Log.e("Device ID", "" + getSession().getDevice_id());
+            List<Document> documents = getHelper().getDocuments().queryForAll();
+            for(Document doc : documents)
+                if(doc.getDocument_lines().size() >= 30) {
+                    Log.e("Doc", doc.getReference());
+                    break;
+                }
             if(getHelper().getDocuments().queryForAll().size() <= 30) {
                 Document document = new Document.Builder()
                         .id(getHelper().getDocuments().queryForAll().size() + 1)
@@ -85,7 +96,7 @@ public class Receive extends ModuleActivity implements SetupActionBar {
         simpleReceiveFragment = new SimpleReceiveFragment();
         simpleReceiveFragment.setHelper(getHelper());
         simpleReceiveFragment.setSetupActionBar(this);
-        simpleReceiveFragment.setUseRecyclerView(true);
+        simpleReceiveFragment.setUseRecyclerView(false);
         simpleReceiveFragment.setProductCategories(getProductCategories(true));
         /*simpleReceiveFragment.setMultipleInput(true);
         simpleReceiveFragment.setMultiInputListener(new MultiInputListener() {
@@ -124,15 +135,30 @@ public class Receive extends ModuleActivity implements SetupActionBar {
         });*/
         simpleReceiveFragment.setFABListener(new SimpleReceiveFragment.FloatingActionButtonListener() {
             @Override
-            public void onClick(Document document) {
-                Log.e("Document", document.toString());
+            public void onClick(ReceivedProductItemList receivedProductItemList, Branch targetBranch, String reference, Integer parentDocumentID) {
+                SimpleReceiveReviewFragment simpleReceiveReviewFragment = new SimpleReceiveReviewFragment();
+                simpleReceiveReviewFragment.setParentID(parentDocumentID);
+                simpleReceiveReviewFragment.setTargetBranch(targetBranch);
+                simpleReceiveReviewFragment.setDRNo(reference);
+                simpleReceiveReviewFragment.setUseRecyclerView(true);
+                simpleReceiveReviewFragment.setHelper(getHelper());
+                simpleReceiveReviewFragment.setReceivedProductItemList(receivedProductItemList);
+                simpleReceiveReviewFragment.setIsManual(simpleReceiveFragment.isManual());
+
+                fragmentManager.beginTransaction()
+                        .replace(R.id.flContent, simpleReceiveReviewFragment)
+                        .addToBackStack("review_fragment")
+                        .commit();
             }
         });
 
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.flContent, simpleReceiveFragment)
+        fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.flContent, simpleReceiveFragment)
+                .addToBackStack("receive_fragment")
                 .commit();
     }
+    FragmentManager fragmentManager;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -159,6 +185,12 @@ public class Receive extends ModuleActivity implements SetupActionBar {
             });
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        getSupportFragmentManager().popBackStack("review_fragment",FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     @Override
