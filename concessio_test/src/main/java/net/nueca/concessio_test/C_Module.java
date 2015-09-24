@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
@@ -16,21 +17,42 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+
+import com.google.gson.Gson;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SearchViewEx;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.DocumentTypeCode;
+import net.nueca.imonggosdk.enums.OfflineDataType;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.DocumentType;
+import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 
+import org.json.JSONException;
+
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 6/4/15.
@@ -59,10 +81,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             public void onClick(View view) {
                 /*try {
                     User user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).query().get(0);
-                    if (SwableTools.sendTransaction(getHelper(), user.getHome_branch_id(), generateOrder(C_Module.this, user.getHome_branch_id()), OfflineDataType.SEND_ORDER) == null)
-                        Log.e("Error", "not adding to the OfflineData");
-                    else
-                        Log.e("Added", "YES");
+                    SwableTools.sendTransaction(getHelper(), user.getHome_branch_id(), generateOrder(C_Module.this, user.getHome_branch_id()), OfflineDataType.SEND_ORDER);
                     ProductsAdapterHelper.getSelectedProductItems().clear();
                     simpleProductsFragment.refreshList();
                 } catch (SQLException | JSONException e) {
@@ -83,15 +102,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
         simpleProductsFragment.setProductCategories(getProductCategories(true));
-        simpleProductsFragment.setMultipleInput(true);
-        simpleProductsFragment.setMultiInputListener(new MultiInputListener() {
-            @Override
-            public void showInputScreen(Product product) {
-                Intent intent = new Intent(C_Module.this, TestMultiInput.class);
-                intent.putExtra(MultiInputSelectedItemFragment.PRODUCT_ID, product.getId());
-                startActivity(intent);
-            }
-        });
         simpleProductsFragment.setListScrollListener(new ListScrollListener() {
             @Override
             public void onScrolling() {
@@ -116,12 +126,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         });*/
 
         try {
-            if(getHelper().getCustomers().queryForAll().size() <= 0) {
+            /*if(getHelper().getCustomers().queryForAll().size() <= 0) {
                 Log.e("CUSTOMERS", " ------------------------- adding");
                 String fname[] = {"John","Pepe","Sid","Mark","Jimmy","Zed","Paul","Charles","Markus","Albert",
-                    "Peter","Donald"};
+                    "Peter","Donald","Davy"};
                 String lname[] = {"Doe","Smith","Meier","Wane","Turner","Wong","Reed","Darwin","Snow","Einstein",
-                    "Griffin","Trump"};
+                    "Griffin","Trump","Jones"};
                 for (int i = 1; i <= 1000; i++) {
                     Customer customer = new Customer();
                     customer.setId(i);
@@ -139,7 +149,62 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                     }
                     customer.insertTo(getHelper());
                 }
+            }*/
+
+            for(Document document : getHelper().getDocuments().queryForAll()) {
+                Log.e("DELETE",document.getId()+"");
+                document.deleteTo(getHelper());
             }
+
+
+            Document document = new Document.Builder()
+                    .id(1)
+                    .document_type_code(DocumentTypeCode.PHYSICAL_COUNT)
+                    .target_branch_id(457)
+                    .generateReference(this, getSession().getDevice_id())
+                    .addDocumentLine(
+                            new DocumentLine.Builder()
+                                    .line_no(1)
+                                    .product_id(36151)
+                                    .price(0)
+                                    .quantity(5)
+                                    .extended_attributes(
+                                            new ExtendedAttributes.Builder()
+                                                    .brand("Rsrh")
+                                                    .delivery_date("2015-07-20")
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .addDocumentLine(
+                            new DocumentLine.Builder()
+                                    .line_no(2)
+                                    .product_id(36152)
+                                    .price(30)
+                                    .quantity(1)
+                                    .extended_attributes(
+                                            new ExtendedAttributes.Builder()
+                                                    .brand("Bsa")
+                                                    .delivery_date("2015-07-20")
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .build();
+
+
+            Log.e("O Docu ------- " + document.getId(), document.toString());
+            document.insertTo(getHelper());
+            Gson gson = new Gson();
+
+            List<Document> documents = getHelper().getDocuments().queryForAll();
+            for(Document docu : documents)
+                Log.e("--DOCU " + docu.getId(), docu.toString());
+
+            Log.e("--DOCUMENT LINE " + getHelper().getDocumentLines().queryForAll().size(),
+                    gson.toJson(getHelper().getDocumentLines().queryForAll()));
+            Log.e("--EXTENDED ATTRIB " + getHelper().getExtendedAttributes().queryForAll().size(),
+                    gson.toJson(getHelper().getExtendedAttributes().queryForAll()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -164,6 +229,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         });
 
         simpleCustomersFragment.setColor(fetchAccentColor(this));
+        simpleCustomersFragment.setHighlightColor(Color.parseColor("#22ffaa00"));
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.flContent, simpleCustomersFragment)
@@ -236,7 +302,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                     try {
                         AccountTools.unlinkAccount(C_Module.this, getHelper(), new AccountListener() {
                             @Override
-                            public void onLogoutAccount() { }
+                            public void onLogoutAccount() {
+
+                            }
 
                             @Override
                             public void onUnlinkAccount() {

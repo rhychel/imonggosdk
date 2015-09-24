@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -42,25 +43,36 @@ import me.grantland.widget.AutofitTextView;
 public class ReceiveMultiInputFragment extends ImonggoFragment {
     private RecyclerView rvProducts;
 
-    private AutofitTextView tvTitle;
+    private TextView tvTitle, tvTotalQuantity;
     private Toolbar tbActionBar;
 
     private boolean isManual = false;
-    private Double original_qty;
 
     private SimpleReceiveMultiInputAdapter simpleReceiveMultiInputAdapter;
     private SimpleReceiveDialog simpleReceiveDialog;
     private SelectedProductItem selectedProductItem;
+
+    private OnValuesUpdatedListener valuesUpdatedListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.simple_receive_multiinput_layout, container, false);
 
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
+        tbActionBar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        tbActionBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
+
         rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
-        tvTitle = (AutofitTextView) view.findViewById(R.id.tvTitle);
+        tvTitle = (TextView) view.findViewById(R.id.tvTitle);
+        tvTotalQuantity = (TextView) view.findViewById(R.id.tvTotalQuantity);
 
         tvTitle.setText(selectedProductItem.getProduct().getName());
+        tvTotalQuantity.setText(NumberTools.separateInCommas(selectedProductItem.getQuantity()));
 
         simpleReceiveMultiInputAdapter = new SimpleReceiveMultiInputAdapter();
         simpleReceiveMultiInputAdapter.setSelectedProductItem(selectedProductItem);
@@ -73,10 +85,10 @@ public class ReceiveMultiInputFragment extends ImonggoFragment {
                 if(simpleReceiveDialog == null)
                     simpleReceiveDialog = new SimpleReceiveDialog(getActivity());
                 simpleReceiveDialog.setProductName(selectedProductItem.getProduct().getName());
-                simpleReceiveDialog.setQuantity(NumberTools.separateInCommas(original_qty));
-                simpleReceiveDialog.setReceiveText(selectedProductItem.getQuantity());
-                simpleReceiveDialog.setReturnText(selectedProductItem.getReturn());
-                simpleReceiveDialog.setDiscrepancy(selectedProductItem.getDiscrepancy());
+                simpleReceiveDialog.setQuantity(selectedProductItem.getOriginalQuantity(position));
+                simpleReceiveDialog.setReceiveText(selectedProductItem.getQuantity(position));
+                simpleReceiveDialog.setReturnText(selectedProductItem.getReturn(position));
+                simpleReceiveDialog.setDiscrepancy(selectedProductItem.getDiscrepancy(position));
                 simpleReceiveDialog.setIsManual(isManual);
 
                 simpleReceiveDialog.setDialogListener(new SimpleReceiveDialog.SimpleReceiveDialogListener() {
@@ -105,6 +117,11 @@ public class ReceiveMultiInputFragment extends ImonggoFragment {
 
                         selectedProductItem.addValues(values);
                         simpleReceiveMultiInputAdapter.notifyItemChanged(position);
+
+                        if(valuesUpdatedListener != null)
+                            valuesUpdatedListener.onUpdate(values);
+
+                        tvTotalQuantity.setText(NumberTools.separateInCommas(selectedProductItem.getQuantity()));
                     }
                 });
 
@@ -121,15 +138,19 @@ public class ReceiveMultiInputFragment extends ImonggoFragment {
         this.simpleReceiveDialog = simpleReceiveDialog;
     }
 
-    public void setOriginalQuantity(Double original_qty) {
-        this.original_qty = original_qty;
-    }
-
     public void setIsManual(boolean isManual) {
         this.isManual = isManual;
     }
 
     public void setSelectedProductItem(SelectedProductItem selectedProductItem) {
         this.selectedProductItem = selectedProductItem;
+    }
+
+    public void setOnValuesUpdatedListener(OnValuesUpdatedListener valuesUpdatedListener) {
+        this.valuesUpdatedListener = valuesUpdatedListener;
+    }
+
+    public interface OnValuesUpdatedListener {
+        void onUpdate(Values values);
     }
 }

@@ -3,6 +3,7 @@ package net.nueca.concessio_test;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -146,6 +147,8 @@ public class Receive extends ModuleActivity implements SetupActionBar {
                 simpleReceiveReviewFragment.setIsManual(simpleReceiveFragment.isManual());
 
                 fragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
+                                R.anim.slide_in_left, R.anim.slide_out_right)
                         .replace(R.id.flContent, simpleReceiveReviewFragment)
                         .addToBackStack("review_fragment")
                         .commit();
@@ -155,7 +158,7 @@ public class Receive extends ModuleActivity implements SetupActionBar {
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.flContent, simpleReceiveFragment)
-                .addToBackStack("receive_fragment")
+                //.addToBackStack("receive_fragment")
                 .commit();
     }
     FragmentManager fragmentManager;
@@ -190,7 +193,7 @@ public class Receive extends ModuleActivity implements SetupActionBar {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        getSupportFragmentManager().popBackStack("review_fragment",FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        //getSupportFragmentManager().popBackStack();
     }
 
     @Override

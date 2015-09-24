@@ -136,6 +136,10 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
             selectedProductItem.addValues(values);
         }
     }
+    public void addAllReceived(List<SelectedProductItem> receivedProductItemList) {
+        //if(!displayProductListItem.containsAll(receivedProductItemList))
+        displayProductListItem.addAll(receivedProductItemList);
+    }
 
     public void clear() {
         super.clear();
@@ -148,6 +152,10 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
     public void updateSelectedProduct(List<DocumentLine> documentLines) {
         clear();
         addAll(documentLines);
+    }
+    public void updateReceivedProduct(List<SelectedProductItem> receivedProductItemList) {
+        clear();
+        addAllReceived(receivedProductItemList);
     }
 
     @Override

@@ -3,6 +3,7 @@ package net.nueca.concessioengine.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -63,6 +64,10 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(hasCategories)
+            productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line,
+                    productCategories);
+
         if(useRecyclerView) {
             simpleReceiveRecyclerViewAdapter = new SimpleReceiveRecyclerViewAdapter(getActivity(), getHelper());
             simpleReceiveRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
@@ -163,16 +168,13 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         tvDiscrepancyLabel = (TextView) view.findViewById(R.id.tvDiscrepancy);
 
         if(hasCategories) {
-            productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, productCategories);
             spCategories.setAdapter(productCategoriesAdapter);
             spCategories.setOnItemSelectedListener(onCategorySelected);
-            if(productCategories.size() > 0)
-                setCategory(productCategories.get(0));
+            //if(productCategories.size() > 0)
+            //    setCategory(productCategories.get(0));
         }
         else
             spCategories.setVisibility(View.GONE);
-
-        offset = 0l;
 
         if(useRecyclerView) {
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
@@ -213,7 +215,8 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
             public void onClick(View v) {
                 if(shouldContinue())
                     if(fabListener != null)
-                        fabListener.onClick(getReceivedProductItemList(), targetBranch, deliveryReceiptNo, getParentDocumentId());
+                        fabListener.onClick(getReceivedProductItemList(), targetBranch, deliveryReceiptNo,
+                                getParentDocumentId());
             }
         });
 
@@ -313,6 +316,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
     }
 
     public void forceUpdateProductList() {
+        Log.e("SimpleReceive", "forceUpdateProductList");
         if(useRecyclerView) {
             simpleReceiveRecyclerViewAdapter.setIsManual(isManual);
             simpleReceiveRecyclerViewAdapter.updateList(getDocumentLines());
@@ -330,6 +334,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
 
     @Override
     protected void whenListEndReached(List<DocumentLine> documentLines) {
+        Log.e("SimpleReceive", "whenListEndReached");
         if(useRecyclerView) {
             simpleReceiveRecyclerViewAdapter.addAll(documentLines);
             simpleReceiveRecyclerViewAdapter.notifyDataSetChanged();
@@ -366,6 +371,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
     }
 
     public void updateListWhenSearch(String searchKey) {
+        Log.e("SimpleReceive", "updateListWhenSearch");
         setSearchKey(searchKey);
         offset = 0l;
         prevLast = 0;
@@ -401,8 +407,14 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
     private AdapterView.OnItemSelectedListener onCategorySelected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+            Log.e("SimpleReceive", "onCategorySelected : onItemSelected : " + getCategory());
             String category = productCategoriesAdapter.getItem(position).toLowerCase();
+
+            if(getCategory().equals(category))
+                return;
+
             setCategory(category);
+
             offset = 0l;
             prevLast = 0;
 
@@ -422,7 +434,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         if(simpleReceiveDialog == null)
             simpleReceiveDialog = new SimpleReceiveDialog(getActivity());
 
-        SelectedProductItem selectedProductItem = useRecyclerView?
+        final SelectedProductItem selectedProductItem = useRecyclerView?
                 simpleReceiveRecyclerViewAdapter.getDisplayProductListItem().get(position) :
                 simpleReceiveListAdapter.getDisplayProductListItem().get(position);
 
@@ -438,10 +450,19 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
             receiveMultiInputFragment.setHelper(getHelper());
             receiveMultiInputFragment.setSelectedProductItem(selectedProductItem);
             receiveMultiInputFragment.setIsManual(isManual);
-            receiveMultiInputFragment.setOriginalQuantity(original_qty);
+            receiveMultiInputFragment.setOnValuesUpdatedListener(new ReceiveMultiInputFragment.OnValuesUpdatedListener() {
+                @Override
+                public void onUpdate(Values values) {
+                    selectedProductItem.addValues(values);
+                    if(isManual)
+                        getReceivedProductItemList().add(selectedProductItem);
+                }
+            });
+            //receiveMultiInputFragment.setOriginalQuantity(original_qty);
 
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.flContent, receiveMultiInputFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .addToBackStack("multiinput_fragment")
                     .commit();
             return;
@@ -501,31 +522,6 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
                     simpleReceiveRecyclerViewAdapter.notifyItemChanged(position);
                 else
                     simpleReceiveListAdapter.notifyItemChanged(lvProducts, position);
-
-                /*if (useRecyclerView) {
-                    simpleReceiveRecyclerViewAdapter.getProductItem(position).setRcv_quantity(values.getQuantity());
-                    if (values.getExtendedAttributes() != null) {
-                        if (values.getExtendedAttributes().getOutright_return() != null)
-                            simpleReceiveRecyclerViewAdapter.getProductItem(position)
-                                    .setRet_quantity(values.getExtendedAttributes().getOutright_return());
-                        if (values.getExtendedAttributes().getDiscrepancy() != null)
-                            simpleReceiveRecyclerViewAdapter.getProductItem(position)
-                                    .setDsc_quantity(values.getExtendedAttributes().getDiscrepancy());
-                    }
-
-                    simpleReceiveRecyclerViewAdapter.notifyItemChanged(position);
-                } else {
-                    simpleReceiveListAdapter.getProductItem(position).setRcv_quantity(values.getQuantity());
-                    if (values.getExtendedAttributes() != null) {
-                        if (values.getExtendedAttributes().getOutright_return() != null)
-                            simpleReceiveListAdapter.getProductItem(position)
-                                    .setRet_quantity(values.getExtendedAttributes().getOutright_return());
-                        if (values.getExtendedAttributes().getDiscrepancy() != null)
-                            simpleReceiveListAdapter.getProductItem(position)
-                                    .setDsc_quantity(values.getExtendedAttributes().getDiscrepancy());
-                    }
-                    simpleReceiveListAdapter.notifyItemChanged(lvProducts, position);
-                }*/
 
                 fabContinue.setVisibility(shouldContinue() ? View.VISIBLE : View.INVISIBLE);
             }

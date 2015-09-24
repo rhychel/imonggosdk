@@ -3,6 +3,7 @@ package net.nueca.concessioengine.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -139,21 +140,13 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
         return documentLines;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(useRecyclerView ?
-                R.layout.simple_review_fragment_rv : R.layout.simple_review_fragment_lv, container, false);
-
-        tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
-
-        tvNoProducts = (TextView) view.findViewById(R.id.tvNoProducts);
-        fabContinue = (FloatingActionButton) view.findViewById(R.id.fabContinue);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         offset = 0l;
 
         if(useRecyclerView) {
-            rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
             simpleReceiveRecyclerViewAdapter = new SimpleReceiveRecyclerViewAdapter(getActivity(), getHelper());
             simpleReceiveRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -162,20 +155,50 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
                 }
             });
             simpleReceiveRecyclerViewAdapter.setOnItemLongClickListener(null);
+
+            simpleReceiveRecyclerViewAdapter.setReceivedProductListItem(receivedProductItemList);
+            simpleReceiveRecyclerViewAdapter.setIsReview(true);
+
+        }
+        else {
+            simpleReceiveListAdapter = new SimpleReceiveListAdapter(getActivity(), getHelper());
+
+            simpleReceiveListAdapter.setReceivedProductListItem(receivedProductItemList);
+            simpleReceiveListAdapter.setIsReview(true);
+        }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(useRecyclerView ?
+                R.layout.simple_review_fragment_rv : R.layout.simple_review_fragment_lv, container, false);
+
+        tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
+        tbActionBar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        tbActionBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
+
+        tvNoProducts = (TextView) view.findViewById(R.id.tvNoProducts);
+        fabContinue = (FloatingActionButton) view.findViewById(R.id.fabContinue);
+
+        if(useRecyclerView) {
+            rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
+
             simpleReceiveRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
 
             rvProducts.setAdapter(simpleReceiveRecyclerViewAdapter);
             rvProducts.addOnScrollListener(rvScrollListener);
-
-            simpleReceiveRecyclerViewAdapter.setReceivedProductListItem(receivedProductItemList);
-            simpleReceiveRecyclerViewAdapter.setIsReview(true);
 
             toggleNoItems("No items to display.", simpleReceiveRecyclerViewAdapter.getItemCount() > 0);
             //forceUpdateProductList();
         }
         else {
             lvProducts = (ListView) view.findViewById(R.id.lvProducts);
-            simpleReceiveListAdapter = new SimpleReceiveListAdapter(getActivity(), getHelper());
             lvProducts.setAdapter(simpleReceiveListAdapter);
 
             lvProducts.setOnScrollListener(lvScrollListener);
@@ -186,9 +209,6 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
                     onProductClick(position);
                 }
             });
-
-            simpleReceiveListAdapter.setReceivedProductListItem(receivedProductItemList);
-            simpleReceiveListAdapter.setIsReview(true);
 
             toggleNoItems("No items to display.", simpleReceiveListAdapter.getCount() > 0);
             //forceUpdateProductList();
@@ -229,6 +249,7 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
     }
 
     public void forceUpdateProductList() {
+        Log.e("SimpleReceiveReviewFragment", "forceUpdateProductList");
         if(useRecyclerView) {
             simpleReceiveRecyclerViewAdapter.setIsManual(isManual);
             //simpleReceiveRecyclerViewAdapter.updateList(getObjects());
@@ -236,7 +257,7 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
         } else {
             simpleReceiveListAdapter.setIsManual(isManual);
             //simpleReceiveListAdapter.updateList(getObjects());
-            toggleNoItems("No items to display.", simpleReceiveListAdapter.updateList(getObjects()));
+            toggleNoItems("No items to display.", simpleReceiveListAdapter.updateReceivedList(getReceivedProducts()));
         }
     }
 
@@ -252,9 +273,10 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        forceUpdateProductList();
-
-        simpleReceiveToolbarExt = new SimpleReceiveToolbarExt(R.layout.simple_receive_columns);
+        if(simpleReceiveToolbarExt == null) {
+            simpleReceiveToolbarExt = new SimpleReceiveToolbarExt(R.layout.simple_receive_columns);
+            forceUpdateProductList();
+        }
         simpleReceiveToolbarExt.attachAfter(getActivity(), tbActionBar, false);
 
         tvQuantityLabel = simpleReceiveToolbarExt.getToolbarExtensionView().findViewById(R.id.tvQuantity);
@@ -278,13 +300,13 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
 
     @Override
     protected void whenListEndReached(List objects) {
-
+        Log.e("SimpleReceiveReviewFragment", "whenListEndReached");
         if(useRecyclerView) {
             simpleReceiveRecyclerViewAdapter.addAllReceived(getReceivedProducts());
             simpleReceiveRecyclerViewAdapter.notifyDataSetChanged();
         }
         else {
-            //simpleReceiveListAdapter.addAllReceived(documentLines);
+            simpleReceiveListAdapter.addAllReceived(getReceivedProducts());
             simpleReceiveListAdapter.notifyDataSetChanged();
         }
     }
@@ -295,17 +317,11 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
             rvProducts.setVisibility(show ? View.VISIBLE : View.GONE);
             tvNoProducts.setVisibility(show ? View.GONE : View.VISIBLE);
             tvNoProducts.setText(msg);
-
-            if(show)
-                rvProducts.scrollToPosition(0);
         }
         else {
             lvProducts.setVisibility(show ? View.VISIBLE : View.GONE);
             tvNoProducts.setVisibility(show ? View.GONE : View.VISIBLE);
             tvNoProducts.setText(msg);
-
-            if(show)
-                lvProducts.smoothScrollToPosition(0);
         }
     }
 
@@ -338,12 +354,33 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
         if(simpleReceiveDialog == null)
             simpleReceiveDialog = new SimpleReceiveDialog(getActivity());
 
-        SelectedProductItem selectedProductItem = useRecyclerView?
+        final SelectedProductItem selectedProductItem = useRecyclerView?
                 simpleReceiveRecyclerViewAdapter.getDisplayProductListItem().get(position) :
                 simpleReceiveListAdapter.getDisplayProductListItem().get(position);
 
-        simpleReceiveDialog.setProductName(selectedProductItem.getProduct().getName());
+        if(selectedProductItem.isMultiline()) {
+            ReceiveMultiInputFragment receiveMultiInputFragment = new
+                    ReceiveMultiInputFragment();
+            receiveMultiInputFragment.setHelper(getHelper());
+            receiveMultiInputFragment.setSelectedProductItem(selectedProductItem);
+            receiveMultiInputFragment.setIsManual(isManual);
+            receiveMultiInputFragment.setOnValuesUpdatedListener(new ReceiveMultiInputFragment.OnValuesUpdatedListener() {
+                @Override
+                public void onUpdate(Values values) {
+                    selectedProductItem.addValues(values);
+                }
+            });
+            //receiveMultiInputFragment.setOriginalQuantity(original_qty);
 
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.flContent, receiveMultiInputFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .addToBackStack("review_multiinput_fragment")
+                    .commitAllowingStateLoss();
+            return;
+        }
+
+        simpleReceiveDialog.setProductName(selectedProductItem.getProduct().getName());
 
         simpleReceiveDialog.setQuantity(selectedProductItem.getOriginalQuantity());
 

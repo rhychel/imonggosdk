@@ -73,42 +73,13 @@ public class SimpleReceiveListAdapter extends BaseReceiveAdapter {
         return convertView;
     }
 
-    /*@Override
-    public List<DocumentLine> generateDocumentLines() {
-        List<DocumentLine> documentLines = new ArrayList<>();
-        for(Product product : receivedProducts) {
-            Double orig_qty = NumberTools.toDouble(product.getOrig_quantity());
-            Double outright_return = NumberTools.toDouble(product.getRet_quantity());
-            //Double discrepancy = isManual? 0d : NumberTools.toDouble(product.getDsc_quantity());
-            Double receive_qty = NumberTools.toDouble(product.getRcv_quantity());
-
-            if(isManual) {
-                if(outright_return == 0d && receive_qty == 0d)
-                    continue;
-            }
-
-            documentLines.add(
-                    new DocumentLine.Builder()
-                            .line_no(documentLines.size() + 1)
-                            .product_id(product.getId())
-                            .useProductDetails(product)
-                            .quantity(orig_qty)
-                            *//*.extended_attributes(
-                                    new ExtendedAttributes.Builder()
-                                            .outright_return(outright_return != 0d ? "" + outright_return : null)
-                                            .discrepancy(discrepancy != 0d ? "" + discrepancy : null)
-                                            .buildIfNotEmpty()
-                            )*//*
-                            .price(1)
-                            .discount_text("0.0%")
-                            .build()
-            );
-        }
-        return documentLines;
-    }*/
-
     public boolean updateList(List<DocumentLine> documentLines) {
         updateSelectedProduct(documentLines);
+        notifyDataSetChanged();
+        return getCount() > 0;
+    }
+    public boolean updateReceivedList(List<SelectedProductItem> selectedProductItems) {
+        updateReceivedProduct(selectedProductItems);
         notifyDataSetChanged();
         return getCount() > 0;
     }

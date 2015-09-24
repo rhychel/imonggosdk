@@ -158,6 +158,7 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
     }
 
     protected List<DocumentLine> getDocumentLines() {
+        Log.e("BaseReceiveFragment", "getDocumentLines");
         if(parentDocumentId == null)
             return getReceivedProducts();
 
@@ -165,7 +166,6 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
 
         boolean includeSearchKey = !searchKey.equals("");
         boolean includeCategory = (!category.toLowerCase().equals("all") && hasCategories);
-        Log.e("includeCategory", includeCategory + "");
         try {
             Where<DocumentLine, Integer> whereDocumentLines = getHelper().getDocumentLines().queryBuilder().where();
 
@@ -194,8 +194,6 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
             QueryBuilder<Document, Integer> documentQb = getHelper().getDocuments().queryBuilder();
             documentQb.where().eq("reference", deliveryReceiptNo);
             resultDocumentLines.join(documentQb);
-
-            Log.e("QUERY", resultDocumentLines.prepareStatementString());
 
             documentLines = resultDocumentLines.query();
         } catch (SQLException e) {
