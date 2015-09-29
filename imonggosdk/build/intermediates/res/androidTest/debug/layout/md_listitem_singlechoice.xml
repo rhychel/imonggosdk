@@ -32,4 +32,4 @@
         android:paddingStart="@dimen/md_listitem_control_margin"
         tools:ignore="NewApi,RtlSymmetry" />
 
-</LinearLayout><!-- From: file:/Users/afollestad/Projects/material-dialogs/library/src/main/res/layout/md_listitem_singlechoice.xml --><!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk2/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/layout/md_listitem_singlechoice.xml -->
+</LinearLayout><!-- From: file:/Users/afollestad/Projects/material-dialogs/library/src/main/res/layout/md_listitem_singlechoice.xml --><!-- From: file:/Users/gama/AndroidStudioProjects/gamaBranch/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/layout/md_listitem_singlechoice.xml -->

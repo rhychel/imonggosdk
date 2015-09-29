@@ -1,18 +1,17 @@
 package net.nueca.concessioengine.dialogs;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
@@ -24,7 +23,8 @@ import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.widgets.ModifiedNumpad;
-import net.nueca.imonggosdk.widgets.Numpad;
+
+import org.json.JSONException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import java.util.List;
 public class SearchDRDialog extends BaseAppCompatDialog {
     private EditText etDeliveryReceipt;
     private Spinner spnBranch;
-    private Button btnSearch, btnCancel;
+    private Button btnSearch, btnCancel, btnManual;
     private ModifiedNumpad npInput;
     private TextView tvNotFound;
 
@@ -45,7 +45,8 @@ public class SearchDRDialog extends BaseAppCompatDialog {
     private ImonggoDBHelper dbHelper;
     private User user;
     private boolean isNotFound = false;
-    private List<Product> productList;
+
+    private Animation animation;
 
     public SearchDRDialog(Context context, ImonggoDBHelper dbHelper, User user) {
         super(context);
@@ -76,6 +77,7 @@ public class SearchDRDialog extends BaseAppCompatDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.simple_receive_searchdr_dialog);
+        super.setCancelable(false);
 
         tvNotFound = (TextView) super.findViewById(R.id.tvNotFound);
         etDeliveryReceipt = (EditText) super.findViewById(R.id.etDeliveryReceipt);
@@ -88,7 +90,7 @@ public class SearchDRDialog extends BaseAppCompatDialog {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 isNotFound = false;
-                tvNotFound.setVisibility(View.GONE);
+                tvNotFound.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -98,6 +100,7 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         });
         spnBranch = (Spinner) super.findViewById(R.id.spnBranch);
 
+        btnManual = (Button) super.findViewById(R.id.btnManual);
         btnCancel = (Button) super.findViewById(R.id.btnCancel);
         btnSearch = (Button) super.findViewById(R.id.btnSearch);
 
@@ -107,60 +110,87 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         spnBranch.setAdapter(branchArrayAdapter);
 
         npInput = (ModifiedNumpad) super.findViewById(R.id.npInput);
-        npInput.addTextHolder(etDeliveryReceipt,"etDeliveryReceipt",false,false,null);
+        npInput.addTextHolder(etDeliveryReceipt, "etDeliveryReceipt", false, false, null);
         npInput.getTextHolderWithTag("etDeliveryReceipt").setEnableDot(false);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dialogListener != null)
-                    dialogListener.onCancel();
-                dismiss();
+                if (dialogListener == null)
+                    cancel();
+
+                if (dialogListener != null && dialogListener.onCancel())
+                    cancel();
             }
         });
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isNotFound = false;
-                productList = new ArrayList<Product>();
 
+                Document document = null;
+
+                Log.e("btnSearch", "clicked");
                 try {
-                    search(etDeliveryReceipt.getText().toString(), (Branch)spnBranch.getSelectedItem());
+                    document = search(etDeliveryReceipt.getText().toString(), (Branch) spnBranch.getSelectedItem());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
-                tvNotFound.setVisibility(isNotFound? View.VISIBLE : View.GONE);
+                btnManual.setVisibility(isNotFound && etDeliveryReceipt.getText().length() > 0 ?
+                        View.VISIBLE : View.INVISIBLE);
+                tvNotFound.setVisibility(isNotFound ? View.VISIBLE : View.INVISIBLE);
+
+                Log.e("isNotFound", "" + isNotFound);
+                if (isNotFound) {
+                    tvNotFound.startAnimation(animation);
+                    return;
+                }
 
                 if (dialogListener != null)
                     dialogListener.onSearch(etDeliveryReceipt.getText().toString(),
-                            (Branch)spnBranch.getSelectedItem());
+                            (Branch) spnBranch.getSelectedItem(), document);
+                dismiss();
             }
         });
+        btnManual.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(etDeliveryReceipt.getText().length() == 0)
+                    return;
+                if(dialogListener != null)
+                    dialogListener.onManualReceive(etDeliveryReceipt.getText().toString(),
+                            (Branch) spnBranch.getSelectedItem());
+
+                btnManual.setVisibility(View.GONE);
+                dismiss();
+            }
+        });
+
+        animation = AnimationUtils.loadAnimation(getContext(),R.anim.shrink);
     }
 
-    public void search(String drNo, Branch branch) throws SQLException {
+    public Document search(String drNo, Branch branch) throws SQLException {
+        Log.e("search", drNo + " from " + dbHelper.getDocuments().queryForAll().size() + " document(s) for branch '"
+                + branch.getName() + "'");
+
         Document document = dbHelper.getDocuments().queryBuilder()
                 .where()
                 .eq("target_branch_id", branch.getId()).and()
-                .eq("reference", drNo)
+                .eq("reference", drNo).and()
+                .eq("intransit_status", "Intransit")
                 .queryForFirst();
 
-        if(document == null) {
-            isNotFound = true;
-            return;
-        }
+        if(document != null)
+            Log.e("Reference " + drNo, document.getTarget_branch_id() + " -- " + branch.getId());
 
-        List<DocumentLine> documentLines = document.getDocument_lines();
-        for(DocumentLine documentLine : documentLines) {
-            Product t_product = dbHelper.getProducts().queryBuilder().where()
-                    .eq("id", documentLine.getProduct_id()).queryForFirst();
+        isNotFound = document == null;
+        return document;
+    }
 
-            if(t_product != null)
-                productList.add(t_product);
-        }
-
-        isNotFound = productList.size() <= 0;
+    public void showWithText(String txt) {
+        show();
+        etDeliveryReceipt.setText(txt);
     }
 
     public SearchDRDialogListener getDialogListener() {
@@ -172,7 +202,21 @@ public class SearchDRDialog extends BaseAppCompatDialog {
     }
 
     public interface SearchDRDialogListener {
-        public void onCancel();
-        public void onSearch(String deliveryReceiptNo, Branch branch);
+        /** return true if should dismiss dialog **/
+        boolean onCancel();
+        void onSearch(String deliveryReceiptNo, Branch target_branch, Document document);
+        void onManualReceive(String deliveryReceiptNo, Branch target_branch);
+    }
+
+    @Override
+    public void cancel() {
+        super.cancel();
+        npInput.setIsFirstErase(true);
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        npInput.setIsFirstErase(true);
     }
 }

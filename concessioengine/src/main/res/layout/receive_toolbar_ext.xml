@@ -17,7 +17,6 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="000"
         android:id="@+id/tvDRNo"
         android:textSize="20dp"
         android:layout_weight="1"

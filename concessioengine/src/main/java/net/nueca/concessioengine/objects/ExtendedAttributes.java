@@ -1,5 +1,11 @@
 package net.nueca.concessioengine.objects;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.j256.ormlite.field.DatabaseField;
+
 import net.nueca.imonggosdk.objects.Unit;
 
 /**
@@ -11,8 +17,9 @@ public class ExtendedAttributes {
     private String brand = "";
     private String delivery_date = "";
     private String batch_no = "";
-    private String outright_return = "";
-    private String discrepancy = "";
+
+    protected String outright_return;
+    protected String discrepancy;
 
     public ExtendedAttributes() { }
 
@@ -27,6 +34,13 @@ public class ExtendedAttributes {
         this.delivery_date = delivery_date;
     }
 
+    public ExtendedAttributes(Double outright_return, Double discrepancy) {
+        if(outright_return != null)
+            this.outright_return = "" + outright_return;
+        if(discrepancy != null)
+            this.discrepancy = "" + discrepancy;
+    }
+
     public String getBrand() {
         if(brand.equals(""))
             return "No Brand";
@@ -39,15 +53,13 @@ public class ExtendedAttributes {
         return batch_no;
     }
 
-    public String getDeliveryDate() {
-        return delivery_date;
-    }
-
     public net.nueca.imonggosdk.objects.document.ExtendedAttributes convertForDocumentLine() {
         return new net.nueca.imonggosdk.objects.document.ExtendedAttributes.Builder()
                 .brand(getBrand())
                 .delivery_date(delivery_date)
                 .batch_no(batch_no)
+                .outright_return(outright_return)
+                .discrepancy(discrepancy)
                 .build();
     }
 
@@ -55,12 +67,12 @@ public class ExtendedAttributes {
         this.brand = brand;
     }
 
-    public void setDelivery_date(String delivery_date) {
-        this.delivery_date = delivery_date;
-    }
-
     public String getDelivery_date() {
         return delivery_date;
+    }
+
+    public void setDelivery_date(String delivery_date) {
+        this.delivery_date = delivery_date;
     }
 
     public String getBatch_no() {
@@ -72,8 +84,6 @@ public class ExtendedAttributes {
     }
 
     public String getOutright_return() {
-        if(outright_return.equals(""))
-            return "0";
         return outright_return;
     }
 
@@ -82,8 +92,6 @@ public class ExtendedAttributes {
     }
 
     public String getDiscrepancy() {
-        if(discrepancy.equals(""))
-            return "0";
         return discrepancy;
     }
 
@@ -94,6 +102,6 @@ public class ExtendedAttributes {
     @Override
     public boolean equals(Object o) {
         ExtendedAttributes extendedAttributes = (ExtendedAttributes)o;
-        return brand.equals(extendedAttributes.getBrand()) && delivery_date.equals(extendedAttributes.getDeliveryDate());
+        return brand.equals(extendedAttributes.getBrand()) && delivery_date.equals(extendedAttributes.getDelivery_date());
     }
 }

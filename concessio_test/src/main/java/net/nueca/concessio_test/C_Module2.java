@@ -35,7 +35,7 @@ public class C_Module2 extends ModuleActivity {
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setUseRecyclerView(true);
         simpleProductsFragment.setProductCategories(getProductCategories(true));
-        simpleProductsFragment.setMultipleInput(false);
+        simpleProductsFragment.setMultipleInput(true);
         simpleProductsFragment.setMultiInputListener(new MultiInputListener() {
             @Override
             public void showInputScreen(Product product) {

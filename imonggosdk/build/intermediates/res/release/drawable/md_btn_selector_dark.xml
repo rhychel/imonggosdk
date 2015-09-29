@@ -5,4 +5,4 @@
     <item android:drawable="@drawable/md_btn_selected_dark" android:state_pressed="true" />
     <item android:drawable="@drawable/md_transparent" />
 
-</selector><!-- From: file:/Users/afollestad/Projects/material-dialogs/library/src/main/res/drawable/md_btn_selector_dark.xml --><!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk2/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/drawable/md_btn_selector_dark.xml -->
+</selector><!-- From: file:/Users/afollestad/Projects/material-dialogs/library/src/main/res/drawable/md_btn_selector_dark.xml --><!-- From: file:/Users/gama/AndroidStudioProjects/gamaBranch/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/drawable/md_btn_selector_dark.xml -->

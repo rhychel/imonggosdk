@@ -5,4 +5,4 @@
     <item android:color="@color/keypad_default_text_disabled"
         android:state_enabled="false"/>
     <item android:color="@color/keypad_default_text"/>
-</selector><!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk2/imonggosdk/src/main/res/color/keypad_button_text.xml --><!-- From: file:/Users/rhymart/Documents/workspace/imonggosdk2/imonggosdk/build/intermediates/bundles/debug/res/color/keypad_button_text.xml -->
+</selector><!-- From: file:/Users/gama/AndroidStudioProjects/gamaBranch/imonggosdk/src/main/res/color/keypad_button_text.xml --><!-- From: file:/Users/gama/AndroidStudioProjects/gamaBranch/imonggosdk/build/intermediates/bundles/debug/res/color/keypad_button_text.xml -->

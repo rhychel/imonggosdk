@@ -2,6 +2,7 @@ package net.nueca.imonggosdk.objects.base;
 
 import android.util.Log;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -19,6 +20,7 @@ public abstract class BaseTable {
     @DatabaseField
     protected String searchKey = "";
 
+    @Expose
     @DatabaseField
     protected String utc_created_at, utc_updated_at;
 
