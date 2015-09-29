@@ -2,13 +2,11 @@ package net.nueca.imonggosdk.objects.base;
 
 import android.content.Context;
 
-import com.google.gson.ExclusionStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
-import net.nueca.imonggosdk.gson.exclusion.TransactionExclusion;
 import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import org.json.JSONException;

@@ -8,7 +8,6 @@ import com.j256.ormlite.field.DatabaseField;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.gson.exclusion.TransactionExclusion;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 
