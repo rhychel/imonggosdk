@@ -11,6 +11,8 @@ public class ExtendedAttributes {
     private String brand = "";
     private String delivery_date = "";
     private String batch_no = "";
+    private String outright_return = "";
+    private String discrepancy = "";
 
     public ExtendedAttributes() { }
 
@@ -37,6 +39,10 @@ public class ExtendedAttributes {
         return batch_no;
     }
 
+    public String getDeliveryDate() {
+        return delivery_date;
+    }
+
     public net.nueca.imonggosdk.objects.document.ExtendedAttributes convertForDocumentLine() {
         return new net.nueca.imonggosdk.objects.document.ExtendedAttributes.Builder()
                 .brand(getBrand())
@@ -49,12 +55,12 @@ public class ExtendedAttributes {
         this.brand = brand;
     }
 
-    public String getDelivery_date() {
-        return delivery_date;
-    }
-
     public void setDelivery_date(String delivery_date) {
         this.delivery_date = delivery_date;
+    }
+
+    public String getDelivery_date() {
+        return delivery_date;
     }
 
     public String getBatch_no() {
@@ -65,9 +71,29 @@ public class ExtendedAttributes {
         this.batch_no = batch_no;
     }
 
+    public String getOutright_return() {
+        if(outright_return.equals(""))
+            return "0";
+        return outright_return;
+    }
+
+    public void setOutright_return(String outright_return) {
+        this.outright_return = outright_return;
+    }
+
+    public String getDiscrepancy() {
+        if(discrepancy.equals(""))
+            return "0";
+        return discrepancy;
+    }
+
+    public void setDiscrepancy(String discrepancy) {
+        this.discrepancy = discrepancy;
+    }
+
     @Override
     public boolean equals(Object o) {
         ExtendedAttributes extendedAttributes = (ExtendedAttributes)o;
-        return brand.equals(extendedAttributes.getBrand()) && delivery_date.equals(extendedAttributes.getDelivery_date());
+        return brand.equals(extendedAttributes.getBrand()) && delivery_date.equals(extendedAttributes.getDeliveryDate());
     }
 }
