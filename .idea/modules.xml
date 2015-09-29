@@ -5,10 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/concessio/concessio.iml" filepath="$PROJECT_DIR$/concessio/concessio.iml" />
       <module fileurl="file://$PROJECT_DIR$/concessio_test/concessio_test.iml" filepath="$PROJECT_DIR$/concessio_test/concessio_test.iml" />
       <module fileurl="file://$PROJECT_DIR$/concessioengine/concessioengine.iml" filepath="$PROJECT_DIR$/concessioengine/concessioengine.iml" />
-      <module fileurl="file://$PROJECT_DIR$/concessioengine/concessioengine.iml" filepath="$PROJECT_DIR$/concessioengine/concessioengine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gamaBranch.iml" filepath="$PROJECT_DIR$/gamaBranch.iml" />
       <module fileurl="file://$PROJECT_DIR$/imonggosdk.iml" filepath="$PROJECT_DIR$/imonggosdk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/imonggosdk/imonggosdk-imonggosdk.iml" filepath="$PROJECT_DIR$/imonggosdk/imonggosdk-imonggosdk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/imonggosdk2.iml" filepath="$PROJECT_DIR$/imonggosdk2.iml" />
     </modules>
   </component>
 </project>

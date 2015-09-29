@@ -806,6 +806,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     protected void startSyncService() {
+        Log.e("startSyncService", "called");
         if (!isSyncServiceRunning(SyncModules.class) || mSyncModules == null) {
             mBounded = false;
             startService(mServiceIntent);
@@ -829,6 +830,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     protected void doUnbindService() {
+        Log.e("mBounded", "" + mBounded);
         if (isSyncServiceBinded()) {
             mBounded = false;
             unbindService(getServiceConnection());

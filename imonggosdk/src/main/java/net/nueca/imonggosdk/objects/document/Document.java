@@ -1,6 +1,9 @@
 package net.nueca.imonggosdk.objects.document;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -9,10 +12,13 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
 import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
 import net.nueca.imonggosdk.swable.SwableTools;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,32 +32,47 @@ import java.util.List;
 public class Document extends BaseTransactionDB {
     public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 50;
 
+    @Expose
     @DatabaseField
     protected String remark;
 
+    @Expose
     @DatabaseField
     protected String document_type_code;
 
+    @Expose
     protected List<DocumentLine> document_lines;
 
     @ForeignCollectionField
     private transient ForeignCollection<DocumentLine> document_lines_fc;
 
+    @Expose
     @DatabaseField
     protected Integer target_branch_id;
 
+    @Expose
     @DatabaseField
     protected Integer document_purpose_id;
+    @Expose
     @DatabaseField
     protected String document_purpose_name;
 
+    @Expose
     @DatabaseField
     protected String intransit_status;
+    @Expose
     @DatabaseField
     protected Integer user_id;
+    @Expose
     @DatabaseField
     protected String status;
 
+    @Expose
+    @DatabaseField
+    protected Integer parent_document_id;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
+    protected transient OfflineData offlineData;
 
     public Document() {
         super(null);
@@ -60,8 +81,14 @@ public class Document extends BaseTransactionDB {
 
     public Document(Builder builder) {
         super(builder);
-        //remark = builder.remark;
-        remark = "page=1/1";
+        remark = builder.remark;
+        if(remark != null && !StringUtils.containsIgnoreCase(remark, "page")) {
+            if(!remark.isEmpty())
+                remark += ",";
+            remark += "page=1/1";
+        }
+        else if(remark == null)
+            remark = "page=1/1";
         document_type_code = builder.document_type_code;
         document_lines = builder.document_lines;
         target_branch_id = builder.target_branch_id;
@@ -75,6 +102,12 @@ public class Document extends BaseTransactionDB {
         utc_created_at = builder.utc_created_at;
         utc_updated_at = builder.utc_updated_at;
         utc_document_date = builder.utc_document_date;
+
+        parent_document_id = builder.parent_document_id;
+
+        if(document_lines != null)
+            for(DocumentLine documentLine : document_lines)
+                documentLine.setDocument(this);
     }
 
     public String getRemark() {
@@ -83,6 +116,10 @@ public class Document extends BaseTransactionDB {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public void appendRemark(String moreRemark) {
+        this.remark += moreRemark;
     }
 
     public DocumentTypeCode getDocument_type_code() {
@@ -154,10 +191,26 @@ public class Document extends BaseTransactionDB {
         this.status = status;
     }
 
+    public Integer getParent_document_id() {
+        return parent_document_id;
+    }
+
+    public void setParent_document_id(Integer parent_document_id) {
+        this.parent_document_id = parent_document_id;
+    }
+
     public void addDocumentLine(DocumentLine documentLine) {
         if(document_lines == null)
             document_lines = new ArrayList<>();
+
+        if(documentLine.autoLine_no)
+            documentLine.setLine_no(document_lines.size()+1);
+
         document_lines.add(documentLine);
+    }
+
+    public void setOfflineData(OfflineData offlineData) {
+        this.offlineData = offlineData;
     }
 
     public static Document fromJSONString(String jsonString) throws JSONException {
@@ -177,8 +230,8 @@ public class Document extends BaseTransactionDB {
     @Override
     public boolean shouldPageRequest() {
         refresh();
-        //return document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
-        return false;
+        return document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
+        //return false;
     }
 
     @Override
@@ -211,6 +264,14 @@ public class Document extends BaseTransactionDB {
             return;
         for(DocumentLine documentLine : document_lines) {
             documentLine.setDocument(this);
+            try {
+                Product product = dbHelper.getProducts().queryBuilder().where().eq("id", documentLine.getProduct_id())
+                        .queryForFirst();
+                if(product != null)
+                    documentLine.setProduct(product);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             documentLine.insertTo(dbHelper);
         }
     }
@@ -244,6 +305,7 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
+        Log.e(reference+" ID","" + id);
         if(shouldPageRequest()) {
             try {
                 List<Document> documents = getChildDocuments();
@@ -276,6 +338,12 @@ public class Document extends BaseTransactionDB {
         protected String utc_created_at;
         protected String utc_updated_at;
         protected String utc_document_date;
+        protected Integer parent_document_id;
+
+        public Builder parent_document_id(Integer parent_document_id) {
+            this.parent_document_id = parent_document_id;
+            return this;
+        }
 
         public Builder utc_created_at(String utc_created_at) {
             this.utc_created_at = utc_created_at;
@@ -310,6 +378,11 @@ public class Document extends BaseTransactionDB {
             return this;
         }
 
+        public Builder intransit_status(boolean isIntransit) {
+            this.intransit_status = isIntransit? "Intransit" : "Received";
+            return this;
+        }
+
         public Builder id(int id) {
             this.id = id;
             return this;
@@ -339,6 +412,10 @@ public class Document extends BaseTransactionDB {
         public Builder addDocumentLine(DocumentLine documentLine) {
             if(document_lines == null)
                 document_lines = new ArrayList<>();
+
+            if(documentLine.autoLine_no)
+                documentLine.setLine_no(document_lines.size()+1);
+
             document_lines.add(documentLine);
             return this;
         }
@@ -362,7 +439,13 @@ public class Document extends BaseTransactionDB {
         document.setId(id + position);
         document.setDocument_lines(getDocumentLineAt(position));
         document.setReference(reference + "-" + (position + 1));
-        document.setRemark("page=" + (position + 1) + "/" + getChildCount());
+        //document.setRemark("page=" + (position + 1) + "/" + getChildCount());
+        document.setRemark(
+                new RemarkBuilder()
+                        .parse(remark)
+                        .page((position + 1), getChildCount())
+                        .build()
+        );
         return document;
     }
 
@@ -386,6 +469,7 @@ public class Document extends BaseTransactionDB {
         return super.toJSONObject();
     }
 
+    @Override
     public void refresh() {
         if(document_lines_fc != null && document_lines == null) {
             for(DocumentLine documentLine : document_lines_fc) {

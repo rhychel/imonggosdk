@@ -15,6 +15,7 @@ public class ModifiedNumpad extends Numpad {
 
     @Override
     protected void doWrite(String str) {
+        isFirstErase = false;
         String text = mTextHolder.getTextView().getText().toString();
         text += str;
         mTextHolder.getTextView().setText(text);
@@ -25,8 +26,14 @@ public class ModifiedNumpad extends Numpad {
         String text = mTextHolder.getTextView().getText().toString();
         if(text.isEmpty())
             return;
-        text = text.substring(0, text.length()-1);
-        mTextHolder.getTextView().setText(text);
+        if(isFirstErase) {
+            doClear();
+            isFirstErase = true;
+        }
+        else {
+            text = text.substring(0, text.length() - 1);
+            mTextHolder.getTextView().setText(text);
+        }
     }
 
     @Override

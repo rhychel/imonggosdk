@@ -86,4 +86,15 @@
         android:layout_toStartOf="@+id/btnSave"
         android:minWidth="64dp"
         android:layout_alignTop="@+id/btnSearch"/>
+
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Manual"
+        android:id="@+id/btnManual"
+        android:minWidth="64dp"
+        android:layout_alignTop="@+id/btnSearch"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"/>
 </RelativeLayout>

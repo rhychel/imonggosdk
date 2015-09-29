@@ -1,25 +1,60 @@
 package net.nueca.imonggosdk.objects.order;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
+import com.j256.ormlite.field.DatabaseField;
+
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
+
 /**
  * Created by gama on 7/1/15.
  */
-public class OrderLine {
+public class OrderLine extends BaseTable2 {
+    @Expose
+    @DatabaseField
     private int line_no = 0;
+    @Expose
+    @DatabaseField
     private int product_id = 0;
+    @Expose
+    @DatabaseField
     private double retail_price = 0.0;
+    @Expose
+    @DatabaseField
     private double quantity = 0.0;
 
+    @Expose
+    @DatabaseField
     private Integer unit_id = null;
+    @Expose
+    @DatabaseField
     private Double unit_quantity = null;
+    @Expose
+    @DatabaseField
     private Double unit_content_quantity = null;
+    @Expose
+    @DatabaseField
     private Double unit_retail_price = null;
+    @Expose
+    @DatabaseField
     private String unit_name = null;
+    @Expose
+    @DatabaseField
     private String brand = null;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "order_id")
+    protected transient Order order;
+
+    public OrderLine() {}
 
     public OrderLine(Builder builder) {
         line_no = builder.line_no;
@@ -70,6 +105,14 @@ public class OrderLine {
 
     public Integer getUnit_id() {
         return unit_id;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public JSONObject toJSONObject() throws JSONException {
@@ -123,6 +166,33 @@ public class OrderLine {
 
     public void setLine_no(int line_no) {
         this.line_no = line_no;
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.ORDER_LINES, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.ORDER_LINES, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.ORDER_LINES, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static class Builder {

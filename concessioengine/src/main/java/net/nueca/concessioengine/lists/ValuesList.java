@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.lists;
 
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,5 +31,25 @@ public class ValuesList extends ArrayList<Values> {
 
         quantity = totalQuantity.toString();
         return quantity;
+    }
+
+    public String getDiscrepancy() {
+        BigDecimal totalDsc = BigDecimal.ZERO;
+        for(Values values : this) {
+            if(values.getExtendedAttributes() != null && values.getExtendedAttributes().getDiscrepancy() != null)
+                totalDsc = totalDsc.add(NumberTools.toBigDecimal(values.getExtendedAttributes().getDiscrepancy()));
+        }
+
+        return totalDsc.toString();
+    }
+
+    public String getOutrightReturn() {
+        BigDecimal totalRet = BigDecimal.ZERO;
+        for(Values values : this) {
+            if(values.getExtendedAttributes() != null && values.getExtendedAttributes().getOutright_return() != null)
+                totalRet = totalRet.add(NumberTools.toBigDecimal(values.getExtendedAttributes().getOutright_return()));
+        }
+
+        return totalRet.toString();
     }
 }

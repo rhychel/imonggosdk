@@ -40,7 +40,7 @@ public class C_HistoryDetails extends ImonggoAppCompatActivity {
 
             List<Product> orderedItems = new ArrayList<>();
             if(offlineData != null) {
-                Log.e("Data", offlineData.getData());
+                //Log.e("Data", offlineData.getData().toString());
                 orderedItems = TransactionsAdapterHelper.generateTransactionItems(offlineData, getHelper());
             }
 

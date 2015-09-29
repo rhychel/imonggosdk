@@ -1,335 +1,275 @@
 package net.nueca.concessio;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SearchViewCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-
-import com.google.gson.Gson;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
+import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
-import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
+import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
+import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
+import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.views.SearchViewEx;
-import net.nueca.imonggosdk.enums.DocumentTypeCode;
-import net.nueca.imonggosdk.interfaces.AccountListener;
-import net.nueca.imonggosdk.objects.document.Document;
-import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
+import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.OfflineDataType;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchTag;
+import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.swable.SwableTools;
-import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.DialogTools;
+
+import org.json.JSONException;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
- * Created by rhymart on 6/4/15.
- * imonggosdk (c)2015
+ * Created by rhymart on 8/21/15.
+ * imonggosdk2 (c)2015
  */
 public class C_Module extends ModuleActivity implements SetupActionBar {
 
-    public SimpleProductsFragment simpleProductsFragment;
-    public SimpleCustomersFragment simpleCustomersFragment;
-    public SearchViewEx mSearch;
-    private Button btnSample;
-    private FloatingActionButton fab;
+    private SimpleProductsFragment simpleProductsFragment, finalizeFragment;
+    private Button btnSummary;
+
+    private Toolbar toolbar;
+    private boolean hasMenu = true;
+
+    private SimpleReceiveFragment simpleReceiveFragment;
+    private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.simple_customers_fragment_lv);
 
-    /*    btnSample = (Button) findViewById(R.id.btnSample);
-        fab = (FloatingActionButton) findViewById(R.id.fab);*/
+        setContentView(R.layout.c_module);
 
-        SwableTools.startSwable(this);
+        btnSummary = (Button) findViewById(R.id.btnSummary);
 
-        btnSample.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*try {
-                    User user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).query().get(0);
-                    SwableTools.sendTransaction(getHelper(), user.getHome_branch_id(), generateOrder(C_Module.this, user.getHome_branch_id()), OfflineDataType.SEND_ORDER);
-                    ProductsAdapterHelper.getSelectedProductItems().clear();
-                    simpleProductsFragment.refreshList();
-                } catch (SQLException | JSONException e) {
-                    e.printStackTrace();
-                }*/
-                Log.e("BUTTON", simpleCustomersFragment.getSelectedCustomers().get(0).toString());
+        btnSummary.setOnClickListener(onClickSummary);
 
-            }
-        });
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e("BUTTON", simpleCustomersFragment.getSelectedCustomers().get(0).toString());
-            }
-        });
+        simpleProductsFragment = SimpleProductsFragment.newInstance();
+        finalizeFragment = SimpleProductsFragment.newInstance();
 
-        /*simpleProductsFragment = new SimpleProductsFragment();
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
-        simpleProductsFragment.setProductCategories(getProductCategories(true));
-        simpleProductsFragment.setListScrollListener(new ListScrollListener() {
-            @Override
-            public void onScrolling() {
-                ViewCompat.animate(btnSample).translationY(1000.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
-            }
 
-            @Override
-            public void onScrollStopped() {
-                ViewCompat.animate(btnSample).translationY(0.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
-            }
-        });
-        simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
-            @Override
-            public void whenItemsSelectedUpdated() {
-                if (ProductsAdapterHelper.getSelectedProductItems().size() > 0)
-                    ViewCompat.animate(btnSample).translationY(0.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
-                else {
-                    if (ProductsAdapterHelper.getSelectedProductItems().size() > 0)
-                        ViewCompat.animate(btnSample).translationY(1000.0f).setDuration(400).setInterpolator(new AccelerateDecelerateInterpolator()).start();
-                }
-            }
-        });*/
+        finalizeFragment.setHelper(getHelper());
+        finalizeFragment.setSetupActionBar(this);
+        switch (concessioModule) {
+            case ORDERS: {
+                simpleProductsFragment.setHasUnits(true);
+                simpleProductsFragment.setProductCategories(getProductCategories(true));
 
-        try {
-            /*if(getHelper().getCustomers().queryForAll().size() <= 0) {
-                Log.e("CUSTOMERS", " ------------------------- adding");
-                String fname[] = {"John","Pepe","Sid","Mark","Jimmy","Zed","Paul","Charles","Markus","Albert",
-                    "Peter","Donald","Davy"};
-                String lname[] = {"Doe","Smith","Meier","Wane","Turner","Wong","Reed","Darwin","Snow","Einstein",
-                    "Griffin","Trump","Jones"};
-                for (int i = 1; i <= 1000; i++) {
-                    Customer customer = new Customer();
-                    customer.setId(i);
-                    customer.setFirst_name(fname[((int) (Math.random() * 100 % fname.length))]);
-                    customer.setLast_name(lname[((int) (Math.random() * 100 % lname.length))]);
-                    customer.setName(customer.getFirst_name() + " " + customer.getLast_name());
-                    customer.setStreet("Unit " + (i + 400) + " DECA Corporate Center, Panganiban Drive, Barangay Tinago");
-                    customer.setCity("Naga City");
-                    customer.setCountry("Philippines");
-                    customer.setZipcode("4400");
-                    customer.setGender("M");
-                    if(((int)(Math.random()*100) % 2) == 0) {
-                        customer.setAlternate_code((int) (Math.random() * 100000000) + "");
-                        Log.e("Customer " + i, customer.getAlternate_code());
+                finalizeFragment.setHasCategories(false);
+                finalizeFragment.setHasBrand(false);
+                finalizeFragment.setHasDeliveryDate(false);
+                finalizeFragment.setHasUnits(true);
+
+                btnSummary.setVisibility(View.VISIBLE);
+            } break;
+            case PHYSICAL_COUNT: {
+                simpleProductsFragment.setProductCategories(getProductCategories(true));
+                simpleProductsFragment.setMultipleInput(true);
+                simpleProductsFragment.setMultiInputListener(multiInputListener);
+
+                finalizeFragment.setHasCategories(false);
+                finalizeFragment.setMultipleInput(true);
+                finalizeFragment.setMultiInputListener(multiInputListener);
+
+                btnSummary.setVisibility(View.VISIBLE);
+            } break;
+            case RECEIVE: {
+                simpleReceiveFragment = new SimpleReceiveFragment();
+                simpleReceiveFragment.setHelper(getHelper());
+                simpleReceiveFragment.setSetupActionBar(this);
+                simpleReceiveFragment.setUseRecyclerView(false);
+                simpleReceiveFragment.setFragmentContainer(R.id.flContent);
+                simpleReceiveFragment.setProductCategories(getProductCategories(true));
+                simpleReceiveFragment.setFABListener(new SimpleReceiveFragment.FloatingActionButtonListener() {
+                    @Override
+                    public void onClick(ReceivedProductItemList receivedProductItemList, Branch targetBranch,
+                                        String reference, Integer parentDocumentID) {
+                        SimpleReceiveReviewFragment simpleReceiveReviewFragment = new SimpleReceiveReviewFragment();
+                        simpleReceiveReviewFragment.setParentID(parentDocumentID);
+                        simpleReceiveReviewFragment.setTargetBranch(targetBranch);
+                        simpleReceiveReviewFragment.setDRNo(reference);
+                        simpleReceiveReviewFragment.setUseRecyclerView(true);
+                        simpleReceiveReviewFragment.setHelper(getHelper());
+                        simpleReceiveReviewFragment.setFragmentContainer(R.id.flContent);
+                        simpleReceiveReviewFragment.setReceivedProductItemList(receivedProductItemList);
+                        simpleReceiveReviewFragment.setIsManual(simpleReceiveFragment.isManual());
+
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
+                                        R.anim.slide_in_left, R.anim.slide_out_right)
+                                .replace(R.id.flContent, simpleReceiveReviewFragment)
+                                .addToBackStack("review_fragment")
+                                .commit();
                     }
-                    customer.insertTo(getHelper());
-                }
-            }*/
-
-            for(Document document : getHelper().getDocuments().queryForAll()) {
-                Log.e("DELETE",document.getId()+"");
-                document.deleteTo(getHelper());
+                });
+                btnSummary.setVisibility(View.GONE);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.flContent, simpleReceiveFragment)
+                        .commit();
+                return;
             }
-
-
-            Document document = new Document.Builder()
-                    .id(1)
-                    .document_type_code(DocumentTypeCode.PHYSICAL_COUNT)
-                    .target_branch_id(457)
-                    .generateReference(this, getSession().getDevice_id())
-                    .addDocumentLine(
-                            new DocumentLine.Builder()
-                                    .line_no(1)
-                                    .product_id(36151)
-                                    .price(0)
-                                    .quantity(5)
-                                    .extended_attributes(
-                                            new ExtendedAttributes.Builder()
-                                                    .brand("Rsrh")
-                                                    .delivery_date("2015-07-20")
-                                                    .build()
-                                    )
-                                    .build()
-                    )
-                    .addDocumentLine(
-                            new DocumentLine.Builder()
-                                    .line_no(2)
-                                    .product_id(36152)
-                                    .price(30)
-                                    .quantity(1)
-                                    .extended_attributes(
-                                            new ExtendedAttributes.Builder()
-                                                    .brand("Bsa")
-                                                    .delivery_date("2015-07-20")
-                                                    .build()
-                                    )
-                                    .build()
-                    )
-                    .build();
-
-
-            Log.e("O Docu ------- " + document.getId(), document.toString());
-            document.insertTo(getHelper());
-            Gson gson = new Gson();
-
-            List<Document> documents = getHelper().getDocuments().queryForAll();
-            for(Document docu : documents)
-                Log.e("--DOCU " + docu.getId(), docu.toString());
-
-            Log.e("--DOCUMENT LINE " + getHelper().getDocumentLines().queryForAll().size(),
-                    gson.toJson(getHelper().getDocumentLines().queryForAll()));
-            Log.e("--EXTENDED ATTRIB " + getHelper().getExtendedAttributes().queryForAll().size(),
-                    gson.toJson(getHelper().getExtendedAttributes().queryForAll()));
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
-        simpleCustomersFragment = new SimpleCustomersFragment();
-        simpleCustomersFragment.setMultiSelect(true);
-        simpleCustomersFragment.setHelper(getHelper());
-        simpleCustomersFragment.setSetupActionBar(this);
-        simpleCustomersFragment.setUseRecyclerView(true);
-        simpleCustomersFragment.setListScrollListener(new ListScrollListener() {
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
-            public void onScrolling() {
-                ViewCompat.animate(fab).translationY(1000.0f).setDuration(400)
-                        .setInterpolator(new AccelerateDecelerateInterpolator()).start();
-            }
-
-            @Override
-            public void onScrollStopped() {
-                ViewCompat.animate(fab).translationY(0.0f).setDuration(400)
-                        .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+            public void onBackStackChanged() {
+                hasMenu = false;
+                btnSummary.setText("Send");
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        btnSummary.setText("Summary");
+                        hasMenu = true;
+                        onBackPressed();
+                        getSupportActionBar().invalidateOptionsMenu();
+                    }
+                });
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                getSupportActionBar().setTitle("Finalize");
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeButtonEnabled(true);
+                getSupportActionBar().invalidateOptionsMenu();
             }
         });
 
-        simpleCustomersFragment.setColor(fetchAccentColor(this));
-        simpleCustomersFragment.setHighlightColor(Color.parseColor("#22ffaa00"));
-
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.flContent, simpleCustomersFragment)
+                .add(R.id.flContent, simpleProductsFragment)
                 .commit();
     }
 
-    private int fetchAccentColor(Context context) {
-        TypedValue typedValue = new TypedValue();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(concessioModule == ConcessioModule.PHYSICAL_COUNT) {
+            simpleProductsFragment.refreshList();
+            if(getSupportFragmentManager().findFragmentByTag("finalize") != null)
+               finalizeFragment.refreshList();
+        }
+    }
 
-        TypedArray a = context.obtainStyledAttributes(typedValue.data, new int[] { R.attr.colorAccent });
-        int color = a.getColor(0, 0);
-
-        a.recycle();
-
-        return color;
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        btnSummary.setText("Summary");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.simple_customers_menu, menu);
-        mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
+        if(hasMenu) {
+            getMenuInflater().inflate(R.menu.simple_products_menu, menu);
+            menu.findItem(R.id.mHistory).setVisible(false);
+            menu.findItem(R.id.mLogout).setVisible(false);
 
-        if(mSearch != null) {
-            mSearch.setSearchViewExListener(new SearchViewEx.SearchViewExListener() {
-                @Override
-                public void whenBackPressed() {
-                    if(!mSearch.isIconified())
-                        mSearch.setIconified(true);
-                }
-            });
-            mSearch.setIconifiedByDefault(true);
-            SearchViewCompat.setOnQueryTextListener(mSearch, new SearchViewCompat.OnQueryTextListenerCompat() {
+            mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
+            initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    //simpleProductsFragment.updateListWhenSearch(newText);
-                    simpleCustomersFragment.updateListWhenSearch(newText);
+                    simpleProductsFragment.updateListWhenSearch(newText);
                     return true;
                 }
-
             });
         }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public void onBackPressed() {
-        if(mSearch != null) {
-            if(!SearchViewCompat.isIconified(mSearch))
-                closeSearchField(mSearch);
-            else
-                super.onBackPressed();
-        }
-        else
-            super.onBackPressed();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.mHistory) {
-            Intent intent = new Intent(this, C_Login.class);
-            startActivity(intent);
-        }
-        else if(item.getItemId() == R.id.mLogout) {
-            AlertDialog.Builder logout = new AlertDialog.Builder(this);
-            logout.setMessage("Logout account?");
-            logout.setTitle("Logout");
-            logout.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    try {
-                        AccountTools.unlinkAccount(C_Module.this, getHelper(), new AccountListener() {
-                            @Override
-                            public void onLogoutAccount() {
-
-                            }
-
-                            @Override
-                            public void onUnlinkAccount() {
-                                Intent intent = new Intent(C_Module.this, C_Login.class);
-                                finish();
-                                startActivity(intent);
-                            }
-                        });
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            logout.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                }
-            });
-            logout.show();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        simpleCustomersFragment.refreshList();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ProductsAdapterHelper.destroyProductAdapterHelper();
-        SwableTools.stopSwable(this);
-    }
-
-    @Override
     public void setupActionBar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        this.toolbar = toolbar;
     }
+
+    private MultiInputListener multiInputListener = new MultiInputListener() {
+        @Override
+        public void showInputScreen(Product product) {
+            Intent intent = new Intent(C_Module.this, C_MultiInput.class);
+            intent.putExtra(MultiInputSelectedItemFragment.PRODUCT_ID, product.getId());
+            startActivity(intent);
+        }
+    };
+
+    private View.OnClickListener onClickSummary = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(btnSummary.getText().equals("Send")) {
+                DialogTools.showSelectionDialog(C_Module.this,
+                        new ArrayAdapter<>(C_Module.this, android.R.layout.simple_list_item_single_choice, getBranches()),
+                        "Yes", new DialogTools.OnItemSelected<Branch>() {
+                            @Override
+                            public void itemChosen(final Branch branch) {
+                                final Branch warehouse = getWarehouse();
+                                if(warehouse == null)
+                                    DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.");
+                                else {
+                                    DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            switch (concessioModule) {
+                                                case ORDERS: {
+                                                    try {
+                                                        SwableTools.sendTransaction(getHelper(), branch.getId(),
+                                                                generateOrder(C_Module.this, warehouse.getId()), OfflineDataType.SEND_ORDER);
+                                                        onBackPressed();
+                                                        ProductsAdapterHelper.clearSelectedProductItemList();
+                                                        simpleProductsFragment.refreshList();
+                                                    } catch (SQLException | JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                                break;
+                                                case PHYSICAL_COUNT: {
+                                                    try {
+                                                        OfflineData offlineData = SwableTools.sendTransaction(getHelper(), branch.getId(),
+                                                                generateDocument(C_Module.this), OfflineDataType.SEND_DOCUMENT);
+
+                                                        Log.e("PCount", offlineData.getObjectFromData().toString());
+                                                        onBackPressed();
+                                                        ProductsAdapterHelper.clearSelectedProductItemList();
+                                                        simpleProductsFragment.refreshList();
+                                                    } catch (SQLException | JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }, "No");
+                                }
+                            }
+                        }, "No");
+            }
+            else {
+                if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
+                    DialogTools.showDialog(C_Module.this, "Ooops!", "You have no selected items. Kindly select first products.");
+                else {
+                    btnSummary.setText("Send");
+                    finalizeFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                            .add(R.id.flContent, finalizeFragment, "finalize")
+                            .addToBackStack("finalizer")
+                            .commit();
+                }
+            }
+        }
+    };
 }

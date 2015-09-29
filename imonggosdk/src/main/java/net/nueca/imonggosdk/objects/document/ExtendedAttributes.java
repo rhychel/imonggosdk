@@ -1,6 +1,7 @@
 package net.nueca.imonggosdk.objects.document;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -17,12 +18,21 @@ import java.sql.SQLException;
  * Created by gama on 7/20/15.
  */
 public class ExtendedAttributes extends BaseTable2 {
+    @Expose
     @DatabaseField
     protected String delivery_date;
+    @Expose
     @DatabaseField
     protected String brand;
+    @Expose
     @DatabaseField
     protected String batch_no;
+    @Expose
+    @DatabaseField
+    protected String outright_return;
+    @Expose
+    @DatabaseField
+    protected String discrepancy;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_line_id")
     protected transient DocumentLine documentLine;
@@ -30,9 +40,13 @@ public class ExtendedAttributes extends BaseTable2 {
     public ExtendedAttributes() {}
 
     protected ExtendedAttributes(Builder builder) {
+        documentLine = builder.documentLine;
+
         delivery_date = builder.delivery_date;
         brand = builder.brand;
         batch_no = builder.batch_no;
+        outright_return = builder.outright_return;
+        discrepancy = builder.discrepancy;
     }
 
     public String getDelivery_date() {
@@ -57,6 +71,22 @@ public class ExtendedAttributes extends BaseTable2 {
 
     public void setBatch_no(String batch_no) {
         this.batch_no = batch_no;
+    }
+
+    public String getOutright_return() {
+        return outright_return;
+    }
+
+    public void setOutright_return(String outright_return) {
+        this.outright_return = outright_return;
+    }
+
+    public String getDiscrepancy() {
+        return discrepancy;
+    }
+
+    public void setDiscrepancy(String discrepancy) {
+        this.discrepancy = discrepancy;
     }
 
     public JSONObject toJSONObject() throws JSONException {
@@ -103,6 +133,8 @@ public class ExtendedAttributes extends BaseTable2 {
         protected String delivery_date;
         protected String brand;
         protected String batch_no;
+        protected String outright_return;
+        protected String discrepancy;
         protected DocumentLine documentLine;
 
         public Builder document_line(DocumentLine documentLine) {
@@ -122,7 +154,28 @@ public class ExtendedAttributes extends BaseTable2 {
             this.batch_no = batch_no;
             return this;
         }
+        public Builder outright_return(String outright_return) {
+            this.outright_return = outright_return;
+            return this;
+        }
+        public Builder discrepancy(String discrepancy) {
+            this.discrepancy = discrepancy;
+            return this;
+        }
 
+        public boolean isEmpty() {
+            return  delivery_date == null &&
+                    brand == null &&
+                    batch_no == null &&
+                    outright_return == null &&
+                    discrepancy == null;
+        }
+
+        public ExtendedAttributes buildIfNotEmpty() {
+            if(isEmpty())
+                return null;
+            return new ExtendedAttributes(this);
+        }
         public ExtendedAttributes build() {
             return new ExtendedAttributes(this);
         }
