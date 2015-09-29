@@ -58,6 +58,16 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
 
     private Integer parentID;
 
+    private int fragmentContainer;
+
+    public int getFragmentContainer() {
+        return fragmentContainer;
+    }
+
+    public void setFragmentContainer(int fragmentContainer) {
+        this.fragmentContainer = fragmentContainer;
+    }
+
     public void setTargetBranch(Branch targetBranch) {
         this.targetBranch = targetBranch;
     }
@@ -79,6 +89,7 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
                     .target_branch_id(targetBranch.getId())
                     .document_type_code(DocumentTypeCode.RECEIVE_BRANCH)
                     .document_lines(documentLines)
+                    //.intransit_status("Received")
                     .remark(
                             new RemarkBuilder()
                                     .isManual(isManual)
@@ -217,9 +228,10 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
         fabContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Document document = generateReceiveDocument();
                 if(fabListener != null)
-                    fabListener.onClick(generateReceiveDocument());
-                Log.e("Document", generateReceiveDocument().toString());
+                    fabListener.onClick(document);
+                Log.e("Document", document.toString());
             }
         });
 
@@ -249,7 +261,6 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
     }
 
     public void forceUpdateProductList() {
-        Log.e("SimpleReceiveReviewFragment", "forceUpdateProductList");
         if(useRecyclerView) {
             simpleReceiveRecyclerViewAdapter.setIsManual(isManual);
             //simpleReceiveRecyclerViewAdapter.updateList(getObjects());
@@ -300,7 +311,6 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
 
     @Override
     protected void whenListEndReached(List objects) {
-        Log.e("SimpleReceiveReviewFragment", "whenListEndReached");
         if(useRecyclerView) {
             simpleReceiveRecyclerViewAdapter.addAllReceived(getReceivedProducts());
             simpleReceiveRecyclerViewAdapter.notifyDataSetChanged();
@@ -373,7 +383,7 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
             //receiveMultiInputFragment.setOriginalQuantity(original_qty);
 
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.flContent, receiveMultiInputFragment)
+                    .replace(getFragmentContainer(), receiveMultiInputFragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .addToBackStack("review_multiinput_fragment")
                     .commitAllowingStateLoss();

@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import net.nueca.concessioengine.adapters.base.BaseReceiveAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
@@ -57,6 +58,16 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
     protected List<String> productCategories = new ArrayList<>();
 
     protected FloatingActionButton fabContinue;
+
+    private int fragmentContainer;
+
+    public int getFragmentContainer() {
+        return fragmentContainer;
+    }
+
+    public void setFragmentContainer(int fragmentContainer) {
+        this.fragmentContainer = fragmentContainer;
+    }
 
     protected abstract void whenListEndReached(List<DocumentLine> documentLines);
     protected abstract void toggleNoItems(String msg, boolean show);

@@ -48,7 +48,7 @@ public class TransactionsAdapterHelper {
 
         try {
             if(offlineData.getType() == OfflineData.ORDER) {
-                Order order = Order.fromJSONString(offlineData.getData());
+                Order order = Order.fromJSONObject(offlineData.getData());
                 for(OrderLine orderLine : order.getOrder_lines()) {
                     Product product = dbHelper.getProducts().queryBuilder().where().eq("id", orderLine.getProduct_id()).and().isNull("status").queryForFirst();
                     if(product != null)

@@ -1,6 +1,7 @@
 package net.nueca.imonggosdk.objects.document;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -17,14 +18,19 @@ import java.sql.SQLException;
  * Created by gama on 7/20/15.
  */
 public class ExtendedAttributes extends BaseTable2 {
+    @Expose
     @DatabaseField
     protected String delivery_date;
+    @Expose
     @DatabaseField
     protected String brand;
+    @Expose
     @DatabaseField
     protected String batch_no;
+    @Expose
     @DatabaseField
     protected String outright_return;
+    @Expose
     @DatabaseField
     protected String discrepancy;
 

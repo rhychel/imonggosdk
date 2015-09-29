@@ -3,31 +3,68 @@ package net.nueca.imonggosdk.objects.invoice;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
+import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
+import net.nueca.imonggosdk.objects.base.BaseTransactionDB2;
 import net.nueca.imonggosdk.objects.base.BatchList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by gama on 7/1/15.
  */
-public class Invoice extends BaseTransaction {
+public class Invoice extends BaseTransactionDB2 {
+    @Expose
+    @DatabaseField
     protected String invoice_date;
+    @Expose
+    @DatabaseField
     protected String status;
+    @Expose
+    @DatabaseField
     protected String email;
+    @Expose
+    @DatabaseField
     protected int user_id;
+    @Expose
+    @DatabaseField
     protected boolean tax_inclusive;
+    @Expose
+    @DatabaseField
     protected String remark;
+    @Expose
     protected List<InvoiceLine> invoice_lines;
+    @Expose
     protected List<InvoicePayment> payments;
+    @Expose
     protected List<InvoiceTaxRate> invoice_tax_rates;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<InvoiceLine> invoice_lines_fc;
+    @ForeignCollectionField
+    private transient ForeignCollection<InvoicePayment> payments_fc;
+    @ForeignCollectionField
+    private transient ForeignCollection<InvoiceTaxRate> invoice_tax_rates_fc;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
+    protected transient OfflineData offlineData;
+
+    public Invoice() {}
 
     public Invoice(Builder builder) {
         super(builder);
@@ -82,6 +119,7 @@ public class Invoice extends BaseTransaction {
     }
 
     public List<InvoiceLine> getInvoiceLines() {
+        refresh();
         if(invoice_lines == null)
             invoice_lines = new BatchList<>(DatabaseOperation.INSERT);
         return invoice_lines;
@@ -91,14 +129,8 @@ public class Invoice extends BaseTransaction {
         this.invoice_lines = invoice_lines;
     }
 
-    public JSONArray getInvoiceLinesJSONArray() throws JSONException {
-        JSONArray jsonArray = new JSONArray();
-        for(InvoiceLine invoiceLine : invoice_lines)
-            jsonArray.put(invoiceLine.toJSONObject());
-        return jsonArray;
-    }
-
     public List<InvoicePayment> getPayments() {
+        refresh();
         return payments;
     }
 
@@ -106,26 +138,13 @@ public class Invoice extends BaseTransaction {
         this.payments = invoicePayments;
     }
 
-    public JSONArray getPaymentsJSONArray() throws JSONException {
-        JSONArray jsonArray = new JSONArray();
-        for(InvoicePayment invoicePayment : payments)
-            jsonArray.put(invoicePayment.toJSONObject());
-        return jsonArray;
-    }
-
     public List<InvoiceTaxRate> getInvoiceTaxRates() {
+        refresh();
         return invoice_tax_rates;
     }
 
     public void setInvoiceTaxRates(BatchList<InvoiceTaxRate> invoice_tax_rates) {
         this.invoice_tax_rates = invoice_tax_rates;
-    }
-
-    public JSONArray getInvoiceTaxRatesJSONArray() throws JSONException {
-        JSONArray jsonArray = new JSONArray();
-        for(InvoiceTaxRate invoiceTaxRate : invoice_tax_rates)
-            jsonArray.put(invoiceTaxRate.toJSONObject());
-        return jsonArray;
     }
 
     public void addInvoiceLine(InvoiceLine invoiceLine) {
@@ -136,6 +155,10 @@ public class Invoice extends BaseTransaction {
     }
     public void addPayment(InvoicePayment invoicePayment) {
         payments.add(invoicePayment);
+    }
+
+    public void setOfflineData(OfflineData offlineData) {
+        this.offlineData = offlineData;
     }
 
     public static Invoice fromJSONString(String jsonString) throws JSONException {
@@ -154,12 +177,25 @@ public class Invoice extends BaseTransaction {
 
     @Override
     public boolean shouldPageRequest() {
+        refresh();
         return false;
     }
 
     @Override
     public int getChildCount() {
         return 1;
+    }
+
+    @Override
+    public String toJSONString() {
+        refresh();
+        return super.toJSONString();
+    }
+
+    @Override
+    public JSONObject toJSONObject() throws JSONException {
+        refresh();
+        return super.toJSONObject();
     }
 
     public static class Builder extends BaseTransaction.Builder<Builder> {
@@ -231,6 +267,109 @@ public class Invoice extends BaseTransaction {
 
         public Invoice build() {
             return new Invoice(this);
+        }
+    }
+
+    @Override
+    public void refresh() {
+        if(invoice_lines_fc != null && invoice_lines == null) {
+            for(InvoiceLine invoiceLine : invoice_lines_fc) {
+                addInvoiceLine(invoiceLine);
+            }
+        }
+        if(payments_fc != null && payments == null) {
+            for(InvoicePayment invoicePayment : payments_fc) {
+                addPayment(invoicePayment);
+            }
+        }
+        if(invoice_tax_rates_fc != null && invoice_tax_rates == null) {
+            for(InvoiceTaxRate invoiceTaxRate : invoice_tax_rates_fc) {
+                addInvoiceTaxRate(invoiceTaxRate);
+            }
+        }
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        refresh();
+        if(invoice_lines != null) {
+            for (InvoiceLine invoiceLine : invoice_lines) {
+                invoiceLine.setInvoice(this);
+                invoiceLine.insertTo(dbHelper);
+            }
+        }
+        if(invoice_tax_rates != null) {
+            for (InvoiceTaxRate invoiceTaxRate : invoice_tax_rates) {
+                invoiceTaxRate.setInvoice(this);
+                invoiceTaxRate.insertTo(dbHelper);
+            }
+        }
+        if(payments != null) {
+            for (InvoicePayment payment : payments) {
+                payment.setInvoice(this);
+                payment.insertTo(dbHelper);
+            }
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        refresh();
+        if(invoice_lines != null) {
+            for (InvoiceLine invoiceLine : invoice_lines) {
+                invoiceLine.deleteTo(dbHelper);
+            }
+        }
+        if(invoice_tax_rates != null) {
+            for (InvoiceTaxRate invoiceTaxRate : invoice_tax_rates) {
+                invoiceTaxRate.deleteTo(dbHelper);
+            }
+        }
+        if(payments != null) {
+            for (InvoicePayment payment : payments) {
+                payment.deleteTo(dbHelper);
+            }
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        refresh();
+        if(invoice_lines != null) {
+            for (InvoiceLine invoiceLine : invoice_lines) {
+                invoiceLine.setInvoice(this);
+                invoiceLine.updateTo(dbHelper);
+            }
+        }
+        if(invoice_tax_rates != null) {
+            for (InvoiceTaxRate invoiceTaxRate : invoice_tax_rates) {
+                invoiceTaxRate.setInvoice(this);
+                invoiceTaxRate.updateTo(dbHelper);
+            }
+        }
+        if(payments != null) {
+            for (InvoicePayment payment : payments) {
+                payment.setInvoice(this);
+                payment.updateTo(dbHelper);
+            }
         }
     }
 }

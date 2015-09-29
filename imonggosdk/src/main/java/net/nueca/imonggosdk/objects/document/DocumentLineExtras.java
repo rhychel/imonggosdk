@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects.document;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
  * Created by gama on 9/8/15.
  */
 public class DocumentLineExtras extends BaseTable2 {
+    @Expose
     @DatabaseField
     private String batch_no;
 

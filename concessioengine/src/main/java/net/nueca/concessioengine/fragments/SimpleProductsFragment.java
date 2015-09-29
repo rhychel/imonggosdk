@@ -292,4 +292,11 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             tvNoProducts.setText(msg);
         }
     }
+
+    public void clearSelectedItems() {
+        if(useRecyclerView)
+            simpleProductRecyclerViewAdapter.clearSelectedItems();
+        else
+            simpleProductListAdapter.clearSelectedItems();
+    }
 }

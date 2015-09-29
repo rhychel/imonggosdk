@@ -21,6 +21,12 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
 import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
+import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
 
 import java.util.ArrayList;
 
@@ -131,5 +137,32 @@ public class BatchList<T> extends ArrayList<T> {
             dbHelper.batchCreateOrUpdateDocumentLineExtras(this, databaseOperation);
             Log.e(TAG, databaseOperation.toString() + "ING to Document Line Extras table");
         }
+        /** Orders -- gama **/
+        if(get(0) instanceof Order) {
+            dbHelper.batchCreateOrUpdateOrders(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order table");
+        }
+        if(get(0) instanceof OrderLine) {
+            dbHelper.batchCreateOrUpdateOrderLines(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order Line table");
+        }
+        /** Invoices -- gama **/
+        if(get(0) instanceof Invoice) {
+            dbHelper.batchCreateOrUpdateInvoices(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order table");
+        }
+        if(get(0) instanceof InvoiceLine) {
+            dbHelper.batchCreateOrUpdateInvoiceLines(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order table");
+        }
+        if(get(0) instanceof InvoicePayment) {
+            dbHelper.batchCreateOrUpdateInvoicePayments(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order table");
+        }
+        if(get(0) instanceof InvoiceTaxRate) {
+            dbHelper.batchCreateOrUpdateInvoiceTaxRates(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order table");
+        }
+
     }
 }

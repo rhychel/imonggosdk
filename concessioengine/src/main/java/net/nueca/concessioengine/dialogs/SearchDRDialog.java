@@ -24,6 +24,8 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.widgets.ModifiedNumpad;
 
+import org.json.JSONException;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,12 +171,18 @@ public class SearchDRDialog extends BaseAppCompatDialog {
     }
 
     public Document search(String drNo, Branch branch) throws SQLException {
-        Log.e("search", drNo + " from " + dbHelper.getDocuments().queryForAll().size() + " document(s)");
+        Log.e("search", drNo + " from " + dbHelper.getDocuments().queryForAll().size() + " document(s) for branch '"
+                + branch.getName() + "'");
+
         Document document = dbHelper.getDocuments().queryBuilder()
                 .where()
-                //.eq("target_branch_id", branch.getId()).and()
-                .eq("reference", drNo)
+                .eq("target_branch_id", branch.getId()).and()
+                .eq("reference", drNo).and()
+                .eq("intransit_status", "Intransit")
                 .queryForFirst();
+
+        if(document != null)
+            Log.e("Reference " + drNo, document.getTarget_branch_id() + " -- " + branch.getId());
 
         isNotFound = document == null;
         return document;

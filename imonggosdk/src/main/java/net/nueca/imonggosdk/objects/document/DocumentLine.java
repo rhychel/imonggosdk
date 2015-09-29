@@ -1,11 +1,14 @@
 package net.nueca.imonggosdk.objects.document;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.gson.exclusion.TransactionExclusion;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 
@@ -19,45 +22,61 @@ import java.sql.SQLException;
  */
 public class DocumentLine extends BaseTable2 {
 
+    @Expose
     @DatabaseField
     protected int line_no;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_obj_id")
     protected transient Product product;
+    @Expose
     @DatabaseField
     protected int product_id;
+    @Expose
     @DatabaseField
     protected double quantity;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
     protected transient Document document;
 
+    @Expose
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extended_attributes")
     protected ExtendedAttributes extended_attributes;
 
+    @Expose
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
     protected DocumentLineExtras extras;
 
+    @Expose
     @DatabaseField
     protected String discount_text;
+    @Expose
     @DatabaseField
     protected Double price;
+    @Expose
     @DatabaseField
     protected Double retail_price;
+    @Expose
     @DatabaseField
     protected Integer unit_id;
+    @Expose
     @DatabaseField
     protected Double unit_content_quantity;
+    @Expose
     @DatabaseField
     protected String unit_name;
+    @Expose
     @DatabaseField
     protected Double unit_quantity;
+    @Expose
     @DatabaseField
     protected Double unit_retail_price;
 
+    @Expose
     @DatabaseField
     protected String product_name;
+    @Expose
     @DatabaseField
     protected String product_stock_no;
+    @Expose
     @DatabaseField
     protected Double subtotal;
 
@@ -236,7 +255,7 @@ public class DocumentLine extends BaseTable2 {
     }
 
     public JSONObject toJSONObject() throws JSONException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return new JSONObject(gson.toJson(this));
     }
 
@@ -288,6 +307,14 @@ public class DocumentLine extends BaseTable2 {
             dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        if(extended_attributes != null) {
+            extended_attributes.updateTo(dbHelper);
+        }
+
+        if(extras != null) {
+            extras.updateTo(dbHelper);
         }
     }
 

@@ -28,11 +28,14 @@ import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SimpleReceiveToolbarExt;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.tools.NumberTools;
+
+import org.json.JSONException;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -64,6 +67,19 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            for(OfflineData offlineData : getHelper().getOfflineData().queryForAll()) {
+                Log.e("OfflineData " + offlineData.getId(),
+                        offlineData.getObjectFromData().getReference() + " " +
+                        offlineData.getObjectFromData().getId() + " -- " + offlineData.getReturnId() + " >> isSynced?" +
+                        offlineData.isSynced() + " isSyncing?" + offlineData.isSyncing() + " isQueued?" + offlineData
+                        .isQueued() + " isCancelled?" + offlineData.isCancelled() + " isPastCutoff?" + offlineData
+                        .isPastCutoff());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         if(hasCategories)
             productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line,
                     productCategories);
@@ -90,6 +106,8 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
                 @Override
                 public boolean onCancel() {
                     Log.e("onCancel", "called");
+                    if(tvDRNo == null || tvDRNo.getText().length() == 0)
+                        getActivity().onBackPressed();
                     return tvDRNo != null && tvDRNo.getText().length() > 0;
                 }
 
@@ -461,7 +479,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
             //receiveMultiInputFragment.setOriginalQuantity(original_qty);
 
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.flContent, receiveMultiInputFragment)
+                    .replace(getFragmentContainer(), receiveMultiInputFragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .addToBackStack("multiinput_fragment")
                     .commit();

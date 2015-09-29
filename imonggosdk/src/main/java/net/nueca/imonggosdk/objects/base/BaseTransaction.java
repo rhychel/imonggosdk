@@ -2,9 +2,13 @@ package net.nueca.imonggosdk.objects.base;
 
 import android.content.Context;
 
+import com.google.gson.ExclusionStrategy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
+import net.nueca.imonggosdk.gson.exclusion.TransactionExclusion;
 import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import org.json.JSONException;
@@ -14,8 +18,11 @@ import org.json.JSONObject;
  * Created by gama on 7/21/15.
  */
 public abstract class BaseTransaction {
+    @Expose
     @DatabaseField
     protected String reference;
+
+    public BaseTransaction() {}
 
     public BaseTransaction(Builder builder) {
         if(builder != null)
@@ -37,7 +44,7 @@ public abstract class BaseTransaction {
     }
 
     public String toJSONString() {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return (gson.toJson(this));
     }
 
@@ -47,7 +54,7 @@ public abstract class BaseTransaction {
     }
 
     public JSONObject toJSONObject() throws JSONException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return new JSONObject(gson.toJson(this));
     }
 
@@ -72,6 +79,6 @@ public abstract class BaseTransaction {
     }
 
     public abstract boolean shouldPageRequest();
-
+    public abstract int getId();
     public abstract int getChildCount();
 }

@@ -12,9 +12,9 @@ import org.json.JSONObject;
 /**
  * Created by gama on 7/21/15.
  */
-public abstract class BaseTransactionDB extends BaseTransaction {
+public abstract class BaseTransactionDB2 extends BaseTransaction {
 
-    @DatabaseField(id=true)
+    @DatabaseField(generatedId=true)
     protected int id = -1;
 
     @DatabaseField
@@ -24,9 +24,9 @@ public abstract class BaseTransactionDB extends BaseTransaction {
     @DatabaseField
     @Expose protected String utc_document_date;
 
-    public BaseTransactionDB() {}
+    public BaseTransactionDB2() {}
 
-    public BaseTransactionDB(Builder builder) {
+    public BaseTransactionDB2(Builder builder) {
         super(builder);
     }
 

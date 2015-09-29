@@ -9,6 +9,23 @@ public class RemarkBuilder {
     private int page = 1;
     private int pageTotal = 1;
 
+    public RemarkBuilder parse(String remark) {
+        String elements[] = remark.split(",");
+        for(String element : elements) {
+            String keyvalue[] = element.split("=");
+            if(keyvalue[0].equals("manual"))
+                isManual = keyvalue[1].equals("true");
+            else if(keyvalue[0].equals("delivery_reference_no"))
+                delivery_reference_no = keyvalue[1];
+            else if(keyvalue[0].equals("page")) {
+                String paging[] = keyvalue[1].split("/");
+                page = Integer.parseInt(paging[0]);
+                pageTotal = Integer.parseInt(paging[1]);
+            }
+        }
+        return this;
+    }
+
     public RemarkBuilder isManual(boolean isManual) {
         this.isManual = isManual;
         return this;
