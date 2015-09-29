@@ -4063,6 +4063,24 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="concessio" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
     </panes>
@@ -4403,7 +4421,13 @@
       <option name="project" value="LOCAL" />
       <updated>1443517977697</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Removed unnecessary files. 2">
+      <created>1443521220429</created>
+      <option name="number" value="00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1443521220429</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TodoView">
@@ -4508,7 +4532,8 @@
     <MESSAGE value="Merge branch 'development' into rhy&#10;&#10;# Conflicts:&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;" />
     <MESSAGE value=".gitignore for rhy" />
     <MESSAGE value="Removed unnecessary files." />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed unnecessary files." />
+    <MESSAGE value="Removed unnecessary files. 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed unnecessary files. 2" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
