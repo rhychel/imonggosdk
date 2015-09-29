@@ -5,6 +5,6 @@
         android:icon="@drawable/ic_check"
         app:showAsAction="always" />
     <item android:id="@+id/mGo" android:title="Go"
-        android:icon="@drawable/ic_keyboard_hide"
+        android:icon="@drawable/ic_cross"
         app:showAsAction="always" />
 </menu>

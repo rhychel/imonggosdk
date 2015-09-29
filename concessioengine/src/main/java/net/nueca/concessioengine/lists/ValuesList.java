@@ -1,7 +1,5 @@
 package net.nueca.concessioengine.lists;
 
-import android.util.Log;
-
 import net.nueca.concessioengine.objects.Values;
 
 import java.math.BigDecimal;
@@ -33,5 +31,4 @@ public class ValuesList extends ArrayList<Values> {
         quantity = totalQuantity.toString();
         return quantity;
     }
-
 }

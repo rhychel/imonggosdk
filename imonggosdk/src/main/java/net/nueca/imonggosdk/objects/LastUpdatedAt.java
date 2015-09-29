@@ -71,4 +71,11 @@ public class LastUpdatedAt {
         }
     }
 
+    @Override
+    public String toString() {
+        return "LastUpdatedAt{" +
+                "tableName='" + tableName + '\'' +
+                ", last_updated_at='" + last_updated_at + '\'' +
+                '}';
+    }
 }

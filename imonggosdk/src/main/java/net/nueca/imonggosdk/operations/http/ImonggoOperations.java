@@ -3,7 +3,6 @@ package net.nueca.imonggosdk.operations.http;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
@@ -76,6 +75,8 @@ public class ImonggoOperations {
                 return ImonggoTools.buildAPIModuleURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, parameter, false);
             case PLDTRETAILCLOUD:
                 return ImonggoTools.buildAPIModuleURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, parameter, false);
+            case IMONGGO_NET:
+                return ImonggoTools.buildAPIModuleURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, parameter, false);
             default:
                 return "";
         }
@@ -91,7 +92,7 @@ public class ImonggoOperations {
                                     VolleyRequestListener volleyRequestListener, Table table,
                                     Server server, RequestType requestType, String parameter) {
 
-        if (requestType == RequestType.LAST_UPDATED_AT || requestType == RequestType.COUNT || table == Table.TAX_SETTINGS)
+        if (requestType == RequestType.LAST_UPDATED_AT || requestType == RequestType.COUNT || table == Table.TAX_SETTINGS || table == Table.DAILY_SALES)
             queue.add(HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, server, table, requestType, parameter));
         else if (requestType == RequestType.API_CONTENT)
             queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, table, requestType, parameter));

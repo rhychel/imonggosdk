@@ -44,5 +44,6 @@ public enum Table {
     OFFLINEDATA,
 
     ORDERS,
-    ORDER_LINES
+    ORDER_LINES,
+    DAILY_SALES
 }

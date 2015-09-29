@@ -1,0 +1,10 @@
+<resources>
+
+    <style name="LoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        --<item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/login_default_status_bg</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:button">@color/primary</item>
+    </style>
+
+</resources>
