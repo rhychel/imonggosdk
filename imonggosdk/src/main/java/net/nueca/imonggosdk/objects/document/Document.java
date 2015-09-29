@@ -39,6 +39,8 @@ public class Document extends BaseTransactionDB {
 
     @DatabaseField
     protected Integer target_branch_id;
+    @DatabaseField
+    protected transient Integer branch_id;
 
     @DatabaseField
     protected Integer document_purpose_id;
@@ -152,6 +154,14 @@ public class Document extends BaseTransactionDB {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Integer getBranch_id() {
+        return branch_id;
+    }
+
+    public void setBranch_id(Integer branch_id) {
+        this.branch_id = branch_id;
     }
 
     public void addDocumentLine(DocumentLine documentLine) {
