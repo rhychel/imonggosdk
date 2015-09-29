@@ -106,12 +106,14 @@ public class ProductsAdapterHelper {
     }
 
     public static void clearSelectedProductItemList() {
-        selectedProductItems.clear();
+        if(selectedProductItems != null)
+            selectedProductItems.clear();
         ProductListTools.restartLineNo();
     }
 
     public static void destroySelectedProductItemList() {
-        selectedProductItems.clear();
+        if(selectedProductItems != null)
+            selectedProductItems.clear();
         selectedProductItems = null;
     }
 

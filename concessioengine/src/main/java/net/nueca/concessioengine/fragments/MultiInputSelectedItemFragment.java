@@ -81,7 +81,7 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
         try {
             product = getHelper().getProducts().queryBuilder().where().eq("id", productId).queryForFirst();
-            hasBatchNo = product.getExtras().isBatch_maintained();
+            hasBatchNo = product.getExtras()!= null && product.getExtras().isBatch_maintained();
 
             ctlActionBar.setTitle(product.getName());
             String imageUrl = ImonggoTools.buildProductImageUrl(getActivity(), getSession().getApiToken(),
