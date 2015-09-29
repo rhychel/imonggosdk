@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
+import net.nueca.imonggosdk.objects.Extras;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
@@ -54,6 +55,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
     private Dao<Inventory, Integer> inventories = null;
     private Dao<Product, Integer> products = null;
     private Dao<ProductTag, Integer> productTags = null;
+    private Dao<Extras, Integer> extras = null;
     private Dao<Session, Integer> sessions = null;
     private Dao<TaxRate, Integer> taxRates = null;
     private Dao<TaxSetting, Integer> taxSettings = null;
@@ -101,6 +103,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Inventory.class);
             TableUtils.createTable(connectionSource, Product.class);
             TableUtils.createTable(connectionSource, ProductTag.class);
+            TableUtils.createTable(connectionSource, Extras.class);
             TableUtils.createTable(connectionSource, Session.class);
             TableUtils.createTable(connectionSource, TaxRate.class);
             TableUtils.createTable(connectionSource, TaxSetting.class);
@@ -137,6 +140,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, Inventory.class, true);
             TableUtils.dropTable(connectionSource, Product.class, true);
             TableUtils.dropTable(connectionSource, ProductTag.class, true);
+            TableUtils.dropTable(connectionSource, Extras.class, true);
             TableUtils.dropTable(connectionSource, Session.class, true);
             TableUtils.dropTable(connectionSource, TaxRate.class, true);
             TableUtils.dropTable(connectionSource, TaxSetting.class, true);
@@ -207,6 +211,12 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         if (productTags == null)
             productTags = getDao(ProductTag.class);
         return productTags;
+    }
+
+    public Dao<Extras, Integer> getProductExtras() throws SQLException {
+        if (extras == null)
+            extras = getDao(Extras.class);
+        return extras;
     }
 
     public Dao<Session, Integer> getSessions() throws SQLException {
@@ -333,6 +343,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 TableUtils.dropTable(getConnectionSource(), ProductTag.class, true);
             }
             break;
+            case PRODUCT_EXTRAS: {
+                TableUtils.dropTable(getConnectionSource(), Extras.class, true);
+            } break;
             case SESSIONS: {
                 TableUtils.dropTable(getConnectionSource(), Session.class, true);
             }
@@ -451,6 +464,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             case PRODUCT_TAGS:
                 getProductTags().create((ProductTag) object);
                 break;
+            case PRODUCT_EXTRAS:
+                getProductExtras().create((Extras) object);
+                break;
             case SESSIONS:
                 getSessions().create((Session) object);
                 break;
@@ -528,6 +544,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             case PRODUCT_TAGS:
                 getProductTags().delete((ProductTag) object);
                 break;
+            case PRODUCT_EXTRAS:
+                getProductExtras().delete((Extras) object);
+                break;
             case SESSIONS:
                 getSessions().delete((Session) object);
                 break;
@@ -603,6 +622,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 break;
             case PRODUCT_TAGS:
                 getProductTags().deleteBuilder().delete();
+                break;
+            case PRODUCT_EXTRAS:
+                getProductExtras().deleteBuilder().delete();
                 break;
             case SESSIONS:
                 getSessions().deleteBuilder().delete();
@@ -680,6 +702,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 break;
             case PRODUCT_TAGS:
                 getProductTags().update((ProductTag) object);
+                break;
+            case PRODUCT_EXTRAS:
+                getProductExtras().update((Extras) object);
                 break;
             case SESSIONS:
                 getSessions().update((Session) object);
@@ -853,6 +878,24 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 public Void call() throws Exception {
                     for (ProductTag productTag : ((BatchList<ProductTag>) productTags))
                         productTag.dbOperation(ImonggoDBHelper.this, databaseOperations);
+                    return null;
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void batchCreateOrUpdateProductExtras(final BatchList productExtras, final DatabaseOperation databaseOperations) {
+        try {
+            Dao<Extras, Integer> daoProductExtras = getProductExtras();
+            daoProductExtras.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (Extras extras : ((BatchList<Extras>) productExtras))
+                        extras.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
