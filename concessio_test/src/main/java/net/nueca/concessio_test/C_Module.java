@@ -69,7 +69,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
         btnSummary.setOnClickListener(onClickSummary);
 
-        /** destroy selected items **/
+        /**  destroy selected items  **/
         ProductsAdapterHelper.destroyProductAdapterHelper();
 
         simpleProductsFragment = SimpleProductsFragment.newInstance();
