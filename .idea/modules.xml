@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/ImonggoSDK-GC.iml" filepath="$PROJECT_DIR$/ImonggoSDK-GC.iml" />
       <module fileurl="file://$PROJECT_DIR$/concessio/concessio.iml" filepath="$PROJECT_DIR$/concessio/concessio.iml" />
       <module fileurl="file://$PROJECT_DIR$/concessioengine/concessioengine.iml" filepath="$PROJECT_DIR$/concessioengine/concessioengine.iml" />
       <module fileurl="file://$PROJECT_DIR$/imonggosdk.iml" filepath="$PROJECT_DIR$/imonggosdk.iml" />

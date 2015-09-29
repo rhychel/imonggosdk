@@ -21,6 +21,7 @@ public class C_Login extends BaseLoginActivity {
     @Override
     protected void initActivity() {
         // set the server choice here
+        // This is a test edit for the Google Cloud Repository
         setServer(Server.IRETAILCLOUD_NET);
     }
 
