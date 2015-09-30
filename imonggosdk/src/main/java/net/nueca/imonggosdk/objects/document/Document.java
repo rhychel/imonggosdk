@@ -30,7 +30,7 @@ import java.util.List;
  * Created by gama on 7/20/15.
  */
 public class Document extends BaseTransactionDB {
-    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 50;
+    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 5;
 
     @Expose
     @DatabaseField
@@ -209,8 +209,19 @@ public class Document extends BaseTransactionDB {
         document_lines.add(documentLine);
     }
 
+    public void addAllDocumentLine(List<DocumentLine> moreDocumentLines) {
+        if(document_lines == null)
+            document_lines = new ArrayList<>();
+
+        document_lines.addAll(moreDocumentLines);
+    }
+
     public void setOfflineData(OfflineData offlineData) {
         this.offlineData = offlineData;
+    }
+
+    public OfflineData getOfflineData() {
+        return offlineData;
     }
 
     public static Document fromJSONString(String jsonString) throws JSONException {
@@ -305,7 +316,6 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
-        Log.e(reference + " ID", "" + id);
         if(shouldPageRequest()) {
             try {
                 List<Document> documents = getChildDocuments();
@@ -435,8 +445,11 @@ public class Document extends BaseTransactionDB {
     }
 
     public Document getChildDocumentAt(int position) throws JSONException {
-        Document document = Document.fromJSONString(toJSONString());
-        document.setId(id + position);
+        Document document = Document.fromJSONObject(toJSONObject());
+        if(id == -1)
+            document.setId((Math.abs(id) + position) * -1);
+        else
+            document.setId(id + position);
         document.setDocument_lines(getDocumentLineAt(position));
         document.setReference(reference + "-" + (position + 1));
         //document.setRemark("page=" + (position + 1) + "/" + getChildCount());

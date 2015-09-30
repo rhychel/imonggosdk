@@ -10,6 +10,7 @@ import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.interfaces.AccountListener;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -29,6 +30,17 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
+
+        try {
+            for(Document document : getHelper().getDocuments().queryForAll()) {
+                if(document.getId() == 0)
+                    document.deleteTo(getHelper());
+                Log.e("Document " + document.getId(), document.getReference() + " " + document.getDocument_type_code
+                        ().name());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         if(!SwableTools.isImonggoSwableRunning(this))
             SwableTools.startSwable(this);

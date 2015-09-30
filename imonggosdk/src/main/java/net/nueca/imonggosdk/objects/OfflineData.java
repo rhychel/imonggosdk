@@ -3,7 +3,9 @@ package net.nueca.imonggosdk.objects;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -13,6 +15,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -26,6 +29,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -42,8 +47,10 @@ public class OfflineData extends BaseTable2 {
     private Invoice invoiceData;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "order_id")
     private Order orderData;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
-    private Document documentData;
+
+    private transient Document documentData;
+    @ForeignCollectionField(orderColumnName = "reference")
+    public transient ForeignCollection<Document> documentData_fc;
 	
 	@DatabaseField
 	private int type = 1;
@@ -197,11 +204,38 @@ public class OfflineData extends BaseTable2 {
             case ORDER:
                 return orderData.toJSONObject();
             case DOCUMENT:
+                generateParentDocument();
                 return documentData.toJSONObject();
             default:
                 return null;
         }
 	}
+
+    private Document generateParentDocument() {
+        if(documentData_fc != null) {
+            if(documentData != null) {
+                documentData.setDocument_lines(null);
+                documentData.setReference(reference_no);
+            }
+
+            for(Document document : documentData_fc) {
+                if(documentData == null) {
+                    documentData = document;
+                    documentData.setReference(reference_no);
+                }
+                else
+                    documentData.addAllDocumentLine(document.getDocument_lines());
+            }
+        }
+        return documentData;
+    }
+
+    public List<Document> getChildDocuments() throws JSONException {
+        if(documentData_fc == null)
+            return documentData.getChildDocuments();
+        else
+            return new ArrayList<>(documentData_fc);
+    }
 
 	public void setData(JSONObject data) throws JSONException {
 		switch (type) {
@@ -489,7 +523,7 @@ public class OfflineData extends BaseTable2 {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
-        String typeStr;
+        String typeStr = "UNKNOWN";
         switch (type) {
             case INVOICE:
                 typeStr = "INVOICE";
@@ -501,10 +535,8 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
-                documentData.insertTo(dbHelper);
-                break;
-            default:
-                typeStr = "UNKNOWN";
+                if(!isPagedRequest()) // not a paged request
+                    documentData.insertTo(dbHelper);
                 break;
         }
         Log.e("OfflineData", "insert " + typeStr + " " + this.getReference_no());
@@ -525,8 +557,20 @@ public class OfflineData extends BaseTable2 {
                 orderData.updateTo(dbHelper);
                 break;
             case DOCUMENT:
-                documentData.setOfflineData(this);
-                documentData.updateTo(dbHelper);
+                if(isPagedRequest()) {
+                    try {
+                        for(Document child : documentData.getChildDocuments()) {
+                            Log.e("OfflineData", "insertTo : CHILD : " + child.getReference());
+                            child.setOfflineData(this);
+                            child.insertTo(dbHelper);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    documentData.setOfflineData(this);
+                    documentData.updateTo(dbHelper);
+                }
                 break;
             default:
                 break;
@@ -552,7 +596,13 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
-                documentData.deleteTo(dbHelper);
+                if(isPagedRequest()) {
+                    for(Document child : documentData_fc) {
+                        child.deleteTo(dbHelper);
+                    }
+                } else {
+                    documentData.deleteTo(dbHelper);
+                }
                 break;
             default:
                 typeStr = "UNKNOWN";
@@ -588,15 +638,40 @@ public class OfflineData extends BaseTable2 {
                     orderData.updateTo(dbHelper);
                 break;
             case DOCUMENT:
+                generateParentDocument();
                 documentData.setOfflineData(this);
                 typeStr = "DOCUMENT";
-                if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
-                        && (documentData.getId() != Integer.parseInt(getReturnIdList().get(0))) ) {
-                    documentData.deleteTo(dbHelper);
-                    documentData.setId(Integer.parseInt(getReturnIdList().get(0)));
-                    documentData.insertTo(dbHelper);
-                } else
-                    documentData.updateTo(dbHelper);
+                if(getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0) {
+                    if(isPagedRequest()) {
+                        try {
+                            List<Document> children = getChildDocuments();
+
+                            List<String> ids = getReturnIdList();
+                            for(int i=0; i<children.size(); i++) {
+                                if(i >= ids.size())
+                                    break;
+                                Document child = children.get(i);
+
+                                child.deleteTo(dbHelper);
+                                child.setId(Integer.parseInt(ids.get(i)));
+                                child.setOfflineData(this);
+                                child.insertTo(dbHelper);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        documentData.deleteTo(dbHelper);
+                        documentData.setId(Integer.parseInt(getReturnIdList().get(0)));
+                        documentData.insertTo(dbHelper);
+                    }
+                } else {
+                    if(isPagedRequest()) {
+                        for(Document child : documentData_fc)
+                            child.updateTo(dbHelper);
+                    } else
+                        documentData.updateTo(dbHelper);
+                }
                 break;
             default:
                 typeStr = "UNKNOWN";
@@ -616,8 +691,9 @@ public class OfflineData extends BaseTable2 {
             return invoiceData;
         else if(type == ORDER)
             return orderData;
-        else if(type == DOCUMENT)
-            return documentData;
+        else if(type == DOCUMENT) {
+            return generateParentDocument();
+        }
         else
             return null;
     }

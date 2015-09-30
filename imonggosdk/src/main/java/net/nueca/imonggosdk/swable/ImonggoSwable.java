@@ -261,6 +261,12 @@ public class ImonggoSwable extends SwableService {
             }
 
             if(offlineData.isPagedRequest()) {
+                if(offlineData.getOfflineDataTransactionType() == OfflineDataType.SEND_DOCUMENT) {
+                    for(Document doc : offlineData.documentData_fc)
+                        Log.e("ImonggoSwable: send : DOC " + doc.getId(), doc.getReference() + " - " + doc
+                                .getOfflineData().getReference_no
+                                        () + " ---- " + doc.getOfflineData().getReturnId());
+                }
                 pagedSend(table, offlineData);
                 return;
             }
@@ -539,7 +545,7 @@ public class ImonggoSwable extends SwableService {
     public void pagedSend(Table table, final OfflineData offlineData) {
         try {
             if(table == Table.ORDERS) {
-                Order order = Order.fromJSONObject(offlineData.getData());
+                Order order = (Order)offlineData.getObjectFromData();
                 Log.e("ORDER", order.toString());
                 int max_page = order.getChildCount();
 
@@ -562,14 +568,16 @@ public class ImonggoSwable extends SwableService {
                 }
             }
             else if(table == Table.DOCUMENTS) {
-                Document document = (Document)offlineData.getObjectFromData();
+                //Document document = (Document)offlineData.getObjectFromData();
+                //Log.e("ImonggoSwable", "pagedSend : " + document.getChildCount());
 
-                int max_page = document.getChildCount();
+                List<Document> childDocuments = offlineData.getChildDocuments();
+
+                int max_page = childDocuments.size();
 
                 if(offlineData.getReturnId().length() > 0) { // for retry sending
                     List<String> returnIds = offlineData.getReturnIdList();
 
-                    List<Document> childDocuments = document.getChildDocuments();
                     for(int i = 0; i < childDocuments.size(); i++) {
                         if(returnIds.get(i).length() <= 0 || !returnIds.get(i).equals(NO_RETURN_ID))
                             continue;
@@ -577,7 +585,6 @@ public class ImonggoSwable extends SwableService {
                                 (), childDocuments.get(i).toJSONObject()), offlineData);
                     }
                 } else {
-                    List<Document> childDocuments = document.getChildDocuments();
                     for(int i = 0; i < childDocuments.size(); i++) {
                         sendThisPage(table, i+1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
                                 (), childDocuments.get(i).toJSONObject()), offlineData);
