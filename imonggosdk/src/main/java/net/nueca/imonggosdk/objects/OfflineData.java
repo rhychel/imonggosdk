@@ -494,17 +494,14 @@ public class OfflineData extends BaseTable2 {
             case INVOICE:
                 typeStr = "INVOICE";
                 invoiceData.insertTo(dbHelper);
-                Log.e("ID", invoiceData.getId() + "");
                 break;
             case ORDER:
                 typeStr = "ORDER";
                 orderData.insertTo(dbHelper);
-                Log.e("ID", orderData.getId() + "");
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
                 documentData.insertTo(dbHelper);
-                Log.e("ID", documentData.getId() + "");
                 break;
             default:
                 typeStr = "UNKNOWN";
@@ -569,30 +566,37 @@ public class OfflineData extends BaseTable2 {
         String typeStr;
         switch (type) {
             case INVOICE:
-                invoiceData.deleteTo(dbHelper);
                 invoiceData.setOfflineData(this);
                 typeStr = "INVOICE";
-                if(getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
+                if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
+                        && (invoiceData.getId() != Integer.parseInt(getReturnIdList().get(0))) ) {
+                    invoiceData.deleteTo(dbHelper);
                     invoiceData.setId(Integer.parseInt(getReturnIdList().get(0)));
-                invoiceData.insertTo(dbHelper);
+                    invoiceData.insertTo(dbHelper);
+                } else
+                    invoiceData.updateTo(dbHelper);
                 break;
             case ORDER:
-                orderData.deleteTo(dbHelper);
                 orderData.setOfflineData(this);
                 typeStr = "ORDER";
-                if(getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
+                if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
+                        && (orderData.getId() != Integer.parseInt(getReturnIdList().get(0))) ) {
+                    orderData.deleteTo(dbHelper);
                     orderData.setId(Integer.parseInt(getReturnIdList().get(0)));
-                orderData.insertTo(dbHelper);
+                    orderData.insertTo(dbHelper);
+                } else
+                    orderData.updateTo(dbHelper);
                 break;
             case DOCUMENT:
-                documentData.deleteTo(dbHelper);
                 documentData.setOfflineData(this);
                 typeStr = "DOCUMENT";
-                if(getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0) {
-                    Log.e("Document", "isNull? " + (documentData == null) + " retId:" + getReturnIdList().get(0));
+                if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
+                        && (documentData.getId() != Integer.parseInt(getReturnIdList().get(0))) ) {
+                    documentData.deleteTo(dbHelper);
                     documentData.setId(Integer.parseInt(getReturnIdList().get(0)));
-                }
-                documentData.insertTo(dbHelper);
+                    documentData.insertTo(dbHelper);
+                } else
+                    documentData.updateTo(dbHelper);
                 break;
             default:
                 typeStr = "UNKNOWN";

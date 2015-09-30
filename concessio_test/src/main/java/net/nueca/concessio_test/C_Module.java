@@ -62,18 +62,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        try {
-            List<Branch> branches = getHelper().getBranches().queryForAll();
-                    //.eq("site_type", "warehouse").query();
-            Log.e("Displaying", "Branches (" + branches.size() + ")");
-            for(Branch branch : branches) {
-                Log.e("Branch " + branch.getId() + " : " + branch.getName(), "'" + branch.getSite_type() + "'");
-            }
-            Log.e("Displaying", "end");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        SwableTools.startSwable(this);
 
         setContentView(R.layout.c_module);
 

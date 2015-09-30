@@ -171,7 +171,7 @@ public class OrderLine extends BaseTable2 {
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.ORDER_LINES, DatabaseOperation.UPDATE);
+            dbHelper.dbOperations(this, Table.ORDER_LINES, DatabaseOperation.INSERT);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -180,7 +180,7 @@ public class OrderLine extends BaseTable2 {
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.ORDER_LINES, DatabaseOperation.UPDATE);
+            dbHelper.dbOperations(this, Table.ORDER_LINES, DatabaseOperation.DELETE);
         } catch (SQLException e) {
             e.printStackTrace();
         }

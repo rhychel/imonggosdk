@@ -260,19 +260,19 @@ public class Document extends BaseTransactionDB {
         }
 
         refresh();
-        if(document_lines == null)
-            return;
-        for(DocumentLine documentLine : document_lines) {
-            documentLine.setDocument(this);
-            try {
-                Product product = dbHelper.getProducts().queryBuilder().where().eq("id", documentLine.getProduct_id())
-                        .queryForFirst();
-                if(product != null)
-                    documentLine.setProduct(product);
-            } catch (SQLException e) {
-                e.printStackTrace();
+        if(document_lines != null) {
+            for (DocumentLine documentLine : document_lines) {
+                documentLine.setDocument(this);
+                try {
+                    Product product = dbHelper.getProducts().queryBuilder().where().eq("id", documentLine.getProduct_id())
+                            .queryForFirst();
+                    if (product != null)
+                        documentLine.setProduct(product);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                documentLine.insertTo(dbHelper);
             }
-            documentLine.insertTo(dbHelper);
         }
     }
 
@@ -305,7 +305,7 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
-        Log.e(reference+" ID","" + id);
+        Log.e(reference + " ID", "" + id);
         if(shouldPageRequest()) {
             try {
                 List<Document> documents = getChildDocuments();

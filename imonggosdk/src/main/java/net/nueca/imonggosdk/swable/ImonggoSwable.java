@@ -191,7 +191,7 @@ public class ImonggoSwable extends SwableService {
                                 break;
                         }
 
-                        offlineData.updateTo(getHelper());
+                        //offlineData.updateTo(getHelper());
                     }
                     Log.e("ImonggoSwable", "starting sync : " + offlineDataList.size() + " queued transactions");
                     REQUEST_COUNT += offlineDataList.size();
@@ -409,6 +409,7 @@ public class ImonggoSwable extends SwableService {
                         offlineData.setSyncing(false);
                         offlineData.setQueued(false);
                         offlineData.setSynced(false);
+                        offlineData.updateTo(getHelper());
                     }
                 }, getSession().getServer(), table, jsonObject, "?branch_id=" + offlineData.getBranch_id() + offlineData
                         .getParameters())
@@ -538,8 +539,8 @@ public class ImonggoSwable extends SwableService {
     public void pagedSend(Table table, final OfflineData offlineData) {
         try {
             if(table == Table.ORDERS) {
-                Order order = (Order)offlineData.getObjectFromData();
-
+                Order order = Order.fromJSONObject(offlineData.getData());
+                Log.e("ORDER", order.toString());
                 int max_page = order.getChildCount();
 
                 if(offlineData.getReturnId().length() > 0) { // for retry sending

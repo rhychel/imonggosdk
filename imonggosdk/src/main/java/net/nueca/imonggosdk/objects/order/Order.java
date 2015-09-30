@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects.order;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
@@ -107,6 +109,8 @@ public class Order extends BaseTransactionDB2 {
     }
 
     public void addOrderLine(OrderLine orderLine) {
+        if(order_lines == null)
+            order_lines = new ArrayList<>();
         order_lines.add(orderLine);
     }
 
@@ -227,7 +231,7 @@ public class Order extends BaseTransactionDB2 {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
-        if(shouldPageRequest()) {
+        /*if(shouldPageRequest()) {
             try {
                 List<Order> orders = getChildOrders();
                 for (Order child : orders)
@@ -236,7 +240,7 @@ public class Order extends BaseTransactionDB2 {
                 e.printStackTrace();
             }
             return;
-        }
+        }*/
 
         try {
             dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.INSERT);
@@ -255,6 +259,7 @@ public class Order extends BaseTransactionDB2 {
 
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
+        /*refresh();
         if(shouldPageRequest()) {
             try {
                 List<Order> orders = getChildOrders();
@@ -264,7 +269,7 @@ public class Order extends BaseTransactionDB2 {
                 e.printStackTrace();
             }
             return;
-        }
+        }*/
 
         try {
             dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.DELETE);
@@ -282,6 +287,7 @@ public class Order extends BaseTransactionDB2 {
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
+        /*refresh();
         if(shouldPageRequest()) {
             try {
                 List<Order> orders = getChildOrders();
@@ -291,7 +297,7 @@ public class Order extends BaseTransactionDB2 {
                 e.printStackTrace();
             }
             return;
-        }
+        }*/
 
         try {
             dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.UPDATE);
