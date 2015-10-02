@@ -20,5 +20,6 @@ public enum RequestType {
 
     INVENTORIES,
 
-    CUSTOMER_CHECKIN
+    CUSTOMER_CHECKIN,
+    DAILY_SALES
 }

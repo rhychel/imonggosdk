@@ -12,6 +12,7 @@ public enum Table {
     INVENTORIES,
     PRODUCTS,
     PRODUCT_TAGS,
+    PRODUCT_EXTRAS,
     SESSIONS,
     TAX_RATES,
     TAX_SETTINGS,
@@ -24,6 +25,9 @@ public enum Table {
     DOCUMENTS,
     DOCUMENT_TYPES,
     DOCUMENT_PURPOSES,
+    DOCUMENT_LINES,
+    EXTENDED_ATTRIBUTES,
+    DOCUMENT_LINE_EXTRAS,
 
     INVOICES,
     INVOICE_LINES,
@@ -41,5 +45,6 @@ public enum Table {
     OFFLINEDATA,
 
     ORDERS,
-    ORDER_LINES
+    ORDER_LINES,
+    DAILY_SALES
 }

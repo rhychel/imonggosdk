@@ -4,11 +4,28 @@ import android.util.Log;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchTag;
+import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.Extras;
+import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.TaxRate;
+import net.nueca.imonggosdk.objects.TaxSetting;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
+import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
+import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
-import net.nueca.imonggosdk.objects.invoice.Payment;
+import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 
 import java.util.ArrayList;
@@ -19,6 +36,7 @@ import java.util.ArrayList;
  */
 public class BatchList<T> extends ArrayList<T> {
 
+    private String TAG = "BatchList";
     private DatabaseOperation databaseOperation = DatabaseOperation.INSERT;
     private ImonggoDBHelper dbHelper;
 
@@ -45,20 +63,106 @@ public class BatchList<T> extends ArrayList<T> {
 
     public void doOperation(ImonggoDBHelper dbHelper) {
         if(size() == 0) {
-            Log.e("BatchList", "Ooops! There's nothing to save.");
+            Log.e(TAG, "Ooops! There's nothing to " + databaseOperation.toString());
             return;
         }
-        if(get(0) instanceof User)
+        if(get(0) instanceof User) {
             dbHelper.batchCreateOrUpdateUsers(this, databaseOperation);
-        if(get(0) instanceof Product)
+            Log.e(TAG, databaseOperation.toString() + "ING to Users table");
+        }
+        if(get(0) instanceof Product) {
             dbHelper.batchCreateOrUpdateProducts(this, databaseOperation);
-        if(get(0) instanceof InvoiceLine)
-            dbHelper.batchCreateOrUpdateInvoiceLines(this, databaseOperation);
-        if(get(0) instanceof InvoiceTaxRate)
-            dbHelper.batchCreateOrUpdateInvoiceTaxRates(this, databaseOperation);
-        if(get(0) instanceof Payment)
-            dbHelper.batchCreateOrUpdatePayments(this, databaseOperation);
-        if(get(0) instanceof OrderLine)
+            Log.e(TAG, databaseOperation.toString() + "ING to Product table");
+        }
+        if(get(0) instanceof ProductTag) {
+            dbHelper.batchCreateOrUpdateProductTags(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to ProductTag table");
+        }
+        if(get(0) instanceof Extras) {
+            dbHelper.batchCreateOrUpdateProductExtras(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to ProductExtras table");
+        }
+        if(get(0) instanceof Unit) {
+            dbHelper.batchCreateOrUpdateUnits(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Unit table");
+        }
+        if(get(0) instanceof Branch) {
+            dbHelper.batchCreateOrUpdateBranches(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Branch table");
+        }
+        if(get(0) instanceof BranchTag) {
+            dbHelper.batchCreateOrUpdateBranchTags(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to BranchTag table");
+        }
+        if(get(0) instanceof BranchUserAssoc) {
+            dbHelper.batchCreateOrUpdateBranchUsers(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to BranchUser Assoc table");
+        }
+        if(get(0) instanceof Customer) {
+            dbHelper.batchCreateOrUpdateCustomers(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Customer table");
+        }
+        if(get(0) instanceof Inventory) {
+            dbHelper.batchCreateOrUpdateInventories(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Inventory table");
+        }
+        if(get(0) instanceof TaxSetting) {
+            dbHelper.batchCreateOrUpdateTaxSettings(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to TaxSetting table");
+        }
+        if(get(0) instanceof TaxRate) {
+            dbHelper.batchCreateOrUpdateTaxRates(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to TaxRate table");
+        }
+        if(get(0) instanceof ProductTaxRateAssoc) {
+            dbHelper.batchCreateOrUpdateProductTaxRates(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to ProductTaxRate Assoc table");
+        }
+
+
+        /** Documents -- gama **/
+        if(get(0) instanceof Document) {
+            dbHelper.batchCreateOrUpdateDocuments(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Document table");
+        }
+        if(get(0) instanceof DocumentLine) {
+            dbHelper.batchCreateOrUpdateDocumentLines(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Document Line table");
+        }
+        if(get(0) instanceof ExtendedAttributes) {
+            dbHelper.batchCreateOrUpdateExtendedAttributes(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Extended Attributes table");
+        }
+        if(get(0) instanceof DocumentLineExtras) {
+            dbHelper.batchCreateOrUpdateDocumentLineExtras(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Document Line Extras table");
+        }
+        /** Orders -- gama **/
+        if(get(0) instanceof Order) {
+            dbHelper.batchCreateOrUpdateOrders(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order table");
+        }
+        if(get(0) instanceof OrderLine) {
             dbHelper.batchCreateOrUpdateOrderLines(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order Line table");
+        }
+        /** Invoices -- gama **/
+        if(get(0) instanceof Invoice) {
+            dbHelper.batchCreateOrUpdateInvoices(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order table");
+        }
+        if(get(0) instanceof InvoiceLine) {
+            dbHelper.batchCreateOrUpdateInvoiceLines(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order table");
+        }
+        if(get(0) instanceof InvoicePayment) {
+            dbHelper.batchCreateOrUpdateInvoicePayments(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order table");
+        }
+        if(get(0) instanceof InvoiceTaxRate) {
+            dbHelper.batchCreateOrUpdateInvoiceTaxRates(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Order table");
+        }
+
     }
 }

@@ -1,9 +1,6 @@
 package net.nueca.imonggosdk.objects.invoice;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
@@ -25,39 +22,41 @@ public class InvoiceLine extends BaseTable2 {
     @Expose
     @DatabaseField
     protected int product_id;
-
     @Expose
     @DatabaseField
     protected int quantity;
-
     @Expose
     @DatabaseField
     protected double retail_price;
-
     @Expose
     @DatabaseField
     protected String discount_text;
 
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
-    private transient Invoice invoice;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "invoice_id")
+    protected transient Invoice invoice;
 
-    public InvoiceLine () {}
+    public InvoiceLine() {}
 
-    public InvoiceLine(Invoice invoice, int product_id, int quantity, int retail_price, String discount_text) {
-        this.invoice = invoice;
+    public InvoiceLine (Builder builder) {
+        product_id = builder.product_id;
+        quantity = builder.quantity;
+        retail_price = builder.retail_price;
+        discount_text = builder.discount_text;
+    }
+
+    /*public InvoiceLine(int product_id, int quantity, int retail_price, String discount_text) {
         this.product_id = product_id;
         this.quantity = quantity;
         this.retail_price = retail_price;
         this.discount_text = discount_text;
     }
 
-    public InvoiceLine(Invoice invoice, Product product, int quantity, String discount_text) {
-        this.invoice = invoice;
+    public InvoiceLine(Product product, int quantity, String discount_text) {
         this.product_id = product.getId();
         this.quantity = quantity;
         this.retail_price = product.getRetail_price();
         this.discount_text = discount_text;
-    }
+    }*/
 
     public int getProduct_id() {
         return product_id;
@@ -99,6 +98,39 @@ public class InvoiceLine extends BaseTable2 {
         this.invoice = invoice;
     }
 
+    public JSONObject toJSONObject() throws JSONException {
+        Gson gson = new Gson();
+        return new JSONObject(gson.toJson(this));
+    }
+
+    public static class Builder {
+        protected int product_id;
+        protected int quantity;
+        protected double retail_price;
+        protected String discount_text;
+
+        public Builder product_id(int product_id) {
+            this.product_id = product_id;
+            return this;
+        }
+        public Builder quantity(int quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+        public Builder retail_price(double retail_price) {
+            this.retail_price = retail_price;
+            return this;
+        }
+        public Builder discount_text(String discount_text) {
+            this.discount_text = discount_text;
+            return this;
+        }
+
+        public InvoiceLine build() {
+            return new InvoiceLine(this);
+        }
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
         try {
@@ -124,24 +156,5 @@ public class InvoiceLine extends BaseTable2 {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public JSONObject toJSONObject() throws JSONException {
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        return new JSONObject(gson.toJson(this));
-        /*JSONObject jsonObject = new JSONObject();
-        jsonObject.put("product_id", product_id);
-        jsonObject.put("quantity", quantity);
-        jsonObject.put("retail_price", retail_price);
-        jsonObject.put("discount_text", discount_text);
-        return jsonObject;*/
-    }
-
-    public double computeTotal(boolean applyDiscount) {
-        double total = retail_price * quantity;
-        if(applyDiscount){
-
-        }
-        return total;
     }
 }

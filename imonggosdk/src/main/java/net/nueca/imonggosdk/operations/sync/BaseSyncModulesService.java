@@ -107,8 +107,7 @@ public abstract class BaseSyncModulesService extends ImonggoService {
             TODO , Table.SALES_PROMOTIONS
              */
             tableSyncing = tablesToSync[tablesIndex];
-        }
-        else {
+        } else {
             int[] forSyncing = bundle.getIntArray(PARAMS_TABLES_TO_SYNC);
             if (forSyncing != null) {
                 tablesIndex = 0;
@@ -116,7 +115,6 @@ public abstract class BaseSyncModulesService extends ImonggoService {
                 for (int i = 0; i < forSyncing.length; i++) {
                     tablesToSync[i] = Table.values()[forSyncing[i]];
                 }
-
                 tableSyncing = tablesToSync[tablesIndex];
             }
         }
@@ -188,6 +186,7 @@ public abstract class BaseSyncModulesService extends ImonggoService {
 
     /**
      * Check if the table item is already existing in the database
+     *
      * @param o
      * @param table
      * @return

@@ -92,4 +92,13 @@ public class BranchUserAssoc {
         else if(databaseOperation == DatabaseOperation.DELETE)
             deleteTo(dbHelper);
     }
+
+    @Override
+    public String toString() {
+        return "BranchUserAssoc{" +
+                "id=" + id +
+                ", branch=" + branch.getName() +
+                ", user=" + user.getName() +
+                '}';
+    }
 }

@@ -23,6 +23,8 @@ public class Unit extends BaseTable {
     private double cost, quantity, retail_price;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
+    @DatabaseField
+    private boolean is_default_ordering_unit = false;
 
     public Unit() { }
 
@@ -94,6 +96,24 @@ public class Unit extends BaseTable {
         this.product = product;
     }
 
+    public boolean is_default_ordering_unit() {
+        return is_default_ordering_unit;
+    }
+
+    public void setIs_default_ordering_unit(boolean is_default_ordering_unit) {
+        this.is_default_ordering_unit = is_default_ordering_unit;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return id == ((Unit)o).getId();
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
         try {
@@ -106,7 +126,7 @@ public class Unit extends BaseTable {
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.INSERT);
+            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.DELETE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -115,7 +135,7 @@ public class Unit extends BaseTable {
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.INSERT);
+            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
         }

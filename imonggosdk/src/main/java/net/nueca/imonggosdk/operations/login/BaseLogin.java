@@ -1,4 +1,3 @@
-
 package net.nueca.imonggosdk.operations.login;
 
 import android.content.Context;
@@ -23,6 +22,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.exception.LoginException;
 import net.nueca.imonggosdk.interfaces.LoginListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
+import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
@@ -30,6 +30,7 @@ import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.LoginTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,9 +44,7 @@ import java.sql.SQLException;
  * @since 6/8/2015
  */
 public class BaseLogin {
-
     private static final String LOGIN_TAG = "login_tag";
-
     private String mAccountId;
     private String mEmail;
     private String mPassword;
@@ -89,6 +88,7 @@ public class BaseLogin {
         this.mPassword = password;
 
         try {
+            Log.e("isLoggedIn", ""+AccountTools.isLoggedIn(dbHelper));
             if (AccountTools.isLoggedIn(dbHelper)) {
                 mSession = dbHelper.getSessions().queryForAll().get(0);
             }
@@ -216,6 +216,7 @@ public class BaseLogin {
                 // Insert Session to Database
                 mSession.insertTo(mDBHelper);
 
+
                 // show Toast Message
                 Log.i("Jn-BaseLogin", "Account URL Request Successful");
 
@@ -296,6 +297,11 @@ public class BaseLogin {
      * @param server
      */
     private void requestForApiToken(final Server server) {
+        Log.e("Context", "is NULL? " + (mContext == null));
+        Log.e("Session", "is NULL? " + (getSession() == null));
+        Log.e("Acct URL", "is NULL? " + (getSession().getAccountUrl() == null));
+        Log.e("Email", "is NULL? " + (getEmail() == null));
+        Log.e("Pwd", "is NULL? " + (getPassword() == null));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoTools.buildAPITokenUrl(mContext, getSession().getAccountUrl(), Table.TOKENS,
@@ -376,6 +382,7 @@ public class BaseLogin {
 
                 // if session don't have device id
                 if (mSession.getDevice_id() == 0) {
+
                     requestForPOSDeviceID(server);
                     mRequestQueue.start();
                 } else {
@@ -413,7 +420,6 @@ public class BaseLogin {
                                     dialog.dismiss();
                                 }
                             });
-
                     // Show Toast Message
                     //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD));
                 } else { // invalid url or not connected to a network
@@ -452,7 +458,7 @@ public class BaseLogin {
         Log.i("Jn-BaseLogin", "Requesting for Token");
     }
 
-    public void requestForPOSDeviceID(Server server) {
+    public void requestForPOSDeviceID(final Server server) {
         ImonggoOperations.sendPOSDevice(mContext, mRequestQueue, mSession, new VolleyRequestListener() {
             @Override
             public void onStart(Table table, RequestType requestType) {
@@ -478,7 +484,60 @@ public class BaseLogin {
                     // if using concessio Settings
                     if (mConcessioSettings) {
                         Log.i("Jn-BaseLogin", "Using Concession Settings");
-                        // CODE
+                        // CODE ADDED by Rhy
+                        ImonggoOperations.getConcesioAppSettings(mContext,
+                                getRequestQueue(), getSession(), new VolleyRequestListener() {
+                                    @Override
+                                    public void onStart(Table table, RequestType requestType) {
+                                        Log.e("Rhy-BaseLogin", "Getting the account-settings now...");
+                                        DialogTools.updateMessage("Downloading settings...");
+                                    }
+
+                                    @Override
+                                    public void onSuccess(Table table, RequestType requestType, Object response) {
+                                        JSONArray concesio = (JSONArray) response;
+                                        Log.e("Rhy-BaseLogin", concesio.toString());
+                                        try {
+                                            AccountSettings.initializeApplicationSettings(mContext, concesio.getJSONObject(0));
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        DialogTools.hideIndeterminateProgressDialog();
+                                        if (mLoginListener != null)
+                                            mLoginListener.onLoginSuccess(mSession);
+                                    }
+
+                                    @Override
+                                    public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                                        DialogTools.hideIndeterminateProgressDialog();
+                                        Log.e("Rhy-BaseLogin["+responseCode+"]", (response == null) ? "null" : ((String) response));
+
+                                        DialogTools.showBasicWithTitle(mContext,
+                                                mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                                                mContext.getString(R.string.LOGIN_CONCESSIO_SETTINGS_ERROR),
+                                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+                                                new MaterialDialog.ButtonCallback() {
+                                                    @Override
+                                                    public void onPositive(MaterialDialog dialog) {
+                                                        super.onPositive(dialog);
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+
+
+                                        if (mLoginListener != null) {
+                                            mLoginListener.onStopLogin();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onRequestError() {
+                                        DialogTools.hideIndeterminateProgressDialog();
+                                        if (mLoginListener != null) {
+                                            mLoginListener.onStopLogin();
+                                        }
+                                    }
+                                }, server, true);
                     } else { // not using Concession Settings
                         Log.i("Jn-BaseLogin", "Not Using Concession Settings");
                         // Update the Listener
@@ -494,9 +553,23 @@ public class BaseLogin {
 
             @Override
             public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+
+                DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                        mContext.getString(R.string.LOGIN_NETWORK_ERROR),
+                        mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+                        new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                super.onPositive(dialog);
+                                dialog.dismiss();
+                            }
+                        });
+
+
                 if (mLoginListener != null) {
                     mLoginListener.onStopLogin();
-                }}
+                }
+            }
 
             @Override
             public void onRequestError() {
@@ -557,5 +630,16 @@ public class BaseLogin {
             mRequestQueue.cancelAll(LOGIN_TAG);
             mDBHelper.deleteAllDatabaseValues();
         }
+    }
+
+    /**
+     * <i>Added by Rhy<i/>
+     *
+     * Return the request queue object from this class.
+     *
+     * @return <i>mRequestQueue</i>
+     */
+    public RequestQueue getRequestQueue() {
+        return mRequestQueue;
     }
 }

@@ -2,13 +2,11 @@ package net.nueca.imonggosdk.objects.base;
 
 import android.util.Log;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.objects.User;
-
-import java.util.ArrayList;
 
 /**
  * Created by rhymart on 5/13/15.
@@ -22,12 +20,15 @@ public abstract class BaseTable {
     @DatabaseField
     protected String searchKey = "";
 
+    @Expose
     @DatabaseField
     protected String utc_created_at, utc_updated_at;
 
     public String getSearchKey() {
         return searchKey;
     }
+
+    public static String TAG = "BASETABLE";
 
     public void setSearchKey(String searchKey) {
         this.searchKey = searchKey;
@@ -60,13 +61,18 @@ public abstract class BaseTable {
     public abstract void insertTo(ImonggoDBHelper dbHelper);
     public abstract void deleteTo(ImonggoDBHelper dbHelper);
     public abstract void updateTo(ImonggoDBHelper dbHelper);
+
     public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
+        if(databaseOperation == DatabaseOperation.INSERT) {
+            Log.e(TAG, "Inserting to database");
             insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
+        } else if(databaseOperation == DatabaseOperation.UPDATE) {
+            Log.e(TAG, "Updating to database");
             updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
+        } else if(databaseOperation == DatabaseOperation.DELETE) {
+            Log.e(TAG, "Deleting to database");
             deleteTo(dbHelper);
+        }
     }
 
 }

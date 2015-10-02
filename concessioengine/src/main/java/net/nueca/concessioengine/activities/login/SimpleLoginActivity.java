@@ -1,11 +1,19 @@
 package net.nueca.concessioengine.activities.login;
 
+import net.nueca.imonggosdk.enums.Table;
+
 /**
- * Created by raquezha on 7/10/2015.
+ * Created by Jn on 7/10/2015.
+ * imonggo (c)2015
  */
 public class SimpleLoginActivity extends BaseLoginActivity {
     @Override
-    protected void initActivity() {
+    protected void initLoginEquipments() {
+
+    }
+
+    @Override
+    protected void loginChecker() {
 
     }
 
@@ -15,12 +23,7 @@ public class SimpleLoginActivity extends BaseLoginActivity {
     }
 
     @Override
-    protected void updateModules() {
-
-    }
-
-    @Override
-    protected void onCreateSelectBranchLayout() {
+    protected void showNextActivityAfterLogin() {
 
     }
 
@@ -35,12 +38,22 @@ public class SimpleLoginActivity extends BaseLoginActivity {
     }
 
     @Override
-    protected void loginSuccess() {
+    protected void successLogin() {
+
+    }
+
+    @Override
+    protected void showCustomDownloadDialog() {
 
     }
 
     @Override
     protected void onCreateLoginLayout() {
+
+    }
+
+    @Override
+    protected void autoUpdateChecker() {
 
     }
 
@@ -51,6 +64,11 @@ public class SimpleLoginActivity extends BaseLoginActivity {
 
     @Override
     public void onUnlinkAccount() {
+
+    }
+
+    @Override
+    public void onStartDownload(Table table) {
 
     }
 }

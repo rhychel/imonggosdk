@@ -32,4 +32,9 @@ public abstract class BaseTable2 {
         else if(databaseOperation == DatabaseOperation.DELETE)
             deleteTo(dbHelper);
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

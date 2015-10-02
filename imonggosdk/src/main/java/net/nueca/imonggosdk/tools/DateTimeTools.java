@@ -14,6 +14,7 @@ import java.util.TimeZone;
  */
 public class DateTimeTools {
 
+    public static String TAG = "DateTimeTools";
     /**
      *
      * Get current date time formatted as yyyy-MM-dd HH:mm:ss splitted by space.
@@ -134,6 +135,7 @@ public class DateTimeTools {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         Date currentDateTime= new Date();
         String currentDate = dateFormat.format(currentDateTime);
+        Log.e(TAG, currentDate);
         return currentDate;
     }
 
@@ -209,6 +211,21 @@ public class DateTimeTools {
         Date currentDateTime= new Date();
         String currentDate = dateFormat.format(currentDateTime);
         return currentDate;
+    }
+
+    public static String convertFromTo(String datetime, TimeZone from, TimeZone to) {
+        String convertedTime = datetime;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        simpleDateFormat.setTimeZone(from);
+        try {
+            Date dateCreated = simpleDateFormat.parse(datetime);
+            simpleDateFormat.setTimeZone(to);
+
+            convertedTime = simpleDateFormat.format(dateCreated);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return convertedTime;
     }
 
 }

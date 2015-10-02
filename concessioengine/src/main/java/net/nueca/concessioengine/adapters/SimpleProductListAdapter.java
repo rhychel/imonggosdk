@@ -1,17 +1,16 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
 import net.nueca.concessioengine.R;
+import net.nueca.concessioengine.adapters.base.BaseProductsAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
@@ -63,11 +62,18 @@ public class SimpleProductListAdapter extends BaseProductsAdapter {
 
         Product product = getItem(position);
 
-        lvh.tvProductName.setText(product.getName());
-        lvh.tvQuantity.setText(getSelectedProductItems().getQuantity(product.getId()));
+        lvh.tvProductName.setText(Html.fromHtml(product.getName()+getSelectedProductItems().getUnitName(product).toLowerCase()));
+        lvh.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
         String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId()+"", false, false);
         lvh.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
 
         return convertView;
+    }
+
+    public boolean updateList(List<Product> productList) {
+        clear();
+        addAll(productList);
+        notifyDataSetChanged();
+        return getCount() > 0;
     }
 }

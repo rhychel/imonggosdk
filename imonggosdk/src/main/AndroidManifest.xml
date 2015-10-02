@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.nueca.imonggosdk">
+    package="net.nueca.imonggosdk" >
 
     <application
         android:allowBackup="true"
@@ -9,7 +9,7 @@
         <service
             android:enabled="true"
             android:exported="false"
-            android:name="net.nueca.imonggosdk.operations.sync.TestService">
+            android:name=".operations.sync.SyncModules">
             <intent-filter>
                 <action android:name="net.nueca.imonggosdk.operations.sync.TestService" />
             </intent-filter>

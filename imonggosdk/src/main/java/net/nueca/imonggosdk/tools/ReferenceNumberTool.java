@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
@@ -13,7 +14,7 @@ import android.util.Log;
 public class ReferenceNumberTool {
     private static final String CURRENT_REF_NUMBER = "_current_ref_no";
 
-    public static String generateRefNo(Context context, int deviceId) {
+    public static String generateRefNo(@NonNull Context context, int deviceId) {
         String refnoStr = deviceId + "-";
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {

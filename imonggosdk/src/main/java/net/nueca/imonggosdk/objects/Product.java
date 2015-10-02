@@ -9,6 +9,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 
 import java.sql.SQLException;
 
@@ -28,8 +29,9 @@ public class Product extends BaseTable {
             name = "",
             description = "",
             thumbnail_url = "",
-            status = "",
             barcode_list = "";
+    @DatabaseField
+    protected String status = "";
     @DatabaseField
     protected boolean allow_decimal_quantities = false,
             enable_decimal_quantities = false,
@@ -63,6 +65,12 @@ public class Product extends BaseTable {
 
     @ForeignCollectionField
     private transient ForeignCollection<Unit> units;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<DocumentLine> documentLines;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "extras_id")
+    private Extras extras;
 
     public double getCost() {
         return cost;
@@ -316,8 +324,45 @@ public class Product extends BaseTable {
         return units;
     }
 
+    public ForeignCollection<DocumentLine> getDocumentLines() {
+        return documentLines;
+    }
+
+    public void setDocumentLines(ForeignCollection<DocumentLine> documentLines) {
+        this.documentLines = documentLines;
+    }
+
     public void setUnits(ForeignCollection<Unit> units) {
         this.units = units;
+    }
+
+    public Extras getExtras() {
+        return extras;
+    }
+
+    public void setExtras(Extras extras) {
+        this.extras = extras;
+    }
+
+    public void doOperationsForExtras(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
+        switch (databaseOperation) {
+            case INSERT: {
+                extras.setProduct(this);
+                extras.dbOperation(dbHelper, databaseOperation);
+            } break;
+            case UPDATE: {
+                extras.setProduct(this);
+                extras.dbOperation(dbHelper, databaseOperation);
+            } break;
+            case DELETE: {
+                try {
+                    Extras extraForeign = dbHelper.getProductExtras().queryBuilder().where().eq("product_id", this).queryForFirst();
+                    extraForeign.dbOperation(dbHelper, databaseOperation);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            } break;
+        }
     }
 
     @Override

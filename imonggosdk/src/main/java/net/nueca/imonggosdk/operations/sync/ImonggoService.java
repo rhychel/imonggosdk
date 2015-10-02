@@ -8,6 +8,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.User;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 public abstract class ImonggoService extends Service {
     private Session session;
+    private User mUser;
     private ImonggoDBHelper dbHelper;
     private RequestQueue queue;
 
@@ -57,5 +59,15 @@ public abstract class ImonggoService extends Service {
             }
         }
         return session;
+    }
+
+    protected User getUser() {
+        if (mUser == null)
+            try {
+                mUser = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        return mUser;
     }
 }

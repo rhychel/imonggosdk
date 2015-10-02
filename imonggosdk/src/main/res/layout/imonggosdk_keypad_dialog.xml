@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/keypad_default_bg"
     android:id="@+id/llParent">
@@ -22,7 +23,7 @@
             android:textStyle="bold"
             android:textSize="24sp"
             android:layout_weight="1"
-            android:gravity="center_vertical|right" />
+            android:gravity="center_vertical|end" />
 
         <ImageButton
             android:layout_width="50dp"
@@ -31,7 +32,6 @@
             android:src="@drawable/ic_backspace"
             android:layout_weight="0"
             android:background="@drawable/keypad_button"
-            android:tintMode="src_atop"
             android:tint="@color/keypad_default_text" />
     </LinearLayout>
 
@@ -229,9 +229,8 @@
             android:id="@+id/ibtnCancel"
             android:src="@drawable/ic_cross"
             android:background="@drawable/keypad_button"
-            android:tintMode="src_atop"
             android:tint="@color/keypad_default_text"
-            android:layout_gravity="left|bottom" />
+            android:layout_gravity="start|bottom" />
 
         <ImageButton
             android:layout_width="60dp"
@@ -239,9 +238,7 @@
             android:id="@+id/ibtnGo"
             android:src="@drawable/ic_check"
             android:background="@drawable/keypad_button_circle"
-            android:tintMode="src_atop"
             android:tint="@color/keypad_default_text"
-            android:layout_weight="0"
             android:adjustViewBounds="true"
             android:layout_gravity="bottom|center" />
 
@@ -251,9 +248,8 @@
             android:id="@+id/ibtnMore"
             android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
             android:background="@drawable/keypad_button"
-            android:tintMode="src_atop"
             android:tint="@color/keypad_default_text"
-            android:layout_gravity="bottom|right" />
+            android:layout_gravity="bottom|end" />
     </FrameLayout>
 
 </LinearLayout>

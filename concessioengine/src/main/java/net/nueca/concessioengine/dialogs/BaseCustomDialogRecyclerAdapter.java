@@ -17,10 +17,16 @@ public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.Vi
     private Context mContext;
     private List<String> mModuleName;
     private List<Integer> mDownloadProgress;
+    private List<Boolean> mCircularProgress;
     protected OnItemClickListener mOnItemClickListener;
+    protected OnItemLongClickListener mOnItemLongClickListener;
+
 
     public interface OnItemClickListener {
         void onItemClicked(View view, int position);
+    }
+
+    public interface OnItemLongClickListener {
         void onItemLongClicked(View view, int position);
     }
 
@@ -33,10 +39,15 @@ public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.Vi
         this.mContext = context;
         this.mModuleName = moduleName;
         this.mDownloadProgress = new ArrayList<>();
+        this.mCircularProgress = new ArrayList<>();
 
         // TODO: change this
         for(int i=0; i< mModuleName.size(); i++) {
             this.mDownloadProgress.add(i,0);
+        }
+
+        for (int y=0; y< mModuleName.size(); y++) {
+            this.mCircularProgress.add(y, false);
         }
     }
 
@@ -44,13 +55,13 @@ public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.Vi
 
     }
 
-    public void setDownloadProgress(List<Integer> progress) {
-        this.mDownloadProgress = progress;
+    public void setDownloadProgress(int position, int progress) {
+        this.mDownloadProgress.set(position, progress);
         notifyDataSetChanged();
     }
 
-    public void setDownloadProgress(int position, int progress) {
-        this.mDownloadProgress.set(position, progress);
+    public void updateCircularProgressBar(int position, Boolean choice) {
+        this.mCircularProgress.set(position, choice);
         notifyItemChanged(position);
     }
 
@@ -63,6 +74,10 @@ public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.Vi
     @Override
     public int getItemCount() {
         return mModuleName.size();
+    }
+
+    public Boolean getCircularProgressBar(int position){
+        return mCircularProgress.get(position);
     }
 
     public String getModuleAt (int position) {
@@ -85,6 +100,10 @@ public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.Vi
         this.mOnItemClickListener = mOnItemClickListener;
     }
 
+    public void setOnItemLongClickListener(OnItemLongClickListener mOnItemLongClickListener) {
+        this.mOnItemLongClickListener = mOnItemLongClickListener;
+    }
+
     // View Holder
     public abstract static class VH extends RecyclerView.ViewHolder  implements View.OnClickListener, View.OnLongClickListener {
 
@@ -93,6 +112,7 @@ public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.Vi
         }
 
         public abstract void bind(String name, int progress);
+        public abstract void hideCircularProgressBar();
+        public abstract void showCircularProgressBar();
     }
-
 }

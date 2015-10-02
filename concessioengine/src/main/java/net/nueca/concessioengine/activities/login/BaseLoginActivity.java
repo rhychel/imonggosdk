@@ -1,5 +1,6 @@
 package net.nueca.concessioengine.activities.login;
 
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +10,10 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -22,13 +23,16 @@ import net.nueca.concessioengine.dialogs.CustomDialogFrameLayout;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.exception.LoginException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.LoginListener;
+import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.operations.login.BaseLogin;
-import net.nueca.imonggosdk.operations.sync.TestService;
+import net.nueca.imonggosdk.operations.sync.BaseSyncService;
+import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.LoggingTools;
 import net.nueca.imonggosdk.tools.LoginTools;
@@ -44,34 +48,40 @@ import java.util.List;
  * created by Jn on 06/16/15
  * imonggosdk (c)2015
  */
-public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener {
+public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
 
-    private Boolean isUnlinked;
-    private Boolean isLoggingIn;
-    private Boolean isLoggedIn;
-    private Boolean isUsingCustomLayout;
+    private BaseLogin mBaseLogin = null;
+    private Boolean isUnlinked = true;
+    private Boolean isLoggedIn = false;
+    private Boolean requireConcessioSettings = false;
     private Session mSession = null;
-    private String mDefaultBranch;
-    private Server mServer;
-    private int[] mModules;
-    private EditText accountIdEditText;
-    private EditText emailEditText;
-    private EditText passwordEditText;
-    private Button btnSignIn;
-    private Button btnUnlinkDevice;
-    private CustomDialog customDialog;
-    private CustomDialogFrameLayout customDialogFrameLayout;
+    private Server mServer = Server.IMONGGO;
+    private Boolean isUsingDefaultCustomDialogForSync = false;
+    private int[] mModules = null;
+    private EditText etAccountID = null;
+    private EditText etEmail = null;
+    private EditText etPassword = null;
+    private Button btnSignIn = null;
+    private CustomDialog customDialog = null;
+    private CustomDialogFrameLayout customDialogFrameLayout = null;
+    private Intent mServiceIntent = null;
+    private List<String> mModulesToDownload = null;
+    private String TAG = "BaseLoginActivity";
+    private SyncModules mSyncModules = null;
+    private Boolean mBounded = false;
 
-    protected BaseLogin mBaseLogin;
-
-    //----
-    private TestService mTestService;
-    private Boolean mBounded;
 
     /**
      * If you want to initialize your own logic. method before login checker.
+     * you should implement this methods: setServer(...) and setModulesToSync(...)
+     * if not then the default server and modules is set.
      */
-    protected abstract void initActivity();
+    protected abstract void initLoginEquipments();
+
+    /**
+     * Checks if someone is logged in
+     */
+    protected abstract void loginChecker();
 
     /**
      * If you want to add some logic before fetching data
@@ -79,233 +89,284 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected abstract void updateAppData();
 
     /**
-     * This is called before updating the modules of the app
-     * you can set the list of modules to be downloaded here
+     * This is where the Login Life Cycle will Stop.
+     * You should @Override this method and the activity you want
+     * to show next
      */
-    protected abstract void updateModules();
+    protected abstract void showNextActivityAfterLogin();
 
     /**
-     * If you want to add some logic i select branches
+     * Override this method if you want to add
+     * your own before logging in start
      */
-    protected abstract void onCreateSelectBranchLayout();
-
     protected abstract void beforeLogin();
 
+    /**
+     * Override this method if you want to add you code.
+     * This code
+     */
     protected abstract void stopLogin();
 
-    protected abstract void loginSuccess();
+    /**
+     * This method is called when after user has successfully
+     * downloaded Account_URL, Token and Authentication
+     */
+    protected abstract void successLogin();
 
+    /**
+     * This method is called before downloading any modules
+     * this is where you will builds the custom downloading
+     * progress dialogs and etc.
+     */
+    protected abstract void showCustomDownloadDialog();
+
+    /**
+     * This is where you will create your login layout
+     * setContentView and align the ids in your layout
+     * to this class.
+     *
+     * if you want to customize login layout
+     * you should extend this class and
+     * override this method and call this
+     * functions inside:
+     *
+     * 1. setContentView( your custom layout)
+     * 2. setLayoutEquipments( fill in the ids in your layout)
+     */
     protected abstract void onCreateLoginLayout();
 
-    @Override
-    protected void onStart(){
-        super.onStart();
-        // Binds service to Activity
-        bindService();
-    }
+    /**
+     * This is where you should check if existing user is currently logged in
+     * logged out or the user has unlinked the credentials in the device
+     */
+    protected abstract void autoUpdateChecker();
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bindService();
-    }
-
+    /**
+     * Calling required methods for login.
+     * you can Override this method as long
+     * as you call super.onCreate
+     * @param savedInstanceState bundle
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initEquipments();
-        initActivity();
+        initLoginEquipments();
         loginChecker();
-        createLoginLayout();
+        onCreateLoginLayout();
         autoUpdateChecker();
     }
 
     /**
-     * Method which will initialize everything
+     * For Sync Service only
+     * Defines callbacks for service binding, passed to bindService()
      */
-    private void initEquipments() {
-        try {
-            isUnlinked = AccountTools.isUnlinked(this);
-            isLoggedIn = AccountTools.isLoggedIn(getHelper());
-            isLoggingIn = AccountTools.isLoggedIn(getHelper());
-            mDefaultBranch = SettingTools.defaultBranch(this);
-            mBounded = false;
-        } catch (SQLException e) {
-            e.printStackTrace();
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.e(TAG, "service is connected");
+
+            BaseSyncService.LocalBinder mLocalBinder = (BaseSyncService.LocalBinder) service;
+
+            mSyncModules = (SyncModules) mLocalBinder.getService();
+
+            if (mSyncModules != null) {
+                mBounded = true;
+                Log.e(TAG, "Successfully bind Service and Activity");
+                mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
+            } else {
+                Log.e(TAG, "Cannot bind Service and Activity");
+            }
         }
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBounded = false;
+            mSyncModules = null;
+        }
+    };
 
-        // Set default server
-        setServer(Server.IMONGGO);
+    /**
+     * This method starts handles the downloads and updates of all modules.
+     *
+     * @throws SQLException
+     */
+    public void startSyncingImonggoModules() throws SQLException {
+        if (isSyncServiceBinded()) {
+            setUpModuleNamesForCustomDialog();
+            showCustomDownloadDialog();
 
-        // Set default custom layout to false
-        setUsingCustomLayout(false);
+            Log.e(TAG, "Starting Module Download");
+            if (mSyncModules != null) {
+                mSyncModules.startFetchingModules();
+            } else {
+                Log.e(TAG, "Service Modules is null cannot start sync");
+
+                if (customDialog != null) {
+                    customDialog.dismiss();
+                }
+                startSyncService();
+                DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
+                        "Sync failed. Login Again ",
+                        "Ok", "", false,
+                        new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                super.onPositive(dialog);
+                                bindSyncService();
+                                dialog.dismiss();
+                            }
+                        });
+            }
+        } else {
+            Log.e(TAG, "Service is not binded cannot start sync");
+            DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE),
+                    "Cannot start sync service.",
+                    "START SERVICE", "", false,
+                    new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            super.onPositive(dialog);
+                            startSyncService();
+                        }
+                    });
+        }
     }
 
     /**
-     * Methods which checks if someone is logged in
+     * This populates list of module names that
+     * the custom dialog needs based on your list.
      */
-    private void loginChecker() {
-        try {
-            // Account is unlinked and user is logout
-            if (AccountTools.isUnlinked(this) && !AccountTools.isLoggedIn(getHelper())) {
-                setUnlinked(true);
-                setLoggingIn(false);
-                setLoggedIn(false);
+    private void setUpModuleNamesForCustomDialog() {
+        if (getModules() != null) { // manually set modules to download see /**/
+            if(mModulesToDownload != null) {
+                mModulesToDownload.clear();
+            } else {
+                mModulesToDownload = new ArrayList<>();
             }
-            // Account is Linked
-            if (!AccountTools.isUnlinked(this)) {
-                // if user is logout
-                if (!AccountTools.isLoggedIn(getHelper())) {
-                    setUnlinked(false);
-                    setLoggingIn(false);
-                    setLoggedIn(false);
-                }
-                // if User is Logged In
-                if (AccountTools.isLoggedIn(getHelper())) {
-                    setUnlinked(false);
 
-                    // user is logged in set up data
-                    mSession = getSession();
-                    //player.me raquezha
-                    if (!mSession.getApiAuthentication().equals("")) { // User is authenticated
-                        setLoggingIn(true);
-                        setLoggedIn(true);
+            for (int module : getModules()) {
 
-                        // TODO: do this after fetching data
-                        /* // check if sessions email exist in user's database
-                        if (getHelper().getUsers().queryBuilder().where().eq("email", mSession.getEmail()).query().size() == 0) {
-                            Log.i("loginChecker", "sessions email dont match dont match user's email");
-                            LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
-                            // TODO: Offline Data in unlinkAccount
-                            // AccountTools.unlinkAccount(this, getHelper(), this, DELETEALL?);
-                            unlinkAccount();
-                            return;
-                        }*/
+                for (Table table : Table.values()) {
+                    if (module == table.ordinal()) {
+                        switch (table) {
+                            case USERS:
+                                mModulesToDownload.add("Users");
+                                break;
+                            case PRODUCTS:
+                                mModulesToDownload.add("Products");
+                                break;
+                            case UNITS:
+                                mModulesToDownload.add("Units");
+                                break;
+                            case BRANCH_USERS:
+                                mModulesToDownload.add("Branches");
+                                break;
+                            case CUSTOMERS:
+                                mModulesToDownload.add("Customers");
+                                break;
+                            case INVENTORIES:
+                                mModulesToDownload.add("Inventories");
+                                break;
+                            case TAX_SETTINGS:
+                                mModulesToDownload.add("Tax Settings");
+                                break;
+                            case DOCUMENTS:
+                                mModulesToDownload.add("Documents");
+                                break;
+                            case DOCUMENT_TYPES:
+                                mModulesToDownload.add("Document Types");
+                                break;
+                            case DOCUMENT_PURPOSES:
+                                mModulesToDownload.add("Document Purposes");
+                                break;
+                            case DAILY_SALES:
+                                mModulesToDownload.add("Daily Sales");
+                                break;
+                            default:
+                                LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module");
+                                Log.e(TAG, "You have added unsupported module");
+                                break;
+                        }
                     }
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } else { // if you don't set custom modules to download. Sync All
+            mModulesToDownload.add("Users");
+            mModulesToDownload.add("Branches");
+            mModulesToDownload.add("Tax Settings");
+            mModulesToDownload.add("Products");
+            mModulesToDownload.add("Customers");
+            mModulesToDownload.add("Units");
+            mModulesToDownload.add("Documents");
+            mModulesToDownload.add("Document Types");
+            mModulesToDownload.add("Document Purposes");
         }
     }
 
-    protected void createLoginLayout() {
-        Log.i("Jn-BaseLoginActivity", "createLoginLayout");
+    public void createNewCustomDialogFrameLayout(Context context, List<String> moduleName) {
+        customDialogFrameLayout = new CustomDialogFrameLayout(context, moduleName);
+    }
 
-        // if user is logout
-        if (!isLoggedIn()) {
-            // show login layout
-            setLoginLayout();
+    public CustomDialogFrameLayout getCustomDialogFrameLayout(){
+        return customDialogFrameLayout;
+    }
+
+
+    public void setCustomDialogContentView(CustomDialogFrameLayout customDialogContentView) {
+        customDialog.setContentView(customDialogContentView);
+    }
+
+    public void setCustomDialogTitle(String title) {
+        customDialog.setTitle(title);
+    }
+
+    public void createNewCustomDialog(Context context){
+        customDialog = new CustomDialog(context);
+    }
+
+    public void createNewCustomDialog(Context context, int theme) {
+        customDialog = new CustomDialog(context, theme);
+    }
+
+    public void setCustomDialogCancelable(Boolean choice) {
+        customDialog.setCancelable(choice);
+    }
+
+    public void hideCustomDialog() {
+        showOrHideCustomDialog(false);
+    }
+
+    public void showCustomDialog() {
+        showOrHideCustomDialog(true);
+    }
+
+    private void showOrHideCustomDialog(boolean choice) {
+        if(choice) {
+            customDialog.show();
         } else {
-
-            // check if user has default branch
-            haveDefaultBranch();
-
-            Log.i("CreateLoginLayout", "Error cannot create login layout when user " +
-                    "is logged in and account is link");
+            customDialog.hide();
         }
+    }
+
+    public void setIsUsingDefaultCustomDialogForSync(boolean choice){
+        isUsingDefaultCustomDialogForSync = choice;
+    }
+
+    public boolean isUsingDefaultCustomDialogForSync(){
+        return isUsingDefaultCustomDialogForSync;
     }
 
     /**
-     * Checks if AutoUpdate is on. If True Update the data, else skip to welcome screen
+     * Checks if the app has default branch.
+     *
+     * @return true if default branch is saved, false otherwise.
      */
-    private void autoUpdateChecker() {
-        Log.i("autoUpdateChecker", "update app data");
-        updateAppData();
-        // Account is Linked User is logged in
-        if (!isUnlinked() && isLoggedIn()) {
-            if (isAutoUpdate()) {
-                Log.i("updateData", "auto update is on.");
-                // Fetch data
-                updateData();
-            } else {
-                Log.i("updateData", "auto update is off.");
-            }
-
-            if (!haveDefaultBranch()) {
-                // TODO: show select branches screen
-
-                setLayoutSelectBranch();
-                onCreateSelectBranchLayout();
-            } else {
-                // TODO: show welcome screen
-            }
-        }
-    }
-
-    private void updateData() {
-        updateModules();
-        // TODO: fetching logic
-
-        if (getModules() == null) {
-            Log.i("Update Data", "No Custom Modules to download, fetching all modules");
-
-        } else {
-            Log.i("Update Data", "Custom Modules length is : " + getModules().length + " ... fetching data");
-
-        }
-    }
-
     public Boolean haveDefaultBranch() {
         // if default branch is not null
-        if (getDefaultBranch().equals("")) {
-            return false;
-        } else {
-            return true;
-        }
+        return !getDefaultBranch(BaseLoginActivity.this).equals("");
     }
 
-    protected void setLayoutSelectBranch() {
-        setContentView(R.layout.concessioengine_select_branches);
-
-        // TODO: remove this
-        Button test_unlink_button = (Button) findViewById(R.id.test_button_unlink);
-        Button test_alertDialog_button = (Button) findViewById(R.id.test_button_alertDialog);
-
-        test_unlink_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LoggingTools.showToast(getApplicationContext(), "Unlink Account..");
-                unlinkAccount();
-
-                setLoginLayout();
-            }
-        });
-
-        test_alertDialog_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int[] modules = {Table.BRANCHES.ordinal(), Table.PRODUCTS.ordinal(), Table.CUSTOMERS.ordinal()};
-
-                if(mTestService != null) {
-                    Toast.makeText(BaseLoginActivity.this, mTestService.getTime() + "", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(BaseLoginActivity.this, "null", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-    }
-
-    /**
-     * Sets the Layout for BaseLogin
-     */
-    private void setLoginLayout() {
-        onCreateLoginLayout();
-
-        // if you are not using custom layout
-        if (!isUsingCustomLayout()) {
-            setContentView(R.layout.concessioengine_login);
-
-            setupLayoutEquipments((EditText) findViewById(R.id.text_account_id),
-                    (EditText) findViewById(R.id.text_email),
-                    (EditText) findViewById(R.id.text_password),
-                    (Button) findViewById(R.id.btn_signin), (Button) findViewById(R.id.btn_unlink));
-        }
-    }
 
     /**
      * Sets up EditText, Buttons and Listeners
@@ -314,35 +375,21 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * @param editTextEmail     Email EditText
      * @param editTextPassword  Password EditText
      * @param btnSignIn         Sign In Button
-     * @param btnLogout         Logout Button
      */
     protected void setupLayoutEquipments(EditText editTextAccountId, EditText
-            editTextEmail, EditText editTextPassword, Button btnSignIn, Button btnLogout) {
-        this.accountIdEditText = editTextAccountId;
-        this.emailEditText = editTextEmail;
-        this.passwordEditText = editTextPassword;
+            editTextEmail, EditText editTextPassword, Button btnSignIn) {
 
-        this.accountIdEditText.setText("retailpos");
-        this.emailEditText.setText("retailpos@test.com");
-        this.passwordEditText.setText("retailpos");
+        this.etAccountID = editTextAccountId;
+        this.etEmail = editTextEmail;
+        this.etPassword = editTextPassword;
 
         this.btnSignIn = btnSignIn;
-        this.btnUnlinkDevice = btnLogout;
 
         // Button SignIn Listener
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 initLogin();
-            }
-        });
-
-        // Button LogOut Listener
-        btnUnlinkDevice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("btnUnlinkListener", "Unlink Account");
-                unlinkAccountCustom();
             }
         });
     }
@@ -363,42 +410,39 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             super.onPositive(dialog);
                             dialog.dismiss();
                         }
-                    } );
-
-           /* Toast.makeText(getBaseContext(),
-                    "No network connection", Toast.LENGTH_SHORT).show();*/
+                    });
         } else {
             Boolean cancelLogin = false;
             // Set error to null
-            accountIdEditText.setError(null);
-            emailEditText.setError(null);
-            passwordEditText.setError(null);
+            etAccountID.setError(null);
+            etEmail.setError(null);
+            etPassword.setError(null);
             // Get the String
-            String accountId = accountIdEditText.getText().toString();
-            String email = emailEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
+            String accountId = etAccountID.getText().toString();
+            String email = etEmail.getText().toString();
+            String password = etPassword.getText().toString();
             // the focus
             View focusView = null;
 
             // ACCOUNT
             if (TextUtils.isEmpty(accountId)) {
-                accountIdEditText.setError(getString(R.string.LOGIN_FIELD_REQUIRED));
-                focusView = accountIdEditText;
+                etAccountID.setError(getString(R.string.LOGIN_FIELD_REQUIRED));
+                focusView = etAccountID;
                 cancelLogin = true;
             } else if (TextUtils.isEmpty(email)) { // EMAIL
-                emailEditText.setError(getString(R.string.LOGIN_FIELD_REQUIRED));
-                focusView = emailEditText;
+                etEmail.setError(getString(R.string.LOGIN_FIELD_REQUIRED));
+                focusView = etEmail;
                 cancelLogin = true;
             } else if (!LoginTools.isValidEmail(email)) {
-                emailEditText.setError(getString(R.string.LOGIN_INVALID_EMAIL));
-                focusView = emailEditText;
+                etEmail.setError(getString(R.string.LOGIN_INVALID_EMAIL));
+                focusView = etEmail;
                 cancelLogin = true;
             }
 
             // PASSWORD
             if (!TextUtils.isEmpty(password) && !LoginTools.isValidPassword(password)) {
-                passwordEditText.setError(getString(R.string.LOGIN_INVALID_PASSWORD));
-                focusView = passwordEditText;
+                etPassword.setError(getString(R.string.LOGIN_INVALID_PASSWORD));
+                focusView = etPassword;
                 cancelLogin = true;
             }
             if (cancelLogin) {
@@ -411,7 +455,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), false);
 
                 // BaseLogin Function
-                Log.i("Jn-BaseLoginActivity", "Loggin in...");
+                Log.i(TAG, "Loggin in...");
                 startLogin(getApplicationContext(), accountId, email, password, getServer());
             }
         }
@@ -421,124 +465,75 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         mBaseLogin.setLoginListener(new LoginListener() {
             @Override
             public void onStartLogin() {
-                Log.i("Jn-BaseLoginActivity", "onStartLogin");
+                Log.e(TAG, "onStartLogin called");
                 beforeLogin();
-                setLoggingIn(true);
             }
 
             @Override
             public void onLoginSuccess(Session session) {
-                Log.i("Jn-BaseLoginActivity", "onLoginSuccess");
-                loginSuccess();
-
+                Log.e(TAG, "Successfully logged in");
+                successLogin();
                 mSession = session;
-
-                // hide progress dialog
-                DialogTools.hideIndeterminateProgressDialog();
-
-                updateData();
-
                 setLoggedIn(true);
-                setLoggingIn(false);
                 setUnlinked(false);
 
-                // hide login form
-                showLoginForm(false);
-
-                List<String> moduleName = new ArrayList<>();
-
-                moduleName.add("Branches");
-                moduleName.add("Users");
-                moduleName.add("Products");
-                moduleName.add("Settings");
-
-                if (getModules() != null) {
-                    Log.i("_modules size: ", getModules().length + "");
-
-                    customDialogFrameLayout = new CustomDialogFrameLayout(BaseLoginActivity.this, moduleName);
-
-                    customDialog = new CustomDialog(BaseLoginActivity.this, R.style.AppCompatDialogStyle);
-                    customDialog.setTitle(getString(R.string.FETCHING_MODULE_TITLE));
-                    customDialog.setContentView(customDialogFrameLayout);
-                    customDialog.show();
-
-                    List<Integer> progressList = new ArrayList<>();
-
-                    for(int i=0; i< moduleName.size(); i++) {
-                        progressList.add(i, i * 2);
-                    }
-
-                    customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(moduleName.indexOf("Settings"), 98);
-                    customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(moduleName.indexOf("Branches"), 20);
-
-                } else {
-                    DialogTools.showBasicWithTitle(BaseLoginActivity.this,
-                            getString(R.string.FETCH_NO_MODULE_SELECTED_TITLE),
-                            getString(R.string.FETCH_NO_MODULE_SELECTED),
-                            getString(R.string.FETCH_NO_MODULE_POSTIVE_BUTTON), "", false, new MaterialDialog.ButtonCallback() {
-                                @Override
-                                public void onPositive(MaterialDialog dialog) {
-                                    super.onPositive(dialog);
-                                    showLoginForm(true);
-                                    unlinkAccount();
-                                }
-                            } );
+                DialogTools.hideIndeterminateProgressDialog();
+                try {
+                    startSyncingImonggoModules();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
 
             @Override
             public void onStopLogin() {
-                Log.i("Jn-BaseLoginActivity", "onStopLogin");
+                Log.e(TAG, "onStopLogin called");
                 stopLogin();
-
                 // hide progress dialog
                 DialogTools.hideIndeterminateProgressDialog();
 
-                if (mSession != null) {
-                    if (AccountTools.isUnlinked(BaseLoginActivity.this)) {
-                        mSession.deleteTo(getHelper());
-                    }
-                } else {
-                    try {
-                        getHelper().getSessions().deleteBuilder().delete();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
+                // delete session data
+                deleteUserSessionData();
 
                 setLoggedIn(false);
-                setLoggingIn(false);
                 setUnlinked(true);
             }
         });
     }
 
-    private void showLoginForm(Boolean hide) {
+    private void deleteUserSessionData() {
+        if (getHelper() != null) {
+            getHelper().deleteAllDatabaseValues();
+        }
+    }
 
+    private void showLoginForm(Boolean hide) {
         try {
             if (AccountTools.isLoggedIn(getHelper())) {
 
                 if (!hide) {
-                    btnUnlinkDevice.setVisibility(View.VISIBLE);
                     btnSignIn.setVisibility(View.GONE);
-
-                    accountIdEditText.setVisibility(View.GONE);
-                    passwordEditText.setVisibility(View.GONE);
-                    emailEditText.setVisibility(View.GONE);
+                    etAccountID.setVisibility(View.GONE);
+                    etPassword.setVisibility(View.GONE);
+                    etEmail.setVisibility(View.GONE);
                 } else {
-                    btnUnlinkDevice.setVisibility(View.GONE);
                     btnSignIn.setVisibility(View.VISIBLE);
-                    accountIdEditText.setVisibility(View.VISIBLE);
-                    passwordEditText.setVisibility(View.VISIBLE);
-                    emailEditText.setVisibility(View.VISIBLE);
+                    etAccountID.setVisibility(View.VISIBLE);
+                    etPassword.setVisibility(View.VISIBLE);
+                    etEmail.setVisibility(View.VISIBLE);
                 }
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    @Override
+    public void finish() {
+        ViewGroup view = (ViewGroup) getWindow().getDecorView();
+        view.removeAllViews();
+        super.finish();
+    }
 
     /**
      * Sets the BaseLogin Credentials of the user and starts login
@@ -547,21 +542,18 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * @param accountId must not be empty
      * @param email     must not be empty and matches the correct form 'email@me.com'
      * @param password  must not be empty and length must be greater or equal to five (5)
-     * @param server    server
+     * @param server    mServer
      */
     protected void startLogin(Context context, String accountId, String email, String
             password, Server server) {
         try {
-            setLoggingIn(true);
             setLoginCredentials(context, accountId, email, password);
             setLoginListeners();
-
             if (isUnlinked()) {
                 LogInAccount(server);
             } else {
                 LogInUser(server);
             }
-
         } catch (LoginException e) {
             e.printStackTrace();
         }
@@ -571,7 +563,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * Logout the current user
      */
     protected void startLogout() {
-        setLoggingIn(false);
         setUnlinked(false);
         setLoggedIn(false);
         LogOutUser();
@@ -582,47 +573,19 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     protected void unlinkAccount() {
         try {
-
             if (!isUnlinked()) {
                 AccountTools.unlinkAccount(this, getHelper(), this);
-
                 setUnlinked(true);
                 setLoggedIn(false);
-                setLoggingIn(false);
-                setLoggingIn(false);
-                setDefaultBranch("");
+                setDefaultBranch(BaseLoginActivity.this, "");
+                startSyncService();
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    protected void unlinkAccountCustom() {
-        try {
-
-            if (!isUnlinked()) {
-                AccountTools.unlinkAccount(this, getHelper(), this);
-
-                setUnlinked(true);
-                setLoggedIn(false);
-                setLoggingIn(false);
-                setLoggingIn(false);
-                setDefaultBranch("");
-
-                btnUnlinkDevice.setVisibility(View.GONE);
-                btnSignIn.setVisibility(View.VISIBLE);
-                accountIdEditText.setVisibility(View.VISIBLE);
-                passwordEditText.setVisibility(View.VISIBLE);
-                emailEditText.setVisibility(View.VISIBLE);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setLoginCredentials(Context context, String accountId, String email, String
+    protected void setLoginCredentials(Context context, String accountId, String email, String
             password) throws LoginException {
         if (TextUtils.isEmpty(accountId) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             throw new LoginException(context.getString(R.string.LOGIN_FIELD_REQUIRED));
@@ -632,10 +595,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             throw new LoginException(context.getString(R.string.LOGIN_INVALID_PASSWORD));
         } else {
             mBaseLogin = new BaseLogin(BaseLoginActivity.this, getHelper(), accountId, email, password);
+            mBaseLogin.setConcessioSettings(requireConcessioSettings);
         }
     }
 
-    private void LogInAccount(Server server) throws LoginException {
+    protected void LogInAccount(Server server) throws LoginException {
         if (mBaseLogin != null) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             mBaseLogin.startLoginAccount(server);
@@ -656,128 +620,349 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
-    public Boolean isLoggedIn() {
+    protected void setLoginSession(Session session) {
+        this.mSession = session;
+    }
+
+    protected Session getLoginSession() {
+        return this.mSession;
+    }
+
+    protected List<String> getModulesToSync() {
+        return this.mModulesToDownload;
+    }
+
+    protected String getTag() {
+        return this.TAG;
+    }
+
+    protected void setTag(String tag) {
+        this.TAG = tag;
+    }
+
+    protected BaseLogin getBaseLogin() {
+        return mBaseLogin;
+    }
+
+    protected CustomDialog getCustomDialog() {
+        return this.customDialog;
+    }
+
+    /**
+     * setRequireConcessioSettings
+     *
+     * @param requireConcessioSettings your choice
+     */
+    public void setRequireConcessioSettings(Boolean requireConcessioSettings) {
+        this.requireConcessioSettings = requireConcessioSettings;
+    }
+
+    protected String getEditTextAccountID() {
+        if (this.etAccountID != null) {
+            return this.etAccountID.getText().toString();
+        }
+        return "";
+    }
+
+    protected void setEditTextAccountID(String id) {
+        if (this.etAccountID != null) {
+            this.etAccountID.setText(id);
+        }
+    }
+
+    protected String getEditTextEmail() {
+        if (this.etEmail != null) {
+            return this.etEmail.getText().toString();
+        }
+        return "";
+    }
+
+    protected void setEditTextEmail(String email) {
+        if (this.etEmail != null) {
+            this.etEmail.setText(email);
+        }
+    }
+
+    protected String getEditTextPassword() {
+        if (this.etPassword != null) {
+            return this.etPassword.getText().toString();
+        }
+        return "";
+    }
+
+    protected void setEditTextPassword(String password) {
+        if (this.etPassword != null) {
+            this.etPassword.setText(password);
+        }
+    }
+
+    protected Boolean isLoggedIn() {
         return isLoggedIn;
     }
 
-    public Boolean isLoggingIn() {
-        return isLoggingIn;
-    }
-
-    public Boolean isUnlinked() {
+    protected Boolean isUnlinked() {
         return isUnlinked;
     }
 
-    public Boolean isAutoUpdate() {
+    protected Boolean isAutoUpdate() {
         return SettingTools.isAutoUpdate(this);
     }
 
-    public String getDefaultBranch() {
-        return mDefaultBranch;
+    protected String getDefaultBranch(Context context) {
+        return SettingTools.defaultBranch(context);
     }
 
-    public Server getServer() {
+    protected void setDefaultBranch(Context context, String branchName) {
+        SettingTools.updateSettings(context, SettingsName.DEFAULT_BRANCH, branchName);
+    }
+
+    protected Server getServer() {
         return mServer;
     }
 
-    private int[] getModules() {
+    protected void setServer(Server server) {
+        this.mServer = server;
+        getSyncServiceIntent().putExtra(SyncModules.PARAMS_SERVER, server.ordinal());
+    }
+
+    public Boolean isSyncFinished() {
+        return SettingTools.isSyncFinished(this);
+    }
+
+    public void setSyncFinished(Context context, Boolean choice) {
+        SettingTools.updateSettings(context, SettingsName.SYNC_FINISHED, choice);
+    }
+
+    protected int[] getModules() {
         return mModules;
     }
 
-    public void setModules(int[] mModules) {
-        this.mModules = mModules;
+    protected void setModulesToSync(int... mModules) {
+        setModule(mModules);
     }
 
-    private void setLoggedIn(Boolean isLoggedIn) {
+    protected void setModule(int[] mModules) {
+        this.mModules = mModules;
+        if (mModules != null) {
+            mServiceIntent.putExtra(SyncModules.PARAMS_SYNC_ALL_MODULES, false);
+            mServiceIntent.putExtra(SyncModules.PARAMS_TABLES_TO_SYNC, mModules);
+        }
+    }
+
+    protected void setLoggedIn(Boolean isLoggedIn) {
         this.isLoggedIn = isLoggedIn;
     }
 
-    private void setLoggingIn(Boolean isLoggingIn) {
-        this.isLoggingIn = isLoggingIn;
-    }
-
-    private void setUnlinked(Boolean isUnlinked) {
+    protected void setUnlinked(Boolean isUnlinked) {
         this.isUnlinked = isUnlinked;
         AccountTools.updateUnlinked(this, isUnlinked);
     }
 
-    public void setServer(Server server) {
-        this.mServer = server;
-    }
-
-    private void setDefaultBranch(String branchName) {
-        mDefaultBranch = branchName;
-    }
-
-    public Boolean isUsingCustomLayout() {
-        return isUsingCustomLayout;
-    }
-
-    public void setUsingCustomLayout(Boolean useCustomLayout) {
-        this.isUsingCustomLayout = useCustomLayout;
-    }
-
-    public ServiceConnection getServiceConnection() {
+    protected ServiceConnection getServiceConnection() {
         return mConnection;
     }
 
-    private void bindService(){
-        mBounded = bindService(new Intent(BaseLoginActivity.this, TestService.class), mConnection, Context.BIND_AUTO_CREATE | Context.BIND_ADJUST_WITH_ACTIVITY);
-        if(mBounded) {
-            LoggingTools.showToast(BaseLoginActivity.this, "Service started");
+    protected void setSyncServiceBinded(Boolean bind) {
+        this.mBounded = bind;
+    }
+
+
+    protected void setSyncAllModules(boolean choice) {
+        this.mServiceIntent.putExtra(SyncModules.PARAMS_SYNC_ALL_MODULES, choice);
+    }
+
+    protected Boolean isSyncServiceBinded() {
+        return mBounded;
+    }
+
+    protected Intent getSyncServiceIntent() {
+        return this.mServiceIntent;
+    }
+
+    protected void setSyncServiceIntent(Intent intent) {
+        this.mServiceIntent = intent;
+    }
+
+    protected SyncModules getSyncModules() {
+        return mSyncModules;
+    }
+
+    protected void setSyncModules(SyncModules syncModules) {
+        mSyncModules = syncModules;
+    }
+
+    protected void stopService() {
+        Log.e(TAG, "Stopping sync service");
+        doUnbindService();
+        if (isSyncServiceRunning(BaseSyncService.class) || mSyncModules != null) {
+            stopService(mServiceIntent);
+        }
+
+        if (!isSyncServiceRunning(SyncModules.class)) {
+            Log.e(TAG, "Sync Services stopped");
         } else {
-            LoggingTools.showToast(BaseLoginActivity.this, "Service not started");
+            Log.e(TAG, "Stopping Sync Service failed, Service is still running.");
         }
     }
 
-    private void doUnbindService(){
-        if(mBounded) {
+    protected void startSyncService() {
+        Log.e("startSyncService", "called");
+        if (!isSyncServiceRunning(SyncModules.class) || mSyncModules == null) {
+            mBounded = false;
+            startService(mServiceIntent);
+            Log.e(TAG, "There is no service running, starting service..");
+            bindSyncService();
+        } else {
+            Log.e(TAG, "Service is already running");
+        }
+    }
+
+    protected void bindSyncService() {
+        Log.e(TAG, "Binding service.........");
+
+        if (!mBounded || mSyncModules == null) {
+            bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
+            Log.e(TAG, "Service binded");
+        } else {
+            Log.e(TAG, "Service is already binded.");
+        }
+
+    }
+
+    protected void doUnbindService() {
+        Log.e("mBounded", "" + mBounded);
+        if (isSyncServiceBinded()) {
+            mBounded = false;
             unbindService(getServiceConnection());
         }
     }
 
-    /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection(){
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Toast.makeText(BaseLoginActivity.this, "Service is connected", Toast.LENGTH_SHORT).show();
-
-            TestService.LocalBinder mLocalBinder = (TestService.LocalBinder) service;
-            mBounded = true;
-            mTestService = mLocalBinder.getService();
+    protected boolean isSyncServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBounded = false;
-            mTestService = null;
-        }
-    };
+        return false;
+    }
 
     @Override
-    public void onStop() {
-        stopLogin();
-        if (isUnlinked() && !isLoggedIn()) {
-            if (mBaseLogin != null) {
-                mBaseLogin.onStop();
+    public void onStartDownload(Table table) {
+        setSyncFinished(BaseLoginActivity.this, false);
+    }
+
+    @Override
+    public void onDownloadProgress(Table table, int page, int max) {
+        Log.e(TAG, "Downloading " + table + " " + page + " out of " + max);
+        String currentTable = "";
+        for (Table tableN : Table.values()) {
+            if (table == tableN) {
+                switch (tableN) {
+                    case USERS:
+                        currentTable = "Users";
+                        break;
+                    case BRANCHES:
+                        currentTable = "Branches";
+                        break;
+                    case BRANCH_USERS:
+                        currentTable = "Branches";
+                        break;
+                    case TAX_SETTINGS:
+                        currentTable = "Tax Settings";
+                        break;
+                    case PRODUCTS:
+                        currentTable = "Products";
+                        break;
+                    case INVENTORIES:
+                        currentTable = "Inventories";
+                        break;
+                    case CUSTOMERS:
+                        currentTable = "Customers";
+                        break;
+                    case DOCUMENTS:
+                        currentTable = "Documents";
+                        break;
+                    case DOCUMENT_TYPES:
+                        currentTable = "Document Types";
+                        break;
+                    case DOCUMENT_PURPOSES:
+                        currentTable = "Document Purposes";
+                        break;
+                    case UNITS:
+                        currentTable = "Units";
+                        break;
+                    case DAILY_SALES:
+                        currentTable = "Daily Sales";
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
-        doUnbindService();
+        int progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
+
+        Log.e(TAG, table + " progress: " + progress);
+        if(isUsingDefaultCustomDialogForSync()) {
+            customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(mModulesToDownload.indexOf(currentTable));
+            customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), progress);
+        }
+    }
+
+    @Override
+    public void onEndDownload(Table table) {
+        stopService();
+        setSyncFinished(BaseLoginActivity.this, true);
+    }
+
+    @Override
+    public void onFinishDownload() {
+        if (customDialog != null) {
+            customDialog.dismiss();
+            customDialog = null;
+        }
+        showNextActivityAfterLogin();
+    }
+
+    @Override
+    public void onErrorDownload(Table table, String message) {
+        Log.e(TAG, "error downloading " + table + " " + message);
+    }
+
+
+    @Override
+    public void onStop() {
+
+        if (customDialog != null) {
+            customDialog.dismiss();
+            customDialog = null;
+        }
 
         super.onStop();
+        stopLogin();
+
+        if (isUnlinked() && !isLoggedIn()) {
+            if (getBaseLogin() != null) {
+                getBaseLogin().onStop();
+            }
+        }
+        DialogTools.hideIndeterminateProgressDialog();
+    }
+
+    public void setAutoUpdateApp(Boolean choice) {
+        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, choice, "");
     }
 
     @Override
     public void onDestroy() {
-        stopLogin();
         if (isUnlinked() && !isLoggedIn()) {
-            if (mBaseLogin != null) {
-                mBaseLogin.onStop();
+            if (getBaseLogin() != null) {
+                getBaseLogin().onStop();
             }
         }
-
-        super.onDestroy();
+        super.onDestroy(); // This should be the last to call after onStop();
+        DialogTools.hideIndeterminateProgressDialog();
+        doUnbindService();
     }
 }

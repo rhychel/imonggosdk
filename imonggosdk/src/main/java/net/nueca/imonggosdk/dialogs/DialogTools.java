@@ -50,6 +50,7 @@ public class DialogTools {
     public static void showIndeterminateProgressDialog(Context context, String title,
                                                        String content, Boolean cancelable) {
         mProgressDialog = new ProgressDialog(context);
+
         mProgressDialog.setIndeterminate(true);
 
         if (title != null) {
@@ -58,6 +59,7 @@ public class DialogTools {
 
         mProgressDialog.setCancelable(cancelable);
         mProgressDialog.setMessage(content);
+
         mProgressDialog.show();
     }
 
@@ -65,7 +67,18 @@ public class DialogTools {
      * Hides the Indeterminate Progress Dialog and sets it to null
      */
     public static void hideIndeterminateProgressDialog() {
-        mProgressDialog.hide();
-        mProgressDialog = null;
+        if(mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
+    }
+
+    /**
+     * Update message of dialog
+     * @param message
+     */
+    public static void updateMessage(String message) {
+        if(mProgressDialog != null)
+            mProgressDialog.setMessage(message);
     }
 }

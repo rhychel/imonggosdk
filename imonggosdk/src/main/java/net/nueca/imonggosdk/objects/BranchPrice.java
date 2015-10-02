@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects;
 
+import android.util.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -92,6 +94,19 @@ public class BranchPrice {
         this.utc_updated_at = utc_updated_at;
     }
 
+    @Override
+    public String toString() {
+        return "BranchPrice{" +
+                "id=" + id +
+                ", wholesale_price=" + wholesale_price +
+                ", branch=" + branch +
+                ", product=" + product +
+                ", retail_price=" + retail_price +
+                ", utc_created_at='" + utc_created_at + '\'' +
+                ", utc_updated_at='" + utc_updated_at + '\'' +
+                '}';
+    }
+
     public void insertTo(ImonggoDBHelper dbHelper) {
         try {
             dbHelper.dbOperations(this, Table.BRANCH_PRICES, DatabaseOperation.INSERT);
@@ -117,11 +132,15 @@ public class BranchPrice {
     }
 
     public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
+        if(databaseOperation == DatabaseOperation.INSERT) {
+            Log.e("BranchPrice", "Inserting to Branch Price Table");
             insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
+        } else if(databaseOperation == DatabaseOperation.UPDATE) {
+            Log.e("BranchPrice", "updating to Branch Price Table");
             updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
+        }  else if(databaseOperation == DatabaseOperation.DELETE) {
+            Log.e("BranchPrice", "Deleting to Branch Price Table");
             deleteTo(dbHelper);
+        }
     }
 }
