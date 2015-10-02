@@ -13,6 +13,7 @@
 # Generated files
 bin/
 gen/
+captures
 
 # Gradle files
 .gradle/
@@ -29,7 +30,6 @@ proguard/
 *.log
 
 .idea
-.idea/
 *.iml
 
 # Windows thumbnail db
