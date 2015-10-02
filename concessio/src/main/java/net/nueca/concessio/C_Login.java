@@ -1,87 +1,79 @@
 package net.nueca.concessio;
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
+import android.content.Intent;
 
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
-import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
-
-import net.nueca.concessioengine.activities.login.BaseLoginActivity;
+import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.objects.AccountSettings;
+import net.nueca.imonggosdk.tools.SettingTools;
 
-import java.sql.SQLException;
-
-public class C_Login extends BaseLoginActivity {
+/**
+ * Created by rhymart on 8/20/15.
+ * imonggosdk2 (c)2015
+ */
+public class C_Login extends LoginActivity {
 
     @Override
-    protected void initActivity() {
-        // set the server choice here
-        // This is a test edit for the Google Cloud Repository
+    protected void initLoginEquipments() {
+        super.initLoginEquipments();
         setServer(Server.IRETAILCLOUD_NET);
+
+        setRequireConcessioSettings(true);
+    }
+
+    @Override
+    protected void successLogin() {
+        super.successLogin();
+        int []modulesToDownload = generateModules(true);
+        setModulesToSync(generateModules(true));
+        getSyncModules().initializeTablesToSync(modulesToDownload);
     }
 
     @Override
     protected void updateAppData() {
+        super.updateAppData();
+        int []modulesToDownload = generateModules(true);
+        setModulesToSync(generateModules(false));
 
+        getSyncModules().initializeTablesToSync(modulesToDownload);
     }
 
     @Override
-    protected void updateModules() {
-        int[] modules = {Table.BRANCHES.ordinal(), Table.PRODUCTS.ordinal(), Table.CUSTOMERS.ordinal() };
-        setModules(modules);
+    protected void showNextActivityAfterLogin() {
+        finish();
+        Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? C_Welcome.class : C_Dashboard.class));
+        startActivity(intent);
     }
 
-    @Override
-    protected void onCreateSelectBranchLayout() {
-
-    }
-
-    @Override
-    protected void beforeLogin() {
-
-    }
-
-    @Override
-    protected void stopLogin() {
-
-    }
-
-    @Override
-    protected void loginSuccess() {
-    }
-
-    @Override
-    protected void onCreateLoginLayout() {
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try {
-            if (AccountTools.isLoggedIn(getHelper()) && !AccountTools.isUnlinked(this)) {
-                Log.e("Account", "I'm logged in!");
-                Log.i("session pos id", getSession().getDevice_id() + "");
-                Log.i("session server", getSession().getServer() + "");
-            } else
-                Log.e("Account", "I'm not logged in!");
-        } catch (SQLException e) {
-            e.printStackTrace();
+    private int[] generateModules(boolean includeUsers) {
+        getSyncModules().setSyncAllModules(false);
+        int modulesToDownload = includeUsers ? 4 : 2;
+        if(AccountSettings.hasPullout(this)) {
+            modulesToDownload+=2;
         }
-    }
+//        if(AccountSettings.hasReceive(this))
+//            modulesToDownload++;
+        if(AccountSettings.hasSales(this))
+            modulesToDownload++;
 
-    @Override
-    public void onLogoutAccount() {
+        int index = modulesToDownload;
+        int[] modules = new int[modulesToDownload];
+        if(includeUsers) {
+            modules[modulesToDownload - (index--)] = Table.USERS.ordinal();
+            modules[modulesToDownload - (index--)] = Table.BRANCH_USERS.ordinal();
+        }
+        modules[modulesToDownload-(index--)] = Table.PRODUCTS.ordinal();
+        modules[modulesToDownload-(index--)] = Table.UNITS.ordinal();
+        if(AccountSettings.hasPullout(this)) {
+            modules[modulesToDownload-(index--)] = Table.DOCUMENT_TYPES.ordinal();
+            modules[modulesToDownload-(index--)] = Table.DOCUMENT_PURPOSES.ordinal();
+        }
+//        if(AccountSettings.hasReceive(this))
+//            modules[modulesToDownload-(index--)] = Table.DOCUMENTS.ordinal();
+        if(AccountSettings.hasSales(this))
+            modules[modulesToDownload-(index--)] = Table.CUSTOMERS.ordinal();
 
-    }
-
-    @Override
-    public void onUnlinkAccount() {
-
+        return modules;
     }
 }
