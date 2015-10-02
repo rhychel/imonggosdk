@@ -29,7 +29,6 @@ proguard/
 *.log
 
 .idea
-.idea/
 *.iml
 
 # Windows thumbnail db
