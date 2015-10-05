@@ -15,7 +15,6 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
 import net.nueca.imonggosdk.objects.document.Document;
-import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -29,8 +28,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -50,7 +47,7 @@ public class OfflineData extends BaseTable2 {
 
     private transient Document documentData;
     @ForeignCollectionField(orderColumnName = "reference")
-    public transient ForeignCollection<Document> documentData_fc;
+    private transient ForeignCollection<Document> documentData_fc;
 	
 	@DatabaseField
 	private int type = 1;
@@ -143,6 +140,9 @@ public class OfflineData extends BaseTable2 {
     @DatabaseField
     private int pagedRequestCount = 0;
 
+    @DatabaseField
+    private boolean isNewPagedSend = true;
+
     public OfflineData() {}
 
     public OfflineData(Invoice invoice, OfflineDataType offlineDataType) {
@@ -195,6 +195,14 @@ public class OfflineData extends BaseTable2 {
         this.isPagedRequest = document.shouldPageRequest();
         this.pagedRequestCount = SwableTools.computePagedRequestCount(document.getDocument_lines().size(),
                 Document.MAX_DOCUMENTLINES_PER_PAGE);
+    }
+
+    public boolean isNewPagedSend() {
+        return isNewPagedSend;
+    }
+
+    public void setNewPagedSend(boolean isNewPagedSend) {
+        this.isNewPagedSend = isNewPagedSend;
     }
 
     public JSONObject getData() throws JSONException {
@@ -535,7 +543,7 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
-                if(!isPagedRequest()) // not a paged request
+                if(!isPagedRequest() || isNewPagedSend) // not a paged request
                     documentData.insertTo(dbHelper);
                 break;
         }
@@ -557,7 +565,7 @@ public class OfflineData extends BaseTable2 {
                 orderData.updateTo(dbHelper);
                 break;
             case DOCUMENT:
-                if(isPagedRequest()) {
+                if(isPagedRequest() && !isNewPagedSend) {
                     try {
                         for(Document child : documentData.getChildDocuments()) {
                             Log.e("OfflineData", "insertTo : CHILD : " + child.getReference());
@@ -596,7 +604,10 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
-                if(isPagedRequest()) {
+                generateParentDocument();
+                if(documentData == null)
+                    break;
+                if(isPagedRequest() && !isNewPagedSend) {
                     for(Document child : documentData_fc) {
                         child.deleteTo(dbHelper);
                     }
@@ -642,7 +653,7 @@ public class OfflineData extends BaseTable2 {
                 documentData.setOfflineData(this);
                 typeStr = "DOCUMENT";
                 if(getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0) {
-                    if(isPagedRequest()) {
+                    if(isPagedRequest() && !isNewPagedSend) {
                         try {
                             List<Document> children = getChildDocuments();
 
@@ -652,21 +663,26 @@ public class OfflineData extends BaseTable2 {
                                     break;
                                 Document child = children.get(i);
 
-                                child.deleteTo(dbHelper);
-                                child.setId(Integer.parseInt(ids.get(i)));
-                                child.setOfflineData(this);
-                                child.insertTo(dbHelper);
+
+                                if(!getReturnIdList().get(0).equals("@")) {
+                                    child.deleteTo(dbHelper);
+                                    child.setId(Integer.parseInt(ids.get(i)));
+                                    child.setOfflineData(this);
+                                    child.insertTo(dbHelper);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        documentData.deleteTo(dbHelper);
-                        documentData.setId(Integer.parseInt(getReturnIdList().get(0)));
-                        documentData.insertTo(dbHelper);
+                        if(!getReturnIdList().get(0).equals("@")) {
+                            documentData.deleteTo(dbHelper);
+                            documentData.setId(Integer.parseInt(getReturnIdList().get(0)));
+                            documentData.insertTo(dbHelper);
+                        }
                     }
                 } else {
-                    if(isPagedRequest()) {
+                    if(isPagedRequest() && !isNewPagedSend) {
                         for(Document child : documentData_fc)
                             child.updateTo(dbHelper);
                     } else
@@ -704,6 +720,12 @@ public class OfflineData extends BaseTable2 {
         return Arrays.asList(returnId.split(","));
     }
 
+    public String getReturnIdListAt(int position) {
+        if(position >= getReturnIdList().size())
+            return null;
+        return getReturnIdList().get(position);
+    }
+
     public void insertReturnIdAt(int index, String returnId) {
         if(!isPagedRequest()) {
             Log.e("OfflineData", "insertReturnIdAt : not a paged transaction, invalid action");
@@ -734,5 +756,9 @@ public class OfflineData extends BaseTable2 {
             childRefs += reference_no + "-" + (i+1);
         }
         return childRefs;
+    }
+
+    public boolean isAllPageSynced() {
+        return getReturnIdList().size() == getPagedRequestCount() && !getReturnId().contains("@");
     }
 }

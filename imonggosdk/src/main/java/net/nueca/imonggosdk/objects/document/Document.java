@@ -74,6 +74,9 @@ public class Document extends BaseTransactionDB {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
     protected transient OfflineData offlineData;
 
+    @DatabaseField
+    protected transient boolean isOldPaging = false;
+
     public Document() {
         super(null);
         remark = "page=1/1";
@@ -108,6 +111,15 @@ public class Document extends BaseTransactionDB {
         if(document_lines != null)
             for(DocumentLine documentLine : document_lines)
                 documentLine.setDocument(this);
+    }
+
+    public boolean isOldPaging() {
+        return isOldPaging;
+    }
+
+    public Document setIsOldPaging(boolean isOldPaging) {
+        this.isOldPaging = isOldPaging;
+        return this;
     }
 
     public String getRemark() {
@@ -253,7 +265,8 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
-        if(shouldPageRequest()) {
+        /** support for old paging **/
+        if(shouldPageRequest() && isOldPaging) {
             try {
                 List<Document> documents = getChildDocuments();
                 for (Document child : documents)
@@ -289,7 +302,8 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
-        if(shouldPageRequest()) {
+        /** support for old paging **/
+        if(shouldPageRequest() && isOldPaging) {
             try {
                 List<Document> documents = getChildDocuments();
                 for (Document child : documents)
@@ -316,7 +330,8 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
-        if(shouldPageRequest()) {
+        /** support for old paging **/
+        if(shouldPageRequest() && isOldPaging) {
             try {
                 List<Document> documents = getChildDocuments();
                 for (Document child : documents)
@@ -444,6 +459,7 @@ public class Document extends BaseTransactionDB {
         return list;
     }
 
+    @Deprecated
     public Document getChildDocumentAt(int position) throws JSONException {
         Document document = Document.fromJSONObject(toJSONObject());
         if(id == -1)
@@ -462,6 +478,7 @@ public class Document extends BaseTransactionDB {
         return document;
     }
 
+    @Deprecated
     public List<Document> getChildDocuments() throws JSONException {
         List<Document> documentList = new ArrayList<>();
         for(int i = 0; i < getChildCount(); i++) {

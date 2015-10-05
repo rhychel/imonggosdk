@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
+import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.interfaces.AccountListener;
@@ -41,6 +42,8 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        new SimplePulloutRequestDialog(this, getHelper()).show();
 
         if(!SwableTools.isImonggoSwableRunning(this))
             SwableTools.startSwable(this);
