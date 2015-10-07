@@ -473,6 +473,7 @@ public class SwableSendModule {
         Log.e("SwableSendModule", "sendFirstPage : reference -> " + jsonObject.get("reference"));
         jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(), jsonObject);
 
+        requestQueue.cancelAll(offlineData.getId()+ "-" +page);
         requestQueue.add(
                 HTTPRequests.sendPOSTRequest2(imonggoSwable, session, new VolleyRequestListener() {
                     @Override
@@ -605,6 +606,7 @@ public class SwableSendModule {
                         offlineData.updateTo(dbHelper);
                     }
                 }, session.getServer(), table, jsonObject, offlineData.getBranch_id(), offlineData.getParameters())
+                .setTag(offlineData.getId()+ "-" +page)
         );
     }
 

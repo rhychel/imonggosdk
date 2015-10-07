@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -21,7 +22,10 @@ import java.util.List;
  * Created by gama on 10/5/15.
  */
 public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
-    public TextView tvSourceBranchLabel, tvDestinationBranchLabel;
+    private TextView tvSourceBranchLabel, tvDestinationBranchLabel;
+
+    private Button btnSave, btnCancel;
+
     private PulloutRequestDialogListener listener;
 
     public SimplePulloutRequestDialog(Context context, ImonggoDBHelper imonggoDBHelper) {
@@ -39,6 +43,7 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.simple_pullout_reason_dialog);
+        super.setCancelable(false);
 
         tvSourceBranchLabel = (TextView) super.findViewById(R.id.tvSourceBranchLabel);
         tvDestinationBranchLabel = (TextView) super.findViewById(R.id.tvDestinationBranchLabel);
@@ -48,7 +53,8 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
         spnDestinationBranch = (Spinner) super.findViewById(R.id.spnDestinationBranch);
 
         spnReason.setAdapter( new ArrayAdapter<>(getContext(), R.layout.simple_spinner_item, getReasonList()) );
-        spnSourceBranch.setAdapter( new ArrayAdapter<>(getContext(), R.layout.simple_spinner_item, getSourceBranch()) );
+
+        spnSourceBranch.setAdapter(new ArrayAdapter<>(getContext(), R.layout.simple_spinner_item, getSourceBranch()));
         try {
             spnDestinationBranch.setAdapter(new ArrayAdapter<>(getContext(), R.layout.simple_spinner_item, getDestinationBranch()));
         } catch (SQLException e) {
@@ -58,10 +64,7 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
         spnReason.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (listener != null)
-                    listener.onReasonSelect((String) spnReason.getSelectedItem());
-
-                showBranchSelection(((String) spnReason.getSelectedItem() ).toLowerCase().equals("transfer " +
+                showBranchSelection(((String) spnReason.getSelectedItem()).toLowerCase().equals("transfer " +
                         "to branch"));
             }
 
@@ -79,8 +82,6 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                if(listener != null)
-                    listener.onSourceSelect(getSelectedBranch(spnSourceBranch));
             }
 
             @Override
@@ -89,16 +90,27 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
             }
         });
 
-        spnDestinationBranch.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        btnSave = (Button) super.findViewById(R.id.btnSave);
+        btnCancel = (Button) super.findViewById(R.id.btnCancel);
+        btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onClick(View v) {
                 if(listener != null)
-                    listener.onDestinationSelect(getSelectedBranch(spnDestinationBranch));
+                    try {
+                        listener.onSave((String) spnReason.getSelectedItem(), getSelectedBranch(spnSourceBranch),
+                                getSelectedBranch(spnDestinationBranch));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                dismiss();
             }
-
+        });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                if(listener != null)
+                    listener.onCancel();
+                cancel();
             }
         });
     }
@@ -110,9 +122,22 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
         tvDestinationBranchLabel.setVisibility(shouldShow? View.VISIBLE : View.GONE);
     }
 
+    public void setListener(PulloutRequestDialogListener listener) {
+        this.listener = listener;
+    }
+
     public interface PulloutRequestDialogListener {
-        void onReasonSelect(String selectedReason);
-        void onSourceSelect(Branch selectedBranch);
-        void onDestinationSelect(Branch selectedBranch);
+        void onSave(String reason, Branch source, Branch destination);
+        void onCancel();
+    }
+
+    public Branch getSelectedSourceBranch() throws SQLException {
+        return getSelectedBranch(spnSourceBranch);
+    }
+    public Branch getSelectedDestinationBranch() throws SQLException {
+        return getSelectedBranch(spnDestinationBranch);
+    }
+    public String getSelectedReason() {
+        return (String)spnReason.getSelectedItem();
     }
 }

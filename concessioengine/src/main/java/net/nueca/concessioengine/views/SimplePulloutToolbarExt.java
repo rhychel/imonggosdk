@@ -5,9 +5,9 @@ import android.view.View;
 import net.nueca.concessioengine.R;
 
 /**
- * Created by gama on 9/1/15.
+ * Created by gama on 10/6/15.
  */
-public class SimpleReceiveToolbarExt extends BaseToolbarExt {
+public class SimplePulloutToolbarExt extends BaseToolbarExt {
 
     protected OnToolbarClickedListener onClickListener;
 
@@ -15,11 +15,11 @@ public class SimpleReceiveToolbarExt extends BaseToolbarExt {
         void onClick();
     }
 
-    public SimpleReceiveToolbarExt() {
-        super(R.layout.receive_toolbar_ext);
+    public SimplePulloutToolbarExt() {
+        super(R.layout.pullout_toolbar_ext);
     }
 
-    public SimpleReceiveToolbarExt(int customResource) {
+    public SimplePulloutToolbarExt(int customResource) {
         super(customResource);
     }
 

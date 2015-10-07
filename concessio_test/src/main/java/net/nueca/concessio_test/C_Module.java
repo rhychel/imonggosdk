@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.GenericRawResults;
@@ -20,6 +21,7 @@ import com.j256.ormlite.support.DatabaseResults;
 import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.ListSelectionDialog;
+import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
@@ -28,6 +30,7 @@ import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.views.SearchViewEx;
+import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.Branch;
@@ -58,6 +61,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
     private SimpleReceiveFragment simpleReceiveFragment;
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
+
+    private SimplePulloutToolbarExt simplePulloutToolbarExt;
+    private SimplePulloutRequestDialog simplePulloutRequestDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +107,39 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 finalizeFragment.setHasCategories(false);
                 finalizeFragment.setMultipleInput(true);
                 finalizeFragment.setMultiInputListener(multiInputListener);
+
+                btnSummary.setVisibility(View.VISIBLE);
+            } break;
+            case PULLOUT: {
+                simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
+                simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+                    @Override
+                    public void onSave(String reason, Branch source, Branch destination) {
+                        TextView tvReason = (TextView)simplePulloutToolbarExt.getToolbarExtensionView()
+                                .findViewById(R.id.tvReason);
+                        reason = reason.substring(0,1).toUpperCase() + reason.substring(1).toLowerCase();
+
+                        if(reason.toLowerCase().equals("transfer to branch"))
+                            tvReason.setText(reason + " " + destination.getName());
+                        else
+                            tvReason.setText(reason);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        if(simplePulloutToolbarExt == null || ((TextView)simplePulloutToolbarExt
+                                .getToolbarExtensionView().findViewById(R.id.tvReason) ).getText().length() == 0)
+                            onBackPressed();
+                    }
+                });
+                simplePulloutRequestDialog.show();
+                simpleProductsFragment.setHasUnits(true);
+                simpleProductsFragment.setProductCategories(getProductCategories(true));
+
+                finalizeFragment.setHasCategories(false);
+                finalizeFragment.setHasBrand(false);
+                finalizeFragment.setHasDeliveryDate(false);
+                finalizeFragment.setHasUnits(true);
 
                 btnSummary.setVisibility(View.VISIBLE);
             } break;
@@ -200,6 +239,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setHomeButtonEnabled(false);
+
+        if(concessioModule == ConcessioModule.PULLOUT && btnSummary.getText().equals("Summary")) {
+            if(simplePulloutToolbarExt != null)
+                simplePulloutToolbarExt.attachAfter(this, toolbar);
+        } else {
+            if(simplePulloutToolbarExt != null)
+                simplePulloutToolbarExt.detach();
+        }
     }
 
     @Override
@@ -226,6 +273,21 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         this.toolbar = toolbar;
+
+        if(concessioModule == ConcessioModule.PULLOUT && btnSummary.getText().equals("Summary")) {
+            if(simplePulloutToolbarExt == null)
+                simplePulloutToolbarExt = new SimplePulloutToolbarExt();
+            simplePulloutToolbarExt.attachAfter(this, this.toolbar);
+            simplePulloutToolbarExt.setOnClickListener(new SimplePulloutToolbarExt.OnToolbarClickedListener() {
+                @Override
+                public void onClick() {
+                    simplePulloutRequestDialog.show();
+                }
+            });
+        } else {
+            if(simplePulloutToolbarExt != null)
+                simplePulloutToolbarExt.detach();
+        }
     }
 
     private MultiInputListener multiInputListener = new MultiInputListener() {

@@ -7,20 +7,22 @@
               android:padding="10dp"
               android:gravity="center">
         <TextView
-            android:text="DR No. : "
+            android:text="Reason : "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:id="@+id/tvDRNo_Label"
+            android:id="@+id/tvReasonLabel"
             android:textColor="@android:color/black"/>
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvDRNo"
-        android:textSize="20dp"
+        android:id="@+id/tvReason"
+        android:textSize="16sp"
         android:layout_weight="1"
-        android:textColor="@android:color/black"/>
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:singleLine="true"/>
 
     <ImageView
         android:layout_width="40dp"

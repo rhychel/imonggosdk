@@ -69,7 +69,13 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         super.onCreate(savedInstanceState);
         try {
             for(OfflineData offlineData : getHelper().getOfflineData().queryForAll()) {
-                Log.e("OfflineData " + offlineData.getId(),
+                Log.e("OfflineData " + offlineData.getId(), offlineData.getType()+" "+offlineData.getReference_no());
+                if(offlineData.getObjectFromData() == null) {
+                    Log.e("OfflineData " + offlineData.getId(), "null object");
+                    offlineData.deleteTo(getHelper());
+                }
+                else
+                    Log.e("OfflineData " + offlineData.getId(),
                         offlineData.getObjectFromData().getReference() + " " +
                         offlineData.getObjectFromData().getId() + " -- " + offlineData.getReturnId() + " >> isSynced?" +
                         offlineData.isSynced() + " isSyncing?" + offlineData.isSyncing() + " isQueued?" + offlineData

@@ -231,10 +231,14 @@ public class OfflineData extends BaseTable2 {
                     documentData = document;
                     documentData.setReference(reference_no);
                 }
-                else
-                    documentData.addAllDocumentLine(document.getDocument_lines());
+                else {
+                    if(document.getDocument_lines() != null)
+                        documentData.addAllDocumentLine(document.getDocument_lines());
+                }
             }
+
         }
+
         return documentData;
     }
 

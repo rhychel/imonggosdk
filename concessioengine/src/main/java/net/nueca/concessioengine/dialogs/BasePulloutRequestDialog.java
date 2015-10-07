@@ -65,8 +65,9 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
         spnDestinationBranch.setVisibility(shouldShow? View.VISIBLE : View.GONE);
     }
 
-    public Branch getSelectedBranch(Spinner spinner) {
-        return branchList.get(spinner.getSelectedItemPosition());
+    public Branch getSelectedBranch(Spinner spinner) throws SQLException {
+        String branchName = (String)spinner.getSelectedItem();
+        return dbHelper.getBranches().queryBuilder().where().eq("name", branchName).queryForFirst();
     }
 
     public List<String> getReasonList() {

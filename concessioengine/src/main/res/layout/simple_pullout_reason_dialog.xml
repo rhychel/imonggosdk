@@ -10,7 +10,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/llContent"
         android:padding="8dp"
-        >
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:animateLayoutChanges="true">
 
         <TextView
             android:layout_width="fill_parent"
