@@ -6,6 +6,7 @@ import android.widget.Spinner;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,12 +22,13 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
 
     private List<String> branchListStr;
     private List<Branch> branchList;
-    private List<String> reasonList;
+    private List<DocumentPurpose> reasonList;
 
     public BasePulloutRequestDialog(Context context, ImonggoDBHelper dbHelper) {
         super(context);
         this.dbHelper = dbHelper;
         try {
+            this.reasonList = dbHelper.getDocumentPurposes().queryBuilder().where().eq("status", "A").query();
             branchList = dbHelper.getBranches().queryForAll();
             for(Branch branch : branchList) {
                 if(branchListStr == null)
@@ -38,7 +40,7 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
         }
     }
 
-    public BasePulloutRequestDialog(Context context, List<String> reasons, ImonggoDBHelper dbHelper) {
+    public BasePulloutRequestDialog(Context context, List<DocumentPurpose> reasons, ImonggoDBHelper dbHelper) {
         super(context);
         reasonList = reasons;
         this.dbHelper = dbHelper;
@@ -54,10 +56,9 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
         }
     }
 
-    public void setReasonList(List<String> reasonList) {
-        this.reasonList = reasonList;
+    public ImonggoDBHelper getHelper() {
+        return dbHelper;
     }
-
     //public abstract void populateBranchSelectors();
 
     public void showBranchSelection(boolean shouldShow) {
@@ -70,7 +71,7 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
         return dbHelper.getBranches().queryBuilder().where().eq("name", branchName).queryForFirst();
     }
 
-    public List<String> getReasonList() {
+    public List<DocumentPurpose> getReasonList() {
         return reasonList;
     }
 

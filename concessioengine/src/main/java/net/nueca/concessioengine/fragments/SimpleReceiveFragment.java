@@ -67,7 +67,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
+        /*try {
             for(OfflineData offlineData : getHelper().getOfflineData().queryForAll()) {
                 Log.e("OfflineData " + offlineData.getId(), offlineData.getType()+" "+offlineData.getReference_no());
                 if(offlineData.getObjectFromData() == null) {
@@ -84,7 +84,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
 
         if(hasCategories)
             productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line,
@@ -183,6 +183,9 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         View view = inflater.inflate(useRecyclerView ?
                 R.layout.simple_receive_fragment_rv : R.layout.simple_receive_fragment_lv, container, false);
 
+        if(simpleReceiveToolbarExt != null)
+            simpleReceiveToolbarExt.detach();
+
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         spCategories = (Spinner) view.findViewById(R.id.spCategories);
         tvNoProducts = (TextView) view.findViewById(R.id.tvNoProducts);
@@ -234,6 +237,9 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
             toggleNoItems("No items to display.", simpleReceiveListAdapter.getCount() > 0);
         }
 
+        fabContinue.setVisibility(getReceivedProductItemList() != null && !getReceivedProductItemList().isEmpty()?
+                View.VISIBLE : View.INVISIBLE);
+
         fabContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -283,9 +289,9 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
             if(documentLine.getExtras() != null) {
                 extendedAttributes.setBatch_no(documentLine.getExtras().getBatch_no());
             }
-            if(documentLine.getExtended_attributes() != null) {
-                extendedAttributes.setDelivery_date(documentLine.getExtended_attributes().getDelivery_date());
-                extendedAttributes.setBrand(documentLine.getExtended_attributes().getBrand());
+            if(documentLine.getExtras() != null) {
+                extendedAttributes.setDelivery_date(documentLine.getExtras().getDelivery_date());
+                extendedAttributes.setBrand(documentLine.getExtras().getBrand());
             }
             if(unit == null) {
                 if(documentLine.getUnit_name() != null)
@@ -382,7 +388,8 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
                         .findViewById(R.id.tvDRNo)).getText().toString());
             }
         });
-        simpleReceiveToolbarExt.attachAfter(getActivity(), tbActionBar, false);
+        Log.e(getClass().getSimpleName(), "onViewCreated : attaching simpleReceiveToolbarExt");
+        simpleReceiveToolbarExt.attachAfter(getActivity(), tbActionBar);
 
         tvDRNo = (TextView) simpleReceiveToolbarExt.getToolbarExtensionView()
                 .findViewById(R.id.tvDRNo);

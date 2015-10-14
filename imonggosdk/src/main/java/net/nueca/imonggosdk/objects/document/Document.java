@@ -253,7 +253,7 @@ public class Document extends BaseTransactionDB {
     @Override
     public boolean shouldPageRequest() {
         refresh();
-        return document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
+        return document_lines != null && document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
         //return false;
     }
 

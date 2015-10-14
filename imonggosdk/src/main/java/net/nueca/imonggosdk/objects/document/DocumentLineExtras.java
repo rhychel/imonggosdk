@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects.document;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
@@ -8,23 +9,60 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.SQLException;
 
 /**
- * Created by gama on 9/8/15.
+ * Created by gama on 7/20/15.
  */
 public class DocumentLineExtras extends BaseTable2 {
     @Expose
     @DatabaseField
-    private String batch_no;
+    protected String delivery_date;
+    @Expose
+    @DatabaseField
+    protected String brand;
+    @Expose
+    @DatabaseField
+    protected String batch_no;
+    @Expose
+    @DatabaseField
+    protected String outright_return;
+    @Expose
+    @DatabaseField
+    protected String discrepancy;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_line_id")
     protected transient DocumentLine documentLine;
 
     public DocumentLineExtras() {}
 
-    public DocumentLineExtras(String batch_no) {
-        this.batch_no = batch_no;
+    protected DocumentLineExtras(Builder builder) {
+        documentLine = builder.documentLine;
+
+        delivery_date = builder.delivery_date;
+        brand = builder.brand;
+        batch_no = builder.batch_no;
+        outright_return = builder.outright_return;
+        discrepancy = builder.discrepancy;
+    }
+
+    public String getDelivery_date() {
+        return delivery_date;
+    }
+
+    public void setDelivery_date(String delivery_date) {
+        this.delivery_date = delivery_date;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getBatch_no() {
@@ -33,6 +71,27 @@ public class DocumentLineExtras extends BaseTable2 {
 
     public void setBatch_no(String batch_no) {
         this.batch_no = batch_no;
+    }
+
+    public String getOutright_return() {
+        return outright_return;
+    }
+
+    public void setOutright_return(String outright_return) {
+        this.outright_return = outright_return;
+    }
+
+    public String getDiscrepancy() {
+        return discrepancy;
+    }
+
+    public void setDiscrepancy(String discrepancy) {
+        this.discrepancy = discrepancy;
+    }
+
+    public JSONObject toJSONObject() throws JSONException {
+        Gson gson = new Gson();
+        return new JSONObject(gson.toJson(this));
     }
 
     public DocumentLine getDocumentLine() {
@@ -67,6 +126,58 @@ public class DocumentLineExtras extends BaseTable2 {
             dbHelper.dbOperations(this, Table.DOCUMENT_LINE_EXTRAS, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static class Builder {
+        protected String delivery_date;
+        protected String brand;
+        protected String batch_no;
+        protected String outright_return;
+        protected String discrepancy;
+        protected DocumentLine documentLine;
+
+        public Builder document_line(DocumentLine documentLine) {
+            this.documentLine = documentLine;
+            return this;
+        }
+
+        public Builder delivery_date(String delivery_date) {
+            this.delivery_date = delivery_date;
+            return this;
+        }
+        public Builder brand(String brand) {
+            this.brand = brand;
+            return this;
+        }
+        public Builder batch_no(String batch_no) {
+            this.batch_no = batch_no;
+            return this;
+        }
+        public Builder outright_return(String outright_return) {
+            this.outright_return = outright_return;
+            return this;
+        }
+        public Builder discrepancy(String discrepancy) {
+            this.discrepancy = discrepancy;
+            return this;
+        }
+
+        public boolean isEmpty() {
+            return  delivery_date == null &&
+                    brand == null &&
+                    batch_no == null &&
+                    outright_return == null &&
+                    discrepancy == null;
+        }
+
+        public DocumentLineExtras buildIfNotEmpty() {
+            if(isEmpty())
+                return null;
+            return new DocumentLineExtras(this);
+        }
+        public DocumentLineExtras build() {
+            return new DocumentLineExtras(this);
         }
     }
 }

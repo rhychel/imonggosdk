@@ -3,7 +3,6 @@ package net.nueca.concessio_test;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -73,7 +72,7 @@ public class Receive extends ModuleActivity implements SetupActionBar {
                                 .price(1)
                                 .unit_content_quantity(1)
                                 .unit_name("PC")
-                                .extras(new DocumentLineExtras("123"))
+                                .extras(new DocumentLineExtras.Builder().batch_no("123").build())
                                 .unit_quantity((int) (Math.random() * 10) % 100)
                                 .build());
 

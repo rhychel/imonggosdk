@@ -32,6 +32,7 @@ import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
@@ -117,7 +118,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                     public void onSave(String reason, Branch source, Branch destination) {
                         TextView tvReason = (TextView)simplePulloutToolbarExt.getToolbarExtensionView()
                                 .findViewById(R.id.tvReason);
-                        reason = reason.substring(0,1).toUpperCase() + reason.substring(1).toLowerCase();
 
                         if(reason.toLowerCase().equals("transfer to branch"))
                             tvReason.setText(reason + " " + destination.getName());
@@ -334,6 +334,29 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                                                 generateDocument(C_Module.this), OfflineDataType.SEND_DOCUMENT);
 
                                                         Log.e("PCount", offlineData.getData().toString());
+                                                        onBackPressed();
+                                                        ProductsAdapterHelper.clearSelectedProductItemList();
+                                                        simpleProductsFragment.refreshList();
+                                                    } catch (SQLException | JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                                break;
+                                                case PULLOUT: {
+                                                    try {
+                                                        Document pulloutDoc = generateDocument(C_Module.this,
+                                                                simplePulloutRequestDialog
+                                                                        .getSelectedDestinationBranch().getId(),
+                                                                DocumentTypeCode.RELEASE_BRANCH);
+                                                        pulloutDoc.setDocument_purpose_name
+                                                                (simplePulloutRequestDialog.getSelectedReason().getName());
+                                                        OfflineData offlineData = SwableTools.sendTransaction(getHelper(),
+                                                                simplePulloutRequestDialog.getSelectedSourceBranch()
+                                                                        .getId(),
+                                                                pulloutDoc,
+                                                                OfflineDataType.SEND_DOCUMENT);
+
+                                                        Log.e("PULLOUT", offlineData.getData().toString());
                                                         onBackPressed();
                                                         ProductsAdapterHelper.clearSelectedProductItemList();
                                                         simpleProductsFragment.refreshList();

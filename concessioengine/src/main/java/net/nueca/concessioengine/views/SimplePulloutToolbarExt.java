@@ -1,6 +1,8 @@
 package net.nueca.concessioengine.views;
 
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import net.nueca.concessioengine.R;
 
@@ -10,6 +12,7 @@ import net.nueca.concessioengine.R;
 public class SimplePulloutToolbarExt extends BaseToolbarExt {
 
     protected OnToolbarClickedListener onClickListener;
+    private ImageButton ibtnEdit;
 
     public interface OnToolbarClickedListener {
         void onClick();
@@ -21,6 +24,12 @@ public class SimplePulloutToolbarExt extends BaseToolbarExt {
 
     public SimplePulloutToolbarExt(int customResource) {
         super(customResource);
+    }
+
+    @Override
+    protected void whenInflated(View view) {
+        ibtnEdit = (ImageButton)view.findViewById(R.id.ibtnEdit);
+        ibtnEdit.setOnClickListener(this);
     }
 
     @Override

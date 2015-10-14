@@ -12,6 +12,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,12 +31,9 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
 
     public SimplePulloutRequestDialog(Context context, ImonggoDBHelper imonggoDBHelper) {
         super(context, imonggoDBHelper);
-        List<String> reasons = Arrays.asList(getContext().getResources()
-                .getStringArray(R.array.string_array_pullout_reason));
-        setReasonList(reasons);
     }
 
-    public SimplePulloutRequestDialog(Context context, List<String> reasons, ImonggoDBHelper imonggoDBHelper) {
+    public SimplePulloutRequestDialog(Context context, List<DocumentPurpose> reasons, ImonggoDBHelper imonggoDBHelper) {
         super(context, reasons, imonggoDBHelper);
     }
 
@@ -64,8 +62,8 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
         spnReason.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                showBranchSelection(((String) spnReason.getSelectedItem()).toLowerCase().equals("transfer " +
-                        "to branch"));
+                showBranchSelection(((DocumentPurpose) spnReason.getSelectedItem())
+                        .isSourceDestinationBranchDependent());
             }
 
             @Override
@@ -97,8 +95,8 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
             public void onClick(View v) {
                 if(listener != null)
                     try {
-                        listener.onSave((String) spnReason.getSelectedItem(), getSelectedBranch(spnSourceBranch),
-                                getSelectedBranch(spnDestinationBranch));
+                        listener.onSave(((DocumentPurpose)spnReason.getSelectedItem()).getName(),
+                                getSelectedBranch(spnSourceBranch), getSelectedBranch(spnDestinationBranch));
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -137,7 +135,7 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
     public Branch getSelectedDestinationBranch() throws SQLException {
         return getSelectedBranch(spnDestinationBranch);
     }
-    public String getSelectedReason() {
-        return (String)spnReason.getSelectedItem();
+    public DocumentPurpose getSelectedReason() {
+        return (DocumentPurpose)spnReason.getSelectedItem();
     }
 }

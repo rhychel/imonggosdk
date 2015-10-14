@@ -52,7 +52,8 @@ public abstract class BaseToolbarExt implements View.OnClickListener {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             toolbarExtension = inflater.inflate(ToolbarResource, parent, false);
-            toolbarExtension.setOnClickListener(this);
+            //toolbarExtension.setOnClickListener(this);
+            whenInflated(toolbarExtension);
         }
 
         if(adaptToolbarBg)
@@ -94,7 +95,8 @@ public abstract class BaseToolbarExt implements View.OnClickListener {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             toolbarExtension = inflater.inflate(ToolbarResource, parent, false);
-            toolbarExtension.setOnClickListener(this);
+            //toolbarExtension.setOnClickListener(this);
+            whenInflated(toolbarExtension);
         }
 
         if(adaptToolbarBg)
@@ -120,6 +122,8 @@ public abstract class BaseToolbarExt implements View.OnClickListener {
     public boolean isAttached() {
         return isAttached;
     }
+
+    protected abstract void whenInflated(View view);
 
     public View getToolbarExtensionView() {
         return toolbarExtension;

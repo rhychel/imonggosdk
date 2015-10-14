@@ -67,6 +67,7 @@ public class SwableSendModule {
                     offlineData.getData());
             //Log.e("JSON", jsonObject.toString());
 
+            requestQueue.cancelAll(offlineData.getId());
             requestQueue.add(
                     HTTPRequests.sendPOSTRequest(imonggoSwable, session, new VolleyRequestListener() {
                         @Override
@@ -213,7 +214,7 @@ public class SwableSendModule {
                             offlineData.updateTo(dbHelper);
                         }
                     }, session.getServer(), table, jsonObject, "?branch_id=" + offlineData.getBranch_id() + offlineData
-                            .getParameters())
+                            .getParameters()).setTag(offlineData.getId())
             );
         } catch (JSONException e) {
             e.printStackTrace();
@@ -279,6 +280,7 @@ public class SwableSendModule {
     private void sendThisPage(Table table, final int page, final int maxpage, final JSONObject jsonObject,
                               final OfflineData parent) throws JSONException {
 
+        requestQueue.cancelAll(parent.getId() + "-" + page);
         requestQueue.add(
                 HTTPRequests.sendPOSTRequest(imonggoSwable, session, new VolleyRequestListener() {
                     @Override
@@ -439,6 +441,7 @@ public class SwableSendModule {
                     }
                 }, session.getServer(), table, jsonObject, "?branch_id=" + parent.getBranch_id() + parent
                         .getParameters())
+                        .setTag(parent.getId()+ "-" +page)
         );
     }
 
