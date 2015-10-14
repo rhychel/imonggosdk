@@ -37,7 +37,13 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     protected static final long LIMIT = 100l;
     protected long offset = 0l;
-    protected boolean hasUnits = true, hasBrand = false, hasDeliveryDate = false, hasCategories = true, multipleInput = false;
+    protected boolean hasUnits = true,
+            hasBrand = false,
+            hasDeliveryDate = false,
+            hasCategories = true,
+            multipleInput = false,
+            showCategoryOnStart = false,
+            lockCategory = false;
     private int prevLast = -1;
     private String searchKey = "", category = "";
     private List<Product> filterProductsBy = new ArrayList<>();
@@ -222,6 +228,14 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setHasCategories(boolean hasCategories) {
         this.hasCategories = hasCategories;
+    }
+
+    public void setShowCategoryOnStart(boolean showCategoryOnStart) {
+        this.showCategoryOnStart = showCategoryOnStart;
+    }
+
+    public void setLockCategory(boolean lockCategory) {
+        this.lockCategory = lockCategory;
     }
 
     public void setFilterProductsBy(List<Product> filterProductsBy) {

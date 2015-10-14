@@ -52,9 +52,9 @@ public class LoginActivity extends BaseLoginActivity {
             }
 
             // TODO: Delete this autofill login data
-            setEditTextAccountID("retailpos");      // ACCOUNT ID
-            setEditTextEmail("retailpos@test.com"); // EMAIL
-            setEditTextPassword("retailpos");       // PASSWORD
+//            setEditTextAccountID("retailpos");      // ACCOUNT ID
+//            setEditTextEmail("retailpos@test.com"); // EMAIL
+//            setEditTextPassword("retailpos");       // PASSWORD
 
             getHelper().deleteAllDatabaseValues();
         }

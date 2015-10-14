@@ -36,6 +36,48 @@ public class HTTPRequests {
 
     public static JsonObjectRequest sendGETJsonObjectRequest(Context context, final Session session,
                                                              final VolleyRequestListener volleyRequestListener, Server server,
+                                                             final Table table, final RequestType requestType, String id, String parameter) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(table, requestType);
+
+        Log.e(TAG,  ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
+                ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (volleyRequestListener != null)
+                            volleyRequestListener.onSuccess(table, requestType, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, error.getLocalizedMessage());
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null)
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                String auth = "Basic " + session.getApiAuthentication();
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        return jsonObjectRequest;
+    }
+
+    public static JsonObjectRequest sendGETJsonObjectRequest(Context context, final Session session,
+                                                             final VolleyRequestListener volleyRequestListener, Server server,
                                                              final Table table, final RequestType requestType, String parameter) {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);

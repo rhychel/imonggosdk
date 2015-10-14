@@ -105,6 +105,12 @@ public class ProductsAdapterHelper {
         return session;
     }
 
+    public static boolean hasSelectedProductItems() {
+        if(selectedProductItems == null)
+            return false;
+        return selectedProductItems.size() > 0;
+    }
+
     public static void clearSelectedProductItemList() {
         selectedProductItems.clear();
         ProductListTools.restartLineNo();

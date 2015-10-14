@@ -73,6 +73,8 @@ public class Values {
         else{
             this.quantity = quantity;
             this.unit = unit;
+            if(unit != null)
+                this.unit_name = unit.getName();
         }
     }
 

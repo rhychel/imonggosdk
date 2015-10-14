@@ -145,12 +145,16 @@ public class ImonggoOperations {
      */
 
     public static void getConcesioAppSettings(Context context, RequestQueue queue, Session session, VolleyRequestListener volleyRequestListener, Server server) {
-        getConcesioAppSettings(context, queue, session, volleyRequestListener, server, false);
+        getConcesioAppSettings(context, queue, session, volleyRequestListener, server, false, false);
     }
 
     public static void getConcesioAppSettings(Context context, RequestQueue queue, Session session,
-                                                           VolleyRequestListener volleyRequestListener, Server server, boolean autoStart) {
-        queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", ""));
+                                                           VolleyRequestListener volleyRequestListener, Server server, boolean autoStart, boolean useJSONObject) {
+        if(useJSONObject)
+            queue.add(HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS,
+                    RequestType.APPLICATION_SETTINGS, "concesio", ""));
+        else
+            queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", ""));
         if(autoStart)
             queue.start();
     }

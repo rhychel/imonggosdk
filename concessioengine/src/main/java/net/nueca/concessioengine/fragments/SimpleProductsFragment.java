@@ -1,6 +1,9 @@
 package net.nueca.concessioengine.fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,9 +28,12 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
 import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.imonggosdk.objects.AccountSettings;
+import net.nueca.imonggosdk.objects.ApplicationSettings;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.operations.ImonggoTools;
+import net.nueca.imonggosdk.tools.DialogTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -50,7 +56,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     private Spinner spCategories;
 
     private boolean useRecyclerView = true;
-    private int prevLast = -1;
+    private int prevLast = -1, prevSelectedCategory = 0;
 
     public static SimpleProductsFragment newInstance() {
         return new SimpleProductsFragment();
@@ -241,25 +247,61 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         super.onViewCreated(view, savedInstanceState);
         if(setupActionBar != null)
             setupActionBar.setupActionBar(tbActionBar);
+        if(showCategoryOnStart)
+            new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message message) {
+                    if(spCategories != null) {
+                        spCategories.performClick();
+                    }
+                    return false;
+                }
+            }).sendEmptyMessageDelayed(0, 200);
+
     }
 
     private AdapterView.OnItemSelectedListener onCategorySelected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-            String category = productCategoriesAdapter.getItem(position).toLowerCase();
-            setCategory(category);
-            offset = 0l;
-            prevLast = 0;
-
-            if(useRecyclerView)
-                toggleNoItems("No results for \"" + category + "\".", simpleProductRecyclerViewAdapter.updateList(getProducts()));
+        public void onItemSelected(AdapterView<?> adapterView, View view, final int position, long id) {
+            final String category = productCategoriesAdapter.getItem(position).toLowerCase();
+            if(AccountSettings.allowLimitOrdersToOneCategory(getActivity())) {
+                if(ProductsAdapterHelper.hasSelectedProductItems() && prevSelectedCategory != position)
+                    DialogTools.showConfirmationDialog(getActivity(), "Ooopps!", "Selected items will be deleted. Would you like to switch to " + category + "?",
+                            "Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    ProductsAdapterHelper.clearSelectedProductItemList();
+                                    changeCategory(category, position);
+                                }
+                            },
+                            "No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    spCategories.setSelection(prevSelectedCategory);
+                                }
+                            });
+                else
+                    changeCategory(category, position);
+            }
             else
-                toggleNoItems("No results for \"" + category + "\".", simpleProductListAdapter.updateList(getProducts()));
+                changeCategory(category, position);
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) { }
     };
+
+    private void changeCategory(String category, int position) {
+        prevSelectedCategory = position;
+        setCategory(category);
+        offset = 0l;
+        prevLast = 0;
+
+        if(useRecyclerView)
+            toggleNoItems("No results for \"" + category + "\".", simpleProductRecyclerViewAdapter.updateList(getProducts()));
+        else
+            toggleNoItems("No results for \"" + category + "\".", simpleProductListAdapter.updateList(getProducts()));
+    }
 
     public void updateListWhenSearch(String searchKey) {
         setSearchKey(searchKey);
