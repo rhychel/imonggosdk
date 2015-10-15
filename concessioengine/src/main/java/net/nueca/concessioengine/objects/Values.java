@@ -44,6 +44,9 @@ public class Values {
     private double unit_retail_price = 0.0, unit_content_quantity = 0.0;
     private String quantity = "1";
     private ExtendedAttributes extendedAttributes = null;
+    // ---- FOR INVOICE
+    private String discount_text = "0%";
+    private String subtotal = "0";
 
     public Values() { }
 
