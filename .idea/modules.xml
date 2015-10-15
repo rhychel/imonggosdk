@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/concessioengine/concessioengine.iml" filepath="$PROJECT_DIR$/concessioengine/concessioengine.iml" />
       <module fileurl="file://$PROJECT_DIR$/gamaBranch.iml" filepath="$PROJECT_DIR$/gamaBranch.iml" />
       <module fileurl="file://$PROJECT_DIR$/imonggosdk.iml" filepath="$PROJECT_DIR$/imonggosdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imonggosdk2.iml" filepath="$PROJECT_DIR$/imonggosdk2.iml" />
     </modules>
   </component>
 </project>

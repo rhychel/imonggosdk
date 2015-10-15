@@ -29,8 +29,14 @@ proguard/
 # Log Files
 *.log
 
+.idea
+.idea/
 *.iml
 
-.idea/
+# Windows thumbnail db
+Thumbs.db
+
+# OSX files
+.DS_Store
 
 androidTest

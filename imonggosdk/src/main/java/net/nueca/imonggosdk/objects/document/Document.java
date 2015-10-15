@@ -49,6 +49,8 @@ public class Document extends BaseTransactionDB {
     @Expose
     @DatabaseField
     protected Integer target_branch_id;
+    @DatabaseField
+    protected transient Integer branch_id;
 
     @Expose
     @DatabaseField
@@ -201,6 +203,14 @@ public class Document extends BaseTransactionDB {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Integer getBranch_id() {
+        return branch_id;
+    }
+
+    public void setBranch_id(Integer branch_id) {
+        this.branch_id = branch_id;
     }
 
     public Integer getParent_document_id() {
