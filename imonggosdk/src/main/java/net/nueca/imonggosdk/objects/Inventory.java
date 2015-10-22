@@ -58,6 +58,17 @@ public class Inventory {
         this.product = product;
     }
 
+    public String getInventory() {
+        String inventoryQty = String.valueOf(quantity);
+        if(inventoryQty.contains(".")) {
+            String[] values = inventoryQty.split(".");
+            if(Integer.valueOf(values[1]) > 0)
+                return inventoryQty;
+            return values[0];
+        }
+        return inventoryQty;
+    }
+
     public double getQuantity() {
         return quantity;
     }

@@ -72,6 +72,9 @@ public class Product extends BaseTable {
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "extras_id")
     private Extras extras;
 
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
+    private Inventory inventory;
+
     public double getCost() {
         return cost;
     }
@@ -342,6 +345,14 @@ public class Product extends BaseTable {
 
     public void setExtras(Extras extras) {
         this.extras = extras;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 
     public void doOperationsForExtras(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
