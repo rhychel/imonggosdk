@@ -33,7 +33,9 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         setContentView(R.layout.c_dashboard);
 
         try {
-            for(Document document : getHelper().getDocuments().queryForAll()) {
+            for(Document document : getHelper().getDocuments().queryBuilder().where()
+                    .eq("intransit_status", "Intransit").and()
+                    .eq("branch_id", 277).or().eq("target_branch_id", 277).query()) {
                 if(document.getId() == 0)
                     document.deleteTo(getHelper());
                 Log.e("Document " + document.getId(), document.getReference() + " " + document.getDocument_type_code

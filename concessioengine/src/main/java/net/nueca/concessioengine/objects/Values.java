@@ -147,6 +147,22 @@ public class Values {
         return (unit != null && unit.getId() != -1);
     }
 
+    public String getDiscount_text() {
+        return discount_text;
+    }
+
+    public void setDiscount_text(String discount_text) {
+        this.discount_text = discount_text;
+    }
+
+    public String getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(String subtotal) {
+        this.subtotal = subtotal;
+    }
+
     @Override
     public boolean equals(Object o) {
 //        return unit.getId() == ((Values)o).getUnit().getId();

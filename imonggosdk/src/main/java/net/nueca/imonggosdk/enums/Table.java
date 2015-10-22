@@ -34,6 +34,8 @@ public enum Table {
     INVOICE_TAX_RATES,
     PAYMENTS,
 
+    PAYMENT_TYPES,
+
     SALES_PROMOTIONS,
 
     SETTINGS,

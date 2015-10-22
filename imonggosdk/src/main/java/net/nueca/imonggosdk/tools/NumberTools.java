@@ -108,10 +108,23 @@ public class NumberTools {
         return String.format("%,1.2f", num);
     }
     public static String separateInCommas(Double num) {
-        return String.format("%,1.2f",num);
+        return String.format("%,1.2f", num);
     }
     public static String separateInCommas(int num) {
-        return String.format("%,1d",num);
+        return String.format("%,1d", num);
+    }
+
+    public static String separateInSpaces(String unparsedNum) {
+        return separateInCommas(unparsedNum).replace(',', ' ');
+    }
+    public static String separateInSpaces(BigDecimal num) {
+        return separateInSpaces(num).replace(',', ' ');
+    }
+    public static String separateInSpaces(Double num) {
+        return separateInSpaces(num).replace(',', ' ');
+    }
+    public static String separateInSpaces(int num) {
+        return separateInSpaces(num).replace(',', ' ');
     }
 
     public static final DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###,##0.##");
@@ -123,5 +136,15 @@ public class NumberTools {
     }
     public static String separateInCommasHideZeroDecimals(String num) {
         return decimalFormat.format(toBigDecimal(num));
+    }
+
+    public static String separateInSpaceHideZeroDecimals(BigDecimal num) {
+        return separateInCommasHideZeroDecimals(num).replace(',', ' ');
+    }
+    public static String separateInSpaceHideZeroDecimals(Double num) {
+        return separateInCommasHideZeroDecimals(num).replace(',', ' ');
+    }
+    public static String separateInSpaceHideZeroDecimals(String num) {
+        return separateInCommasHideZeroDecimals(toBigDecimal(num)).replace(',', ' ');
     }
 }

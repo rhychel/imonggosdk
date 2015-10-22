@@ -83,6 +83,10 @@
             android:label="@string/title_activity_sample_sales"
             android:theme="@style/AppTheme.Concessio.NoActionBar" >
         </activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="50e2100f1a801357b9d65a4f7f38551db0df28ce" />
     </application>
 
 </manifest>

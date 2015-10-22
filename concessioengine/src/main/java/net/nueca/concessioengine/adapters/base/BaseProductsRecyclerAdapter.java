@@ -50,4 +50,23 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
         ProductsAdapterHelper.setDbHelper(dbHelper);
     }
 
+    @Override
+    public Product getItem(int position) {
+        return super.getItem(position);
+    }
+
+    @Override
+    public boolean updateList(List<Product> products) {
+        return super.updateList(products);
+    }
+
+    @Override
+    public void addAll(List<Product> products) {
+        super.addAll(products);
+    }
+
+    @Override
+    public void add(Product product) {
+        super.add(product);
+    }
 }

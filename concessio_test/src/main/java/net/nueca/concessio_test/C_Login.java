@@ -1,18 +1,28 @@
 package net.nueca.concessio_test;
 
 import android.content.Intent;
+import android.os.Bundle;
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.tools.SettingTools;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+
 
 /**
  * Created by rhymart on 8/20/15.
  * imonggosdk2 (c)2015
  */
 public class C_Login extends LoginActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+    }
 
     @Override
     protected void initLoginEquipments() {
@@ -76,5 +86,14 @@ public class C_Login extends LoginActivity {
             modules[modulesToDownload-(index--)] = Table.CUSTOMERS.ordinal();
 
         return modules;
+    }
+
+    @Override
+    protected void onCreateLoginLayout() {
+        super.onCreateLoginLayout();
+
+        setEditTextAccountID("nuecaonly");
+        setEditTextEmail("nuecaonly@test.com");
+        setEditTextPassword("nuecaonly");
     }
 }

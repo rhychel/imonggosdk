@@ -851,6 +851,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             for (int i = 0; i < size; i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Branch branch = gson.fromJson(jsonObject.toString(), Branch.class);
+                                if(branch.getSite_type() != null && branch.getSite_type().equals("head_office"))
+                                    continue;
                                 BranchUserAssoc branchUserAssoc = new BranchUserAssoc(branch, getUser());
 
                               //  if (jsonArray.getJSONObject(i).getString("site_type").equals("null")) {

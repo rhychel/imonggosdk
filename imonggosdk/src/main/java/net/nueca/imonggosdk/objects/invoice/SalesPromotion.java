@@ -11,15 +11,13 @@ import java.util.Date;
  */
 @DatabaseTable
 public class SalesPromotion {
-
     @DatabaseField(id=true)
     private int id = 0;
 
     @DatabaseField
-    private String settings = "", promotion_type_name = "", utc_created_at = "", utc_updated_at = "", status = null, name = "", code = "", photos_ids = "", to_date = "", from_date = "";
+    private String settings = "", promotion_type_name = "", utc_created_at = "", utc_updated_at = "", status = null,
+            name = "", code = "", photos_ids = "", to_date = "", from_date = "";
 
     @DatabaseField
     private transient Date toDate, fromDate;
-
-
 }

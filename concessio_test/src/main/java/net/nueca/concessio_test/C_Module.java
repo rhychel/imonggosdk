@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.DatabaseResults;
 
 import net.nueca.concessioengine.activities.ModuleActivity;
@@ -35,9 +37,11 @@ import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
