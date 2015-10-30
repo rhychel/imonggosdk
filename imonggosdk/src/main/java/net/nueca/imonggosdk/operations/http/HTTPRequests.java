@@ -54,7 +54,7 @@ public class HTTPRequests {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, error.getLocalizedMessage());
+                        Log.e(TAG, "Errod: " + error.getMessage() );
                         if (volleyRequestListener != null) {
                             if (error.networkResponse != null)
                                 volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);

@@ -9,10 +9,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/concessio" />
             <option value="$PROJECT_DIR$/concessio_test" />
             <option value="$PROJECT_DIR$/concessioengine" />
             <option value="$PROJECT_DIR$/imonggosdk" />
+            <option value="$PROJECT_DIR$/salesdashboard" />
           </set>
         </option>
       </GradleProjectSettings>

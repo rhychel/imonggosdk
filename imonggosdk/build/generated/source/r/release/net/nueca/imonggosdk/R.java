@@ -2716,8 +2716,11 @@ containing a value of this type.
         public static int abc_toolbar_collapse_description=0x7f050036;
         public static int app_name=0x7f050037;
         public static int appbar_scrolling_view_behavior=0x7f050038;
-        public static int param_login=0x7f050039;
-        public static int status_bar_notification_info_overflow=0x7f05003a;
+        public static int error_dialog_message_requires_premium_subscription=0x7f050039;
+        public static int error_dialog_title_requires_premium_subscription=0x7f05003a;
+        public static int error_response_requires_premium_subscription=0x7f05003b;
+        public static int param_login=0x7f05003c;
+        public static int status_bar_notification_info_overflow=0x7f05003d;
     }
     public static final class style {
         public static int AlertDialog_AppCompat=0x7f070076;

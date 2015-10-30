@@ -18,7 +18,7 @@ public class C_SampleLogin extends LoginActivity {
         setRequireConcessioSettings(false);
         setServer(Server.IMONGGO);
         setAutoUpdateApp(true);
-        setModulesToSync(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(), Table.DAILY_SALES.ordinal());
+        setModulesToSync(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(), Table.PRODUCTS.ordinal());
 
     }
 

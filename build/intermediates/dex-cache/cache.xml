@@ -2,11 +2,11 @@
 <items version="2" >
 
     <item
-        jar="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\exploded-aar\imonggosdk\imonggosdk\unspecified\jars\classes.jar"
+        jar="E:\Bitbucket\Android Projects\imonggosdk\salesdashboard\build\intermediates\exploded-aar\imonggosdk\imonggosdk\unspecified\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="8e31fe6f6b3a6fa07ceae4f617a37477b1f90235">
-        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\concessio_test\build\intermediates\pre-dexed\debug\classes-9ab7af008a2b6d65dba3f2170b9c8eb26452b802.jar" />
+        sha1="cee772bc28e955420643487e0f691fa5bfbfb10e">
+        <dex dex="E:\Bitbucket\Android Projects\imonggosdk\salesdashboard\build\intermediates\pre-dexed\debug\classes-5896cfb271adeb96380a5cb8ed57deedfe00dd42.jar" />
     </item>
 
 </items>

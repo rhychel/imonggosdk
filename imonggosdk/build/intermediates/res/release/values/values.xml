@@ -443,6 +443,9 @@
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
     <!-- From: file:/E:/Bitbucket/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/strings.xml -->
     <eat-comment/>
+    <string name="error_dialog_message_requires_premium_subscription">You can check it by trying the Premium Features. On the upper right, click "Try Premium Features Free".</string>
+    <string name="error_dialog_title_requires_premium_subscription">Requires Premium Subscription</string>
+    <string name="error_response_requires_premium_subscription">Requires premium subscription.</string>
     <string name="param_login">email=%1$s&amp;password=%2$s</string>
     <!-- From: file:/E:/Bitbucket/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
     <eat-comment/>

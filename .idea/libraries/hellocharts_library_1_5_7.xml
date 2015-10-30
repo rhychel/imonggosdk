@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="hellocharts-library-1.5.7">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/salesdashboard/build/intermediates/exploded-aar/com.github.lecho/hellocharts-library/1.5.7/res" />
+      <root url="jar://$PROJECT_DIR$/salesdashboard/build/intermediates/exploded-aar/com.github.lecho/hellocharts-library/1.5.7/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.lecho/hellocharts-library/1.5.7/82156952573558a23ec5e606449bacf855e1df01/hellocharts-library-1.5.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

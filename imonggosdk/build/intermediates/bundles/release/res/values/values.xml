@@ -55,5 +55,8 @@
     <string name="PRODUCT_LARGEIMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
     <string name="PRODUCT_LARGEIMAGE_URL_SECURED">https://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
     <string name="app_name">ImonggoSDK</string>
+    <string name="error_dialog_message_requires_premium_subscription">You can check it by trying the Premium Features. On the upper right, click "Try Premium Features Free".</string>
+    <string name="error_dialog_title_requires_premium_subscription">Requires Premium Subscription</string>
+    <string name="error_response_requires_premium_subscription">Requires premium subscription.</string>
     <string name="param_login">email=%1$s&amp;password=%2$s</string>
 </resources>

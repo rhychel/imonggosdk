@@ -15,12 +15,14 @@ import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
+import net.nueca.imonggosdk.objects.Extras;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
@@ -45,7 +47,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk.db";
 
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 25;
 
     private Dao<Branch, Integer> branches = null;
     private Dao<BranchPrice, Integer> branchPrices = null;
@@ -54,38 +56,23 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
     private Dao<Inventory, Integer> inventories = null;
     private Dao<Product, Integer> products = null;
     private Dao<ProductTag, Integer> productTags = null;
+    private Dao<Extras, Integer> extras = null;
     private Dao<Session, Integer> sessions = null;
     private Dao<TaxRate, Integer> taxRates = null;
     private Dao<TaxSetting, Integer> taxSettings = null;
     private Dao<Unit, Integer> units = null;
     private Dao<User, Integer> users = null;
-
     private Dao<DocumentType, Integer> documentTypes = null;
     private Dao<DocumentPurpose, Integer> documentPurposes = null;
-
     private Dao<BranchUserAssoc, Integer> branchUserAssocs = null;
     private Dao<ProductTaxRateAssoc, Integer> productTaxRateAssocs = null;
-
     private Dao<LastUpdatedAt, Integer> lastUpdatedAts = null;
-
-    /**
-     * added by gama
-     **/
     private Dao<OfflineData, Integer> offlineData = null;
-
     private Dao<Document, Integer> documents = null;
     private Dao<DocumentLine, Integer> documentLines = null;
     private Dao<ExtendedAttributes, Integer> extendedAttributes = null;
-    /**           end           **/
-    /**- - - - - - - - - - - - -**/
-    /**
-     * added by jn
-     **/
     private Dao<DailySales, Integer> dailySales = null;
-
-    /**
-     * end
-     **/
+    private Dao<Settings, Integer> settings = null;
 
     public ImonggoDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -101,26 +88,23 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Inventory.class);
             TableUtils.createTable(connectionSource, Product.class);
             TableUtils.createTable(connectionSource, ProductTag.class);
+            TableUtils.createTable(connectionSource, Extras.class);
             TableUtils.createTable(connectionSource, Session.class);
             TableUtils.createTable(connectionSource, TaxRate.class);
             TableUtils.createTable(connectionSource, TaxSetting.class);
             TableUtils.createTable(connectionSource, Unit.class);
             TableUtils.createTable(connectionSource, User.class);
-
             TableUtils.createTable(connectionSource, DocumentType.class);
             TableUtils.createTable(connectionSource, DocumentPurpose.class);
-
             TableUtils.createTable(connectionSource, BranchUserAssoc.class);
             TableUtils.createTable(connectionSource, ProductTaxRateAssoc.class);
-
             TableUtils.createTable(connectionSource, LastUpdatedAt.class);
-
             TableUtils.createTable(connectionSource, OfflineData.class);
-
             TableUtils.createTable(connectionSource, Document.class);
             TableUtils.createTable(connectionSource, DocumentLine.class);
             TableUtils.createTable(connectionSource, ExtendedAttributes.class);
             TableUtils.createTable(connectionSource, DailySales.class);
+            TableUtils.createTable(connectionSource, Settings.class);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -137,26 +121,23 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, Inventory.class, true);
             TableUtils.dropTable(connectionSource, Product.class, true);
             TableUtils.dropTable(connectionSource, ProductTag.class, true);
+            TableUtils.dropTable(connectionSource, Extras.class, true);
             TableUtils.dropTable(connectionSource, Session.class, true);
             TableUtils.dropTable(connectionSource, TaxRate.class, true);
             TableUtils.dropTable(connectionSource, TaxSetting.class, true);
             TableUtils.dropTable(connectionSource, Unit.class, true);
             TableUtils.dropTable(connectionSource, User.class, true);
-
             TableUtils.dropTable(connectionSource, DocumentType.class, true);
             TableUtils.dropTable(connectionSource, DocumentPurpose.class, true);
-
             TableUtils.dropTable(connectionSource, BranchUserAssoc.class, true);
             TableUtils.dropTable(connectionSource, ProductTaxRateAssoc.class, true);
-
             TableUtils.dropTable(connectionSource, LastUpdatedAt.class, true);
-
             TableUtils.dropTable(connectionSource, OfflineData.class, true);
-
             TableUtils.dropTable(connectionSource, Document.class, true);
             TableUtils.dropTable(connectionSource, DocumentLine.class, true);
             TableUtils.dropTable(connectionSource, ExtendedAttributes.class, true);
             TableUtils.dropTable(connectionSource, DailySales.class, true);
+            TableUtils.dropTable(connectionSource, Settings.class, true);
 
             onCreate(database, connectionSource);
         } catch (SQLException e) {
@@ -207,6 +188,12 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         if (productTags == null)
             productTags = getDao(ProductTag.class);
         return productTags;
+    }
+
+    public Dao<Extras, Integer> getProductExtras() throws SQLException {
+        if (extras == null)
+            extras = getDao(Extras.class);
+        return extras;
     }
 
     public Dao<Session, Integer> getSessions() throws SQLException {
@@ -300,6 +287,13 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         return dailySales;
     }
 
+    public Dao<Settings, Integer> getSettings() throws SQLException {
+        if (settings == null) {
+            settings = getDao(Settings.class);
+        }
+        return settings;
+    }
+
     /**
      * DROP Table
      */
@@ -331,6 +325,10 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             break;
             case PRODUCT_TAGS: {
                 TableUtils.dropTable(getConnectionSource(), ProductTag.class, true);
+            }
+            break;
+            case PRODUCT_EXTRAS: {
+                TableUtils.dropTable(getConnectionSource(), Extras.class, true);
             }
             break;
             case SESSIONS: {
@@ -396,6 +394,11 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 TableUtils.dropTable(getConnectionSource(), DailySales.class, true);
             }
             break;
+
+            case SETTINGS: {
+                TableUtils.dropTable(getConnectionSource(), DailySales.class, true);
+            }
+            break;
         }
     }
 
@@ -451,6 +454,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             case PRODUCT_TAGS:
                 getProductTags().create((ProductTag) object);
                 break;
+            case PRODUCT_EXTRAS:
+                getProductExtras().create((Extras) object);
+                break;
             case SESSIONS:
                 getSessions().create((Session) object);
                 break;
@@ -497,9 +503,11 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             case PRODUCT_TAX_RATES:
                 getProductTaxRateAssocs().create((ProductTaxRateAssoc) object);
                 break;
-
             case DAILY_SALES:
                 getDailySales().create((DailySales) object);
+                break;
+            case SETTINGS:
+                getSettings().create((Settings) object);
                 break;
         }
     }
@@ -527,6 +535,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 break;
             case PRODUCT_TAGS:
                 getProductTags().delete((ProductTag) object);
+                break;
+            case PRODUCT_EXTRAS:
+                getProductExtras().delete((Extras) object);
                 break;
             case SESSIONS:
                 getSessions().delete((Session) object);
@@ -577,6 +588,10 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
             case DAILY_SALES:
                 getDailySales().delete((DailySales) object);
+                break;
+            case SETTINGS:
+                getSettings().delete((Settings) object);
+                break;
         }
     }
 
@@ -603,6 +618,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 break;
             case PRODUCT_TAGS:
                 getProductTags().deleteBuilder().delete();
+                break;
+            case PRODUCT_EXTRAS:
+                getProductExtras().deleteBuilder().delete();
                 break;
             case SESSIONS:
                 getSessions().deleteBuilder().delete();
@@ -654,6 +672,8 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             case DAILY_SALES:
                 getDailySales().deleteBuilder().delete();
                 break;
+            case SETTINGS:
+                getSettings().deleteBuilder().delete();
         }
     }
 
@@ -680,6 +700,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 break;
             case PRODUCT_TAGS:
                 getProductTags().update((ProductTag) object);
+                break;
+            case PRODUCT_EXTRAS:
+                getProductExtras().update((Extras) object);
                 break;
             case SESSIONS:
                 getSessions().update((Session) object);
@@ -730,6 +753,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
             case DAILY_SALES:
                 getDailySales().update((DailySales) object);
+                break;
+            case SETTINGS:
+                getSettings().update((Settings) object);
                 break;
         }
     }
@@ -786,6 +812,23 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             });
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void batchCreateOrUpdateBranchAssocs(final BatchList branchAssocs, final DatabaseOperation databaseOperations) {
+        try {
+            Dao<BranchUserAssoc, Integer> daoBranchUserAssocs = getBranchUserAssocs();
+            daoBranchUserAssocs.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (BranchUserAssoc branchUser : ((BatchList<BranchUserAssoc>) branchAssocs))
+                        branchUser.dbOperation(ImonggoDBHelper.this, databaseOperations);
+                    return null;
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -853,6 +896,24 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 public Void call() throws Exception {
                     for (ProductTag productTag : ((BatchList<ProductTag>) productTags))
                         productTag.dbOperation(ImonggoDBHelper.this, databaseOperations);
+                    return null;
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void batchCreateOrUpdateProductExtras(final BatchList productExtras, final DatabaseOperation databaseOperations) {
+        try {
+            Dao<Extras, Integer> daoProductExtras = getProductExtras();
+            daoProductExtras.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (Extras extras : ((BatchList<Extras>) productExtras))
+                        extras.dbOperation(ImonggoDBHelper.this, databaseOperations);
                     return null;
                 }
             });
@@ -1074,6 +1135,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             getInventories().deleteBuilder().delete();
             getProducts().deleteBuilder().delete();
             getProductTags().deleteBuilder().delete();
+            getProductExtras().deleteBuilder().delete();
             getSessions().deleteBuilder().delete();
             getTaxRates().deleteBuilder().delete();
             getTaxSettings().deleteBuilder().delete();
@@ -1082,16 +1144,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             getLastUpdatedAts().deleteBuilder().delete();
             getDocumentTypes().deleteBuilder().delete();
             getDocumentPurposes().deleteBuilder().delete();
-
             getOfflineData().deleteBuilder().delete();
-
             getDocuments().deleteBuilder().delete();
             getDocumentLines().deleteBuilder().delete();
             getExtendedAttributes().deleteBuilder().delete();
-
             getBranchUserAssocs().deleteBuilder().delete();
             getProductTaxRateAssocs().deleteBuilder().delete();
             getDailySales().deleteBuilder().delete();
+            getSettings().deleteBuilder().delete();
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -907,8 +907,11 @@ int string abc_shareactionprovider_share_with_application 0x7f05000c
 int string abc_toolbar_collapse_description 0x7f050036
 int string app_name 0x7f050037
 int string appbar_scrolling_view_behavior 0x7f050038
-int string param_login 0x7f050039
-int string status_bar_notification_info_overflow 0x7f05003a
+int string error_dialog_message_requires_premium_subscription 0x7f050039
+int string error_dialog_title_requires_premium_subscription 0x7f05003a
+int string error_response_requires_premium_subscription 0x7f05003b
+int string param_login 0x7f05003c
+int string status_bar_notification_info_overflow 0x7f05003d
 int style AlertDialog_AppCompat 0x7f070076
 int style AlertDialog_AppCompat_Light 0x7f070077
 int style Animation_AppCompat_Dialog 0x7f070078
