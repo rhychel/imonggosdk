@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_reload_branches"
+            android:icon="@drawable/ic_refresh"
+            android:title="@string/drawer_reload_text" />
+        <item
+            android:id="@+id/nav_facebook"
+            android:icon="@drawable/ic_action_facebook"
+            android:title="@string/drawer_facebook_text" />
+        <item
+            android:id="@+id/nav_twitter"
+            android:icon="@drawable/ic_action_twitter"
+            android:title="@string/drawer_twitter_text" />
+        <item
+            android:id="@+id/nav_instagram"
+            android:icon="@drawable/ic_action_instagram"
+            android:title="@string/drawer_instagram_text" />
+        <item
+            android:id="@+id/nav_report_a_problem"
+            android:icon="@drawable/ic_action_message"
+            android:title="@string/drawer_problem_text" />
+        <item
+            android:id="@+id/nav_unlink"
+            android:icon="@drawable/ic_action_unlink"
+            android:title="@string/drawer_unlink_text" />
+
+    </group>
+</menu>
