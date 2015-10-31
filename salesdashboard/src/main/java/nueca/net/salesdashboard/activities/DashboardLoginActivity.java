@@ -41,7 +41,7 @@ public class DashboardLoginActivity extends LoginActivity {
         setIsUsingDefaultLoginLayout(false);
         Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
-        setServer(Server.IMONGGO_NET);
+        setServer(Server.IMONGGO);
         SettingTools.updateSettings(DashboardLoginActivity.this, SettingsName.AUTO_UPDATE, false, "");
         setModulesToSync(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(), Table.SETTINGS.ordinal());
     }

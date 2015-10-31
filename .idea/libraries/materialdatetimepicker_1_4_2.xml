@@ -5,8 +5,6 @@
       <root url="jar://$PROJECT_DIR$/salesdashboard/build/intermediates/exploded-aar/com.wdullaer/materialdatetimepicker/1.4.2/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.wdullaer/materialdatetimepicker/1.4.2/c302adcdd48b30d4b3a1fb7262d0992472ad3148/materialdatetimepicker-1.4.2-sources.jar!/" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>

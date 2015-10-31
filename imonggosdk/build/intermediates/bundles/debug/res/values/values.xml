@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/E:/Bitbucket/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/keypad_color.xml -->
+    <!-- From: file:/Users/raquezha/Bitbucket/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/keypad_color.xml -->
     <eat-comment/>
     <color name="keypad_default_bg">#fff</color>
     <color name="keypad_default_buttonbg">#00c0c0c0</color>
@@ -14,7 +14,7 @@
     <color name="keypad_default_text_pressed">#c0c0c0c0</color>
     <declare-styleable name="Keypad"><attr format="boolean" name="handleBackbutton"/><attr format="boolean" name="hasOkayButton"/></declare-styleable>
     <declare-styleable name="Numpad"><attr format="boolean" name="handleBackButton"/><attr format="boolean" name="showGoButton"/><attr format="boolean" name="showMoreButton"/><attr format="boolean" name="showNegativeButton"/><attr format="boolean" name="showControlButtons"/><attr format="boolean" name="alwaysShowDecimal"/><attr format="integer" name="fontSize"/><attr format="color" name="fontColor"/><attr format="reference" name="buttonBgResource"/><attr format="reference" name="goButtonBgResource"/><attr format="color" name="backgroundColor"/></declare-styleable>
-    <!-- From: file:/E:/Bitbucket/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/strings.xml -->
+    <!-- From: file:/Users/raquezha/Bitbucket/Android%20Projects/imonggosdk/imonggosdk/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="API_MODULE_ID_URL">http://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
     <string name="API_MODULE_ID_URL_SECURED">https://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
@@ -55,5 +55,8 @@
     <string name="PRODUCT_LARGEIMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
     <string name="PRODUCT_LARGEIMAGE_URL_SECURED">https://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
     <string name="app_name">ImonggoSDK</string>
+    <string name="error_dialog_message_requires_premium_subscription">You can check it by trying the Premium Features. On the upper right, click "Try Premium Features Free".</string>
+    <string name="error_dialog_title_requires_premium_subscription">Requires Premium Subscription</string>
+    <string name="error_response_requires_premium_subscription">Requires premium subscription.</string>
     <string name="param_login">email=%1$s&amp;password=%2$s</string>
 </resources>
