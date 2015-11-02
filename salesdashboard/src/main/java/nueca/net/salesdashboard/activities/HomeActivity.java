@@ -174,7 +174,6 @@ public class HomeActivity extends BaseDailySalesActivity implements ViewPager.On
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
@@ -225,7 +224,7 @@ public class HomeActivity extends BaseDailySalesActivity implements ViewPager.On
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 selectDrawerItem(menuItem);
-                return true;
+                return false;
             }
         });
     }
@@ -365,6 +364,7 @@ public class HomeActivity extends BaseDailySalesActivity implements ViewPager.On
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
+        mDrawerLayout.setSelected(false);
         mDrawerLayout.closeDrawers();
 
         switch (menuItem.getItemId()) {
