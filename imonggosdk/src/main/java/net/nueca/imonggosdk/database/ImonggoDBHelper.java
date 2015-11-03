@@ -141,14 +141,14 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, ExtendedAttributes.class);
             //TableUtils.createTable(connectionSource, DocumentLineExtras.class);
             TableUtils.createTable(connectionSource, DailySales.class);
-
-            TableUtils.createTable(connectionSource, Order.class);
-            TableUtils.createTable(connectionSource, OrderLine.class);
-
-            TableUtils.createTable(connectionSource, Invoice.class);
-            TableUtils.createTable(connectionSource, InvoiceLine.class);
-            TableUtils.createTable(connectionSource, InvoicePayment.class);
-            TableUtils.createTable(connectionSource, InvoiceTaxRate.class);
+///*
+//            TableUtils.createTable(connectionSource, Order.class);
+//            TableUtils.createTable(connectionSource, OrderLine.class);
+//
+//            TableUtils.createTable(connectionSource, Invoice.class);
+//            TableUtils.createTable(connectionSource, InvoiceLine.class);
+//            TableUtils.createTable(connectionSource, InvoicePayment.class);
+//            TableUtils.createTable(connectionSource, InvoiceTaxRate.class);*/
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -188,12 +188,12 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, DailySales.class, true);
             //TableUtils.dropTable(connectionSource, DocumentLineExtras.class, true);
 
-            TableUtils.dropTable(connectionSource, Order.class, true);
+           /* TableUtils.dropTable(connectionSource, Order.class, true);
             TableUtils.dropTable(connectionSource, OrderLine.class, true);
 
             TableUtils.dropTable(connectionSource, Invoice.class, true);
             TableUtils.dropTable(connectionSource, InvoiceLine.class, true);
-            TableUtils.dropTable(connectionSource, InvoicePayment.class, true);
+            TableUtils.dropTable(connectionSource, InvoicePayment.class, true);*/
             TableUtils.dropTable(connectionSource, InvoiceTaxRate.class, true);
 
             onCreate(database, connectionSource);
