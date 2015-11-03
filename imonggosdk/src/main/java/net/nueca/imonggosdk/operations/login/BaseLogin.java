@@ -559,7 +559,6 @@ public class BaseLogin {
             @Override
             public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
 
-                Log.e("Jn-BaseLogin", "Error POSDev: " + response.toString() + "Code: " + responseCode);
 
                 String requires_premium_subscription = mContext.getString(R.string.error_response_requires_premium_subscription);
 
