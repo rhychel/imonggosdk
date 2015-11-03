@@ -55,10 +55,9 @@
     <bookmark url="file://$PROJECT_DIR$/salesdashboard/src/main/res/values/strings.xml" line="27" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="cleaning files">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio_test/.gitignore" afterPath="$PROJECT_DIR$/concessio_test/.gitignore" />
+    <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="delete profiile_settings in idea">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/salesdashboard/build.gradle" afterPath="$PROJECT_DIR$/salesdashboard/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="cf34c86b-940c-43c4-8fe3-8ede93b6a55a" name="Failed commit: Failed commit: Default" comment="backup windows" />
     <ignored path="imonggosdk.iws" />
@@ -110,41 +109,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/salesdashboard/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="43" column="11" selection-start-line="43" selection-start-column="11" selection-end-line="43" selection-end-column="11" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessioengine/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="38" column="9" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/imonggosdk/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="43" column="9" selection-start-line="43" selection-start-column="9" selection-end-line="43" selection-end-column="9" />
+            <state vertical-scroll-proportion="0.16198704">
+              <caret line="26" column="23" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -160,31 +129,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/concessio_test/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6125828">
-              <caret line="37" column="9" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="3" column="5" selection-start-line="3" selection-start-column="2" selection-end-line="3" selection-end-column="5" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="settings.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <file leaf-file-name="DashboardLoginActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AndroidManifest.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/AndroidManifest.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="13" column="40" selection-start-line="13" selection-start-column="40" selection-end-line="13" selection-end-column="40" />
+              <caret line="43" column="28" selection-start-line="43" selection-start-column="28" selection-end-line="43" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -202,6 +161,11 @@
         <option value="Class" />
       </list>
     </option>
+  </component>
+  <component name="GenerateSignedApkSettings">
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/salesdashboard/salesdashboard.jks" />
+    <option name="KEY_ALIAS" value="salesdashboard" />
+    <option name="REMEMBER_PASSWORDS" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -3503,7 +3467,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="8679126714000" />
+        <entry key="$PROJECT_DIR$" value="8679134241000" />
         <entry key="E:\Bitbucket\Android Projects\imonggosdk" value="8661418091661" />
       </map>
     </option>
@@ -4225,7 +4189,6 @@
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/animations/SlideInUpAnimation.java" />
         <option value="$PROJECT_DIR$/imonggosdk/build.gradle" />
-        <option value="$PROJECT_DIR$/salesdashboard/build.gradle" />
         <option value="$PROJECT_DIR$/concessioengine/build.gradle" />
         <option value="$PROJECT_DIR$/concessio_test/build.gradle" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/res/values-v21/dimens.xml" />
@@ -4238,6 +4201,7 @@
         <option value="$PROJECT_DIR$/imonggosdk/.gitignore" />
         <option value="$PROJECT_DIR$/gradle.properties" />
         <option value="$PROJECT_DIR$/concessio_test/.gitignore" />
+        <option value="$PROJECT_DIR$/salesdashboard/build.gradle" />
       </list>
     </option>
   </component>
@@ -4255,7 +4219,8 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="4" />
+    <option name="x" value="-15" />
+    <option name="y" value="2" />
     <option name="width" value="1676" />
     <option name="height" value="1050" />
   </component>
@@ -4290,7 +4255,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
+    <navigator currentView="AndroidView" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -4321,113 +4286,21 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="salesdashboard" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="salesdashboard" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="libs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="concessioengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="concessio_test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="concessio" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value=".idea" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="Scratches" />
       <pane id="AndroidView">
         <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Gradle Scripts" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="imonggosdk" />
@@ -4550,7 +4423,7 @@
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="HKE5C395" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="0064d476db09986d" />
     <property name="SearchEverywhereHistoryKey" value="Htt&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java&#10;SyncDailySales&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;Sync&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;BaseLogin&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.login.BaseLogin&#10;BaseLoginActivity&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;reloadBranch&#9;PSI&#9;JAVA://nueca.net.salesdashboard.interfaces.OnReloadBranches&#10;string&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/res/values/strings.xml&#10;string.&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/res/values/strings.xml&#10;SyncModu&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Daily&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java&#10;DailySales&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SalesWeek4&#9;PSI&#9;JAVA://nueca.net.salesdashboard.fragments.SalesWeek4&#10;DailySal&#9;PSI&#9;JAVA://net.nueca.imonggosdk.objects.DailySales&#10;Anim&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;ViewPage&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerAdapter.java&#10;AnimToo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;SyncMo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;SyncD&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SyncModules&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.sync.SyncModules&#10;sYNC&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SyncDa&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;sYNCdAIL&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;Login&#9;PSI&#9;JAVA://net.nueca.imonggosdk.enums.RequestType#LOGIN&#10;Db&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;Animt&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;BaseDailySalesActivity&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/BaseDailySalesActivity.java&#10;DateT&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java&#10;DateTim&#9;PSI&#9;JAVA://net.nueca.imonggosdk.tools.DateTimeTools&#10;SyncDai&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;DateTools&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java&#10;SimpleWeekSalesFragment&#9;PSI&#9;JAVA://nueca.net.salesdashboard.fragments.SimpleWeekSalesFragment&#10;SalesWeekly&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeeklyBackup.java&#10;SalesRe&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/SalesRefreshListener.java&#10;BaseS&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/BaseSalesFragment.java&#10;ViewPagerAda&#9;PSI&#9;JAVA://nueca.net.salesdashboard.adapters.ViewPagerAdapter&#10;Sess&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Session.java&#10;DashB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java&#10;Settings&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Settings.java&#10;SimpleDai&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleDailySalesFragment.java&#10;DBHE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Setting&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Settings.java&#10;DB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;DBHe&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;SyncMO&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;ViewP&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerAdapter.java&#10;Dialog&#9;PSI&#9;JAVA://net.nueca.imonggosdk.dialogs.DialogTools&#10;DateToo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java&#10;SyncMod&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;DateTime&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/DateTimeTools.java&#10;SimpleMonthlySalesFragment&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleMonthlySalesFragment.java" />
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop" />
     <property name="OverrideImplement.combined" value="true" />
@@ -4564,6 +4437,9 @@
     <property name="UI_DESIGNER_EDITOR_MODE.PaletteToolWindowManager.SHOW" value="false" />
     <property name="FullScreen" value="false" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus_4" />
+    <property name="ExportApk.ApkPath" value="$PROJECT_DIR$/salesdashboard" />
+    <property name="ExportApk.Flavors" value="" />
+    <property name="ExportApk.BuildType" value="release" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -4962,13 +4838,13 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="4" y="0" width="1676" height="1050" extended-state="6" />
-    <editor active="false" />
+    <frame x="-15" y="2" width="1676" height="1050" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43393603" sideWeight="0.49678457" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Fabric" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.114567526" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Fabric" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31311274" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32655245" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.7023644" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -4978,13 +4854,13 @@
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.9318498" sideWeight="0.51790833" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30085653" sideWeight="0.4820917" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47430408" sideWeight="0.47125566" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.47430408" sideWeight="0.47125566" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32843137" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24816176" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32984716" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26960784" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26960784" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.379015" sideWeight="0.48280802" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6132879" sideWeight="0.493553" order="14" side_tool="false" content_ui="tabs" />
@@ -5028,7 +4904,8 @@
     <MESSAGE value="Sales Dashboard Backup for Mac" />
     <MESSAGE value="backup before merging to jn" />
     <MESSAGE value="cleaning files" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleaning files" />
+    <MESSAGE value="delete profiile_settings in idea" />
+    <option name="LAST_COMMIT_MESSAGE" value="delete profiile_settings in idea" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -5038,101 +4915,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="131" column="30" selection-start-line="131" selection-start-column="30" selection-end-line="131" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/LineChartValueTools.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/res/layout/monthly_sales.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="5" column="39" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleWeekSalesFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="173" column="16" selection-start-line="173" selection-start-column="16" selection-end-line="173" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek1.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="69" column="9" selection-start-line="61" selection-start-column="6" selection-end-line="69" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek3.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="69" column="9" selection-start-line="69" selection-start-column="9" selection-end-line="69" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/OnReloadBranches.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.07380608">
-          <caret line="3" column="17" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek2.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="84" column="0" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.38494936">
-          <caret line="1137" column="42" selection-start-line="1137" selection-start-column="42" selection-end-line="1137" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek4.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="31" column="14" selection-start-line="31" selection-start-column="14" selection-end-line="31" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleMonthlySalesFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="137" column="6" selection-start-line="137" selection-start-column="6" selection-end-line="137" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/associatives/BranchUserAssoc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="19" column="40" selection-start-line="19" selection-start-column="40" selection-end-line="19" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/BranchTag.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="25" column="23" selection-start-line="25" selection-start-column="23" selection-end-line="25" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -5380,26 +5162,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.32397407">
-          <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="560" column="0" selection-start-line="560" selection-start-column="0" selection-end-line="560" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
           <folding />
         </state>
       </provider>
@@ -5409,10 +5175,10 @@
         <state vertical-scroll-proportion="0.01655629">
           <caret line="53" column="0" selection-start-line="53" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
           <folding>
-            <element signature="e#7598#7964#0" expanded="true" />
-            <element signature="e#7963#7964#0" expanded="true" />
-            <element signature="e#14514#14805#0" expanded="true" />
-            <element signature="e#14804#14805#0" expanded="true" />
+            <element signature="e#7598#7964#0" expanded="false" />
+            <element signature="e#7963#7964#0" expanded="false" />
+            <element signature="e#14514#14805#0" expanded="false" />
+            <element signature="e#14804#14805#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -5449,14 +5215,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/settings.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/concessio/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -5465,10 +5223,104 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.01655629">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/concessio_test/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6125828">
-          <caret line="37" column="9" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="5" selection-start-line="3" selection-start-column="2" selection-end-line="3" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="43" column="28" selection-start-line="43" selection-start-column="28" selection-end-line="43" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-130915.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132036.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132441.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132454.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132522.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132531.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132543.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132600.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132627.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132704.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132717.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132732.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132850.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/device-2015-11-03-132909.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/salesdashboard/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.16198704">
+          <caret line="26" column="23" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
           <folding />
         </state>
       </provider>
