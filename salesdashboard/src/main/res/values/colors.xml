@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <color name="primary">#2E353E</color>
-    <color name="primary_dark">#252B32</color>
-    <color name="primary_light">#c8f0eb</color>
-    <color name="accent">#F58119 </color>
-    <color name="primary_text">#FFFFFF</color>
-    <color name="secondary_text">#2E353E</color>
-    <color name="divider">#BEC0C3</color>
-    <color name="login_bg">#2E353E </color>
+    <color name="d_primary">#2E353E</color>
+    <color name="d_primary_dark">#252B32</color>
+    <color name="d_primary_light">#c8f0eb</color>
+    <color name="d_tab_color">#B1B2B1</color>
+    <color name="d_transparentr">#000000</color>
+    <color name="d_accent">#F58119 </color>
+    <color name="d_primary_text">#FFFFFF</color>
+    <color name="d_secondary_text">#B1B2B1</color>
+    <color name="d_hint_text">#626468</color>
+    <color name="d_divider">#BEC0C3</color>
+    <color name="d_login_default_bg">#2E353E </color>
+    <color name="d_more_view_color">#252B32 </color>
+    <color name="d_tabs_scroll_color">#b1b2b1</color>
+    <color name="d_card_today">#F37E18</color>
+    <color name="d_card_today_amount_color">#F15D25</color>
+    <color name="d_card_yesterday">#6D6D6D</color>
+    <color name="d_line_chart_color_1">#F58119</color>
+    <color name="d_line_chart_color_2">#B1B2B1</color>
 </resources>

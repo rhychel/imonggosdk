@@ -26,19 +26,20 @@ public class DailySales {
     @DatabaseField
     private String date_requested_at;
     @DatabaseField
-    private double average_amount_per_invoice = 0.0;
+    private Double average_amount_per_invoice = 0.0;
     @DatabaseField
-    private double tax = 0.0;
+    private Double tax = 0.0;
     @DatabaseField
-    private double quantity = 0;
+    private Double quantity = 0.0;
     @DatabaseField
     private int transaction_count = 0;
     @DatabaseField
-    private double amount = 0.0;
+    private String amount = "0";
     @DatabaseField
-    private double amount_with_tax = 0.0;
+    private String amount_with_tax = "0";
     @DatabaseField
-    private double amount_without_tax = 0.0;
+    private String amount_without_tax = "0";
+
     @DatabaseField
     private transient int branch_id = 0;
 
@@ -52,7 +53,7 @@ public class DailySales {
         this.id = id;
     }
 
-    public double getAverage_amount_per_invoice() {
+    public Double getAverage_amount_per_invoice() {
         return average_amount_per_invoice;
     }
 
@@ -60,7 +61,7 @@ public class DailySales {
         this.average_amount_per_invoice = average_amount_per_invoice;
     }
 
-    public double getTax() {
+    public Double getTax() {
         return tax;
     }
 
@@ -68,11 +69,11 @@ public class DailySales {
         this.tax = tax;
     }
 
-    public double getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(double quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 
@@ -84,27 +85,27 @@ public class DailySales {
         this.transaction_count = transaction_count;
     }
 
-    public double getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 
-    public double getAmount_with_tax() {
+    public String getAmount_with_tax() {
         return amount_with_tax;
     }
 
-    public void setAmount_with_tax(double amount_with_tax) {
+    public void setAmount_with_tax(String amount_with_tax) {
         this.amount_with_tax = amount_with_tax;
     }
 
-    public double getAmount_without_tax() {
+    public String getAmount_without_tax() {
         return amount_without_tax;
     }
 
-    public void setAmount_without_tax(double amount_without_tax) {
+    public void setAmount_without_tax(String amount_without_tax) {
         this.amount_without_tax = amount_without_tax;
     }
 

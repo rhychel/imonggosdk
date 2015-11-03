@@ -7,7 +7,9 @@ import net.nueca.imonggosdk.objects.Session;
  * imonggosdk (c)2015
  */
 public interface LoginListener {
-    public void onStartLogin();
-    public void onLoginSuccess(Session session);
-    public void onStopLogin();
+    void onStartLogin();
+    void onLoginSuccess(Session session);
+    void onPositiveButtonPressed();
+    void onNegativeButtonPressed();
+    void onStopLogin();
 }

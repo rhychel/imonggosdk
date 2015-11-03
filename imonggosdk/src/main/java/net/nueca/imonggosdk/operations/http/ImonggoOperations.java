@@ -1,8 +1,11 @@
 package net.nueca.imonggosdk.operations.http;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
@@ -91,12 +94,28 @@ public class ImonggoOperations {
     public static void getAPIModule(Context context, RequestQueue queue, Session session,
                                     VolleyRequestListener volleyRequestListener, Table table,
                                     Server server, RequestType requestType, String parameter) {
+        getAPIModule(context, queue, session, volleyRequestListener, table, server, requestType, parameter, "");
 
-        if (requestType == RequestType.LAST_UPDATED_AT || requestType == RequestType.COUNT || table == Table.TAX_SETTINGS || table == Table.DAILY_SALES)
-            queue.add(HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, server, table, requestType, parameter));
-        else if (requestType == RequestType.API_CONTENT)
-            queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, table, requestType, parameter));
+    }
 
+
+    public static void getAPIModule(Context context, RequestQueue queue, Session session,
+                                    VolleyRequestListener volleyRequestListener, Table table,
+                                    Server server, RequestType requestType, String parameter, String TAG) {
+
+        Log.e(TAG, "RequestType: " + requestType);
+        if (requestType == RequestType.LAST_UPDATED_AT || requestType == RequestType.COUNT || table == Table.TAX_SETTINGS || table == Table.DAILY_SALES) {
+            JsonObjectRequest request = HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, server, table, requestType, parameter);
+            request.setTag(TAG);
+            request.setShouldCache(false);
+            queue.add(request);
+
+        } else if (requestType == RequestType.API_CONTENT) {
+            JsonArrayRequest request = HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, table, requestType, parameter);
+            request.setTag(TAG);
+            request.setShouldCache(false);
+            queue.add(request);
+        }
     }
 
     /**
@@ -107,6 +126,7 @@ public class ImonggoOperations {
 
     /**
      * Checkin Customer --- for CityMall
+     *
      * @param context
      * @param queue
      * @param session
@@ -123,6 +143,7 @@ public class ImonggoOperations {
 
     /**
      * Checkin Customer --- for CityMall
+     *
      * @param context
      * @param queue
      * @param session
@@ -133,10 +154,10 @@ public class ImonggoOperations {
      * @param autoStart
      */
     public static void checkinCustomer(Context context, RequestQueue queue,
-                                                    Session session, VolleyRequestListener volleyRequestListener,
-                                                    Server server, String id, String parameter, boolean autoStart) {
+                                       Session session, VolleyRequestListener volleyRequestListener,
+                                       Server server, String id, String parameter, boolean autoStart) {
         queue.add(HTTPRequests.sendGETRequest(context, session, volleyRequestListener, server, Table.CUSTOMERS, id + "/checkin", parameter));
-        if(autoStart)
+        if (autoStart)
             queue.start();
     }
 
@@ -149,9 +170,9 @@ public class ImonggoOperations {
     }
 
     public static void getConcesioAppSettings(Context context, RequestQueue queue, Session session,
-                                                           VolleyRequestListener volleyRequestListener, Server server, boolean autoStart) {
+                                              VolleyRequestListener volleyRequestListener, Server server, boolean autoStart) {
         queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", ""));
-        if(autoStart)
+        if (autoStart)
             queue.start();
     }
 
