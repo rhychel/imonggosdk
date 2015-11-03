@@ -17,7 +17,8 @@
         <activity
             android:name=".activities.DashboardLoginActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.Dashboard.Login">
+            android:theme="@style/AppTheme.Dashboard.Login"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -27,7 +28,8 @@
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/act_home"
-            android:theme="@style/AppTheme.Dashboard.Home" >
+            android:theme="@style/AppTheme.Dashboard.Home"
+            android:screenOrientation="portrait">
         </activity>
 
         <meta-data
