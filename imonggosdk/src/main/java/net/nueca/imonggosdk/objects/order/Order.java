@@ -24,6 +24,8 @@ public class Order extends BaseTransaction {
     private int serving_branch_id;
     private List<OrderLine> order_lines;
 
+    public Order() { super(null);}
+
     public Order(Builder builder) {
         super(builder);
 

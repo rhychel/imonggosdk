@@ -67,4 +67,4 @@
 
     <include layout="@layout/md_stub_actionbuttons" />
 
-</com.afollestad.materialdialogs.internal.MDRootLayout><!-- From: file:/Users/afollestad/Projects/material-dialogs/library/src/main/res/layout/md_dialog_input.xml --><!-- From: file:/E:/Bitbucket/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.5.5/res/layout/md_dialog_input.xml -->
+</com.afollestad.materialdialogs.internal.MDRootLayout><!-- From: file:/build/core/src/main/res/layout/md_dialog_input.xml --><!-- From: file:/Users/raquezha/Bitbucket/Android%20Projects/imonggosdk/imonggosdk/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.0/res/layout/md_dialog_input.xml -->
