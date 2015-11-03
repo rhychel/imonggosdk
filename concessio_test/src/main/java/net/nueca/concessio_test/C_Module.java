@@ -8,22 +8,17 @@ import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.j256.ormlite.dao.CloseableIterator;
-import com.j256.ormlite.dao.GenericRawResults;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
-import com.j256.ormlite.support.DatabaseResults;
-
 import net.nueca.concessioengine.activities.ModuleActivity;
+import net.nueca.concessioengine.adapters.SimpleSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.dialogs.ListSelectionDialog;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
+import net.nueca.concessioengine.fragments.CheckoutFragment;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
@@ -31,26 +26,23 @@ import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
 import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
+import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.Document;
-import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
 import org.json.JSONException;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by rhymart on 8/21/15.
@@ -59,7 +51,7 @@ import java.util.List;
 public class C_Module extends ModuleActivity implements SetupActionBar {
 
     private SimpleProductsFragment simpleProductsFragment, finalizeFragment;
-    private Button btnSummary;
+    private Button btnReview;
 
     private Toolbar toolbar;
     private boolean hasMenu = true;
@@ -70,6 +62,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     private SimplePulloutToolbarExt simplePulloutToolbarExt;
     private SimplePulloutRequestDialog simplePulloutRequestDialog;
 
+    private CheckoutFragment checkoutFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,9 +71,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
         setContentView(R.layout.c_module);
 
-        btnSummary = (Button) findViewById(R.id.btnSummary);
+        btnReview = (Button) findViewById(R.id.btnReview);
 
-        btnSummary.setOnClickListener(onClickSummary);
+        btnReview.setOnClickListener(onClickContinue);
 
         /**  destroy selected items  **/
         ProductsAdapterHelper.clearSelectedProductItemList();
@@ -92,7 +86,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
         finalizeFragment.setHelper(getHelper());
         finalizeFragment.setSetupActionBar(this);
+
+        simpleProductsFragment.setProductsRecyclerAdapter(null);
+        finalizeFragment.setProductsRecyclerAdapter(null);
+
         switch (concessioModule) {
+            case SALES: {
+                simpleProductsFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
+                finalizeFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
+            }
             case ORDERS: {
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setProductCategories(getProductCategories(true));
@@ -102,7 +104,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 finalizeFragment.setHasDeliveryDate(false);
                 finalizeFragment.setHasUnits(true);
 
-                btnSummary.setVisibility(View.VISIBLE);
+                btnReview.setVisibility(View.VISIBLE);
             } break;
             case PHYSICAL_COUNT: {
                 simpleProductsFragment.setProductCategories(getProductCategories(true));
@@ -113,7 +115,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 finalizeFragment.setMultipleInput(true);
                 finalizeFragment.setMultiInputListener(multiInputListener);
 
-                btnSummary.setVisibility(View.VISIBLE);
+                btnReview.setVisibility(View.VISIBLE);
             } break;
             case PULLOUT: {
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
@@ -145,7 +147,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 finalizeFragment.setHasDeliveryDate(false);
                 finalizeFragment.setHasUnits(true);
 
-                btnSummary.setVisibility(View.VISIBLE);
+                btnReview.setVisibility(View.VISIBLE);
             } break;
             case RECEIVE: {
                 simpleReceiveFragment = new SimpleReceiveFragment();
@@ -189,7 +191,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                 .commit();
                     }
                 });
-                btnSummary.setVisibility(View.GONE);
+                btnReview.setVisibility(View.GONE);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.flContent, simpleReceiveFragment)
                         .commit();
@@ -201,22 +203,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             @Override
             public void onBackStackChanged() {
                 hasMenu = false;
-                btnSummary.setText("Send");
-                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        btnSummary.setText("Summary");
-                        hasMenu = true;
-                        onBackPressed();
-
-                        getSupportActionBar().invalidateOptionsMenu();
-                    }
-                });
-                getSupportActionBar().setDisplayShowTitleEnabled(true);
-                getSupportActionBar().setTitle("Finalize");
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setHomeButtonEnabled(true);
-                getSupportActionBar().invalidateOptionsMenu();
+                invalidateOptionsMenu();
             }
         });
 
@@ -230,7 +217,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         super.onResume();
         if(concessioModule == ConcessioModule.PHYSICAL_COUNT) {
             simpleProductsFragment.refreshList();
-            if(getSupportFragmentManager().findFragmentByTag("finalize") != null)
+            if(getSupportFragmentManager().findFragmentByTag("review") != null)
                finalizeFragment.refreshList();
         }
     }
@@ -238,47 +225,86 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        btnSummary.setText("Summary");
+        hasMenu = true;
+        if(!btnReview.getText().toString().equals("Review")) {
+            if(concessioModule == ConcessioModule.SALES && btnReview.getText().toString().equals("Send"))
+                btnReview.setText("Checkout");
+            else
+                btnReview.setText("Review");
+        }
 
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setHomeButtonEnabled(false);
-
-        if(concessioModule == ConcessioModule.PULLOUT && btnSummary.getText().equals("Summary")) {
+        if(concessioModule == ConcessioModule.PULLOUT && btnReview.getText().equals("Review")) {
             if(simplePulloutToolbarExt != null)
                 simplePulloutToolbarExt.attachAfter(this, toolbar);
         } else {
             if(simplePulloutToolbarExt != null)
                 simplePulloutToolbarExt.detach();
         }
+        invalidateOptionsMenu();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(hasMenu) {
-            getMenuInflater().inflate(R.menu.simple_products_menu, menu);
-            menu.findItem(R.id.mHistory).setVisible(false);
-            menu.findItem(R.id.mLogout).setVisible(false);
-
-            mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
-            initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    simpleProductsFragment.updateListWhenSearch(newText);
-                    return true;
-                }
-            });
+        if(!btnReview.getText().toString().equals("Review")) {
+            setTitle("Review");
+            if(concessioModule == ConcessioModule.SALES && btnReview.getText().toString().equals("Send"))
+                setTitle("Checkout");
         }
+
+        if(!btnReview.getText().toString().equals("Review")) {
+            if(concessioModule == ConcessioModule.SALES && getTitle().toString().equals("Checkout"))
+                getMenuInflater().inflate(R.menu.simple_checkout_menu, menu);
+            else
+                getMenuInflater().inflate(R.menu.simple_review_products_menu, menu);
+        }
+        else {
+            if(hasMenu) {
+                getMenuInflater().inflate(R.menu.simple_products_menu, menu);
+                menu.findItem(R.id.mHistory).setVisible(false);
+                menu.findItem(R.id.mLogout).setVisible(false);
+
+                mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
+                initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        simpleProductsFragment.updateListWhenSearch(newText);
+                        return true;
+                        }
+                });
+            }
+        }
+
+        getSupportActionBar().setDisplayShowTitleEnabled(!btnReview.getText().equals("Review"));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(!btnReview.getText().equals("Review"));
+        getSupportActionBar().setHomeButtonEnabled(!btnReview.getText().equals("Review"));
+
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == android.R.id.home) {
+            onBackPressed();
+        } else if(id == R.id.mClear) {
+            DialogTools.showConfirmationDialog(this, "Delete All", "Are you sure you want to delete all selected items?",
+                    "Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finalizeFragment.clearSelectedItems();
+                }
+            }, "No");
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void setupActionBar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
         this.toolbar = toolbar;
 
-        if(concessioModule == ConcessioModule.PULLOUT && btnSummary.getText().equals("Summary")) {
+        if(concessioModule == ConcessioModule.PULLOUT && btnReview.getText().equals("Review")) {
             if(simplePulloutToolbarExt == null)
                 simplePulloutToolbarExt = new SimplePulloutToolbarExt();
             simplePulloutToolbarExt.attachAfter(this, this.toolbar);
@@ -303,10 +329,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         }
     };
 
-    private View.OnClickListener onClickSummary = new View.OnClickListener() {
+    private View.OnClickListener onClickContinue = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(btnSummary.getText().equals("Send")) {
+            if(btnReview.getText().equals("Send")) {
                 DialogTools.showSelectionDialog(C_Module.this,
                         new ArrayAdapter<>(C_Module.this, android.R.layout.simple_list_item_single_choice, getBranches()),
                         "Yes", new DialogTools.OnItemSelected<Branch>() {
@@ -375,16 +401,38 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                 }
                             }
                         }, "No");
-            }
-            else {
+            } else if(btnReview.getText().toString().equals("Checkout")) {
+                if(ProductsAdapterHelper.hasSelectedProductItems()) {
+                    DialogTools.showDialog(C_Module.this, "Ooops!", "You haven't selected anything.");
+                } else {
+                    btnReview.setText("Send");
+
+                    checkoutFragment = new CheckoutFragment();
+                    checkoutFragment.setSetupActionBar(C_Module.this);
+                    checkoutFragment.setInvoice(new Invoice.Builder()
+                            .invoice_lines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
+                                    .getSelectedProductItems()))
+                            .build());
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
+                                    R.anim.slide_in_left, R.anim.slide_out_right)
+                            .replace(R.id.flContent, checkoutFragment, "checkout")
+                            .addToBackStack("checkout")
+                            .commit();
+                }
+            } else {
                 if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
-                    DialogTools.showDialog(C_Module.this, "Ooops!", "You have no selected items. Kindly select first products.");
+                    DialogTools.showDialog(C_Module.this, "Ooops!", "You haven't selected anything.");
                 else {
-                    btnSummary.setText("Send");
+                    if (concessioModule == ConcessioModule.SALES)
+                        btnReview.setText("Checkout");
+                    else
+                        btnReview.setText("Send");
                     finalizeFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
                     getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                            .replace(R.id.flContent, finalizeFragment, "finalize")
+                            .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
+                                    R.anim.slide_in_left, R.anim.slide_out_right)
+                            .replace(R.id.flContent, finalizeFragment, "review")
                             .addToBackStack("finalizer")
                             .commit();
                 }

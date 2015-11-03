@@ -42,6 +42,7 @@ public class SelectedProductItem {
      */
     public int addValues(Values value) {
         int index = valuesList.indexOf(value);
+        value.setRetail_price(getRetail_price());
         //Log.e(TAG, "index: " + index + " valuesList: " + value.toString());
         if(index > -1) {
             setValues(index, value);

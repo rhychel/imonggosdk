@@ -1,0 +1,119 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="fill_parent"
+              android:layout_height="match_parent"
+              xmlns:appstools="http://schemas.android.com/apk/res-auto"
+              tools:context=".SariLogin"
+              android:orientation="horizontal" >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="@dimen/sari_padding"
+        android:elevation="10dp"
+        android:background="@android:color/white">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tilStore"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/store_spacing">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:hint="Store Name"
+                android:textSize="@dimen/sari_store_name_fontsize"
+                android:text="Evelyn's Store"
+                android:id="@+id/etStoreName"
+                android:textColor="@android:color/black"
+                android:enabled="false"
+                android:focusable="false"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tilTodaySales"
+            android:gravity="center">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:hint="Today&apos;s Sales"
+                android:textSize="@dimen/sari_store_sales_fontsize"
+                android:text="Php 12,396.00"
+                android:id="@+id/etTodaySales"
+                android:textColor="@android:color/black"
+                android:enabled="false"
+                android:focusable="false"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tilYesterdaySales"
+            android:gravity="center">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:hint="Yesterday&apos;s Sales"
+                android:textSize="@dimen/sari_store_sales_fontsize"
+                android:text="Php 10,672.00"
+                android:id="@+id/etYesterdaySales"
+                android:textColor="@android:color/black"
+                android:enabled="false"
+                android:focusable="false"/>
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        >
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:orientation="horizontal"
+                      android:layout_width="match_parent"
+                      android:layout_height="50dp"
+                      android:gravity="center"
+                      android:background="@color/accent"
+                      android:padding="@dimen/sari_items_padding">
+
+            <Space
+                android:layout_width="@dimen/product_image_dimens"
+                android:layout_height="wrap_content"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Product Name"
+                android:id="@+id/tvLabel1"
+                android:layout_weight="3"
+                android:textSize="@dimen/labels_fontsize"
+                android:layout_marginLeft="@dimen/sari_items_padding"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Price"
+                android:id="@+id/tvLabel2"
+                android:layout_weight="1"
+                android:textSize="@dimen/labels_fontsize"
+                android:layout_marginLeft="@dimen/sari_items_padding"/>
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:id="@+id/rvProducts"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+</LinearLayout>

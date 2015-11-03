@@ -79,7 +79,7 @@ public class C_Welcome extends ModuleActivity {
                 SettingTools.updateSettings(C_Welcome.this, SettingsName.DEFAULT_BRANCH, String.valueOf(branch.getId()));
 
                 finish();
-                Intent intent = new Intent(C_Welcome.this, SampleSales.class);
+                Intent intent = new Intent(C_Welcome.this, C_Dashboard.class);
                 startActivity(intent);
 
                 try {

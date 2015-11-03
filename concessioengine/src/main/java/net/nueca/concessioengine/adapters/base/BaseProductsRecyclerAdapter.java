@@ -69,4 +69,9 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
     public void add(Product product) {
         super.add(product);
     }
+
+    @Override
+    public void setList(List<Product> objectList) {
+        super.setList(objectList);
+    }
 }

@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="net.nueca.imonggosari.activities.SariMain">
+    <item android:id="@+id/mSearch"
+          android:title="Search"
+          android:icon="@drawable/ic_search_gray"
+          android:orderInCategory="100"
+          app:showAsAction="always"
+          app:actionViewClass="net.nueca.concessioengine.views.SearchViewEx"/>
+      <item android:id="@+id/mDelivery"
+            android:title="Delivery"
+            android:icon="@drawable/ic_truck_gray"
+            android:orderInCategory="100"
+            app:showAsAction="always"/>
+      <item android:id="@+id/mTopProducts"
+            android:title="Top Products"
+            android:icon="@drawable/ic_star_solid_gray"
+            android:orderInCategory="100"
+            app:showAsAction="always"/>
+    <item android:id="@+id/mSales"
+          android:title="Sales"
+          android:icon="@drawable/ic_money_gray"
+          android:orderInCategory="100"
+          app:showAsAction="always"/>
+</menu>

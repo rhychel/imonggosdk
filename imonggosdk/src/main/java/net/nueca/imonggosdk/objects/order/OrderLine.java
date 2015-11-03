@@ -61,6 +61,13 @@ public class OrderLine extends BaseTable2 {
         product_id = builder.product_id;
         retail_price = builder.retail_price;
         quantity = builder.quantity;
+
+        unit_id = builder.unit_id;
+        unit_quantity = builder.unit_quantity;
+        unit_content_quantity = builder.unit_content_quantity;
+        unit_retail_price = builder.unit_retail_price;
+        unit_name = builder.unit_name;
+        brand = builder.brand;
     }
 
     public OrderLine(int product_id, double quantity) {

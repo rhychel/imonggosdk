@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.objects;
 
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 /**
  * Created by rhymart on 7/13/15.
@@ -47,6 +48,7 @@ public class Values {
     // ---- FOR INVOICE
     private String discount_text = "0%";
     private String subtotal = "0";
+    private double retail_price = 0d;
 
     public Values() { }
 
@@ -156,11 +158,20 @@ public class Values {
     }
 
     public String getSubtotal() {
+        subtotal = "" + ( (unit != null? unit.getRetail_price() : retail_price ) * NumberTools.toDouble(quantity) );
         return subtotal;
     }
 
     public void setSubtotal(String subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public double getRetail_price() {
+        return retail_price;
+    }
+
+    public void setRetail_price(double retail_price) {
+        this.retail_price = retail_price;
     }
 
     @Override

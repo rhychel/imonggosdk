@@ -1,0 +1,94 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                xmlns:sothree="http://schemas.android.com/apk/res-auto"
+                tools:context=".SariLogin">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tbActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        sothree:theme="@style/ActionBar"
+        android:elevation="3dp">
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:layout_below="@+id/tbActionBar">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:elevation="2dp"
+            android:background="@android:color/white"
+            >
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/rvListProducts"
+                android:layout_weight="1"
+                android:layout_above="@+id/tvSalesLabel"
+                android:background="@android:color/white"
+                android:paddingBottom="@dimen/sari_product_list_dimens"
+                android:clipToPadding="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/sari_sales_box"
+                android:text="Today&apos;s Sales:"
+                android:id="@+id/tvSalesLabel"
+                android:layout_alignParentBottom="true"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/sari_store_sales_fontsize"
+                android:paddingLeft="@dimen/sari_padding"
+                android:paddingTop="@dimen/sari_padding"
+                android:paddingBottom="@dimen/sari_padding"
+                android:background="?attr/colorPrimary"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/sari_sales_box"
+                android:text="Php 888,888.88"
+                android:id="@+id/tvTodaySales"
+                android:layout_toRightOf="@+id/tvSalesLabel"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/tvSalesLabel"
+                android:gravity="center_vertical|right"
+                android:textSize="@dimen/sari_store_sales_fontsize"
+                android:paddingTop="@dimen/sari_padding"
+                android:paddingRight="@dimen/sari_padding"
+                android:paddingBottom="@dimen/sari_padding"
+                android:background="?attr/colorPrimary"/>
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:id="@+id/rvGridProducts"
+            android:layout_weight="2"
+            android:padding="@dimen/sari_product_tile_padding"
+            android:clipToPadding="false"
+            android:background="@android:color/darker_gray"
+            />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="No product results for Beef category"
+            android:id="@+id/tvNoProducts"
+            android:gravity="center"
+            android:layout_weight="2"
+            android:background="@android:color/darker_gray"
+            android:padding="50dp"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+</RelativeLayout>

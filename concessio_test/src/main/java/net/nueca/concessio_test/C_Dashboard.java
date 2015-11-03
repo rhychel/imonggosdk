@@ -25,35 +25,24 @@ import java.util.List;
  */
 public class C_Dashboard extends ImonggoAppCompatActivity {
 
-    private Button btnOrder, btnCount, btnReceive, btnPullout, btnUnlink;
+    private Button btnSales, btnOrder, btnCount, btnReceive, btnPullout, btnUnlink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
 
-        try {
-            for(Document document : getHelper().getDocuments().queryBuilder().where()
-                    .eq("intransit_status", "Intransit").and()
-                    .eq("branch_id", 277).or().eq("target_branch_id", 277).query()) {
-                if(document.getId() == 0)
-                    document.deleteTo(getHelper());
-                Log.e("Document " + document.getId(), document.getReference() + " " + document.getDocument_type_code
-                        ().name());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         if(!SwableTools.isImonggoSwableRunning(this))
             SwableTools.startSwable(this);
 
+        btnSales = (Button) findViewById(R.id.btnSales);
         btnOrder = (Button) findViewById(R.id.btnOrder);
         btnCount = (Button) findViewById(R.id.btnCount);
         btnReceive = (Button) findViewById(R.id.btnReceive);
         btnPullout = (Button) findViewById(R.id.btnPullout);
         btnUnlink = (Button) findViewById(R.id.btnUnlink);
 
+        btnSales.setOnClickListener(onChooseModule);
         btnOrder.setOnClickListener(onChooseModule);
         btnCount.setOnClickListener(onChooseModule);
         btnReceive.setOnClickListener(onChooseModule);
@@ -86,6 +75,9 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         public void onClick(View view) {
             Intent intent = new Intent(C_Dashboard.this, C_Module.class);
             switch(view.getId()) {
+                case R.id.btnSales: {
+                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.SALES.ordinal());
+                } break;
                 case R.id.btnOrder: {
                     intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.ORDERS.ordinal());
                 } break;

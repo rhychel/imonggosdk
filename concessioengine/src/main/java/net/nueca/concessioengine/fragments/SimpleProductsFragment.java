@@ -92,6 +92,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
             if(!isCustomAdapter)
                 productRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
+            else {
+                productRecyclerViewAdapter.setDbHelper(getHelper());
+                productRecyclerViewAdapter.setList(getProducts());
+            }
             productRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClicked(View view, int position) {
@@ -168,8 +172,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
     public void setProductsRecyclerAdapter(BaseProductsRecyclerAdapter adapter) {
         productRecyclerViewAdapter = adapter;
-        isCustomAdapter = true;
+        isCustomAdapter = productRecyclerViewAdapter != null;
     }
+
 
     public void refreshList() {
         if(useRecyclerView)
@@ -345,9 +350,14 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     }
 
     public void clearSelectedItems() {
-        if(useRecyclerView)
+        if(useRecyclerView) {
             productRecyclerViewAdapter.clearSelectedItems();
-        else
+            productRecyclerViewAdapter.notifyDataSetChanged();
+            toggleNoItems("No products available.", productRecyclerViewAdapter.updateList(new ArrayList<Product>()));
+        } else {
             productListAdapter.clearSelectedItems();
+            productListAdapter.notifyDataSetChanged();
+            toggleNoItems("No products available.", productListAdapter.updateList(new ArrayList<Product>()));
+        }
     }
 }

@@ -18,18 +18,10 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
-import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
-import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.tools.DialogTools;
-import net.nueca.imonggosdk.tools.NumberTools;
-
-import org.json.JSONException;
-
-import java.sql.SQLException;
-import java.util.List;
 
 public class SampleSales extends ModuleActivity implements SetupActionBar, View.OnClickListener {
-    private static final String SUMMARY_LABEL = "Summary";
+    private static final String REVIEW_LABEL = "Review";
     private static final String SEND_LABEL = "Send";
     private static final String CHECKOUT_LABEL = "Checkout";
 
@@ -40,7 +32,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
     private CheckoutFragment checkoutFragment;
 
     private Toolbar toolbar;
-    private Button btnSummary;
+    private Button btnReview;
     private MenuItem miSearch;
 
     @Override
@@ -48,8 +40,8 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_module);
 
-        btnSummary = (Button) findViewById(R.id.btnSummary);
-        btnSummary.setOnClickListener(this);
+        btnReview = (Button) findViewById(R.id.btnReview);
+        btnReview.setOnClickListener(this);
 
         simpleProductsFragment = SimpleProductsFragment.newInstance();
         finalizeFragment = SimpleProductsFragment.newInstance();
@@ -59,14 +51,9 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
         finalizeFragment.setHelper(getHelper());
         finalizeFragment.setSetupActionBar(this);
-        try {
-            simpleProductsFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this, getHelper(),
-                    getHelper().getProducts().queryForAll()));
-            finalizeFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this, getHelper(),
-                    getHelper().getProducts().queryForAll()));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        simpleProductsFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
+        finalizeFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
 
         simpleProductsFragment.setHasUnits(true);
         simpleProductsFragment.setProductCategories(getProductCategories(true));
@@ -85,7 +72,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(btnSummary != null && btnSummary.getText().toString().equals(SUMMARY_LABEL)) {
+        if(btnReview != null && btnReview.getText().toString().equals(REVIEW_LABEL)) {
             getMenuInflater().inflate(R.menu.menu_sample_sales, menu);
             mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
             initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
@@ -99,10 +86,10 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
             miSearch = menu.findItem(R.id.mSearch);
         }
-        miSearch.setVisible(btnSummary.getText().toString().equals(SUMMARY_LABEL));
-        getSupportActionBar().setDisplayShowTitleEnabled(!btnSummary.getText().toString().equals(SUMMARY_LABEL));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(!btnSummary.getText().toString().equals(SUMMARY_LABEL));
-        getSupportActionBar().setHomeButtonEnabled(!btnSummary.getText().toString().equals(SUMMARY_LABEL));
+        miSearch.setVisible(btnReview.getText().toString().equals(REVIEW_LABEL));
+        getSupportActionBar().setDisplayShowTitleEnabled(!btnReview.getText().toString().equals(REVIEW_LABEL));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(!btnReview.getText().toString().equals(REVIEW_LABEL));
+        getSupportActionBar().setHomeButtonEnabled(!btnReview.getText().toString().equals(REVIEW_LABEL));
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -120,14 +107,14 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if(btnSummary.getText().toString().equals(SEND_LABEL)) {
+        if(btnReview.getText().toString().equals(SEND_LABEL)) {
             setTitle(REVIEW_TITLE);
-            btnSummary.setText(CHECKOUT_LABEL);
+            btnReview.setText(CHECKOUT_LABEL);
         }
-        else if(btnSummary.getText().toString().equals(CHECKOUT_LABEL))
-            btnSummary.setText(SUMMARY_LABEL);
+        else if(btnReview.getText().toString().equals(CHECKOUT_LABEL))
+            btnReview.setText(REVIEW_LABEL);
 
-        btnSummary.setVisibility(View.VISIBLE);
+        btnReview.setVisibility(View.VISIBLE);
 
         //getSupportActionBar().setDisplayShowTitleEnabled(false);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -145,7 +132,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
     @Override
     public void onClick(View v) {
-        if(btnSummary.getText().toString().equals(SUMMARY_LABEL)) {
+        if(btnReview.getText().toString().equals(REVIEW_LABEL)) {
             if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
                 DialogTools.showDialog(SampleSales.this, "Ooops!", "You have no selected items. Kindly select first " +
                         "products.");
@@ -153,7 +140,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
                 setTitle(REVIEW_TITLE);
                 miSearch.setVisible(false);
 
-                btnSummary.setText(CHECKOUT_LABEL);
+                btnReview.setText(CHECKOUT_LABEL);
                 finalizeFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
 
                 getSupportFragmentManager().beginTransaction()
@@ -166,9 +153,9 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
                 //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 //getSupportActionBar().setHomeButtonEnabled(true);
             }
-        } else if(btnSummary.getText().toString().equals(CHECKOUT_LABEL)) {
+        } else if(btnReview.getText().toString().equals(CHECKOUT_LABEL)) {
             setTitle(CHECKOUT_TITLE);
-            btnSummary.setText(SEND_LABEL);
+            btnReview.setText(SEND_LABEL);
 
             checkoutFragment.setSetupActionBar(this);
             checkoutFragment.setInvoice(new Invoice.Builder()
