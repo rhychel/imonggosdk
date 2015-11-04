@@ -36,6 +36,7 @@ import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
+//import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -172,7 +173,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, OfflineData.class, true);
             TableUtils.dropTable(connectionSource, Document.class, true);
             TableUtils.dropTable(connectionSource, DocumentLine.class, true);
-            TableUtils.dropTable(connectionSource, ExtendedAttributes.class, true);
+            //TableUtils.dropTable(connectionSource, ExtendedAttributes.class, true);
             TableUtils.dropTable(connectionSource, DailySales.class, true);
             TableUtils.dropTable(connectionSource, Settings.class, true);
             TableUtils.dropTable(connectionSource, DocumentLineExtras.class, true);
