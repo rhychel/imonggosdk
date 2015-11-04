@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
@@ -13,6 +15,8 @@ import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.orderingapp.R;
 
 public class OrderingLogin extends LoginActivity {
+
+    private Button loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,13 @@ public class OrderingLogin extends LoginActivity {
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
+        setContentView(R.layout.activity_ordering_login);
+        setupLayoutEquipments((EditText) findViewById(R.id.etAccountId),
+                (EditText) findViewById(R.id.etEmail),
+                (EditText) findViewById(R.id.etPassword),
+                (Button) findViewById(R.id.btnSignIn));
+
+        loginButton = (Button) findViewById(R.id.btnSignIn);
 
         setEditTextAccountID("retailpos");
         setEditTextEmail("retailpos@test.com");
