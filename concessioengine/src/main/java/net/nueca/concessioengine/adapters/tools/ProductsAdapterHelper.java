@@ -105,13 +105,21 @@ public class ProductsAdapterHelper {
         return session;
     }
 
+    public static boolean hasSelectedProductItems() {
+        if(selectedProductItems == null)
+            return false;
+        return selectedProductItems.isEmpty();
+    }
+
     public static void clearSelectedProductItemList() {
-        selectedProductItems.clear();
+        if(selectedProductItems != null)
+            selectedProductItems.clear();
         ProductListTools.restartLineNo();
     }
 
     public static void destroySelectedProductItemList() {
-        selectedProductItems.clear();
+        if(selectedProductItems != null)
+            selectedProductItems.clear();
         selectedProductItems = null;
     }
 

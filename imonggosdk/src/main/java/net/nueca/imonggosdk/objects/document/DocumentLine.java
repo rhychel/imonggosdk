@@ -37,12 +37,12 @@ public class DocumentLine extends BaseTable2 {
     protected transient Document document;
 
     @Expose
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extended_attributes")
-    protected ExtendedAttributes extended_attributes;
-
-    @Expose
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
     protected DocumentLineExtras extras;
+
+    //@Expose
+    //@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
+    //protected DocumentLineExtras_Old extras;
 
     @Expose
     @DatabaseField
@@ -89,9 +89,9 @@ public class DocumentLine extends BaseTable2 {
         line_no = builder.line_no;
         product_id = builder.product_id;
         quantity = builder.quantity;
-        extended_attributes = builder.extended_attributes;
-        if(extended_attributes != null)
-            extended_attributes.setDocumentLine(this);
+        extras = builder.extras;
+        if(extras != null)
+            extras.setDocumentLine(this);
         discount_text = builder.discount_text;
         price = builder.price;
         retail_price = builder.retail_price;
@@ -102,9 +102,9 @@ public class DocumentLine extends BaseTable2 {
         unit_retail_price = builder.unit_retail_price;
         document = builder.document;
 
-        extras = builder.extras;
-        if(extras != null)
-            extras.setDocumentLine(this);
+        //extras = builder.extras;
+        //if(extras != null)
+        //    extras.setDocumentLine(this);
 
         product = builder.product;
     }
@@ -133,14 +133,6 @@ public class DocumentLine extends BaseTable2 {
         this.quantity = quantity;
     }
 
-    public ExtendedAttributes getExtended_attributes() {
-        return extended_attributes;
-    }
-
-    public void setExtended_attributes(ExtendedAttributes extended_attributes) {
-        this.extended_attributes = extended_attributes;
-    }
-
     public DocumentLineExtras getExtras() {
         return extras;
     }
@@ -148,6 +140,16 @@ public class DocumentLine extends BaseTable2 {
     public void setExtras(DocumentLineExtras extras) {
         this.extras = extras;
     }
+
+    /*@Deprecated
+    public DocumentLineExtras_Old getExtras() {
+        return extras;
+    }
+
+    @Deprecated
+    public void setExtras(DocumentLineExtras_Old extras) {
+        this.extras = extras;
+    }*/
 
     public String getDiscount_text() {
         return discount_text;
@@ -260,8 +262,8 @@ public class DocumentLine extends BaseTable2 {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
-        if(extended_attributes != null)
-            extended_attributes.insertTo(dbHelper);
+        if(extras != null)
+            extras.insertTo(dbHelper);
 
         if(extras != null)
             extras.insertTo(dbHelper);
@@ -272,9 +274,9 @@ public class DocumentLine extends BaseTable2 {
             e.printStackTrace();
         }
 
-        if(extended_attributes != null) {
-            extended_attributes.setDocumentLine(this);
-            extended_attributes.updateTo(dbHelper);
+        if(extras != null) {
+            extras.setDocumentLine(this);
+            extras.updateTo(dbHelper);
         }
 
         if(extras != null) {
@@ -291,8 +293,8 @@ public class DocumentLine extends BaseTable2 {
             e.printStackTrace();
         }
 
-        if(extended_attributes != null) {
-            extended_attributes.deleteTo(dbHelper);
+        if(extras != null) {
+            extras.deleteTo(dbHelper);
         }
 
         if(extras != null) {
@@ -308,8 +310,8 @@ public class DocumentLine extends BaseTable2 {
             e.printStackTrace();
         }
 
-        if(extended_attributes != null) {
-            extended_attributes.updateTo(dbHelper);
+        if(extras != null) {
+            extras.updateTo(dbHelper);
         }
 
         if(extras != null) {
@@ -321,7 +323,7 @@ public class DocumentLine extends BaseTable2 {
         protected int line_no = 0;
         protected int product_id = 0;
         protected double quantity;
-        protected ExtendedAttributes extended_attributes;
+        protected DocumentLineExtras extras;
         protected String discount_text;
         protected Double price;
         protected Double retail_price;
@@ -337,7 +339,7 @@ public class DocumentLine extends BaseTable2 {
         protected Double subtotal;
         protected Product product;
 
-        protected DocumentLineExtras extras;
+        //protected DocumentLineExtras_Old extras;
 
         protected boolean autoLine_no;
 
@@ -346,10 +348,10 @@ public class DocumentLine extends BaseTable2 {
             return this;
         }
 
-        public Builder extras(DocumentLineExtras extras) {
+        /*public Builder extras(DocumentLineExtras_Old extras) {
             this.extras = extras;
             return this;
-        }
+        }*/
 
         public Builder autoLine_no() {
             autoLine_no = true;
@@ -404,8 +406,8 @@ public class DocumentLine extends BaseTable2 {
             this.quantity = quantity;
             return this;
         }
-        public Builder extended_attributes(ExtendedAttributes extended_attributes) {
-            this.extended_attributes = extended_attributes;
+        public Builder extras(DocumentLineExtras extras) {
+            this.extras = extras;
             return this;
         }
         public Builder discount_text(String discount_text) {

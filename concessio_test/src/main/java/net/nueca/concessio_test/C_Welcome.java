@@ -3,6 +3,7 @@ package net.nueca.concessio_test;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import net.nueca.concessioengine.activities.ModuleActivity;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
@@ -79,6 +81,20 @@ public class C_Welcome extends ModuleActivity {
                 finish();
                 Intent intent = new Intent(C_Welcome.this, C_Dashboard.class);
                 startActivity(intent);
+
+                try {
+                    Log.e("Document Query", "start");
+                    for(Document document : getHelper().getDocuments().queryForAll()){//.queryBuilder().where()
+                            //.eq("intransit_status", "Intransit").and()
+                            //.eq("branch_id", 277).or().eq("target_branch_id", 277).query()) {
+                        if(document.getId() == 0)
+                            document.deleteTo(getHelper());
+                        Log.e("Document " + document.getId(), document.getReference() + " " + document.getDocument_type_code
+                                ().name());
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

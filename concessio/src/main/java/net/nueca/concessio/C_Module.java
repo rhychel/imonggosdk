@@ -24,6 +24,7 @@ import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.OfflineDataType;
+import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.OfflineData;
@@ -72,7 +73,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         switch (concessioModule) {
             case ORDERS: {
                 simpleProductsFragment.setHasUnits(true);
-                simpleProductsFragment.setProductCategories(getProductCategories(true));
+                simpleProductsFragment.setProductCategories(getProductCategories(!AccountSettings.allowLimitOrdersToOneCategory(this)));
+                simpleProductsFragment.setShowCategoryOnStart(AccountSettings.showCategoriesOnStart(this));
 
                 finalizeFragment.setHasCategories(false);
                 finalizeFragment.setHasBrand(false);

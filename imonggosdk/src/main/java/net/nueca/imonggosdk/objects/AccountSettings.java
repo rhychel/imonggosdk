@@ -52,11 +52,16 @@ public class AccountSettings {
 
     private static final String               COUNT_ALLOW_ENTERING_BRAND = "count_allow_entering_brand";
     private static final String       COUNT_ALLOW_ENTERING_DELIVERY_DATE = "count_allow_entering_delivery_date";
+    private static final String           COUNT_ALLOW_BATCH_NUMBER_INPUT = "count_allow_batch_number_input"; // October 6, 2015
 
     private static final String             RECEIVE_ALLOW_OUTRIGHT_INPUT = "receive_allow_outright_input";
     private static final String          RECEIVE_ALLOW_DISCREPANCY_INPUT = "receive_allow_discrepancy_input";
+    private static final String                      RECEIVE_MULTI_INPUT = "receive_multi_input"; // October 6, 2015
+    private static final String         RECEIVE_ALLOW_BATCH_NUMBER_INPUT = "receive_allow_batch_number_input"; // October 6, 2015
 
     private static final String             PULLOUT_ALLOW_STORE_TRANSFER = "pullout_allow_store_transfer";
+    private static final String                      PULLOUT_MULTI_INPUT = "pullout_multi_input"; // October 6, 2015
+    private static final String         PULLOUT_ALLOW_BATCH_NUMBER_INPUT = "pullout_allow_batch_number_input"; // October 6, 2015
 
     private static SharedPreferences concessioSettings = null;
 
@@ -100,6 +105,8 @@ public class AccountSettings {
                 updateCountAllowEnteringBrand(context, fromIntToBool(jsonObject.getInt(COUNT_ALLOW_ENTERING_BRAND)));
             if(jsonObject.has(COUNT_ALLOW_ENTERING_DELIVERY_DATE))
                 updateCountAllowEnteringDeliveryDate(context, fromIntToBool(jsonObject.getInt(COUNT_ALLOW_ENTERING_DELIVERY_DATE)));
+            if(jsonObject.has(COUNT_ALLOW_BATCH_NUMBER_INPUT))
+                updateCountAllowBatchNumberInput(context, fromIntToBool(jsonObject.getInt(COUNT_ALLOW_BATCH_NUMBER_INPUT)));
             if(jsonObject.has(COUNT_AUTODELETE))
                 updateCountAutodelete(context, jsonObject.getInt(COUNT_AUTODELETE));
             if(jsonObject.has(COUNT_VIEW_HISTORY_EVERY))
@@ -109,6 +116,10 @@ public class AccountSettings {
                 updateReceiveAllowOutrightInput(context, fromIntToBool(jsonObject.getInt(RECEIVE_ALLOW_OUTRIGHT_INPUT)));
             if(jsonObject.has(RECEIVE_ALLOW_DISCREPANCY_INPUT))
                 updateReceiveAllowDiscrepancyInput(context, fromIntToBool(jsonObject.getInt(RECEIVE_ALLOW_DISCREPANCY_INPUT)));
+            if(jsonObject.has(RECEIVE_MULTI_INPUT))
+                updateReceiveMultiInput(context, fromIntToBool(jsonObject.getInt(RECEIVE_MULTI_INPUT)));
+            if(jsonObject.has(RECEIVE_ALLOW_BATCH_NUMBER_INPUT))
+                updateReceiveAllowBatchNumberInput(context, fromIntToBool(jsonObject.getInt(RECEIVE_ALLOW_BATCH_NUMBER_INPUT)));
             if(jsonObject.has(RECEIVE_AUTODELETE))
                 updateReceiveAutodelete(context, jsonObject.getInt(RECEIVE_AUTODELETE));
             if(jsonObject.has(RECEIVE_VIEW_HISTORY_EVERY))
@@ -116,6 +127,10 @@ public class AccountSettings {
 
             if(jsonObject.has(PULLOUT_ALLOW_STORE_TRANSFER))
                 updatePulloutAllowStoreTransfer(context, fromIntToBool(jsonObject.getInt(PULLOUT_ALLOW_STORE_TRANSFER)));
+            if(jsonObject.has(PULLOUT_MULTI_INPUT))
+                updatePulloutMultiInput(context, fromIntToBool(jsonObject.getInt(PULLOUT_MULTI_INPUT)));
+            if(jsonObject.has(PULLOUT_ALLOW_BATCH_NUMBER_INPUT))
+                updatePulloutAllowBatchNumberInput(context, fromIntToBool(jsonObject.getInt(PULLOUT_ALLOW_BATCH_NUMBER_INPUT)));
             if(jsonObject.has(PULLOUT_AUTODELETE))
                 updatePulloutAutodelete(context, jsonObject.getInt(PULLOUT_AUTODELETE));
             if(jsonObject.has(PULLOUT_VIEW_HISTORY_EVERY))
@@ -158,7 +173,60 @@ public class AccountSettings {
             concessioSettings = PreferenceManager.getDefaultSharedPreferences(context);
         return concessioSettings;
     }
+    // ----- New after October 5, 2015
 
+    public static void updateReceiveMultiInput(Context context, boolean isMultiInput) {
+        SharedPreferences.Editor editor = getSettings(context).edit();
+        editor.putBoolean(getPackageName(context) + RECEIVE_MULTI_INPUT, isMultiInput);
+        editor.apply();
+    }
+
+    public static boolean receiveMultiInput(Context context) {
+        return getSettings(context).getBoolean(getPackageName(context) + RECEIVE_MULTI_INPUT, false);
+    }
+
+    public static void updateReceiveAllowBatchNumberInput(Context context, boolean allowBatchNumber) {
+        SharedPreferences.Editor editor = getSettings(context).edit();
+        editor.putBoolean(getPackageName(context) + RECEIVE_ALLOW_BATCH_NUMBER_INPUT, allowBatchNumber);
+        editor.apply();
+    }
+
+    public static boolean receiveAllowBatchNumberInput(Context context) {
+        return getSettings(context).getBoolean(getPackageName(context) + RECEIVE_ALLOW_BATCH_NUMBER_INPUT, false);
+    }
+
+
+    public static void updatePulloutMultiInput(Context context, boolean isMultiInput) {
+        SharedPreferences.Editor editor = getSettings(context).edit();
+        editor.putBoolean(getPackageName(context) + PULLOUT_MULTI_INPUT, isMultiInput);
+        editor.apply();
+    }
+
+    public static boolean pulloutMultiInput(Context context) {
+        return getSettings(context).getBoolean(getPackageName(context) + PULLOUT_MULTI_INPUT, false);
+    }
+
+    public static void updatePulloutAllowBatchNumberInput(Context context, boolean allowBatchNumber) {
+        SharedPreferences.Editor editor = getSettings(context).edit();
+        editor.putBoolean(getPackageName(context) + PULLOUT_ALLOW_BATCH_NUMBER_INPUT, allowBatchNumber);
+        editor.apply();
+    }
+
+    public static boolean pulloutAllowBatchNumberInput(Context context) {
+        return getSettings(context).getBoolean(getPackageName(context) + PULLOUT_ALLOW_BATCH_NUMBER_INPUT, false);
+    }
+
+    public static void updateCountAllowBatchNumberInput(Context context, boolean allowBatchNumber) {
+        SharedPreferences.Editor editor = getSettings(context).edit();
+        editor.putBoolean(getPackageName(context) + COUNT_ALLOW_BATCH_NUMBER_INPUT, allowBatchNumber);
+        editor.apply();
+    }
+
+    public static boolean countAllowBatchNumberInput(Context context) {
+        return getSettings(context).getBoolean(getPackageName(context) + COUNT_ALLOW_BATCH_NUMBER_INPUT, false);
+    }
+
+    // -----
     public static void updateSendSwableLogs(Context context, boolean sendSwableLogs) {
         SharedPreferences.Editor editor = getSettings(context).edit();
         editor.putBoolean(getPackageName(context) + SEND_SWABLE_LOGS, sendSwableLogs);

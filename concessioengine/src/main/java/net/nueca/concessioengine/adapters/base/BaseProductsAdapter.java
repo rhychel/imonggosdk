@@ -46,4 +46,5 @@ public abstract class BaseProductsAdapter extends BaseAdapter<Product> {
         ProductsAdapterHelper.setDbHelper(dbHelper);
     }
 
+    public abstract boolean updateList(List<Product> productList);
 }

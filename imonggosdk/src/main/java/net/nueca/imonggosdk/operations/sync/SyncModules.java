@@ -156,8 +156,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
             if (mCurrentTableSyncing == Table.DOCUMENTS) {// This is when the module syncing is DOCUMENTS
                 if (initialSync || lastUpdatedAt == null) {
-                    return String.format(ImonggoTools.generateParameter(Parameter.DOCUMENT_TYPE, Parameter.INTRANSIT,
-                                    Parameter.FROM, Parameter.TO, Parameter.LAST_UPDATED_AT, Parameter.TARGET_BRANCH_ID),
+                    return String.format(ImonggoTools.generateParameter(Parameter.DOCUMENT_TYPE,
+                                    Parameter.INTRANSIT,
+                                    Parameter.FROM,
+                                    Parameter.TO,
+                                    Parameter.LAST_UPDATED_AT,
+                                    Parameter.BRANCH_ID),  // RHY: Parameter.TARGET_BRANCH_ID Changed to cater transfer to branch
                             document_type, intransit_status, DateTimeTools.convertDateForUrl(from), DateTimeTools.convertDateForUrl(to),
                             getTargetBranchId(branchIndex));
                 } else {
@@ -184,7 +188,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Parameter.DOCUMENT_TYPE,
                                     Parameter.INTRANSIT,
                                     Parameter.PAGE,
-                                    Parameter.TARGET_BRANCH_ID,
+                                    Parameter.BRANCH_ID, // RHY: Parameter.TARGET_BRANCH_ID Changed to cater transfer to branch
                                     Parameter.FROM,
                                     Parameter.TO),
 
@@ -209,7 +213,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(
                                     Parameter.DOCUMENT_TYPE,
                                     Parameter.AFTER,
-                                    Parameter.TARGET_BRANCH_ID,
+                                    Parameter.BRANCH_ID, // RHY: Parameter.TARGET_BRANCH_ID Changed to cater transfer to branch
                                     Parameter.PAGE
                             ),
                             document_type,
@@ -227,8 +231,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             // TODO 1. Support ACTIVE_ONLY
             if (initialSync || lastUpdatedAt == null) {
                 if (mCurrentTableSyncing == Table.DOCUMENTS) {
-                    return String.format(ImonggoTools.generateParameter(Parameter.DOCUMENT_TYPE, Parameter.INTRANSIT,
-                                    Parameter.FROM, Parameter.TO, Parameter.COUNT, Parameter.TARGET_BRANCH_ID),
+                    return String.format(ImonggoTools.generateParameter(Parameter.DOCUMENT_TYPE,
+                                    Parameter.INTRANSIT,
+                                    Parameter.FROM,
+                                    Parameter.TO,
+                                    Parameter.COUNT,
+                                    Parameter.BRANCH_ID), // RHY: Parameter.TARGET_BRANCH_ID Changed to cater transfer to branch
                             document_type, intransit_status, DateTimeTools.convertDateForUrl(from), DateTimeTools.convertDateForUrl(to),
                             getTargetBranchId(branchIndex));
                 }
@@ -247,7 +255,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(
                                     Parameter.DOCUMENT_TYPE,
                                     Parameter.AFTER,
-                                    Parameter.TARGET_BRANCH_ID,
+                                    Parameter.BRANCH_ID,  // RHY: Parameter.TARGET_BRANCH_ID Changed to cater transfer to branch
                                     Parameter.COUNT
                             ),
                             document_type,
@@ -844,6 +852,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             for (int i = 0; i < size; i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Branch branch = gson.fromJson(jsonObject.toString(), Branch.class);
+                                if(branch.getSite_type() != null && branch.getSite_type().equals("head_office"))
+                                    continue;
                                 BranchUserAssoc branchUserAssoc = new BranchUserAssoc(branch, getUser());
 
                               //  if (jsonArray.getJSONObject(i).getString("site_type").equals("null")) {

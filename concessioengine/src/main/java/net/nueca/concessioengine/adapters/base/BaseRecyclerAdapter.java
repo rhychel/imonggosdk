@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -24,6 +25,7 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
     protected OnItemLongClickListener onItemLongClickListener = null;
 
     protected LinearLayoutManager linearLayoutManager;
+    protected GridLayoutManager gridLayoutManager;
 
     public BaseRecyclerAdapter() {}
 
@@ -102,6 +104,17 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         rvProducts.setLayoutManager(linearLayoutManager);
         rvProducts.setHasFixedSize(true);
         rvProducts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL_LIST));
+    }
+
+    public void initializeGridRecyclerView(Context context, RecyclerView rvProducts, int span) {
+        gridLayoutManager = new GridLayoutManager(context, span);
+
+        rvProducts.setLayoutManager(gridLayoutManager);
+        rvProducts.setHasFixedSize(true);
+    }
+
+    public GridLayoutManager getGridLayoutManager() {
+        return gridLayoutManager;
     }
 
     public LinearLayoutManager getLinearLayoutManager() {

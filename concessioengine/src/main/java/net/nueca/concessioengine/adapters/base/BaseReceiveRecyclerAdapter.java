@@ -37,11 +37,15 @@ public abstract class BaseReceiveRecyclerAdapter<T extends BaseRecyclerAdapter.V
     }
 
     public ReceivedProductItemList getReceivedProductListItem() {
+        receivedProductListItem.sort();
+        if(isManual)
+            receivedProductListItem.removeZeroValue();
         return receivedProductListItem;
     }
 
     public void setReceivedProductListItem(ReceivedProductItemList receivedProductListItem) {
         this.receivedProductListItem = receivedProductListItem;
+        this.receivedProductListItem.sort();
     }
 
     public void setListItemResource(int resource) {
@@ -124,9 +128,9 @@ public abstract class BaseReceiveRecyclerAdapter<T extends BaseRecyclerAdapter.V
             if(documentLine.getExtras() != null) {
                 extendedAttributes.setBatch_no(documentLine.getExtras().getBatch_no());
             }
-            if(documentLine.getExtended_attributes() != null) {
-                extendedAttributes.setDelivery_date(documentLine.getExtended_attributes().getDelivery_date());
-                extendedAttributes.setBrand(documentLine.getExtended_attributes().getBrand());
+            if(documentLine.getExtras() != null) {
+                extendedAttributes.setDelivery_date(documentLine.getExtras().getDelivery_date());
+                extendedAttributes.setBrand(documentLine.getExtras().getBrand());
             }
             values.setValue("0", unit, extendedAttributes);
 
@@ -164,6 +168,9 @@ public abstract class BaseReceiveRecyclerAdapter<T extends BaseRecyclerAdapter.V
 
     @Override
     public int getCount() {
+        if(isReview)
+            return receivedProductListItem.size();
+
         if(displayProductListItem == null)
             return 0;
         return displayProductListItem.size();

@@ -60,7 +60,8 @@ public class SwableTools {
         Intent service = new Intent(activity,ImonggoSwable.class);
         return activity.bindService(service, swableServiceConnection, Context.BIND_AUTO_CREATE);
     }
-	public static boolean isImonggoSwableRunning(Context context) {
+
+    public static boolean isImonggoSwableRunning(Context context) {
         return isMyServiceRunning(context, ImonggoSwable.class);
     }
 	private static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
@@ -273,6 +274,23 @@ public class SwableTools {
                 transaction.put("invoice", jsonObject);
                 break;
             case DOCUMENTS:
+                transaction.put("document", jsonObject);
+                break;
+        }
+        return transaction;
+    }
+
+    public static JSONObject prepareTransactionJSON(OfflineDataType offlineDataType, JSONObject jsonObject) throws
+            JSONException {
+        JSONObject transaction = new JSONObject();
+        switch(offlineDataType) {
+            case SEND_ORDER:
+                transaction.put("order", jsonObject);
+                break;
+            case SEND_INVOICE:
+                transaction.put("invoice", jsonObject);
+                break;
+            case SEND_DOCUMENT:
                 transaction.put("document", jsonObject);
                 break;
         }

@@ -101,8 +101,16 @@ public class DocumentPurpose extends BaseTable {
         }
     }
 
+    public boolean isSourceDestinationBranchDependent() {
+        return name.toLowerCase().equals("transfer to branch");
+    }
+
     @Override
     public String toString() {
+        return name;
+    }
+
+    public String toObjectString() {
         return "DocumentPurpose{" +
                 "status='" + status + '\'' +
                 ", name='" + name + '\'' +
