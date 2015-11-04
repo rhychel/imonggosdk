@@ -4,6 +4,7 @@
 *.apk
 *.ap_
 
+/salesdashboard
 # Files for the Dalvik VM
 *.dex
 

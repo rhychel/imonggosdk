@@ -11,6 +11,149 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/build.gradle" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/fabric.properties" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/libs/mpandroidchartlibrary-2-1-3.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Bold.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-BoldItalic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-DemiBold.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-DemiBoldItalic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Heavy.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-HeavyItalic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Italic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Medium.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-MediumItalic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Regular.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-UltraLight.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-UltraLightItalic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext.ttc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/BaseDailySalesActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/HomeActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/UserBranchesSpinnerAdapter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerAdapter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerWeeklyAdapter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/application/DashboardApplication.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/dialog/ProgressHUD.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/FormatValue.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/ShareType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/Update.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/UpdateDayType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/UpdateType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/UpdateWeekType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/exceptions/DailySalesFragmentException.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/BaseSalesFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesDaily.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesMonthly.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek1.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek2.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek3.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek4.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeekly.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleDailySalesFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleMonthlySalesFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleWeekSalesFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/OnPageChangeWeeklyListener.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/OnReloadBranches.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/SalesRefreshListener.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/SyncDailySalesListener.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/slidingtab/SlidingTabLayout.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/slidingtab/SlidingTabStrip.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/FontsOverride.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/HUDTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/ImonggoSettingsTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/IntentTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/LineChartValueTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/NumberTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/viewpager/CustomViewPager.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/anim/spinner.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/color/selector.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_facebook.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_instagram.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_message.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_more.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_twitter.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_unlink.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_refresh.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_facebook.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_instagram.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_message.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_more.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_twitter.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_unlink.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_refresh.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/progress_hud_bg.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_0.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_1.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_10.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_11.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_2.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_3.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_4.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_5.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_6.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_7.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_8.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_facebook.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_instagram.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_message.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_more.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_twitter.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_unlink.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_refresh.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_facebook.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_instagram.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_message.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_more.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_twitter.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_unlink.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_refresh.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_facebook.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_instagram.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_message.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_more.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_twitter.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_unlink.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_refresh.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/logo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/rectangle.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_button_login.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_text_today.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_text_yesterday.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_textview_login.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/spinner_bg.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/app_bar_spinner.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/app_bar_spinner_action_bar.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/app_bar_spinner_dropdown.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/daily_sales.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/home.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/last_week.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/login.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/monthly_sales.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/nav_header.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/notification.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/progress_hud.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/toolbar.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/weekly_sales_backup.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/weekly_sales_for_all.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/weekly_sales_viewpager.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/menu/drawer_view.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/menu/line_chart.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-hdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-mdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/values-v21/styles.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/values/colors.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/values/strings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/values/styles.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="936d6c5a-1f27-4920-bb3d-2332c2dff8bc" name="Failed commit: Default" comment="Merge branch 'development' into rhy&#10;&#10;# Conflicts:&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;" />
@@ -43,10 +186,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ImonggoDBHelper.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ImonggoDBHelper.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-5.4950166">
+            <state vertical-scroll-proportion="0.0">
               <caret line="42" column="59" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
               <folding />
             </state>
@@ -57,17 +200,7 @@
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="25" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/salesdashboard/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <caret line="7" column="25" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -128,21 +261,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="settings.gradle" pinned="false" current-in-tab="false">
+      <file leaf-file-name="settings.gradle" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/settings.gradle">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="20" column="42" selection-start-line="20" selection-start-column="42" selection-end-line="20" selection-end-column="42" />
+              <caret line="0" column="73" selection-start-line="0" selection-start-column="73" selection-end-line="0" selection-end-column="73" />
               <folding />
             </state>
           </provider>
@@ -4126,7 +4249,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="8679653984000" />
+        <entry key="$PROJECT_DIR$" value="8679655430000" />
         <entry key="E:\Bitbucket\Android Projects\imonggosdk" value="8645005560732" />
       </map>
     </option>
@@ -4901,14 +5024,14 @@
         <option value="$PROJECT_DIR$/concessio_test/.gitignore" />
         <option value="$PROJECT_DIR$/imonggosdk/.gitignore" />
         <option value="$PROJECT_DIR$/salesdashboard/.gitignore" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/concessio/build.gradle" />
         <option value="$PROJECT_DIR$/concessio_test/build.gradle" />
         <option value="$PROJECT_DIR$/concessioengine/build.gradle" />
         <option value="$PROJECT_DIR$/imonggosdk/build.gradle" />
-        <option value="$PROJECT_DIR$/settings.gradle" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/settings.gradle" />
       </list>
     </option>
   </component>
@@ -4994,6 +5117,26 @@
       <pane id="Scratches" />
       <pane id="AndroidView">
         <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Gradle Scripts" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk-imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="imonggosdk" />
@@ -6108,14 +6251,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -6161,14 +6296,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/local.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -6177,18 +6304,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/settings.gradle">
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <caret line="42" column="59" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.4950166">
-          <caret line="42" column="59" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="7" column="25" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="73" selection-start-line="0" selection-start-column="73" selection-end-line="0" selection-end-column="73" />
           <folding />
         </state>
       </provider>
