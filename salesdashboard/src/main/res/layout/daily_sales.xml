@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fl_dailySales"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/tools"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/scDaily"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/cvToday"
+                    android:layout_width="match_parent"
+                    android:layout_height="204dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="15dp"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardUseCompatPadding="true"
+                    card_view:cardBackgroundColor="@color/d_card_today"
+                    card_view:cardCornerRadius="4dp"
+                    card_view:cardElevation="0dp"
+                    card_view:cardMaxElevation="0dp"
+                    card_view:cardPreventCornerOverlap="false"
+                    card_view:cardUseCompatPadding="true"
+                    card_view:contentPaddingBottom="3dp"
+                    card_view:contentPaddingLeft="3dp"
+                    card_view:contentPaddingRight="3dp"
+                    card_view:contentPaddingTop="3dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/ll1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvTodayDateTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="-5dp"
+                                android:fontFamily="sans_serif"
+                                android:gravity="center"
+                                android:text="Today"
+                                android:textColor="#FFFFFF"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvTodayDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="10dp"
+                                android:gravity="center"
+                                android:text="Tuesday, Sep 9, 2015"
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="61dp"
+
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginLeft="6dp"
+                                android:layout_marginRight="6dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/shape_text_yesterday"
+                                android:gravity="center_vertical|center_horizontal"
+                                android:orientation="vertical">
+
+                                <me.grantland.widget.AutofitTextView
+                                    android:id="@+id/tvTodayDailySalesAmount"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:layout_marginTop="-5dp"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical|center_horizontal"
+                                    android:minLines="1"
+                                    android:scrollHorizontally="false"
+                                    android:singleLine="true"
+                                    android:text="$0"
+                                    android:textColor="@color/d_card_today_amount_color"
+                                    android:textSize="40sp"
+                                    android:textStyle="bold"
+                                    autofit:minTextSize="16sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:orientation="vertical">
+
+                                <LinearLayout xmlns:autofit="http://schemas.android.com/apk/res-auto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <me.grantland.widget.AutofitTextView
+                                        android:id="@+id/tvTodayQtySold"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="-10dp"
+                                        android:layout_weight="1"
+                                        android:gravity="center_vertical|center_horizontal"
+                                        android:maxLines="1"
+                                        android:minLines="1"
+                                        android:paddingLeft="6dp"
+                                        android:singleLine="true"
+                                        android:text="0"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="27sp"
+                                        android:textStyle="bold"
+                                        autofit:minTextSize="12sp" />
+
+                                    <me.grantland.widget.AutofitTextView
+                                        android:id="@+id/tvTodayNoOfInvoice"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="-10dp"
+                                        android:layout_weight="1"
+                                        android:gravity="center_vertical|center_horizontal"
+                                        android:maxLines="1"
+                                        android:minLines="1"
+                                        android:singleLine="true"
+                                        android:text="0"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="27sp"
+                                        android:textStyle="bold"
+                                        autofit:minTextSize="12sp" />
+
+                                    <me.grantland.widget.AutofitTextView
+                                        android:id="@+id/tvTodayAverageAmount"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="-10dp"
+                                        android:layout_weight="1"
+                                        android:gravity="center_vertical|center_horizontal"
+                                        android:maxLines="1"
+                                        android:minLines="1"
+                                        android:paddingRight="6dp"
+                                        android:singleLine="true"
+                                        android:text="0"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="27sp"
+                                        android:textStyle="bold"
+                                        autofit:minTextSize="12sp" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvTodayQtySoldTitle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:text="Qty. Sold"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="10sp" />
+
+                                    <TextView
+                                        android:id="@+id/tvTodayNoOfInvoiceTitle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:text="No. of Invoice"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="10sp" />
+
+                                    <TextView
+                                        android:id="@+id/tvTodayAverageAmountTitle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:text="Ave.Amt./Invoice"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="10sp"
+                                        android:typeface="monospace" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/cvYesterday"
+                    android:layout_width="match_parent"
+                    android:layout_height="204dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="15dp"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardUseCompatPadding="true"
+                    card_view:cardBackgroundColor="@color/d_card_yesterday"
+                    card_view:cardCornerRadius="4dp"
+                    card_view:cardElevation="0dp"
+                    card_view:cardMaxElevation="0dp"
+                    card_view:cardPreventCornerOverlap="false"
+                    card_view:cardUseCompatPadding="true"
+                    card_view:contentPaddingBottom="3dp"
+                    card_view:contentPaddingLeft="3dp"
+                    card_view:contentPaddingRight="3dp"
+                    card_view:contentPaddingTop="3dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/ll11"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvYesterdayDateTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="-5dp"
+                                android:fontFamily="sans_serif"
+                                android:gravity="center"
+                                android:text="Yesterday"
+                                android:textColor="#FFFFFF"
+                                android:textSize="24dp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvYesterdayDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="10dp"
+                                android:gravity="center"
+                                android:text="Tuesday, Sep 8, 2015"
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <LinearLayout xmlns:autofit="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/ll22"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="61dp"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginLeft="6dp"
+                                android:layout_marginRight="6dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/shape_text_yesterday"
+                                android:orientation="vertical">
+
+                                <me.grantland.widget.AutofitTextView
+                                    android:id="@+id/tvYesterdayDailySalesAmount"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:layout_marginTop="-5dp"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical|center_horizontal"
+                                    android:minLines="1"
+                                    android:scrollHorizontally="false"
+                                    android:singleLine="true"
+                                    android:text="$0"
+                                    android:textColor="#000000"
+                                    android:textSize="40sp"
+                                    android:textStyle="bold"
+                                    autofit:minTextSize="12sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll33"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:orientation="vertical">
+
+                                <LinearLayout xmlns:autofit="http://schemas.android.com/apk/res-auto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <me.grantland.widget.AutofitTextView
+                                        android:id="@+id/tvYesterdayQtySold"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="-10dp"
+                                        android:layout_weight="1"
+                                        android:gravity="center_vertical|center_horizontal"
+                                        android:maxLines="1"
+                                        android:minLines="1"
+                                        android:paddingLeft="6dp"
+                                        android:singleLine="true"
+                                        android:text="0"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="27sp"
+                                        android:textStyle="bold"
+                                        autofit:minTextSize="12sp" />
+
+                                    <TextView
+                                        android:id="@+id/tvYesterdayNoOfInvoice"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="-10dp"
+                                        android:layout_weight="1"
+                                        android:gravity="center_vertical|center_horizontal"
+                                        android:text="0"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="27sp"
+                                        android:textStyle="bold" />
+
+                                    <me.grantland.widget.AutofitTextView
+                                        android:id="@+id/tvYesterdayAverageAmount"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="-10dp"
+                                        android:layout_weight="1"
+                                        android:gravity="center_vertical|center_horizontal"
+                                        android:paddingRight="6dp"
+                                        android:singleLine="true"
+                                        android:text="0"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="27sp"
+                                        android:textStyle="bold"
+                                        autofit:minTextSize="12sp" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvYesterdayQtySoldTitle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:text="Qty. Sold"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="10sp" />
+
+                                    <TextView
+                                        android:id="@+id/tvYesterdayNoOfInvoiceTitle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:text="No. of Invoice"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="10sp" />
+
+                                    <TextView
+                                        android:id="@+id/tvYesterdayAverageAmountTitle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:text="Ave.Amt./Invoice"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="10sp"
+                                        android:typeface="monospace" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+    <include
+        layout="@layout/notification"/>
+    <include layout="@layout/progress_hud" />
+</FrameLayout>

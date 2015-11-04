@@ -1,5 +1,6 @@
 package net.nueca.concessioengine.activities.login;
 
+import net.nueca.imonggosdk.enums.DialogType;
 import net.nueca.imonggosdk.enums.Table;
 
 /**
@@ -54,6 +55,21 @@ public class SimpleLoginActivity extends BaseLoginActivity {
 
     @Override
     protected void autoUpdateChecker() {
+
+    }
+
+    @Override
+    protected void dialogPositiveButtonAction() {
+
+    }
+
+    @Override
+    protected void dialogNegativeButtonAction() {
+
+    }
+
+    @Override
+    protected void showProgressDialog(DialogType type, String message, String positiveText, String negativeText) {
 
     }
 
