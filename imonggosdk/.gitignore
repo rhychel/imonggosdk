@@ -13,6 +13,7 @@
 # Generated files
 bin/
 gen/
+captures
 
 # Gradle files
 .gradle/
@@ -29,6 +30,8 @@ proguard/
 *.log
 
 .idea
+.idea/
+gradle
 *.iml
 
 # Windows thumbnail db
@@ -36,3 +39,6 @@ Thumbs.db
 
 # OSX files
 .DS_Store
+
+gradlew
+gradlew.bat

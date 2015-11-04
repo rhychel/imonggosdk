@@ -52,6 +52,7 @@ public class BaseLogin {
     private Session mSession;
 
     private Boolean mConcessioSettings = false;
+    private Boolean mUseObjectForConcessioSettings = false;
 
     private ImonggoDBHelper mDBHelper;
     private RequestQueue mRequestQueue;
@@ -88,7 +89,7 @@ public class BaseLogin {
         this.mPassword = password;
 
         try {
-            Log.e("isLoggedIn", ""+AccountTools.isLoggedIn(dbHelper));
+            Log.e("isLoggedIn", "" + AccountTools.isLoggedIn(dbHelper));
             if (AccountTools.isLoggedIn(dbHelper)) {
                 mSession = dbHelper.getSessions().queryForAll().get(0);
             }
@@ -241,6 +242,7 @@ public class BaseLogin {
                                 public void onPositive(MaterialDialog dialog) {
                                     super.onPositive(dialog);
                                     dialog.dismiss();
+                                    mLoginListener.onPositiveButtonPressed();
                                 }
                             });
                     //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID));
@@ -255,6 +257,7 @@ public class BaseLogin {
                                     public void onPositive(MaterialDialog dialog) {
                                         super.onPositive(dialog);
                                         dialog.dismiss();
+                                        mLoginListener.onPositiveButtonPressed();
                                     }
                                 });
                         //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_NETWORK_ERROR));
@@ -267,6 +270,7 @@ public class BaseLogin {
                                     public void onPositive(MaterialDialog dialog) {
                                         super.onPositive(dialog);
                                         dialog.dismiss();
+                                        mLoginListener.onPositiveButtonPressed();
                                     }
                                 });
                         //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR));
@@ -297,12 +301,6 @@ public class BaseLogin {
      * @param server
      */
     private void requestForApiToken(final Server server) {
-        Log.e("Context", "is NULL? " + (mContext == null));
-        Log.e("Session", "is NULL? " + (getSession() == null));
-        Log.e("Acct URL", "is NULL? " + (getSession().getAccountUrl() == null));
-        Log.e("Email", "is NULL? " + (getEmail() == null));
-        Log.e("Pwd", "is NULL? " + (getPassword() == null));
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoTools.buildAPITokenUrl(mContext, getSession().getAccountUrl(), Table.TOKENS,
                         getEmail(), getPassword()), new Response.Listener<JSONObject>() {
@@ -323,6 +321,7 @@ public class BaseLogin {
                                 public void onPositive(MaterialDialog dialog) {
                                     super.onPositive(dialog);
                                     dialog.dismiss();
+                                    mLoginListener.onPositiveButtonPressed();
                                 }
                             });
                     // Show Toast
@@ -395,7 +394,9 @@ public class BaseLogin {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Jn-BaseLogin", "onErrorResponse : " + error.getMessage());
+
+                Log.e("Jn-BaseLogin", "onErrorResponse : " + error.toString());
+
 
                 // Update the BaseLogin Listener
                 if (mLoginListener != null) {
@@ -418,6 +419,7 @@ public class BaseLogin {
                                 public void onPositive(MaterialDialog dialog) {
                                     super.onPositive(dialog);
                                     dialog.dismiss();
+                                    mLoginListener.onPositiveButtonPressed();
                                 }
                             });
                     // Show Toast Message
@@ -432,6 +434,7 @@ public class BaseLogin {
                                     public void onPositive(MaterialDialog dialog) {
                                         super.onPositive(dialog);
                                         dialog.dismiss();
+                                        mLoginListener.onPositiveButtonPressed();
                                     }
                                 });
                         //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_NETWORK_ERROR));
@@ -444,6 +447,7 @@ public class BaseLogin {
                                     public void onPositive(MaterialDialog dialog) {
                                         super.onPositive(dialog);
                                         dialog.dismiss();
+                                        mLoginListener.onPositiveButtonPressed();
                                     }
                                 });
                         //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR));
@@ -495,10 +499,15 @@ public class BaseLogin {
 
                                     @Override
                                     public void onSuccess(Table table, RequestType requestType, Object response) {
-                                        JSONArray concesio = (JSONArray) response;
-                                        Log.e("Rhy-BaseLogin", concesio.toString());
                                         try {
-                                            AccountSettings.initializeApplicationSettings(mContext, concesio.getJSONObject(0));
+                                            JSONObject concesio = null;
+                                            if(mUseObjectForConcessioSettings)
+                                                concesio = (JSONObject) response;
+                                            else
+                                                concesio = ((JSONArray) response).getJSONObject(0);
+                                            Log.e("Rhy-BaseLogin", concesio.toString());
+
+                                            AccountSettings.initializeApplicationSettings(mContext, concesio);
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
@@ -510,7 +519,7 @@ public class BaseLogin {
                                     @Override
                                     public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
                                         DialogTools.hideIndeterminateProgressDialog();
-                                        Log.e("Rhy-BaseLogin["+responseCode+"]", (response == null) ? "null" : ((String) response));
+                                        Log.e("Rhy-BaseLogin[" + responseCode + "]", (response == null) ? "null" : ((String) response));
 
                                         DialogTools.showBasicWithTitle(mContext,
                                                 mContext.getString(R.string.LOGIN_FAILED_TITLE),
@@ -521,6 +530,8 @@ public class BaseLogin {
                                                     public void onPositive(MaterialDialog dialog) {
                                                         super.onPositive(dialog);
                                                         dialog.dismiss();
+                                                        mLoginListener.onPositiveButtonPressed();
+
                                                     }
                                                 });
 
@@ -537,7 +548,7 @@ public class BaseLogin {
                                             mLoginListener.onStopLogin();
                                         }
                                     }
-                                }, server, true);
+                                }, server, true, mUseObjectForConcessioSettings);
                     } else { // not using Concession Settings
                         Log.i("Jn-BaseLogin", "Not Using Concession Settings");
                         // Update the Listener
@@ -554,16 +565,36 @@ public class BaseLogin {
             @Override
             public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
 
-                DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-                        mContext.getString(R.string.LOGIN_NETWORK_ERROR),
-                        mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                        new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                super.onPositive(dialog);
-                                dialog.dismiss();
-                            }
-                        });
+                Log.e("Jn-BaseLogin", "Error POSDev: " + response.toString() + "Code: " + responseCode);
+
+                String requires_premium_subscription = mContext.getString(R.string.error_response_requires_premium_subscription);
+
+                if (requires_premium_subscription.equals(response.toString())) {
+                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.error_dialog_title_requires_premium_subscription),
+                            mContext.getString(R.string.error_dialog_message_requires_premium_subscription),
+                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+                            new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    super.onPositive(dialog);
+                                    dialog.dismiss();
+                                    mLoginListener.onPositiveButtonPressed();
+                                }
+                            });
+                } else {
+                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                            mContext.getString(R.string.LOGIN_NETWORK_ERROR),
+                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+                            new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    super.onPositive(dialog);
+                                    dialog.dismiss();
+                                    mLoginListener.onPositiveButtonPressed();
+                                }
+                            });
+
+                }
 
 
                 if (mLoginListener != null) {
@@ -608,6 +639,15 @@ public class BaseLogin {
     }
 
     /**
+     * Set TRUE to use jsonobject for Concessio Setting, FALSE otherwise
+     *
+     * @param mUseObjectForConcessioSettings true or false
+     */
+    public void setmUseObjectForConcessioSettings(Boolean mUseObjectForConcessioSettings) {
+        this.mUseObjectForConcessioSettings = mUseObjectForConcessioSettings;
+    }
+
+    /**
      * Returns Loginlistener instance
      *
      * @return mLoginListener
@@ -634,7 +674,7 @@ public class BaseLogin {
 
     /**
      * <i>Added by Rhy<i/>
-     *
+     * <p/>
      * Return the request queue object from this class.
      *
      * @return <i>mRequestQueue</i>

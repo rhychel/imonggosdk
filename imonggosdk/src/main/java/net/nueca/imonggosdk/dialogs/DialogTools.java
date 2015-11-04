@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 
 /**
  * Created by Jn on 6/10/2015.
@@ -12,6 +13,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 public class DialogTools {
 
     static ProgressDialog mProgressDialog;
+
 
 
     /**
@@ -27,17 +29,35 @@ public class DialogTools {
      * @param callback     Listener for AlertDialog's button
      */
     public static void showBasicWithTitle(Context context, String title, String content,
-                                          String positiveText, String negativeText, Boolean cancelable, MaterialDialog.ButtonCallback callback) {
-        new MaterialDialog.Builder(context)
-                .title(title)
-                .content(content)
-                .positiveText(positiveText)
-                .negativeText(negativeText)
-                .callback(callback)
-                .cancelable(cancelable)
-                .show();
+                                          String positiveText, String negativeText, Boolean cancelable,
+                                          MaterialDialog.ButtonCallback callback) {
+        showBasicWithTitle(context, title, content, positiveText, negativeText, cancelable, callback, null);
     }
 
+    public static void showBasicWithTitle(Context context, String title, String content,
+                                          String positiveText, String negativeText, Boolean cancelable,
+                                          MaterialDialog.ButtonCallback callback, Theme theme) {
+        if(theme == null ) {
+            new MaterialDialog.Builder(context)
+                    .title(title)
+                    .content(content)
+                    .positiveText(positiveText)
+                    .negativeText(negativeText)
+                    .callback(callback)
+                    .cancelable(cancelable)
+                    .theme(theme)
+                    .show();
+        } else {
+            new MaterialDialog.Builder(context)
+                    .title(title)
+                    .content(content)
+                    .positiveText(positiveText)
+                    .negativeText(negativeText)
+                    .callback(callback)
+                    .cancelable(cancelable)
+                    .show();
+        }
+    }
 
     /**
      * Simple Indeterminate Progress Dialog

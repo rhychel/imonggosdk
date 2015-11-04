@@ -30,7 +30,7 @@ import java.util.List;
  * Created by gama on 7/20/15.
  */
 public class Document extends BaseTransactionDB {
-    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 50;
+    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 5;
 
     @Expose
     @DatabaseField
@@ -49,6 +49,8 @@ public class Document extends BaseTransactionDB {
     @Expose
     @DatabaseField
     protected Integer target_branch_id;
+    @DatabaseField
+    protected transient Integer branch_id;
 
     @Expose
     @DatabaseField
@@ -73,6 +75,9 @@ public class Document extends BaseTransactionDB {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
     protected transient OfflineData offlineData;
+
+    @DatabaseField
+    protected transient boolean isOldPaging = false;
 
     public Document() {
         super(null);
@@ -108,6 +113,15 @@ public class Document extends BaseTransactionDB {
         if(document_lines != null)
             for(DocumentLine documentLine : document_lines)
                 documentLine.setDocument(this);
+    }
+
+    public boolean isOldPaging() {
+        return isOldPaging;
+    }
+
+    public Document setIsOldPaging(boolean isOldPaging) {
+        this.isOldPaging = isOldPaging;
+        return this;
     }
 
     public String getRemark() {
@@ -191,6 +205,14 @@ public class Document extends BaseTransactionDB {
         this.status = status;
     }
 
+    public Integer getBranch_id() {
+        return branch_id;
+    }
+
+    public void setBranch_id(Integer branch_id) {
+        this.branch_id = branch_id;
+    }
+
     public Integer getParent_document_id() {
         return parent_document_id;
     }
@@ -209,8 +231,19 @@ public class Document extends BaseTransactionDB {
         document_lines.add(documentLine);
     }
 
+    public void addAllDocumentLine(List<DocumentLine> moreDocumentLines) {
+        if(document_lines == null)
+            document_lines = new ArrayList<>();
+
+        document_lines.addAll(moreDocumentLines);
+    }
+
     public void setOfflineData(OfflineData offlineData) {
         this.offlineData = offlineData;
+    }
+
+    public OfflineData getOfflineData() {
+        return offlineData;
     }
 
     public static Document fromJSONString(String jsonString) throws JSONException {
@@ -230,7 +263,7 @@ public class Document extends BaseTransactionDB {
     @Override
     public boolean shouldPageRequest() {
         refresh();
-        return document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
+        return document_lines != null && document_lines.size() > MAX_DOCUMENTLINES_PER_PAGE;
         //return false;
     }
 
@@ -242,7 +275,8 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
-        if(shouldPageRequest()) {
+        /** support for old paging **/
+        if(shouldPageRequest() && isOldPaging) {
             try {
                 List<Document> documents = getChildDocuments();
                 for (Document child : documents)
@@ -260,25 +294,26 @@ public class Document extends BaseTransactionDB {
         }
 
         refresh();
-        if(document_lines == null)
-            return;
-        for(DocumentLine documentLine : document_lines) {
-            documentLine.setDocument(this);
-            try {
-                Product product = dbHelper.getProducts().queryBuilder().where().eq("id", documentLine.getProduct_id())
-                        .queryForFirst();
-                if(product != null)
-                    documentLine.setProduct(product);
-            } catch (SQLException e) {
-                e.printStackTrace();
+        if(document_lines != null) {
+            for (DocumentLine documentLine : document_lines) {
+                documentLine.setDocument(this);
+                try {
+                    Product product = dbHelper.getProducts().queryBuilder().where().eq("id", documentLine.getProduct_id())
+                            .queryForFirst();
+                    if (product != null)
+                        documentLine.setProduct(product);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                documentLine.insertTo(dbHelper);
             }
-            documentLine.insertTo(dbHelper);
         }
     }
 
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
-        if(shouldPageRequest()) {
+        /** support for old paging **/
+        if(shouldPageRequest() && isOldPaging) {
             try {
                 List<Document> documents = getChildDocuments();
                 for (Document child : documents)
@@ -305,8 +340,8 @@ public class Document extends BaseTransactionDB {
 
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
-        Log.e(reference+" ID","" + id);
-        if(shouldPageRequest()) {
+        /** support for old paging **/
+        if(shouldPageRequest() && isOldPaging) {
             try {
                 List<Document> documents = getChildDocuments();
                 for (Document child : documents)
@@ -434,9 +469,13 @@ public class Document extends BaseTransactionDB {
         return list;
     }
 
+    @Deprecated
     public Document getChildDocumentAt(int position) throws JSONException {
-        Document document = Document.fromJSONString(toJSONString());
-        document.setId(id + position);
+        Document document = Document.fromJSONObject(toJSONObject());
+        if(id == -1)
+            document.setId((Math.abs(id) + position) * -1);
+        else
+            document.setId(id + position);
         document.setDocument_lines(getDocumentLineAt(position));
         document.setReference(reference + "-" + (position + 1));
         //document.setRemark("page=" + (position + 1) + "/" + getChildCount());
@@ -449,6 +488,7 @@ public class Document extends BaseTransactionDB {
         return document;
     }
 
+    @Deprecated
     public List<Document> getChildDocuments() throws JSONException {
         List<Document> documentList = new ArrayList<>();
         for(int i = 0; i < getChildCount(); i++) {

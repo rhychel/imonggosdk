@@ -31,6 +31,9 @@ public class InvoiceLine extends BaseTable2 {
     @Expose
     @DatabaseField
     protected String discount_text;
+    @Expose
+    @DatabaseField
+    protected String subtotal;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "invoice_id")
     protected transient Invoice invoice;
@@ -42,6 +45,7 @@ public class InvoiceLine extends BaseTable2 {
         quantity = builder.quantity;
         retail_price = builder.retail_price;
         discount_text = builder.discount_text;
+        subtotal = builder.subtotal;
     }
 
     /*public InvoiceLine(int product_id, int quantity, int retail_price, String discount_text) {
@@ -90,6 +94,14 @@ public class InvoiceLine extends BaseTable2 {
         this.discount_text = discount_text;
     }
 
+    public String getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(String subtotal) {
+        this.subtotal = subtotal;
+    }
+
     public Invoice getInvoice() {
         return invoice;
     }
@@ -108,6 +120,7 @@ public class InvoiceLine extends BaseTable2 {
         protected int quantity;
         protected double retail_price;
         protected String discount_text;
+        protected String subtotal;
 
         public Builder product_id(int product_id) {
             this.product_id = product_id;
@@ -123,6 +136,10 @@ public class InvoiceLine extends BaseTable2 {
         }
         public Builder discount_text(String discount_text) {
             this.discount_text = discount_text;
+            return this;
+        }
+        public Builder subtotal(String subtotal) {
+            this.subtotal = subtotal;
             return this;
         }
 
