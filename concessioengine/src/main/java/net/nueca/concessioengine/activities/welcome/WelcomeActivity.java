@@ -1,4 +1,6 @@
-package net.nueca.concessioengine.activities;
+package net.nueca.concessioengine.activities.welcome;
+
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 
 /**
  * Created by rhymart on 8/20/15.

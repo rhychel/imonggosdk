@@ -10,7 +10,154 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="delete salesdashboard">
+    <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="up">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/build.gradle" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/fabric.properties" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/libs/mpandroidchartlibrary-2-1-3.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/androidTest/java/nueca/net/salesdashboard/ApplicationTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Bold.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-BoldItalic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-DemiBold.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-DemiBoldItalic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Heavy.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-HeavyItalic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Italic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Medium.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-MediumItalic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Regular.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-UltraLight.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-UltraLightItalic.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext.ttc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/BaseDailySalesActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/HomeActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/UserBranchesSpinnerAdapter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerAdapter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerWeeklyAdapter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/application/DashboardApplication.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/dialog/ProgressHUD.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/FormatValue.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/ShareType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/Update.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/UpdateDayType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/UpdateType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/UpdateWeekType.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/exceptions/DailySalesFragmentException.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/BaseSalesFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesDaily.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesMonthly.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek1.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek2.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek3.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek4.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeekly.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleDailySalesFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleMonthlySalesFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleWeekSalesFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/OnPageChangeWeeklyListener.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/OnReloadBranches.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/SalesRefreshListener.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/SyncDailySalesListener.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/slidingtab/SlidingTabLayout.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/slidingtab/SlidingTabStrip.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/FontsOverride.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/HUDTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/ImonggoSettingsTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/IntentTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/LineChartValueTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/NumberTools.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/viewpager/CustomViewPager.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/anim/spinner.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/color/selector.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_facebook.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_instagram.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_message.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_more.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_twitter.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_unlink.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_refresh.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_facebook.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_instagram.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_message.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_more.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_twitter.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_unlink.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_refresh.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/progress_hud_bg.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_0.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_1.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_10.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_11.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_2.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_3.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_4.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_5.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_6.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_7.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_8.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_facebook.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_instagram.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_message.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_more.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_twitter.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_unlink.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_refresh.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_facebook.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_instagram.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_message.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_more.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_twitter.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_unlink.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_refresh.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_facebook.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_instagram.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_message.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_more.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_twitter.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_unlink.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_refresh.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/logo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/rectangle.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_button_login.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_text_today.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_text_yesterday.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_textview_login.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/spinner_bg.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/app_bar_spinner.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/app_bar_spinner_action_bar.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/app_bar_spinner_dropdown.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/daily_sales.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/home.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/last_week.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/login.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/monthly_sales.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/nav_header.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/notification.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/progress_hud.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/toolbar.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/weekly_sales_backup.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/weekly_sales_for_all.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/weekly_sales_viewpager.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/menu/drawer_view.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/menu/line_chart.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/menu/menu_sd__login.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-hdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-mdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/values-v21/styles.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/values-w820dp/dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/values/colors.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/values/dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/values/strings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/salesdashboard/src/main/res/values/styles.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings.gradle" afterPath="$PROJECT_DIR$/settings.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="936d6c5a-1f27-4920-bb3d-2332c2dff8bc" name="Failed commit: Default" comment="Merge branch 'development' into rhy&#10;&#10;# Conflicts:&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;" />
@@ -43,28 +190,61 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ImonggoDBHelper.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="42" column="59" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.02053388">
-              <caret line="9" column="11" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="11" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="local.properties" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/local.properties">
+      <file leaf-file-name="dimens.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/values-v21/dimens.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="2" column="34" selection-start-line="2" selection-start-column="34" selection-end-line="2" selection-end-column="34" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SlideInUpAnimation.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/animations/SlideInUpAnimation.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="12" column="2" selection-start-line="12" selection-start-column="2" selection-end-line="12" selection-end-column="2" />
+              <folding>
+                <element signature="e#1224#1225#0" expanded="false" />
+                <element signature="e#1252#1253#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="20" column="42" selection-start-line="20" selection-start-column="42" selection-end-line="20" selection-end-column="42" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessio/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/concessio_test/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -77,7 +257,7 @@
         <entry file="file://$PROJECT_DIR$/concessioengine/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+              <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -87,37 +267,27 @@
         <entry file="file://$PROJECT_DIR$/imonggosdk/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="27" column="48" selection-start-line="27" selection-start-column="48" selection-end-line="27" selection-end-column="48" />
+              <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="19" selection-end-column="1" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessio/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessio_test/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="settings.gradle" pinned="false" current-in-tab="false">
+      <file leaf-file-name="settings.gradle" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/settings.gradle">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="0" column="73" selection-start-line="0" selection-start-column="73" selection-end-line="0" selection-end-column="73" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BaseLogin.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="214" column="0" selection-start-line="207" selection-start-column="0" selection-end-line="214" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -141,7 +311,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="jn" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
   </component>
@@ -616,11 +786,6 @@
                 <option name="name" value="prepareComAndroidSupportAppcompatV72310Library" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Prepare com.android.support:cardview-v7:22.2.1" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="prepareComAndroidSupportCardviewV72221Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
                 <option name="description" value="Prepare com.android.support:design:23.1.0" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="prepareComAndroidSupportDesign2310Library" />
@@ -806,49 +971,6 @@
               <ExternalTaskPojo>
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="zipalignDebug" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Uploads an APK to Crashlytics for distribution." />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="crashlyticsUploadDistributionDebug" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Uploads an APK to Crashlytics for distribution." />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="crashlyticsUploadDistributionRelease" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="fabricGenerateResourcesDebug" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="fabricGenerateResourcesRelease" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare com.crashlytics.sdk.android:answers:1.3.2" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="prepareComCrashlyticsSdkAndroidAnswers132Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare com.crashlytics.sdk.android:beta:1.1.3" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="prepareComCrashlyticsSdkAndroidBeta113Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare com.crashlytics.sdk.android:crashlytics:2.5.2" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="prepareComCrashlyticsSdkAndroidCrashlytics252Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare com.crashlytics.sdk.android:crashlytics-core:2.3.5" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="prepareComCrashlyticsSdkAndroidCrashlyticsCore235Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare io.fabric.sdk.android:fabric:1.3.6" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="prepareIoFabricSdkAndroidFabric136Library" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
@@ -1340,11 +1462,6 @@
                 <option name="name" value="prepareComAndroidSupportAppcompatV72310Library" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Prepare com.android.support:cardview-v7:22.2.1" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio" />
-                <option name="name" value="prepareComAndroidSupportCardviewV72221Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
                 <option name="description" value="Prepare com.android.support:design:23.1.0" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio" />
                 <option name="name" value="prepareComAndroidSupportDesign2310Library" />
@@ -1726,16 +1843,6 @@
                 <option name="name" value="connectedCheck" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Uploads an APK to Crashlytics for distribution." />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
-                <option name="name" value="crashlyticsUploadDistributionDebug" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Uploads an APK to Crashlytics for distribution." />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
-                <option name="name" value="crashlyticsUploadDistributionRelease" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
                 <option name="description" value="Displays all dependencies declared in project ':concessio_test'." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
                 <option name="name" value="dependencies" />
@@ -1766,14 +1873,6 @@
               <ExternalTaskPojo>
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
                 <option name="name" value="dexRelease" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
-                <option name="name" value="fabricGenerateResourcesDebug" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
-                <option name="name" value="fabricGenerateResourcesRelease" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
@@ -1974,11 +2073,6 @@
                 <option name="name" value="prepareComAndroidSupportAppcompatV72310Library" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Prepare com.android.support:cardview-v7:22.2.1" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
-                <option name="name" value="prepareComAndroidSupportCardviewV72221Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
                 <option name="description" value="Prepare com.android.support:design:23.1.0" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
                 <option name="name" value="prepareComAndroidSupportDesign2310Library" />
@@ -2002,26 +2096,6 @@
                 <option name="description" value="Prepare com.cocosw:bottomsheet:1.2.0" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
                 <option name="name" value="prepareComCocoswBottomsheet120Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare com.crashlytics.sdk.android:answers:1.3.2" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
-                <option name="name" value="prepareComCrashlyticsSdkAndroidAnswers132Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare com.crashlytics.sdk.android:beta:1.1.3" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
-                <option name="name" value="prepareComCrashlyticsSdkAndroidBeta113Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare com.crashlytics.sdk.android:crashlytics:2.5.2" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
-                <option name="name" value="prepareComCrashlyticsSdkAndroidCrashlytics252Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare com.crashlytics.sdk.android:crashlytics-core:2.3.5" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
-                <option name="name" value="prepareComCrashlyticsSdkAndroidCrashlyticsCore235Library" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="description" value="Prepare com.github.afollestad.material-dialogs:commons:0.8.5.0" />
@@ -2069,11 +2143,6 @@
                 <option name="description" value="Prepare imonggosdk:imonggosdk:unspecified" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
                 <option name="name" value="prepareImonggosdkImonggosdkUnspecifiedLibrary" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare io.fabric.sdk.android:fabric:1.3.6" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessio_test" />
-                <option name="name" value="prepareIoFabricSdkAndroidFabric136Library" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="description" value="Prepare me.grantland:autofittextview:0.2.1" />
@@ -2651,11 +2720,6 @@
                 <option name="description" value="Prepare com.android.support:appcompat-v7:23.1.0" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessioengine" />
                 <option name="name" value="prepareComAndroidSupportAppcompatV72310Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Prepare com.android.support:cardview-v7:22.2.1" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/concessioengine" />
-                <option name="name" value="prepareComAndroidSupportCardviewV72221Library" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="description" value="Prepare com.android.support:design:23.1.0" />
@@ -3433,11 +3497,57 @@
             </list>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/salesdashboard">
+          <value>
+            <list>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the components produced by project ':salesdashboard'. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/salesdashboard" />
+                <option name="name" value="components" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays all dependencies declared in project ':salesdashboard'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/salesdashboard" />
+                <option name="name" value="dependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the insight into a specific dependency in project ':salesdashboard'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/salesdashboard" />
+                <option name="name" value="dependencyInsight" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays a help message." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/salesdashboard" />
+                <option name="name" value="help" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the configuration model of project ':salesdashboard'. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/salesdashboard" />
+                <option name="name" value="model" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the sub-projects of project ':salesdashboard'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/salesdashboard" />
+                <option name="name" value="projects" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the properties of project ':salesdashboard'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/salesdashboard" />
+                <option name="name" value="properties" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the tasks runnable from project ':salesdashboard'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/salesdashboard" />
+                <option name="name" value="tasks" />
+              </ExternalTaskPojo>
+            </list>
+          </value>
+        </entry>
       </map>
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="8680158443000" />
+        <entry key="$PROJECT_DIR$" value="8679746602000" />
         <entry key="E:\Bitbucket\Android Projects\imonggosdk" value="8645005560732" />
       </map>
     </option>
@@ -3693,58 +3803,8 @@
                             <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/appcompat-v7/23.1.0/appcompat-v7-23.1.0.aar" />
                             <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/design/23.1.0/design-23.1.0.aar" />
                             <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/support-v4/23.1.0/support-v4-23.1.0.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/crashlytics/2.5.2/9891aa329daaacae07eb7269f648ea1833c640e6/crashlytics-2.5.2.aar" />
                             <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/recyclerview-v7/23.1.0/recyclerview-v7-23.1.0.aar" />
                             <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.0/support-annotations-23.1.0.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/answers/1.3.2/54d970cdc1e6995d9fdbd7eaca53c6333e77bb55/answers-1.3.2.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.fabric.sdk.android/fabric/1.3.6/cdfdd123e598acad7822b6cd903b32e355028518/fabric-1.3.6.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/crashlytics-core/2.3.5/a52bbb9f5c1e903fc1e60754eaae3871a5fb62e7/crashlytics-core-2.3.5.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/beta/1.1.3/5e3a3112e6adf41e70b2382d313d963fdbc8d1bd/beta-1.1.3.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/gradle/1.3.1/f03da49001aa1274822a8265453e496127515e13/gradle-1.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/gradle/1.3.1/f9f3d53c24efd3b9176ec36aeed9c518954c2fd9/gradle-1.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.fabric.tools/gradle/1.20.1/f3fc9824abcb0f8681ed019d599232dc4d37e5c2/gradle-1.20.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/gradle-core/1.3.1/5b678d9b1656bfd09c39c5c65deb9a0bdf141aaa/gradle-core-1.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/gradle-core/1.3.1/70731f5b83a22faa2f25d6281f6812977f64f520/gradle-core-1.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/builder/1.3.1/c28ada3461bdfe0e26a3fcd74cd00b80de7e1383/builder-1.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/builder/1.3.1/83e6307a43477f2a5ff0b5b654b131425c3dcbc5/builder-1.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.lint/lint/24.3.1/6b1dcead03399197796d64b5f891e89f902420ee/lint-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.lint/lint/24.3.1/57cb2a6361f32753bee3670f072f097840219e34/lint-24.3.1.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/net/sf/proguard/proguard-gradle/5.2.1/proguard-gradle-5.2.1-sources.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/net/sf/proguard/proguard-gradle/5.2.1/proguard-gradle-5.2.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/builder-model/1.3.1/f25d38149595b9cbc5292b775835e36fb0734e64/builder-model-1.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/builder-model/1.3.1/16c0a3e34af44f31f757144d7c1bf045777dff88/builder-model-1.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/builder-test-api/1.3.1/2b606649d93d44621961df27488b6598161ed793/builder-test-api-1.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/builder-test-api/1.3.1/1954d436ec3eeea11070e91e6c808232837728b8/builder-test-api-1.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools/sdklib/24.3.1/9ed8ec95c205923234740f78c9937d5c1d073b5e/sdklib-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools/sdklib/24.3.1/1a4226d7db1381552b94fee30453a08fbfd678a5/sdklib-24.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools/sdk-common/24.3.1/4d174e34a0a72d0ed6346074d4de009b7dea90f9/sdk-common-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools/sdk-common/24.3.1/5c28ab2dda1600eddaa978e095f0d8c044cac33b/sdk-common-24.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools/common/24.3.1/bc53a90f1946a2616a37361d8cbcb79d74819579/common-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools/common/24.3.1/92f1a60ebb004e2969661315de200232f90e0a80/common-24.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/manifest-merger/24.3.1/23d3189d5f2eba7c0653f70cc26106e2d9c295f6/manifest-merger-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.build/manifest-merger/24.3.1/b9b0fc1064f963774beb573469ac371bf0c2c461/manifest-merger-24.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.ddms/ddmlib/24.3.1/d20b7452c76470b2d4442989fda41fcf9f18dacd/ddmlib-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.ddms/ddmlib/24.3.1/2018ea863b14fe3aeaf2b49316ee98567e1d9c11/ddmlib-24.3.1.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/jack/jack-api/0.9.0/jack-api-0.9.0-sources.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/jack/jack-api/0.9.0/jack-api-0.9.0.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/jill/jill-api/0.9.0/jill-api-0.9.0-sources.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/jill/jill-api/0.9.0/jill-api-0.9.0.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.lint/lint-checks/24.3.1/606831c23251acf115949306b6c20be19e60a8f9/lint-checks-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.lint/lint-checks/24.3.1/ee1edb630d923511bb46bef4da148dcb0a74a029/lint-checks-24.3.1.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/org/eclipse/jdt/core/compiler/ecj/4.4.2/ecj-4.4.2-sources.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/org/eclipse/jdt/core/compiler/ecj/4.4.2/ecj-4.4.2.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/net/sf/proguard/proguard-base/5.2.1/proguard-base-5.2.1-sources.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/net/sf/proguard/proguard-base/5.2.1/proguard-base-5.2.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools/annotations/24.3.1/8cad6d336a2f6bd32d04b251621d375991ba3f49/annotations-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools/annotations/24.3.1/3c0f015e74a277e90ca34229458dd767aa39bb30/annotations-24.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.layoutlib/layoutlib-api/24.3.1/46242e3d715941c59be336dbd31cfafae1b68205/layoutlib-api-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.layoutlib/layoutlib-api/24.3.1/982783a222369254fce34336cc48155bbd87e3fd/layoutlib-api-24.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools/dvlib/24.3.1/40c9bf825ee7a931b096a94d3994f49109b59d1c/dvlib-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools/dvlib/24.3.1/1d78ec584fb99277e54e849b8ab57b860d590c17/dvlib-24.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.lint/lint-api/24.3.1/ab078c2ba2196e5f4595bdd39701e022d8929976/lint-api-24.3.1-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.tools.lint/lint-api/24.3.1/f5666b0d8408e79273a17cbe89c673c98f37b9fa/lint-api-24.3.1.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/intellij/annotations/12.0/annotations-12.0-sources.jar" />
-                            <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/intellij/annotations/12.0/annotations-12.0.jar" />
                           </list>
                         </option>
                         <option name="path" value="$PROJECT_DIR$/concessio_test" />
@@ -3837,7 +3897,6 @@
                             <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/appcompat-v7/23.1.0/appcompat-v7-23.1.0.aar" />
                             <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/recyclerview-v7/23.1.0/recyclerview-v7-23.1.0.aar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.wdullaer/materialdatetimepicker/1.4.2/3ee94fd12fde2c42cb1639a88b1c1f50a3a39a26/materialdatetimepicker-1.4.2.aar" />
-                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/cardview-v7/22.2.1/cardview-v7-22.2.1.aar" />
                             <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/palette-v7/23.1.0/palette-v7-23.1.0.aar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar" />
                             <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.0/support-annotations-23.1.0.jar" />
@@ -4016,21 +4075,6 @@
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/commons-codec/commons-codec/1.4/commons-codec-1.4-sources.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/me.grantland/autofittextview/0.2.1/f64a72bb94465b84cb1a2808a887d27dc3021aef/autofittextview-0.2.1.aar" />
-                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/appcompat-v7/23.1.0/appcompat-v7-23.1.0.aar" />
-                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/support-v4/23.1.0/support-v4-23.1.0.aar" />
-                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/design/23.1.0/design-23.1.0.aar" />
-                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/cardview-v7/23.1.0/cardview-v7-23.1.0.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.lecho/hellocharts-library/1.5.7/d02c6606a18e8a269ac42014d72e179c26c8a5e5/hellocharts-library-1.5.7.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/crashlytics/2.5.2/9891aa329daaacae07eb7269f648ea1833c640e6/crashlytics-2.5.2.aar" />
-                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.0/support-annotations-23.1.0.jar" />
-                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/recyclerview-v7/23.1.0/recyclerview-v7-23.1.0.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/answers/1.3.2/54d970cdc1e6995d9fdbd7eaca53c6333e77bb55/answers-1.3.2.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.fabric.sdk.android/fabric/1.3.6/cdfdd123e598acad7822b6cd903b32e355028518/fabric-1.3.6.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/crashlytics-core/2.3.5/a52bbb9f5c1e903fc1e60754eaae3871a5fb62e7/crashlytics-core-2.3.5.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/beta/1.1.3/5e3a3112e6adf41e70b2382d313d963fdbc8d1bd/beta-1.1.3.aar" />
-                            <option value="$MODULE_DIR$/libs/mpandroidchartlibrary-2-1-3.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.fabric.tools/gradle/1.20.1/f3fc9824abcb0f8681ed019d599232dc4d37e5c2/gradle-1.20.1.jar" />
                           </list>
                         </option>
                         <option name="path" value="$PROJECT_DIR$/salesdashboard" />
@@ -4209,17 +4253,17 @@
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java" />
         <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/D_Login.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" />
         <option value="$PROJECT_DIR$/concessio_test/.gitignore" />
         <option value="$PROJECT_DIR$/imonggosdk/.gitignore" />
         <option value="$PROJECT_DIR$/salesdashboard/.gitignore" />
-        <option value="$PROJECT_DIR$/build.gradle" />
-        <option value="$PROJECT_DIR$/concessio/build.gradle" />
-        <option value="$PROJECT_DIR$/concessio_test/build.gradle" />
-        <option value="$PROJECT_DIR$/concessioengine/build.gradle" />
-        <option value="$PROJECT_DIR$/imonggosdk/build.gradle" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" />
-        <option value="$PROJECT_DIR$/settings.gradle" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/res/values-v21/dimens.xml" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/animations/SlideInUpAnimation.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/build.gradle" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java" />
+        <option value="$PROJECT_DIR$/settings.gradle" />
       </list>
     </option>
   </component>
@@ -4234,8 +4278,10 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1680" />
-    <option name="height" value="1050" />
+    <option name="x" value="17" />
+    <option name="y" value="23" />
+    <option name="width" value="1676" />
+    <option name="height" value="1027" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -4279,37 +4325,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="PackagesPane" />
-      <pane id="AndroidView">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -4376,21 +4392,51 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="Scratches" />
+      <pane id="AndroidView">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Gradle Scripts" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="preferences.updates" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="HKE5C395" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus_10" />
-    <property name="SearchEverywhereHistoryKey" value="Imongg&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Dail&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java&#10;login&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;Sync&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;LoginA&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;BaseL&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;BaseS&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java&#10;LoginAc&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;BaseLO&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;dbH&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;SYNC&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;bA&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTable.java&#10;Login&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;bASE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;BaseLogin&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;Simple&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/SimpleLoginActivity.java&#10;C_Samp&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java&#10;Selec&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/objects/SelectedProductItem.java&#10;C_Module2&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_Module2.java&#10;Sele&#9;PSI&#9;JAVA://net.nueca.concessioengine.objects.SelectedProductItem&#10;SyncMo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;BaseLo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;DB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;BaseLOgin&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;DBHE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Document&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;DBHe&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;C_Module&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_Module.java&#10;Sync\&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Base&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;SyncM&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Configu&#9;PSI&#9;JAVA://net.nueca.imonggosdk.tools.Configurations" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Lollipopable" />
+    <property name="SearchEverywhereHistoryKey" value="BaseLogin&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java&#10;Imongg&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Dail&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java&#10;login&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;Sync&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;LoginA&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;BaseL&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;BaseS&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java&#10;LoginAc&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;BaseLO&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;dbH&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;SYNC&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;bA&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTable.java&#10;Login&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;bASE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;Simple&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/SimpleLoginActivity.java&#10;C_Samp&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java&#10;Selec&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/objects/SelectedProductItem.java&#10;C_Module2&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_Module2.java&#10;Sele&#9;PSI&#9;JAVA://net.nueca.concessioengine.objects.SelectedProductItem&#10;SyncMo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;BaseLo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;DB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;BaseLOgin&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;DBHE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Document&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;DBHe&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;C_Module&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_Module.java&#10;Sync\&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Base&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;SyncM&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Configu&#9;PSI&#9;JAVA://net.nueca.imonggosdk.tools.Configurations" />
     <property name="last_opened_file_path" value="$USER_HOME$/Downloads/Document_-_additional_fields.patch" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
-    <property name="android.project.structure.last.selected" value="imonggosdk" />
-    <property name="android.project.structure.proportion" value="0.15" />
+    <property name="android.project.structure.last.selected" value="salesdashboard" />
+    <property name="android.project.structure.proportion" value="0.2625" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="ignore_missing_gitignore" value="true" />
     <property name="FullScreen" value="false" />
@@ -4579,50 +4625,20 @@
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
-      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
-      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
-      <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
-      <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="Please select a project..." />
+      <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="Please select a project..." />
       <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="" />
+      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="Cloud configuration not specified" />
       <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="" />
+      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="Cloud configuration not specified" />
       <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
       <method />
     </configuration>
-    <configuration default="false" name="salesdashboard" type="AndroidRunConfigurationType" factoryName="Android Application">
-      <module name="salesdashboard" />
-      <option name="ACTIVITY_CLASS" value="" />
-      <option name="MODE" value="default_activity" />
-      <option name="DEPLOY" value="true" />
-      <option name="ARTIFACT_NAME" value="" />
-      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
-      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
-      <option name="PREFERRED_AVD" value="" />
-      <option name="USE_COMMAND_LINE" value="true" />
-      <option name="COMMAND_LINE" value="" />
-      <option name="WIPE_USER_DATA" value="false" />
-      <option name="DISABLE_BOOT_ANIMATION" value="false" />
-      <option name="NETWORK_SPEED" value="full" />
-      <option name="NETWORK_LATENCY" value="none" />
-      <option name="CLEAR_LOGCAT" value="false" />
-      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
-      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
-      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
-      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
-      <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
-      <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
-      <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="" />
-      <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="" />
-      <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
-      <method />
-    </configuration>
-    <list size="3">
+    <list size="2">
       <item index="0" class="java.lang.String" itemvalue="Android Application.concessio_test" />
       <item index="1" class="java.lang.String" itemvalue="Android Application.concessio" />
-      <item index="2" class="java.lang.String" itemvalue="Android Application.salesdashboard" />
     </list>
     <configuration name="&lt;template&gt;" type="Applet" default="true" selected="false">
       <option name="MAIN_CLASS_NAME" />
@@ -4740,35 +4756,35 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
-    <editor active="false" />
+    <frame x="17" y="23" width="1676" height="1027" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4330544" sideWeight="0.4944988" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43382353" sideWeight="0.49678457" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Fabric" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4330544" sideWeight="0.5055012" order="6" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32058823" sideWeight="0.52831715" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15273312" sideWeight="0.50596255" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3253138" sideWeight="0.47493887" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32647058" sideWeight="0.49190938" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32012847" sideWeight="0.47168285" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45717344" sideWeight="0.48713827" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3194292" sideWeight="0.47168285" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.45664105" sideWeight="0.48713827" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21088019" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16053921" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5006954" sideWeight="0.49196142" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5" sideWeight="0.49196142" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32823366" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -4833,9 +4849,7 @@
     <MESSAGE value=".gitignore for rhy" />
     <MESSAGE value="Removed unnecessary files." />
     <MESSAGE value="Removed unnecessary files. 2" />
-    <MESSAGE value="merged jn to development2" />
-    <MESSAGE value="delete salesdashboard" />
-    <option name="LAST_COMMIT_MESSAGE" value="delete salesdashboard" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed unnecessary files. 2" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -4847,30 +4861,24 @@
     <entry file="file://$PROJECT_DIR$/concessio_test/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/settings.gradle">
+    <entry file="file://$PROJECT_DIR$/concessioengine/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="73" selection-start-line="0" selection-start-column="73" selection-end-line="0" selection-end-column="73" />
+          <caret line="21" column="4" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/AccountSettings.java">
+    <entry file="file://$PROJECT_DIR$/imonggosdk/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Customer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="14" />
+          <caret line="37" column="5" selection-start-line="37" selection-start-column="5" selection-end-line="37" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4993,13 +5001,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33273703">
-          <caret line="203" column="27" selection-start-line="203" selection-start-column="27" selection-end-line="203" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/LoginTools.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -5112,11 +5113,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="22.141104">
+          <caret line="1311" column="32" selection-start-line="1311" selection-start-column="32" selection-end-line="1311" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/concessio/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.6441718">
           <caret line="35" column="9" selection-start-line="0" selection-start-column="0" selection-end-line="38" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5124,7 +5131,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="38" column="9" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5132,7 +5138,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="21" column="42" selection-start-line="21" selection-start-column="42" selection-end-line="21" selection-end-column="42" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5143,46 +5148,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="20" column="42" selection-start-line="20" selection-start-column="42" selection-end-line="20" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/concessio_test/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="27" column="48" selection-start-line="27" selection-start-column="48" selection-end-line="27" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/local.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -5190,10 +5156,69 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
+    <entry file="file://$PROJECT_DIR$/concessioengine/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="42" column="59" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="20" column="42" selection-start-line="20" selection-start-column="42" selection-end-line="20" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/values-v21/dimens.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="34" selection-start-line="2" selection-start-column="34" selection-end-line="2" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/animations/SlideInUpAnimation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="12" column="2" selection-start-line="12" selection-start-column="2" selection-end-line="12" selection-end-column="2" />
+          <folding>
+            <element signature="e#1224#1225#0" expanded="false" />
+            <element signature="e#1252#1253#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="19" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="214" column="0" selection-start-line="207" selection-start-column="0" selection-end-line="214" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -5202,14 +5227,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="73" selection-start-line="0" selection-start-column="73" selection-end-line="0" selection-end-column="73" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.02053388">
-          <caret line="9" column="11" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="11" />
           <folding />
         </state>
       </provider>
