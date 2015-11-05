@@ -1,11 +1,14 @@
 package net.nueca.imonggosdk.objects.document;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 
 import org.json.JSONException;
@@ -18,50 +21,77 @@ import java.sql.SQLException;
  */
 public class DocumentLine extends BaseTable2 {
 
+    @Expose
     @DatabaseField
     protected int line_no;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_obj_id")
+    protected transient Product product;
+    @Expose
     @DatabaseField
     protected int product_id;
+    @Expose
     @DatabaseField
     protected double quantity;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
     protected transient Document document;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extended_attributes")
-    protected ExtendedAttributes extended_attributes;
+    @Expose
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
+    protected DocumentLineExtras extras;
 
+    //@Expose
+    //@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
+    //protected DocumentLineExtras_Old extras;
+
+    @Expose
     @DatabaseField
     protected String discount_text;
+    @Expose
     @DatabaseField
     protected Double price;
+    @Expose
     @DatabaseField
     protected Double retail_price;
+    @Expose
     @DatabaseField
     protected Integer unit_id;
+    @Expose
     @DatabaseField
     protected Double unit_content_quantity;
+    @Expose
     @DatabaseField
     protected String unit_name;
+    @Expose
     @DatabaseField
     protected Double unit_quantity;
+    @Expose
     @DatabaseField
     protected Double unit_retail_price;
 
+    @Expose
     @DatabaseField
     protected String product_name;
+    @Expose
     @DatabaseField
     protected String product_stock_no;
+    @Expose
     @DatabaseField
     protected Double subtotal;
+
+    protected transient boolean autoLine_no = false;
 
     public DocumentLine() {}
 
     public DocumentLine(Builder builder) {
+        autoLine_no = builder.autoLine_no;
+
         line_no = builder.line_no;
         product_id = builder.product_id;
         quantity = builder.quantity;
-        extended_attributes = builder.extended_attributes;
+        extras = builder.extras;
+        if(extras != null)
+            extras.setDocumentLine(this);
         discount_text = builder.discount_text;
         price = builder.price;
         retail_price = builder.retail_price;
@@ -71,6 +101,12 @@ public class DocumentLine extends BaseTable2 {
         unit_quantity = builder.unit_quantity;
         unit_retail_price = builder.unit_retail_price;
         document = builder.document;
+
+        //extras = builder.extras;
+        //if(extras != null)
+        //    extras.setDocumentLine(this);
+
+        product = builder.product;
     }
 
     public int getLine_no() {
@@ -97,13 +133,23 @@ public class DocumentLine extends BaseTable2 {
         this.quantity = quantity;
     }
 
-    public ExtendedAttributes getExtended_attributes() {
-        return extended_attributes;
+    public DocumentLineExtras getExtras() {
+        return extras;
     }
 
-    public void setExtended_attributes(ExtendedAttributes extended_attributes) {
-        this.extended_attributes = extended_attributes;
+    public void setExtras(DocumentLineExtras extras) {
+        this.extras = extras;
     }
+
+    /*@Deprecated
+    public DocumentLineExtras_Old getExtras() {
+        return extras;
+    }
+
+    @Deprecated
+    public void setExtras(DocumentLineExtras_Old extras) {
+        this.extras = extras;
+    }*/
 
     public String getDiscount_text() {
         return discount_text;
@@ -201,15 +247,26 @@ public class DocumentLine extends BaseTable2 {
         this.subtotal = subtotal;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
     public JSONObject toJSONObject() throws JSONException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return new JSONObject(gson.toJson(this));
     }
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
-        if(extended_attributes != null)
-            extended_attributes.insertTo(dbHelper);
+        if(extras != null)
+            extras.insertTo(dbHelper);
+
+        if(extras != null)
+            extras.insertTo(dbHelper);
 
         try {
             dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.INSERT);
@@ -217,10 +274,15 @@ public class DocumentLine extends BaseTable2 {
             e.printStackTrace();
         }
 
-        if(extended_attributes == null)
-            return;
-        extended_attributes.setDocumentLine(this);
-        extended_attributes.updateTo(dbHelper);
+        if(extras != null) {
+            extras.setDocumentLine(this);
+            extras.updateTo(dbHelper);
+        }
+
+        if(extras != null) {
+            extras.setDocumentLine(this);
+            extras.updateTo(dbHelper);
+        }
     }
 
     @Override
@@ -231,9 +293,13 @@ public class DocumentLine extends BaseTable2 {
             e.printStackTrace();
         }
 
-        if(extended_attributes == null)
-            return;
-        extended_attributes.deleteTo(dbHelper);
+        if(extras != null) {
+            extras.deleteTo(dbHelper);
+        }
+
+        if(extras != null) {
+            extras.deleteTo(dbHelper);
+        }
     }
 
     @Override
@@ -243,13 +309,21 @@ public class DocumentLine extends BaseTable2 {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        if(extras != null) {
+            extras.updateTo(dbHelper);
+        }
+
+        if(extras != null) {
+            extras.updateTo(dbHelper);
+        }
     }
 
     public static class Builder {
         protected int line_no = 0;
         protected int product_id = 0;
         protected double quantity;
-        protected ExtendedAttributes extended_attributes;
+        protected DocumentLineExtras extras;
         protected String discount_text;
         protected Double price;
         protected Double retail_price;
@@ -263,6 +337,44 @@ public class DocumentLine extends BaseTable2 {
         protected String product_name;
         protected String product_stock_no;
         protected Double subtotal;
+        protected Product product;
+
+        //protected DocumentLineExtras_Old extras;
+
+        protected boolean autoLine_no;
+
+        public Builder product(Product product) {
+            this.product = product;
+            return this;
+        }
+
+        /*public Builder extras(DocumentLineExtras_Old extras) {
+            this.extras = extras;
+            return this;
+        }*/
+
+        public Builder autoLine_no() {
+            autoLine_no = true;
+            return this;
+        }
+
+        public Builder useProductDetails(Product product) {
+            this.product = product;
+
+            product_id = product.getId();
+            product_name = product.getName();
+            product_stock_no = product.getStock_no();
+            retail_price = product.getRetail_price();
+            unit_id = product.getUnit_id();
+            unit_content_quantity = product.getUnit_content_quantity();
+            unit_name = product.getUnit();
+            unit_quantity = product.getUnit_quantity();
+
+            if(product.getRcv_quantity() != null && product.getRcv_quantity().length() > 0)
+                quantity = Double.parseDouble(product.getRcv_quantity().replaceAll("[^0-9.,]", ""));
+
+            return this;
+        }
 
         public Builder product_name(String product_name) {
             this.product_name = product_name;
@@ -294,8 +406,8 @@ public class DocumentLine extends BaseTable2 {
             this.quantity = quantity;
             return this;
         }
-        public Builder extended_attributes(ExtendedAttributes extended_attributes) {
-            this.extended_attributes = extended_attributes;
+        public Builder extras(DocumentLineExtras extras) {
+            this.extras = extras;
             return this;
         }
         public Builder discount_text(String discount_text) {

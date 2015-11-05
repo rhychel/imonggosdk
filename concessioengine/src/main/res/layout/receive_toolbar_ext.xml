@@ -17,15 +17,15 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="000"
         android:id="@+id/tvDRNo"
         android:textSize="20dp"
         android:layout_weight="1"
         android:textColor="@android:color/black"/>
 
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:id="@+id/ivIcon"
-        android:src="@drawable/ic_check"/>
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/ibtnEdit"
+        android:src="@drawable/ic_pen"
+        android:background="@drawable/toolbar_ext_button"/>
 </LinearLayout>

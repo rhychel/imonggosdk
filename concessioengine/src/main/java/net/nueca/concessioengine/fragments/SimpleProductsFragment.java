@@ -1,6 +1,9 @@
 package net.nueca.concessioengine.fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,15 +22,18 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
+import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.interfaces.OnItemLongClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
 import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.operations.ImonggoTools;
+import net.nueca.imonggosdk.tools.DialogTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -50,7 +56,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     private Spinner spCategories;
 
     private boolean useRecyclerView = true;
-    private int prevLast = -1;
+    private int prevLast = -1, prevSelectedCategory = 0;
+
+    private boolean isCustomAdapter = false;
 
     public static SimpleProductsFragment newInstance() {
         return new SimpleProductsFragment();
@@ -82,17 +90,23 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
         if(useRecyclerView) {
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
-            simpleProductRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
-            simpleProductRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
+            if(!isCustomAdapter)
+                productRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
+            else {
+                productRecyclerViewAdapter.setDbHelper(getHelper());
+                productRecyclerViewAdapter.setList(getProducts());
+            }
+            productRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClicked(View view, int position) {
-                    Product product = simpleProductRecyclerViewAdapter.getItem(position);
+                    Product product = productRecyclerViewAdapter.getItem(position);
                     if(multipleInput) {
                         if(multiInputListener != null)
                             multiInputListener.showInputScreen(product);
                     }
                     else {
-                        SelectedProductItem selectedProductItem = simpleProductRecyclerViewAdapter.getSelectedProductItems().getSelectedProductItem(product);
+                        SelectedProductItem selectedProductItem = productRecyclerViewAdapter.getSelectedProductItems()
+                                .getSelectedProductItem(product);
                         if (selectedProductItem == null) {
                             selectedProductItem = new SelectedProductItem();
                             selectedProductItem.setProduct(product);
@@ -101,34 +115,34 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     }
                 }
             });
-            simpleProductRecyclerViewAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            productRecyclerViewAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
                 @Override
                 public void onItemLongClicked(View view, int position) {
-                    Product product = simpleProductRecyclerViewAdapter.getItem(position);
+                    Product product = productRecyclerViewAdapter.getItem(position);
                     showProductDetails(product);
                 }
             });
 
-            simpleProductRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
-            rvProducts.setAdapter(simpleProductRecyclerViewAdapter);
+            productRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
+            rvProducts.setAdapter(productRecyclerViewAdapter);
             rvProducts.addOnScrollListener(rvScrollListener);
 
-            toggleNoItems("No products available.", (simpleProductRecyclerViewAdapter.getItemCount() > 0));
+            toggleNoItems("No products available.", (productRecyclerViewAdapter.getItemCount() > 0));
         }
         else {
             lvProducts = (ListView) view.findViewById(R.id.lvProducts);
-            simpleProductListAdapter = new SimpleProductListAdapter(getActivity(), getHelper(), getProducts());
-            lvProducts.setAdapter(simpleProductListAdapter);
+            productListAdapter = new SimpleProductListAdapter(getActivity(), getHelper(), getProducts());
+            lvProducts.setAdapter(productListAdapter);
             lvProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    Product product = simpleProductListAdapter.getItem(position);
+                    Product product = productListAdapter.getItem(position);
                     if(multipleInput) {
                         if(multiInputListener != null)
                             multiInputListener.showInputScreen(product);
                     }
                     else {
-                        SelectedProductItem selectedProductItem = simpleProductListAdapter.getSelectedProductItems().getSelectedProductItem(product);
+                        SelectedProductItem selectedProductItem = productListAdapter.getSelectedProductItems().getSelectedProductItem(product);
 
                         if (selectedProductItem == null) {
                             selectedProductItem = new SelectedProductItem();
@@ -142,7 +156,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             lvProducts.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    Product product = simpleProductListAdapter.getItem(position);
+                    Product product = productListAdapter.getItem(position);
                     showProductDetails(product);
 
                     return true;
@@ -150,17 +164,23 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             });
             lvProducts.setOnScrollListener(lvScrollListener);
 
-            toggleNoItems("No products available.", (simpleProductListAdapter.getCount() > 0));
+            toggleNoItems("No products available.", (productListAdapter.getCount() > 0));
         }
 
         return view;
     }
 
+    public void setProductsRecyclerAdapter(BaseProductsRecyclerAdapter adapter) {
+        productRecyclerViewAdapter = adapter;
+        isCustomAdapter = productRecyclerViewAdapter != null;
+    }
+
+
     public void refreshList() {
         if(useRecyclerView)
-            simpleProductRecyclerViewAdapter.notifyDataSetChanged();
+            productRecyclerViewAdapter.notifyDataSetChanged();
         else
-            simpleProductListAdapter.notifyDataSetChanged();
+            productListAdapter.notifyDataSetChanged();
         if(productsFragmentListener != null)
             productsFragmentListener.whenItemsSelectedUpdated();
     }
@@ -197,12 +217,12 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 @Override
                 public void onSave(SelectedProductItem selectedProductItem) {
                     if(useRecyclerView) {
-                        simpleProductRecyclerViewAdapter.getSelectedProductItems().add(selectedProductItem);
-                        simpleProductRecyclerViewAdapter.notifyItemChanged(position);
+                        productRecyclerViewAdapter.getSelectedProductItems().add(selectedProductItem);
+                        productRecyclerViewAdapter.notifyItemChanged(position);
                     }
                     else {
-                        simpleProductListAdapter.getSelectedProductItems().add(selectedProductItem);
-                        simpleProductListAdapter.notifyItemChanged(lvProducts, position);
+                        productListAdapter.getSelectedProductItems().add(selectedProductItem);
+                        productListAdapter.notifyItemChanged(lvProducts, position);
                     }
                     if(productsFragmentListener != null)
                         productsFragmentListener.whenItemsSelectedUpdated();
@@ -231,9 +251,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     @Override
     protected void whenListEndReached(List<Product> productList) {
         if(useRecyclerView)
-            simpleProductRecyclerViewAdapter.addAll(productList);
+            productRecyclerViewAdapter.addAll(productList);
         else
-            simpleProductListAdapter.addAll(productList);
+            productListAdapter.addAll(productList);
     }
 
     @Override
@@ -241,25 +261,61 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         super.onViewCreated(view, savedInstanceState);
         if(setupActionBar != null)
             setupActionBar.setupActionBar(tbActionBar);
+        if(showCategoryOnStart)
+            new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message message) {
+                    if(spCategories != null) {
+                        spCategories.performClick();
+                    }
+                    return false;
+                }
+            }).sendEmptyMessageDelayed(0, 200);
+
     }
 
     private AdapterView.OnItemSelectedListener onCategorySelected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-            String category = productCategoriesAdapter.getItem(position).toLowerCase();
-            setCategory(category);
-            offset = 0l;
-            prevLast = 0;
-
-            if(useRecyclerView)
-                toggleNoItems("No results for \"" + category + "\".", simpleProductRecyclerViewAdapter.updateList(getProducts()));
+        public void onItemSelected(AdapterView<?> adapterView, View view, final int position, long id) {
+            final String category = productCategoriesAdapter.getItem(position).toLowerCase();
+            if(AccountSettings.allowLimitOrdersToOneCategory(getActivity())) {
+                if(ProductsAdapterHelper.hasSelectedProductItems() && prevSelectedCategory != position)
+                    DialogTools.showConfirmationDialog(getActivity(), "Ooopps!", "Selected items will be deleted. Would you like to switch to " + category + "?",
+                            "Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    ProductsAdapterHelper.clearSelectedProductItemList();
+                                    changeCategory(category, position);
+                                }
+                            },
+                            "No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    spCategories.setSelection(prevSelectedCategory);
+                                }
+                            });
+                else
+                    changeCategory(category, position);
+            }
             else
-                toggleNoItems("No results for \"" + category + "\".", simpleProductListAdapter.updateList(getProducts()));
+                changeCategory(category, position);
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) { }
     };
+
+    private void changeCategory(String category, int position) {
+        prevSelectedCategory = position;
+        setCategory(category);
+        offset = 0l;
+        prevLast = 0;
+
+        if(useRecyclerView)
+            toggleNoItems("No results for \"" + category + "\".", productRecyclerViewAdapter.updateList(getProducts()));
+        else
+            toggleNoItems("No results for \"" + category + "\".", productListAdapter.updateList(getProducts()));
+    }
 
     public void updateListWhenSearch(String searchKey) {
         setSearchKey(searchKey);
@@ -267,9 +323,16 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         prevLast = 0;
 
         if(useRecyclerView)
-            toggleNoItems("No results for \""+searchKey+"\""+messageCategory()+".", simpleProductRecyclerViewAdapter.updateList(getProducts()));
+            toggleNoItems("No results for \""+searchKey+"\""+messageCategory()+".", productRecyclerViewAdapter.updateList(getProducts()));
         else
-            toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", simpleProductListAdapter.updateList(getProducts()));
+            toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", productListAdapter.updateList(getProducts()));
+    }
+
+    public void forceUpdateProductList(List<Product> productList) {
+        if(useRecyclerView)
+            productRecyclerViewAdapter.updateList(productList);
+        else
+            productListAdapter.updateList(productList);
     }
 
     @Override
@@ -286,4 +349,15 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         }
     }
 
+    public void clearSelectedItems() {
+        if(useRecyclerView) {
+            productRecyclerViewAdapter.clearSelectedItems();
+            productRecyclerViewAdapter.notifyDataSetChanged();
+            toggleNoItems("No products available.", productRecyclerViewAdapter.updateList(new ArrayList<Product>()));
+        } else {
+            productListAdapter.clearSelectedItems();
+            productListAdapter.notifyDataSetChanged();
+            toggleNoItems("No products available.", productListAdapter.updateList(new ArrayList<Product>()));
+        }
+    }
 }

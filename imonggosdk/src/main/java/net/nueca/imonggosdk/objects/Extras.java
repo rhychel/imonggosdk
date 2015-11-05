@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.Gson;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -67,5 +68,11 @@ public class Extras extends BaseTable2 {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }

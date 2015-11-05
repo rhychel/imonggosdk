@@ -3,11 +3,6 @@ package net.nueca.concessioengine.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.SearchViewCompat;
-import android.util.Log;
-import android.view.Menu;
-import android.widget.SearchView;
-
-import com.j256.ormlite.dao.CloseableIterator;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
@@ -17,25 +12,16 @@ import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
-import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
-import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.ProductTag;
-import net.nueca.imonggosdk.objects.Session;
-import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
-import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.StringUtilsEx;
-
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -266,7 +252,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     ExtendedAttributes extendedAttributes = value.getExtendedAttributes();
                     // if pcount
 //                    extendedAttributes.setBatch_no("0");
-                    builder.extended_attributes(extendedAttributes.convertForDocumentLine());
+                    builder.extras(extendedAttributes.convertForDocumentLine());
                 }
 
                 DocumentLine documentLine = builder.build();

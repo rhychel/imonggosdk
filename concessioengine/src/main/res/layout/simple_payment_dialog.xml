@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:numpad="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/llContent"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment Type"
+            android:id="@+id/tvPaymentType"
+            android:textSize="12sp"
+            android:layout_margin="3dp"
+            />
+
+        <Spinner
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:id="@+id/spnPaymentType"
+            />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tilPayment"
+            >
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberSigned"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:id="@+id/etPayment"
+                android:text="0"
+                android:hint="Amount"/>
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+    <net.nueca.imonggosdk.widgets.Numpad
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/npInput"
+        android:visibility="visible"
+        numpad:showGoButton="false"
+        numpad:showMoreButton="false"
+        numpad:showNegativeButton="false"
+        android:layout_below="@+id/llContent"/>
+
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:id="@+id/btnAdd"
+        android:layout_gravity="right"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:minWidth="64dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/npInput"/>
+
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/btnCancel"
+        android:layout_toLeftOf="@+id/btnAdd"
+        android:layout_toStartOf="@+id/btnSave"
+        android:minWidth="64dp"
+        android:layout_alignTop="@+id/btnAdd"/>
+
+</RelativeLayout>

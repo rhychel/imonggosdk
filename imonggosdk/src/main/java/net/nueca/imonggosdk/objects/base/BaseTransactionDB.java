@@ -1,9 +1,13 @@
 package net.nueca.imonggosdk.objects.base;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by gama on 7/21/15.
@@ -14,16 +18,19 @@ public abstract class BaseTransactionDB extends BaseTransaction {
     protected int id = -1;
 
     @DatabaseField
-    protected String utc_created_at;
+    @Expose protected String utc_created_at;
     @DatabaseField
-    protected String utc_updated_at;
+    @Expose protected String utc_updated_at;
     @DatabaseField
-    protected String utc_document_date;
+    @Expose protected String utc_document_date;
+
+    public BaseTransactionDB() {}
 
     public BaseTransactionDB(Builder builder) {
         super(builder);
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -66,5 +73,19 @@ public abstract class BaseTransactionDB extends BaseTransaction {
             updateTo(dbHelper);
         else if(databaseOperation == DatabaseOperation.DELETE)
             deleteTo(dbHelper);
+    }
+
+    public abstract void refresh();
+
+    @Override
+    public String toJSONString() {
+        refresh();
+        return super.toJSONString();
+    }
+
+    @Override
+    public JSONObject toJSONObject() throws JSONException {
+        refresh();
+        return super.toJSONObject();
     }
 }

@@ -5,6 +5,7 @@ package net.nueca.imonggosdk.enums;
  * NuecaLibrary (c)2014
  */
 public enum Parameter {
+    PER_PAGE, // per_page<page_limit> | JSONArray
     PAGE, // page=<pageNo> | JSONArray
     ACTIVE_ONLY, // active_only=1 | JSONArray
     LAST_UPDATED_AT, // q=last_updated_at | JSONObject

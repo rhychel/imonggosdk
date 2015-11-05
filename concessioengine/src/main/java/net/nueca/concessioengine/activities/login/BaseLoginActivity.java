@@ -55,6 +55,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private Boolean isUnlinked = true;
     private Boolean isLoggedIn = false;
     private Boolean requireConcessioSettings = false;
+    private Boolean requireObjectConcessioSettings = false;
     private Session mSession = null;
     private Server mServer = Server.IMONGGO;
     private Boolean isUsingDefaultCustomDialogForSync = true;
@@ -619,6 +620,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         } else {
             mBaseLogin = new BaseLogin(BaseLoginActivity.this, getHelper(), accountId, email, password);
             mBaseLogin.setConcessioSettings(requireConcessioSettings);
+            mBaseLogin.setmUseObjectForConcessioSettings(requireObjectConcessioSettings);
         }
     }
 
@@ -678,6 +680,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     public void setRequireConcessioSettings(Boolean requireConcessioSettings) {
         this.requireConcessioSettings = requireConcessioSettings;
+    }
+
+    public void setRequireObjectConcessioSettings(Boolean requireObjectConcessioSettings) {
+        this.requireObjectConcessioSettings = requireObjectConcessioSettings;
     }
 
     protected String getEditTextAccountID() {
@@ -837,6 +843,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     protected void startSyncService() {
+        Log.e("startSyncService", "called");
         if (!isSyncServiceRunning(SyncModules.class) || mSyncModules == null) {
             mBounded = false;
             startService(mServiceIntent);
@@ -860,6 +867,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     protected void doUnbindService() {
+        Log.e("mBounded", "" + mBounded);
         if (isSyncServiceBinded()) {
             mBounded = false;
             unbindService(getServiceConnection());

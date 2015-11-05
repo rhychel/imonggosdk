@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/rvContent"
+        android:elevation="1dp"
+        android:clipToPadding="false"
+        />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        >
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirm"
+            android:id="@+id/btnConfirm"
+            android:layout_gravity="right"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:minWidth="64dp"
+            android:layout_alignParentRight="true"/>
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/btnCancel"
+            android:layout_alignTop="@+id/btnConfirm"
+            android:layout_toLeftOf="@+id/btnConfirm"
+            android:layout_toStartOf="@+id/btnConfirm"
+            android:minWidth="64dp"
+            />
+    </RelativeLayout>
+</LinearLayout>

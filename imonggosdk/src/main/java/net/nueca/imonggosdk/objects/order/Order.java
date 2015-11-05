@@ -1,30 +1,60 @@
 package net.nueca.imonggosdk.objects.order;
 
-import com.google.gson.Gson;
+import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTransaction;
+import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
+import net.nueca.imonggosdk.objects.base.BaseTransactionDB2;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.swable.SwableTools;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by gama on 7/1/15.
  */
-public class Order extends BaseTransaction {
+public class Order extends BaseTransactionDB2 {
     public static transient final int MAX_ORDERLINES_PER_PAGE = 50;
 
+    @Expose
+    @DatabaseField
     private String target_delivery_date; // current_date + 2 days
+    @Expose
+    @DatabaseField
     private String remark;
+    @Expose
+    @DatabaseField
     private String order_type_code;
+    @Expose
+    @DatabaseField
     private int serving_branch_id;
+    @Expose
     private List<OrderLine> order_lines;
 
-    public Order() { super(null);}
+    @ForeignCollectionField
+    private transient ForeignCollection<OrderLine> order_lines_fc;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
+    protected transient OfflineData offlineData;
+
+    public Order() {}
 
     public Order(Builder builder) {
         super(builder);
@@ -54,19 +84,12 @@ public class Order extends BaseTransaction {
     }
 
     public List<OrderLine> getOrder_lines() {
+        refresh();
         return order_lines;
     }
 
     public void setOrder_lines(List<OrderLine> order_lines) {
         this.order_lines = order_lines;
-    }
-
-    public JSONArray getOrderLineJSONArray() throws JSONException {
-        JSONArray jsonArray = new JSONArray();
-        for (OrderLine orderLine : order_lines) {
-            jsonArray.put(orderLine.toJSONObject());
-        }
-        return jsonArray;
     }
 
     public String getOrder_type_code() {
@@ -86,7 +109,13 @@ public class Order extends BaseTransaction {
     }
 
     public void addOrderLine(OrderLine orderLine) {
+        if(order_lines == null)
+            order_lines = new ArrayList<>();
         order_lines.add(orderLine);
+    }
+
+    public void setOfflineData(OfflineData offlineData) {
+        this.offlineData = offlineData;
     }
 
     public static Order fromJSONString(String jsonString) throws JSONException {
@@ -104,13 +133,36 @@ public class Order extends BaseTransaction {
     }
 
     @Override
+    public String toJSONString() {
+        refresh();
+        return super.toJSONString();
+    }
+
+    @Override
+    public JSONObject toJSONObject() throws JSONException {
+        refresh();
+        return super.toJSONObject();
+    }
+
+    @Override
     public boolean shouldPageRequest() {
+        refresh();
         return order_lines.size() > MAX_ORDERLINES_PER_PAGE;
     }
 
     @Override
     public int getChildCount() {
+        refresh();
         return SwableTools.computePagedRequestCount(order_lines.size(), MAX_ORDERLINES_PER_PAGE);
+    }
+
+    @Override
+    public void refresh() {
+        if(order_lines_fc != null && order_lines == null) {
+            for(OrderLine orderLine : order_lines_fc) {
+                addOrderLine(orderLine);
+            }
+        }
     }
 
     public static class Builder extends BaseTransaction.Builder<Builder> {
@@ -154,6 +206,8 @@ public class Order extends BaseTransaction {
     }
 
     public List<OrderLine> getOrderLineAt(int position) {
+        refresh();
+
         List<OrderLine> list = new ArrayList<>();
         list.addAll(SwableTools.partition(position,order_lines,MAX_ORDERLINES_PER_PAGE));
         return list;
@@ -173,5 +227,88 @@ public class Order extends BaseTransaction {
             orderList.add(getChildOrderAt(i));
         }
         return orderList;
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        /*if(shouldPageRequest()) {
+            try {
+                List<Order> orders = getChildOrders();
+                for (Order child : orders)
+                    child.insertTo(dbHelper);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return;
+        }*/
+
+        try {
+            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        refresh();
+        if(order_lines != null) {
+            for (OrderLine orderLine : order_lines) {
+                orderLine.setOrder(this);
+                orderLine.insertTo(dbHelper);
+            }
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        /*refresh();
+        if(shouldPageRequest()) {
+            try {
+                List<Order> orders = getChildOrders();
+                for (Order child : orders)
+                    child.deleteTo(dbHelper);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return;
+        }*/
+
+        try {
+            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        refresh();
+        if(order_lines != null) {
+            for (OrderLine orderLine : order_lines) {
+                orderLine.deleteTo(dbHelper);
+            }
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        /*refresh();
+        if(shouldPageRequest()) {
+            try {
+                List<Order> orders = getChildOrders();
+                for (Order child : orders)
+                    child.updateTo(dbHelper);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return;
+        }*/
+
+        try {
+            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if(order_lines != null) {
+            for (OrderLine orderLine : order_lines) {
+                orderLine.setOrder(this);
+                orderLine.updateTo(dbHelper);
+            }
+        }
     }
 }

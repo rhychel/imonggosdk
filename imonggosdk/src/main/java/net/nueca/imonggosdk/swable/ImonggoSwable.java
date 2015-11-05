@@ -8,22 +8,15 @@ import android.content.IntentFilter;
 import android.support.annotation.DrawableRes;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import net.nueca.imonggosdk.R;
-import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.User;
-import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.document.Document;
-import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.order.Order;
-import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NotificationTools;
@@ -32,10 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,12 +47,15 @@ public class ImonggoSwable extends SwableService {
 
     private SwableStateListener swableStateListener;
 
-    private int REQUEST_SUCCESS = 0;
-    private int REQUEST_COUNT = 0;
+    protected int REQUEST_SUCCESS = 0;
+    protected int REQUEST_COUNT = 0;
 
     private int APP_ICON_DRAWABLE = R.drawable.ic_check_circle;
 
     private IntentFilter notificationFilter = new IntentFilter();
+
+    private SwableSendModule swableSendModule;
+    private SwableVoidModule swableVoidModule;
 
     private User user;
     @Override
@@ -78,7 +72,7 @@ public class ImonggoSwable extends SwableService {
     }
 
     private PendingIntent pendingIntent = null;
-    private PendingIntent getPendingIntent() {
+    protected PendingIntent getPendingIntent() {
         if(pendingIntent == null) {
             Intent notificationIntent = new Intent();
             notificationIntent.setAction(NOTIFICATION_ACTION);
@@ -117,6 +111,8 @@ public class ImonggoSwable extends SwableService {
             notificationFilter.addAction(NOTIFICATION_ACTION);
             registerReceiver(receiver, notificationFilter);
         }
+        swableSendModule = new SwableSendModule(this,getHelper(),getSession(),getQueue());
+        swableVoidModule = new SwableVoidModule(this,getHelper(),getSession(),getQueue());
     }
 
     @Override
@@ -143,6 +139,7 @@ public class ImonggoSwable extends SwableService {
                                 .eq("isPastCutoff", false).query();
 
                     if(offlineDataList.size() <= 0) {
+                        Log.e("ImonggoSwable", "syncModule : nothing to sync");
                         setSyncing(false);
                         return;
                     }
@@ -161,7 +158,16 @@ public class ImonggoSwable extends SwableService {
                         }
                         if(offlineData.isQueued()) {
                             continue;
-                        }
+                        }/*
+                        try {
+                            if(offlineData.getObjectFromData() == null) {
+                                offlineData.deleteTo(getHelper());
+                                continue;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }*/
+                        Log.e("ImonggoSwable", "OFFLINEDATA: " + offlineData.getReturnId());
 
                         offlineData.setQueued(true);
 
@@ -170,27 +176,27 @@ public class ImonggoSwable extends SwableService {
 
                         switch ( offlineData.getOfflineDataTransactionType() ) {
                             case SEND_ORDER:
-                                send(Table.ORDERS, offlineData);
+                                swableSendModule.sendTransaction(Table.ORDERS, offlineData);
                                 break;
                             case SEND_INVOICE:
-                                send(Table.INVOICES, offlineData);
+                                swableSendModule.sendTransaction(Table.INVOICES, offlineData);
                                 break;
                             case SEND_DOCUMENT:
-                                send(Table.DOCUMENTS, offlineData);
+                                swableSendModule.sendTransaction(Table.DOCUMENTS, offlineData);
                                 break;
 
                             case CANCEL_ORDER:
-                                delete(Table.ORDERS, offlineData);
+                                swableVoidModule.voidTransaction(Table.ORDERS, offlineData);
                                 break;
                             case CANCEL_INVOICE:
-                                delete(Table.INVOICES, offlineData);
+                                swableVoidModule.voidTransaction(Table.INVOICES, offlineData);
                                 break;
                             case CANCEL_DOCUMENT:
-                                delete(Table.DOCUMENTS, offlineData);
+                                swableVoidModule.voidTransaction(Table.DOCUMENTS, offlineData);
                                 break;
                         }
 
-                        offlineData.updateTo(getHelper());
+                        //offlineData.updateTo(getHelper());
                     }
                     Log.e("ImonggoSwable", "starting sync : " + offlineDataList.size() + " queued transactions");
                     REQUEST_COUNT += offlineDataList.size();
@@ -218,8 +224,15 @@ public class ImonggoSwable extends SwableService {
         this.swableStateListener = swableStateListener;
     }
 
+    public SwableStateListener getSwableStateListener() {
+        return swableStateListener;
+    }
+
     public void setNotificationIcon(@DrawableRes int iconResource) {
         APP_ICON_DRAWABLE = iconResource;
+    }
+    public int getNotificationIcon() {
+        return APP_ICON_DRAWABLE;
     }
 
     public interface SwableStateListener {
@@ -232,22 +245,11 @@ public class ImonggoSwable extends SwableService {
         void onAlreadyCancelled(OfflineData offlineData);
         void onSwableStopping();
     }
-
-    private JSONObject prepareTransactionJSON(OfflineDataType offlineDataType, String jsonString) throws JSONException {
-        switch(offlineDataType) {
-            case SEND_ORDER:
-                jsonString = "{\"order\":" + jsonString + "}";
-                break;
-            case SEND_INVOICE:
-                jsonString = "{\"invoice\":" + jsonString + "}";
-                break;
-            case SEND_DOCUMENT:
-                jsonString = "{\"document\":" + jsonString + "}";
-                break;
-        }
-        return new JSONObject(jsonString);
-    }
-
+    /** ------------------------------------------------------------------
+     *  Following methods moved to SwableSendModule and SwableVoidModule
+     *             for better readability and debugging
+     **/
+    /*
     public void send(Table table, final OfflineData offlineData) {
         try {
             Branch branch = getHelper().getBranches().queryBuilder().where().eq("id", offlineData.getBranch_id())
@@ -258,12 +260,12 @@ public class ImonggoSwable extends SwableService {
                 //return;
             }
 
-            if(offlineData.generateObjectFromData().shouldPageRequest()) {
+            if(offlineData.isPagedRequest()) {
                 pagedSend(table, offlineData);
                 return;
             }
 
-            JSONObject jsonObject = prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
+            JSONObject jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
                     offlineData.getData());
             //Log.e("JSON", jsonObject.toString());
 
@@ -272,13 +274,10 @@ public class ImonggoSwable extends SwableService {
                     @Override
                     public void onStart(Table table, RequestType requestType) {
                         offlineData.setSyncing(true);
-                        try {
-                            Log.e("ImonggoSwable", "sending : started -- Transaction Type: " +
-                                    offlineData.generateObjectFromData().getClass().getSimpleName() +
-                                    " - with RefNo '" + offlineData.getReference_no() + "'");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+
+                        Log.e("ImonggoSwable", "sending : started -- Transaction Type: " +
+                                offlineData.getObjectFromData().getClass().getSimpleName() +
+                                " - with RefNo '" + offlineData.getReference_no() + "'");
 
                         if (swableStateListener != null)
                             swableStateListener.onSyncing(offlineData);
@@ -310,9 +309,9 @@ public class ImonggoSwable extends SwableService {
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                        }/* catch (SQLException e) {
+                        }*//* catch (SQLException e) {
                             e.printStackTrace();
-                        }*/
+                        }*//*
 
                         if (offlineData.isSynced()) {
                             REQUEST_SUCCESS++;
@@ -348,6 +347,13 @@ public class ImonggoSwable extends SwableService {
                                             Log.e("STR : SEND_ORDER ID", orderId);
                                             offlineData.setReturnId(orderId);
                                         }
+                                        else if (errorMsg.contains("document id")) {
+                                            String documentId = errorMsg.substring(
+                                                    errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
+                                            );
+                                            Log.e("STR : SEND_DOCUMENT ID", documentId);
+                                            offlineData.setReturnId(documentId);
+                                        }
                                     }
                                 } else if (response instanceof JSONObject) {
                                     JSONObject responseJson = (JSONObject) response;
@@ -364,6 +370,13 @@ public class ImonggoSwable extends SwableService {
                                                 );
                                                 Log.e("JSON : SEND_ORDER ID", orderId);
                                                 offlineData.setReturnId(orderId);
+                                            }
+                                            else if (errorMsg.contains("document id")) {
+                                                String documentId = errorMsg.substring(
+                                                        errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
+                                                );
+                                                Log.e("STR : SEND_DOCUMENT ID", documentId);
+                                                offlineData.setReturnId(documentId);
                                             }
                                         }
                                     }
@@ -396,6 +409,7 @@ public class ImonggoSwable extends SwableService {
                         offlineData.setSyncing(false);
                         offlineData.setQueued(false);
                         offlineData.setSynced(false);
+                        offlineData.updateTo(getHelper());
                     }
                 }, getSession().getServer(), table, jsonObject, "?branch_id=" + offlineData.getBranch_id() + offlineData
                         .getParameters())
@@ -427,14 +441,10 @@ public class ImonggoSwable extends SwableService {
                         @Override
                         public void onStart(Table table, RequestType requestType) {
                             offlineData.setSyncing(true);
-                            try {
-                                Log.e("ImonggoSwable", "deleting : started -- Transaction Type: " +
-                                        offlineData.generateObjectFromData().getClass().getSimpleName() +
-                                        " - with RefNo '" + offlineData.getReference_no() +
-                                        "' and returnId '" + offlineData.getReturnId() + "'");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            Log.e("ImonggoSwable", "deleting : started -- Transaction Type: " +
+                                    offlineData.getObjectFromData().getClass().getSimpleName() +
+                                    " - with RefNo '" + offlineData.getReference_no() +
+                                    "' and returnId '" + offlineData.getReturnId() + "'");
 
                             if (swableStateListener != null)
                                 swableStateListener.onSyncing(offlineData);
@@ -521,16 +531,16 @@ public class ImonggoSwable extends SwableService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        /*} catch (JSONException e) {
+        *//*} catch (JSONException e) {
             e.printStackTrace();
-        }*/
+        }*//*
     }
 
     public void pagedSend(Table table, final OfflineData offlineData) {
         try {
             if(table == Table.ORDERS) {
-                Order order = (Order)offlineData.generateObjectFromData();
-
+                Order order = (Order)offlineData.getObjectFromData();
+                Log.e("ORDER", order.toString());
                 int max_page = order.getChildCount();
 
                 if(offlineData.getReturnId().length() > 0) { // for retry sending
@@ -540,37 +550,38 @@ public class ImonggoSwable extends SwableService {
                     for(int i = 0; i < childOrders.size(); i++) {
                         if(returnIds.get(i).length() <= 0 || !returnIds.get(i).equals(NO_RETURN_ID))
                             continue;
-                        sendThisPage(table, i+1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
-                                (), childOrders.get(i).toJSONString()), offlineData);
+                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                                (), childOrders.get(i).toJSONObject()), offlineData);
                     }
                 } else {
                     List<Order> childOrders = order.getChildOrders();
                     for(int i = 0; i < childOrders.size(); i++) {
-                        sendThisPage(table, i+1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
-                                (), childOrders.get(i).toJSONString()), offlineData);
+                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                                (), childOrders.get(i).toJSONObject()), offlineData);
                     }
                 }
             }
             else if(table == Table.DOCUMENTS) {
-                Document document = (Document)offlineData.generateObjectFromData();
+                //Document document = (Document)offlineData.getObjectFromData();
+                //Log.e("ImonggoSwable", "pagedSend : " + document.getChildCount());
 
-                int max_page = document.getChildCount();
+                List<Document> childDocuments = offlineData.getChildDocuments();
+
+                int max_page = childDocuments.size();
 
                 if(offlineData.getReturnId().length() > 0) { // for retry sending
                     List<String> returnIds = offlineData.getReturnIdList();
 
-                    List<Document> childDocuments = document.getChildDocuments();
                     for(int i = 0; i < childDocuments.size(); i++) {
                         if(returnIds.get(i).length() <= 0 || !returnIds.get(i).equals(NO_RETURN_ID))
                             continue;
-                        sendThisPage(table, i+1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
-                                (), childDocuments.get(i).toJSONString()), offlineData);
+                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                                (), childDocuments.get(i).toJSONObject()), offlineData);
                     }
                 } else {
-                    List<Document> childDocuments = document.getChildDocuments();
                     for(int i = 0; i < childDocuments.size(); i++) {
-                        sendThisPage(table, i+1, max_page, prepareTransactionJSON(offlineData.getOfflineDataTransactionType
-                                (), childDocuments.get(i).toJSONString()), offlineData);
+                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                                (), childDocuments.get(i).toJSONObject()), offlineData);
                     }
                 }
             }
@@ -588,14 +599,10 @@ public class ImonggoSwable extends SwableService {
                     public void onStart(Table table, RequestType requestType) {
                         parent.setSyncing(true);
 
-                        try {
-                            Log.e("ImonggoSwable", "sending : started [" + page + "] -- Transaction Type: " +
-                                    parent.generateObjectFromData().getClass().getSimpleName() +
-                                    " - Paged RefNo " + parent.getReference_no()+"-"+(page)
-                            );
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        Log.e("ImonggoSwable", "sending : started [" + page + "] -- Transaction Type: " +
+                                parent.getObjectFromData().getClass().getSimpleName() +
+                                " - Paged RefNo " + parent.getReference_no()+"-"+(page)
+                        );
 
                         if (swableStateListener != null)
                             swableStateListener.onSyncing(parent);
@@ -677,6 +684,15 @@ public class ImonggoSwable extends SwableService {
                                             parent.insertReturnIdAt(page - 1, orderId);
                                             isNullReturnId = false;
                                         }
+                                        else if (errorMsg.contains("document id")) {
+                                            String documentId = errorMsg.substring(
+                                                    errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
+                                            );
+                                            Log.e("STR : SEND_DOCUMENT ID", documentId);
+
+                                            parent.insertReturnIdAt(page - 1, documentId);
+                                            isNullReturnId = false;
+                                        }
                                     }
                                 } else if (response instanceof JSONObject) {
                                     JSONObject responseJson = (JSONObject) response;
@@ -746,13 +762,9 @@ public class ImonggoSwable extends SwableService {
                         @Override
                         public void onStart(Table table, RequestType requestType) {
                             offlineData.setSyncing(true);
-                            try {
-                                Log.e("ImonggoSwable", "deleting : started -- Transaction Type: " +
-                                        offlineData.generateObjectFromData().getClass().getSimpleName() +
-                                        " - with RefNo '" + offlineData.getReference_no() + "' and returnId '" + id + "'");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            Log.e("ImonggoSwable", "deleting : started -- Transaction Type: " +
+                                    offlineData.getObjectFromData().getClass().getSimpleName() +
+                                    " - with RefNo '" + offlineData.getReference_no() + "' and returnId '" + id + "'");
 
                             if (swableStateListener != null)
                                 swableStateListener.onSyncing(offlineData);
@@ -848,4 +860,5 @@ public class ImonggoSwable extends SwableService {
             e.printStackTrace();
         }
     }
+    */
 }

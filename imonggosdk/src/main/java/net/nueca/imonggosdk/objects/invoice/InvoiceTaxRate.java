@@ -2,17 +2,37 @@ package net.nueca.imonggosdk.objects.invoice;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import com.j256.ormlite.field.DatabaseField;
+
+import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
+
 /**
  * Created by gama on 7/1/15.
  */
-public class InvoiceTaxRate {
+public class InvoiceTaxRate extends BaseTable2 {
+    @Expose
+    @DatabaseField
     protected String tax_rate_id;
+    @Expose
+    @DatabaseField
     protected double amount;
+    @Expose
+    @DatabaseField
     protected double rate;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "invoice_id")
+    protected transient Invoice invoice;
+
+    public InvoiceTaxRate() {}
 
     public InvoiceTaxRate(Builder builder) {
         tax_rate_id = builder.tax_rate_id;
@@ -50,6 +70,14 @@ public class InvoiceTaxRate {
         this.rate = rate;
     }
 
+    public Invoice getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
+    }
+
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return new JSONObject(gson.toJson(this));
@@ -75,6 +103,33 @@ public class InvoiceTaxRate {
 
         public InvoiceTaxRate build() {
             return new InvoiceTaxRate(this);
+        }
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.INSERT);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.DELETE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper dbHelper) {
+        try {
+            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.UPDATE);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

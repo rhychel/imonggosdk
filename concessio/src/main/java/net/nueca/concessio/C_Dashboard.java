@@ -20,7 +20,7 @@ import java.sql.SQLException;
  */
 public class C_Dashboard extends ImonggoAppCompatActivity {
 
-    private Button btnOrder, btnCount, btnUnlink;
+    private Button btnOrder, btnCount, btnReceive, btnUnlink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +32,12 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
 
         btnOrder = (Button) findViewById(R.id.btnOrder);
         btnCount = (Button) findViewById(R.id.btnCount);
+        btnReceive = (Button) findViewById(R.id.btnReceive);
         btnUnlink = (Button) findViewById(R.id.btnUnlink);
 
         btnOrder.setOnClickListener(onChooseModule);
-        btnCount.setOnClickListener(onChooseModule  );
+        btnCount.setOnClickListener(onChooseModule);
+        btnReceive.setOnClickListener(onChooseModule);
         btnUnlink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,6 +71,9 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
                 } break;
                 case R.id.btnCount: {
                     intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.PHYSICAL_COUNT.ordinal());
+                } break;
+                case R.id.btnReceive: {
+                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.RECEIVE.ordinal());
                 } break;
             }
             startActivity(intent);

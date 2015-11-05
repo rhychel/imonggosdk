@@ -7,12 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Switch;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
-import net.nueca.imonggosdk.R;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.RequestType;
@@ -28,7 +26,6 @@ import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.ListTools;
-import net.nueca.imonggosdk.tools.NotificationTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +33,6 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -64,7 +60,8 @@ public class SwableTools {
         Intent service = new Intent(activity,ImonggoSwable.class);
         return activity.bindService(service, swableServiceConnection, Context.BIND_AUTO_CREATE);
     }
-	public static boolean isImonggoSwableRunning(Context context) {
+
+    public static boolean isImonggoSwableRunning(Context context) {
         return isMyServiceRunning(context, ImonggoSwable.class);
     }
 	private static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
@@ -210,13 +207,13 @@ public class SwableTools {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         try {
-            String dataStr;
+            JSONObject jsonObject;
             if(data instanceof Invoice)
-                dataStr = ((Invoice)data).toJSONString();
+                jsonObject = ((Invoice)data).toJSONObject();
             else if(data instanceof Order)
-                dataStr = ((Order)data).toJSONString();
+                jsonObject = ((Order)data).toJSONObject();
             else if(data instanceof Document)
-                dataStr = ((Document)data).toJSONString();
+                jsonObject = ((Document)data).toJSONObject();
             else {
                 Log.e("SwableTools", "sendTransactionNow : Class '" + data.getClass().getSimpleName() + "' is not " +
                         "supported for OfflineData --- Use Order, Document and Invoice");
@@ -258,7 +255,7 @@ public class SwableTools {
                         public void onRequestError() {
                             Log.e("SwableTools", "[default listener] sending request error");
                         }
-                    }, server, table, prepareTransactionJSON(table, dataStr), "?branch=" + branchId +
+                    }, server, table, prepareTransactionJSON(table, jsonObject), "?branch=" + branchId +
                         parameters)
             );
         } catch (JSONException e) {
@@ -267,19 +264,37 @@ public class SwableTools {
         queue.start();
     }
 
-    private static JSONObject prepareTransactionJSON(Table table, String jsonString) throws JSONException {
+    private static JSONObject prepareTransactionJSON(Table table, JSONObject jsonObject) throws JSONException {
+        JSONObject transaction = new JSONObject();
         switch(table) {
             case ORDERS:
-                jsonString = "{\"order\":" + jsonString + "}";
+                transaction.put("order", jsonObject);
                 break;
             case INVOICES:
-                jsonString = "{\"invoice\":" + jsonString + "}";
+                transaction.put("invoice", jsonObject);
                 break;
             case DOCUMENTS:
-                jsonString = "{\"document\":" + jsonString + "}";
+                transaction.put("document", jsonObject);
                 break;
         }
-        return new JSONObject(jsonString);
+        return transaction;
+    }
+
+    public static JSONObject prepareTransactionJSON(OfflineDataType offlineDataType, JSONObject jsonObject) throws
+            JSONException {
+        JSONObject transaction = new JSONObject();
+        switch(offlineDataType) {
+            case SEND_ORDER:
+                transaction.put("order", jsonObject);
+                break;
+            case SEND_INVOICE:
+                transaction.put("invoice", jsonObject);
+                break;
+            case SEND_DOCUMENT:
+                transaction.put("document", jsonObject);
+                break;
+        }
+        return transaction;
     }
 
     public static int computePagedRequestCount(int listSize, int maxElementPerPage) {
@@ -696,7 +711,7 @@ public class SwableTools {
             public void pagedSend(Table table, final OfflineData offlineData) {
                 try {
                     if(table == Table.ORDERS) {
-                        Order order = (Order)offlineData.generateObjectFromData();
+                        Order order = (Order)offlineData.getObjectFromData();
 
                         int max_page = order.getChildCount();
 
@@ -718,7 +733,7 @@ public class SwableTools {
                         }
                     }
                     else if(table == Table.DOCUMENTS) {
-                        Document document = (Document)offlineData.generateObjectFromData();
+                        Document document = (Document)offlineData.getObjectFromData();
 
                         int max_page = document.getChildCount();
 

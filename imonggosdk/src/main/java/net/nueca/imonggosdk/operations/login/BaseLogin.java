@@ -52,6 +52,7 @@ public class BaseLogin {
     private Session mSession;
 
     private Boolean mConcessioSettings = false;
+    private Boolean mUseObjectForConcessioSettings = false;
 
     private ImonggoDBHelper mDBHelper;
     private RequestQueue mRequestQueue;
@@ -498,10 +499,15 @@ public class BaseLogin {
 
                                     @Override
                                     public void onSuccess(Table table, RequestType requestType, Object response) {
-                                        JSONArray concesio = (JSONArray) response;
-                                        Log.e("Rhy-BaseLogin", concesio.toString());
                                         try {
-                                            AccountSettings.initializeApplicationSettings(mContext, concesio.getJSONObject(0));
+                                            JSONObject concesio = null;
+                                            if(mUseObjectForConcessioSettings)
+                                                concesio = (JSONObject) response;
+                                            else
+                                                concesio = ((JSONArray) response).getJSONObject(0);
+                                            Log.e("Rhy-BaseLogin", concesio.toString());
+
+                                            AccountSettings.initializeApplicationSettings(mContext, concesio);
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
@@ -542,7 +548,7 @@ public class BaseLogin {
                                             mLoginListener.onStopLogin();
                                         }
                                     }
-                                }, server, true);
+                                }, server, true, mUseObjectForConcessioSettings);
                     } else { // not using Concession Settings
                         Log.i("Jn-BaseLogin", "Not Using Concession Settings");
                         // Update the Listener
@@ -629,6 +635,15 @@ public class BaseLogin {
      */
     public void setConcessioSettings(Boolean mConcessioSettings) {
         this.mConcessioSettings = mConcessioSettings;
+    }
+
+    /**
+     * Set TRUE to use jsonobject for Concessio Setting, FALSE otherwise
+     *
+     * @param mUseObjectForConcessioSettings true or false
+     */
+    public void setmUseObjectForConcessioSettings(Boolean mUseObjectForConcessioSettings) {
+        this.mUseObjectForConcessioSettings = mUseObjectForConcessioSettings;
     }
 
     /**
