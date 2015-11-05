@@ -1,1 +1,1 @@
-include ':imonggosdk', ':concessioengine', ':concessio_test', 'concessio'
+include ':salesdashboard', ':imonggosdk', ':concessioengine'
