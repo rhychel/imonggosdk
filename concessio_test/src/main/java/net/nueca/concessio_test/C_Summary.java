@@ -3,7 +3,7 @@ package net.nueca.concessio_test;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
-import net.nueca.concessioengine.activities.ModuleActivity;
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 

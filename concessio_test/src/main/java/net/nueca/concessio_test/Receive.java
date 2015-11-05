@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import net.nueca.concessioengine.activities.ModuleActivity;
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;

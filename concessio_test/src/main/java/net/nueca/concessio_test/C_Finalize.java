@@ -1,6 +1,6 @@
 package net.nueca.concessio_test;
 
-import net.nueca.concessioengine.activities.ModuleActivity;
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 
 /**
  * Created by rhymart on 8/22/15.
