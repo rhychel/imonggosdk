@@ -118,6 +118,7 @@ public class AccountTools {
         updateUnlinked(context, true);
         dbHelper.deleteAllDatabaseValues();
         SettingTools.updateSettings(context, SettingsName.SYNC_FINISHED, false);
+        SettingTools.updateSettings(context, SettingsName.DEFAULT_BRANCH, "");
 
         // update the account listener
         if (accountListener != null) {

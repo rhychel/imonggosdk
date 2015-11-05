@@ -9,6 +9,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 
 import java.sql.SQLException;
 
@@ -64,6 +65,9 @@ public class Product extends BaseTable {
 
     @ForeignCollectionField
     private transient ForeignCollection<Unit> units;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<DocumentLine> documentLines;
 
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "extras_id")
     private Extras extras;
@@ -318,6 +322,14 @@ public class Product extends BaseTable {
 
     public ForeignCollection<Unit> getUnits() {
         return units;
+    }
+
+    public ForeignCollection<DocumentLine> getDocumentLines() {
+        return documentLines;
+    }
+
+    public void setDocumentLines(ForeignCollection<DocumentLine> documentLines) {
+        this.documentLines = documentLines;
     }
 
     public void setUnits(ForeignCollection<Unit> units) {

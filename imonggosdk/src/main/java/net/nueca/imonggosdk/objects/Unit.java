@@ -23,6 +23,8 @@ public class Unit extends BaseTable {
     private double cost, quantity, retail_price;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
+    @DatabaseField
+    private boolean is_default_ordering_unit = false;
 
     public Unit() { }
 
@@ -92,6 +94,14 @@ public class Unit extends BaseTable {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public boolean is_default_ordering_unit() {
+        return is_default_ordering_unit;
+    }
+
+    public void setIs_default_ordering_unit(boolean is_default_ordering_unit) {
+        this.is_default_ordering_unit = is_default_ordering_unit;
     }
 
     @Override

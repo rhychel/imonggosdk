@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:numpad="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/llContent"
+        android:padding="8dp">
+
+        <me.grantland.widget.AutofitTextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Product 01"
+            android:id="@+id/tvProductName"
+            android:textSize="20sp"
+            android:singleLine="true"
+            android:layout_marginBottom="5dp"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tilQuantity"
+                android:layout_weight="1">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Quantity"
+                    android:gravity="center_horizontal"
+                    android:textSize="20sp"
+                    android:id="@+id/etQuantity"
+                    android:inputType="number|numberDecimal"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tilDiscrepancy"
+                android:layout_weight="1">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Discrepancy"
+                    android:gravity="center_horizontal"
+                    android:textSize="20sp"
+                    android:id="@+id/etDiscrepancy"
+                    android:inputType="number|numberDecimal"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tilReceive"
+                android:layout_weight="1">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Receive"
+                    android:gravity="center_horizontal"
+                    android:textSize="20sp"
+                    android:id="@+id/etReceive"
+                    android:inputType="number|numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tilReturn"
+                android:layout_weight="1">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Return"
+                    android:gravity="center_horizontal"
+                    android:textSize="20sp"
+                    android:id="@+id/etReturn"
+                    android:inputType="number|numberDecimal"/>
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <net.nueca.imonggosdk.widgets.Numpad
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/npInput"
+        android:visibility="visible"
+        numpad:showGoButton="false"
+        numpad:showMoreButton="false"
+        numpad:showNegativeButton="false"
+        android:layout_below="@+id/llContent"/>
+
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/btnSave"
+        android:layout_gravity="right"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:minWidth="64dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/npInput"/>
+
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/btnCancel"
+        android:layout_toLeftOf="@+id/btnSave"
+        android:layout_toStartOf="@+id/btnSave"
+        android:minWidth="64dp"
+        android:layout_alignTop="@+id/btnSave"/>
+</RelativeLayout>

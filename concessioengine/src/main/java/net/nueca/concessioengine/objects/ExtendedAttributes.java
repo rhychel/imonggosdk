@@ -1,6 +1,6 @@
 package net.nueca.concessioengine.objects;
 
-import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
 
 /**
  * Created by rhymart on 7/13/15.
@@ -11,6 +11,9 @@ public class ExtendedAttributes {
     private String brand = "";
     private String delivery_date = "";
     private String batch_no = "";
+
+    protected String outright_return;
+    protected String discrepancy;
 
     public ExtendedAttributes() { }
 
@@ -25,6 +28,13 @@ public class ExtendedAttributes {
         this.delivery_date = delivery_date;
     }
 
+    public ExtendedAttributes(Double outright_return, Double discrepancy) {
+        if(outright_return != null)
+            this.outright_return = "" + outright_return;
+        if(discrepancy != null)
+            this.discrepancy = "" + discrepancy;
+    }
+
     public String getBrand() {
         if(brand.equals(""))
             return "No Brand";
@@ -37,11 +47,13 @@ public class ExtendedAttributes {
         return batch_no;
     }
 
-    public net.nueca.imonggosdk.objects.document.ExtendedAttributes convertForDocumentLine() {
-        return new net.nueca.imonggosdk.objects.document.ExtendedAttributes.Builder()
+    public DocumentLineExtras convertForDocumentLine() {
+        return new DocumentLineExtras.Builder()
                 .brand(getBrand())
                 .delivery_date(delivery_date)
                 .batch_no(batch_no)
+                .outright_return(outright_return)
+                .discrepancy(discrepancy)
                 .build();
     }
 
@@ -63,6 +75,22 @@ public class ExtendedAttributes {
 
     public void setBatch_no(String batch_no) {
         this.batch_no = batch_no;
+    }
+
+    public String getOutright_return() {
+        return outright_return;
+    }
+
+    public void setOutright_return(String outright_return) {
+        this.outright_return = outright_return;
+    }
+
+    public String getDiscrepancy() {
+        return discrepancy;
+    }
+
+    public void setDiscrepancy(String discrepancy) {
+        this.discrepancy = discrepancy;
     }
 
     @Override

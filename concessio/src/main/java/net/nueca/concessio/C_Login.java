@@ -76,4 +76,13 @@ public class C_Login extends LoginActivity {
 
         return modules;
     }
+
+    @Override
+    protected void onCreateLoginLayout() {
+        super.onCreateLoginLayout();
+
+        setEditTextAccountID("nuecaonly");
+        setEditTextEmail("nuecaonly@test.com");
+        setEditTextPassword("nuecaonly");
+    }
 }
