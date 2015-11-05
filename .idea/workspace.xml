@@ -55,154 +55,80 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="fix login bug">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Bold.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-BoldItalic.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-DemiBold.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-DemiBoldItalic.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Heavy.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-HeavyItalic.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Italic.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Medium.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-MediumItalic.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-Regular.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-UltraLight.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext-UltraLightItalic.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/assets/fonts/AvenirNext.ttc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_facebook.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_facebook.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_facebook.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_facebook.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_facebook.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_instagram.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_instagram.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_instagram.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_instagram.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_instagram.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_message.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_message.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_message.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_message.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_message.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_more.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_more.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_more.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_more.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_more.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_twitter.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_twitter.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_twitter.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_twitter.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_twitter.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_action_unlink.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_action_unlink.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_action_unlink.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_action_unlink.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_action_unlink.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-hdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-mdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xhdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xxhdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-hdpi/ic_refresh.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/ic_refresh.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xhdpi/ic_refresh.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxhdpi/ic_refresh.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-xxxhdpi/ic_refresh.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/libs/mpandroidchartlibrary-2-1-3.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_0.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_10.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_11.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_2.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_3.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_4.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_5.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_6.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_7.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_8.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/spinner_9.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/spinner_bg.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/AndroidManifest.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/androidTest/java/nueca/net/salesdashboard/ApplicationTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/BaseDailySalesActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/BaseSalesFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/viewpager/CustomViewPager.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/exceptions/DailySalesFragmentException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/application/DashboardApplication.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/FontsOverride.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/FormatValue.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/HUDTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/HomeActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/ImonggoSettingsTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/IntentTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/LineChartValueTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/NumberTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/OnPageChangeWeeklyListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/OnReloadBranches.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/dialog/ProgressHUD.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesDaily.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesMonthly.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/SalesRefreshListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek1.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek3.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek4.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeekly.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/ShareType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleDailySalesFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleMonthlySalesFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleWeekSalesFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/slidingtab/SlidingTabLayout.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/slidingtab/SlidingTabStrip.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/SyncDailySalesListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/Update.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/UpdateDayType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/UpdateType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/UpdateWeekType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/UserBranchesSpinnerAdapter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerAdapter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerWeeklyAdapter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/app_bar_spinner.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/app_bar_spinner_action_bar.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/app_bar_spinner_dropdown.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/build.gradle" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values/colors.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/daily_sales.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values/dimens.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values-w820dp/dimens.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/menu/drawer_view.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/fabric.properties" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/home.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/last_week.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/menu/line_chart.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/login.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/menu/menu_sd__login.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/monthly_sales.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/nav_header.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/notification.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/progress_hud.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable-mdpi/progress_hud_bg.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/rectangle.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/color/selector.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_button_login.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_text_today.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_text_yesterday.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/drawable/shape_textview_login.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/anim/spinner.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values/strings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values/styles.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/values-v21/styles.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/toolbar.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/weekly_sales_backup.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/weekly_sales_for_all.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/salesdashboard/src/main/res/layout/weekly_sales_viewpager.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings.gradle" afterPath="$PROJECT_DIR$/settings.gradle" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/.gitignore" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/build.gradle" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/androidTest/java/net/nueca/concessio/ApplicationTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Dashboard.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Finalize.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Login.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_MultiInput.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Welcome.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/layout/c_dashboard.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/layout/c_login.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/layout/c_module.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/layout/c_welcome.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/mipmap-hdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/mipmap-mdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/mipmap-xhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/values-w820dp/dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/values/colors.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/values/dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/values/strings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio/src/main/res/values/styles.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/.gitignore" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/build.gradle" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/androidTest/java/net/nueca/concessio_test/ApplicationTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/BindThisService.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Dashboard.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Finalize.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_History.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_HistoryDetails.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login2.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login3.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Module.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Module2.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_MultiInput.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Summary.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Welcome.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/InitializeActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/KeypadTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/MainActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/Receive.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/SampleAppCompatDialog.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/SampleSales.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/TestMultiInput.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout-land/c_login.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/activity_main.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/activity_receive.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/c_dashboard.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/c_login.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/c_module.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/c_module2.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/c_welcome.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/quantity.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/sample.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/sample_fragment.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/layout/sample_list.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/menu/c_module.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/menu/custom_view.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/menu/menu_main.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/menu/menu_receive.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/menu/menu_sample_sales.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/mipmap-hdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/mipmap-mdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/mipmap-xhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/values-w820dp/dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/values/colors.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/values/dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/values/strings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/values/styles.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="cf34c86b-940c-43c4-8fe3-8ede93b6a55a" name="Failed commit: Failed commit: Default" comment="backup windows" />
@@ -4283,7 +4209,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="7233414343000" />
+        <entry key="$PROJECT_DIR$" value="7233490677000" />
         <entry key="E:\Bitbucket\Android Projects\imonggosdk" value="8661418091661" />
       </map>
     </option>
@@ -5086,10 +5012,8 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="4" />
-    <option name="y" value="23" />
-    <option name="width" value="1676" />
-    <option name="height" value="1027" />
+    <option name="width" value="1680" />
+    <option name="height" value="1050" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -5122,7 +5046,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="AndroidView" proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -5134,37 +5058,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Scratches" />
-      <pane id="AndroidView">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -5231,7 +5124,48 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
+      <pane id="AndroidView">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Gradle Scripts" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -5653,7 +5587,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="4" y="23" width="1676" height="1027" extended-state="6" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -5668,19 +5602,19 @@
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30085653" sideWeight="0.4820917" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47430408" sideWeight="0.47125566" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32843137" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24816176" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32984716" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26960784" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2695599" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6132879" sideWeight="0.493553" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962178" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.379015" sideWeight="0.48280802" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962178" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3272059" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32655245" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.7023644" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -5757,6 +5691,46 @@
     <entry file="file://$PROJECT_DIR$/settings.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="40" selection-start-line="0" selection-start-column="40" selection-end-line="0" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/salesdashboard/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="263" column="36" selection-start-line="263" selection-start-column="36" selection-end-line="263" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="566" column="0" selection-start-line="566" selection-start-column="0" selection-end-line="566" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
@@ -5783,13 +5757,6 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="560" column="0" selection-start-line="560" selection-start-column="0" selection-end-line="560" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="56" selection-start-line="4" selection-start-column="56" selection-end-line="4" selection-end-column="56" />
         </state>
       </provider>
     </entry>
@@ -5901,30 +5868,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="38" column="9" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessio_test/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="27" column="1" selection-start-line="27" selection-start-column="1" selection-end-line="27" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessio_test/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3" column="5" selection-start-line="3" selection-start-column="2" selection-end-line="3" selection-end-column="5" />
           <folding />
         </state>
       </provider>
