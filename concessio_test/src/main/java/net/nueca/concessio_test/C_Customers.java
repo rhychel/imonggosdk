@@ -12,12 +12,9 @@ import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 
-import java.sql.SQLException;
-
 
 public class C_Customers extends ImonggoAppCompatActivity implements SetupActionBar {
 
-    private Toolbar mToolbar;
     private SimpleCustomersFragment mSimpleCustomersFragment;
     private String TAG = "C_Customers";
 
@@ -33,12 +30,10 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
         mSimpleCustomersFragment = new SimpleCustomersFragment();
         mSimpleCustomersFragment.setHelper(getHelper());
         mSimpleCustomersFragment.setSetupActionBar(this);
-        mSimpleCustomersFragment.setUseRecyclerView(true);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.flContent, mSimpleCustomersFragment)
-                .addToBackStack("..")
+                .add(R.id.flContent, mSimpleCustomersFragment)
                 .commit();
     }
 
@@ -73,8 +68,6 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                         .addToBackStack("add_customer")
                         .commit();
                 getSupportActionBar().setTitle("Add Customers");
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                Log.e(TAG, mSimpleCustomersFragment.getRecyclerAdapter().getItemCount() + "<<<");
                 break;
             default:
                 break;
@@ -86,10 +79,5 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        try {
-            Log.e(TAG, getHelper().getCustomers().queryForAll().size() + "<<<");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }
