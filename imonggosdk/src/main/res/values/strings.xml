@@ -52,4 +52,13 @@
     <string name="error_dialog_message_requires_premium_subscription">You can check it by trying the Premium Features. On the upper right, click "Try Premium Features Free".</string>
     <string name="error_response_requires_premium_subscription">Requires premium subscription.</string>
 
+
+    <string name="CUSTOMERS_TITLE_NAME">Name</string>
+    <string name="CUSTOMERS_ADD_FIRST_NAME">First Name</string>
+    <string name="CUSTOMERS_ADD_LAST_NAME">Last Name</string>
+    <string name="CUSTOMERS_ADD_COMPANY_NAME">Company Name</string>
+    <string name="CUSTOMERS_TITLE_NAME_SIZE">27dp</string>
+    <string name="CUSTOMERS_TITLE_CONTACT_NAME">Contact</string>
+    <string name="CUSTOMERS_TITLE_CONTACT_SIZE">27dp</string>
+
 </resources>

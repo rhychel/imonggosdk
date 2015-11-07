@@ -2,24 +2,54 @@
 <project version="4">
   <component name="AndroidLayouts">
     <shared>
-      <config />
+      <config>
+        <devices>
+          <device id="Nexus 4" />
+          <device id="wear_square" />
+          <device id="Nexus S" />
+          <device id="Nexus 7" />
+          <device id="Nexus 10" />
+        </devices>
+        <target>android-22</target>
+      </config>
     </shared>
+    <layouts>
+      <layout url="file://$PROJECT_DIR$/concessio_test/src/main/res/layout/c_module.xml">
+        <config>
+          <theme>@style/AppTheme.Concessio.NoActionBar</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/add_customers_fragment.xml">
+        <config>
+          <theme>@style/AppTheme.Concessio.NoActionBar</theme>
+        </config>
+      </layout>
+    </layouts>
   </component>
   <component name="AndroidLogFilters">
     <option name="TOOL_WINDOW_LOG_LEVEL" value="ERROR" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" line="738" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="up">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Dashboard.java" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Dashboard.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Finalize.java" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Finalize.java" />
+    <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="deleted concessio_test and concessio module">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/AddCustomersFragment.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Customers.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/layout/add_customers_fragment.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessio_test/src/main/res/layout/c_customers.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio_test/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/concessio_test/src/main/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/views/BaseToolbarExt.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/views/BaseToolbarExt.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login.java" afterPath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_MultiInput.java" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_MultiInput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Welcome.java" afterPath="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Welcome.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Customer.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Customer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_customers_menu.xml" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_customers_menu.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio_test/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/concessio_test/src/main/res/values/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/imonggosdk/src/main/res/values/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
-    <list id="936d6c5a-1f27-4920-bb3d-2332c2dff8bc" name="Failed commit: Default" comment="Merge branch 'development' into rhy&#10;&#10;# Conflicts:&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;" />
-    <list id="3fa79065-db17-46c5-a317-2d70db362927" name="Unprioritized Files" comment="" />
+    <list id="cf34c86b-940c-43c4-8fe3-8ede93b6a55a" name="Failed commit: Failed commit: Default" comment="backup windows" />
     <ignored path="imonggosdk.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,14 +61,28 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CreatePatchCommitExecutor">
-    <option name="PATCH_PATH" value="E:\Bitbucket\Android Projects\imonggosdk" />
+    <option name="PATCH_PATH" value="C:\Users\rarwkk\Desktop" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="ExportToHTMLSettings">
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/exportToHTML" />
+  </component>
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
         <projects_view>
-          <tree_state />
+          <tree_state>
+            <PATH>
+              <PATH_ELEMENT>
+                <option name="myItemId" value="" />
+                <option name="myItemType" value="com.intellij.openapi.externalSystem.view.ExternalProjectsStructure$RootNode" />
+              </PATH_ELEMENT>
+              <PATH_ELEMENT>
+                <option name="myItemId" value="imonggosdk" />
+                <option name="myItemType" value="com.intellij.openapi.externalSystem.view.ProjectNode" />
+              </PATH_ELEMENT>
+            </PATH>
+          </tree_state>
         </projects_view>
       </state>
     </system>
@@ -47,126 +91,137 @@
     <favorites_list name="imonggosdk" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="dimens.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/values-v21/dimens.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="2" column="34" selection-start-line="2" selection-start-column="34" selection-end-line="2" selection-end-column="34" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SlideInUpAnimation.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/animations/SlideInUpAnimation.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="12" column="2" selection-start-line="12" selection-start-column="2" selection-end-line="12" selection-end-column="2" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="C_Welcome.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Welcome.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33536586">
-              <caret line="11" column="51" selection-start-line="11" selection-start-column="51" selection-end-line="11" selection-end-column="51" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/imonggosdk/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="19" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="settings.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/settings.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="0" column="73" selection-start-line="0" selection-start-column="73" selection-end-line="0" selection-end-column="73" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="C_Dashboard.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Dashboard.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="7" column="43" selection-start-line="7" selection-start-column="43" selection-end-line="7" selection-end-column="43" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="C_Module.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="14" column="51" selection-start-line="14" selection-start-column="51" selection-end-line="14" selection-end-column="51" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="C_MultiInput.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_MultiInput.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="6" column="51" selection-start-line="6" selection-start-column="51" selection-end-line="6" selection-end-column="51" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="C_Finalize.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Finalize.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="2" column="51" selection-start-line="2" selection-start-column="51" selection-end-line="2" selection-end-column="51" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BaseLogin.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="214" column="0" selection-start-line="205" selection-start-column="68" selection-end-line="214" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.5324357">
+      <split-first>
+        <leaf>
+          <file leaf-file-name="C_Customers.java" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Customers.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.7285383">
+                  <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="AddCustomersFragment.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/AddCustomersFragment.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="16" column="51" selection-start-line="16" selection-start-column="51" selection-end-line="16" selection-end-column="51" />
+                  <folding>
+                    <element signature="e#640#641#0" expanded="true" />
+                    <element signature="e#689#690#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="simple_customers_fragment_rv.xml" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_customers_fragment_rv.xml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="13" column="33" selection-start-line="7" selection-start-column="3" selection-end-line="13" selection-end-column="33" />
+                  <folding />
+                </state>
+              </provider>
+              <provider editor-type-id="android-designer">
+                <state />
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="SimpleCustomersFragment.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleCustomersFragment.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="44" column="5" selection-start-line="44" selection-start-column="5" selection-end-line="44" selection-end-column="5" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="C_Module.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="121" column="47" selection-start-line="121" selection-start-column="33" selection-end-line="121" selection-end-column="47" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="add_customers_fragment.xml" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/add_customers_fragment.xml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+              <provider editor-type-id="android-designer">
+                <state />
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Customer.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Customer.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="32" column="104" selection-start-line="28" selection-start-column="19" selection-end-line="32" selection-end-column="104" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="BaseTable.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTable.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="24" column="35" selection-start-line="24" selection-start-column="35" selection-end-line="24" selection-end-column="35" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="strings.xml" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/res/values/strings.xml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="61" column="46" selection-start-line="61" selection-start-column="18" selection-end-line="61" selection-end-column="46" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="valueResourceFile" />
+        <option value="Enum" />
+        <option value="resourceFile" />
         <option value="Class" />
+        <option value="layoutResourceFile_vertical" />
       </list>
     </option>
   </component>
+  <component name="GenerateSignedApkSettings">
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/salesdashboard/salesdashboard.jks" />
+    <option name="KEY_ALIAS" value="salesdashboard" />
+    <option name="REMEMBER_PASSWORDS" value="true" />
+  </component>
   <component name="Git.Settings">
-    <option name="PREVIOUS_COMMIT_AUTHORS">
-      <list>
-        <option value="Rhy &lt;rhymart.manchus@gmail.com&gt;" />
-      </list>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="salesdash" />
       </map>
     </option>
   </component>
@@ -3462,8 +3517,8 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="8679746602000" />
-        <entry key="E:\Bitbucket\Android Projects\imonggosdk" value="8645005560732" />
+        <entry key="$PROJECT_DIR$" value="8680210253000" />
+        <entry key="E:\Bitbucket\Android Projects\imonggosdk" value="8661418091661" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -3973,6 +4028,7 @@
                           <list>
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/build/gradle/1.2.3/gradle-1.2.3-sources.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/build/gradle/1.2.3/gradle-1.2.3.jar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.fabric.tools/gradle/1.20.1/f3fc9824abcb0f8681ed019d599232dc4d37e5c2/gradle-1.20.1.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/build/gradle-core/1.2.3/gradle-core-1.2.3-sources.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/build/gradle-core/1.2.3/gradle-core-1.2.3.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/net/sf/proguard/proguard-gradle/5.1/proguard-gradle-5.1-sources.jar" />
@@ -4041,6 +4097,20 @@
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/commons-codec/commons-codec/1.4/commons-codec-1.4-sources.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/me.grantland/autofittextview/0.2.1/f64a72bb94465b84cb1a2808a887d27dc3021aef/autofittextview-0.2.1.aar" />
+                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/appcompat-v7/23.1.0/appcompat-v7-23.1.0.aar" />
+                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/support-v4/23.1.0/support-v4-23.1.0.aar" />
+                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/design/23.1.0/design-23.1.0.aar" />
+                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/cardview-v7/23.1.0/cardview-v7-23.1.0.aar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.lecho/hellocharts-library/1.5.7/d02c6606a18e8a269ac42014d72e179c26c8a5e5/hellocharts-library-1.5.7.aar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/crashlytics/2.5.2/9891aa329daaacae07eb7269f648ea1833c640e6/crashlytics-2.5.2.aar" />
+                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.0/support-annotations-23.1.0.jar" />
+                            <option value="/Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/recyclerview-v7/23.1.0/recyclerview-v7-23.1.0.aar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/answers/1.3.2/54d970cdc1e6995d9fdbd7eaca53c6333e77bb55/answers-1.3.2.aar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.fabric.sdk.android/fabric/1.3.6/cdfdd123e598acad7822b6cd903b32e355028518/fabric-1.3.6.aar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/crashlytics-core/2.3.5/a52bbb9f5c1e903fc1e60754eaae3871a5fb62e7/crashlytics-core-2.3.5.aar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.crashlytics.sdk.android/beta/1.1.3/5e3a3112e6adf41e70b2382d313d963fdbc8d1bd/beta-1.1.3.aar" />
+                            <option value="$MODULE_DIR$/libs/mpandroidchartlibrary-2-1-3.jar" />
                           </list>
                         </option>
                         <option name="path" value="$PROJECT_DIR$/salesdashboard" />
@@ -4179,57 +4249,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java" />
-        <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/ImonggoLogin.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java" />
-        <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Module.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/ModuleActivity.java" />
-        <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Module2.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SimpleQuantityDialog.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/widgets/Numpad.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/lists/ValuesList.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/Values.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleProductsFragment.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/SelectedProductItem.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/SimpleLoginActivity.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/CustomDialog.java" />
-        <option value="$PROJECT_DIR$/salesdashboard/src/main/res/values/styles.xml" />
-        <option value="$PROJECT_DIR$/salesdashboard/src/main/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/D_Login.java" />
-        <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/DateTimeTools.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DailSalesEnums.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/LastUpdatedAt.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Server.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/ImonggoOperations.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/ImonggoTools.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/LoginTools.java" />
-        <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/CustomDialogFrameLayout.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DailySalesEnums.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java" />
-        <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/D_Login.java" />
-        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/LineChartValueTools.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleWeekSalesFragment.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek1.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleMonthlySalesFragment.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek3.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek4.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/BaseDailySalesActivity.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeek2.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/BranchTag.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" />
-        <option value="$PROJECT_DIR$/concessio_test/.gitignore" />
-        <option value="$PROJECT_DIR$/imonggosdk/.gitignore" />
-        <option value="$PROJECT_DIR$/salesdashboard/.gitignore" />
-        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/UserBranchesSpinnerAdapter.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
-        <option value="$PROJECT_DIR$/concessioengine/src/main/res/values-v21/dimens.xml" />
         <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/animations/SlideInUpAnimation.java" />
         <option value="$PROJECT_DIR$/imonggosdk/build.gradle" />
+        <option value="$PROJECT_DIR$/concessioengine/build.gradle" />
+        <option value="$PROJECT_DIR$/concessio_test/build.gradle" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/res/values-v21/dimens.xml" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/enums/ShareType.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/res/layout/login.xml" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/HomeActivity.java" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/imonggosdk/.gitignore" />
+        <option value="$PROJECT_DIR$/gradle.properties" />
+        <option value="$PROJECT_DIR$/concessio_test/.gitignore" />
+        <option value="$PROJECT_DIR$/salesdashboard/build.gradle" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/settings.gradle" />
-        <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Dashboard.java" />
-        <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Finalize.java" />
+        <option value="$PROJECT_DIR$/concessio_test/src/main/res/layout/c_customers.xml" />
+        <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/views/SimpleCustomerToolbarExt.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/views/BaseToolbarExt.java" />
+        <option value="$PROJECT_DIR$/concessio_test/src/main/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleCustomersFragment.java" />
+        <option value="$PROJECT_DIR$/concessio_test/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java" />
-        <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_MultiInput.java" />
-        <option value="$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Welcome.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_customers_menu.xml" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleCustomersAddFragment.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/CustomersAddFragment.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Customer.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/module/ModuleActivity.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/AddCustomersFragment.java" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleProductsFragment.java" />
+        <option value="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Customers.java" />
+        <option value="$PROJECT_DIR$/imonggosdk/src/main/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/concessioengine/src/main/res/layout/add_customers_fragment.xml" />
       </list>
     </option>
   </component>
@@ -4240,12 +4310,17 @@
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="MavenProjectNavigator">
+    <treeState />
+  </component>
   <component name="NamedScopeManager">
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1680" />
-    <option name="height" value="1050" />
+    <option name="x" value="61" />
+    <option name="y" value="23" />
+    <option name="width" value="1619" />
+    <option name="height" value="1027" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -4260,7 +4335,7 @@
         </expanded-state>
         <selected-state>
           <State>
-            <id>AndroidLintSimpleDateFormat</id>
+            <id>Android</id>
           </State>
         </selected-state>
       </profile-state>
@@ -4289,37 +4364,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="AndroidView">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Gradle Scripts" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -4386,52 +4430,107 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="AndroidView">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Gradle Scripts" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
       <pane id="PackagesPane" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="HKE5C395" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus_10" />
-    <property name="SearchEverywhereHistoryKey" value="BaseLogin&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java&#10;Imongg&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Dail&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java&#10;login&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;Sync&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;LoginA&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;BaseL&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;BaseS&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java&#10;LoginAc&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;BaseLO&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;dbH&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;SYNC&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;bA&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTable.java&#10;Login&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java&#10;bASE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;Simple&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/SimpleLoginActivity.java&#10;C_Samp&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java&#10;Selec&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/objects/SelectedProductItem.java&#10;C_Module2&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_Module2.java&#10;Sele&#9;PSI&#9;JAVA://net.nueca.concessioengine.objects.SelectedProductItem&#10;SyncMo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;BaseLo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;DB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;BaseLOgin&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;DBHE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Document&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;DBHe&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;C_Module&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessio_test/src/main/java/net/nueca/concessio_test/C_Module.java&#10;Sync\&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Base&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;SyncM&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Configu&#9;PSI&#9;JAVA://net.nueca.imonggosdk.tools.Configurations" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/Document_-_additional_fields.patch" />
+    <property name="SearchEverywhereHistoryKey" value="login&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/salesdashboard/build/intermediates/res/debug/layout/login.xml&#10;Customer&#9;PSI&#9;JAVA://net.nueca.imonggosdk.objects.Customer#customer_type_id&#10;Customers&#9;PSI&#9;JAVA://net.nueca.imonggosdk.enums.Table#CUSTOMERS&#10;recycle&#9;PSI&#9;JAVA://net.nueca.concessioengine.adapters.base.BaseCustomersRecyclerAdapter&#10;Bas&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java&#10;Htt&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java&#10;BaseLogin.ja&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;SyncDailySales&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;Sync&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;BaseLogin&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.login.BaseLogin&#10;BaseLoginActivity&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;reloadBranch&#9;PSI&#9;JAVA://nueca.net.salesdashboard.interfaces.OnReloadBranches&#10;string&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/res/values/strings.xml&#10;string.&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/res/values/strings.xml&#10;SyncModu&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Daily&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java&#10;DailySales&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SalesWeek4&#9;PSI&#9;JAVA://nueca.net.salesdashboard.fragments.SalesWeek4&#10;DailySal&#9;PSI&#9;JAVA://net.nueca.imonggosdk.objects.DailySales&#10;Anim&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;ViewPage&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerAdapter.java&#10;AnimToo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;SyncMo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;SyncD&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SyncModules&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.sync.SyncModules&#10;sYNC&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SyncDa&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;sYNCdAIL&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;Login&#9;PSI&#9;JAVA://net.nueca.imonggosdk.enums.RequestType#LOGIN&#10;Db&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;Animt&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;BaseDailySalesActivity&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/BaseDailySalesActivity.java&#10;DateT&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java&#10;DateTim&#9;PSI&#9;JAVA://net.nueca.imonggosdk.tools.DateTimeTools&#10;SyncDai&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;DateTools&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java&#10;SimpleWeekSalesFragment&#9;PSI&#9;JAVA://nueca.net.salesdashboard.fragments.SimpleWeekSalesFragment&#10;SalesWeekly&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeeklyBackup.java&#10;SalesRe&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/SalesRefreshListener.java&#10;BaseS&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/BaseSalesFragment.java&#10;ViewPagerAda&#9;PSI&#9;JAVA://nueca.net.salesdashboard.adapters.ViewPagerAdapter&#10;Sess&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Session.java&#10;DashB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java&#10;Settings&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Settings.java&#10;SimpleDai&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleDailySalesFragment.java&#10;DBHE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Setting&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Settings.java&#10;DB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;DBHe&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;SyncMO&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Desktop" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
-    <property name="android.project.structure.last.selected" value="salesdashboard" />
-    <property name="android.project.structure.proportion" value="0.2625" />
+    <property name="android.project.structure.last.selected" value="imonggosdk" />
+    <property name="android.project.structure.proportion" value="0.15" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="ignore_missing_gitignore" value="true" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/salesdashboard/src/main/java" />
+    <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager2.SHOW" value="true" />
+    <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager2.WIDTH" value="366" />
+    <property name="UI_DESIGNER_EDITOR_MODE.PaletteToolWindowManager.SHOW" value="true" />
     <property name="FullScreen" value="false" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus_4" />
+    <property name="ExportApk.ApkPath" value="$PROJECT_DIR$/salesdashboard" />
+    <property name="ExportApk.Flavors" value="" />
+    <property name="ExportApk.BuildType" value="release" />
+    <property name="full.screen.before.presentation.mode" value="true" />
   </component>
-  <component name="RunManager" selected="Android Application.concessio">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Bitbucket\Android Projects\imonggosdk\salesdashboard\src\main\assets\fonts" />
+      <recent name="E:\Bitbucket\Android Projects\imonggosdk\salesdashboard\src\main\assets" />
+      <recent name="E:\Bitbucket\Android Projects\imonggosdk\concessioengine\src\main\res\anim" />
+      <recent name="E:\Bitbucket\Android Projects\imonggosdk\concessioengine\src\main\res\drawable" />
+    </key>
+    <key name="android.template.packageName">
+      <recent name="com.imonggo.dashboard" />
+      <recent name="nueca.net.salesdashboard.adapters" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Bitbucket\Android Projects\imonggosdk\salesdashboard\src\main\assets\fonts" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Android Application.concessio_test">
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="" />
       <option name="ACTIVITY_CLASS" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="DEPLOY" value="true" />
       <option name="ARTIFACT_NAME" value="" />
       <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
       <option name="USE_LAST_SELECTED_DEVICE" value="false" />
       <option name="PREFERRED_AVD" value="" />
-      <option name="USE_COMMAND_LINE" value="true" />
-      <option name="COMMAND_LINE" value="" />
-      <option name="WIPE_USER_DATA" value="false" />
-      <option name="DISABLE_BOOT_ANIMATION" value="false" />
-      <option name="NETWORK_SPEED" value="full" />
-      <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
-      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
       <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
       <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
       <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
       <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
-      <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="" />
-      <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="" />
       <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
       <method />
     </configuration>
@@ -4442,26 +4541,18 @@
       <option name="METHOD_NAME" value="" />
       <option name="CLASS_NAME" value="" />
       <option name="PACKAGE_NAME" value="" />
+      <option name="EXTRA_OPTIONS" value="" />
       <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
       <option name="USE_LAST_SELECTED_DEVICE" value="false" />
       <option name="PREFERRED_AVD" value="" />
-      <option name="USE_COMMAND_LINE" value="true" />
-      <option name="COMMAND_LINE" value="" />
-      <option name="WIPE_USER_DATA" value="false" />
-      <option name="DISABLE_BOOT_ANIMATION" value="false" />
-      <option name="NETWORK_SPEED" value="full" />
-      <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
-      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
       <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
       <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
       <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
       <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
-      <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="" />
-      <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="" />
       <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
       <method />
     </configuration>
@@ -4478,6 +4569,15 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="" />
       <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="GroovyScriptRunConfiguration" factoryName="Groovy">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
       <method />
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
@@ -4545,64 +4645,70 @@
     <configuration default="false" name="concessio_test" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="concessio_test" />
       <option name="ACTIVITY_CLASS" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="DEPLOY" value="true" />
       <option name="ARTIFACT_NAME" value="" />
       <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
       <option name="USE_LAST_SELECTED_DEVICE" value="false" />
       <option name="PREFERRED_AVD" value="" />
-      <option name="USE_COMMAND_LINE" value="true" />
-      <option name="COMMAND_LINE" value="" />
-      <option name="WIPE_USER_DATA" value="false" />
-      <option name="DISABLE_BOOT_ANIMATION" value="false" />
-      <option name="NETWORK_SPEED" value="full" />
-      <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
-      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
       <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
       <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
       <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
       <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
-      <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="" />
-      <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="" />
       <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
       <method />
     </configuration>
     <configuration default="false" name="concessio" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="concessio" />
       <option name="ACTIVITY_CLASS" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="DEPLOY" value="true" />
       <option name="ARTIFACT_NAME" value="" />
       <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
       <option name="USE_LAST_SELECTED_DEVICE" value="false" />
       <option name="PREFERRED_AVD" value="" />
-      <option name="USE_COMMAND_LINE" value="true" />
-      <option name="COMMAND_LINE" value="" />
-      <option name="WIPE_USER_DATA" value="false" />
-      <option name="DISABLE_BOOT_ANIMATION" value="false" />
-      <option name="NETWORK_SPEED" value="full" />
-      <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
-      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
+      <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
+      <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
+      <method />
+    </configuration>
+    <configuration default="false" name="salesdashboard" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
       <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
       <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="Please select a project..." />
       <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="-1" />
       <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="Please select a project..." />
-      <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="Cloud configuration not specified" />
-      <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="Cloud configuration not specified" />
       <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
       <method />
     </configuration>
-    <list size="2">
+    <list size="3">
       <item index="0" class="java.lang.String" itemvalue="Android Application.concessio_test" />
       <item index="1" class="java.lang.String" itemvalue="Android Application.concessio" />
+      <item index="2" class="java.lang.String" itemvalue="Android Application.salesdashboard" />
     </list>
     <configuration name="&lt;template&gt;" type="Applet" default="true" selected="false">
       <option name="MAIN_CLASS_NAME" />
@@ -4624,7 +4730,6 @@
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="" />
-      <changelist id="3fa79065-db17-46c5-a317-2d70db362927" name="Unprioritized Files" comment="" />
       <created>1440065346095</created>
       <option name="number" value="Default" />
       <updated>1440065346095</updated>
@@ -4677,37 +4782,31 @@
       <option name="project" value="LOCAL" />
       <updated>1441260877118</updated>
     </task>
-    <task id="LOCAL-00009" summary="Merge branch 'development' into rhy&#10;&#10;# Conflicts:&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;">
-      <created>1443514786715</created>
+    <task id="LOCAL-00009" summary="fix SyncModules not downloading branch with warehouse">
+      <created>1443512537235</created>
       <option name="number" value="00009" />
       <option name="project" value="LOCAL" />
-      <updated>1443514786715</updated>
+      <updated>1443512537236</updated>
     </task>
-    <task id="LOCAL-00010" summary=".gitignore for rhy">
-      <created>1443515617593</created>
+    <task id="LOCAL-00010" summary="backup windows">
+      <created>1446203008644</created>
       <option name="number" value="00010" />
       <option name="project" value="LOCAL" />
-      <updated>1443515617593</updated>
+      <updated>1446203008644</updated>
     </task>
-    <task id="LOCAL-00011" summary="Removed unnecessary files.">
-      <created>1443517977697</created>
+    <task id="LOCAL-00011" summary="backup windows">
+      <created>1446203085547</created>
       <option name="number" value="00011" />
       <option name="project" value="LOCAL" />
-      <updated>1443517977697</updated>
+      <updated>1446203085547</updated>
     </task>
-    <task id="LOCAL-00012" summary="Removed unnecessary files. 2">
-      <created>1443521220429</created>
+    <task id="LOCAL-00012" summary="backup windows">
+      <created>1446203321680</created>
       <option name="number" value="00012" />
       <option name="project" value="LOCAL" />
-      <updated>1443521220429</updated>
+      <updated>1446203321680</updated>
     </task>
-    <task id="LOCAL-00013" summary="Removed unnecessary files. 2">
-      <created>1443521274887</created>
-      <option name="number" value="00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1443521274887</updated>
-    </task>
-    <option name="localTasksCounter" value="14" />
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TodoView">
@@ -4720,65 +4819,72 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
-    <editor active="false" />
+    <frame x="61" y="23" width="1619" height="1027" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43382353" sideWeight="0.49678457" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Fabric" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32058823" sideWeight="0.52831715" order="6" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15273312" sideWeight="0.50596255" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32647058" sideWeight="0.49190938" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
-      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31903765" sideWeight="0.47168285" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.45606694" sideWeight="0.48713827" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16198044" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5" sideWeight="0.49196142" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16550413" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43393603" sideWeight="0.49678457" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6123595" sideWeight="0.493553" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26772615" sideWeight="0.51046026" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43311402" sideWeight="0.506447" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47483587" sideWeight="0.49283668" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.9318498" sideWeight="0.51790833" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3" sideWeight="0.4820917" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32843137" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="top" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24816176" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32984716" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21481028" sideWeight="0.48953974" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Fabric" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31295845" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37865168" sideWeight="0.48280802" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962178" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32823366" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32655245" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.7023644" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4730337" sideWeight="0.47125566" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Fabric" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31295845" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.63202727" sideWeight="0.5128617" order="6" side_tool="true" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6132879" sideWeight="0.493553" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42398286" sideWeight="0.506447" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47483587" sideWeight="0.49283668" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.9318498" sideWeight="0.51790833" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.49544764" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14372164" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5008518" sideWeight="0.49196142" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32843137" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26772615" sideWeight="0.48953974" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3786611" sideWeight="0.48280802" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962178" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43532684" sideWeight="0.49678457" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15273312" sideWeight="0.50596255" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32197616" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.63202727" sideWeight="0.48713827" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43393603" sideWeight="0.49678457" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1314181" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32655245" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.7023644" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26772615" sideWeight="0.51046026" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3002092" sideWeight="0.4820917" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4738494" sideWeight="0.47125566" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24816176" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32984716" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
@@ -4794,7 +4900,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="false" />
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="before merging to dev" />
@@ -4804,368 +4909,364 @@
     <MESSAGE value="fixed Product Tag issue." />
     <MESSAGE value="fixed product tags issue.&#10;in development: documents." />
     <MESSAGE value="Jn Backup Before Checking out Dev" />
-    <MESSAGE value="fix login bug" />
     <MESSAGE value="fixed service connection bug" />
     <MESSAGE value="added daily sales api support (TODAY)" />
-    <MESSAGE value="Before merging to RHY" />
-    <MESSAGE value="Fixed lacking methods." />
-    <MESSAGE value="Merge branch 'development' into rhy&#10;&#10;# Conflicts:&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;#&#9;imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java&#10;" />
-    <MESSAGE value=".gitignore for rhy" />
-    <MESSAGE value="Removed unnecessary files." />
-    <MESSAGE value="Removed unnecessary files. 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed unnecessary files. 2" />
+    <MESSAGE value="first commit" />
+    <MESSAGE value="fix SyncModules not downloading branch with warehouse" />
+    <MESSAGE value="backup windows" />
+    <MESSAGE value="commit file: ShareType" />
+    <MESSAGE value="Sales Dashboard Backup for Mac" />
+    <MESSAGE value="backup before merging to jn" />
+    <MESSAGE value="cleaning files" />
+    <MESSAGE value="delete profiile_settings in idea" />
+    <MESSAGE value="fix login bug" />
+    <MESSAGE value="deleted concessio_test and concessio module" />
+    <option name="LAST_COMMIT_MESSAGE" value="deleted concessio_test and concessio module" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="1" />
+      <option name="time" value="44" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Inventory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27370304">
-          <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTable.java">
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/values-v21/dimens.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="22" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/TaxSetting.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="95" column="1" selection-start-line="95" selection-start-column="1" selection-end-line="95" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/SettingsName.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.060822897">
-          <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/SettingTools.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="105" column="82" selection-start-line="105" selection-start-column="77" selection-end-line="105" selection-end-column="82" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/DateTimeTools.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.865832">
-          <caret line="26" column="79" selection-start-line="26" selection-start-column="60" selection-end-line="26" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3.1/563dcb685903c96ce8abbd03adf7fa49e19aa8b4/gson-2.3.1-sources.jar!/com/google/gson/Gson.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="694" column="15" selection-start-line="694" selection-start-column="15" selection-end-line="694" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/DatabaseOperation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.1824687">
-          <caret line="6" column="12" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/ImonggoService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="51" column="22" selection-start-line="51" selection-start-column="22" selection-end-line="51" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Session.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="162" column="20" selection-start-line="162" selection-start-column="20" selection-end-line="162" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-core/4.48/be29c57c0e7b7c1137e27e6048d17bda9a1174db/ormlite-core-4.48-sources.jar!/com/j256/ormlite/stmt/Where.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33273703">
-          <caret line="515" column="13" selection-start-line="515" selection-start-column="13" selection-end-line="515" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/LastUpdatedAt.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="74" column="18" selection-start-line="74" selection-start-column="18" selection-end-line="74" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/ImonggoOperations.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="78" column="44" selection-start-line="78" selection-start-column="44" selection-end-line="78" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/Configurations.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.135957">
-          <caret line="57" column="41" selection-start-line="57" selection-start-column="41" selection-end-line="57" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.037037">
-          <caret line="8" column="33" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/LoginTools.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="29" column="7" selection-start-line="29" selection-start-column="7" selection-end-line="29" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Server.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="15" selection-start-line="4" selection-start-column="15" selection-end-line="4" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/ImonggoTools.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.05724508">
-          <caret line="109" column="39" selection-start-line="109" selection-start-column="39" selection-end-line="109" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.51520574">
-          <caret line="45" column="46" selection-start-line="45" selection-start-column="46" selection-end-line="45" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/LastUpdateAtTools.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="20" column="25" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_SampleLogin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/CustomDialogFrameLayout.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="62" column="5" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="229" column="21" selection-start-line="229" selection-start-column="21" selection-end-line="229" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="194" column="39" selection-start-line="194" selection-start-column="39" selection-end-line="194" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.5402985">
-          <caret line="505" column="33" selection-start-line="505" selection-start-column="33" selection-end-line="505" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Product.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="346" column="64" selection-start-line="346" selection-start-column="64" selection-end-line="346" selection-end-column="64" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="230" column="46" selection-start-line="230" selection-start-column="46" selection-end-line="230" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Table.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.22699386">
-          <caret line="14" column="18" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Extras.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BatchList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="74" column="53" selection-start-line="74" selection-start-column="21" selection-end-line="74" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/OfflineData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="530" column="50" selection-start-line="530" selection-start-column="50" selection-end-line="530" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="22.141104">
-          <caret line="1311" column="32" selection-start-line="1311" selection-start-column="32" selection-end-line="1311" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6441718">
-          <caret line="35" column="9" selection-start-line="0" selection-start-column="0" selection-end-line="38" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessio_test/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="38" column="9" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="21" column="42" selection-start-line="21" selection-start-column="42" selection-end-line="21" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="38" column="9" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessio_test/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="20" column="42" selection-start-line="20" selection-start-column="42" selection-end-line="20" selection-end-column="42" />
-          <folding />
+          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
+          <caret line="43" column="11" selection-start-line="43" selection-start-column="11" selection-end-line="43" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/values-v21/dimens.xml">
+    <entry file="file://$PROJECT_DIR$/imonggosdk/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="2" column="34" selection-start-line="2" selection-start-column="34" selection-end-line="2" selection-end-column="34" />
-          <folding />
+          <caret line="43" column="9" selection-start-line="43" selection-start-column="9" selection-end-line="43" selection-end-column="9" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/animations/SlideInUpAnimation.java">
+    <entry file="file://$PROJECT_DIR$/concessioengine/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="12" column="2" selection-start-line="12" selection-start-column="2" selection-end-line="12" selection-end-column="2" />
-          <folding />
+          <caret line="38" column="9" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/build.gradle">
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="19" selection-end-column="1" />
-          <folding />
+          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="214" column="0" selection-start-line="205" selection-start-column="68" selection-end-line="214" selection-end-column="0" />
-          <folding />
+          <caret line="566" column="0" selection-start-line="566" selection-start-column="0" selection-end-line="566" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/settings.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="73" selection-start-line="0" selection-start-column="73" selection-end-line="0" selection-end-column="73" />
+          <caret line="0" column="40" selection-start-line="0" selection-start-column="40" selection-end-line="0" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="263" column="36" selection-start-line="263" selection-start-column="36" selection-end-line="263" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseRecyclerAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.12931034">
+          <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseCustomersRecyclerAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.22105263">
+          <caret line="12" column="33" selection-start-line="12" selection-start-column="33" selection-end-line="12" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleCustomerRecyclerViewAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.44210526">
+          <caret line="25" column="34" selection-start-line="25" selection-start-column="34" selection-end-line="25" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Dashboard.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="31" column="43" selection-start-line="29" selection-start-column="4" selection-end-line="31" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/BindThisService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/res/layout/c_module.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1645857">
+          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="10" selection-end-column="37" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="jar:///Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/support-v4/23.1.0/support-v4-23.1.0-sources.jar!/android/support/v4/app/Fragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.53556">
+          <caret line="399" column="27" selection-start-line="399" selection-start-column="27" selection-end-line="399" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Applications/Android Tools/sdk/extras/android/m2repository/com/android/support/appcompat-v7/23.1.0/appcompat-v7-23.1.0-sources.jar!/android/support/v7/app/AppCompatActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33297414">
+          <caret line="51" column="13" selection-start-line="51" selection-start-column="13" selection-end-line="51" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_products_menu.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Finalize.java">
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="2" column="51" selection-start-line="2" selection-start-column="51" selection-end-line="2" selection-end-column="51" />
+          <caret line="46" column="50" selection-start-line="46" selection-start-column="50" selection-end-line="46" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/res/layout/c_customers.xml">
+      <provider editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="37" selection-start-line="10" selection-start-column="37" selection-end-line="10" selection-end-column="37" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="jar:///Applications/Android Tools/sdk/platforms/android-23/android.jar!/android/widget/TextView.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17887564">
+          <caret line="55" column="13" selection-start-line="55" selection-start-column="13" selection-end-line="55" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/pullout_toolbar_ext.xml">
+      <provider editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="31" column="22" selection-start-line="31" selection-start-column="22" selection-end-line="31" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/receive_toolbar_ext.xml">
+      <provider editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/views/BaseToolbarExt.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.21228448">
+          <caret line="62" column="37" selection-start-line="62" selection-start-column="37" selection-end-line="62" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/views/SimplePulloutToolbarExt.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.14547414">
+          <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="46" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/interfaces/SetupActionBar.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="8" column="20" selection-start-line="8" selection-start-column="20" selection-end-line="8" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/res/layout/sample_fragment.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Dashboard.java">
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/values/styles.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="7" column="43" selection-start-line="7" selection-start-column="43" selection-end-line="7" selection-end-column="43" />
+          <caret line="15" column="17" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.100446425">
+          <caret line="3" column="53" selection-start-line="3" selection-start-column="53" selection-end-line="3" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_History.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.62736845">
+          <caret line="27" column="41" selection-start-line="27" selection-start-column="41" selection-end-line="27" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Module.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.4105263">
+          <caret line="61" column="36" selection-start-line="61" selection-start-column="36" selection-end-line="61" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/views/SimpleReceiveToolbarExt.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.22105263">
+          <caret line="10" column="51" selection-start-line="10" selection-start-column="51" selection-end-line="10" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/activities/ImonggoAppCompatActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.38793105">
+          <caret line="34" column="27" selection-start-line="34" selection-start-column="27" selection-end-line="34" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6519722">
+          <caret line="38" column="64" selection-start-line="38" selection-start-column="53" selection-end-line="38" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="30" column="64" selection-start-line="30" selection-start-column="64" selection-end-line="30" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_customers_fragment_rv.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="13" column="33" selection-start-line="7" selection-start-column="3" selection-end-line="13" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Table.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/salesdashboard/build/intermediates/res/debug/layout/login.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.016968327">
+          <caret line="1" column="38" selection-start-line="1" selection-start-column="38" selection-end-line="1" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.21003501">
+          <caret line="12" column="18" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/module/ModuleActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="52" column="12" selection-start-line="52" selection-start-column="12" selection-end-line="52" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_customers_menu.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="38" selection-start-line="0" selection-start-column="38" selection-end-line="0" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleProductsFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17401393">
+          <caret line="47" column="13" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/AddCustomersFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="16" column="51" selection-start-line="16" selection-start-column="51" selection-end-line="16" selection-end-column="51" />
+          <folding>
+            <element signature="e#640#641#0" expanded="true" />
+            <element signature="e#689#690#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseCustomersFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.38275862">
+          <caret line="176" column="49" selection-start-line="176" selection-start-column="49" selection-end-line="176" selection-end-column="49" />
           <folding />
         </state>
       </provider>
@@ -5173,25 +5274,60 @@
     <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Module.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="14" column="51" selection-start-line="14" selection-start-column="51" selection-end-line="14" selection-end-column="51" />
+          <caret line="121" column="47" selection-start-line="121" selection-start-column="33" selection-end-line="121" selection-end-column="47" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_MultiInput.java">
+    <entry file="file://$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Customers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7285383">
+          <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleCustomersFragment.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="51" selection-start-line="6" selection-start-column="51" selection-end-line="6" selection-end-column="51" />
+          <caret line="44" column="5" selection-start-line="44" selection-start-column="5" selection-end-line="44" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concessio/src/main/java/net/nueca/concessio/C_Welcome.java">
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33536586">
-          <caret line="11" column="51" selection-start-line="11" selection-start-column="51" selection-end-line="11" selection-end-column="51" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="24" column="35" selection-start-line="24" selection-start-column="35" selection-end-line="24" selection-end-column="35" />
           <folding />
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Customer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="32" column="104" selection-start-line="28" selection-start-column="19" selection-end-line="32" selection-end-column="104" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="61" column="46" selection-start-line="61" selection-start-column="18" selection-end-line="61" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concessioengine/src/main/res/layout/add_customers_fragment.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
   </component>
