@@ -56,7 +56,6 @@
   <component name="ChangeListManager">
     <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="fix login bug">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java" afterPath="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="cf34c86b-940c-43c4-8fe3-8ede93b6a55a" name="Failed commit: Failed commit: Default" comment="backup windows" />
@@ -102,7 +101,7 @@
       <file leaf-file-name="strings.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/res/values/strings.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-22.222221">
+            <state vertical-scroll-proportion="0.0">
               <caret line="40" column="44" selection-start-line="40" selection-start-column="18" selection-end-line="40" selection-end-column="44" />
               <folding />
             </state>
@@ -119,25 +118,22 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DashboardLoginActivity.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="DashboardLoginActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="143" column="5" selection-start-line="143" selection-start-column="5" selection-end-line="143" selection-end-column="5" />
+            <state vertical-scroll-proportion="0.5010776">
+              <caret line="83" column="12" selection-start-line="83" selection-start-column="12" selection-end-line="83" selection-end-column="39" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SyncModules.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SyncModules.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8471121">
+            <state vertical-scroll-proportion="0.0">
               <caret line="633" column="29" selection-start-line="633" selection-start-column="29" selection-end-line="633" selection-end-column="29" />
-              <folding>
-                <element signature="e#61973#61974#0" expanded="true" />
-                <element signature="e#62028#62029#0" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -4140,7 +4136,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="7234029825000" />
+        <entry key="$PROJECT_DIR$" value="7234081236000" />
         <entry key="E:\Bitbucket\Android Projects\imonggosdk" value="8661418091661" />
       </map>
     </option>
@@ -4924,8 +4920,8 @@
         <option value="$PROJECT_DIR$/salesdashboard/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/settings.gradle" />
         <option value="$PROJECT_DIR$/salesdashboard/src/main/res/layout/login.xml" />
-        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java" />
         <option value="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
+        <option value="$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java" />
       </list>
     </option>
   </component>
@@ -4943,10 +4939,8 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="61" />
-    <option name="y" value="23" />
-    <option name="width" value="1619" />
-    <option name="height" value="1027" />
+    <option name="width" value="1680" />
+    <option name="height" value="1050" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -4991,6 +4985,37 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="AndroidView">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Gradle Scripts" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -5065,134 +5090,15 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="PackagesPane" />
-      <pane id="AndroidView">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Gradle Scripts" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="salesdashboard" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="assets" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="salesdashboard" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="salesdashboard" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="layout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="salesdashboard" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="salesdashboard" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="salesdashboard" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="salesdashboard" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="0064d476db09986d" />
-    <property name="SearchEverywhereHistoryKey" value="Dash&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java&#10;SyncMOd&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.sync.SyncModules&#10;DashboardLo&#9;PSI&#9;JAVA://nueca.net.salesdashboard.activities.DashboardLoginActivity&#10;Bas&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java&#10;Htt&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java&#10;BaseLogin.ja&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;SyncDailySales&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;Sync&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;BaseLogin&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.login.BaseLogin&#10;BaseLoginActivity&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;reloadBranch&#9;PSI&#9;JAVA://nueca.net.salesdashboard.interfaces.OnReloadBranches&#10;string&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/res/values/strings.xml&#10;string.&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/res/values/strings.xml&#10;SyncModu&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Daily&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java&#10;DailySales&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SalesWeek4&#9;PSI&#9;JAVA://nueca.net.salesdashboard.fragments.SalesWeek4&#10;DailySal&#9;PSI&#9;JAVA://net.nueca.imonggosdk.objects.DailySales&#10;Anim&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;ViewPage&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerAdapter.java&#10;AnimToo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;SyncMo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;SyncD&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SyncModules&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.sync.SyncModules&#10;sYNC&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SyncDa&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;sYNCdAIL&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;Login&#9;PSI&#9;JAVA://net.nueca.imonggosdk.enums.RequestType#LOGIN&#10;Db&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;Animt&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;BaseDailySalesActivity&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/BaseDailySalesActivity.java&#10;DateT&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java&#10;DateTim&#9;PSI&#9;JAVA://net.nueca.imonggosdk.tools.DateTimeTools&#10;SyncDai&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;DateTools&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java&#10;SimpleWeekSalesFragment&#9;PSI&#9;JAVA://nueca.net.salesdashboard.fragments.SimpleWeekSalesFragment&#10;SalesWeekly&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeeklyBackup.java&#10;SalesRe&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/SalesRefreshListener.java&#10;BaseS&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/BaseSalesFragment.java&#10;ViewPagerAda&#9;PSI&#9;JAVA://nueca.net.salesdashboard.adapters.ViewPagerAdapter&#10;Sess&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Session.java&#10;DashB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java&#10;Settings&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Settings.java&#10;SimpleDai&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleDailySalesFragment.java&#10;DBHE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Setting&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Settings.java&#10;DB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;DBHe&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;SyncMO&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;ViewP&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerAdapter.java" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="HKE5C395" />
+    <property name="SearchEverywhereHistoryKey" value="DashboardL&#9;PSI&#9;JAVA://nueca.net.salesdashboard.activities.DashboardLoginActivity&#10;Dash&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java&#10;SyncMOd&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.sync.SyncModules&#10;DashboardLo&#9;PSI&#9;JAVA://nueca.net.salesdashboard.activities.DashboardLoginActivity&#10;Bas&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/login/BaseLogin.java&#10;Htt&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java&#10;BaseLogin.ja&#9;FILE&#9;file:///Users/raquezha/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;SyncDailySales&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;Sync&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;BaseLogin&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.login.BaseLogin&#10;BaseLoginActivity&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/BaseLoginActivity.java&#10;reloadBranch&#9;PSI&#9;JAVA://nueca.net.salesdashboard.interfaces.OnReloadBranches&#10;string&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/res/values/strings.xml&#10;string.&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/res/values/strings.xml&#10;SyncModu&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;Daily&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/DailySales.java&#10;DailySales&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SalesWeek4&#9;PSI&#9;JAVA://nueca.net.salesdashboard.fragments.SalesWeek4&#10;DailySal&#9;PSI&#9;JAVA://net.nueca.imonggosdk.objects.DailySales&#10;Anim&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;ViewPage&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/adapters/ViewPagerAdapter.java&#10;AnimToo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;SyncMo&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java&#10;SyncD&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SyncModules&#9;PSI&#9;JAVA://net.nueca.imonggosdk.operations.sync.SyncModules&#10;sYNC&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;SyncDa&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;sYNCdAIL&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;Login&#9;PSI&#9;JAVA://net.nueca.imonggosdk.enums.RequestType#LOGIN&#10;Db&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;Animt&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/AnimTools.java&#10;BaseDailySalesActivity&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/BaseDailySalesActivity.java&#10;DateT&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java&#10;DateTim&#9;PSI&#9;JAVA://net.nueca.imonggosdk.tools.DateTimeTools&#10;SyncDai&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/operations/SyncDailySales.java&#10;DateTools&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/tools/DateTools.java&#10;SimpleWeekSalesFragment&#9;PSI&#9;JAVA://nueca.net.salesdashboard.fragments.SimpleWeekSalesFragment&#10;SalesWeekly&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SalesWeeklyBackup.java&#10;SalesRe&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/interfaces/SalesRefreshListener.java&#10;BaseS&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/BaseSalesFragment.java&#10;ViewPagerAda&#9;PSI&#9;JAVA://nueca.net.salesdashboard.adapters.ViewPagerAdapter&#10;Sess&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Session.java&#10;DashB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java&#10;Settings&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Settings.java&#10;SimpleDai&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/salesdashboard/src/main/java/nueca/net/salesdashboard/fragments/SimpleDailySalesFragment.java&#10;DBHE&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;Setting&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Settings.java&#10;DB&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java&#10;DBHe&#9;PSI&#9;JAVA://net.nueca.imonggosdk.database.ImonggoDBHelper&#10;SyncMO&#9;FILE&#9;file://E:/Bitbucket/Android Projects/imonggosdk/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
@@ -5558,20 +5464,20 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="61" y="23" width="1619" height="1027" extended-state="6" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3272059" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43393603" sideWeight="0.49678457" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6132879" sideWeight="0.493553" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6129707" sideWeight="0.493553" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.7023644" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15273312" sideWeight="0.50596255" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42398286" sideWeight="0.506447" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47483587" sideWeight="0.49283668" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.9318498" sideWeight="0.51790833" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -5581,15 +5487,15 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24816176" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32984716" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26949906" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26923078" sideWeight="0.49403748" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.379015" sideWeight="0.48280802" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Fabric" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31311274" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.379015" sideWeight="0.48280802" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962178" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3272059" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32655245" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.7023644" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47430408" sideWeight="0.47125566" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -5637,11 +5543,50 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="40" column="44" selection-start-line="40" selection-start-column="18" selection-end-line="40" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="40" selection-start-line="0" selection-start-column="40" selection-end-line="0" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="143" column="5" selection-start-line="143" selection-start-column="5" selection-end-line="143" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/ImonggoService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="65" column="17" selection-start-line="65" selection-start-column="17" selection-end-line="65" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/http/HTTPRequests.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="263" column="36" selection-start-line="263" selection-start-column="36" selection-end-line="263" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5657,7 +5602,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="566" column="0" selection-start-line="566" selection-start-column="0" selection-end-line="566" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5681,7 +5625,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="263" column="36" selection-start-line="263" selection-start-column="36" selection-end-line="263" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5697,7 +5640,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="566" column="0" selection-start-line="566" selection-start-column="0" selection-end-line="566" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5721,7 +5663,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="263" column="36" selection-start-line="263" selection-start-column="36" selection-end-line="263" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5737,7 +5678,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="566" column="0" selection-start-line="566" selection-start-column="0" selection-end-line="566" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5753,7 +5693,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="221" column="36" selection-start-line="221" selection-start-column="36" selection-end-line="221" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5769,7 +5708,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="560" column="0" selection-start-line="560" selection-start-column="0" selection-end-line="560" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5894,7 +5832,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="566" column="0" selection-start-line="566" selection-start-column="0" selection-end-line="566" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5910,13 +5847,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="263" column="36" selection-start-line="263" selection-start-column="36" selection-end-line="263" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-22.222221">
+        <state vertical-scroll-proportion="0.0">
           <caret line="40" column="44" selection-start-line="40" selection-start-column="18" selection-end-line="40" selection-end-column="44" />
           <folding />
         </state>
@@ -5949,14 +5885,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="143" column="5" selection-start-line="143" selection-start-column="5" selection-end-line="143" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/res/layout/daily_sales.xml">
       <provider editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -5970,12 +5898,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8471121">
+        <state vertical-scroll-proportion="0.0">
           <caret line="633" column="29" selection-start-line="633" selection-start-column="29" selection-end-line="633" selection-end-column="29" />
-          <folding>
-            <element signature="e#61973#61974#0" expanded="true" />
-            <element signature="e#62028#62029#0" expanded="true" />
-          </folding>
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/salesdashboard/src/main/java/nueca/net/salesdashboard/activities/DashboardLoginActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5010776">
+          <caret line="83" column="12" selection-start-line="83" selection-start-column="12" selection-end-line="83" selection-end-column="39" />
+          <folding />
         </state>
       </provider>
     </entry>

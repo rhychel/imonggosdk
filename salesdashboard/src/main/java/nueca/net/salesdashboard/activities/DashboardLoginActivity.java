@@ -54,10 +54,10 @@ public class DashboardLoginActivity extends LoginActivity {
                 (EditText) findViewById(R.id.etEmail),
                 (EditText) findViewById(R.id.etPassword),
                 (Button) findViewById(R.id.btnSignIn));
-/*
+
         setEditTextAccountID("ourlovelybotique");                   // ACCOUNT ID
         setEditTextEmail("owner@ourlovelybotique.com");             // EMAIL
-        setEditTextPassword("ourlovelybotique");*/
+        setEditTextPassword("ourlovelybotique");
         loginButton = (Button) findViewById(R.id.btnSignIn);
     }
 
