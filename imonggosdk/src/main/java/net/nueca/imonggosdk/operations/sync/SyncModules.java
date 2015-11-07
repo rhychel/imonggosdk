@@ -586,6 +586,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             BatchList<User> updateUsers = new BatchList<>(DatabaseOperation.UPDATE, getHelper()); // container for the updated users
                             BatchList<User> deleteUsers = new BatchList<>(DatabaseOperation.DELETE, getHelper()); // container for the deleted users
 
+                            User current_user = null;
+                            String email = getSession().getEmail();
+
+
                             for (int i = 0; i < size; i++) {
                                 //get the object in the array
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -609,19 +613,25 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     }
 
                                 }
+
+                                if(user.getEmail().equals(email)) {
+                                    current_user = user;
+                                    Log.e(TAG, "Session's email: " + email + " Fetched Email: " + user.getEmail());
+                                }
+
                             }
 
                             newUsers.doOperation();
                             updateUsers.doOperation();
                             deleteUsers.doOperation();
 
-                            User current_user = getUser();
 
-                            getSession().setUser(current_user);
-                            getSession().setCurrent_branch_id(current_user.getHome_branch_id());
-                            Log.e(TAG, "User Home Branch ID: " + current_user.getHome_branch_id());
-                            getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
-
+                            if(current_user != null) {
+                                getSession().setUser(current_user);
+                                getSession().setCurrent_branch_id(current_user.getHome_branch_id());
+                                Log.e(TAG, "User Home Branch ID: " + current_user.getHome_branch_id());
+                                getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
+                            }
                             updateNext(requestType, size);
                         }
                         break;

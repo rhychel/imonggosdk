@@ -143,19 +143,6 @@ public class DashboardLoginActivity extends LoginActivity {
         HUDTools.hideIndeterminateProgressDialog();
     }
 
-   /* String requires_premium_subscription = getResources().getString(R.string.error_response_requires_premium_subscription);
-    if (message.equals(requires_premium_subscription)) {
-        DialogTools.showBasicWithTitle(HomeActivity.this,
-                getResources().getString(R.string.error_dialog_title_requires_premium_subscription),
-                getResources().getString(R.string.error_dialog_message_requires_premium_subscription),
-                "Ok", null, false, new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
-                        dialog.dismiss();
-                    }
-                });*/
-
     @Override
     protected void stopLogin() {
         loginButton.setEnabled(true);
