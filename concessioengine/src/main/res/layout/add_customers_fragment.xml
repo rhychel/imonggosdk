@@ -2,73 +2,70 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:sothree="http://schemas.android.com/tools"
     android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tbAddCustomer"
+        android:layout_width="match_parent"
+        android:background="?attr/colorPrimary"
+        sothree:theme="@style/ActionBar"
+        android:elevation="3dp"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:id="@+id/svScrollViewCustomer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_gravity="center_horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="36dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
                 android:text="@string/CUSTOMERS_TITLE_NAME"
                 android:textSize="24sp" />
 
-            <LinearLayout
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:layout_weight="1"
+                android:textColorHint="@color/hint_text">
 
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/etFirstName"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:textColorHint="@color/hint_text">
+                    android:gravity="left"
+                    android:hint="@string/CUSTOMERS_ADD_FIRST_NAME"
+                    android:inputType="text"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_text" />
+            </android.support.design.widget.TextInputLayout>
 
-                    <EditText
-                        android:id="@+id/etFirstName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:hint="@string/CUSTOMERS_ADD_FIRST_NAME"
-                        android:inputType="textPassword"
-                        android:paddingBottom="10dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/primary_text" />
-                </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColorHint="@color/hint_text">
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/etLastName"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:textColorHint="@color/hint_text">
+                    android:gravity="left"
+                    android:hint="@string/CUSTOMERS_ADD_LAST_NAME"
+                    android:inputType="text"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_text" />
 
-                    <EditText
-                        android:id="@+id/etLastName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:hint="@string/CUSTOMERS_ADD_LAST_NAME"
-                        android:inputType="textPassword"
-                        android:paddingBottom="10dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/primary_text" />
-
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -81,10 +78,9 @@
                     android:id="@+id/etCompanyName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:hint="@string/CUSTOMERS_ADD_COMPANY_NAME"
-                    android:inputType="textPassword"
-                    android:paddingBottom="10dp"
+                    android:inputType="text"
                     android:textAlignment="center"
                     android:textColor="@color/primary_text" />
 
@@ -94,59 +90,48 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingTop="20dp"
                 android:text="@string/CUSTOMERS_TITLE_CONTACT_NAME"
                 android:textSize="24sp" />
 
-            <LinearLayout
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:textColorHint="@color/hint_text">
 
-
-                <android.support.design.widget.TextInputLayout
+                <EditText
+                    android:id="@+id/etTelephone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:textColorHint="@color/hint_text">
+                    android:gravity="left"
+                    android:hint="@string/CUSTOMERS_ADD_TELEPHONE"
+                    android:inputType="number"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_text" />
 
-                    <EditText
-                        android:id="@+id/etTelephone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:hint="@string/CUSTOMERS_ADD_TELEPHONE"
-                        android:inputType="textPassword"
-                        android:paddingBottom="10dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/primary_text" />
-
-                </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout>
 
 
-                <android.support.design.widget.TextInputLayout
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:textColorHint="@color/hint_text">
+
+                <EditText
+                    android:id="@+id/etMobile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:textColorHint="@color/hint_text">
+                    android:gravity="left"
+                    android:hint="@string/CUSTOMERS_ADD_MOBILE"
+                    android:inputType="number"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_text" />
 
-                    <EditText
-                        android:id="@+id/etMobile"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:hint="@string/CUSTOMERS_ADD_MOBILE"
-                        android:inputType="textPassword"
-                        android:paddingBottom="10dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/primary_text" />
-
-                </android.support.design.widget.TextInputLayout>
-
-            </LinearLayout>
+            </android.support.design.widget.TextInputLayout>
 
 
             <android.support.design.widget.TextInputLayout
@@ -160,10 +145,9 @@
                     android:id="@+id/etFax"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:hint="@string/CUSTOMERS_ADD_FAX"
-                    android:inputType="textPassword"
-                    android:paddingBottom="10dp"
+                    android:inputType="text"
                     android:textAlignment="center"
                     android:textColor="@color/primary_text" />
 
@@ -181,15 +165,178 @@
                     android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:hint="@string/CUSTOMERS_ADD_EMAIL"
-                    android:inputType="textPassword"
-                    android:paddingBottom="10dp"
+                    android:inputType="textEmailAddress"
                     android:textAlignment="center"
                     android:textColor="@color/primary_text" />
 
             </android.support.design.widget.TextInputLayout>
 
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/CUSTOMERS_TITLE_ADDRESS_NAME"
+                android:textSize="24sp" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:textColorHint="@color/hint_text">
+
+                <EditText
+                    android:id="@+id/etStreet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:hint="@string/CUSTOMERS_ADD_STREET"
+                    android:inputType="text"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:textColorHint="@color/hint_text">
+
+                <EditText
+                    android:id="@+id/etCity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:hint="@string/CUSTOMERS_ADD_CITY"
+                    android:inputType="text"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:textColorHint="@color/hint_text">
+
+                <EditText
+                    android:id="@+id/etZipcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:hint="@string/CUSTOMERS_ADD_ZIPCODE"
+                    android:inputType="number"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:textColorHint="@color/hint_text">
+
+                    <EditText
+                        android:id="@+id/etCountry"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:hint="@string/CUSTOMERS_ADD_COUNTRY"
+                        android:inputType="text"
+                        android:textAlignment="center"
+                        android:textColor="@color/primary_text" />
+
+                </android.support.design.widget.TextInputLayout>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:textColorHint="@color/hint_text">
+
+                    <EditText
+                        android:id="@+id/etState"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:hint="@string/CUSTOMERS_ADD_STATE"
+                        android:inputType="text"
+                        android:textAlignment="center"
+                        android:textColor="@color/primary_text" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/CUSTOMERS_TITLE_PERSONAL_NAME"
+                android:textSize="24sp" />
+
+
+            <fr.ganfra.materialspinner.MaterialSpinner
+                android:id="@+id/spGender"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/gender_array"
+                app:ms_multiline="false"
+                app:ms_hint="Gender"
+                app:ms_floatingLabelText="Gender"
+                app:ms_alignLabels="true"/>
+
+            <fr.ganfra.materialspinner.MaterialSpinner
+                android:id="@+id/spCivilStatus"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/civil_status_array"
+                app:ms_multiline="false"
+                app:ms_hint="Civil Status"
+                app:ms_floatingLabelText="Civil Status"
+                app:ms_alignLabels="true"/>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/CUSTOMERS_TITLE_OTHERS_NAME"
+                android:textSize="24sp" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:textColorHint="@color/hint_text">
+
+                <EditText
+                    android:id="@+id/etTIN"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:hint="@string/CUSTOMERS_ADD_TIN"
+                    android:inputType="number"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" Exempt from Tax "
+                android:id="@+id/swTaxExempt" />
 
         </LinearLayout>
     </ScrollView>

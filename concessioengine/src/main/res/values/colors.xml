@@ -9,6 +9,7 @@
     <color name="secondary_text">#727272</color>
     <color name="hint_text">#b8b8b8</color>
     <color name="divider">#dadada</color>
+    <color name="white">#ffffff</color>
 
     <color name="login_default_bg">#ffffff</color>
     <color name="login_default_status_bg">#ffffff</color>

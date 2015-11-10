@@ -17,6 +17,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
     private SimpleCustomersFragment mSimpleCustomersFragment;
     private String TAG = "C_Customers";
+    private String CurrentView = "Customers";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,8 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.flContent, mSimpleCustomersFragment)
+                .replace(R.id.flContent, mSimpleCustomersFragment)
+                .addToBackStack("customers")
                 .commit();
     }
 
@@ -44,15 +46,20 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.simple_customers_menu, menu);
-        menu.findItem(R.id.mSearch).setVisible(false);
+        Log.e(TAG, "OnCreateOptionsMenu");
 
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setTitle("Customers");
 
+        if (CurrentView.equals("Customers")) {
+            getMenuInflater().inflate(R.menu.simple_customers_menu, menu);
+            getSupportActionBar().setTitle("Customers");
+            menu.findItem(R.id.mSearch).setVisible(false);
+        } else if(CurrentView.equals("Add Customers")) {
+            getSupportActionBar().setTitle("Add Customers");
+            getMenuInflater().inflate(R.menu.simple_add_customers_menu, menu);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -62,12 +69,18 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
         switch (menuItem.getItemId()) {
             case net.nueca.concessioengine.R.id.mAddCustomer:
+
+                CurrentView = "Add Customers";
+
+                AddCustomersFragment addCustomersFragment = AddCustomersFragment.newInstance();
+                addCustomersFragment.setSetupActionBar(this);
+
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.flContent, AddCustomersFragment.newInstance())
-                        .addToBackStack("add_customer")
+                        .replace(R.id.flContent, addCustomersFragment)
+                        .addToBackStack("Add Customer")
                         .commit();
-                getSupportActionBar().setTitle("Add Customers");
+
                 break;
             default:
                 break;
@@ -79,5 +92,8 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+        if(CurrentView.equals("Add Customers"))
+            CurrentView = "Customers";
     }
 }

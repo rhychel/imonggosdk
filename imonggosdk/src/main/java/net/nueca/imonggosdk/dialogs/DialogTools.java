@@ -28,12 +28,15 @@ public class DialogTools {
      * @param cancelable   True if you want to cancel dialog by tapping the side of the screen
      * @param callback     Listener for AlertDialog's button
      */
+
+    @Deprecated
     public static void showBasicWithTitle(Context context, String title, String content,
                                           String positiveText, String negativeText, Boolean cancelable,
                                           MaterialDialog.ButtonCallback callback) {
         showBasicWithTitle(context, title, content, positiveText, negativeText, cancelable, callback, null);
     }
 
+    @Deprecated
     public static void showBasicWithTitle(Context context, String title, String content,
                                           String positiveText, String negativeText, Boolean cancelable,
                                           MaterialDialog.ButtonCallback callback, Theme theme) {
@@ -57,6 +60,47 @@ public class DialogTools {
                     .cancelable(cancelable)
                     .show();
         }
+    }
+
+
+    public static void showBasicWithTitle(Context context, String title, String content,
+                                          String positiveText, String negativeText, Boolean cancelable,
+                                          MaterialDialog.SingleButtonCallback postive,
+                                          MaterialDialog.SingleButtonCallback negative,
+                                          MaterialDialog.SingleButtonCallback neutral) {
+        showBasicWithTitle(context, title, content, positiveText, negativeText, cancelable, postive, negative, neutral, null);
+    }
+
+    public static void showBasicWithTitle(Context context, String title, String content,
+                                          String positiveText, String negativeText, Boolean cancelable,
+                                          MaterialDialog.SingleButtonCallback postive,
+                                          MaterialDialog.SingleButtonCallback negative,
+                                          MaterialDialog.SingleButtonCallback neutral, Theme theme) {
+        if(theme == null ) {
+            new MaterialDialog.Builder(context)
+                    .title(title)
+                    .content(content)
+                    .positiveText(positiveText)
+                    .negativeText(negativeText)
+                    .onPositive(postive)
+                    .onNegative(negative)
+                    .onNeutral(neutral)
+                    .cancelable(cancelable)
+                    .theme(theme)
+                    .show();
+        } else {
+            new MaterialDialog.Builder(context)
+                    .title(title)
+                    .content(content)
+                    .positiveText(positiveText)
+                    .negativeText(negativeText)
+                    .onPositive(postive)
+                    .onNegative(negative)
+                    .onNeutral(neutral)
+                    .cancelable(cancelable)
+                    .show();
+        }
+
     }
 
     /**

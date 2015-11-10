@@ -30,7 +30,8 @@ public class Customer extends BaseTable {
             tin, street = "", city, state, zipcode, country, telephone = "", fax,
             mobile, email, remark, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
-            membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+            membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "",
+            notes;
     @DatabaseField
     private transient String extras = "";
     @DatabaseField

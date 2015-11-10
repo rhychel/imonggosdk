@@ -36,7 +36,6 @@ import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
-//import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -47,6 +46,8 @@ import net.nueca.imonggosdk.objects.order.OrderLine;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
+//import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
+
 /**
  * Created by rhymart on 5/12/15.
  * ImonggoLibrary (c)2015
@@ -55,7 +56,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk.db";
     
-    private static final int DATABASE_VERSION = 27;
+    private static final int DATABASE_VERSION = 28;
 
     private Dao<Branch, Integer> branches = null;
     private Dao<BranchPrice, Integer> branchPrices = null;
