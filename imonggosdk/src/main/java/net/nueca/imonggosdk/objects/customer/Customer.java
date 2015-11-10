@@ -1,14 +1,19 @@
-package net.nueca.imonggosdk.objects;
+package net.nueca.imonggosdk.objects.customer;
 
 import android.util.Log;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.PriceList;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +41,16 @@ public class Customer extends BaseTable {
     private boolean tax_exempt;
     @DatabaseField
     private transient boolean is_favorite = false;
+    @ForeignCollectionField
+    private ForeignCollection<CustomerGroup> foreignCustomerGroups;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "price_list_id")
+    private PriceList priceList;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")
+    private Branch branch;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_terms_id")
+    private PaymentTerms paymentTerms;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
+    private CustomerCategory customerCategory; // customer_type_id (?)
 
     private Extras extra = null;
 
@@ -351,6 +366,46 @@ public class Customer extends BaseTable {
 
     public void setIs_favorite(boolean is_favorite) {
         this.is_favorite = is_favorite;
+    }
+
+    public CustomerCategory getCustomerCategory() {
+        return customerCategory;
+    }
+
+    public void setCustomerCategory(CustomerCategory customerCategory) {
+        this.customerCategory = customerCategory;
+    }
+
+    public PaymentTerms getPaymentTerms() {
+        return paymentTerms;
+    }
+
+    public void setPaymentTerms(PaymentTerms paymentTerms) {
+        this.paymentTerms = paymentTerms;
+    }
+
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
+    public PriceList getPriceList() {
+        return priceList;
+    }
+
+    public void setPriceList(PriceList priceList) {
+        this.priceList = priceList;
+    }
+
+    public ForeignCollection<CustomerGroup> getForeignCustomerGroups() {
+        return foreignCustomerGroups;
+    }
+
+    public void setForeignCustomerGroups(ForeignCollection<CustomerGroup> foreignCustomerGroups) {
+        this.foreignCustomerGroups = foreignCustomerGroups;
     }
 
     public void setExtra(Extras extra) {

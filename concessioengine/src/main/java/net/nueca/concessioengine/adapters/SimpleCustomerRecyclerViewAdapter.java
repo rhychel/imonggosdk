@@ -14,7 +14,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseCustomersRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
-import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.customer.Customer;
 
 import org.apache.commons.lang3.StringUtils;
 

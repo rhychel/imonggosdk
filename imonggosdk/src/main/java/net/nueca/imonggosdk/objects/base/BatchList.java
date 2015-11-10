@@ -6,7 +6,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
-import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.Extras;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.Product;

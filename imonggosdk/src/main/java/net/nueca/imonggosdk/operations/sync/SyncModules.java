@@ -15,7 +15,7 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
-import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
