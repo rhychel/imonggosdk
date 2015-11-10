@@ -26,10 +26,8 @@ import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
@@ -82,7 +80,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 finalizeFragment.setHasUnits(true);
 
                 btnSummary.setVisibility(View.VISIBLE);
-            } break;
+            }
+            break;
             case PHYSICAL_COUNT: {
                 simpleProductsFragment.setProductCategories(getProductCategories(true));
                 simpleProductsFragment.setMultipleInput(true);
@@ -93,7 +92,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 finalizeFragment.setMultiInputListener(multiInputListener);
 
                 btnSummary.setVisibility(View.VISIBLE);
-            } break;
+            }
+            break;
             case RECEIVE: {
                 simpleReceiveFragment = new SimpleReceiveFragment();
                 simpleReceiveFragment.setHelper(getHelper());
@@ -161,10 +161,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     protected void onResume() {
         super.onResume();
-        if(concessioModule == ConcessioModule.PHYSICAL_COUNT) {
+        if (concessioModule == ConcessioModule.PHYSICAL_COUNT) {
             simpleProductsFragment.refreshList();
-            if(getSupportFragmentManager().findFragmentByTag("finalize") != null)
-               finalizeFragment.refreshList();
+            if (getSupportFragmentManager().findFragmentByTag("finalize") != null)
+                finalizeFragment.refreshList();
         }
     }
 
@@ -176,7 +176,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(hasMenu) {
+        if (hasMenu) {
             getMenuInflater().inflate(R.menu.simple_products_menu, menu);
             menu.findItem(R.id.mHistory).setVisible(false);
             menu.findItem(R.id.mLogout).setVisible(false);
@@ -212,14 +212,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     private View.OnClickListener onClickSummary = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(btnSummary.getText().equals("Send")) {
+            if (btnSummary.getText().equals("Send")) {
                 DialogTools.showSelectionDialog(C_Module.this,
                         new ArrayAdapter<>(C_Module.this, android.R.layout.simple_list_item_single_choice, getBranches()),
                         "Yes", new DialogTools.OnItemSelected<Branch>() {
                             @Override
                             public void itemChosen(final Branch branch) {
                                 final Branch warehouse = getWarehouse();
-                                if(warehouse == null)
+                                if (warehouse == null)
                                     DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.");
                                 else {
                                     DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
@@ -258,8 +258,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                 }
                             }
                         }, "No");
-            }
-            else {
+            } else {
                 if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
                     DialogTools.showDialog(C_Module.this, "Ooops!", "You have no selected items. Kindly select first products.");
                 else {
