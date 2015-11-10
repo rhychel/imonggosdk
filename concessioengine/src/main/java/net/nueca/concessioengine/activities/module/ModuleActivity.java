@@ -1,4 +1,4 @@
-package net.nueca.concessioengine.activities;
+package net.nueca.concessioengine.activities.module;
 
 import android.content.Context;
 import android.os.Bundle;

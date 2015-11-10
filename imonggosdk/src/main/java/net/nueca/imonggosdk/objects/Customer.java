@@ -23,13 +23,15 @@ import java.sql.SQLException;
 public class Customer extends BaseTable {
 
     @DatabaseField
-    private int point_to_amount_ratio;
+    private int point_to_amount_ratio, price_list_id, customer_group_id, route_plan_id, user_id, branch_id,
+            payment_term_id, sales_call_schedule_code, customer_type_id;
     @DatabaseField
     private String code, alternate_code, first_name, last_name, name, company_name,
             tin, street = "", city, state, zipcode, country, telephone = "", fax,
-            mobile, email, remark, customer_type_id, customer_type_name, discount_text,
+            mobile, email, remark, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
-            membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+            membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "",
+            notes;
     @DatabaseField
     private transient String extras = "";
     @DatabaseField
@@ -71,7 +73,7 @@ public class Customer extends BaseTable {
 
         public Extras(JSONObject jsonObject) {
             try {
-                if(jsonObject.has("checkin_count")) {
+                if (jsonObject.has("checkin_count")) {
                     this.checkin_count = jsonObject.getString("checkin_count");
                     this.last_checkin_at = jsonObject.getString("last_checkin_at");
                 }
@@ -241,11 +243,11 @@ public class Customer extends BaseTable {
         this.remark = remark;
     }
 
-    public String getCustomer_type_id() {
+    public int getCustomer_type_id() {
         return customer_type_id;
     }
 
-    public void setCustomer_type_id(String customer_type_id) {
+    public void setCustomer_type_id(int customer_type_id) {
         this.customer_type_id = customer_type_id;
     }
 
@@ -357,10 +359,66 @@ public class Customer extends BaseTable {
         this.extra = extra;
     }
 
+    public int getPrice_list_id() {
+        return price_list_id;
+    }
+
+    public void setPrice_list_id(int price_list_id) {
+        this.price_list_id = price_list_id;
+    }
+
+    public int getCustomer_group_id() {
+        return customer_group_id;
+    }
+
+    public void setCustomer_group_id(int customer_group_id) {
+        this.customer_group_id = customer_group_id;
+    }
+
+    public int getRoute_plan_id() {
+        return route_plan_id;
+    }
+
+    public void setRoute_plan_id(int route_plan_id) {
+        this.route_plan_id = route_plan_id;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
+
+    public int getBranch_id() {
+        return branch_id;
+    }
+
+    public void setBranch_id(int branch_id) {
+        this.branch_id = branch_id;
+    }
+
+    public int getPayment_term_id() {
+        return payment_term_id;
+    }
+
+    public void setPayment_term_id(int payment_term_id) {
+        this.payment_term_id = payment_term_id;
+    }
+
+    public int getSales_call_schedule_code() {
+        return sales_call_schedule_code;
+    }
+
+    public void setSales_call_schedule_code(int sales_call_schedule_code) {
+        this.sales_call_schedule_code = sales_call_schedule_code;
+    }
+
     public Extras getExtra() throws JSONException {
         Log.e("Extra value=", extras + "<----This is the value");
-        if(extra == null) {
-            if(extras.equals(""))
+        if (extra == null) {
+            if (extras.equals(""))
                 extras = "{}";
             extra = new Extras(new JSONObject(extras));
         }
@@ -369,10 +427,12 @@ public class Customer extends BaseTable {
 
     @Override
     public boolean equals(Object o) {
-        return (o instanceof Customer) && ((Customer)o).getId() == id;
+        return (o instanceof Customer) && ((Customer) o).getId() == id;
     }
 
-    /** Overriding equals() requires an Overridden hashCode() **/
+    /**
+     * Overriding equals() requires an Overridden hashCode()
+     **/
     @Override
     public int hashCode() {
         int result = 17;
@@ -388,23 +448,23 @@ public class Customer extends BaseTable {
     public String getFullAddress() {
         String address = "";
 
-        if(street != null && !street.isEmpty())
+        if (street != null && !street.isEmpty())
             address += street;
 
-        if(city != null && !city.isEmpty()) {
-            if(!address.isEmpty())
+        if (city != null && !city.isEmpty()) {
+            if (!address.isEmpty())
                 address += ", ";
             address += city;
         }
 
-        if(zipcode != null && !zipcode.isEmpty()) {
-            if(!address.isEmpty())
+        if (zipcode != null && !zipcode.isEmpty()) {
+            if (!address.isEmpty())
                 address += " ";
             address += zipcode;
         }
 
-        if(country != null && !country.isEmpty()) {
-            if(!address.isEmpty())
+        if (country != null && !country.isEmpty()) {
+            if (!address.isEmpty())
                 address += ", ";
             address += country;
         }

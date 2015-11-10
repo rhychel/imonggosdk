@@ -289,7 +289,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                 mModulesToDownload.add("Daily Sales");
                                 break;
                             case SETTINGS:
-                                mModulesToDownload.add("Settings");
                                 break;
                             default:
                                 LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
