@@ -56,14 +56,14 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         branchList = new ArrayList<>();
         try {
             List<BranchUserAssoc> branchUserAssocs = dbHelper.getBranchUserAssocs().queryBuilder().where()
-                    .eq("user_id", user).query();
+                    .eq("user_id", this.user).query();
 
             for(BranchUserAssoc branchUser : branchUserAssocs) {
                 if(branchUser.getBranch().getSite_type() != null &&
-                    branchUser.getBranch().getSite_type().toLowerCase().equals("warehouse"))
+                        branchUser.getBranch().getSite_type().toLowerCase().equals("warehouse"))
                     continue;
 
-                if(branchUser.getBranch().getId() == user.getHome_branch_id())
+                if(branchUser.getBranch().getId() == this.user.getHome_branch_id())
                     branchList.add(0, branchUser.getBranch());
                 else
                     branchList.add(branchUser.getBranch());
@@ -193,6 +193,12 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         etDeliveryReceipt.setText(txt);
     }
 
+    @Override
+    public void show() {
+        super.show();
+        npInput.setIsFirstErase(true);
+    }
+
     public SearchDRDialogListener getDialogListener() {
         return dialogListener;
     }
@@ -206,17 +212,5 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         boolean onCancel();
         void onSearch(String deliveryReceiptNo, Branch target_branch, Document document);
         void onManualReceive(String deliveryReceiptNo, Branch target_branch);
-    }
-
-    @Override
-    public void cancel() {
-        super.cancel();
-        npInput.setIsFirstErase(true);
-    }
-
-    @Override
-    public void dismiss() {
-        super.dismiss();
-        npInput.setIsFirstErase(true);
     }
 }

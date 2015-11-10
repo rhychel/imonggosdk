@@ -20,6 +20,7 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
 import net.nueca.concessioengine.fragments.CheckoutFragment;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
+import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
@@ -294,6 +295,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                     finalizeFragment.clearSelectedItems();
                 }
             }, "No");
+        } else if(id == R.id.mCustomer) {
+
         }
 
         return super.onOptionsItemSelected(item);

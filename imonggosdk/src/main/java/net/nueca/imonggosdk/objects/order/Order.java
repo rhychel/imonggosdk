@@ -12,14 +12,9 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.base.BaseTransaction;
-import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
-import net.nueca.imonggosdk.objects.base.BaseTransactionDB2;
-import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
 import net.nueca.imonggosdk.swable.SwableTools;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +25,7 @@ import java.util.List;
 /**
  * Created by gama on 7/1/15.
  */
-public class Order extends BaseTransactionDB2 {
+public class Order extends BaseTransactionTable2 {
     public static transient final int MAX_ORDERLINES_PER_PAGE = 50;
 
     @Expose
@@ -165,7 +160,7 @@ public class Order extends BaseTransactionDB2 {
         }
     }
 
-    public static class Builder extends BaseTransaction.Builder<Builder> {
+    public static class Builder extends BaseTransactionTable2.Builder<Builder> {
         private String target_delivery_date = ""; // current_date+2days
         private String remark = "";
         private String order_type_code = "stock_request";

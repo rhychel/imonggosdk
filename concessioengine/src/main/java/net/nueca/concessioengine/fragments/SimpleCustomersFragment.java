@@ -44,6 +44,30 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
         this.useRecyclerView = useRecyclerView;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(useRecyclerView) {
+            simpleCustomerRecyclerViewAdapter = new SimpleCustomerRecyclerViewAdapter(getActivity(), getCustomers(),
+                    isMultiSelect, highlightColor);
+
+            if (color != null) {
+                simpleCustomerRecyclerViewAdapter.setCircleColor(color);
+                tbActionBar.setBackgroundColor(color);
+            }
+        }
+        else {
+            simpleCustomerListAdapter = new SimpleCustomerListAdapter(getActivity(), getCustomers(), isMultiSelect,
+                    highlightColor);
+
+            if (color != null) {
+                simpleCustomerListAdapter.setCircleColor(color);
+                tbActionBar.setBackgroundColor(color);
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,13 +80,13 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
 
         if(useRecyclerView) {
             rvCustomers = (RecyclerView) view.findViewById(R.id.rvCustomers);
-            simpleCustomerRecyclerViewAdapter = new SimpleCustomerRecyclerViewAdapter(getActivity(), getCustomers(),
+            /*simpleCustomerRecyclerViewAdapter = new SimpleCustomerRecyclerViewAdapter(getActivity(), getCustomers(),
                     isMultiSelect, highlightColor);
 
             if (color != null) {
                 simpleCustomerRecyclerViewAdapter.setCircleColor(color);
                 tbActionBar.setBackgroundColor(color);
-            }
+            }*/
             simpleCustomerRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvCustomers);
             rvCustomers.setAdapter(simpleCustomerRecyclerViewAdapter);
             rvCustomers.addOnScrollListener(rvScrollListener);
@@ -71,13 +95,13 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
         }
         else {
             lvCustomers = (ListView) view.findViewById(R.id.lvCustomers);
-            simpleCustomerListAdapter = new SimpleCustomerListAdapter(getActivity(), getCustomers(), isMultiSelect,
+            /*simpleCustomerListAdapter = new SimpleCustomerListAdapter(getActivity(), getCustomers(), isMultiSelect,
                     highlightColor);
 
             if (color != null) {
                 simpleCustomerListAdapter.setCircleColor(color);
                 tbActionBar.setBackgroundColor(color);
-            }
+            }*/
 
             lvCustomers.setAdapter(simpleCustomerListAdapter);
             lvCustomers.setOnItemClickListener(simpleCustomerListAdapter.getOnItemClickListener());
