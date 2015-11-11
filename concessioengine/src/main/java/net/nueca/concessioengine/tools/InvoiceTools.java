@@ -24,6 +24,7 @@ public class InvoiceTools {
 
         for(SelectedProductItem selectedProductItem : selectedProductItems) {
             Product product = selectedProductItem.getProduct();
+
             for(Values itemValue : selectedProductItem.getValues()) {
                 InvoiceLine.Builder builder = new InvoiceLine.Builder();
                 builder.product_id(product.getId());
