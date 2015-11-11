@@ -88,7 +88,7 @@
 
                             <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="61dp"
+                                android:layout_height="wrap_content"
 
                                 android:layout_gravity="center_horizontal"
                                 android:layout_marginLeft="6dp"
@@ -101,7 +101,7 @@
                                 <me.grantland.widget.AutofitTextView
                                     android:id="@+id/tvTodayDailySalesAmount"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
+                                    android:layout_height="61dp"
                                     android:layout_gravity="center"
                                     android:layout_marginTop="-5dp"
                                     android:layout_weight="1"
@@ -298,7 +298,7 @@
 
                             <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="61dp"
+                                android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:layout_marginLeft="6dp"
                                 android:layout_marginRight="6dp"
@@ -309,7 +309,7 @@
                                 <me.grantland.widget.AutofitTextView
                                     android:id="@+id/tvYesterdayDailySalesAmount"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
+                                    android:layout_height="61dp"
                                     android:layout_gravity="center"
                                     android:layout_marginTop="-5dp"
                                     android:layout_weight="1"

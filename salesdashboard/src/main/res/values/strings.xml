@@ -44,4 +44,5 @@
     <string name="error_response_branch_is_not_accessible">Branch is not accesible to user.</string>
     <string name="error_response_function_is_restricted">Function is restricted to user.</string>
     <string name="error_response_title">Oops!</string>
+    <string name="todayDate">Tuesday, Sep 9, 2015</string>
 </resources>

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 
@@ -54,10 +55,10 @@ public class DashboardLoginActivity extends LoginActivity {
                 (EditText) findViewById(R.id.etEmail),
                 (EditText) findViewById(R.id.etPassword),
                 (Button) findViewById(R.id.btnSignIn));
-
+/*
         setEditTextAccountID("ourlovelybotique");                   // ACCOUNT ID
         setEditTextEmail("owner@ourlovelybotique.com");             // EMAIL
-        setEditTextPassword("ourlovelybotique");
+        setEditTextPassword("ourlovelybotique");*/
         loginButton = (Button) findViewById(R.id.btnSignIn);
     }
 
@@ -90,32 +91,30 @@ public class DashboardLoginActivity extends LoginActivity {
             } else if (user_role_code.equals("head_office")) {
                 DialogTools.showBasicWithTitle(DashboardLoginActivity.this, "Notice",
                         "Invalid use of head office.",
-                        "Ok", null, false, new MaterialDialog.ButtonCallback() {
+                        "Ok", null, false, new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                super.onPositive(dialog);
+                            public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
                                 Log.e(TAG, getServer() + "");
                                 startLogout();
                                 finish();
                                 Intent intent = new Intent(DashboardLoginActivity.this, DashboardLoginActivity.class);
                                 startActivity(intent);
                             }
-                        }
+                        }, null, null
                 );
             } else {
                 DialogTools.showBasicWithTitle(DashboardLoginActivity.this, "Oops!",
                         "Sorry. Your account credentials is not provisioned to use Imonggo Sales Dashboard. A manager or owner account type is required.",
-                        "Ok", null, false, new MaterialDialog.ButtonCallback() {
+                        "Ok", null, false, new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                super.onPositive(dialog);
+                            public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
                                 Log.e(TAG, getServer() + "");
                                 startLogout();
                                 finish();
                                 Intent intent = new Intent(DashboardLoginActivity.this, DashboardLoginActivity.class);
                                 startActivity(intent);
                             }
-                        }
+                        }, null, null
                 );
             }
         } catch (SQLException e) {
