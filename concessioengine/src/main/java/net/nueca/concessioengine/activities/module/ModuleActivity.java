@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
+import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
@@ -130,7 +131,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public List<Branch> getBranchesByTag(String tag) {
         List<Branch> branches = new ArrayList<>();
         try {
-            List<BranchTag> branchTags = getHelper().getBranchTags().queryBuilder().where().in("branch_id", getBranches()).and().like("tag", "#"+tag).query();
+            List<BranchTag> branchTags = getHelper().getBranchTags().queryBuilder().where().in("branch_id", getBranches()).and().like("tag", "#" + tag).query();
             for(BranchTag branchTag : branchTags) {
                 branches.add(branchTag.getBranch());
             }
@@ -276,5 +277,22 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             e.printStackTrace();
         }
         return pcount.build();
+    }
+
+    /**
+     *
+     * @return the number of inventory objects updated
+     */
+    public int updateInventoryFromSelectedItemList() {
+        int updated = 0;
+        for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
+            if(selectedProductItem.getInventory() != null) {
+                Inventory updateInventory = selectedProductItem.getInventory();
+                updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory()));
+                updateInventory.updateTo(getHelper());
+                updated++;
+            }
+        }
+        return updated;
     }
 }

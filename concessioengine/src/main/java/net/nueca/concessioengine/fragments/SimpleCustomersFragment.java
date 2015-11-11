@@ -1,8 +1,5 @@
 package net.nueca.concessioengine.fragments;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +13,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleCustomerListAdapter;
 import net.nueca.concessioengine.adapters.SimpleCustomerRecyclerViewAdapter;
-import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.util.List;
 

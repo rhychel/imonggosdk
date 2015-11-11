@@ -3,16 +3,20 @@ package net.nueca.concessioengine.objects;
 import android.util.Log;
 
 import net.nueca.concessioengine.lists.ValuesList;
+import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.tools.ProductListTools;
+
+import java.math.BigDecimal;
 
 /**
  * Created by rhymart on 7/13/15.
  * imonggosdk (c)2015
  */
 public class SelectedProductItem {
+    private Inventory inventory;
     private Product product;
     private String total_quantity = "0";
     private String total_return = "0";
@@ -128,6 +132,22 @@ public class SelectedProductItem {
 
     public String getQuantity() {
         return total_quantity;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
+    public String updatedInventory() {
+        if(inventory == null)
+            return "0";
+        BigDecimal currentInventory = new BigDecimal(inventory.getQuantity());
+        BigDecimal totalQuantity = new BigDecimal(total_quantity);
+        return currentInventory.subtract(totalQuantity).toPlainString();
     }
 
     public String getQuantity(int valuePosition) {

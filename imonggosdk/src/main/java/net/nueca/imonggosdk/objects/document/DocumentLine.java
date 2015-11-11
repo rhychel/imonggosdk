@@ -10,6 +10,8 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
+import net.nueca.imonggosdk.objects.deprecated.ExtendedAttributes;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -8,7 +8,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.*;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 
 import java.sql.SQLException;
@@ -18,7 +19,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Product extends BaseTable {
+public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @DatabaseField
     protected double cost = 0.0, retail_price = 0.0, wholesale_price = 0.0, wholesale_quantity = 0.0;
@@ -69,8 +70,8 @@ public class Product extends BaseTable {
     @ForeignCollectionField
     private transient ForeignCollection<DocumentLine> documentLines;
 
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "extras_id")
-    private Extras extras;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
+    private Inventory inventory;
 
     public double getCost() {
         return cost;
@@ -336,33 +337,12 @@ public class Product extends BaseTable {
         this.units = units;
     }
 
-    public Extras getExtras() {
-        return extras;
+    public Inventory getInventory() {
+        return inventory;
     }
 
-    public void setExtras(Extras extras) {
-        this.extras = extras;
-    }
-
-    public void doOperationsForExtras(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        switch (databaseOperation) {
-            case INSERT: {
-                extras.setProduct(this);
-                extras.dbOperation(dbHelper, databaseOperation);
-            } break;
-            case UPDATE: {
-                extras.setProduct(this);
-                extras.dbOperation(dbHelper, databaseOperation);
-            } break;
-            case DELETE: {
-                try {
-                    Extras extraForeign = dbHelper.getProductExtras().queryBuilder().where().eq("product_id", this).queryForFirst();
-                    extraForeign.dbOperation(dbHelper, databaseOperation);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } break;
-        }
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 
     @Override
@@ -400,5 +380,22 @@ public class Product extends BaseTable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper dbHelper) {
+        extras.setProduct(this);
+        extras.setId(Product.class.getName().toUpperCase(), id);
+        extras.insertTo(dbHelper);
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper dbHelper) {
+        extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper dbHelper) {
+        extras.updateTo(dbHelper);
     }
 }

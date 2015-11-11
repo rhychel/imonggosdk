@@ -2,7 +2,11 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
+<<<<<<< HEAD
     buildToolsVersion '23.0.2'
+=======
+    buildToolsVersion "23.0.1"
+>>>>>>> rhy
 
     defaultConfig {
         minSdkVersion 14
@@ -25,12 +29,21 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.mcxiaoke.volley:library:1.0.17'
+<<<<<<< HEAD
     compile('com.github.afollestad.material-dialogs:core:0.8.5.0@aar') {
         transitive = true
     }
     compile('com.github.afollestad.material-dialogs:commons:0.8.5.0@aar') {
         transitive = true
     }
+=======
+
+//    compile 'com.afollestad:material-dialogs:0.7.5.5'
+    compile('com.afollestad.material-dialogs:core:0.8.4.2@aar') {
+        transitive = true
+    }
+
+>>>>>>> rhy
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.android.support:design:23.1.0'

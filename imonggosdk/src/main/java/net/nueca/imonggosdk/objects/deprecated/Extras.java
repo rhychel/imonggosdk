@@ -1,4 +1,4 @@
-package net.nueca.imonggosdk.objects;
+package net.nueca.imonggosdk.objects.deprecated;
 
 import com.google.gson.Gson;
 import com.j256.ormlite.field.DatabaseField;
@@ -7,6 +7,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
  * Created by rhymart on 8/24/15.
  * imonggosdk2 (c)2015
  */
+@Deprecated
 @DatabaseTable
 public class Extras extends BaseTable2 {
 
