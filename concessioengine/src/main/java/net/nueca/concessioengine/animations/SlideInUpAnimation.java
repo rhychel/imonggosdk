@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
  * imonggosdk (c)2015
  */
 public class SlideInUpAnimation extends RecyclerView.ItemAnimator {
+
     @Override
     public boolean animateDisappearance(RecyclerView.ViewHolder viewHolder, ItemHolderInfo preLayoutInfo, ItemHolderInfo postLayoutInfo) {
         return false;

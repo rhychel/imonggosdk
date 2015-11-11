@@ -2,13 +2,11 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
-import net.nueca.imonggosdk.objects.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by gama on 20/10/2015.
