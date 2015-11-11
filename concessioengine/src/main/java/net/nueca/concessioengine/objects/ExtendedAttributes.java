@@ -1,13 +1,5 @@
 package net.nueca.concessioengine.objects;
 
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.j256.ormlite.field.DatabaseField;
-
-import net.nueca.imonggosdk.objects.Unit;
-
 /**
  * Created by rhymart on 7/13/15.
  * imonggosdk (c)2015
@@ -53,8 +45,8 @@ public class ExtendedAttributes {
         return batch_no;
     }
 
-    public net.nueca.imonggosdk.objects.document.ExtendedAttributes convertForDocumentLine() {
-        return new net.nueca.imonggosdk.objects.document.ExtendedAttributes.Builder()
+    public net.nueca.imonggosdk.objects.deprecated.ExtendedAttributes convertForDocumentLine() {
+        return new net.nueca.imonggosdk.objects.deprecated.ExtendedAttributes.Builder()
                 .brand(getBrand())
                 .delivery_date(delivery_date)
                 .batch_no(batch_no)

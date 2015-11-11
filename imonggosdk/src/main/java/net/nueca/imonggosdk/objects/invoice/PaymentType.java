@@ -11,37 +11,21 @@ import net.nueca.imonggosdk.objects.base.BaseTable;
 import java.sql.SQLException;
 
 /**
- * Created by rhymart on 11/10/15.
+ * Created by rhymart on 11/11/15.
  */
 @DatabaseTable
-public class PaymentTerms extends BaseTable {
+public class PaymentType extends BaseTable {
 
     @DatabaseField
     private String code, name;
 
-    public PaymentTerms() {
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public PaymentType() {
     }
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PAYMENT_TERMS, DatabaseOperation.INSERT);
+            dbHelper.dbOperations(this, Table.PAYMENT_TYPES, DatabaseOperation.INSERT);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -50,7 +34,7 @@ public class PaymentTerms extends BaseTable {
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PAYMENT_TERMS, DatabaseOperation.DELETE);
+            dbHelper.dbOperations(this, Table.PAYMENT_TYPES, DatabaseOperation.DELETE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -59,7 +43,7 @@ public class PaymentTerms extends BaseTable {
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PAYMENT_TERMS, DatabaseOperation.UPDATE);
+            dbHelper.dbOperations(this, Table.PAYMENT_TYPES, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -1,12 +1,15 @@
 package net.nueca.imonggosdk.objects;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import java.sql.SQLException;
 
@@ -24,6 +27,10 @@ public class User extends BaseTable {
     private transient int sequenceNumber = 1;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "session_id")
     private transient Session session = null;
+    @ForeignCollectionField
+    private ForeignCollection<Extras> foreignCustomersExtras;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "route_plan_id")
+    private RoutePlan routePlan;
 
     private transient boolean isSelected = false;// For what?
 
@@ -91,6 +98,22 @@ public class User extends BaseTable {
 
     public void setSession(Session session) {
         this.session = session;
+    }
+
+    public ForeignCollection<Extras> getForeignCustomersExtras() {
+        return foreignCustomersExtras;
+    }
+
+    public void setForeignCustomersExtras(ForeignCollection<Extras> foreignCustomersExtras) {
+        this.foreignCustomersExtras = foreignCustomersExtras;
+    }
+
+    public RoutePlan getRoutePlan() {
+        return routePlan;
+    }
+
+    public void setRoutePlan(RoutePlan routePlan) {
+        this.routePlan = routePlan;
     }
 
     @Override

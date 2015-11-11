@@ -11,15 +11,15 @@ import net.nueca.imonggosdk.objects.base.BaseTable;
 import java.sql.SQLException;
 
 /**
- * Created by rhymart on 11/10/15.
+ * Created by rhymart on 11/11/15.
  */
 @DatabaseTable
-public class PaymentTerms extends BaseTable {
+public class InvoicePurpose extends BaseTable {
 
     @DatabaseField
-    private String code, name;
+    private String code, name, status;
 
-    public PaymentTerms() {
+    public InvoicePurpose() {
     }
 
     public String getCode() {
@@ -38,10 +38,18 @@ public class PaymentTerms extends BaseTable {
         this.name = name;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PAYMENT_TERMS, DatabaseOperation.INSERT);
+            dbHelper.dbOperations(this, Table.INVOICE_PURPOSES, DatabaseOperation.INSERT);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -50,7 +58,7 @@ public class PaymentTerms extends BaseTable {
     @Override
     public void deleteTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PAYMENT_TERMS, DatabaseOperation.DELETE);
+            dbHelper.dbOperations(this, Table.INVOICE_PURPOSES, DatabaseOperation.DELETE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -59,7 +67,7 @@ public class PaymentTerms extends BaseTable {
     @Override
     public void updateTo(ImonggoDBHelper dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PAYMENT_TERMS, DatabaseOperation.UPDATE);
+            dbHelper.dbOperations(this, Table.INVOICE_PURPOSES, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
         }

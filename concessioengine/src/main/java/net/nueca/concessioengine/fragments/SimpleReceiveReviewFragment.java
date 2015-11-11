@@ -137,7 +137,7 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
                                 .useProductDetails(product)
                                 .quantity(receive_qty)
                                 .extended_attributes(
-                                        new net.nueca.imonggosdk.objects.document.ExtendedAttributes.Builder()
+                                        new net.nueca.imonggosdk.objects.deprecated.ExtendedAttributes.Builder()
                                                 .outright_return(outright_return != 0d ? "" + outright_return : null)
                                                 .discrepancy(discrepancy != 0d ? "" + discrepancy : null)
                                                 .buildIfNotEmpty()

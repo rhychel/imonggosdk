@@ -1,7 +1,6 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +11,8 @@ import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.document.ExtendedAttributes;
 import net.nueca.imonggosdk.tools.NumberTools;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import me.grantland.widget.AutofitTextView;

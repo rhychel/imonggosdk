@@ -3,7 +3,6 @@ package net.nueca.concessio_test;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,7 +20,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
+import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 
 import java.sql.SQLException;
 import java.util.List;

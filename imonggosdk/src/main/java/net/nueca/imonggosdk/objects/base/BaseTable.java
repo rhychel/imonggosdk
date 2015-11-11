@@ -14,11 +14,16 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
  */
 public abstract class BaseTable {
 
+    public static final String TAG = "BASETABLE";
+
     @DatabaseField(id=true)
     protected int id = -1;
 
     @DatabaseField
     protected String searchKey = "";
+
+    @DatabaseField
+    protected Extras extras;
 
     @Expose
     @DatabaseField
@@ -27,8 +32,6 @@ public abstract class BaseTable {
     public String getSearchKey() {
         return searchKey;
     }
-
-    public static String TAG = "BASETABLE";
 
     public void setSearchKey(String searchKey) {
         this.searchKey = searchKey;
@@ -56,6 +59,14 @@ public abstract class BaseTable {
 
     public void setUtc_updated_at(String utc_updated_at) {
         this.utc_updated_at = utc_updated_at;
+    }
+
+    public Extras getExtras() {
+        return extras;
+    }
+
+    public void setExtras(Extras extras) {
+        this.extras = extras;
     }
 
     public abstract void insertTo(ImonggoDBHelper dbHelper);
