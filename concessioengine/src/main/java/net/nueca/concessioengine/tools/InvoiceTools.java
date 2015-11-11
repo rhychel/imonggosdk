@@ -3,16 +3,13 @@ package net.nueca.concessioengine.tools;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
-import net.nueca.imonggosdk.objects.PaymentType;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**

@@ -9,11 +9,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import net.nueca.concessioengine.R;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
-import net.nueca.imonggosdk.objects.PaymentType;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.widgets.Numpad;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
