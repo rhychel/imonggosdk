@@ -28,6 +28,7 @@ public class ImonggoAppCompatActivity extends AppCompatActivity {
             OpenHelperManager.releaseHelper();
             dbHelper = null;
         }
+
         super.onDestroy();
     }
 

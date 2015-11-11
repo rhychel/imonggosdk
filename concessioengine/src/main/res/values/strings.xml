@@ -11,8 +11,19 @@
     <string name="LOGIN_UI_TEXT_HINT_ACCOUNT_ID">ACCOUNT ID</string>
     <string name="LOGIN_UI_TEXT_HINT_EMAIL_ID">EMAIL</string>
     <string name="LOGIN_UI_TEXT_HINT_PASSWORD_ID">PASSWORD</string>
-    <string name="LOGIN_UI_BUTTON_SIGNIN">Sign In</string>
+    <string name="LOGIN_UI_BUTTON_SIGNIN">Log In</string>
 
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="civil_status_array">
+        <item>Single</item>
+        <item>Married</item>
+        <item>Separated</item>
+        <item>Widow (er)</item>
+    </string-array>
 
 
 </resources>

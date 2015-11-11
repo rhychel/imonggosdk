@@ -1,6 +1,8 @@
 package net.nueca.concessioengine.views;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -40,6 +42,7 @@ public abstract class BaseToolbarExt implements View.OnClickListener {
         attachAfter(context, toolbar, true);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void attachAfter(Context context, View toolbar, boolean adaptToolbarBg) {
         if(isAttached) {
             Log.e(getClass().getSimpleName(), "attachAfter : isAttached? true");
@@ -83,6 +86,7 @@ public abstract class BaseToolbarExt implements View.OnClickListener {
         attachBefore(context, toolbar, true);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void attachBefore(Context context, View toolbar, boolean adaptToolbarBg) {
         if(isAttached) {
             Log.e(getClass().getSimpleName(), "attachBefore : isAttached? true");

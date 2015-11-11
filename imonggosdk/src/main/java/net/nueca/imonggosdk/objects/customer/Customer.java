@@ -1,17 +1,19 @@
-package net.nueca.imonggosdk.objects;
+package net.nueca.imonggosdk.objects.customer;
 
-import android.util.Log;
-
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.RoutePlan;
+import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.base.BaseTable;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 
 import java.sql.SQLException;
 
@@ -20,7 +22,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Customer extends BaseTable {
+public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
 
     @DatabaseField
     private int point_to_amount_ratio;
@@ -31,13 +33,19 @@ public class Customer extends BaseTable {
             available_points, birthdate, status, birthday,
             membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
     @DatabaseField
-    private transient String extras = "";
-    @DatabaseField
     private boolean tax_exempt;
     @DatabaseField
     private transient boolean is_favorite = false;
-
-    private Extras extra = null;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "price_list_id")
+    private PriceList priceList;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")
+    private Branch branch;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_terms_id")
+    private PaymentTerms paymentTerms;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
+    private CustomerCategory customerCategory; // customer_type_id (?)
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
+    private RoutePlan routePlan;
 
     @Override
     public void insertTo(ImonggoDBHelper dbHelper) {
@@ -63,37 +71,6 @@ public class Customer extends BaseTable {
             dbHelper.dbOperations(this, Table.CUSTOMERS, DatabaseOperation.UPDATE);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-    }
-
-    public class Extras {
-        private String checkin_count = "0", last_checkin_at = "";
-
-        public Extras(JSONObject jsonObject) {
-            try {
-                if(jsonObject.has("checkin_count")) {
-                    this.checkin_count = jsonObject.getString("checkin_count");
-                    this.last_checkin_at = jsonObject.getString("last_checkin_at");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public String getCheckin_count() {
-            return checkin_count;
-        }
-
-        public void setCheckin_count(String checkin_count) {
-            this.checkin_count = checkin_count;
-        }
-
-        public String getLast_checkin_at() {
-            return last_checkin_at;
-        }
-
-        public void setLast_checkin_at(String last_checkin_at) {
-            this.last_checkin_at = last_checkin_at;
         }
     }
 
@@ -329,14 +306,6 @@ public class Customer extends BaseTable {
         this.gender = gender;
     }
 
-    public String getExtras() {
-        return extras;
-    }
-
-    public void setExtras(String extras) {
-        this.extras = extras;
-    }
-
     public boolean isTax_exempt() {
         return tax_exempt;
     }
@@ -353,18 +322,44 @@ public class Customer extends BaseTable {
         this.is_favorite = is_favorite;
     }
 
-    public void setExtra(Extras extra) {
-        this.extra = extra;
+    public CustomerCategory getCustomerCategory() {
+        return customerCategory;
     }
 
-    public Extras getExtra() throws JSONException {
-        Log.e("Extra value=", extras + "<----This is the value");
-        if(extra == null) {
-            if(extras.equals(""))
-                extras = "{}";
-            extra = new Extras(new JSONObject(extras));
-        }
-        return extra;
+    public void setCustomerCategory(CustomerCategory customerCategory) {
+        this.customerCategory = customerCategory;
+    }
+
+    public PaymentTerms getPaymentTerms() {
+        return paymentTerms;
+    }
+
+    public void setPaymentTerms(PaymentTerms paymentTerms) {
+        this.paymentTerms = paymentTerms;
+    }
+
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
+    public PriceList getPriceList() {
+        return priceList;
+    }
+
+    public void setPriceList(PriceList priceList) {
+        this.priceList = priceList;
+    }
+
+    public RoutePlan getRoutePlan() {
+        return routePlan;
+    }
+
+    public void setRoutePlan(RoutePlan routePlan) {
+        this.routePlan = routePlan;
     }
 
     @Override
@@ -410,5 +405,22 @@ public class Customer extends BaseTable {
         }
 
         return address;
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper dbHelper) {
+        extras.setCustomer(this);
+        extras.setId(Customer.class.getName().toUpperCase(), id);
+        extras.insertTo(dbHelper);
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper dbHelper) {
+        extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper dbHelper) {
+        extras.updateTo(dbHelper);
     }
 }

@@ -79,6 +79,13 @@ public class Configurations {
 			put(Table.DOCUMENTS, "documents.json");
             put(Table.ORDERS, "orders.json");
             put(Table.DAILY_SALES, "daily_sales/");
+
+            // FOR REBISCO
+            put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
+            put(Table.PAYMENT_TERMS, "payment_terms.json");
+            put(Table.CUSTOMER_CATEGORIES, "customer_categories.json");
+            put(Table.PAYMENT_TYPES, "payment_types.json");
+
             /*put(Modules.CONCESSIO_SETTINGS, "application_settings/concesio.json");
             put(Modules.POS_DEVICES, "pos_devices.json");
             put(Modules.SALES_PROMOTIONS, "sales_promotions.json");*/
@@ -115,6 +122,12 @@ public class Configurations {
             put(Table.DOCUMENTS, "documents");
 			put(Table.ORDERS, "orders");
             put(Table.APPLICATION_SETTINGS, "application_settings");
+
+            // FOR REBISCO
+            put(Table.INVOICE_PURPOSES, "invoice_purposes");
+            put(Table.PAYMENT_TERMS, "payment_terms");
+            put(Table.CUSTOMER_CATEGORIES, "customer_categories");
+            put(Table.PAYMENT_TYPES, "payment_types");
 //            put(Modules.CONCESSIO_SETTINGS, "application_settings");
 //            put(Modules.DISCOUNTS, "sales_promotions");
 //            put(Modules.DOCUMENT_TYPES, "document_types");

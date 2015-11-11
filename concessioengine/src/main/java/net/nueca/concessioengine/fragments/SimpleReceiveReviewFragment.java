@@ -27,9 +27,9 @@ import net.nueca.concessioengine.views.SimpleReceiveToolbarExt;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
 import net.nueca.imonggosdk.objects.document.RemarkBuilder;
 import net.nueca.imonggosdk.tools.NumberTools;
 

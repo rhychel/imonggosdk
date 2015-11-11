@@ -1,13 +1,10 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
-import net.nueca.concessioengine.R;
-import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.util.ArrayList;
 import java.util.List;

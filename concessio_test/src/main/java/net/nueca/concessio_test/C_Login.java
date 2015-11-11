@@ -3,12 +3,14 @@ package net.nueca.concessio_test;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.crashlytics.android.Crashlytics;
+
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.tools.SettingTools;
-import com.crashlytics.android.Crashlytics;
+
 import io.fabric.sdk.android.Fabric;
 
 
@@ -92,8 +94,8 @@ public class C_Login extends LoginActivity {
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
 
-        setEditTextAccountID("retailpos");
-        setEditTextEmail("retailpos@test.com");
-        setEditTextPassword("retailpos");
+        setEditTextAccountID("nuecaonly");
+        setEditTextEmail("nuecaonly@test.com");
+        setEditTextPassword("nuecaonly");
     }
 }

@@ -15,12 +15,13 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
-import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
@@ -75,8 +76,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         } else if (requestType == RequestType.LAST_UPDATED_AT) {
 
             if (mCurrentTableSyncing == Table.DAILY_SALES) {
-                /*ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing,
-                        getSession().getServer(), RequestType.DAILY_SALES_TODAY, getParameters(RequestType.DAILY_SALES_TODAY));*/
+                ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing,
+                        getSession().getServer(), RequestType.DAILY_SALES_TODAY, getParameters(RequestType.DAILY_SALES_TODAY));
                 return;
             }
 
@@ -108,11 +109,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing,
                     getSession().getServer(), requestType, getParameters(requestType));
 
-        } /*else if (requestType == RequestType.DAILY_SALES_TODAY) {
+        } else if (requestType == RequestType.DAILY_SALES_TODAY) {
 
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing,
                     getSession().getServer(), requestType, getParameters(requestType));
-        }*/
+        }
     }
 
     protected void initializeFromTo() {
@@ -143,13 +144,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     private String getParameters(RequestType requestType) {
-        /*if (requestType == RequestType.DAILY_SALES_TODAY) {
+        if (requestType == RequestType.DAILY_SALES_TODAY) {
             Log.e(TAG, "parameter" + String.format(ImonggoTools.generateParameter(Parameter.CURRENT_DATE, Parameter.BRANCH_ID),
                     DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd"), getSession().getCurrent_branch_id()) + "");
 
             return String.format(ImonggoTools.generateParameter(Parameter.CURRENT_DATE, Parameter.BRANCH_ID),
                     DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd"), getSession().getCurrent_branch_id() + "");
-        }*/
+        }
 
         if (requestType == RequestType.LAST_UPDATED_AT) {
 
@@ -322,7 +323,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         mCurrentTableSyncing = mModulesToSync[mModulesIndex];
 
         if (mCurrentTableSyncing == Table.TAX_SETTINGS || mCurrentTableSyncing == Table.DOCUMENT_TYPES
-                || mCurrentTableSyncing == Table.DOCUMENT_PURPOSES) {
+                || mCurrentTableSyncing == Table.DOCUMENT_PURPOSES || mCurrentTableSyncing == Table.SETTINGS) {
             startSyncModuleContents(RequestType.API_CONTENT);
         } else { // otherwise, call the last updated at request {
             startSyncModuleContents(RequestType.LAST_UPDATED_AT);
@@ -539,7 +540,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                         syncNext();
                     }
-                } /*else if (requestType == RequestType.DAILY_SALES_TODAY) {
+                } else if (requestType == RequestType.DAILY_SALES_TODAY) {
 
                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                     String date_updated_at = DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd");
@@ -565,7 +566,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     }
 
                     syncNext();
-                }*/
+                }
                 // JSONArray
             } else if (response instanceof JSONArray) {
                 JSONArray jsonArray = (JSONArray) response;
@@ -1073,6 +1074,27 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         deleteDocument.doOperation();
                         updateNext(requestType, size);
                         break;
+                    case SETTINGS:
+                        Log.e(TAG, mCurrentTableSyncing + " | size: " + size + " page: " + page + " max page: " + numberOfPages);
+
+                        if (size == 0) {
+                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                            syncNext();
+                            return;
+                        } else {
+
+                            getHelper().getSettings().deleteBuilder().delete();
+
+                            for (int i = 0; i < size; i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                Log.e(TAG, jsonObject.getString("name") + " - " + jsonObject.getString("value"));
+                                Settings settings = new Settings(i, jsonObject.getString("name"), jsonObject.getString("value"));
+                                settings.insertTo(getHelper());
+                            }
+                        }
+
+                        syncNext();
+                        break;
                     default:
                         updateNext(requestType, size);
                         break;
@@ -1137,11 +1159,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         for (Table t : mModulesToSync) {
             Log.e(TAG, t.toString());
         }
-        /*if (mCurrentTableSyncing == Table.DAILY_SALES) {
+        if (mCurrentTableSyncing == Table.DAILY_SALES) {
             startSyncModuleContents(RequestType.DAILY_SALES_TODAY);
-        }*/// else {
+        } else {
             startSyncModuleContents(RequestType.LAST_UPDATED_AT);
-        //}
+        }
 
     }
 }
