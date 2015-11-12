@@ -9,6 +9,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.base.BaseTransactionLine;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,16 +19,7 @@ import java.sql.SQLException;
 /**
  * Created by gama on 7/1/15.
  */
-public class InvoiceLine extends BaseTable2 {
-    @Expose
-    @DatabaseField
-    protected int product_id;
-    @Expose
-    @DatabaseField
-    protected int quantity;
-    @Expose
-    @DatabaseField
-    protected double retail_price;
+public class InvoiceLine extends BaseTransactionLine {
     @Expose
     @DatabaseField
     protected String discount_text;
@@ -41,49 +33,9 @@ public class InvoiceLine extends BaseTable2 {
     public InvoiceLine() {}
 
     public InvoiceLine (Builder builder) {
-        product_id = builder.product_id;
-        quantity = builder.quantity;
-        retail_price = builder.retail_price;
+        super(builder);
         discount_text = builder.discount_text;
         subtotal = builder.subtotal;
-    }
-
-    /*public InvoiceLine(int product_id, int quantity, int retail_price, String discount_text) {
-        this.product_id = product_id;
-        this.quantity = quantity;
-        this.retail_price = retail_price;
-        this.discount_text = discount_text;
-    }
-
-    public InvoiceLine(Product product, int quantity, String discount_text) {
-        this.product_id = product.getId();
-        this.quantity = quantity;
-        this.retail_price = product.getRetail_price();
-        this.discount_text = discount_text;
-    }*/
-
-    public int getProduct_id() {
-        return product_id;
-    }
-
-    public void setProduct_id(int product_id) {
-        this.product_id = product_id;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getRetail_price() {
-        return retail_price;
-    }
-
-    public void setRetail_price(double retail_price) {
-        this.retail_price = retail_price;
     }
 
     public String getDiscount_text() {
@@ -115,25 +67,10 @@ public class InvoiceLine extends BaseTable2 {
         return new JSONObject(gson.toJson(this));
     }
 
-    public static class Builder {
-        protected int product_id;
-        protected int quantity;
-        protected double retail_price;
+    public static class Builder extends BaseTransactionLine.Builder<Builder> {
         protected String discount_text;
         protected String subtotal;
 
-        public Builder product_id(int product_id) {
-            this.product_id = product_id;
-            return this;
-        }
-        public Builder quantity(int quantity) {
-            this.quantity = quantity;
-            return this;
-        }
-        public Builder retail_price(double retail_price) {
-            this.retail_price = retail_price;
-            return this;
-        }
         public Builder discount_text(String discount_text) {
             this.discount_text = discount_text;
             return this;

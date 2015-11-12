@@ -1,6 +1,5 @@
 package net.nueca.concessioengine.fragments;
 
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -11,9 +10,8 @@ import android.widget.ListView;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
-import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
-import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
-import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
+import net.nueca.concessioengine.adapters.base.BaseProductsAdapter;
+import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.exceptions.ProductsFragmentException;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
@@ -63,8 +61,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     protected ListView lvProducts;
     protected Toolbar tbActionBar;
 
-    protected SimpleProductRecyclerViewAdapter simpleProductRecyclerViewAdapter;
-    protected SimpleProductListAdapter simpleProductListAdapter;
+    protected BaseProductsRecyclerAdapter productRecyclerViewAdapter;
+    protected BaseProductsAdapter productListAdapter;
 
     protected abstract void showQuantityDialog(int position, Product product, SelectedProductItem selectedProductItem);
     protected abstract void showProductDetails(Product product);
@@ -175,8 +173,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             super.onScrolled(recyclerView, dx, dy);
 
             int visibleItemCount = rvProducts.getChildCount();
-            int totalItemCount = simpleProductRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
-            int firstVisibleItem = simpleProductRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
+            int totalItemCount = productRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
+            int firstVisibleItem = productRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
 
             int lastItem = firstVisibleItem + visibleItemCount;
 

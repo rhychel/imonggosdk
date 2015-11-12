@@ -1,5 +1,7 @@
 package net.nueca.concessioengine.objects;
 
+import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
+
 /**
  * Created by rhymart on 7/13/15.
  * imonggosdk (c)2015
@@ -45,8 +47,8 @@ public class ExtendedAttributes {
         return batch_no;
     }
 
-    public net.nueca.imonggosdk.objects.deprecated.ExtendedAttributes convertForDocumentLine() {
-        return new net.nueca.imonggosdk.objects.deprecated.ExtendedAttributes.Builder()
+    public DocumentLineExtras convertForDocumentLine() {
+        return new DocumentLineExtras.Builder()
                 .brand(getBrand())
                 .delivery_date(delivery_date)
                 .batch_no(batch_no)

@@ -22,6 +22,7 @@ import net.nueca.concessioengine.dialogs.CustomDialog;
 import net.nueca.concessioengine.dialogs.CustomDialogFrameLayout;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.dialogs.DialogTools;
+import net.nueca.imonggosdk.enums.DialogType;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
@@ -57,7 +58,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private Boolean requireObjectConcessioSettings = false;
     private Session mSession = null;
     private Server mServer = Server.IMONGGO;
-    private Boolean isUsingDefaultCustomDialogForSync = false;
+    private Boolean isUsingDefaultCustomDialogForSync = true;
     private int[] mModules = null;
     private EditText etAccountID = null;
     private EditText etEmail = null;
@@ -70,6 +71,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private String TAG = "BaseLoginActivity";
     private SyncModules mSyncModules = null;
     private Boolean mBounded = false;
+    private Boolean mUseDefaultDialog = true;
 
 
     /**
@@ -125,12 +127,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * This is where you will create your login layout
      * setContentView and align the ids in your layout
      * to this class.
-     *
+     * <p/>
      * if you want to customize login layout
      * you should extend this class and
      * override this method and call this
      * functions inside:
-     *
+     * <p/>
      * 1. setContentView( your custom layout)
      * 2. setLayoutEquipments( fill in the ids in your layout)
      */
@@ -142,10 +144,17 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     protected abstract void autoUpdateChecker();
 
+    protected abstract void dialogPositiveButtonAction();
+
+    protected abstract void dialogNegativeButtonAction();
+
+    protected abstract void showProgressDialog(DialogType type, String message, String positiveText, String negativeText);
+
     /**
      * Calling required methods for login.
      * you can Override this method as long
      * as you call super.onCreate
+     *
      * @param savedInstanceState bundle
      */
     @Override
@@ -153,7 +162,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         super.onCreate(savedInstanceState);
         initLoginEquipments();
         loginChecker();
-        onCreateLoginLayout();
+        if (!isLoggedIn() || isUnlinked()) {
+            onCreateLoginLayout();
+        }
         autoUpdateChecker();
     }
 
@@ -170,6 +181,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             BaseSyncService.LocalBinder mLocalBinder = (BaseSyncService.LocalBinder) service;
 
             mSyncModules = (SyncModules) mLocalBinder.getService();
+
 
             if (mSyncModules != null) {
                 mBounded = true;
@@ -207,6 +219,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     customDialog.dismiss();
                 }
                 startSyncService();
+
                 DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
                         "Sync failed. Login Again ",
                         "Ok", "", false,
@@ -220,17 +233,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         });
             }
         } else {
-            Log.e(TAG, "Service is not binded cannot start sync");
-            DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE),
-                    "Cannot start sync service.",
-                    "START SERVICE", "", false,
-                    new MaterialDialog.ButtonCallback() {
-                        @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
-                            startSyncService();
-                        }
-                    });
+
+            startSyncService();
         }
     }
 
@@ -240,7 +244,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     private void setUpModuleNamesForCustomDialog() {
         if (getModules() != null) { // manually set modules to download see /**/
-            if(mModulesToDownload != null) {
+            if (mModulesToDownload != null) {
                 mModulesToDownload.clear();
             } else {
                 mModulesToDownload = new ArrayList<>();
@@ -284,9 +288,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             case DAILY_SALES:
                                 mModulesToDownload.add("Daily Sales");
                                 break;
+                            case SETTINGS:
+                                break;
                             default:
-                                LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module");
-                                Log.e(TAG, "You have added unsupported module");
+                                LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
+                                Log.e(TAG, "You have added unsupported module. please check your code");
+                                finish();
                                 break;
                         }
                     }
@@ -309,7 +316,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         customDialogFrameLayout = new CustomDialogFrameLayout(context, moduleName);
     }
 
-    public CustomDialogFrameLayout getCustomDialogFrameLayout(){
+    public CustomDialogFrameLayout getCustomDialogFrameLayout() {
         return customDialogFrameLayout;
     }
 
@@ -322,7 +329,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         customDialog.setTitle(title);
     }
 
-    public void createNewCustomDialog(Context context){
+    public void createNewCustomDialog(Context context) {
         customDialog = new CustomDialog(context);
     }
 
@@ -343,18 +350,18 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     private void showOrHideCustomDialog(boolean choice) {
-        if(choice) {
+        if (choice) {
             customDialog.show();
         } else {
             customDialog.hide();
         }
     }
 
-    public void setIsUsingDefaultCustomDialogForSync(boolean choice){
+    public void setIsUsingDefaultCustomDialogForSync(boolean choice) {
         isUsingDefaultCustomDialogForSync = choice;
     }
 
-    public boolean isUsingDefaultCustomDialogForSync(){
+    public boolean isUsingDefaultCustomDialogForSync() {
         return isUsingDefaultCustomDialogForSync;
     }
 
@@ -401,7 +408,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private void initLogin() {
 
         if (!NetworkTools.isInternetAvailable(this)) {
-
             DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE),
                     "No network connection",
                     getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
@@ -451,9 +457,14 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 focusView.requestFocus();
             } else {
                 //show progress dialog
-                DialogTools.showIndeterminateProgressDialog(BaseLoginActivity.this,
-                        null,
-                        getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), false);
+
+                if(isUsingDefaultDialog()) {
+                    DialogTools.showIndeterminateProgressDialog(BaseLoginActivity.this,
+                            null,
+                            getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), false);
+                } else {
+                    showProgressDialog(DialogType.INDETERDMINATE, getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), "", "");
+                }
 
                 // BaseLogin Function
                 Log.i(TAG, "Loggin in...");
@@ -473,12 +484,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             @Override
             public void onLoginSuccess(Session session) {
                 Log.e(TAG, "Successfully logged in");
+                DialogTools.hideIndeterminateProgressDialog();
+
                 successLogin();
                 mSession = session;
                 setLoggedIn(true);
                 setUnlinked(false);
 
-                DialogTools.hideIndeterminateProgressDialog();
                 try {
                     startSyncingImonggoModules();
                 } catch (SQLException e) {
@@ -487,12 +499,22 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             }
 
             @Override
+            public void onPositiveButtonPressed() {
+                dialogPositiveButtonAction();
+            }
+
+            @Override
+            public void onNegativeButtonPressed() {
+                dialogNegativeButtonAction();
+            }
+
+            @Override
             public void onStopLogin() {
                 Log.e(TAG, "onStopLogin called");
                 stopLogin();
+
                 // hide progress dialog
                 DialogTools.hideIndeterminateProgressDialog();
-
                 // delete session data
                 deleteUserSessionData();
 
@@ -797,6 +819,14 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         mSyncModules = syncModules;
     }
 
+    public Boolean isUsingDefaultDialog() {
+        return mUseDefaultDialog;
+    }
+
+    public void setIsUsingDefaultDialog(Boolean mUseDefaultDialog) {
+        this.mUseDefaultDialog = mUseDefaultDialog;
+    }
+
     protected void stopService() {
         Log.e(TAG, "Stopping sync service");
         doUnbindService();
@@ -901,6 +931,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     case DAILY_SALES:
                         currentTable = "Daily Sales";
                         break;
+                    case SETTINGS:
+                        currentTable = "SETTINGS";
+                        break;
                     default:
                         break;
                 }
@@ -910,7 +943,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         int progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
 
         Log.e(TAG, table + " progress: " + progress);
-        if(isUsingDefaultCustomDialogForSync()) {
+        if (isUsingDefaultCustomDialogForSync()) {
             customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(mModulesToDownload.indexOf(currentTable));
             customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), progress);
         }
@@ -928,12 +961,15 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             customDialog.dismiss();
             customDialog = null;
         }
+
+        DialogTools.hideIndeterminateProgressDialog();
         showNextActivityAfterLogin();
     }
 
     @Override
     public void onErrorDownload(Table table, String message) {
         Log.e(TAG, "error downloading " + table + " " + message);
+        stopLogin();
     }
 
 
@@ -946,7 +982,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
 
         super.onStop();
-        stopLogin();
+
 
         if (isUnlinked() && !isLoggedIn()) {
             if (getBaseLogin() != null) {
@@ -954,6 +990,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             }
         }
         DialogTools.hideIndeterminateProgressDialog();
+        stopLogin();
     }
 
     public void setAutoUpdateApp(Boolean choice) {

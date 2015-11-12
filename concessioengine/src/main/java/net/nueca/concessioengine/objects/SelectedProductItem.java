@@ -21,6 +21,7 @@ public class SelectedProductItem {
     private String total_quantity = "0";
     private String total_return = "0";
     private String total_discrepancy = "0";
+    private Double retail_price;
 
     private String TAG = "SelectedProductItem";
     private ValuesList valuesList = new ValuesList();
@@ -45,6 +46,7 @@ public class SelectedProductItem {
      */
     public int addValues(Values value) {
         int index = valuesList.indexOf(value);
+        value.setRetail_price(getRetail_price());
         //Log.e(TAG, "index: " + index + " valuesList: " + value.toString());
         if(index > -1) {
             setValues(index, value);
@@ -78,7 +80,7 @@ public class SelectedProductItem {
     public Double getRetailPriceWithTax() {
 
         int quantity = Integer.parseInt(total_quantity);
-        double retail_price = product.getRetail_price();
+        /**double retail_price = product.getRetail_price();**/
         //ProductTaxRateAssoc pTRate =
 
         if(quantity == 0) { // if quantity is zero | return 0
@@ -86,12 +88,12 @@ public class SelectedProductItem {
         } else {
             if(product.isTax_exempt()) { // if tax excempted return retail price
                 Log.e(TAG, "Product is tax exempted. returning default retail price");
-                return retail_price;
+                return getRetail_price();
             }
             if(isMultiline) {
-                return retail_price;
+                return getRetail_price();
             } else {
-                return retail_price * quantity;
+                return getRetail_price() * quantity;
             }
         }
     }
@@ -225,6 +227,16 @@ public class SelectedProductItem {
                 ", valuesList=" + valuesList +
                 ", isMultiline=" + isMultiline +
                 '}';
+    }
+
+    public Double getRetail_price() {
+        if(retail_price == null)
+            retail_price = product.getRetail_price();
+        return retail_price;
+    }
+
+    public void setRetail_price(Double retail_price) {
+        this.retail_price = retail_price;
     }
 
 

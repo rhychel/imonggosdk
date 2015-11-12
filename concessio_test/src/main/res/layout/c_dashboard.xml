@@ -6,6 +6,12 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Sales"
+        android:id="@+id/btnSales"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Order"
         android:id="@+id/btnOrder" />
 
@@ -20,6 +26,12 @@
         android:layout_height="wrap_content"
         android:text="Receive"
         android:id="@+id/btnReceive" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pullout"
+        android:id="@+id/btnPullout"/>
 
     <Button
         android:layout_width="match_parent"

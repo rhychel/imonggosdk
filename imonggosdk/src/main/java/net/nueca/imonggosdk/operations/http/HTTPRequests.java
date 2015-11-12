@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * Created by rhymart on 5/19/15.
  * imonggosdk (c)2015
- * <p/>
+ * <p>
  * =====================================================
  * ==---------------RESTFul HTTP Methods--------------==
  * =====================================================
@@ -40,7 +40,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
-        Log.e(TAG,  ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+        Log.e(TAG, ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
@@ -82,7 +82,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
-        Log.e(TAG,  ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+        Log.e(TAG, ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
@@ -96,7 +96,6 @@ public class HTTPRequests {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, error.getLocalizedMessage());
                         if (volleyRequestListener != null) {
                             if (error.networkResponse != null)
                                 volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
@@ -124,7 +123,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
-        Log.e(TAG,  ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+        Log.e(TAG, ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
                 new Response.Listener<JSONArray>() {
@@ -356,4 +355,105 @@ public class HTTPRequests {
         return jsonObjectRequest;
     }
 
+    /**
+     * New page send implementation
+     **/
+
+    public static JsonObjectRequest sendPOSTRequest2(Context context, final Session session,
+                                                     final VolleyRequestListener volleyRequestListener, Server server,
+                                                     final Table table, final JSONObject jsonObject, int branch_id,
+                                                     String parameter) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(table, RequestType.POST);
+
+        if (parameter != null && parameter.length() > 1 && parameter.charAt(0) != '&')
+            parameter = "?post=0&branch_id=" + branch_id +
+                    (parameter.charAt(0) == '?' ? parameter.substring(1) : parameter);
+        else
+            parameter = "?post=0&branch_id=" + branch_id;
+
+        Log.e("HTTPRequests", "sendPOSTRequest2 : " + ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.POST,
+                ImonggoOperations.getAPIModuleURL(context, session, table, server,
+                        parameter),
+                jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (volleyRequestListener != null)
+                            volleyRequestListener.onSuccess(table, RequestType.POST, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null)
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                String auth = "Basic " + session.getApiAuthentication();
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        return jsonObjectRequest;
+    }
+
+    public static JsonObjectRequest sendPUTRequest2(Context context, final Session session,
+                                                    final VolleyRequestListener volleyRequestListener, Server server,
+                                                    final Table table, final JSONObject jsonObject, String id,
+                                                    int branch_id, boolean isLastPage, String parameter) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(table, RequestType.PUT);
+
+        if (parameter != null && parameter.length() > 1 && parameter.charAt(0) != '&')
+            parameter = "post=" + (isLastPage ? "1" : "0") + "&branch_id=" + branch_id +
+                    (parameter.charAt(0) == '?' ? parameter.substring(1) : parameter);
+        else
+            parameter = "post=" + (isLastPage ? "1" : "0") + "&branch_id=" + branch_id;
+
+        Log.e("HTTPRequests", "sendPUTRequest2 : " + ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.PUT,
+                ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter), jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (volleyRequestListener != null)
+                            volleyRequestListener.onSuccess(table, RequestType.PUT, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null)
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                String auth = "Basic " + session.getApiAuthentication();
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        return jsonObjectRequest;
+    }
 }

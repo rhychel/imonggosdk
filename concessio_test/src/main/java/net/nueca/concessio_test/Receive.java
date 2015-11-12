@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import net.nueca.concessioengine.activities.ModuleActivity;
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
@@ -72,7 +72,7 @@ public class Receive extends ModuleActivity implements SetupActionBar {
                                 .price(1)
                                 .unit_content_quantity(1)
                                 .unit_name("PC")
-                                .extras(new DocumentLineExtras("123"))
+                                .extras(new DocumentLineExtras.Builder().batch_no("123").build())
                                 .unit_quantity((int) (Math.random() * 10) % 100)
                                 .build());
 

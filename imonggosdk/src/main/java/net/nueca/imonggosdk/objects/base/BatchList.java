@@ -129,14 +129,14 @@ public class BatchList<T> extends ArrayList<T> {
             dbHelper.batchCreateOrUpdateDocumentLines(this, databaseOperation);
             Log.e(TAG, databaseOperation.toString() + "ING to Document Line table");
         }
-        if(get(0) instanceof ExtendedAttributes) {
-            dbHelper.batchCreateOrUpdateExtendedAttributes(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Extended Attributes table");
-        }
         if(get(0) instanceof DocumentLineExtras) {
             dbHelper.batchCreateOrUpdateDocumentLineExtras(this, databaseOperation);
             Log.e(TAG, databaseOperation.toString() + "ING to Document Line Extras table");
         }
+        /*if(get(0) instanceof DocumentLineExtras_Old) {
+            dbHelper.batchCreateOrUpdateDocumentLineExtras(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Document Line Extras table");
+        }*/
         /** Orders -- gama **/
         if(get(0) instanceof Order) {
             dbHelper.batchCreateOrUpdateOrders(this, databaseOperation);

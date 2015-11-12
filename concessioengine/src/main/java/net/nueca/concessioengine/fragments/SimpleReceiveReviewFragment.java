@@ -27,6 +27,7 @@ import net.nueca.concessioengine.views.SimpleReceiveToolbarExt;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.document.RemarkBuilder;
@@ -136,8 +137,8 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
                                 .product_id(product.getId())
                                 .useProductDetails(product)
                                 .quantity(receive_qty)
-                                .extended_attributes(
-                                        new net.nueca.imonggosdk.objects.deprecated.ExtendedAttributes.Builder()
+                                .extras(
+                                        new DocumentLineExtras.Builder()
                                                 .outright_return(outright_return != 0d ? "" + outright_return : null)
                                                 .discrepancy(discrepancy != 0d ? "" + discrepancy : null)
                                                 .buildIfNotEmpty()
@@ -229,7 +230,7 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
             @Override
             public void onClick(View v) {
                 Document document = generateReceiveDocument();
-                if(fabListener != null)
+                if(fabListener != null && shouldContinue())
                     fabListener.onClick(document);
                 Log.e("Document", document.toString());
             }
@@ -244,6 +245,10 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
 
     public void setFABListener(FloatingActionButtonListener fabListener) {
         this.fabListener = fabListener;
+    }
+
+    protected boolean shouldContinue() {
+        return !isManual || getReceivedProductItemList().size() > 0;
     }
 
     public List<SelectedProductItem> getReceivedProducts() {
@@ -333,6 +338,8 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
             tvNoProducts.setVisibility(show ? View.GONE : View.VISIBLE);
             tvNoProducts.setText(msg);
         }
+
+        fabContinue.setVisibility(show? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -410,11 +417,12 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
 
             @Override
             public void onSave(String receivetxt, String returntxt, String discrepancytxt) {
+
                 SelectedProductItem selectedProductItem = getDisplayProductItemList().get(position);
 
                 if (!selectedProductItem.isMultiline() || selectedProductItem.getValues().size() <= 1) {
                     Values values;
-                    if(selectedProductItem.getValues() != null && selectedProductItem.getValues().size() > 0)
+                    if (selectedProductItem.getValues() != null && selectedProductItem.getValues().size() > 0)
                         values = selectedProductItem.getValues().get(0);
                     else
                         values = new Values();
@@ -426,7 +434,7 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
 //                            NumberTools.toNullableDouble(returntxt), NumberTools.toNullableDouble(discrepancytxt)));
                     values.setQuantity(receivetxt);
                     ExtendedAttributes extendedAttributes = values.getExtendedAttributes();
-                    if(extendedAttributes == null)
+                    if (extendedAttributes == null)
                         extendedAttributes = new ExtendedAttributes();
                     extendedAttributes.setOutright_return(returntxt);
                     extendedAttributes.setDiscrepancy(discrepancytxt);
@@ -434,13 +442,20 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
                     values.setExtendedAttributes(extendedAttributes);
 
                     selectedProductItem.addValues(values);
-                    getReceivedProductItemList().add(selectedProductItem);
+
+                    if (isManual && NumberTools.toDouble(receivetxt) == 0d && NumberTools.toDouble(returntxt) == 0d) {
+                        getReceivedProductItemList().remove(selectedProductItem);
+                    } else {
+                        getReceivedProductItemList().add(selectedProductItem);
+                    }
                 }
 
                 if (useRecyclerView)
                     simpleReceiveRecyclerViewAdapter.notifyItemChanged(position);
                 else
                     simpleReceiveListAdapter.notifyItemChanged(lvProducts, position);
+
+                toggleNoItems("No items to display.", !getReceivedProductItemList().isEmpty());
             }
         });
 

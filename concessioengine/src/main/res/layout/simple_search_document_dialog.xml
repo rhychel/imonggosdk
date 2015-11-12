@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:numpad="http://schemas.android.com/apk/res-auto"
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tilReference"
+        android:padding="10dp">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:hint="Reference Number"
+            android:gravity="center_horizontal"
+            android:textSize="20sp"
+            android:id="@+id/etReference"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Not Found"
+        android:id="@+id/tvNotFound"
+        android:gravity="center"
+        android:textColor="@android:color/holo_red_light"
+        android:visibility="invisible"
+        android:layout_below="@+id/tilReference"/>
+
+    <net.nueca.imonggosdk.widgets.ModifiedNumpad
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/npInput"
+        numpad:showGoButton="false"
+        numpad:showMoreButton="false"
+        numpad:showNegativeButton="false"
+        android:layout_below="@+id/tvNotFound"
+        android:layout_alignWithParentIfMissing="true"/>
+
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search"
+        android:id="@+id/btnSearch"
+        android:layout_gravity="right"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:minWidth="64dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/npInput"
+        />
+
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/btnCancel"
+        android:layout_toLeftOf="@+id/btnSearch"
+        android:layout_toStartOf="@+id/btnSave"
+        android:minWidth="64dp"
+        android:layout_alignTop="@+id/btnSearch"/>
+</RelativeLayout>

@@ -45,8 +45,12 @@ public class SimpleReceiveRecyclerViewAdapter extends BaseReceiveRecyclerAdapter
                 " (" + product.getUnit() + ")" : "" ));
         if(!isReview)
             lvh.tvNum.setText("" + getItem(position).getLine_no());
-        else
-            lvh.tvNum.setText("" + selectedProductItem.getValues().get(0).getLine_no());
+        else {
+            if(selectedProductItem.getValues().isEmpty())
+                lvh.tvNum.setText("" + position);
+            else
+                lvh.tvNum.setText("" + selectedProductItem.getValues().get(0).getLine_no());
+        }
 
         lvh.tvQuantity.setText(NumberTools.separateInCommas(selectedProductItem.getOriginalQuantity()));
         lvh.tvReceive.setText(NumberTools.separateInCommas(selectedProductItem.getQuantity()));

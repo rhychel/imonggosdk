@@ -40,11 +40,15 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
     }
 
     public ReceivedProductItemList getReceivedProductListItem() {
+        receivedProductListItem.sort();
+        if(isManual)
+            receivedProductListItem.removeZeroValue();
         return receivedProductListItem;
     }
 
     public void setReceivedProductListItem(ReceivedProductItemList receivedProductListItem) {
         this.receivedProductListItem = receivedProductListItem;
+        this.receivedProductListItem.sort();
     }
 
     public void setListItemResource(int resource) {
@@ -126,9 +130,9 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
             if(documentLine.getExtras() != null) {
                 extendedAttributes.setBatch_no(documentLine.getExtras().getBatch_no());
             }
-            if(documentLine.getExtended_attributes() != null) {
-                extendedAttributes.setDelivery_date(documentLine.getExtended_attributes().getDelivery_date());
-                extendedAttributes.setBrand(documentLine.getExtended_attributes().getBrand());
+            if(documentLine.getExtras() != null) {
+                extendedAttributes.setDelivery_date(documentLine.getExtras().getDelivery_date());
+                extendedAttributes.setBrand(documentLine.getExtras().getBrand());
             }
             values.setValue("0", unit, extendedAttributes);
 

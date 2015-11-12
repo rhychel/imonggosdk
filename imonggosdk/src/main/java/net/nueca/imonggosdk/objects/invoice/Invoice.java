@@ -12,12 +12,9 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
-import net.nueca.imonggosdk.objects.base.BaseTransaction;
-import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
-import net.nueca.imonggosdk.objects.base.BaseTransactionDB2;
+import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
 import net.nueca.imonggosdk.objects.base.BatchList;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +25,7 @@ import java.util.List;
 /**
  * Created by gama on 7/1/15.
  */
-public class Invoice extends BaseTransactionDB2 {
+public class Invoice extends BaseTransactionTable2 {
     @Expose
     @DatabaseField
     protected String invoice_date;
@@ -198,7 +195,7 @@ public class Invoice extends BaseTransactionDB2 {
         return super.toJSONObject();
     }
 
-    public static class Builder extends BaseTransaction.Builder<Builder> {
+    public static class Builder extends BaseTransactionTable2.Builder<Builder> {
         protected String invoice_date = "";
         protected String status = "";
         protected String email = "";

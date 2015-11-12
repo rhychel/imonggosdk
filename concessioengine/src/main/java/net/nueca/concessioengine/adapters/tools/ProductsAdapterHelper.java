@@ -108,16 +108,18 @@ public class ProductsAdapterHelper {
     public static boolean hasSelectedProductItems() {
         if(selectedProductItems == null)
             return false;
-        return selectedProductItems.size() > 0;
+        return selectedProductItems.isEmpty();
     }
 
     public static void clearSelectedProductItemList() {
-        selectedProductItems.clear();
+        if(selectedProductItems != null)
+            selectedProductItems.clear();
         ProductListTools.restartLineNo();
     }
 
     public static void destroySelectedProductItemList() {
-        selectedProductItems.clear();
+        if(selectedProductItems != null)
+            selectedProductItems.clear();
         selectedProductItems = null;
     }
 

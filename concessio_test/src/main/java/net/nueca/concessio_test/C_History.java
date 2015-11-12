@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import net.nueca.concessioengine.activities.ModuleActivity;
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.fragments.BaseTransactionsFragment;
 import net.nueca.concessioengine.fragments.SimpleTransactionDetailsFragment;
 import net.nueca.concessioengine.fragments.SimpleTransactionsFragment;
