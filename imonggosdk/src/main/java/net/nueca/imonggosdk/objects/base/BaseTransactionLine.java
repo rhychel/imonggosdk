@@ -112,7 +112,7 @@ public abstract class BaseTransactionLine extends BaseTable2 {
         this.unit_name = unit_name;
     }
 
-    public static abstract class Builder {
+    public static abstract class Builder<T extends Builder> {
         protected int product_id = -1;
         protected double retail_price = 0.0;
         protected double quantity = 0.0;
@@ -123,39 +123,37 @@ public abstract class BaseTransactionLine extends BaseTable2 {
         protected Double unit_retail_price = null;
         protected String unit_name = null;
 
-        public Builder product_id(int product_id) {
+        public T product_id(int product_id) {
             this.product_id = product_id;
-            return this;
+            return (T)this;
         }
-        public Builder retail_price(double retail_price) {
+        public T retail_price(double retail_price) {
             this.retail_price = retail_price;
-            return this;
+            return (T)this;
         }
-        public Builder quantity(double quantity) {
+        public T quantity(double quantity) {
             this.quantity = quantity;
-            return this;
+            return (T)this;
         }
-        public Builder unit_id(int unit_id) {
+        public T unit_id(int unit_id) {
             this.unit_id = unit_id;
-            return this;
+            return (T)this;
         }
-        public Builder unit_quantity(double unit_quantity) {
+        public T unit_quantity(double unit_quantity) {
             this.unit_quantity = unit_quantity;
-            return this;
+            return (T)this;
         }
-        public Builder unit_content_quantity(double unit_content_quantity) {
+        public T unit_content_quantity(double unit_content_quantity) {
             this.unit_content_quantity = unit_content_quantity;
-            return this;
+            return (T)this;
         }
-        public Builder unit_retail_price(double unit_retail_price) {
+        public T unit_retail_price(double unit_retail_price) {
             this.unit_retail_price = unit_retail_price;
-            return this;
+            return (T)this;
         }
-        public Builder unit_name(String unit_name) {
+        public T unit_name(String unit_name) {
             this.unit_name = unit_name;
-            return this;
+            return (T)this;
         }
-
-        public abstract BaseTransactionLine build();
     }
 }

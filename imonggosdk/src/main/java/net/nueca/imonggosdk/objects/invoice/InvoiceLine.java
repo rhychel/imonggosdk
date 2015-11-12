@@ -67,7 +67,7 @@ public class InvoiceLine extends BaseTransactionLine {
         return new JSONObject(gson.toJson(this));
     }
 
-    public static class Builder extends BaseTransactionLine.Builder {
+    public static class Builder extends BaseTransactionLine.Builder<Builder> {
         protected String discount_text;
         protected String subtotal;
 

@@ -27,7 +27,7 @@ public class Extras {
 
     // Product
     @DatabaseField
-    private String batch_maintained; // true || false
+    private boolean batch_maintained; // true || false
 
     // DocumentLine
     @DatabaseField
@@ -219,11 +219,11 @@ public class Extras {
         this.batch_no = batch_no;
     }
 
-    public String getBatch_maintained() {
+    public boolean isBatch_maintained() {
         return batch_maintained;
     }
 
-    public void setBatch_maintained(String batch_maintained) {
+    public void setBatch_maintained(boolean batch_maintained) {
         this.batch_maintained = batch_maintained;
     }
 

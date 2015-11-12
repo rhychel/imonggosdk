@@ -11,6 +11,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.BaseTransactionLine;
+import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -215,7 +216,7 @@ public class DocumentLine extends BaseTransactionLine {
         }
     }
 
-    public static class Builder extends BaseTransactionLine.Builder{
+    public static class Builder extends BaseTransactionLine.Builder<Builder> {
         protected int line_no = 0;
         protected DocumentLineExtras extras;
         protected String discount_text;

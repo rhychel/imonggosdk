@@ -9,6 +9,7 @@ import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.tools.SettingTools;
 
 import io.fabric.sdk.android.Fabric;

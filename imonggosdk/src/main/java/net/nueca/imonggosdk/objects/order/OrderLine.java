@@ -94,7 +94,7 @@ public class OrderLine extends BaseTransactionLine {
         }
     }
 
-    public static class Builder extends BaseTransactionLine.Builder {
+    public static class Builder extends BaseTransactionLine.Builder<Builder> {
         private int line_no;
         private String brand = null;
 
