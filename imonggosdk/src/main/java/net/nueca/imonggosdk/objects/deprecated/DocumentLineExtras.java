@@ -1,4 +1,4 @@
-package net.nueca.imonggosdk.objects.document;
+package net.nueca.imonggosdk.objects.deprecated;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -8,6 +8,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 /**
  * Created by gama on 7/20/15.
  */
+@Deprecated
 public class DocumentLineExtras extends BaseTable2 {
     @Expose
     @DatabaseField

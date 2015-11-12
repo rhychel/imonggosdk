@@ -12,6 +12,7 @@ import org.json.JSONObject;
 /**
  * Created by gama on 7/21/15.
  */
+@Deprecated
 public abstract class BaseTransactionDB extends BaseTransaction {
 
     @DatabaseField(id=true)

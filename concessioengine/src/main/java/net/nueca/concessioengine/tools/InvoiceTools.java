@@ -4,14 +4,12 @@ import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -23,6 +21,7 @@ public class InvoiceTools {
 
         for(SelectedProductItem selectedProductItem : selectedProductItems) {
             Product product = selectedProductItem.getProduct();
+
             for(Values itemValue : selectedProductItem.getValues()) {
                 InvoiceLine.Builder builder = new InvoiceLine.Builder();
                 builder.product_id(product.getId());
@@ -84,7 +83,7 @@ public class InvoiceTools {
 
             if(tender <= balance)
                 payment.setAmount(tender);
-            else
+            else    // tender > balance
                 payment.setAmount(balance);
 
             total_payment_made = total_payment_made.add(new BigDecimal(payment.getTender()));
@@ -124,4 +123,6 @@ public class InvoiceTools {
             return payments;
         }
     }
+
+
 }
