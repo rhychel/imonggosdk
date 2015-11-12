@@ -11,8 +11,8 @@ import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
-import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.util.ArrayList;

@@ -9,7 +9,6 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.BaseTransactionLine;
 import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 

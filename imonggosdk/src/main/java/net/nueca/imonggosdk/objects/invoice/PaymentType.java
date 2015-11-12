@@ -2,7 +2,6 @@ package net.nueca.imonggosdk.objects.invoice;
 
 import com.google.gson.Gson;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;

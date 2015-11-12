@@ -1,7 +1,5 @@
 package net.nueca.imonggosdk.objects.invoice;
 
-import android.content.Context;
-
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;

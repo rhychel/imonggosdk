@@ -7,7 +7,6 @@ import com.j256.ormlite.field.DatabaseField;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.BaseTransactionLine;
 
 import org.json.JSONException;

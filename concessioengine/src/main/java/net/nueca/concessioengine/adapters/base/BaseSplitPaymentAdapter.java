@@ -2,8 +2,8 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
-import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
 
 import java.util.ArrayList;
 import java.util.HashMap;

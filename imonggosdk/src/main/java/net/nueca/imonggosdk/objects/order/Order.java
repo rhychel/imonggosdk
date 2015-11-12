@@ -1,7 +1,5 @@
 package net.nueca.imonggosdk.objects.order;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;

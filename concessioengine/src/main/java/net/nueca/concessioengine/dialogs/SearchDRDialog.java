@@ -17,14 +17,10 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
-import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.widgets.ModifiedNumpad;
-
-import org.json.JSONException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
