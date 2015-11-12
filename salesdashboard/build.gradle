@@ -20,12 +20,13 @@ android {
     buildToolsVersion '23.0.2'
 
     defaultConfig {
-        applicationId "com.imonggo.dashboard"
+        applicationId "com.imonggo.salesdashboard"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 2
+        versionCode 1
         versionName "1.0.3"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -47,4 +48,7 @@ dependencies {
         transitive = true;
     }
     compile project(':concessioengine')
+    compile('com.crashlytics.sdk.android:answers:1.3.3@aar') {
+        transitive = true;
+    }
 }
