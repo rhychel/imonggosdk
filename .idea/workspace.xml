@@ -4731,7 +4731,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="before merging to dev" />
-    <MESSAGE value="backup" />
     <MESSAGE value="before mergin to dev" />
     <MESSAGE value="fixed serviceConnection has leaked." />
     <MESSAGE value="fixed Product Tag issue." />
@@ -4749,7 +4748,8 @@
     <MESSAGE value="delete profiile_settings in idea" />
     <MESSAGE value="fix login bug" />
     <MESSAGE value="deleted concessio_test and concessio module" />
-    <option name="LAST_COMMIT_MESSAGE" value="deleted concessio_test and concessio module" />
+    <MESSAGE value="backup" />
+    <option name="LAST_COMMIT_MESSAGE" value="backup" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
