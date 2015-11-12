@@ -1,11 +1,9 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
@@ -13,12 +11,10 @@ import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
-import net.nueca.imonggosdk.objects.PaymentType;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
-import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 

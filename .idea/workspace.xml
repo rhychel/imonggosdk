@@ -31,10 +31,82 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" line="738" />
+    <bookmark url="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" line="963" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="backup">
+    <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="merged dev2 in jn">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTransactionLine.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTransactionTable.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTransactionTable2.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/customer/CustomerCategory.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/associatives/CustomerCustomerGroupAssoc.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/customer/CustomerGroup.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/deprecated/ExtendedAttributes.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/Extras.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/invoice/InvoicePurpose.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/invoice/PaymentTerms.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/price/Price.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/price/PriceList.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/associatives/ProductSalesPromotionAssoc.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/RoutePlan.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SimpleSearchDocumentDialog.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessio_test/fabric.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/layout/simple_search_document_dialog.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/gradlew" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/gradlew.bat" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Customer.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/customer/Customer.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Extras.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/deprecated/Extras.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/PaymentType.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/invoice/PaymentType.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/DocumentLineExtras.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/deprecated/DocumentLineExtras.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/AddCustomersFragment.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/AddCustomersFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseCustomersAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseCustomersAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseCustomersFragment.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/BaseCustomersFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseCustomersRecyclerAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseCustomersRecyclerAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseSplitPaymentAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/base/BaseSplitPaymentAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/BaseSyncService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTable.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTable.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTransaction.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTransaction.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTransactionDB.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTransactionDB.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTransactionDB2.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BaseTransactionDB2.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BatchList.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/base/BatchList.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Branch.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Branch.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login.java" afterPath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Login.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Module.java" afterPath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/C_Module.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/Configurations.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/tools/Configurations.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/Document.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/DocumentLine.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/document/DocumentLine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/ExtendedAttributes.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/ExtendedAttributes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/database/ImonggoDBHelper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Inventory.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Inventory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/invoice/Invoice.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/invoice/Invoice.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/invoice/InvoiceLine.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/invoice/InvoiceLine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/tools/InvoiceTools.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/tools/InvoiceTools.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/login/LoginActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/module/ModuleActivity.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/activities/module/ModuleActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/OfflineData.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/OfflineData.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/order/Order.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/order/Order.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/order/OrderLine.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/order/OrderLine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Product.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Product.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/Receive.java" afterPath="$PROJECT_DIR$/concessio_test/src/main/java/net/nueca/concessio_test/Receive.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/invoice/SalesPromotion.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/invoice/SalesPromotion.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SearchDRDialog.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SearchDRDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/SelectedProductItem.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/objects/SelectedProductItem.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleCustomerListAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleCustomerListAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleCustomerRecyclerViewAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleCustomerRecyclerViewAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleCustomersFragment.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleCustomersFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SimplePaymentDialog.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/dialogs/SimplePaymentDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleReceiveReviewFragment.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/fragments/SimpleReceiveReviewFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleSplitPaymentAdapter.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/adapters/SimpleSplitPaymentAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/animations/SlideInUpAnimation.java" afterPath="$PROJECT_DIR$/concessioengine/src/main/java/net/nueca/concessioengine/animations/SlideInUpAnimation.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/operations/sync/SyncModules.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Table.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/enums/Table.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/User.java" afterPath="$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/User.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/build.gradle" afterPath="$PROJECT_DIR$/imonggosdk/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/imonggosdk/src/main/res/layout/imonggosdk_numpad.xml" afterPath="$PROJECT_DIR$/imonggosdk/src/main/res/layout/imonggosdk_numpad.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_customers_menu.xml" afterPath="$PROJECT_DIR$/concessioengine/src/main/res/menu/simple_customers_menu.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="cf34c86b-940c-43c4-8fe3-8ede93b6a55a" name="Failed commit: Failed commit: Default" comment="backup windows" />
@@ -3417,7 +3489,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="8683400984000" />
+        <entry key="$PROJECT_DIR$" value="8683403370000" />
         <entry key="E:\Bitbucket\Android Projects\imonggosdk" value="8661418091661" />
       </map>
     </option>
@@ -3906,7 +3978,7 @@
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-core/4.48/e579bd2905d0399af5029aaaf9817d5fa0ca88a5/ormlite-core-4.48.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-android/4.48/afa06f539a4026c10b247386312aa67404b80a16/ormlite-android-4.48.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3.1/ecb6e1f8e4b0e84c4b886c2f14a1500caf309757/gson-2.3.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mcxiaoke.volley/library/1.0.19/a8f23f65fc1e522ee4a1a697ee569901a46741fa/library-1.0.19.jar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mcxiaoke.volley/library/1.0.17/f417d7f776d1ee5858fc04d9362aa45e9bedd26b/library-1.0.17.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.afollestad.material-dialogs/core/0.8.5.0/814766c9ce943fa2f8bff779ce3ee1e28c9f8c1c/core-0.8.5.0.aar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.afollestad.material-dialogs/commons/0.8.5.0/94d31b7471b2cff820164bcd4369aba0251ac7f9/commons-0.8.5.0.aar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.4/5fe28b9518e58819180a43a850fbc0dd24b7c050/commons-lang3-3.4.jar" />
@@ -4253,7 +4325,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="AndroidView" proportions="" version="1">
+    <navigator currentView="Scope" currentSubView="Project Files" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -4265,19 +4337,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="Scratches" />
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imonggosdk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -4298,6 +4358,27 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imonggosdk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -4657,7 +4738,7 @@
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.447191" sideWeight="0.493553" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26772615" sideWeight="0.51046026" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44157302" sideWeight="0.506447" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44157302" sideWeight="0.506447" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47379678" sideWeight="0.49283668" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.9318498" sideWeight="0.51790833" order="9" side_tool="true" content_ui="tabs" />
@@ -4668,7 +4749,7 @@
       <window_info id="Structure" active="false" anchor="top" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24816176" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32984716" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21437658" sideWeight="0.48953974" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21437658" sideWeight="0.48953974" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3764045" sideWeight="0.48280802" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962178" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -4687,11 +4768,11 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43707865" sideWeight="0.493553" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43208557" sideWeight="0.506447" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47379678" sideWeight="0.49283668" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.9318498" sideWeight="0.51790833" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.9318498" sideWeight="0.51790833" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47379678" sideWeight="0.49283668" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32843137" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32684284" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21501273" sideWeight="0.48953974" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3764045" sideWeight="0.48280802" order="2" side_tool="false" content_ui="tabs" />
@@ -4711,8 +4792,8 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2988764" sideWeight="0.4820917" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4730337" sideWeight="0.47125566" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="top" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24816176" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32984716" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32984716" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
@@ -4749,7 +4830,8 @@
     <MESSAGE value="fix login bug" />
     <MESSAGE value="deleted concessio_test and concessio module" />
     <MESSAGE value="backup" />
-    <option name="LAST_COMMIT_MESSAGE" value="backup" />
+    <MESSAGE value="merged dev2 in jn" />
+    <option name="LAST_COMMIT_MESSAGE" value="merged dev2 in jn" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -4839,7 +4921,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.6639511">
           <caret line="77" column="44" selection-start-line="77" selection-start-column="44" selection-end-line="77" selection-end-column="44" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4861,7 +4942,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.2556818">
           <caret line="15" column="38" selection-start-line="15" selection-start-column="38" selection-end-line="15" selection-end-column="38" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4886,7 +4966,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-12.074074">
           <caret line="41" column="51" selection-start-line="41" selection-start-column="51" selection-end-line="41" selection-end-column="51" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4901,7 +4980,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="11" column="31" selection-start-line="11" selection-start-column="31" selection-end-line="11" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4937,6 +5015,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.19845645">
           <caret line="12" column="20" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4982,13 +5061,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-14.740741">
           <caret line="60" column="56" selection-start-line="60" selection-start-column="56" selection-end-line="60" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/imonggosdk/src/main/java/net/nueca/imonggosdk/objects/Customer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="33" column="17" selection-start-line="33" selection-start-column="17" selection-end-line="33" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -5047,7 +5119,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.71458775">
           <caret line="25" column="50" selection-start-line="25" selection-start-column="50" selection-end-line="25" selection-end-column="50" />
-          <folding />
         </state>
       </provider>
     </entry>

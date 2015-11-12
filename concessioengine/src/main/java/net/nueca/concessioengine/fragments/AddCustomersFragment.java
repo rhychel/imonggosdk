@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import net.nueca.concessioengine.R;
-import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.util.List;
 

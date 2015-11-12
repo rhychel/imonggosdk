@@ -16,9 +16,7 @@ import net.nueca.concessioengine.adapters.SimpleCustomerRecyclerViewAdapter;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
-import net.nueca.imonggosdk.objects.Customer;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.tools.ListTools;
+import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

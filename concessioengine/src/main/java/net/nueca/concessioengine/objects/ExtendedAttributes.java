@@ -1,6 +1,6 @@
 package net.nueca.concessioengine.objects;
 
-import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
+import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 
 /**
  * Created by rhymart on 7/13/15.

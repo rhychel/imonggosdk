@@ -13,7 +13,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleCustomerListAdapter;
 import net.nueca.concessioengine.adapters.SimpleCustomerRecyclerViewAdapter;
-import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.util.List;
 

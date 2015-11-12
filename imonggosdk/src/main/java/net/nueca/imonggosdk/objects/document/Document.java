@@ -14,8 +14,7 @@ import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.base.BaseTransaction;
-import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
+import net.nueca.imonggosdk.objects.base.BaseTransactionTable;
 import net.nueca.imonggosdk.swable.SwableTools;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +28,7 @@ import java.util.List;
 /**
  * Created by gama on 7/20/15.
  */
-public class Document extends BaseTransactionDB {
+public class Document extends BaseTransactionTable {
     public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 5;
 
     @Expose
@@ -80,8 +79,8 @@ public class Document extends BaseTransactionDB {
     protected transient boolean isOldPaging = false;
 
     public Document() {
-        super(null);
-        remark = "page=1/1";
+        //super(null);
+        //remark = "page=1/1";
     }
 
     public Document(Builder builder) {
@@ -359,7 +358,7 @@ public class Document extends BaseTransactionDB {
         }
     }
 
-    public static class Builder extends BaseTransaction.Builder<Builder> {
+    public static class Builder extends BaseTransactionTable.Builder<Builder> {
         protected String remark;
         protected String document_type_code;
         protected List<DocumentLine> document_lines;

@@ -1,4 +1,4 @@
-package net.nueca.imonggosdk.objects;
+package net.nueca.imonggosdk.objects.invoice;
 
 import com.google.gson.Gson;
 import com.j256.ormlite.field.DatabaseField;

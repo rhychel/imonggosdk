@@ -9,6 +9,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
 
@@ -27,6 +28,10 @@ public class Branch extends BaseTable {
     private transient ForeignCollection<BranchTag> branchTags;
     @ForeignCollectionField
     private transient ForeignCollection<TaxRate> taxRates;
+    @ForeignCollectionField
+    private transient ForeignCollection<PriceList> priceLists;
+    @ForeignCollectionField
+    private transient ForeignCollection<RoutePlan> routePlans;
 
     public Branch() { }
 
@@ -123,6 +128,22 @@ public class Branch extends BaseTable {
 
     public void setTaxRates(ForeignCollection<TaxRate> taxRates) {
         this.taxRates = taxRates;
+    }
+
+    public ForeignCollection<PriceList> getPriceLists() {
+        return priceLists;
+    }
+
+    public void setPriceLists(ForeignCollection<PriceList> priceLists) {
+        this.priceLists = priceLists;
+    }
+
+    public ForeignCollection<RoutePlan> getRoutePlans() {
+        return routePlans;
+    }
+
+    public void setRoutePlans(ForeignCollection<RoutePlan> routePlans) {
+        this.routePlans = routePlans;
     }
 
     @Override

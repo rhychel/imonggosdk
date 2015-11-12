@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:id="@+id/llMainContainer"
-        android:background="@color/keypad_default_bg"
         android:padding="5dp"
         android:baselineAligned="false">
 
