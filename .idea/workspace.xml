@@ -52,7 +52,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="733220cd-e89e-4fd1-9e0f-79da6395fbd8" name="Default" comment="remove concessio_test&#10;">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/concessio_test/fabric.properties" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/concessio_test/fabric.properties" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="cf34c86b-940c-43c4-8fe3-8ede93b6a55a" name="Failed commit: Failed commit: Default" comment="backup windows" />
