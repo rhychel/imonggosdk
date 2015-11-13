@@ -7,7 +7,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.customer.Customer;
-import net.nueca.imonggosdk.objects.deprecated.Extras;
+import net.nueca.imonggosdk.objects.deprecated.Extras_2;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
@@ -20,7 +20,6 @@ import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
-import net.nueca.imonggosdk.objects.deprecated.ExtendedAttributes;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -78,7 +77,7 @@ public class BatchList<T> extends ArrayList<T> {
             dbHelper.batchCreateOrUpdateProductTags(this, databaseOperation);
             Log.e(TAG, databaseOperation.toString() + "ING to ProductTag table");
         }
-        if(get(0) instanceof Extras) {
+        if(get(0) instanceof Extras_2) {
             dbHelper.batchCreateOrUpdateProductExtras(this, databaseOperation);
             Log.e(TAG, databaseOperation.toString() + "ING to ProductExtras table");
         }
@@ -119,6 +118,11 @@ public class BatchList<T> extends ArrayList<T> {
             Log.e(TAG, databaseOperation.toString() + "ING to ProductTaxRate Assoc table");
         }
 
+        if(get(0) instanceof Extras) {
+            dbHelper.batchCreateOrUpdatefExtras(this, databaseOperation);
+            Log.e(TAG, databaseOperation.toString() + "ING to Extras table");
+        }
+
 
         /** Documents -- gama **/
         if(get(0) instanceof Document) {
@@ -131,11 +135,11 @@ public class BatchList<T> extends ArrayList<T> {
         }
         if(get(0) instanceof DocumentLineExtras) {
             dbHelper.batchCreateOrUpdateDocumentLineExtras(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Document Line Extras table");
+            Log.e(TAG, databaseOperation.toString() + "ING to Document Line Extras_2 table");
         }
         /*if(get(0) instanceof DocumentLineExtras_Old) {
             dbHelper.batchCreateOrUpdateDocumentLineExtras(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Document Line Extras table");
+            Log.e(TAG, databaseOperation.toString() + "ING to Document Line Extras_2 table");
         }*/
         /** Orders -- gama **/
         if(get(0) instanceof Order) {

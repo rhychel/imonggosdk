@@ -85,6 +85,37 @@ public class ImonggoOperations {
         }
     }
 
+    /**
+     * Returns URL for requesting a single row by reference in the API.
+     *
+     * @param context
+     * @param session
+     * @param table
+     * @param reference
+     * @param server
+     * @return String URL for the reference
+     */
+    public static String getAPIModuleReferenceURL(Context context, Session session, Table table, Server server, String reference) {
+        String URL = "";
+        switch (server) {
+            case IMONGGO:
+                URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, true);
+                break;
+            case IRETAILCLOUD_COM:
+                URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, false);
+                break;
+            case IRETAILCLOUD_NET:
+                URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, false);
+                break;
+            case PLDTRETAILCLOUD:
+                URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, false);
+                break;
+            default:
+                return "";
+        }
+        return URL;
+    }
+
     public static void getAPIModule(Context context, RequestQueue queue, Session session,
                                     VolleyRequestListener volleyRequestListener, Table table,
                                     Server server, RequestType requestType) {

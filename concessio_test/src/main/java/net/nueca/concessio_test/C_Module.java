@@ -14,6 +14,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
@@ -33,11 +36,15 @@ import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
+import net.nueca.imonggosdk.enums.RequestType;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
@@ -296,7 +303,32 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 }
             }, "No");
         } else if(id == R.id.mCustomer) {
+            RequestQueue queue = Volley.newRequestQueue(this);
+            try {
+                queue.add(HTTPRequests.sendGETRequest(this, getSession(), new VolleyRequestListener() {
+                    @Override
+                    public void onStart(Table table, RequestType requestType) {
 
+                    }
+
+                    @Override
+                    public void onSuccess(Table table, RequestType requestType, Object response) {
+                        Log.e("Response", response.toString());
+                    }
+
+                    @Override
+                    public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                        Log.e("Response " + responseCode, response != null? response.toString() : "null");
+                    }
+
+                    @Override
+                    public void onRequestError() {
+
+                    }
+                }, getSession().getServer(), Table.DOCUMENTS, "340-1"));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return super.onOptionsItemSelected(item);

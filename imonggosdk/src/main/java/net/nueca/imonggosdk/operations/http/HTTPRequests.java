@@ -456,4 +456,88 @@ public class HTTPRequests {
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
+
+    /**
+     *  For requests by reference
+     **/
+    public static JsonObjectRequest sendGETRequest(Context context, final Session session,
+                                                   final VolleyRequestListener volleyRequestListener, Server server,
+                                                   final Table table, String reference) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(table, RequestType.GET);
+
+        Log.e("Request-URL", ImonggoOperations.getAPIModuleReferenceURL(context, session, table, server, reference));
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
+                ImonggoOperations.getAPIModuleReferenceURL(context, session, table, server, reference),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (volleyRequestListener != null)
+                            volleyRequestListener.onSuccess(table, RequestType.GET, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null) {
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            } else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                String auth = "Basic " + session.getApiAuthentication();
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        return jsonObjectRequest;
+    }
+
+    public static JsonArrayRequest sendGETJsonArrayRequest(Context context, final Session session,
+                                                           final VolleyRequestListener volleyRequestListener, Server server,
+                                                           final Table table, String reference) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(table, RequestType.GET);
+
+        Log.e("Request-URL", ImonggoOperations.getAPIModuleReferenceURL(context, session, table, server, reference));
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(ImonggoOperations.getAPIModuleReferenceURL(context, session, table, server, reference),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (volleyRequestListener != null)
+                            volleyRequestListener.onSuccess(table, RequestType.GET, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null)
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                String auth = "Basic " + session.getApiAuthentication();
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonArrayRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        return jsonArrayRequest;
+    }
 }
