@@ -20,6 +20,7 @@ public class C_Login extends LoginActivity {
         setServer(Server.IRETAILCLOUD_NET);
 
         setRequireConcessioSettings(true);
+        setRequireObjectConcessioSettings(true);
     }
 
     @Override
@@ -81,8 +82,8 @@ public class C_Login extends LoginActivity {
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
 
-        setEditTextAccountID("nuecaonly");
-        setEditTextEmail("nuecaonly@test.com");
-        setEditTextPassword("nuecaonly");
+        setEditTextAccountID("retailpos");
+        setEditTextEmail("retailpos@test.com");
+        setEditTextPassword("retailpos");
     }
 }

@@ -15,6 +15,7 @@ import android.widget.Button;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
+import net.nueca.concessioengine.fragments.SimpleInventoryFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
@@ -49,6 +50,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
     private SimpleReceiveFragment simpleReceiveFragment;
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
+
+    private SimpleInventoryFragment simpleInventoryFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,8 +130,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.flContent, simpleReceiveFragment)
                         .commit();
-                return;
             }
+            break;
+            case INVENTORY: {
+                simpleInventoryFragment = new SimpleInventoryFragment();
+                simpleInventoryFragment.setHelper(getHelper());
+                simpleInventoryFragment.setSetupActionBar(this);
+                simpleInventoryFragment.setHasUnits(true);
+                simpleInventoryFragment.setProductCategories(getProductCategories(!AccountSettings.allowLimitOrdersToOneCategory(this)));
+                simpleInventoryFragment.setShowCategoryOnStart(AccountSettings.showCategoriesOnStart(this));
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.flContent, simpleInventoryFragment)
+                        .commit();
+            } break;
         }
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {

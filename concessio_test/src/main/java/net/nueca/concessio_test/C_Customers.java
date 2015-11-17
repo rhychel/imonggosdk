@@ -69,9 +69,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
         switch (menuItem.getItemId()) {
             case net.nueca.concessioengine.R.id.mAddCustomer:
-
                 CurrentView = "Add Customers";
-
                 AddCustomersFragment addCustomersFragment = AddCustomersFragment.newInstance();
                 addCustomersFragment.setSetupActionBar(this);
 

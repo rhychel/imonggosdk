@@ -13,6 +13,7 @@ import org.json.JSONObject;
  * Created by rhymart on 3/19/15.
  * ImonggoLibrary (c)2015
  */
+@Deprecated
 public class AccountSettings {
 
     private static final String                                HAS_ORDER = "has_order";
