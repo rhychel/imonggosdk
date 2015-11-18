@@ -15,7 +15,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import net.nueca.imonggosdk.R;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
@@ -55,7 +55,7 @@ public class BaseLogin {
     private Boolean mConcessioSettings = false;
     private Boolean mUseObjectForConcessioSettings = false;
 
-    private ImonggoDBHelper mDBHelper;
+    private ImonggoDBHelper2 mDBHelper;
     private RequestQueue mRequestQueue;
     private LoginListener mLoginListener;
 
@@ -80,7 +80,7 @@ public class BaseLogin {
      * @param password  Password of the user
      * @throws net.nueca.imonggosdk.exception.LoginException if accountId, email and password is null or invalid
      */
-    public BaseLogin(Context context, ImonggoDBHelper dbHelper, String accountId, String email,
+    public BaseLogin(Context context, ImonggoDBHelper2 dbHelper, String accountId, String email,
                      String password) throws LoginException {
         this.mRequestQueue = Volley.newRequestQueue(context);
         this.mContext = context;
@@ -92,7 +92,7 @@ public class BaseLogin {
         try {
             Log.e("isLoggedIn", "" + AccountTools.isLoggedIn(dbHelper));
             if (AccountTools.isLoggedIn(dbHelper)) {
-                mSession = dbHelper.getSessions().queryForAll().get(0);
+                mSession = dbHelper.fetchObjectsList(Session.class).get(0);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -659,7 +659,11 @@ public class BaseLogin {
     public void onStop() {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(LOGIN_TAG);
-            mDBHelper.deleteAllDatabaseValues();
+            try {
+                mDBHelper.deleteAllDatabaseValues();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

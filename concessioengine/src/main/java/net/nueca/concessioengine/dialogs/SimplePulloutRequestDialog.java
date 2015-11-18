@@ -10,7 +10,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 
@@ -29,11 +29,11 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
 
     private PulloutRequestDialogListener listener;
 
-    public SimplePulloutRequestDialog(Context context, ImonggoDBHelper imonggoDBHelper) {
+    public SimplePulloutRequestDialog(Context context, ImonggoDBHelper2 imonggoDBHelper) {
         super(context, imonggoDBHelper);
     }
 
-    public SimplePulloutRequestDialog(Context context, List<DocumentPurpose> reasons, ImonggoDBHelper imonggoDBHelper) {
+    public SimplePulloutRequestDialog(Context context, List<DocumentPurpose> reasons, ImonggoDBHelper2 imonggoDBHelper) {
         super(context, reasons, imonggoDBHelper);
     }
 

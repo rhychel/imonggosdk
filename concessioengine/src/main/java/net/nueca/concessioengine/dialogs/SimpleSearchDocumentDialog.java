@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.widgets.ModifiedNumpad;
 
@@ -21,7 +21,7 @@ import java.sql.SQLException;
  */
 public class SimpleSearchDocumentDialog extends BaseAppCompatDialog {
 
-    private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper;
 
     private ModifiedNumpad npInput;
     private EditText etReference;
@@ -32,7 +32,7 @@ public class SimpleSearchDocumentDialog extends BaseAppCompatDialog {
 
     private Animation animation;
 
-    public SimpleSearchDocumentDialog(Context context, ImonggoDBHelper dbHelper) {
+    public SimpleSearchDocumentDialog(Context context, ImonggoDBHelper2 dbHelper) {
         super(context);
         this.dbHelper = dbHelper;
     }
@@ -97,7 +97,7 @@ public class SimpleSearchDocumentDialog extends BaseAppCompatDialog {
     }
 
     public Document search(String reference) throws SQLException {
-        return dbHelper.getDocuments().queryBuilder().where()
+        return dbHelper.fetchObjects(Document.class).queryBuilder().where()
                 .eq("reference", reference).and()
                 .eq("intransit_status", "Intransit")
                 .queryForFirst();

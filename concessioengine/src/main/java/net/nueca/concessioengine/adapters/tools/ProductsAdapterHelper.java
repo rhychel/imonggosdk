@@ -14,7 +14,7 @@ import com.android.volley.toolbox.ImageRequest;
 
 import net.nueca.concessioengine.adapters.interfaces.ImageLoaderListener;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.ProductListTools;
@@ -31,7 +31,7 @@ public class ProductsAdapterHelper {
 
     private static RequestQueue imageRequestQueue;
     private static ImageLoader imageLoader;
-    private static ImonggoDBHelper dbHelper;
+    private static ImonggoDBHelper2 dbHelper;
     private static Session session;
     private static SelectedProductItemList selectedProductItems = null;
     public static ImageLoaderListener imageLoaderListener = null;
@@ -83,11 +83,11 @@ public class ProductsAdapterHelper {
         return selectedProductItems;
     }
 
-    public static void setDbHelper(ImonggoDBHelper dbHelper) {
+    public static void setDbHelper(ImonggoDBHelper2 dbHelper) {
         ProductsAdapterHelper.dbHelper = dbHelper;
     }
 
-    public ImonggoDBHelper getDbHelper() {
+    public ImonggoDBHelper2 getDbHelper() {
         return dbHelper;
     }
 
@@ -98,7 +98,7 @@ public class ProductsAdapterHelper {
     public static Session getSession() {
         try {
             if(AccountTools.isLoggedIn(dbHelper))
-                session = dbHelper.getSessions().queryForAll().get(0);
+                session = dbHelper.fetchObjectsList(Session.class).get(0);
         } catch (SQLException e) {
             e.printStackTrace();
         }

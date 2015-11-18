@@ -32,6 +32,7 @@ import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
@@ -199,10 +200,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             quantityDialog.setSelectedProductItem(selectedProductItem);
             if(hasUnits) {
                 quantityDialog.setHasUnits(true);
-                quantityDialog.setUnitList(getHelper().getUnits().queryBuilder().where().eq("product_id", product).query(), true);
+                quantityDialog.setUnitList(getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query(), true);
             }
             if(hasBrand) {
-                List<ProductTag> tags = getHelper().getProductTags().queryBuilder().where().eq("product_id", product).query();
+                List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();
                 List<String> brands = new ArrayList<>();
 
                 for(ProductTag productTag : tags)

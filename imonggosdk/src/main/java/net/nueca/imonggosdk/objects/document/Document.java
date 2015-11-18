@@ -9,6 +9,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.Table;
@@ -273,7 +274,7 @@ public class Document extends BaseTransactionTable {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -287,7 +288,7 @@ public class Document extends BaseTransactionTable {
         }
 
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.INSERT);
+            dbHelper.insert(Document.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -297,7 +298,7 @@ public class Document extends BaseTransactionTable {
             for (DocumentLine documentLine : document_lines) {
                 documentLine.setDocument(this);
                 try {
-                    Product product = dbHelper.getProducts().queryBuilder().where().eq("id", documentLine.getProduct_id())
+                    Product product = dbHelper.fetchObjects(Product.class).queryBuilder().where().eq("id", documentLine.getProduct_id())
                             .queryForFirst();
                     if (product != null)
                         documentLine.setProduct(product);
@@ -310,7 +311,7 @@ public class Document extends BaseTransactionTable {
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -324,7 +325,7 @@ public class Document extends BaseTransactionTable {
         }
 
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.DELETE);
+            dbHelper.delete(Document.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -338,7 +339,7 @@ public class Document extends BaseTransactionTable {
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -352,7 +353,7 @@ public class Document extends BaseTransactionTable {
         }
 
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.UPDATE);
+            dbHelper.update(Document.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }

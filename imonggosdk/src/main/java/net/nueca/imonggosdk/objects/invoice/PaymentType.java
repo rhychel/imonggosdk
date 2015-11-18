@@ -5,15 +5,18 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
 /**
  * Created by gama on 16/10/2015.
  */
-public class PaymentType {
+@DatabaseTable
+public class PaymentType extends DBTable {
     @DatabaseField
     private String status;
 
@@ -70,36 +73,30 @@ public class PaymentType {
         return gson.toJson(this);
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PAYMENT_TYPES, DatabaseOperation.INSERT);
+            dbHelper.insert(PaymentType.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PAYMENT_TYPES, DatabaseOperation.DELETE);
+            dbHelper.delete(PaymentType.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PAYMENT_TYPES, DatabaseOperation.UPDATE);
+            dbHelper.update(PaymentType.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
     }
 }

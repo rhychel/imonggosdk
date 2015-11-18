@@ -6,6 +6,7 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
@@ -158,7 +159,7 @@ public class DocumentLine extends BaseTransactionLine {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         if(extras != null)
             extras.insertTo(dbHelper);
 
@@ -166,7 +167,7 @@ public class DocumentLine extends BaseTransactionLine {
             extras.insertTo(dbHelper);
 
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.INSERT);
+            dbHelper.insert(DocumentLine.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -183,9 +184,9 @@ public class DocumentLine extends BaseTransactionLine {
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.DELETE);
+            dbHelper.delete(DocumentLine.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -200,9 +201,9 @@ public class DocumentLine extends BaseTransactionLine {
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENT_LINES, DatabaseOperation.UPDATE);
+            dbHelper.update(DocumentLine.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }

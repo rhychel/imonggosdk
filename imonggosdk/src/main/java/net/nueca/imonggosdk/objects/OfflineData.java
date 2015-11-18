@@ -9,6 +9,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Table;
@@ -535,7 +536,7 @@ public class OfflineData extends BaseTable2 {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         String typeStr = "UNKNOWN";
         switch (type) {
             case INVOICE:
@@ -555,7 +556,7 @@ public class OfflineData extends BaseTable2 {
         Log.e("OfflineData", "insert " + typeStr + " " + this.getReference_no());
 
         try {
-            dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.INSERT);
+            dbHelper.insert(OfflineData.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -591,9 +592,9 @@ public class OfflineData extends BaseTable2 {
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.DELETE);
+            dbHelper.delete(OfflineData.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -628,7 +629,7 @@ public class OfflineData extends BaseTable2 {
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         String typeStr;
         switch (type) {
             case INVOICE:
@@ -701,7 +702,7 @@ public class OfflineData extends BaseTable2 {
         Log.e("OfflineData", "update " + typeStr + " " + this.getReference_no() + " returnId:" + getReturnId());
 
         try {
-            dbHelper.dbOperations(this, Table.OFFLINEDATA, DatabaseOperation.UPDATE);
+            dbHelper.update(OfflineData.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -766,4 +767,5 @@ public class OfflineData extends BaseTable2 {
     public boolean isAllPageSynced() {
         return getReturnIdList().size() == getPagedRequestCount() && !getReturnId().contains("@");
     }
+
 }

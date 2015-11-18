@@ -9,6 +9,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
@@ -287,9 +288,9 @@ public class Invoice extends BaseTransactionTable2 {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.INSERT);
+            dbHelper.insert(Invoice.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -316,9 +317,9 @@ public class Invoice extends BaseTransactionTable2 {
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.DELETE);
+            dbHelper.delete(Invoice.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -342,9 +343,9 @@ public class Invoice extends BaseTransactionTable2 {
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.UPDATE);
+            dbHelper.update(Invoice.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -369,4 +370,5 @@ public class Invoice extends BaseTransactionTable2 {
             }
         }
     }
+
 }

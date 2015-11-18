@@ -3,7 +3,7 @@ package net.nueca.concessioengine.adapters.tools;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
@@ -43,14 +43,14 @@ public class TransactionsAdapterHelper {
         return R.drawable.ic_readytosync_black;
     }
 
-    public static List<Product> generateTransactionItems(OfflineData offlineData, ImonggoDBHelper dbHelper) {
+    public static List<Product> generateTransactionItems(OfflineData offlineData, ImonggoDBHelper2 dbHelper) {
         List<Product> transactionLines = new ArrayList<>();
 
         try {
             if(offlineData.getType() == OfflineData.ORDER) {
                 Order order = Order.fromJSONObject(offlineData.getData());
                 for(OrderLine orderLine : order.getOrder_lines()) {
-                    Product product = dbHelper.getProducts().queryBuilder().where().eq("id", orderLine.getProduct_id()).and().isNull("status").queryForFirst();
+                    Product product = dbHelper.fetchObjects(Product.class).queryBuilder().where().eq("id", orderLine.getProduct_id()).and().isNull("status").queryForFirst();
                     if(product != null)
                         transactionLines.add(product);
                     else

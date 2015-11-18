@@ -10,7 +10,7 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -22,14 +22,14 @@ import java.util.List;
  * Created by gama on 20/10/2015.
  */
 public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSplitPaymentAdapter.ListViewHolder> {
-    private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper;
 
-    public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper dbHelper) {
+    public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper2 dbHelper) {
         super(context, R.layout.simple_checkout_payment_item);
         this.dbHelper = dbHelper;
     }
 
-    public SimpleSplitPaymentAdapter(Context context, List<InvoicePayment> payments, ImonggoDBHelper dbHelper) {
+    public SimpleSplitPaymentAdapter(Context context, List<InvoicePayment> payments, ImonggoDBHelper2 dbHelper) {
         super(context, R.layout.simple_checkout_payment_item, payments);
         this.dbHelper = dbHelper;
     }

@@ -109,19 +109,6 @@ public abstract class BaseTransactionTable2 extends BaseTable2 {
     public abstract int getChildCount();
     public abstract void refresh();
 
-    public abstract void insertTo(ImonggoDBHelper dbHelper);
-    public abstract void deleteTo(ImonggoDBHelper dbHelper);
-    public abstract void updateTo(ImonggoDBHelper dbHelper);
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
-    }
-
     public String toJSONString() {
         refresh();
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();

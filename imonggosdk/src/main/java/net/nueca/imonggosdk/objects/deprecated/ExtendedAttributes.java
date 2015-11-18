@@ -1,10 +1,13 @@
 package net.nueca.imonggosdk.objects.deprecated;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
@@ -104,31 +107,47 @@ public class ExtendedAttributes extends BaseTable2 {
         this.documentLine = documentLine;
     }
 
+//    @Override
+//    public void insertTo(ImonggoDBHelper dbHelper) {
+//        try {
+//            dbHelper.dbOperations(this, Table.EXTENDED_ATTRIBUTES, DatabaseOperation.INSERT);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Override
+//    public void deleteTo(ImonggoDBHelper dbHelper) {
+//        try {
+//            dbHelper.dbOperations(this, Table.EXTENDED_ATTRIBUTES, DatabaseOperation.DELETE);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Override
+//    public void updateTo(ImonggoDBHelper dbHelper) {
+//        try {
+//            dbHelper.dbOperations(this, Table.EXTENDED_ATTRIBUTES, DatabaseOperation.UPDATE);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.EXTENDED_ATTRIBUTES, DatabaseOperation.INSERT);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        Log.e("Ooops!--insertTo", "Please migrate to the new DBHelper");
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.EXTENDED_ATTRIBUTES, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        Log.e("Ooops!--deleteTo", "Please migrate to the new DBHelper");
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.EXTENDED_ATTRIBUTES, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        Log.e("Ooops!--updateTo", "Please migrate to the new DBHelper");
     }
 
     public static class Builder {

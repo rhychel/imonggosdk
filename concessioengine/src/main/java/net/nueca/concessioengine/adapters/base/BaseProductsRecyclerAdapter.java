@@ -4,7 +4,7 @@ import android.content.Context;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.tools.ProductListTools;
 
@@ -27,7 +27,7 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
         setList(productsList);
     }
 
-    public BaseProductsRecyclerAdapter(Context context, ImonggoDBHelper dbHelper, List<Product> productsList) {
+    public BaseProductsRecyclerAdapter(Context context, ImonggoDBHelper2 dbHelper, List<Product> productsList) {
         super(context);
         setList(productsList);
         setDbHelper(dbHelper);
@@ -46,7 +46,7 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
         return productsAdapterHelper;
     }
 
-    public void setDbHelper(ImonggoDBHelper dbHelper) {
+    public void setDbHelper(ImonggoDBHelper2 dbHelper) {
         ProductsAdapterHelper.setDbHelper(dbHelper);
     }
 
