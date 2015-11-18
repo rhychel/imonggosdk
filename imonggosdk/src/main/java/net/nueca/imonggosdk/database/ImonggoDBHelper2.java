@@ -114,6 +114,14 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    public <D> Dao<D, Integer> fetchIntId(Class<D> objClass) throws SQLException {
+        return getDao(objClass);
+    }
+
+    public <D> Dao<D, String> fetchStrId(Class<D> objClass) throws SQLException {
+        return getDao(objClass);
+    }
+
     public <D> Dao<D, ?> fetchObjects(Class<D> objClass) throws SQLException {
         return getDao(objClass);
     }

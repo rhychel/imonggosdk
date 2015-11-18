@@ -4,6 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.RoutePlan;
@@ -20,7 +21,7 @@ import java.sql.SQLException;
  * Created by rhymart on 11/10/15.
  */
 @DatabaseTable
-public class Extras {
+public class Extras extends DBTable {
 
     @DatabaseField(id = true)
     private String id;
@@ -235,42 +236,36 @@ public class Extras {
         this.routePlan = routePlan;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.EXTRAS, DatabaseOperation.INSERT);
+            dbHelper.insert(Extras.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.EXTRAS, DatabaseOperation.DELETE);
+            dbHelper.delete(Extras.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.EXTRAS, DatabaseOperation.UPDATE);
+            dbHelper.update(Extras.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT) {
-            insertTo(dbHelper);
-        } else if(databaseOperation == DatabaseOperation.UPDATE) {
-            updateTo(dbHelper);
-        } else if(databaseOperation == DatabaseOperation.DELETE) {
-            deleteTo(dbHelper);
-        }
-    }
     public interface DoOperationsForExtras {
-        void insertExtrasTo(ImonggoDBHelper dbHelper);
-        void deleteExtrasTo(ImonggoDBHelper dbHelper);
-        void updateExtrasTo(ImonggoDBHelper dbHelper);
+        void insertExtrasTo(ImonggoDBHelper2 dbHelper);
+        void deleteExtrasTo(ImonggoDBHelper2 dbHelper);
+        void updateExtrasTo(ImonggoDBHelper2 dbHelper);
     }
 }

@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects.accountsettings;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -208,6 +209,4 @@ public class ModuleSetting extends DBTable {
             e.printStackTrace();
         }
     }
-
-
 }

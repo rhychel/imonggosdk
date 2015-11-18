@@ -24,43 +24,4 @@ public abstract class BaseTable2 extends DBTable {
         this.id = id;
     }
 
-    @Deprecated
-    public abstract void insertTo(ImonggoDBHelper dbHelper);
-    @Deprecated
-    public abstract void deleteTo(ImonggoDBHelper dbHelper);
-    @Deprecated
-    public abstract void updateTo(ImonggoDBHelper dbHelper);
-    @Deprecated
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT) {
-            Log.e(TAG, "Inserting to database");
-            insertTo(dbHelper);
-        } else if(databaseOperation == DatabaseOperation.UPDATE) {
-            Log.e(TAG, "Updating to database");
-            updateTo(dbHelper);
-        } else if(databaseOperation == DatabaseOperation.DELETE) {
-            Log.e(TAG, "Deleting to database");
-            deleteTo(dbHelper);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
-    }
-
-    @Override
-    public void insertTo(ImonggoDBHelper2 dbHelper) {
-
-    }
-
-    @Override
-    public void deleteTo(ImonggoDBHelper2 dbHelper) {
-
-    }
-
-    @Override
-    public void updateTo(ImonggoDBHelper2 dbHelper) {
-
-    }
 }

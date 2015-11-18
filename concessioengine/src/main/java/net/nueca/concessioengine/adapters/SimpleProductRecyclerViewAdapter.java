@@ -13,7 +13,7 @@ import net.nueca.concessioengine.adapters.base.BaseAdapter;
 import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
@@ -36,7 +36,7 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         super(context, productsList);
     }
 
-    public SimpleProductRecyclerViewAdapter(Context context, ImonggoDBHelper dbHelper, List<Product> productsList) {
+    public SimpleProductRecyclerViewAdapter(Context context, ImonggoDBHelper2 dbHelper, List<Product> productsList) {
         super(context, dbHelper, productsList);
     }
 

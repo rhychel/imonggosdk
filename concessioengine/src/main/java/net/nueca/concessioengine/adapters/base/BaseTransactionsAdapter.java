@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import net.nueca.concessioengine.R;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.OfflineData;
 
 import java.util.ArrayList;

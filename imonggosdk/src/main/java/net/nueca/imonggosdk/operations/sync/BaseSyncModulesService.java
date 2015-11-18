@@ -11,13 +11,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 
 import java.sql.SQLException;
@@ -56,7 +57,7 @@ public abstract class BaseSyncModulesService extends ImonggoService {
 
     protected Table tableSyncing;
 
-    protected ImonggoDBHelper dbHelper;
+    protected ImonggoDBHelper2 dbHelper;
     private RequestQueue queue;
     private Session session;
     protected LastUpdatedAt lastUpdatedAt, newLastUpdatedAt;
@@ -152,9 +153,9 @@ public abstract class BaseSyncModulesService extends ImonggoService {
      * Get the database helper
      * @return
      */
-    protected ImonggoDBHelper getHelper() {
+    protected ImonggoDBHelper2 getHelper() {
         if(dbHelper == null)
-            dbHelper = OpenHelperManager.getHelper(this, ImonggoDBHelper.class);
+            dbHelper = OpenHelperManager.getHelper(this, ImonggoDBHelper2.class);
         return dbHelper;
 
     }
@@ -166,7 +167,7 @@ public abstract class BaseSyncModulesService extends ImonggoService {
     protected Session getSession() {
         if(session == null) {
             try {
-                session = getHelper().getSessions().queryBuilder().queryForFirst();
+                session = getHelper().fetchObjects(Session.class).queryBuilder().queryForFirst();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -177,7 +178,7 @@ public abstract class BaseSyncModulesService extends ImonggoService {
     protected User getUser() {
         if(user == null)
             try {
-                user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
+                user = getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -196,11 +197,11 @@ public abstract class BaseSyncModulesService extends ImonggoService {
         switch (table) {
             case USERS: {
                 User user = (User)o;
-                return getHelper().getUsers().queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
             }
             case PRODUCTS: {
                 Product product = (Product) o;
-                return getHelper().getProducts().queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
             }
         }
         return false;

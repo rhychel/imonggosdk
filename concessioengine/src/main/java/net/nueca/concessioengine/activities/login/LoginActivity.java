@@ -11,6 +11,7 @@ import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.DialogType;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
@@ -56,7 +57,11 @@ public class LoginActivity extends BaseLoginActivity {
         setEditTextEmail("owner@ourlovelybotique.com");             // EMAIL
         setEditTextPassword("ourlovelybotique");                    // PASSWORD*/
 
-        getHelper().deleteAllDatabaseValues();
+        try {
+            getHelper().deleteAllDatabaseValues();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -154,7 +159,7 @@ public class LoginActivity extends BaseLoginActivity {
                         if (!getLoginSession().getApiAuthentication().equals("")) { // User is authenticated
                             setLoggedIn(true);
                             // check if sessions email exist in user's database
-                            if (getHelper().getUsers().queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
+                            if (getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
                                 //LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
                                 setLoggedIn(false);
                                 setUnlinked(true);

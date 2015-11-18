@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.Spinner;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 
@@ -18,18 +18,18 @@ import java.util.List;
 public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
     protected Spinner spnReason, spnSourceBranch, spnDestinationBranch;
 
-    private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper;
 
     private List<String> branchListStr;
     private List<Branch> branchList;
     private List<DocumentPurpose> reasonList;
 
-    public BasePulloutRequestDialog(Context context, ImonggoDBHelper dbHelper) {
+    public BasePulloutRequestDialog(Context context, ImonggoDBHelper2 dbHelper) {
         super(context);
         this.dbHelper = dbHelper;
         try {
-            this.reasonList = dbHelper.getDocumentPurposes().queryBuilder().where().eq("status", "A").query();
-            branchList = dbHelper.getBranches().queryForAll();
+            this.reasonList = dbHelper.fetchObjects(DocumentPurpose.class).queryBuilder().where().eq("status", "A").query();
+            branchList = dbHelper.fetchObjects(Branch.class).queryForAll();
             for(Branch branch : branchList) {
                 if(branchListStr == null)
                     branchListStr = new ArrayList<>();
@@ -40,12 +40,12 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
         }
     }
 
-    public BasePulloutRequestDialog(Context context, List<DocumentPurpose> reasons, ImonggoDBHelper dbHelper) {
+    public BasePulloutRequestDialog(Context context, List<DocumentPurpose> reasons, ImonggoDBHelper2 dbHelper) {
         super(context);
         reasonList = reasons;
         this.dbHelper = dbHelper;
         try {
-            branchList = dbHelper.getBranches().queryForAll();
+            branchList = dbHelper.fetchObjects(Branch.class).queryForAll();
             for(Branch branch : branchList) {
                 if(branchListStr == null)
                     branchListStr = new ArrayList<>();
@@ -56,7 +56,7 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
         }
     }
 
-    public ImonggoDBHelper getHelper() {
+    public ImonggoDBHelper2 getHelper() {
         return dbHelper;
     }
     //public abstract void populateBranchSelectors();
@@ -68,7 +68,7 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
 
     public Branch getSelectedBranch(Spinner spinner) throws SQLException {
         String branchName = (String)spinner.getSelectedItem();
-        return dbHelper.getBranches().queryBuilder().where().eq("name", branchName).queryForFirst();
+        return dbHelper.fetchObjects(Branch.class).queryBuilder().where().eq("name", branchName).queryForFirst();
     }
 
     public List<DocumentPurpose> getReasonList() {
@@ -80,7 +80,7 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
     }
 
     public List<String> getDestinationBranch() throws SQLException {
-        List<Branch> destinationList = dbHelper.getBranches().queryBuilder().where().not().eq( "id", branchList.get
+        List<Branch> destinationList = dbHelper.fetchObjects(Branch.class).queryBuilder().where().not().eq( "id", branchList.get
                 (spnSourceBranch.getSelectedItemPosition()).getId() ).query();
 
         List<String> destinationBranches = new ArrayList<>();

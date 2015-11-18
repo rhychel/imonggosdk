@@ -16,6 +16,7 @@ import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Inventory;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
@@ -110,7 +111,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public List<Branch> getBranches() {
         List<Branch> assignedBranches = new ArrayList<>();
         try {
-            List<BranchUserAssoc> branchUserAssocs = getHelper().getBranchUserAssocs().queryBuilder().where().eq("user_id", getUser()).query();
+            List<BranchUserAssoc> branchUserAssocs = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
             for(BranchUserAssoc branchUser : branchUserAssocs) {
                 if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
                     assignedBranches.add(0, branchUser.getBranch());
@@ -131,7 +132,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public List<Branch> getBranchesByTag(String tag) {
         List<Branch> branches = new ArrayList<>();
         try {
-            List<BranchTag> branchTags = getHelper().getBranchTags().queryBuilder().where().in("branch_id", getBranches()).and().like("tag", "#" + tag).query();
+            List<BranchTag> branchTags = getHelper().fetchObjects(BranchTag.class).queryBuilder().where().in("branch_id", getBranches()).and().like("tag", "#" + tag).query();
             for(BranchTag branchTag : branchTags) {
                 branches.add(branchTag.getBranch());
             }
@@ -147,7 +148,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     public Branch getWarehouse() {
         try {
-            return getHelper().getBranches().queryBuilder().where().eq("site_type", "warehouse").queryForFirst();
+            return getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("site_type", "warehouse").queryForFirst();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -163,7 +164,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         List<String> categories = new ArrayList<>();
 
         try {
-            List<ProductTag> productTags = getHelper().getProductTags().queryBuilder().distinct().selectColumns("tag").orderByRaw("tag COLLATE NOCASE ASC").where().like("tag", "#%").query();
+            List<ProductTag> productTags = getHelper().fetchObjects(ProductTag.class).queryBuilder().distinct().selectColumns("tag").orderByRaw("tag COLLATE NOCASE ASC").where().like("tag", "#%").query();
             for(ProductTag productTag : productTags) {
                 if(productTag.getTag().matches("^#[\\w\\-\\'\\+ ]*")) {
                     String category = StringUtilsEx.ucwords(productTag.getTag().replace("#", ""));

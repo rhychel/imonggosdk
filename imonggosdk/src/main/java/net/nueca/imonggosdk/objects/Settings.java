@@ -4,8 +4,10 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
@@ -15,7 +17,7 @@ import java.sql.SQLException;
  */
 
 @DatabaseTable
-public class Settings {
+public class Settings extends DBTable {
     public final static String SETTINGS_ID_FIELD_NAME = "id";
     public final static String SETTINGS_NAME_FIELD_NAME = "name";
     public final static String SETTINGS_VALUE_FIELD_NAME = "value";
@@ -71,36 +73,30 @@ public class Settings {
         this.value = value;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SETTINGS, DatabaseOperation.INSERT);
+            dbHelper.insert(Settings.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SETTINGS, DatabaseOperation.DELETE);
+            dbHelper.delete(Settings.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SETTINGS, DatabaseOperation.UPDATE);
+            dbHelper.update(Settings.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if (databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if (databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if (databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
     }
 }

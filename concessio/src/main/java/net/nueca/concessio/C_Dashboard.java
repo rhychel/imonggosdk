@@ -58,7 +58,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         btnConcessio = (Button) findViewById(R.id.btnConcessio);
 
         try {
-            List<ModuleSetting> moduleSettings = getHelper2().fetchObjectsList(ModuleSetting.class);
+            List<ModuleSetting> moduleSettings = getHelper().fetchObjectsList(ModuleSetting.class);
             for(ModuleSetting moduleSetting : moduleSettings) {
                 if(moduleSetting.getLabel() != null)
                     Log.e("moduleSetting[label]", moduleSetting.getLabel());
@@ -86,52 +86,51 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
                  *
                  * getSession()
                  */
-                Session session = new Session();
-                session.setApiToken("6267fdfb17d6ea90916e8230e82be969f316d5d0");
-                session.setAccountUrl("http://retailpos.iretailcloud.net");
-                session.setApiAuthentication(ImonggoTools.buildAPIAuthentication(session.getApiToken()));
-
-                ImonggoOperations.getConcesioAppSettings(C_Dashboard.this, Volley.newRequestQueue(C_Dashboard.this), session, new VolleyRequestListener() {
-                    @Override
-                    public void onStart(Table table, RequestType requestType) {
-                        Log.e("onStart", "Concessio Settings");
-                    }
-
-                    @Override
-                    public void onSuccess(Table table, RequestType requestType, Object response) {
-                        JSONObject jsonObject = (JSONObject) response;
-                        Log.e("onSuccess", jsonObject.toString());
-                        try {
-                            getHelper2().deleteAllDatabaseValues();
-                            for(String key : Configurations.MODULE_KEYS) {
-                                JSONObject module = jsonObject.getJSONObject(key);
-                                ModuleSetting moduleSetting = gson.fromJson(module.toString(), ModuleSetting.class);
-                                moduleSetting.setModule_type(key);
-                                if(key.equals("app")) {
-                                    moduleSetting.insertTo(getHelper2());
-                                }
-                                else {
-                                    moduleSetting.insertTo(getHelper2());
-                                }
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                try {
+                    ImonggoOperations.getConcesioAppSettings(C_Dashboard.this, Volley.newRequestQueue(C_Dashboard.this), getSession(), new VolleyRequestListener() {
+                        @Override
+                        public void onStart(Table table, RequestType requestType) {
+                            Log.e("onStart", "Concessio Settings");
                         }
 
-                    }
+                        @Override
+                        public void onSuccess(Table table, RequestType requestType, Object response) {
+                            JSONObject jsonObject = (JSONObject) response;
+                            Log.e("onSuccess", jsonObject.toString());
+                            try {
+                                getHelper().deleteAllDatabaseValues();
+                                for(String key : Configurations.MODULE_KEYS) {
+                                    JSONObject module = jsonObject.getJSONObject(key);
+                                    ModuleSetting moduleSetting = gson.fromJson(module.toString(), ModuleSetting.class);
+                                    moduleSetting.setModule_type(key);
+                                    if(key.equals("app")) {
+                                        moduleSetting.insertTo(getHelper());
+                                    }
+                                    else {
+                                        moduleSetting.insertTo(getHelper());
+                                    }
+                                }
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
-                    @Override
-                    public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                        Log.e("onError", "hasInternet=" + hasInternet + " || responseCode=" + responseCode);
-                    }
+                        }
 
-                    @Override
-                    public void onRequestError() {
-                        Log.e("onRequestError", "Concessio Settings");
-                    }
-                }, Server.IRETAILCLOUD_NET, true, true);
+                        @Override
+                        public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                            Log.e("onError", "hasInternet=" + hasInternet + " || responseCode=" + responseCode);
+                        }
+
+                        @Override
+                        public void onRequestError() {
+                            Log.e("onRequestError", "Concessio Settings");
+                        }
+                    }, Server.IRETAILCLOUD_NET, true, true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         });
         btnUnlink.setOnClickListener(new View.OnClickListener() {

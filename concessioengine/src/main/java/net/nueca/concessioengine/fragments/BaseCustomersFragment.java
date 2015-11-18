@@ -50,7 +50,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
         boolean hasSearchKey = searchKey != null && !searchKey.isEmpty();
 
         try {
-            Where<Customer, Integer> whereCustomers = getHelper().getCustomers().queryBuilder().where();
+            Where<Customer, Integer> whereCustomers = getHelper().fetchIntId(Customer.class).queryBuilder().where();
             whereCustomers.isNull("status");
             if(hasSearchKey) {
                 whereCustomers.and();
@@ -58,7 +58,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
                 whereCustomers.or().like("alternate_code", "%" + searchKey + "%");
             }
 
-            QueryBuilder<Customer, Integer> resultCustomers = getHelper().getCustomers().queryBuilder()
+            QueryBuilder<Customer, Integer> resultCustomers = getHelper().fetchIntId(Customer.class).queryBuilder()
                     .orderByRaw("name COLLATE NOCASE ASC").limit(LIMIT).offset(offset);
             resultCustomers.setWhere(whereCustomers);
 

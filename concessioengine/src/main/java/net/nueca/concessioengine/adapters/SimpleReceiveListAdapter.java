@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseReceiveAdapter;
 import net.nueca.concessioengine.objects.SelectedProductItem;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -22,7 +22,7 @@ import me.grantland.widget.AutofitTextView;
  */
 public class SimpleReceiveListAdapter extends BaseReceiveAdapter {
 
-    public SimpleReceiveListAdapter(Context context, ImonggoDBHelper dbHelper) {
+    public SimpleReceiveListAdapter(Context context, ImonggoDBHelper2 dbHelper) {
         super(context, R.layout.simple_receive_listitem, dbHelper);
     }
 

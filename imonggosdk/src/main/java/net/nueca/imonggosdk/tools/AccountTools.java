@@ -7,7 +7,7 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Session;
@@ -31,8 +31,8 @@ public class AccountTools {
      * @return true if LoggedIn, false otherwise.
      * @throws SQLException
      */
-    public static boolean isLoggedIn(ImonggoDBHelper dbHelper) throws SQLException {
-        return (dbHelper.getSessions().countOf() > 0);
+    public static boolean isLoggedIn(ImonggoDBHelper2 dbHelper) throws SQLException {
+        return (dbHelper.fetchObjects(Session.class).countOf() > 0);
     }
 
 
@@ -81,9 +81,9 @@ public class AccountTools {
      * @param dbHelper
      * @param accountListener
      */
-    public static void logoutUser(Context context, ImonggoDBHelper dbHelper, AccountListener accountListener) throws SQLException {
+    public static void logoutUser(Context context, ImonggoDBHelper2 dbHelper, AccountListener accountListener) throws SQLException {
         // Get the session and reset; AccountId, Email, and Password.
-        Session session = dbHelper.getSessions().queryForAll().get(0);
+        Session session = dbHelper.fetchObjectsList(Session.class).get(0);
         session.setAccountId("");
         session.setEmail("");
         session.setPassword("");
@@ -100,7 +100,7 @@ public class AccountTools {
         }
     }
 
-    public static void unlinkAccount(Context context, ImonggoDBHelper dbHelper) throws SQLException {
+    public static void unlinkAccount(Context context, ImonggoDBHelper2 dbHelper) throws SQLException {
         unlinkAccount(context,dbHelper, null);
     }
 
@@ -113,7 +113,7 @@ public class AccountTools {
      * @param accountListener
      * @throws SQLException
      */
-    public static void unlinkAccount(Context context, ImonggoDBHelper dbHelper, AccountListener accountListener) throws SQLException {
+    public static void unlinkAccount(Context context, ImonggoDBHelper2 dbHelper, AccountListener accountListener) throws SQLException {
 
         updateUnlinked(context, true);
         dbHelper.deleteAllDatabaseValues();

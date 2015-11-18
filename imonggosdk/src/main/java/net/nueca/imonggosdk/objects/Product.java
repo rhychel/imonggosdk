@@ -6,6 +6,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.*;
@@ -356,46 +357,46 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCTS, DatabaseOperation.INSERT);
+            dbHelper.insert(Product.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCTS, DatabaseOperation.DELETE);
+            dbHelper.delete(Product.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCTS, DatabaseOperation.UPDATE);
+            dbHelper.update(Product.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
+
     @Override
-    public void insertExtrasTo(ImonggoDBHelper dbHelper) {
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
         extras.setProduct(this);
         extras.setId(Product.class.getName().toUpperCase(), id);
         extras.insertTo(dbHelper);
     }
 
     @Override
-    public void deleteExtrasTo(ImonggoDBHelper dbHelper) {
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
         extras.deleteTo(dbHelper);
     }
 
     @Override
-    public void updateExtrasTo(ImonggoDBHelper dbHelper) {
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
         extras.updateTo(dbHelper);
     }
 }
