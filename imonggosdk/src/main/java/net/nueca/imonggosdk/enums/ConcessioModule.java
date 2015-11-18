@@ -9,5 +9,10 @@ public enum ConcessioModule {
     PHYSICAL_COUNT,
     SALES,
     RECEIVE,
-    PULLOUT
+    PULLOUT_REQUEST,
+    PULLOUT_CONFIRMATION,
+
+    INVENTORY,
+
+    APP
 }

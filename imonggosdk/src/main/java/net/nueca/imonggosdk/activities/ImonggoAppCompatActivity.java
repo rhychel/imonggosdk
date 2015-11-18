@@ -6,6 +6,7 @@ import android.util.Log;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -20,7 +21,23 @@ import java.sql.SQLException;
 
 public class ImonggoAppCompatActivity extends AppCompatActivity {
 
+    @Deprecated
     private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper2;
+
+    protected void destroyHelper() {
+        if(dbHelper != null) {
+            OpenHelperManager.releaseHelper();
+            dbHelper = null;
+        }
+    }
+
+    protected void destroyHelper2() {
+        if(dbHelper2 != null) {
+            OpenHelperManager.releaseHelper();
+            dbHelper2 = null;
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -29,13 +46,25 @@ public class ImonggoAppCompatActivity extends AppCompatActivity {
             dbHelper = null;
         }
 
+        if(dbHelper2 != null) {
+            OpenHelperManager.releaseHelper();
+            dbHelper2 = null;
+        }
+
         super.onDestroy();
     }
 
+    @Deprecated
     public ImonggoDBHelper getHelper() {
         if(dbHelper == null)
             dbHelper = OpenHelperManager.getHelper(this, ImonggoDBHelper.class);
         return dbHelper;
+    }
+
+    public ImonggoDBHelper2 getHelper2() {
+        if(dbHelper2 == null)
+            dbHelper2 = OpenHelperManager.getHelper(this, ImonggoDBHelper2.class);
+        return dbHelper2;
     }
 
     public Session getSession() throws SQLException {

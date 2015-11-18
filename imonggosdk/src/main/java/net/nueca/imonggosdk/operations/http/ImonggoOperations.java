@@ -13,6 +13,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.operations.ImonggoTools;
+import net.nueca.imonggosdk.tools.Configurations;
 
 import org.json.JSONObject;
 
@@ -173,9 +174,9 @@ public class ImonggoOperations {
                                                            VolleyRequestListener volleyRequestListener, Server server, boolean autoStart, boolean useJSONObject) {
         if(useJSONObject)
             queue.add(HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS,
-                    RequestType.APPLICATION_SETTINGS, "concesio", ""));
+                    RequestType.APPLICATION_SETTINGS, Configurations.CONCESSIO_JSON, ""));
         else
-            queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", ""));
+            queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, Configurations.CONCESSIO_JSON, ""));
         if(autoStart)
             queue.start();
     }

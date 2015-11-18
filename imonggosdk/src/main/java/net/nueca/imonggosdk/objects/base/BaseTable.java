@@ -6,15 +6,20 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+
+import java.sql.SQLException;
 
 /**
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
  */
-public abstract class BaseTable {
+public abstract class BaseTable extends DBTable {
 
     public static final String TAG = "BASETABLE";
+
+    private Object obj;
 
     @DatabaseField(id=true)
     protected int id = -1;
@@ -22,7 +27,7 @@ public abstract class BaseTable {
     @DatabaseField
     protected String searchKey = "";
 
-    @DatabaseField
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
     protected Extras extras;
 
     @Expose
@@ -69,10 +74,13 @@ public abstract class BaseTable {
         this.extras = extras;
     }
 
+    @Deprecated
     public abstract void insertTo(ImonggoDBHelper dbHelper);
+    @Deprecated
     public abstract void deleteTo(ImonggoDBHelper dbHelper);
+    @Deprecated
     public abstract void updateTo(ImonggoDBHelper dbHelper);
-
+    @Deprecated
     public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
         if(databaseOperation == DatabaseOperation.INSERT) {
             Log.e(TAG, "Inserting to database");
@@ -86,4 +94,18 @@ public abstract class BaseTable {
         }
     }
 
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+
+    }
 }

@@ -16,6 +16,8 @@ import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductSalesPromotionAssoc;
+import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
@@ -54,12 +56,14 @@ import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 /**
  * Created by rhymart on 5/12/15.
  * ImonggoLibrary (c)2015
  */
+@Deprecated
 public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk.db";
@@ -497,6 +501,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             productSalesPromotionAssocs = getDao(ProductSalesPromotionAssoc.class);
         return productSalesPromotionAssocs;
     }
+
     /**
      * DROP Table
      */

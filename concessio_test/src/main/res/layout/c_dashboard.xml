@@ -36,6 +36,12 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Concessio.json"
+        android:id="@+id/btnConcessio"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Unlink"
         android:id="@+id/btnUnlink"
         android:layout_gravity="center_horizontal" />
