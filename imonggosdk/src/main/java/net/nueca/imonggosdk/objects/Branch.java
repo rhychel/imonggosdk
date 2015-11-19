@@ -33,6 +33,8 @@ public class Branch extends BaseTable {
     private transient ForeignCollection<PriceList> priceLists;
     @ForeignCollectionField
     private transient ForeignCollection<RoutePlan> routePlans;
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchPrice> branchPrices;
 
     public Branch() { }
 
@@ -145,6 +147,14 @@ public class Branch extends BaseTable {
 
     public void setRoutePlans(ForeignCollection<RoutePlan> routePlans) {
         this.routePlans = routePlans;
+    }
+
+    public ForeignCollection<BranchPrice> getBranchPrices() {
+        return branchPrices;
+    }
+
+    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
+        this.branchPrices = branchPrices;
     }
 
     @Override

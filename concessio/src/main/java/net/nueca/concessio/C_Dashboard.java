@@ -10,6 +10,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -36,12 +37,10 @@ import java.util.List;
  * Created by rhymart on 8/21/15.
  * imonggosdk2 (c)2015
  */
-public class C_Dashboard extends ImonggoAppCompatActivity {
+public class C_Dashboard extends DashboardActivity {
 
     private Button btnOrder, btnCount, btnReceive, btnUnlink;
-    private Button btnInventory;
-
-    private Gson gson = new GsonBuilder().serializeNulls().create();
+    private Button btnInventory, btnPullout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +55,38 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         btnReceive = (Button) findViewById(R.id.btnReceive);
         btnUnlink = (Button) findViewById(R.id.btnUnlink);
         btnInventory = (Button) findViewById(R.id.btnInventory);
+        btnPullout = (Button) findViewById(R.id.btnPullout);
 
         try {
             List<ModuleSetting> moduleSettings = getHelper().fetchObjectsList(ModuleSetting.class);
             for(ModuleSetting moduleSetting : moduleSettings) {
-                if(moduleSetting.getLabel() != null)
+                if(moduleSetting.getLabel() != null) {
                     Log.e("moduleSetting[label]", moduleSetting.getLabel());
+                    if(moduleSetting.is_enabled()) {
+                        switch (moduleSetting.getModuleType()) {
+                            case ORDERS: {
+                                btnOrder.setVisibility(View.VISIBLE);
+                            }
+                            break;
+                            case PHYSICAL_COUNT: {
+                                btnCount.setVisibility(View.VISIBLE);
+                            }
+                            break;
+                            case RECEIVE: {
+                                btnReceive.setVisibility(View.VISIBLE);
+                            }
+                            break;
+                            case INVENTORY: {
+                                btnInventory.setVisibility(View.VISIBLE);
+                            }
+                            break;
+                            case PULLOUT_REQUEST: {
+                                btnPullout.setVisibility(View.VISIBLE);
+                            }
+                            break;
+                        }
+                    }
+                }
                 else
                     Log.e("moduleSetting[app]", moduleSetting.getModule_type());
             }
@@ -69,10 +94,13 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
             e.printStackTrace();
         }
 
-        btnOrder.setOnClickListener(onChooseModule);
-        btnCount.setOnClickListener(onChooseModule);
-        btnReceive.setOnClickListener(onChooseModule);
-        btnInventory.setOnClickListener(onChooseModule);
+        btnOrder.setTag(ConcessioModule.ORDERS);
+        btnCount.setTag(ConcessioModule.PHYSICAL_COUNT);
+        btnReceive.setTag(ConcessioModule.RECEIVE);
+        btnInventory.setTag(ConcessioModule.INVENTORY);
+        btnPullout.setTag(ConcessioModule.PULLOUT_REQUEST);
+        setNextActivityClass(C_Module.class);
+
         btnUnlink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,25 +124,8 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         });
     }
 
-    private View.OnClickListener onChooseModule = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent intent = new Intent(C_Dashboard.this, C_Module.class);
-            switch(view.getId()) {
-                case R.id.btnOrder: {
-                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.ORDERS.ordinal());
-                } break;
-                case R.id.btnCount: {
-                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.PHYSICAL_COUNT.ordinal());
-                } break;
-                case R.id.btnReceive: {
-                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.RECEIVE.ordinal());
-                } break;
-                case R.id.btnInventory: {
-                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.INVENTORY.ordinal());
-                } break;
-            }
-            startActivity(intent);
-        }
-    };
+    @Override
+    protected Bundle addExtras(ConcessioModule concessioModule) {
+        return null;
+    }
 }

@@ -7,26 +7,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Order"
-        android:id="@+id/btnOrder" />
+        android:id="@+id/btnOrder"
+        android:onClick="moduleSelected"
+        android:visibility="gone"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Count"
-        android:id="@+id/btnCount" />
+        android:id="@+id/btnCount"
+        android:onClick="moduleSelected"
+        android:visibility="gone" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Receive"
-        android:id="@+id/btnReceive" />
-
+        android:id="@+id/btnReceive"
+        android:onClick="moduleSelected"
+        android:visibility="gone" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Inventory"
-        android:id="@+id/btnInventory"/>
+        android:id="@+id/btnInventory"
+        android:onClick="moduleSelected"
+        android:visibility="gone"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pullout"
+        android:id="@+id/btnPullout"
+        android:onClick="moduleSelected"
+        android:visibility="gone"/>
 
     <Button
         android:layout_width="match_parent"

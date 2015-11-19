@@ -17,15 +17,18 @@ import com.google.gson.GsonBuilder;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
 import net.nueca.concessioengine.fragments.SimpleInventoryFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
+import net.nueca.concessioengine.fragments.SimplePulloutFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
 import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.views.SearchViewEx;
+import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
@@ -61,6 +64,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
     private SimpleInventoryFragment simpleInventoryFragment;
 
+    // For the pullout module
+    private SimplePulloutFragment simplePulloutFragment;
+    private SimplePulloutToolbarExt simplePulloutToolbarExt;
+    private SimplePulloutRequestDialog simplePulloutRequestDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,16 +81,22 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             @Override
             public void onClick(View v) {
                 Gson gson = new GsonBuilder().serializeNulls().create();
-                Document document = generateDocument(C_Module.this, 277, DocumentTypeCode.RECEIVE_SUPPLIER);
+                Document document = generateDocument(C_Module.this, 341, DocumentTypeCode.RELEASE_SUPPLIER);
                 try {
                     JSONObject jsonObject = new JSONObject(gson.toJson(document));
                     Log.e("jsonObject", jsonObject.toString());
 
-                    updateInventoryFromSelectedItemList(true);
+                    updateInventoryFromSelectedItemList(false);
                     List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
                     for(Inventory inventory : inventoryList) {
                         Log.e("Inventory", inventory.getProduct().getName()+" = "+inventory.getQuantity());
                     }
+
+                    new SwableTools.Transaction(getHelper())
+                            .toSend()
+                            .object(document)
+                            .forBranch(341)
+                            .queue();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -181,6 +195,34 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                         .replace(R.id.flContent, simpleInventoryFragment)
                         .commit();
             } break;
+            case PULLOUT_REQUEST: {
+                simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
+                simplePulloutRequestDialog.setTitle("Choose a reason");
+                simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+                    @Override
+                    public void onSave(String reason, Branch source, Branch destination) {
+                        Log.e("Reason", reason);
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+                if(getModuleSetting().isRequire_document_reason())
+                    simplePulloutRequestDialog.show();
+
+                simplePulloutFragment = new SimplePulloutFragment();
+                simplePulloutFragment.setHelper(getHelper());
+                simplePulloutFragment.setSetupActionBar(this);
+                simplePulloutFragment.setHasUnits(true);
+                simplePulloutFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
+                simplePulloutFragment.setShowCategoryOnStart(getModuleSetting().getProductListing().isShow_categories_on_start());
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.flContent, simplePulloutFragment)
+                        .commit();
+            } break;
         }
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
@@ -224,6 +266,16 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     public void onBackPressed() {
         super.onBackPressed();
         btnSummary.setText("Summary");
+
+        if(getModuleSetting().isRequire_document_reason()) {
+            if (concessioModule == ConcessioModule.PULLOUT_REQUEST) {
+                if (simplePulloutToolbarExt != null)
+                    simplePulloutToolbarExt.attachAfter(this, toolbar);
+            } else {
+                if (simplePulloutToolbarExt != null)
+                    simplePulloutToolbarExt.detach();
+            }
+        }
     }
 
     @Override
@@ -250,6 +302,22 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         this.toolbar = toolbar;
+        if(getModuleSetting().isRequire_document_reason()) {
+            if (concessioModule == ConcessioModule.PULLOUT_REQUEST) {
+                if (simplePulloutToolbarExt == null)
+                    simplePulloutToolbarExt = new SimplePulloutToolbarExt();
+                simplePulloutToolbarExt.attachAfter(this, this.toolbar);
+                simplePulloutToolbarExt.setOnClickListener(new SimplePulloutToolbarExt.OnToolbarClickedListener() {
+                    @Override
+                    public void onClick() {
+                        simplePulloutRequestDialog.show();
+                    }
+                });
+            } else {
+                if (simplePulloutToolbarExt != null)
+                    simplePulloutToolbarExt.detach();
+            }
+        }
     }
 
     private MultiInputListener multiInputListener = new MultiInputListener() {

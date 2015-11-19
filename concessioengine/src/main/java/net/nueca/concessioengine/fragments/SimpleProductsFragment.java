@@ -111,6 +111,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                         if (selectedProductItem == null) {
                             selectedProductItem = new SelectedProductItem();
                             selectedProductItem.setProduct(product);
+                            selectedProductItem.setInventory(product.getInventory()); // add the inventory object
                         }
                         showQuantityDialog(position, product, selectedProductItem);
                     }
@@ -148,6 +149,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                         if (selectedProductItem == null) {
                             selectedProductItem = new SelectedProductItem();
                             selectedProductItem.setProduct(product);
+                            selectedProductItem.setInventory(product.getInventory()); // add the inventory object
                         }
 
                         showQuantityDialog(position, product, selectedProductItem);
