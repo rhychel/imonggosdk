@@ -9,7 +9,24 @@ import android.widget.Toast;
  */
 public class LoggingTools {
 
+    /**
+     * show Toast message with short length
+     * @param context
+     * @param message
+     */
     public static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        showToast(context, message, Toast.LENGTH_SHORT);
+    }
+
+    public static void showToastLong(Context context, String message) {
+        showToast(context, message, Toast.LENGTH_LONG);
+    }
+
+    public static void showToastShort(Context context, String message) {
+        showToast(context, message, Toast.LENGTH_SHORT);
+    }
+
+    public static void showToast(Context context, String message, int length) {
+        Toast.makeText(context, message, length).show();
     }
 }

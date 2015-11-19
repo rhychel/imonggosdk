@@ -1,10 +1,8 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#FFFFFF"
-    android:layout_marginLeft="10dp"
-    android:layout_marginStart="10dp"
     android:padding="7dp"
     android:layout_weight="1">
 
@@ -13,6 +11,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1.2"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:padding="7dp"
 
         android:text="Module Name"
@@ -54,6 +54,13 @@
         android:paddingLeft="9dp"
         android:paddingTop="9dp"
         android:paddingBottom="9dp" />
+
+    <ImageView
+        android:id="@+id/ivRetrySync"
+        android:layout_width="50dp"
+        android:visibility="invisible"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_navigation_refresh"/>
 
 
 </LinearLayout>

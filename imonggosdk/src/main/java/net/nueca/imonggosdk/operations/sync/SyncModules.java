@@ -1082,15 +1082,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             syncNext();
                             return;
                         } else {
-
                             getHelper().getSettings().deleteBuilder().delete();
-
                             for (int i = 0; i < size; i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Log.e(TAG, jsonObject.getString("name") + " - " + jsonObject.getString("value"));
                                 Settings settings = new Settings(i, jsonObject.getString("name"), jsonObject.getString("value"));
                                 settings.insertTo(getHelper());
                             }
+
+                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                         }
 
                         syncNext();
@@ -1129,7 +1129,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     startSyncModuleContents(requestType);
                 }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -1159,7 +1158,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         for (Table t : mModulesToSync) {
             Log.e(TAG, t.toString());
         }
-        if (mCurrentTableSyncing == Table.DAILY_SALES) {
+
+        if(mCurrentTableSyncing == Table.USERS) {
+            startSyncModuleContents(RequestType.LAST_UPDATED_AT);
+        } else if (mCurrentTableSyncing == Table.DAILY_SALES) {
             startSyncModuleContents(RequestType.DAILY_SALES_TODAY);
         } else {
             startSyncModuleContents(RequestType.LAST_UPDATED_AT);

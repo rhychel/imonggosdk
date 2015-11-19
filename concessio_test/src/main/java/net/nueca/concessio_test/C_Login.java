@@ -33,13 +33,16 @@ public class C_Login extends LoginActivity {
         setIsUsingDefaultLoginLayout(true);
         Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
-        setServer(Server.IMONGGO);
+        setServer(Server.IRETAILCLOUD_NET);
         SettingTools.updateSettings(C_Login.this, SettingsName.AUTO_UPDATE, false, "");
-        setModulesToSync(Table.USERS.ordinal(), Table.BRANCH_USERS.ordinal(), Table.SETTINGS.ordinal(), Table.CUSTOMERS.ordinal());
-
-
+        setModulesToSync(
+                Table.USERS.ordinal(),
+                Table.BRANCH_USERS.ordinal(),
+                Table.SETTINGS.ordinal(),
+                Table.CUSTOMERS.ordinal(),
+                Table.DAILY_SALES.ordinal(),
+                Table.PRODUCTS.ordinal());
     }
-
 
     @Override
     protected void showNextActivityAfterLogin() {
@@ -48,13 +51,11 @@ public class C_Login extends LoginActivity {
         startActivity(intent);
     }
 
-
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
-
-        setEditTextAccountID("ourlovelybotique");
-        setEditTextEmail("owner@ourlovelybotique.com");
-        setEditTextPassword("ourlovelybotique");
+        setEditTextAccountID("retailpos");
+        setEditTextEmail("retailpos@test.com");
+        setEditTextPassword("retailpos");
     }
 }

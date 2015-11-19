@@ -20,7 +20,6 @@ import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
-import net.nueca.imonggosdk.objects.deprecated.Extras;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
@@ -52,6 +51,7 @@ import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
@@ -63,7 +63,7 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk.db";
-    private static final int DATABASE_VERSION = 30;
+    private static final int DATABASE_VERSION = 31;
 
     private Dao<Branch, Integer> branches = null;
     private Dao<BranchPrice, Integer> branchPrices = null;
@@ -92,7 +92,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
     private Dao<Document, Integer> documents = null;
     private Dao<DocumentLine, Integer> documentLines = null;
-    private Dao<DocumentLineExtras, Integer> documentLineExtras = null;
+    //private Dao<DocumentLineExtras, Integer> documentLineExtras = null;
     //private Dao<DocumentLineExtras_Old, Integer> documentLineExtras = null;
 
     private Dao<Order, Integer> orders = null;
@@ -376,11 +376,11 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             documentLines = getDao(DocumentLine.class);
         return documentLines;
     }
-    public Dao<DocumentLineExtras, Integer> getDocumentLineExtras() throws SQLException {
+/*    public Dao<DocumentLineExtras, Integer> getDocumentLineExtras() throws SQLException {
         if(documentLineExtras == null)
             documentLineExtras = getDao(DocumentLineExtras.class);
         return documentLineExtras;
-    }
+    }*.
     /*public Dao<DocumentLineExtras_Old, Integer> getDocumentLineExtras() throws SQLException {
         if(documentLineExtras == null)
             documentLineExtras = getDao(DocumentLineExtras_Old.class);
@@ -731,9 +731,11 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             /*case EXTENDED_ATTRIBUTES:
                 getExtendedAttributes().create((DocumentLineExtras) object);
                 break;*/
+/*
             case DOCUMENT_LINE_EXTRAS:
                 getDocumentLineExtras().create((DocumentLineExtras) object);
                 break;
+*/
 
             case ORDERS:
                 getOrders().create((Order) object);
@@ -881,9 +883,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             /*case EXTENDED_ATTRIBUTES:
                 getExtendedAttributes().delete((DocumentLineExtras) object);
                 break;*/
-            case DOCUMENT_LINE_EXTRAS:
+/*            case DOCUMENT_LINE_EXTRAS:
                 getDocumentLineExtras().delete((DocumentLineExtras) object);
-                break;
+                break;*/
 
             case ORDERS:
                 getOrders().delete((Order) object);
@@ -1032,9 +1034,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             /*case EXTENDED_ATTRIBUTES:
                 getExtendedAttributes().deleteBuilder().delete();
                 break;*/
-            case DOCUMENT_LINE_EXTRAS:
+/*            case DOCUMENT_LINE_EXTRAS:
                 getDocumentLineExtras().deleteBuilder().delete();
-                break;
+                break;*/
 
             case ORDERS:
                 getOrders().deleteBuilder().delete();
@@ -1183,9 +1185,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             /*case EXTENDED_ATTRIBUTES:
                 getExtendedAttributes().update((DocumentLineExtras) object);
                 break;*/
-            case DOCUMENT_LINE_EXTRAS:
+/*            case DOCUMENT_LINE_EXTRAS:
                 getDocumentLineExtras().update((DocumentLineExtras) object);
-                break;
+                break;*/
 
             case ORDERS:
                 getOrders().update((Order) object);
@@ -1634,7 +1636,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }*/
 
-    public void batchCreateOrUpdateDocumentLineExtras(final BatchList documentLineExtras, final DatabaseOperation
+/*    public void batchCreateOrUpdateDocumentLineExtras(final BatchList documentLineExtras, final DatabaseOperation
             databaseOperations) {
         try {
             Dao<DocumentLineExtras, Integer> daoDocumentLineExtras = getDocumentLineExtras();
@@ -1651,7 +1653,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     public void batchCreateOrUpdateOrders(final BatchList orders, final DatabaseOperation
             databaseOperations) {
@@ -1824,7 +1826,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             getDocuments().deleteBuilder().delete();
             getDocumentLines().deleteBuilder().delete();
             //getExtendedAttributes().deleteBuilder().delete();
-            getDocumentLineExtras().deleteBuilder().delete();
+            //getDocumentLineExtras().deleteBuilder().delete();
 
             getOrders().deleteBuilder().delete();
             getOrderLines().deleteBuilder().delete();

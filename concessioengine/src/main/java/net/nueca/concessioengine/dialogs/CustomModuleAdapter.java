@@ -1,14 +1,17 @@
 package net.nueca.concessioengine.dialogs;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -43,7 +46,14 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
             holder.showCircularProgressBar();
         }
 
+        Log.e("CustomModuleAdapter", getRetryButtonStatus(position) + " <<<<");
+
+        if(getRetryButtonStatus(position)){
+            holder.showRetryButton();
+        }
+
         holder.bind(getModuleAt(position), getProgressAt(position));
+
         holder.itemView.setTag(getModuleAt(position));
     }
 
@@ -51,6 +61,7 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
     public class ViewHolder extends BaseCustomDialogRecyclerAdapter.VH {
         private TextView tvModuleName;
         private TextView tvPercentageDownload;
+        private ImageView imgRetryBtn;
         private ProgressBar pbHorizontal;
         private ProgressBar pbCircular;
 
@@ -59,6 +70,7 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
 
             tvModuleName = (TextView) itemView.findViewById(R.id.tvModuleName);
             pbCircular = (ProgressBar) itemView.findViewById(R.id.pbCircularProgressBar);
+            imgRetryBtn = (ImageView) itemView.findViewById(R.id.ivRetrySync);
 
             tvPercentageDownload = (TextView) itemView.findViewById(R.id.tvDownloadProgress);
             tvPercentageDownload.setText("0%");
@@ -76,18 +88,33 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
             getModuleName().setText(name);
             getPercentageDownload().setText(progress + "%");
             getHorizontalProgressBar().setProgress(progress);
+
         }
 
         @Override
         public void hideCircularProgressBar() {
             getPercentageDownload().setVisibility(View.VISIBLE);
             getCircularProgressBar().setVisibility(View.GONE);
+            getImgRetryBtn().setVisibility(View.GONE);
         }
 
         @Override
         public void showCircularProgressBar() {
             getPercentageDownload().setVisibility(View.GONE);
             getCircularProgressBar().setVisibility(View.VISIBLE);
+            getImgRetryBtn().setVisibility(View.GONE);
+        }
+
+        @Override
+        public void showRetryButton() {
+            getPercentageDownload().setVisibility(View.GONE);
+            getCircularProgressBar().setVisibility(View.GONE);
+            getImgRetryBtn().setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void hideRetryButton() {
+            getImgRetryBtn().setVisibility(View.GONE);
         }
 
         public TextView getModuleName() {
@@ -96,6 +123,10 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
 
         public TextView getPercentageDownload() {
             return tvPercentageDownload;
+        }
+
+        public ImageView getImgRetryBtn() {
+            return imgRetryBtn;
         }
 
         public ProgressBar getHorizontalProgressBar() {
@@ -109,7 +140,11 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
         @Override
         public void onClick(View v) {
             if (mOnItemClickListener != null) {
-                mOnItemClickListener.onItemClicked(v, getLayoutPosition());
+                try {
+                    mOnItemClickListener.onItemClicked(v, getLayoutPosition());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -138,6 +173,16 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
     public void showCircularProgressBar(int position) {
         if(!getCircularProgressBar(position)) {
             updateCircularProgressBar(position, false);
+        }
+    }
+
+    public void hideRetryButton(int position) {
+        updateRetryButton(position, false);
+    }
+
+    public void showRetryButton(int position) {
+        if(!getRetryButtonStatus(position)) {
+            updateRetryButton(position, true);
         }
     }
 

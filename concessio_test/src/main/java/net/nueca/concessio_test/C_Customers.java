@@ -1,21 +1,27 @@
 package net.nueca.concessio_test;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import net.nueca.concessioengine.fragments.AddCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.imonggosdk.tools.AccountTools;
+
+import java.sql.SQLException;
 
 
 public class C_Customers extends ImonggoAppCompatActivity implements SetupActionBar {
 
     private SimpleCustomersFragment mSimpleCustomersFragment;
+    private AddCustomersFragment addCustomersFragment;
     private String TAG = "C_Customers";
     private String CurrentView = "Customers";
 
@@ -60,9 +66,9 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
             getSupportActionBar().setTitle("Add Customers");
             getMenuInflater().inflate(R.menu.simple_add_customers_menu, menu);
         }
+
         return super.onCreateOptionsMenu(menu);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
@@ -72,7 +78,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
                 CurrentView = "Add Customers";
 
-                AddCustomersFragment addCustomersFragment = AddCustomersFragment.newInstance();
+                addCustomersFragment = AddCustomersFragment.newInstance();
                 addCustomersFragment.setSetupActionBar(this);
 
                 getSupportFragmentManager()
@@ -80,7 +86,15 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                         .replace(R.id.flContent, addCustomersFragment)
                         .addToBackStack("Add Customer")
                         .commit();
+                break;
 
+            case net.nueca.concessioengine.R.id.mAddCustomerOkay:
+                Toast.makeText(C_Customers.this, "Adding Customers", Toast.LENGTH_SHORT).show();
+
+                onBackPressed();
+                break;
+            case net.nueca.concessioengine.R.id.mUnlink:
+                unlinkDevice();
                 break;
             default:
                 break;
@@ -88,6 +102,18 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
         return true;
     }
+
+    private void unlinkDevice() {
+        Log.e(TAG, "Unlink Device");
+        try {
+            AccountTools.unlinkAccount(C_Customers.this, getHelper());
+            finish();
+            startActivity(new Intent(C_Customers.this, C_Login.class));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onBackPressed() {

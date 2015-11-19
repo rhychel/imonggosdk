@@ -212,9 +212,6 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                  * Customers -- LAST_UPDATED_AT, COUNT
                  * Inventory -- LAST_UPDATED_AT, COUNT
                  * Tax Settings -- LAST_UPDATED_AT <--- NON SENSE
-                 *
-                 *
-                 *
 
                  * Documents -- LAST_UPDATED_AT, COUNT
                  * Document Types -- #CONSTANT

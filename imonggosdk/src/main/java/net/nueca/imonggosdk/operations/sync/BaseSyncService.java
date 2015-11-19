@@ -70,7 +70,6 @@ public abstract class BaseSyncService extends ImonggoService {
     protected String document_type;
     protected String intransit_status;
     protected int responseCode = 200;
-    private int NOTIFICATION_ID = 200;
 
     /**
      * Empty Constructor
@@ -308,6 +307,49 @@ public abstract class BaseSyncService extends ImonggoService {
         }
     }
 
+    public Table getCurrentTableSyncing() {
+        return mCurrentTableSyncing;
+    }
+
+
+    /**
+     * removes modules from array for Re-Sync
+     */
+    public void prepareModulesToReSync() {
+
+        int length = mModulesToSync.length;
+        int newlength = 0;
+
+        //Log.e(TAG, "Tables To Sync:");
+
+        newlength = length - mModulesIndex;
+        Table[] temp = new Table[newlength];
+
+        // Log.e(TAG, "Current Index: " + mModulesIndex + " Length: " + length + " new length: " + newlength);
+
+
+        if (newlength != 0) {
+            int x = 0;
+            for (int i = mModulesIndex; i < length; i++) {
+                temp[x] = Table.values()[mModulesToSync[i].ordinal()];
+                x++;
+            }
+            mModulesToSync = temp;
+            //  Log.e(TAG, "Temp length is " + temp.length);
+        }
+
+
+        // reset variable
+        page = 0;
+        numberOfPages = 0;
+        count = 0;
+        branchIndex = 0;
+        mModulesIndex = 0;
+    }
+
+    public Table[] getModulesToSync() {
+        return mModulesToSync;
+    }
 
     public void setSyncModulesListener(SyncModulesListener syncModulesListener) {
         this.mSyncModulesListener = syncModulesListener;

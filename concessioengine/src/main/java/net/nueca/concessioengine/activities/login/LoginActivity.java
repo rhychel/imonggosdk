@@ -11,6 +11,9 @@ import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.DialogType;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.interfaces.LoginListener;
+import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
@@ -21,7 +24,7 @@ import java.sql.SQLException;
  * Created by Jn on 7/12/2015.
  * imonggosdk (c)2015
  */
-public class LoginActivity extends BaseLoginActivity {
+public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
     public static String TAG = "LoginActivity";
     private boolean isUsingDefaultLoginLayout = true;
@@ -223,6 +226,36 @@ public class LoginActivity extends BaseLoginActivity {
     protected void onPause() {
         super.onPause();
         DialogTools.hideIndeterminateProgressDialog();
+    }
+
+    @Override
+    public void onStartLogin() {
+
+    }
+
+    @Override
+    public void onLoginSuccess(Session session) {
+
+    }
+
+    @Override
+    public void onPositiveButtonPressed() {
+
+    }
+
+    @Override
+    public void onNegativeButtonPressed() {
+
+    }
+
+    @Override
+    public void onRetryButtonPressed(Table table) {
+
+    }
+
+    @Override
+    public void onStopLogin() {
+
     }
 
     private class StartSyncServiceAsyncTask extends AsyncTask<String, Void, String> {
