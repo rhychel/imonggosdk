@@ -1,5 +1,7 @@
 package net.nueca.concessioengine.objects;
 
+import android.util.Log;
+
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -68,6 +70,7 @@ public class Values {
         if(extendedAttributes != null)
             this.extendedAttributes = extendedAttributes;
         if(unit != null && unit.getId() != -1) {
+            Log.e("Quantity-unit",unit.getQuantity()+" * "+quantity);
             this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_quantity = quantity;
             this.unit_content_quantity = unit.getQuantity();
@@ -86,6 +89,14 @@ public class Values {
     public String getQuantity() {
         if(unit != null && unit.getId() != -1)
             return unit_quantity;
+        return quantity;
+    }
+
+    /**
+     * This is used when generating the transaction ready for syncing.
+     * @return
+     */
+    public String getActualQuantity() {
         return quantity;
     }
 

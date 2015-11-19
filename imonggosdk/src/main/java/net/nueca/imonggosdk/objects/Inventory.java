@@ -95,6 +95,14 @@ public class Inventory extends DBTable {
         this.utc_created_at = utc_created_at;
     }
 
+    public void addQuantity(double addQuantity) {
+        this.quantity += addQuantity;
+    }
+
+    public void subtractQuantity(double subtractQuantity) {
+        this.quantity -= subtractQuantity;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {

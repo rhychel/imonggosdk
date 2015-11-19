@@ -547,6 +547,8 @@ public class BaseLogin {
                                                         DebugMode debugMode = gson.fromJson(module.getJSONObject("debug_mode").toString(), DebugMode.class);
                                                         debugMode.setModuleSetting(moduleSetting);
                                                         debugMode.insertTo(mDBHelper);
+
+                                                        moduleSetting.setDebugMode(debugMode);
                                                     }
                                                     else {
                                                         moduleSetting.insertTo(mDBHelper);
@@ -559,7 +561,6 @@ public class BaseLogin {
                                                             cutoff.setModuleSetting(moduleSetting);
                                                             cutoffs.add(cutoff);
                                                         }
-
                                                         cutoffs.doOperation(Cutoff.class);
 
                                                         // Product Listing
@@ -581,7 +582,14 @@ public class BaseLogin {
                                                         QuantityInput manualQI = gson.fromJson(module.getJSONObject("manual").getJSONObject("quantity_input").toString(), QuantityInput.class);
                                                         manualQI.setManual(manual);
                                                         manualQI.insertTo(mDBHelper);
+
+                                                        moduleSetting.setProductListing(productListing);
+                                                        moduleSetting.setQuantityInput(quantityInput);
+                                                        moduleSetting.setManual(manual);
+
                                                     }
+
+                                                    moduleSetting.updateTo(mDBHelper);
                                                 }
                                             } catch (SQLException e) {
                                                 e.printStackTrace();
