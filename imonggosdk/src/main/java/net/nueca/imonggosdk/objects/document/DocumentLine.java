@@ -88,11 +88,11 @@ public class DocumentLine extends BaseTransactionLine {
         this.line_no = line_no;
     }
 
-    public DocumentLineExtras getExtras() {
+    public DocumentLineExtras getDocumentLineExtras() {
         return extras;
     }
 
-    public void setExtras(DocumentLineExtras extras) {
+    public void setDocumentLineExtras(DocumentLineExtras extras) {
         this.extras = extras;
     }
 

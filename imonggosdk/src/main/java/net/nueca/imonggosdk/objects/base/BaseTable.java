@@ -22,6 +22,7 @@ public abstract class BaseTable {
     @DatabaseField
     protected String searchKey = "";
 
+    @Expose
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
     protected Extras extras;
 

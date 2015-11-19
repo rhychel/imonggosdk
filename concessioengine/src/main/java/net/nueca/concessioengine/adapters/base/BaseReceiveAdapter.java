@@ -1,7 +1,6 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
-import android.util.Log;
 
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
@@ -11,7 +10,6 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -127,12 +125,12 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
 
             Values values = new Values();
             ExtendedAttributes extendedAttributes = new ExtendedAttributes(0d, documentLine.getQuantity());
-            if(documentLine.getExtras() != null) {
-                extendedAttributes.setBatch_no(documentLine.getExtras().getBatch_no());
+            if(documentLine.getDocumentLineExtras() != null) {
+                extendedAttributes.setBatch_no(documentLine.getDocumentLineExtras().getBatch_no());
             }
-            if(documentLine.getExtras() != null) {
-                extendedAttributes.setDelivery_date(documentLine.getExtras().getDelivery_date());
-                extendedAttributes.setBrand(documentLine.getExtras().getBrand());
+            if(documentLine.getDocumentLineExtras() != null) {
+                extendedAttributes.setDelivery_date(documentLine.getDocumentLineExtras().getDelivery_date());
+                extendedAttributes.setBrand(documentLine.getDocumentLineExtras().getBrand());
             }
             values.setValue("0", unit, extendedAttributes);
 

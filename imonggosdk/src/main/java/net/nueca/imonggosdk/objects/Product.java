@@ -11,8 +11,11 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.*;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.salespromotion.Discount;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 5/12/15.
@@ -69,6 +72,9 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @ForeignCollectionField
     private transient ForeignCollection<DocumentLine> documentLines;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<Discount> discounts;
 
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
     private Inventory inventory;
@@ -331,6 +337,18 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     public void setDocumentLines(ForeignCollection<DocumentLine> documentLines) {
         this.documentLines = documentLines;
+    }
+
+    public ForeignCollection<Discount> getDiscounts() {
+        return discounts;
+    }
+
+    public List<Discount> getDiscountsList() {
+        return new ArrayList<>(discounts);
+    }
+
+    public void setDiscounts(ForeignCollection<Discount> discounts) {
+        this.discounts = discounts;
     }
 
     public void setUnits(ForeignCollection<Unit> units) {

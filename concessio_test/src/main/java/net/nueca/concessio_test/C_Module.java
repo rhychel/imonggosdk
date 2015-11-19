@@ -303,33 +303,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 }
             }, "No");
         } else if(id == R.id.mCustomer) {
-            RequestQueue queue = Volley.newRequestQueue(this);
-            try {
-                queue.add(HTTPRequests.sendGETRequest(this, getSession(), new VolleyRequestListener() {
-                    @Override
-                    public void onStart(Table table, RequestType requestType) {
 
-                    }
-
-                    @Override
-                    public void onSuccess(Table table, RequestType requestType, Object response) {
-                        Log.e("Response", response.toString());
-
-                    }
-
-                    @Override
-                    public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                        Log.e("Response " + responseCode, response != null? response.toString() : "null");
-                    }
-
-                    @Override
-                    public void onRequestError() {
-
-                    }
-                }, getSession().getServer(), Table.DOCUMENTS, "340-1"));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return super.onOptionsItemSelected(item);

@@ -28,14 +28,11 @@ import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SimpleReceiveToolbarExt;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.tools.NumberTools;
-
-import org.json.JSONException;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -286,12 +283,12 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
 
             Values values = new Values();
             ExtendedAttributes extendedAttributes = new ExtendedAttributes(0d, documentLine.getQuantity());
-            if(documentLine.getExtras() != null) {
-                extendedAttributes.setBatch_no(documentLine.getExtras().getBatch_no());
+            if(documentLine.getDocumentLineExtras() != null) {
+                extendedAttributes.setBatch_no(documentLine.getDocumentLineExtras().getBatch_no());
             }
-            if(documentLine.getExtras() != null) {
-                extendedAttributes.setDelivery_date(documentLine.getExtras().getDelivery_date());
-                extendedAttributes.setBrand(documentLine.getExtras().getBrand());
+            if(documentLine.getDocumentLineExtras() != null) {
+                extendedAttributes.setDelivery_date(documentLine.getDocumentLineExtras().getDelivery_date());
+                extendedAttributes.setBrand(documentLine.getDocumentLineExtras().getBrand());
             }
             if(unit == null) {
                 if(documentLine.getUnit_name() != null)

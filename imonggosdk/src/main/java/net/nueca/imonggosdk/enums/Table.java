@@ -37,6 +37,7 @@ public enum Table {
     PAYMENTS,
 
     SALES_PROMOTIONS,
+    SALES_PROMOTION_LINES,
 
     SETTINGS,
     TOKENS,

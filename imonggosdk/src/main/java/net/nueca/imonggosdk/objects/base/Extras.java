@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects.base;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -26,34 +27,45 @@ public class Extras {
     private String id;
 
     // Product
+    @Expose
     @DatabaseField
     private boolean batch_maintained; // true || false
 
     // DocumentLine
+    @Expose
     @DatabaseField
     private String batch_no;
+    @Expose
     @DatabaseField
     private String delivery_date;
+    @Expose
     @DatabaseField
     private String brand;
+    @Expose
     @DatabaseField
     private String outright_return;
+    @Expose
     @DatabaseField
     private String discrepancy;
 
     // Invoice
+    @Expose
     @DatabaseField
     private String longitude;
+    @Expose
     @DatabaseField
     private String latitude;
 
     // Customer
+    @Expose
     @DatabaseField
     private String checkin_count;
+    @Expose
     @DatabaseField
     private String last_checkin_at;
 
     // DocumentPurpose
+    @Expose
     @DatabaseField
     private String requires_expiry_date; // true || false
 
