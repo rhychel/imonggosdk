@@ -48,8 +48,8 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
 
-//        if(!SwableTools.isImonggoSwableRunning(this))
-//            SwableTools.startSwable(this);
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.startSwable(this);
 
         btnOrder = (Button) findViewById(R.id.btnOrder);
         btnCount = (Button) findViewById(R.id.btnCount);
@@ -72,67 +72,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         btnOrder.setOnClickListener(onChooseModule);
         btnCount.setOnClickListener(onChooseModule);
         btnReceive.setOnClickListener(onChooseModule);
-        btnInventory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                try {
-//
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-                /**
-                 * 6267fdfb17d6ea90916e8230e82be969f316d5d0
-                 * retailpos.iretailcloud.net
-                 *
-                 * getSession()
-                 */
-                try {
-                    ImonggoOperations.getConcesioAppSettings(C_Dashboard.this, Volley.newRequestQueue(C_Dashboard.this), getSession(), new VolleyRequestListener() {
-                        @Override
-                        public void onStart(Table table, RequestType requestType) {
-                            Log.e("onStart", "Concessio Settings");
-                        }
-
-                        @Override
-                        public void onSuccess(Table table, RequestType requestType, Object response) {
-                            JSONObject jsonObject = (JSONObject) response;
-                            Log.e("onSuccess", jsonObject.toString());
-                            try {
-                                getHelper().deleteAllDatabaseValues();
-                                for(String key : Configurations.MODULE_KEYS) {
-                                    JSONObject module = jsonObject.getJSONObject(key);
-                                    ModuleSetting moduleSetting = gson.fromJson(module.toString(), ModuleSetting.class);
-                                    moduleSetting.setModule_type(key);
-                                    if(key.equals("app")) {
-                                        moduleSetting.insertTo(getHelper());
-                                    }
-                                    else {
-                                        moduleSetting.insertTo(getHelper());
-                                    }
-                                }
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-
-                        @Override
-                        public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                            Log.e("onError", "hasInternet=" + hasInternet + " || responseCode=" + responseCode);
-                        }
-
-                        @Override
-                        public void onRequestError() {
-                            Log.e("onRequestError", "Concessio Settings");
-                        }
-                    }, Server.IRETAILCLOUD_NET, true, true);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        btnInventory.setOnClickListener(onChooseModule);
         btnUnlink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -169,6 +109,9 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
                 } break;
                 case R.id.btnReceive: {
                     intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.RECEIVE.ordinal());
+                } break;
+                case R.id.btnInventory: {
+                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.INVENTORY.ordinal());
                 } break;
             }
             startActivity(intent);

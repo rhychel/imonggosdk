@@ -142,11 +142,13 @@ public class SelectedProductItem {
         this.inventory = inventory;
     }
 
-    public String updatedInventory() {
+    public String updatedInventory(boolean shouldAdd) {
         if(inventory == null)
-            return "0";
+            return valuesList.getActualQuantity();
         BigDecimal currentInventory = new BigDecimal(inventory.getQuantity());
-        BigDecimal totalQuantity = new BigDecimal(total_quantity);
+        BigDecimal totalQuantity = new BigDecimal(valuesList.getActualQuantity());
+        if(shouldAdd)
+            return currentInventory.add(totalQuantity).toPlainString();
         return currentInventory.subtract(totalQuantity).toPlainString();
     }
 

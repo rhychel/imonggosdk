@@ -33,6 +33,21 @@ public class ValuesList extends ArrayList<Values> {
         return quantity;
     }
 
+    /**
+     * Used to get the actual quantity from either computed from the unit or from base unit(1).
+     * @return
+     */
+    public String getActualQuantity() {
+        String quantity = "0";
+        BigDecimal totalQuantity = new BigDecimal(0);
+        for(Values values : this) {
+            totalQuantity = totalQuantity.add(new BigDecimal(values.getActualQuantity().replaceAll(",", "")));
+        }
+
+        quantity = totalQuantity.toString();
+        return quantity;
+    }
+
     public String getDiscrepancy() {
         BigDecimal totalDsc = BigDecimal.ZERO;
         for(Values values : this) {
