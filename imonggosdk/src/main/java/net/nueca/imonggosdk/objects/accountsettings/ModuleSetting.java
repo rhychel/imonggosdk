@@ -209,4 +209,5 @@ public class ModuleSetting extends DBTable {
             e.printStackTrace();
         }
     }
+
 }

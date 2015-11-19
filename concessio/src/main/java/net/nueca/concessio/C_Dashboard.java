@@ -39,7 +39,7 @@ import java.util.List;
 public class C_Dashboard extends ImonggoAppCompatActivity {
 
     private Button btnOrder, btnCount, btnReceive, btnUnlink;
-    private Button btnConcessio;
+    private Button btnInventory;
 
     private Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -55,7 +55,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         btnCount = (Button) findViewById(R.id.btnCount);
         btnReceive = (Button) findViewById(R.id.btnReceive);
         btnUnlink = (Button) findViewById(R.id.btnUnlink);
-        btnConcessio = (Button) findViewById(R.id.btnConcessio);
+        btnInventory = (Button) findViewById(R.id.btnInventory);
 
         try {
             List<ModuleSetting> moduleSettings = getHelper().fetchObjectsList(ModuleSetting.class);
@@ -72,7 +72,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         btnOrder.setOnClickListener(onChooseModule);
         btnCount.setOnClickListener(onChooseModule);
         btnReceive.setOnClickListener(onChooseModule);
-        btnConcessio.setOnClickListener(new View.OnClickListener() {
+        btnInventory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                try {

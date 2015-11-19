@@ -22,6 +22,8 @@ public class ProductListing extends DBTable {
     private boolean show_unit = false;
     @DatabaseField
     private boolean lock_category = false;
+    @DatabaseField
+    private boolean show_on_hand = false;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "module_setting_id")
     private transient ModuleSetting moduleSetting;
 

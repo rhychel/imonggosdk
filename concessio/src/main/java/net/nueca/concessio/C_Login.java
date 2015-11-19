@@ -3,10 +3,16 @@ package net.nueca.concessio;
 import android.content.Intent;
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.AccountSettings;
+import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.SettingTools;
+
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by rhymart on 8/20/15.
@@ -50,13 +56,31 @@ public class C_Login extends LoginActivity {
     private int[] generateModules(boolean includeUsers) {
         getSyncModules().setSyncAllModules(false);
         int modulesToDownload = includeUsers ? 4 : 2;
-        if(AccountSettings.hasPullout(this)) {
-            modulesToDownload+=2;
+        boolean hasReceive = false, hasPulloutRequest = false, hasSales = false;
+
+        try {
+            List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
+                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.PULLOUT_REQUEST, ConcessioModule.SALES, ConcessioModule.RECEIVE)).query();
+
+            for(ModuleSetting moduleSetting : moduleSettings) {
+                if(!moduleSetting.is_enabled())
+                    continue;
+                if(moduleSetting.getModuleType() == ConcessioModule.PULLOUT_REQUEST) {
+                    hasPulloutRequest = true;
+                    modulesToDownload += 2;
+                }
+                if(moduleSetting.getModuleType() == ConcessioModule.SALES && moduleSetting.is_enabled()) {
+                    hasSales = true;
+                    modulesToDownload++;
+                }
+                if(moduleSetting.getModuleType() == ConcessioModule.RECEIVE) {
+                    hasReceive = true;
+                    modulesToDownload++;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-//        if(AccountSettings.hasReceive(this))
-//            modulesToDownload++;
-        if(AccountSettings.hasSales(this))
-            modulesToDownload++;
 
         int index = modulesToDownload;
         int[] modules = new int[modulesToDownload];
@@ -66,13 +90,13 @@ public class C_Login extends LoginActivity {
         }
         modules[modulesToDownload-(index--)] = Table.PRODUCTS.ordinal();
         modules[modulesToDownload-(index--)] = Table.UNITS.ordinal();
-        if(AccountSettings.hasPullout(this)) {
+        if(hasPulloutRequest) {
             modules[modulesToDownload-(index--)] = Table.DOCUMENT_TYPES.ordinal();
             modules[modulesToDownload-(index--)] = Table.DOCUMENT_PURPOSES.ordinal();
         }
-//        if(AccountSettings.hasReceive(this))
-//            modules[modulesToDownload-(index--)] = Table.DOCUMENTS.ordinal();
-        if(AccountSettings.hasSales(this))
+        if(hasReceive)
+            modules[modulesToDownload-(index--)] = Table.DOCUMENTS.ordinal();
+        if(hasSales)
             modules[modulesToDownload-(index--)] = Table.CUSTOMERS.ordinal();
 
         return modules;
