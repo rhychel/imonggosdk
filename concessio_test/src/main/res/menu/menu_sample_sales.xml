@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="net.nueca.concessio_test.SampleSales">
+      <item android:id="@+id/mSearch"
+            android:title="Search product"
+            android:icon="@drawable/ic_search"
+            app:showAsAction="always"
+            android:orderInCategory="100"
+            app:actionViewClass="net.nueca.concessioengine.views.SearchViewEx" />
+</menu>

@@ -6,9 +6,11 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
 
@@ -27,6 +29,10 @@ public class Branch extends BaseTable {
     private transient ForeignCollection<BranchTag> branchTags;
     @ForeignCollectionField
     private transient ForeignCollection<TaxRate> taxRates;
+    @ForeignCollectionField
+    private transient ForeignCollection<PriceList> priceLists;
+    @ForeignCollectionField
+    private transient ForeignCollection<RoutePlan> routePlans;
 
     public Branch() { }
 
@@ -125,6 +131,22 @@ public class Branch extends BaseTable {
         this.taxRates = taxRates;
     }
 
+    public ForeignCollection<PriceList> getPriceLists() {
+        return priceLists;
+    }
+
+    public void setPriceLists(ForeignCollection<PriceList> priceLists) {
+        this.priceLists = priceLists;
+    }
+
+    public ForeignCollection<RoutePlan> getRoutePlans() {
+        return routePlans;
+    }
+
+    public void setRoutePlans(ForeignCollection<RoutePlan> routePlans) {
+        this.routePlans = routePlans;
+    }
+
     @Override
     public String toString() {
         return name;
@@ -136,27 +158,27 @@ public class Branch extends BaseTable {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.BRANCHES, DatabaseOperation.INSERT);
+            dbHelper.insert(Branch.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.BRANCHES, DatabaseOperation.DELETE);
+            dbHelper.delete(Branch.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.BRANCHES, DatabaseOperation.UPDATE);
+            dbHelper.update(Branch.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }

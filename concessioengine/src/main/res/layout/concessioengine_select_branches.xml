@@ -4,14 +4,14 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/test_button_unlink"
+        android:id="@+id/btnTestUnlink"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="UNLINK DEVICE"/>
 
     <Button
-        android:id="@+id/test_button_alertDialog"
+        android:id="@+id/btnTestFunction"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

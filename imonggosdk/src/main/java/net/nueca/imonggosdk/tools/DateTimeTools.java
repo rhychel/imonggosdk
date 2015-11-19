@@ -14,6 +14,7 @@ import java.util.TimeZone;
  */
 public class DateTimeTools {
 
+    public static String TAG = "DateTimeTools";
     /**
      *
      * Get current date time formatted as yyyy-MM-dd HH:mm:ss splitted by space.
@@ -106,7 +107,7 @@ public class DateTimeTools {
     public static String convertDateForUrl(String dateTime) {
         SimpleDateFormat convertStringToDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
         SimpleDateFormat forDisplaying = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        Log.e("Timezone is => ", convertStringToDate.getTimeZone().getID() + " --- " + dateTime);
+        //Log.e("Timezone is => ", convertStringToDate.getTimeZone().getID() + " --- " + dateTime);
         forDisplaying.setTimeZone(convertStringToDate.getTimeZone());
         forDisplaying.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -134,7 +135,36 @@ public class DateTimeTools {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         Date currentDateTime= new Date();
         String currentDate = dateFormat.format(currentDateTime);
+        //Log.e(TAG, currentDate);
         return currentDate;
+    }
+
+    public static String getYesterdayDateTimeWithFormat(String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        return dateFormat.format(cal.getTime());
+    }
+
+    public static String add2HoursToTimeWithFormat(String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date date1 = null;
+        try {
+            date1 = dateFormat.parse(format);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar cal = Calendar.getInstance();
+        if(date1 != null){
+            cal.setTime(date1);
+
+            cal.add(Calendar.HOUR, 1);
+        } else {
+            Log.e(TAG, "function: add2HoursToTimeWithFormat(...) Date is NULL!");
+        }
+        return dateFormat.format(cal.getTime());
     }
 
     /**
@@ -211,4 +241,32 @@ public class DateTimeTools {
         return currentDate;
     }
 
+    public static String convertFromTo(String datetime, TimeZone from, TimeZone to) {
+        String convertedTime = datetime;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        simpleDateFormat.setTimeZone(from);
+        try {
+            Date dateCreated = simpleDateFormat.parse(datetime);
+            simpleDateFormat.setTimeZone(to);
+
+            convertedTime = simpleDateFormat.format(dateCreated);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return convertedTime;
+    }
+
+    public static String convertTo12HourFormat(String time) {
+        try {
+            final SimpleDateFormat sdf = new SimpleDateFormat("H:mm");
+            final Date dateObj = sdf.parse(time);
+
+            return new SimpleDateFormat("K:mm a").format(dateObj);
+
+        } catch (final ParseException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
 }

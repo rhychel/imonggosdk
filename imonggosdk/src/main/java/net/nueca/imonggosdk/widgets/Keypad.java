@@ -2,11 +2,13 @@ package net.nueca.imonggosdk.widgets;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.nueca.imonggosdk.R;
@@ -41,7 +44,7 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
     private String PREFIX= "";
     private boolean BEGIN_FROM_DECIMAL;
     private int DECIMAL_LENGTH = 2;
-    private boolean isNegative = false;
+    private boolean isNegative = false, disableAnimation = false, handleBackbutton = true, hasOkayButton = true;
 
     public static final int DEFAULT_KEYPAD_BUTTON_TEXTCOLOR = R.color.keypad_button_text;
     public static final int DEFAULT_KEYPAD_BUTTON_BG = R.drawable.keypad_button;
@@ -82,6 +85,10 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
         ANIM_IN = AnimationUtils.loadAnimation(context, R.anim.abc_slide_in_bottom);
         ANIM_OUT = AnimationUtils.loadAnimation(context, R.anim.abc_slide_out_bottom);
         //ANIM_CLICK = AnimationUtils.loadAnimation(context, R.anim.enlarge);
+
+        final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Keypad);
+        handleBackbutton = typedArray.getBoolean(R.styleable.Keypad_handleBackbutton, true);
+        hasOkayButton = typedArray.getBoolean(R.styleable.Keypad_hasOkayButton, true);
 
         initButtons();
         changeColor(DEFAULT_KEYPAD_BUTTON_TEXTCOLOR,
@@ -229,6 +236,10 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
         mTextHolder = textHolder;
     }
 
+    public void setDisableAnimation(boolean disableAnimation) {
+        this.disableAnimation = disableAnimation;
+    }
+
     private void initButtons() {
         buttonFinder(keypadView, false);
         setAsBackspaceButton(keypadView.findViewById(R.id.ibtnBksp));
@@ -239,6 +250,8 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
             }
         });
         ibtnGo.setOnClickListener(goClickListener);
+        if(!hasOkayButton)
+            ibtnGo.setVisibility(View.INVISIBLE);
         ibtnNegative.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -249,9 +262,21 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
     }
     private void toggleNegative() {
         isNegative = !isNegative;
-        ibtnNegative.setImageResource(isNegative?
+        ibtnNegative.setImageResource(isNegative ?
                         R.drawable.ic_negative_scale : R.drawable.ic_positive_scale
         );
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        LinearLayout llControls = (LinearLayout) keypadView.findViewById(R.id.llControls);
+
+        // Ideal Width
+        if(llControls.getHeight() > 0) {
+            int pxP = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, llControls.getHeight(), getContext().getResources().getDisplayMetrics());
+            getLayoutParams().height = pxP;
+        }
     }
 
     public void setAsBackspaceButton(View view) {
@@ -491,10 +516,11 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
                 @Override
                 public boolean onKey(View view, int i, KeyEvent keyEvent) {
                     if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                        if(getVisibility() == VISIBLE) {
-                            hide();
-                            return true;
-                        }
+                        if(handleBackbutton)
+                            if(getVisibility() == VISIBLE) {
+                                hide();
+                                return true;
+                            }
                     }
                     return false;
                 }
@@ -534,12 +560,10 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
                             setCustomDrawer(customDrawer);
                         }
 
-
                         if (customDrawer == null && (extraButtonList == null || extraButtonList.size() <= 0)) {
                             setEnableDrawer(false);
                             extraButtonList = null;
                         }
-
 
                         textHolder.helper.hasFocus(view, true);
                     } else { // no helper
@@ -552,12 +576,15 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
 
     public void hide() {
         closeDrawer();
-        startAnimation(ANIM_OUT);
+        if(!disableAnimation)
+            startAnimation(ANIM_OUT);
         setVisibility(GONE);
     }
+
     public void show() {
         setVisibility(VISIBLE);
-        startAnimation(ANIM_IN);
+        if(!disableAnimation)
+            startAnimation(ANIM_IN);
     }
 
     private void setCustomDrawer(View view) {
@@ -665,5 +692,10 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
         }
         private String mText;
         public OnClickListener mListener;
+    }
+
+    @Override
+    public boolean isInEditMode() {
+        return true;
     }
 }

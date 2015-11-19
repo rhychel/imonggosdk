@@ -11,13 +11,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
-import com.jakewharton.disklrucache.DiskLruCache;
 
+import net.nueca.concessioengine.adapters.interfaces.ImageLoaderListener;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.ProductListTools;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -31,8 +31,10 @@ public class ProductsAdapterHelper {
 
     private static RequestQueue imageRequestQueue;
     private static ImageLoader imageLoader;
-    private static ImonggoDBHelper dbHelper;
+    private static ImonggoDBHelper2 dbHelper;
     private static Session session;
+    private static SelectedProductItemList selectedProductItems = null;
+    public static ImageLoaderListener imageLoaderListener = null;
 
     public static ImageLoader getImageLoaderInstance(Context context) {
         return getImageLoaderInstance(context, false);
@@ -43,12 +45,14 @@ public class ProductsAdapterHelper {
             imageRequestQueue = ImageVolley.newRequestQueue(context);
         if(imageLoader == null)
             imageLoader = new ImageLoader(imageRequestQueue,
-                    DiskImageLruCache.getInstance(context)){
+                    DiskImageLruCache.getInstance(context, imageLoaderListener)){
                 @Override
                 protected Request<Bitmap> makeImageRequest(String requestUrl, int maxWidth, int maxHeight, ImageView.ScaleType scaleType, final String cacheKey) {
                     return new ImageRequest(requestUrl, new Response.Listener<Bitmap>() {
                         @Override
                         public void onResponse(Bitmap response) {
+                            if(imageLoaderListener != null)
+                                imageLoaderListener.imageLoaded(response);
                             onGetImageSuccess(cacheKey, response);
                         }
                     }, maxWidth, maxHeight, scaleType, Bitmap.Config.RGB_565, new Response.ErrorListener() {
@@ -73,28 +77,50 @@ public class ProductsAdapterHelper {
         return imageLoader;
     }
 
-    public SelectedProductItemList selectedProductItems = new SelectedProductItemList();
-
-    public SelectedProductItemList getSelectedProductItems() {
+    public static SelectedProductItemList getSelectedProductItems() {
+        if(selectedProductItems == null)
+            selectedProductItems = new SelectedProductItemList();
         return selectedProductItems;
     }
 
-    public static void setDbHelper(ImonggoDBHelper dbHelper) {
+    public static void setDbHelper(ImonggoDBHelper2 dbHelper) {
         ProductsAdapterHelper.dbHelper = dbHelper;
     }
 
-    public ImonggoDBHelper getDbHelper() {
+    public ImonggoDBHelper2 getDbHelper() {
         return dbHelper;
+    }
+
+    public static void setImageLoaderListener(ImageLoaderListener imageLoaderListener) {
+        ProductsAdapterHelper.imageLoaderListener = imageLoaderListener;
     }
 
     public static Session getSession() {
         try {
             if(AccountTools.isLoggedIn(dbHelper))
-                session = dbHelper.getSessions().queryForAll().get(0);
+                session = dbHelper.fetchObjectsList(Session.class).get(0);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return session;
+    }
+
+    public static boolean hasSelectedProductItems() {
+        if(selectedProductItems == null)
+            return false;
+        return selectedProductItems.isEmpty();
+    }
+
+    public static void clearSelectedProductItemList() {
+        if(selectedProductItems != null)
+            selectedProductItems.clear();
+        ProductListTools.restartLineNo();
+    }
+
+    public static void destroySelectedProductItemList() {
+        if(selectedProductItems != null)
+            selectedProductItems.clear();
+        selectedProductItems = null;
     }
 
     public static void destroyProductAdapterHelper() {
@@ -102,5 +128,6 @@ public class ProductsAdapterHelper {
         session = null;
         imageLoader = null;
         imageRequestQueue = null;
+        selectedProductItems = null;
     }
 }

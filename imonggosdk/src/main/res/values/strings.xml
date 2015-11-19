@@ -7,8 +7,9 @@
     <string name="API_URL_IRETAILCLOUD_COM">http://www.iretailcloud.com/system/api_url?account_id=%s</string>
     <string name="API_URL_IRETAILCLOUD_NET">http://www.iretailcloud.net/system/api_url?account_id=%s</string>
     <string name="API_URL_IMONGGO">http://www.imonggo.com/system/api_url?account_id=%s</string>
-    <string name="API_URL_CUSTOM">%1$s/system/api_url?account_id=%2$s</string> <!-- TODO URL for custom server domain -->
-    <string name="API_URL_CUSTOM_SECURED">%1$s/system/api_url?account_id=%2$s</string> <!-- TODO URL for custom server domain -->
+    <string name="API_URL_IMONGGO_NET">http://www.imonggo.net:8888/system/api_url?account_id=%s</string>
+    <string name="API_URL_CUSTOM">%1$s/system/api_url?account_id=%2$s</string> <!-- TODO URL for custom mServer domain -->
+    <string name="API_URL_CUSTOM_SECURED">%1$s/system/api_url?account_id=%2$s</string> <!-- TODO URL for custom mServer domain -->
 
     <string name="API_TOKEN_URL">%1$s/api/%2$s?email=%3$s&amp;password=%4$s</string>
 
@@ -24,7 +25,7 @@
     <string name="param_login">email=%1$s&amp;password=%2$s</string>
 
     <string name="LOGIN_FAILED_TITLE">Failed to Sign In</string>
-    <string name="LOGIN_FAILED_POSITIVE_BUTTON">Sign In Again</string>
+    <string name="LOGIN_FAILED_POSITIVE_BUTTON">Ok</string>
     <string name="LOGIN_FIELD_REQUIRED">This field is required.</string>
     <string name="LOGIN_INVALID_EMAIL">Invalid email address.</string>
     <string name="LOGIN_INVALID_PASSWORD">Invalid password, the length of Password should be at least 5 characters.</string>
@@ -34,6 +35,7 @@
     <string name="LOGIN_DIALOG_POSITIVE_BUTTON"> Ok </string>
     <string name="LOGIN_DIALOG_NEGATIVE_BUTTON"> Cancel </string>
     <string name="LOGIN_NETWORK_ERROR">You are offline, Kindly check your internet connection.</string>
+    <string name="LOGIN_CONCESSIO_SETTINGS_ERROR">Unable to download Account-Settings. Please retry.</string> <!-- Added by Rhy -->
     <string name="LOGIN_AUTHENTICATION_ERROR">Authentication Failed, Kindly check your internet connection.</string>
     <string name="LOGIN_INVALID_EMAIL_PASSWORD"> Invalid email address or password.</string>
     <string name="LOGIN_USER_DONT_EXIST"> User does not exist. Account unlinked. </string>
@@ -45,5 +47,36 @@
     <string name="FETCH_NO_MODULE_SELECTED_TITLE">Download Failed</string>
     <string name="FETCH_NO_MODULE_SELECTED">Modules to download is not set.</string>
     <string name="FETCH_NO_MODULE_POSTIVE_BUTTON">Alright</string>
+
+    <string name="error_dialog_title_requires_premium_subscription">Requires Premium Subscription</string>
+    <string name="error_dialog_message_requires_premium_subscription">You can check it by trying the Premium Features. On the upper right, click "Try Premium Features Free".</string>
+    <string name="error_response_requires_premium_subscription">Requires premium subscription.</string>
+
+    <string name="CUSTOMERS_TITLE_NAME">Name</string>
+    <string name="CUSTOMERS_ADD_FIRST_NAME">First Name</string>
+    <string name="CUSTOMERS_ADD_LAST_NAME">Last Name</string>
+    <string name="CUSTOMERS_ADD_COMPANY_NAME">Company Name</string>
+    <string name="CUSTOMERS_TITLE_CONTACT_NAME">Contact</string>
+    <string name="CUSTOMERS_ADD_TELEPHONE">Telephone</string>
+    <string name="CUSTOMERS_ADD_MOBILE">Mobile</string>
+    <string name="CUSTOMERS_ADD_FAX">Fax</string>
+    <string name="CUSTOMERS_ADD_EMAIL">Email</string>
+    <string name="CUSTOMERS_TITLE_ADDRESS_NAME">Address</string>
+    <string name="CUSTOMERS_ADD_STREET">Street</string>
+    <string name="CUSTOMERS_ADD_CITY">City</string>
+    <string name="CUSTOMERS_ADD_ZIPCODE">Zipcode</string>
+    <string name="CUSTOMERS_ADD_COUNTRY">Country</string>
+    <string name="CUSTOMERS_ADD_STATE">State</string>
+    <string name="CUSTOMERS_TITLE_PERSONAL_NAME">Personal</string>
+    <string name="CUSTOMERS_ADD_GENDER">Gender</string>
+    <string name="CUSTOMERS_ADD_CIVIL_STATUS">Civil Status</string>
+    <string name="CUSTOMERS_ADD_NATIONALITY">Nationality</string>
+    <string name="CUSTOMERS_ADD_BIRTHDAY">Birthday</string>
+    <string name="CUSTOMERS_TITLE_OTHERS_NAME">Others</string>
+    <string name="CUSTOMERS_ADD_TIN">Tax Identification No. (TIN)</string>
+    <string name="CUSTOMERS_ADD_EXCEMPT_FROM_TAX">Excempt From Tax</string>
+    <string name="CUSTOMERS_ADD_NOTES">Notes</string>
+
+
 
 </resources>

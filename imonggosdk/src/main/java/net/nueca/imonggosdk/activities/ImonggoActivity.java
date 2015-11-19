@@ -4,7 +4,7 @@ import android.app.Activity;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.tools.AccountTools;
 
@@ -14,9 +14,10 @@ import java.sql.SQLException;
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 public class ImonggoActivity extends Activity {
 
-    private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper;
 
     @Override
     protected void onDestroy() {
@@ -27,16 +28,16 @@ public class ImonggoActivity extends Activity {
         super.onDestroy();
     }
 
-    public ImonggoDBHelper getHelper() {
+    public ImonggoDBHelper2 getHelper() {
         if(dbHelper == null)
-            dbHelper = OpenHelperManager.getHelper(this, ImonggoDBHelper.class);
+            dbHelper = OpenHelperManager.getHelper(this, ImonggoDBHelper2.class);
         return dbHelper;
     }
 
     public Session getSession() throws SQLException {
         Session session = null;
         if(AccountTools.isLoggedIn(getHelper()))
-            session = getHelper().getSessions().queryForAll().get(0);
+            session = getHelper().fetchObjectsList(Session.class).get(0);
         return session;
     }
 

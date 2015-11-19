@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
@@ -36,6 +37,7 @@ import java.sql.SQLException;
  * Created by rhymart on 5/14/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 public class SyncImonggoModules extends BaseSyncModulesService implements VolleyRequestListener {
     private static final String TAG = "SyncImonggoModules";
 
@@ -49,12 +51,13 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
             lastUpdatedAt = null;
 
             // Get the last updated at
-            QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().getLastUpdatedAts().queryBuilder();
+            QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().fetchIntId(LastUpdatedAt.class).queryBuilder();
             if(tableSyncing == Table.DOCUMENTS)
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(tableSyncing, String.valueOf(branches[branchIndex])));
             else
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(tableSyncing));
-            lastUpdatedAt = getHelper().getLastUpdatedAts().queryForFirst(queryBuilder.prepare());
+
+            lastUpdatedAt = getHelper().fetchIntId(LastUpdatedAt.class).queryForFirst(queryBuilder.prepare());
 
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
                     tableSyncing, server, requestType, getParameters(requestType));
@@ -71,7 +74,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                     initializeFromTo();
 
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
-                    tableSyncing, server, requestType, getParameters(requestType));
+                    tableSyncing, server, requestType);
 
             if (syncModulesListener != null)
                 syncModulesListener.onDownloadProgress(tableSyncing, page, 1);
@@ -100,15 +103,14 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.BRANCH_ID),
                             String.valueOf(getUser().getId()), String.valueOf(branches[branchIndex]));
                 return ImonggoTools.generateParameter(Parameter.COUNT);
-            }
-            else {
+            } else {
                 if(tableSyncing == Table.BRANCH_USERS) // TODO last_updated_at of this should relay on NOW at the end of the request...
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.USER_ID, Parameter.AFTER),
                             String.valueOf(getUser().getId()), DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 if(tableSyncing == Table.DOCUMENTS)
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.BRANCH_ID, Parameter.AFTER),
                             String.valueOf(getUser().getId()), String.valueOf(branches[branchIndex]),
-                                        DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.AFTER),
                         DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
             }
@@ -126,7 +128,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                 if(tableSyncing == Table.DOCUMENTS) // Get from Past 3 months til today
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.BRANCH_ID, Parameter.FROM, Parameter.TO),
                             String.valueOf(page), String.valueOf(branches[branchIndex]),
-                                        DateTimeTools.convertDateForUrl(from), DateTimeTools.convertDateForUrl(to));
+                            DateTimeTools.convertDateForUrl(from), DateTimeTools.convertDateForUrl(to));
                 return String.format(ImonggoTools.generateParameter(Parameter.PAGE), String.valueOf(page));
             }
             else {
@@ -152,6 +154,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
             startSyncContents(RequestType.COUNT);
         }
         tablesIndex++;
+
         if(tablesIndex == tablesToSync.length) { // this is when there are no left tables to sync
             if (syncModulesListener != null) {
                 // When the request is successful
@@ -206,12 +209,15 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                  * Application Settings //==> During login
                  * Users -- LAST_UPDATED_AT
                  * User Branches -- COUNT
-                 * Tax Settings -- LAST_UPDATED_AT <--- NON SENSE
                  * Products -- LAST_UPDATED_AT, COUNT
-                 * Inventory -- LAST_UPDATED_AT, COUNT
                  * Customers -- LAST_UPDATED_AT, COUNT
-                 * Documents -- LAST_UPDATED_AT, COUNT
+                 * Inventory -- LAST_UPDATED_AT, COUNT
+                 * Tax Settings -- LAST_UPDATED_AT <--- NON SENSE
                  *
+                 *
+                 *
+
+                 * Documents -- LAST_UPDATED_AT, COUNT
                  * Document Types -- #CONSTANT
                  * Document Purposes -- LAST_UPDATED_AT, COUNT
                  * Sales Promotion
@@ -231,6 +237,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                         startSyncContents(RequestType.COUNT);
                 } else if (requestType == RequestType.COUNT) {
                     count = jsonObject.getInt("count");
+
                     if(count == 0)
                         if(!syncNext())
                             return;
@@ -242,17 +249,19 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                         /**
                          * Delete all data related to taxes
                          */
-                        getHelper().dbOperations(null, Table.PRODUCT_TAX_RATES, DatabaseOperation.DELETE_ALL);
-                        getHelper().dbOperations(null, Table.TAX_SETTINGS, DatabaseOperation.DELETE_ALL);
-                        getHelper().dbOperations(null, Table.TAX_RATES, DatabaseOperation.DELETE_ALL);
+                        getHelper().deleteAll(ProductTaxRateAssoc.class);
+                        getHelper().deleteAll(TaxSetting.class);
+                        getHelper().deleteAll(TaxRate.class);
 
                         TaxSetting taxSetting = gson.fromJson(jsonObject.toString(), TaxSetting.class);
-                        getHelper().dbOperations(taxSetting, Table.TAX_SETTINGS, DatabaseOperation.INSERT); // insert the tax settings
+                        taxSetting.insertTo(getHelper());
                         if(!jsonObject.has("tax_rates")) { //check if there is even a tax_rates field
                             syncNext();
                             return;
                         }
+
                         JSONArray jsonArray = jsonObject.getJSONArray("tax_rates");
+
                         int size = jsonArray.length();
                         if(size == 0) { // Check if there are tax_rates
                             syncNext();
@@ -265,8 +274,8 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             TaxRate taxRate = gson.fromJson(taxRatejson.toString(), TaxRate.class);
                             String branchId = taxRatejson.getString("branch_id");
                             if(!branchId.equals("null")) {
-                                Branch branch = getHelper().getBranches().queryBuilder()
-                                            .where().eq("id", Integer.valueOf(branchId)).queryForFirst(); // Check if the branch is assigned to the USER
+                                Branch branch = getHelper().fetchObjects(Branch.class).queryBuilder()
+                                        .where().eq("id", Integer.valueOf(branchId)).queryForFirst(); // Check if the branch is assigned to the USER
                                 if(branch != null)
                                     taxRate.setBranch(branch);
                                 else // otherwise, do not add the tax rate
@@ -274,7 +283,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             }
                             newTaxRates.add(taxRate);
                         }
-                        newTaxRates.doOperation();
+                        newTaxRates.doOperation(TaxRate.class);
 
                         syncNext();
                     }
@@ -314,9 +323,9 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                                     newUsers.add(user);
                             }
                         }
-                        newUsers.doOperation();
-                        updateUsers.doOperation();
-                        deleteUsers.doOperation();
+                        newUsers.doOperationBT(User.class);
+                        updateUsers.doOperationBT(User.class);
+                        deleteUsers.doOperationBT(User.class);
                     } break;
 
                     /**
@@ -324,10 +333,11 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                      */
                     case BRANCH_USERS: {
                         if(page == 1) {
-                            getHelper().dbOperations(null, Table.BRANCH_USERS, DatabaseOperation.DELETE_ALL);
-                            getHelper().dbOperations(null, Table.BRANCH_TAGS, DatabaseOperation.DELETE_ALL);
-                            getHelper().dbOperations(null, Table.BRANCHES, DatabaseOperation.DELETE_ALL);
+                            getHelper().deleteAll(BranchUserAssoc.class);
+                            getHelper().deleteAll(BranchTag.class);
+                            getHelper().deleteAll(Branch.class);
                         }
+
                         if(size == 0) {
                             syncNext();
                             return;
@@ -336,6 +346,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                         BatchList<Branch> newBranches = new BatchList<>(getHelper());
                         BatchList<BranchTag> newBranchTags = new BatchList<>(getHelper());
                         BatchList<BranchUserAssoc> newBranchUserAssocs = new BatchList<>(getHelper());
+
                         for(int i = 0;i < size;i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             Branch branch = gson.fromJson(jsonObject.toString(), Branch.class);
@@ -353,9 +364,9 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             newBranchUserAssocs.add(branchUserAssoc);
                         }
 
-                        newBranches.doOperation();
-                        newBranchUserAssocs.doOperation();
-                        newBranchTags.doOperation();
+                        newBranches.doOperationBT(Branch.class);
+                        newBranchUserAssocs.doOperation(BranchUserAssoc.class);
+                        newBranchTags.doOperation(BranchTag.class);
                     } break;
                     /**
                      * Process the products
@@ -378,7 +389,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             }
                             else {
                                 if (isExisting(product, Table.PRODUCTS)) {
-                                    DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
+                                    DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().fetchIntId(ProductTag.class).deleteBuilder();
                                     deleteProductsHelper.where().eq("product_id", product);
                                     deleteProductsHelper.delete();
                                     if (product.getStatus().equals("D")) {
@@ -403,10 +414,10 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             // Save the taxes to the database
                         }
 
-                        newProducts.doOperation();
-                        updateProducts.doOperation();
-                        deleteProducts.doOperation();
-                        productTags.doOperation(); // Other product tags should be deleted!
+                        newProducts.doOperationBT(Product.class);
+                        updateProducts.doOperationBT(Product.class);
+                        deleteProducts.doOperationBT(Product.class);
+                        productTags.doOperation(ProductTag.class); // Other product tags should be deleted!
                     } break;
                     case INVENTORIES: {
 

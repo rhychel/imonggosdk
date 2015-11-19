@@ -3,6 +3,7 @@ package net.nueca.imonggosdk.enums;
 public enum SettingsName {
     AUTO_UPDATE,
     DEFAULT_BRANCH,
+    CURRENT_BRANCH,
     ENABLE_CUSTOMER_MEMBERSHIP,
     ENABLE_REWARD_POINTS,
     ENABLE_SALESMAN,
@@ -53,5 +54,6 @@ public enum SettingsName {
     INVOICE_TR_STOCK_NO,
     INVOICE_TR_QUANTITY,
     INVOICE_TR_PAYMENTS,
-    MASTER_ACCOUNT_ID
+    MASTER_ACCOUNT_ID,
+    SYNC_FINISHED
 }

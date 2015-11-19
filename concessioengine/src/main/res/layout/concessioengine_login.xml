@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/login_default_bg"
-    android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".LoginActivity">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/login_default_bg"
+              android:descendantFocusability="beforeDescendants"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/activity_vertical_margin"
+              tools:context=".LoginActivity">
 
 
     <LinearLayout
@@ -40,7 +40,6 @@
 
 
         <ScrollView
-            android:id="@+id/login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -56,7 +55,7 @@
                     android:orientation="vertical">
 
                     <EditText
-                        android:id="@+id/text_account_id"
+                        android:id="@+id/etAccountId"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/LOGIN_UI_TEXT_HINT_ACCOUNT_ID"
@@ -72,7 +71,7 @@
                     android:orientation="vertical">
 
                     <EditText
-                        android:id="@+id/text_email"
+                        android:id="@+id/etEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
@@ -88,35 +87,22 @@
                     android:orientation="vertical">
 
                     <EditText
-                        android:id="@+id/text_password"
+                        android:id="@+id/etPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
-                        android:layout_marginEnd="40sp"
-                        android:layout_marginLeft="40sp"
-                        android:layout_marginRight="40sp"
-                        android:layout_marginStart="40sp"
-                        android:layout_marginTop="10sp"
-
                         android:hint="@string/LOGIN_UI_TEXT_HINT_PASSWORD_ID"
-                        android:inputType="textPassword"
-                        android:paddingBottom="10dp"
-                        android:paddingEnd="10dp"
-                        android:paddingLeft="5dp"
-
-                        android:paddingRight="10dp" />
+                        android:inputType="textPassword" />
 
                 </android.support.design.widget.TextInputLayout>
 
                 <com.andexert.library.RippleView
-                    android:id="@+id/btn_signin_ripple"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     app:rv_centered="false">
 
                     <Button
-                        android:id="@+id/btn_signin"
+                        android:id="@+id/btnSignIn"
                         style="?android:textAppearanceSmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -128,7 +114,7 @@
                         android:textStyle="bold" />
 
                     <Button
-                        android:id="@+id/btn_unlink"
+                        android:id="@+id/btnUnlink"
                         style="?android:textAppearanceSmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

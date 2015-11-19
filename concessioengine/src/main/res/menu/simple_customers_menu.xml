@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/mSearch"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="100"
+        android:title="Search product"
+        app:actionViewClass="net.nueca.concessioengine.views.SearchViewEx"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/mAddCustomer"
+        android:icon="@drawable/ic_add_white"
+        android:title="Add Customer"
+        app:showAsAction="ifRoom" />
+
+
+
+
+</menu>

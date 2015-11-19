@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="string_array_pullout_reason">
+        <item>Transfer to branch</item>
+        <item>To Warehouse, same item</item>
+        <item>To Warehouse, different item</item>
+        <item>To Store, same item</item>
+        <item>To Store, different item</item>
+        <item>For Disposal, in store</item>
+        <item>For Disposal, at warehouse</item>
+    </string-array>
+</resources>

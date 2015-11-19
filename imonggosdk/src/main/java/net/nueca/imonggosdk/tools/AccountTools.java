@@ -7,7 +7,8 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Session;
 
@@ -21,6 +22,7 @@ import java.sql.SQLException;
 public class AccountTools {
 
     private static final String IS_UNLINKED = "_is_unlinked";
+    private static final String IS_ACTIVE_USER = "_is_active_user";
 
     /**
      * Check if the user is logged in on their Imonggo/Iretailcloud account.
@@ -29,8 +31,8 @@ public class AccountTools {
      * @return true if LoggedIn, false otherwise.
      * @throws SQLException
      */
-    public static boolean isLoggedIn(ImonggoDBHelper dbHelper) throws SQLException {
-        return (dbHelper.getSessions().countOf() > 0);
+    public static boolean isLoggedIn(ImonggoDBHelper2 dbHelper) throws SQLException {
+        return (dbHelper.fetchObjects(Session.class).countOf() > 0);
     }
 
 
@@ -79,9 +81,9 @@ public class AccountTools {
      * @param dbHelper
      * @param accountListener
      */
-    public static void logoutUser(Context context, ImonggoDBHelper dbHelper, AccountListener accountListener) throws SQLException {
+    public static void logoutUser(Context context, ImonggoDBHelper2 dbHelper, AccountListener accountListener) throws SQLException {
         // Get the session and reset; AccountId, Email, and Password.
-        Session session = dbHelper.getSessions().queryForAll().get(0);
+        Session session = dbHelper.fetchObjectsList(Session.class).get(0);
         session.setAccountId("");
         session.setEmail("");
         session.setPassword("");
@@ -98,6 +100,10 @@ public class AccountTools {
         }
     }
 
+    public static void unlinkAccount(Context context, ImonggoDBHelper2 dbHelper) throws SQLException {
+        unlinkAccount(context,dbHelper, null);
+    }
+
     /**
      * Deletes Account Details from the database
      *
@@ -107,10 +113,12 @@ public class AccountTools {
      * @param accountListener
      * @throws SQLException
      */
+    public static void unlinkAccount(Context context, ImonggoDBHelper2 dbHelper, AccountListener accountListener) throws SQLException {
 
-    public static void unlinkAccount(Context context, ImonggoDBHelper dbHelper, AccountListener accountListener) throws SQLException {
         updateUnlinked(context, true);
         dbHelper.deleteAllDatabaseValues();
+        SettingTools.updateSettings(context, SettingsName.SYNC_FINISHED, false);
+        SettingTools.updateSettings(context, SettingsName.DEFAULT_BRANCH, "");
 
         // update the account listener
         if (accountListener != null) {
@@ -118,5 +126,42 @@ public class AccountTools {
         }
 
         Log.i("Jn-BaseLogin", "Unlinking Account");
+    }
+
+    /**
+     * Checks if User is still active
+     *
+     * @param context Current context
+     */
+    public static boolean isUserActive(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            Log.e("Key[isActiveUser]", pinfo.packageName + IS_ACTIVE_USER);
+            return preferences.getBoolean(pinfo.packageName + IS_ACTIVE_USER, true);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Key[isActiveUser]", "Not Found");
+            return true;
+        }
+    }
+
+    /**
+     * Update User Status
+     *
+     * @param context
+     * @param isActive
+     */
+    public static void updateUserActiveStatus(Context context, boolean isActive) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            SharedPreferences.Editor editor = preferences.edit();
+            Log.e("Key[updateUserActiveSt]", pinfo.packageName + IS_ACTIVE_USER);
+            editor.putBoolean(pinfo.packageName + IS_ACTIVE_USER, isActive);
+            editor.apply();
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Key[updateUserActiveSt]", "Not Found");
+            e.printStackTrace();
+        }
     }
 }

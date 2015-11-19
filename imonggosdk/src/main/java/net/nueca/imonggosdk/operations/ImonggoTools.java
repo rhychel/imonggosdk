@@ -2,8 +2,8 @@ package net.nueca.imonggosdk.operations;
 
 import android.content.Context;
 import android.util.Base64;
-import net.nueca.imonggosdk.R;
 
+import net.nueca.imonggosdk.R;
 import net.nueca.imonggosdk.enums.Parameter;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.operations.urls.CustomURLTools;
@@ -66,6 +66,19 @@ public class ImonggoTools {
                     parameterStr += "target_branch_id=%"+stringInputCount+"$s&";
                     stringInputCount++;
                     break;
+                case DOCUMENT_TYPE: // added by Jn
+                    parameterStr += "document_type=%"+stringInputCount+"$s&";
+                    stringInputCount++;
+                    break;
+                case INTRANSIT:
+                    parameterStr += "intransit_status=%"+stringInputCount+"$s&";
+                    stringInputCount++;
+                    break;
+                case CURRENT_DATE:
+                    parameterStr = "";
+                    parameterStr += "%"+stringInputCount+"$s.json?";
+                    stringInputCount++;
+                    break;
             }
         }
         if(!parameterStr.equals("?"))
@@ -97,6 +110,18 @@ public class ImonggoTools {
 	public static String buildAPIUrlImonggo(Context context, String accountId) {
 		return String.format(context.getString(R.string.API_URL_IMONGGO), accountId);
 	}
+
+    /**
+     *
+     * Build URL for getting Account URL on Imonggo.
+     *
+     * @param context
+     * @param accountId
+     * @return
+     */
+    public static String buildAPIUrlImonggoNet(Context context, String accountId) {
+        return String.format(context.getString(R.string.API_URL_IMONGGO_NET), accountId);
+    }
 	
 	/**
 	 * 

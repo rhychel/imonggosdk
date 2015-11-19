@@ -4,6 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
@@ -75,29 +76,49 @@ public class DocumentPurpose extends BaseTable {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENT_PURPOSES, DatabaseOperation.INSERT);
+            dbHelper.insert(DocumentPurpose.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENT_PURPOSES, DatabaseOperation.INSERT);
+            dbHelper.delete(DocumentPurpose.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENT_PURPOSES, DatabaseOperation.INSERT);
+            dbHelper.update(DocumentPurpose.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public boolean isSourceDestinationBranchDependent() {
+        return name.toLowerCase().equals("transfer to branch");
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public String toObjectString() {
+        return "DocumentPurpose{" +
+                "status='" + status + '\'' +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", documentType=" + documentType +
+                ", id=" + id +
+                '}';
+    }
+
 }

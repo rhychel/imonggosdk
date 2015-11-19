@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 
 /**
  * Created by Jn on 6/10/2015.
@@ -12,6 +13,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 public class DialogTools {
 
     static ProgressDialog mProgressDialog;
+
 
 
     /**
@@ -26,18 +28,80 @@ public class DialogTools {
      * @param cancelable   True if you want to cancel dialog by tapping the side of the screen
      * @param callback     Listener for AlertDialog's button
      */
+
+    @Deprecated
     public static void showBasicWithTitle(Context context, String title, String content,
-                                          String positiveText, String negativeText, Boolean cancelable, MaterialDialog.ButtonCallback callback) {
-        new MaterialDialog.Builder(context)
-                .title(title)
-                .content(content)
-                .positiveText(positiveText)
-                .negativeText(negativeText)
-                .callback(callback)
-                .cancelable(cancelable)
-                .show();
+                                          String positiveText, String negativeText, Boolean cancelable,
+                                          MaterialDialog.ButtonCallback callback) {
+        showBasicWithTitle(context, title, content, positiveText, negativeText, cancelable, callback, null);
     }
 
+    @Deprecated
+    public static void showBasicWithTitle(Context context, String title, String content,
+                                          String positiveText, String negativeText, Boolean cancelable,
+                                          MaterialDialog.ButtonCallback callback, Theme theme) {
+        if(theme == null ) {
+            new MaterialDialog.Builder(context)
+                    .title(title)
+                    .content(content)
+                    .positiveText(positiveText)
+                    .negativeText(negativeText)
+                    .callback(callback)
+                    .cancelable(cancelable)
+                    .theme(theme)
+                    .show();
+        } else {
+            new MaterialDialog.Builder(context)
+                    .title(title)
+                    .content(content)
+                    .positiveText(positiveText)
+                    .negativeText(negativeText)
+                    .callback(callback)
+                    .cancelable(cancelable)
+                    .show();
+        }
+    }
+
+
+    public static void showBasicWithTitle(Context context, String title, String content,
+                                          String positiveText, String negativeText, Boolean cancelable,
+                                          MaterialDialog.SingleButtonCallback postive,
+                                          MaterialDialog.SingleButtonCallback negative,
+                                          MaterialDialog.SingleButtonCallback neutral) {
+        showBasicWithTitle(context, title, content, positiveText, negativeText, cancelable, postive, negative, neutral, null);
+    }
+
+    public static void showBasicWithTitle(Context context, String title, String content,
+                                          String positiveText, String negativeText, Boolean cancelable,
+                                          MaterialDialog.SingleButtonCallback postive,
+                                          MaterialDialog.SingleButtonCallback negative,
+                                          MaterialDialog.SingleButtonCallback neutral, Theme theme) {
+        if(theme == null ) {
+            new MaterialDialog.Builder(context)
+                    .title(title)
+                    .content(content)
+                    .positiveText(positiveText)
+                    .negativeText(negativeText)
+                    .onPositive(postive)
+                    .onNegative(negative)
+                    .onNeutral(neutral)
+                    .cancelable(cancelable)
+                    .theme(theme)
+                    .show();
+        } else {
+            new MaterialDialog.Builder(context)
+                    .title(title)
+                    .content(content)
+                    .positiveText(positiveText)
+                    .negativeText(negativeText)
+                    .onPositive(postive)
+                    .onNegative(negative)
+                    .onNeutral(neutral)
+                    .cancelable(cancelable)
+                    .show();
+        }
+
+    }
 
     /**
      * Simple Indeterminate Progress Dialog
@@ -50,6 +114,7 @@ public class DialogTools {
     public static void showIndeterminateProgressDialog(Context context, String title,
                                                        String content, Boolean cancelable) {
         mProgressDialog = new ProgressDialog(context);
+
         mProgressDialog.setIndeterminate(true);
 
         if (title != null) {
@@ -58,6 +123,7 @@ public class DialogTools {
 
         mProgressDialog.setCancelable(cancelable);
         mProgressDialog.setMessage(content);
+
         mProgressDialog.show();
     }
 
@@ -65,7 +131,18 @@ public class DialogTools {
      * Hides the Indeterminate Progress Dialog and sets it to null
      */
     public static void hideIndeterminateProgressDialog() {
-        mProgressDialog.hide();
-        mProgressDialog = null;
+        if(mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
+    }
+
+    /**
+     * Update message of dialog
+     * @param message
+     */
+    public static void updateMessage(String message) {
+        if(mProgressDialog != null)
+            mProgressDialog.setMessage(message);
     }
 }

@@ -2,12 +2,15 @@
 <resources>
 
     <style name="AppTheme.Concessio" parent="Theme.AppCompat.Light">
-        <!--<item name="android:windowNoTitle">true</item>-->
-        <!--<item name="windowActionBar">false</item>-->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
-        <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.Concessio.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
     <style name="LoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -17,10 +20,46 @@
         <item name="android:button">@color/primary</item>
     </style>
 
+    <style name="AppCompatDialogStyle.NoTitle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:background">#FFFFFF</item>
+        <item name="windowNoTitle">false</item>
+    </style>
+
     <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/accent</item>
         <item name="android:textColorPrimary">@color/primary_text</item>
         <item name="android:background">#FFFFFF</item>
         <item name="windowNoTitle">false</item>
     </style>
+
+    <!-- PRODUCTS LIST STYLES -->
+    <style name="TextView.ProductItem.Name" parent="TextAppearance.AppCompat"></style>
+    <style name="TextView.ProductItem.Quantity" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:displayOptions">homeAsUp</item>
+    </style>
+
+    <!-- Floating Action Button -->
+    <style name="FloatingActionButton.Margin" parent="Widget.Design.FloatingActionButton">
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+    </style>
+    <style name="ProgressHUD" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+
 </resources>

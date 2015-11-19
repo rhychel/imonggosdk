@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.lists;
 
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,8 +16,7 @@ public class ValuesList extends ArrayList<Values> {
         super(capacity);
     }
 
-    public ValuesList() {
-    }
+    public ValuesList() { }
 
     public ValuesList(Collection<? extends Values> collection) {
         super(collection);
@@ -25,11 +25,31 @@ public class ValuesList extends ArrayList<Values> {
     public String getQuantity() {
         String quantity = "0";
         BigDecimal totalQuantity = new BigDecimal(0);
-        for(Values values : this)
-            totalQuantity.add(new BigDecimal(values.getQuantity()));
+        for(Values values : this) {
+            totalQuantity = totalQuantity.add(new BigDecimal(values.getQuantity().replaceAll(",", "")));
+        }
 
         quantity = totalQuantity.toString();
         return quantity;
     }
 
+    public String getDiscrepancy() {
+        BigDecimal totalDsc = BigDecimal.ZERO;
+        for(Values values : this) {
+            if(values.getExtendedAttributes() != null && values.getExtendedAttributes().getDiscrepancy() != null)
+                totalDsc = totalDsc.add(NumberTools.toBigDecimal(values.getExtendedAttributes().getDiscrepancy()));
+        }
+
+        return totalDsc.toString();
+    }
+
+    public String getOutrightReturn() {
+        BigDecimal totalRet = BigDecimal.ZERO;
+        for(Values values : this) {
+            if(values.getExtendedAttributes() != null && values.getExtendedAttributes().getOutright_return() != null)
+                totalRet = totalRet.add(NumberTools.toBigDecimal(values.getExtendedAttributes().getOutright_return()));
+        }
+
+        return totalRet.toString();
+    }
 }

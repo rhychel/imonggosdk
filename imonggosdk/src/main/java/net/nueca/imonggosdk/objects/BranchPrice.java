@@ -1,11 +1,15 @@
 package net.nueca.imonggosdk.objects;
 
+import android.util.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
@@ -14,7 +18,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class BranchPrice {
+public class BranchPrice extends DBTable {
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -92,36 +96,43 @@ public class BranchPrice {
         this.utc_updated_at = utc_updated_at;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public String toString() {
+        return "BranchPrice{" +
+                "id=" + id +
+                ", wholesale_price=" + wholesale_price +
+                ", branch=" + branch +
+                ", product=" + product +
+                ", retail_price=" + retail_price +
+                ", utc_created_at='" + utc_created_at + '\'' +
+                ", utc_updated_at='" + utc_updated_at + '\'' +
+                '}';
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.BRANCH_PRICES, DatabaseOperation.INSERT);
+            dbHelper.insert(BranchPrice.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.BRANCH_PRICES, DatabaseOperation.DELETE);
+            dbHelper.delete(BranchPrice.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.BRANCH_PRICES, DatabaseOperation.UPDATE);
+            dbHelper.update(BranchPrice.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
     }
 }

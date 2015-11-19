@@ -6,9 +6,12 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.*;
+import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 
 import java.sql.SQLException;
 
@@ -17,7 +20,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Product extends BaseTable {
+public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @DatabaseField
     protected double cost = 0.0, retail_price = 0.0, wholesale_price = 0.0, wholesale_quantity = 0.0;
@@ -28,8 +31,9 @@ public class Product extends BaseTable {
             name = "",
             description = "",
             thumbnail_url = "",
-            status = "",
             barcode_list = "";
+    @DatabaseField
+    protected String status = "";
     @DatabaseField
     protected boolean allow_decimal_quantities = false,
             enable_decimal_quantities = false,
@@ -63,6 +67,12 @@ public class Product extends BaseTable {
 
     @ForeignCollectionField
     private transient ForeignCollection<Unit> units;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<DocumentLine> documentLines;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
+    private Inventory inventory;
 
     public double getCost() {
         return cost;
@@ -316,8 +326,24 @@ public class Product extends BaseTable {
         return units;
     }
 
+    public ForeignCollection<DocumentLine> getDocumentLines() {
+        return documentLines;
+    }
+
+    public void setDocumentLines(ForeignCollection<DocumentLine> documentLines) {
+        this.documentLines = documentLines;
+    }
+
     public void setUnits(ForeignCollection<Unit> units) {
         this.units = units;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 
     @Override
@@ -331,29 +357,46 @@ public class Product extends BaseTable {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCTS, DatabaseOperation.INSERT);
+            dbHelper.insert(Product.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCTS, DatabaseOperation.DELETE);
+            dbHelper.delete(Product.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCTS, DatabaseOperation.UPDATE);
+            dbHelper.update(Product.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.setProduct(this);
+        extras.setId(Product.class.getName().toUpperCase(), id);
+        extras.insertTo(dbHelper);
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.updateTo(dbHelper);
     }
 }

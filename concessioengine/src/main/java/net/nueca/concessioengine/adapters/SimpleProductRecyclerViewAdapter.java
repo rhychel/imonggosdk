@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +9,16 @@ import android.view.ViewGroup;
 import com.android.volley.toolbox.NetworkImageView;
 
 import net.nueca.concessioengine.R;
+import net.nueca.concessioengine.adapters.base.BaseAdapter;
+import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
+import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.lists.ProductsList;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
+
+import java.util.List;
 
 import me.grantland.widget.AutofitTextView;
 
@@ -25,12 +32,41 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         super(context);
     }
 
-    public SimpleProductRecyclerViewAdapter(Context context, ProductsList productsList) {
+    public SimpleProductRecyclerViewAdapter(Context context, List<Product> productsList) {
         super(context, productsList);
     }
 
+    public SimpleProductRecyclerViewAdapter(Context context, ImonggoDBHelper2 dbHelper, List<Product> productsList) {
+        super(context, dbHelper, productsList);
+    }
 
-    public class ListViewHolder extends BaseProductsRecyclerAdapter.ViewHolder {
+    @Override
+    public SimpleProductRecyclerViewAdapter.ListViewHolder onCreateViewHolder(ViewGroup parent, int viewtype) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem, parent, false);
+
+        ListViewHolder lvh = new ListViewHolder(v);
+        return lvh;
+    }
+
+    @Override
+    public void onBindViewHolder(SimpleProductRecyclerViewAdapter.ListViewHolder viewHolder, int position) {
+        Product product = getItem(position);
+
+        viewHolder.tvProductName.setText(Html.fromHtml(product.getName()+getSelectedProductItems().getUnitName(product).toLowerCase()));
+        viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
+        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
+        viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
+    }
+
+    @Override
+    public int getItemCount() {
+        return getCount();
+    }
+
+    /**
+     * ViewHolder
+     */
+    public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {
         public NetworkImageView ivProductImage;
         public AutofitTextView tvProductName, tvQuantity;
         public View root;
@@ -46,6 +82,7 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             ivProductImage.setErrorImageResId(R.drawable.no_image);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
@@ -59,31 +96,8 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         public boolean onLongClick(View view) {
             if(onItemLongClickListener != null)
                 onItemLongClickListener.onItemLongClicked(view, getLayoutPosition());
-            return false;
+            return true;
         }
-    }
-
-    @Override
-    public SimpleProductRecyclerViewAdapter.ListViewHolder onCreateViewHolder(ViewGroup parent, int viewtype) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem, parent, false);
-
-        ListViewHolder lvh = new ListViewHolder(v);
-        return lvh;
-    }
-
-    @Override
-    public void onBindViewHolder(SimpleProductRecyclerViewAdapter.ListViewHolder viewHolder, int position) {
-        Product product = productsList.get(position);
-
-        viewHolder.tvProductName.setText(product.getName());
-        viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product.getId()));
-        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
-        viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
-    }
-
-    @Override
-    public int getItemCount() {
-        return productsList.size();
     }
 
 }

@@ -4,10 +4,12 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.TaxRate;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
@@ -16,7 +18,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class ProductTaxRateAssoc {
+public class ProductTaxRateAssoc extends DBTable {
 
     public static final String PRODUCT_ID_FIELD_NAME = "product_id";
     public static final String TAXRATE_ID_FIELD_NAME = "tax_rate_id";
@@ -60,36 +62,39 @@ public class ProductTaxRateAssoc {
         this.taxRate = taxRate;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public String toString() {
+        return "ProductTaxRateAssoc{" +
+                "id=" + id +
+                ", product=" + product.getName() +
+                ", taxRate=" + taxRate.getName() +
+                '}';
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCT_TAX_RATES, DatabaseOperation.INSERT);
+            dbHelper.insert(ProductTaxRateAssoc.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCT_TAX_RATES, DatabaseOperation.DELETE);
+            dbHelper.delete(ProductTaxRateAssoc.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCT_TAX_RATES, DatabaseOperation.UPDATE);
+            dbHelper.update(ProductTaxRateAssoc.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
     }
 }

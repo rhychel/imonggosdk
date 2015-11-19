@@ -4,9 +4,11 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
@@ -15,7 +17,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Session {
+public class Session extends DBTable{
 
     @DatabaseField(generatedId=true)
     private int id;
@@ -42,7 +44,7 @@ public class Session {
     @DatabaseField
     private Server server;
     @DatabaseField
-    private String current_branch;
+    private int current_branch_id;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private User user;
 
@@ -156,44 +158,38 @@ public class Session {
         this.user = user;
     }
 
-    public String getCurrent_branch() {
-        return current_branch;
+    public int getCurrent_branch_id() {
+        return current_branch_id;
     }
 
-    public void setCurrent_branch(String current_branch) {
-        this.current_branch = current_branch;
+    public void setCurrent_branch_id(int current_branch_id) {
+        this.current_branch_id = current_branch_id;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SESSIONS, DatabaseOperation.INSERT);
+            dbHelper.insert(Session.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SESSIONS, DatabaseOperation.DELETE);
+            dbHelper.delete(Session.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SESSIONS, DatabaseOperation.UPDATE);
+            dbHelper.update(Session.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
     }
 }

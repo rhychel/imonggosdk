@@ -6,6 +6,7 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
@@ -22,22 +23,25 @@ public class InvoiceTaxRate extends BaseTable2 {
     @Expose
     @DatabaseField
     protected String tax_rate_id;
-
     @Expose
     @DatabaseField
     protected double amount;
-
     @Expose
     @DatabaseField
     protected double rate;
 
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
-    private transient Invoice invoice;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "invoice_id")
+    protected transient Invoice invoice;
 
     public InvoiceTaxRate() {}
 
-    public InvoiceTaxRate(Invoice invoice, String tax_rate_id, double amount, double rate) {
-        this.invoice = invoice;
+    public InvoiceTaxRate(Builder builder) {
+        tax_rate_id = builder.tax_rate_id;
+        amount = builder.amount;
+        rate = builder.rate;
+    }
+
+    public InvoiceTaxRate(String tax_rate_id, double amount, double rate) {
         this.tax_rate_id = tax_rate_id;
         this.amount = amount;
         this.rate = rate;
@@ -75,40 +79,58 @@ public class InvoiceTaxRate extends BaseTable2 {
         this.invoice = invoice;
     }
 
-    @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.INSERT);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public JSONObject toJSONObject() throws JSONException {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return new JSONObject(gson.toJson(this));
-        /*JSONObject jsonObject = new JSONObject();
-        jsonObject.put("tax_rate_id",tax_rate_id);
-        jsonObject.put("amount",amount);
-        jsonObject.put("rate",rate);
-        return jsonObject;*/
+    }
+
+    public static class Builder {
+        protected String tax_rate_id;
+        protected double amount;
+        protected double rate;
+
+        public Builder tax_rate_id(String tax_rate_id) {
+            this.tax_rate_id = tax_rate_id;
+            return this;
+        }
+        public Builder amount(double amount) {
+            this.amount = amount;
+            return this;
+        }
+        public Builder rate(double rate) {
+            this.rate = rate;
+            return this;
+        }
+
+        public InvoiceTaxRate build() {
+            return new InvoiceTaxRate(this);
+        }
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.insert(InvoiceTaxRate.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.delete(InvoiceTaxRate.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.update(InvoiceTaxRate.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
