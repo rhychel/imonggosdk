@@ -9,6 +9,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
@@ -204,7 +205,7 @@ public class Order extends BaseTransactionTable2 {
         refresh();
 
         List<OrderLine> list = new ArrayList<>();
-        list.addAll(SwableTools.partition(position,order_lines,MAX_ORDERLINES_PER_PAGE));
+        list.addAll(SwableTools.partition(position, order_lines, MAX_ORDERLINES_PER_PAGE));
         return list;
     }
 
@@ -212,7 +213,7 @@ public class Order extends BaseTransactionTable2 {
         Order order = Order.fromJSONString(toJSONString());
         order.setOrder_lines(getOrderLineAt(position));
         order.setReference(reference + "-" + (position + 1));
-        order.setRemark("page=" + (position+1) + "/" + getChildCount());
+        order.setRemark("page=" + (position + 1) + "/" + getChildCount());
         return order;
     }
 
@@ -225,7 +226,7 @@ public class Order extends BaseTransactionTable2 {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         /*if(shouldPageRequest()) {
             try {
                 List<Order> orders = getChildOrders();
@@ -238,7 +239,7 @@ public class Order extends BaseTransactionTable2 {
         }*/
 
         try {
-            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.INSERT);
+            dbHelper.insert(Order.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -253,7 +254,7 @@ public class Order extends BaseTransactionTable2 {
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         /*refresh();
         if(shouldPageRequest()) {
             try {
@@ -267,7 +268,7 @@ public class Order extends BaseTransactionTable2 {
         }*/
 
         try {
-            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.DELETE);
+            dbHelper.delete(Order.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -281,7 +282,7 @@ public class Order extends BaseTransactionTable2 {
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         /*refresh();
         if(shouldPageRequest()) {
             try {
@@ -295,7 +296,7 @@ public class Order extends BaseTransactionTable2 {
         }*/
 
         try {
-            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.UPDATE);
+            dbHelper.update(Order.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -306,4 +307,5 @@ public class Order extends BaseTransactionTable2 {
             }
         }
     }
+
 }

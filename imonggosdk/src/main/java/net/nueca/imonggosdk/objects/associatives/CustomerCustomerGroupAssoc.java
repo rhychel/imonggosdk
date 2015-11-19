@@ -3,8 +3,10 @@ package net.nueca.imonggosdk.objects.associatives;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 
@@ -13,7 +15,7 @@ import java.sql.SQLException;
 /**
  * Created by rhymart on 11/11/15.
  */
-public class CustomerCustomerGroupAssoc {
+public class CustomerCustomerGroupAssoc extends DBTable {
     public static final String CUSTOMER_ID_FIELD_NAME = "customer_id";
     public static final String CUSTOMER_GROUP_ID_FIELD_NAME = "customer_group_id";
 
@@ -58,37 +60,30 @@ public class CustomerCustomerGroupAssoc {
         this.customerGroup = customerGroup;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.CUSTOMER_CUSTOMER_GROUP, DatabaseOperation.INSERT);
+            dbHelper.insert(CustomerCustomerGroupAssoc.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.CUSTOMER_CUSTOMER_GROUP, DatabaseOperation.DELETE);
+            dbHelper.delete(CustomerCustomerGroupAssoc.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.CUSTOMER_CUSTOMER_GROUP, DatabaseOperation.UPDATE);
+            dbHelper.update(CustomerCustomerGroupAssoc.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
-    }
-
 }

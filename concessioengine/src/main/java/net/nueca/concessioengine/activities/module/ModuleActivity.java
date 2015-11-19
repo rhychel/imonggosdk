@@ -3,6 +3,7 @@ package net.nueca.concessioengine.activities.module;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.SearchViewCompat;
+import android.util.Log;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
@@ -16,12 +17,15 @@ import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Inventory;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
+import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.StringUtilsEx;
 
 import java.sql.SQLException;
@@ -37,11 +41,30 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public static final String CONCESSIO_MODULE = "concessio_module";
     protected ConcessioModule concessioModule = ConcessioModule.ORDERS;
     protected boolean isMultiInput = false;
+    private ModuleSetting moduleSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         concessioModule = ConcessioModule.values()[getIntent().getIntExtra(CONCESSIO_MODULE, ConcessioModule.ORDERS.ordinal())];
+    }
+
+    protected ModuleSetting getModuleSetting() {
+        try {
+            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(concessioModule)).queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    protected ModuleSetting getAppSetting() {
+        try {
+            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(ConcessioModule.APP)).queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<String> getTransactionTypes() {
@@ -110,7 +133,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public List<Branch> getBranches() {
         List<Branch> assignedBranches = new ArrayList<>();
         try {
-            List<BranchUserAssoc> branchUserAssocs = getHelper().getBranchUserAssocs().queryBuilder().where().eq("user_id", getUser()).query();
+            List<BranchUserAssoc> branchUserAssocs = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
             for(BranchUserAssoc branchUser : branchUserAssocs) {
                 if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
                     assignedBranches.add(0, branchUser.getBranch());
@@ -131,7 +154,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public List<Branch> getBranchesByTag(String tag) {
         List<Branch> branches = new ArrayList<>();
         try {
-            List<BranchTag> branchTags = getHelper().getBranchTags().queryBuilder().where().in("branch_id", getBranches()).and().like("tag", "#" + tag).query();
+            List<BranchTag> branchTags = getHelper().fetchObjects(BranchTag.class).queryBuilder().where().in("branch_id", getBranches()).and().like("tag", "#" + tag).query();
             for(BranchTag branchTag : branchTags) {
                 branches.add(branchTag.getBranch());
             }
@@ -147,7 +170,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     public Branch getWarehouse() {
         try {
-            return getHelper().getBranches().queryBuilder().where().eq("site_type", "warehouse").queryForFirst();
+            return getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("site_type", "warehouse").queryForFirst();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -163,8 +186,9 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         List<String> categories = new ArrayList<>();
 
         try {
-            List<ProductTag> productTags = getHelper().getProductTags().queryBuilder().distinct().selectColumns("tag").orderByRaw("tag COLLATE NOCASE ASC").where().like("tag", "#%").query();
+            List<ProductTag> productTags = getHelper().fetchObjects(ProductTag.class).queryBuilder().distinct().selectColumns("tag").orderByRaw("tag COLLATE NOCASE ASC").where().like("tag", "#%").query();
             for(ProductTag productTag : productTags) {
+                Log.e("ProductTag", productTag.getTag());
                 if(productTag.getTag().matches("^#[\\w\\-\\'\\+ ]*")) {
                     String category = StringUtilsEx.ucwords(productTag.getTag().replace("#", ""));
                     categories.add(category);
@@ -175,6 +199,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         }
         if(includeAll)
             categories.add(0, "All");
+
+        Log.e("categories", categories.size() + " size");
 
         return categories;
     }
@@ -203,7 +229,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             OrderLine orderLine = new OrderLine.Builder()
                     .line_no(value.getLine_no())
                     .product_id(selectedProductItem.getProduct().getId())
-                    .quantity(Double.valueOf(value.getQuantity()))
+                    .quantity(Double.valueOf(value.getActualQuantity()))
                     .build();
             if(value.isValidUnit()) {
                 orderLine.setUnit_id(value.getUnit().getId());
@@ -248,7 +274,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 DocumentLine.Builder builder = new DocumentLine.Builder()
                         .line_no(value.getLine_no())
                         .product_id(selectedProductItem.getProduct().getId())
-                        .quantity(Double.valueOf(value.getQuantity()));
+                        .quantity(Double.valueOf(value.getActualQuantity()));
                 if(value.getExtendedAttributes() != null) {
                     ExtendedAttributes extendedAttributes = value.getExtendedAttributes();
                     // if pcount
@@ -283,16 +309,24 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      *
      * @return the number of inventory objects updated
      */
-    public int updateInventoryFromSelectedItemList() {
+    public int updateInventoryFromSelectedItemList(boolean shouldAdd) {
         int updated = 0;
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             if(selectedProductItem.getInventory() != null) {
                 Inventory updateInventory = selectedProductItem.getInventory();
-                updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory()));
+                updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
                 updateInventory.updateTo(getHelper());
+                updated++;
+            }
+            else {
+                Inventory updateInventory = new Inventory();
+                updateInventory.setProduct(selectedProductItem.getProduct());
+                updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
+                updateInventory.insertTo(getHelper());
                 updated++;
             }
         }
         return updated;
     }
+
 }

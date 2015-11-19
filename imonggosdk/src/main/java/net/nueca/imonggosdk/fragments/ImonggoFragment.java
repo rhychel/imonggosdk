@@ -2,7 +2,7 @@ package net.nueca.imonggosdk.fragments;
 
 import android.support.v4.app.Fragment;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.tools.AccountTools;
 
@@ -14,20 +14,20 @@ import java.sql.SQLException;
  */
 public class ImonggoFragment extends Fragment {
 
-    private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper2;
 
-    public void setHelper(ImonggoDBHelper dbHelper) {
-        this.dbHelper = dbHelper;
+    public void setHelper(ImonggoDBHelper2 dbHelper) {
+        this.dbHelper2 = dbHelper;
     }
 
-    public ImonggoDBHelper getHelper() {
-        return dbHelper;
+    public ImonggoDBHelper2 getHelper() {
+        return dbHelper2;
     }
 
     public Session getSession() throws SQLException {
         Session session = null;
         if(AccountTools.isLoggedIn(getHelper()))
-            session = getHelper().getSessions().queryForAll().get(0);
+            session = getHelper().fetchObjectsList(Session.class).get(0);
         return session;
     }
 }

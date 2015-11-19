@@ -12,9 +12,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
+import net.nueca.concessioengine.fragments.SimpleInventoryFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
@@ -23,17 +27,22 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by rhymart on 8/21/15.
@@ -50,6 +59,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     private SimpleReceiveFragment simpleReceiveFragment;
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
 
+    private SimpleInventoryFragment simpleInventoryFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +69,28 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
         btnSummary = (Button) findViewById(R.id.btnSummary);
 
-        btnSummary.setOnClickListener(onClickSummary);
+        btnSummary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                Document document = generateDocument(C_Module.this, 277, DocumentTypeCode.RECEIVE_SUPPLIER);
+                try {
+                    JSONObject jsonObject = new JSONObject(gson.toJson(document));
+                    Log.e("jsonObject", jsonObject.toString());
+
+                    updateInventoryFromSelectedItemList(true);
+                    List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
+                    for(Inventory inventory : inventoryList) {
+                        Log.e("Inventory", inventory.getProduct().getName()+" = "+inventory.getQuantity());
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }); //onClickSummary
 
         simpleProductsFragment = SimpleProductsFragment.newInstance();
         finalizeFragment = SimpleProductsFragment.newInstance();
@@ -71,8 +103,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         switch (concessioModule) {
             case ORDERS: {
                 simpleProductsFragment.setHasUnits(true);
-                simpleProductsFragment.setProductCategories(getProductCategories(!AccountSettings.allowLimitOrdersToOneCategory(this)));
-                simpleProductsFragment.setShowCategoryOnStart(AccountSettings.showCategoriesOnStart(this));
+                simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
+                simpleProductsFragment.setShowCategoryOnStart(getModuleSetting().getProductListing().isShow_categories_on_start());
 
                 finalizeFragment.setHasCategories(false);
                 finalizeFragment.setHasBrand(false);
@@ -80,6 +112,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 finalizeFragment.setHasUnits(true);
 
                 btnSummary.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.flContent, simpleProductsFragment)
+                        .commit();
             }
             break;
             case PHYSICAL_COUNT: {
@@ -92,6 +127,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 finalizeFragment.setMultiInputListener(multiInputListener);
 
                 btnSummary.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction()
+                    .add(R.id.flContent, simpleProductsFragment)
+                    .commit();
             }
             break;
             case RECEIVE: {
@@ -127,8 +165,22 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.flContent, simpleReceiveFragment)
                         .commit();
-                return;
             }
+            break;
+            case INVENTORY: {
+                if(getModuleSetting() != null)
+                    Log.e("moduleSetting", "Yeah");
+                simpleInventoryFragment = new SimpleInventoryFragment();
+                simpleInventoryFragment.setHelper(getHelper());
+                simpleInventoryFragment.setSetupActionBar(this);
+                simpleInventoryFragment.setHasUnits(true);
+                simpleInventoryFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
+                simpleInventoryFragment.setShowCategoryOnStart(getModuleSetting().getProductListing().isShow_categories_on_start());
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.flContent, simpleInventoryFragment)
+                        .commit();
+            } break;
         }
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
@@ -153,9 +205,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             }
         });
 
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.flContent, simpleProductsFragment)
-                .commit();
+//        getSupportFragmentManager().beginTransaction()
+//                .add(R.id.flContent, simpleProductsFragment)
+//                .commit();
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Branch;
@@ -46,33 +47,6 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     private CustomerCategory customerCategory; // customer_type_id (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private RoutePlan routePlan;
-
-    @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.CUSTOMERS, DatabaseOperation.INSERT);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.CUSTOMERS, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.CUSTOMERS, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     public int getPoint_to_amount_ratio() {
         return point_to_amount_ratio;
@@ -408,19 +382,46 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     }
 
     @Override
-    public void insertExtrasTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.insert(Customer.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.delete(Customer.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.update(Customer.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
         extras.setCustomer(this);
         extras.setId(Customer.class.getName().toUpperCase(), id);
         extras.insertTo(dbHelper);
     }
 
     @Override
-    public void deleteExtrasTo(ImonggoDBHelper dbHelper) {
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
         extras.deleteTo(dbHelper);
     }
 
     @Override
-    public void updateExtrasTo(ImonggoDBHelper dbHelper) {
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
         extras.updateTo(dbHelper);
     }
 }

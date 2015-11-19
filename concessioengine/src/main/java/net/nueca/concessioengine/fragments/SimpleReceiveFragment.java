@@ -279,7 +279,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
             Unit unit = null;
             Integer unit_id = documentLine.getUnit_id();
             if(unit_id != null)
-                unit = getHelper().getUnits().queryBuilder().where().eq("id", unit_id).queryForFirst();
+                unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit_id).queryForFirst();
 
             Values values = new Values();
             ExtendedAttributes extendedAttributes = new ExtendedAttributes(0d, documentLine.getQuantity());

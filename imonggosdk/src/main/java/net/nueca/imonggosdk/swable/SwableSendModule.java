@@ -5,7 +5,7 @@ import android.util.Log;
 import com.android.volley.RequestQueue;
 
 import net.nueca.imonggosdk.R;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
@@ -28,12 +28,12 @@ import java.util.List;
  * Created by gama on 10/1/15.
  */
 public class SwableSendModule {
-    private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper;
     private ImonggoSwable imonggoSwable;
     private RequestQueue requestQueue;
     private Session session;
 
-    public SwableSendModule(ImonggoSwable imonggoSwable, ImonggoDBHelper helper, Session session, RequestQueue
+    public SwableSendModule(ImonggoSwable imonggoSwable, ImonggoDBHelper2 helper, Session session, RequestQueue
             requestQueue) {
         this.imonggoSwable = imonggoSwable;
         this.dbHelper = helper;
@@ -43,7 +43,7 @@ public class SwableSendModule {
 
     public void sendTransaction(Table table, final OfflineData offlineData) {
         try {
-            Branch branch = dbHelper.getBranches().queryBuilder().where().eq("id", offlineData.getBranch_id())
+            Branch branch = dbHelper.fetchObjects(Branch.class).queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
             if(branch == null || branch.getStatus().equalsIgnoreCase("D")) {
                 Log.e("ImonggoSwable", "sending error : Branch '" + (branch == null ? "NULL" : branch.getName()) + "'," +

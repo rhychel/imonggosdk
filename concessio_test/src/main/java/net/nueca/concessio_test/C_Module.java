@@ -125,7 +125,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
                 btnReview.setVisibility(View.VISIBLE);
             } break;
-            case PULLOUT: {
+            case PULLOUT_REQUEST: {
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
                 simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
                     @Override
@@ -241,7 +241,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 btnReview.setText("Review");
         }
 
-        if(concessioModule == ConcessioModule.PULLOUT && btnReview.getText().equals("Review")) {
+        if(concessioModule == ConcessioModule.PULLOUT_REQUEST && btnReview.getText().equals("Review")) {
             if(simplePulloutToolbarExt != null)
                 simplePulloutToolbarExt.attachAfter(this, toolbar);
         } else {
@@ -314,7 +314,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         setSupportActionBar(toolbar);
         this.toolbar = toolbar;
 
-        if(concessioModule == ConcessioModule.PULLOUT && btnReview.getText().equals("Review")) {
+        if(concessioModule == ConcessioModule.PULLOUT_REQUEST && btnReview.getText().equals("Review")) {
             if(simplePulloutToolbarExt == null)
                 simplePulloutToolbarExt = new SimplePulloutToolbarExt();
             simplePulloutToolbarExt.attachAfter(this, this.toolbar);
@@ -382,7 +382,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                                     }
                                                 }
                                                 break;
-                                                case PULLOUT: {
+                                                case PULLOUT_REQUEST: {
                                                     try {
                                                         Document pulloutDoc = generateDocument(C_Module.this,
                                                                 simplePulloutRequestDialog

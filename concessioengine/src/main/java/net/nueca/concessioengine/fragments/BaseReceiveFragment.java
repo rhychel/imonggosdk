@@ -137,19 +137,19 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
         boolean includeSearchKey = !searchKey.equals("");
         boolean includeCategory = (!category.toLowerCase().equals("all") && hasCategories);
         try {
-            Where<Product, Integer> whereProducts = getHelper().getProducts().queryBuilder().where();
+            Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
             whereProducts.isNull("status");
             if(includeSearchKey) {
                 whereProducts.and().like("searchKey", "%" + searchKey + "%");
             }
             if(includeCategory) {
-                QueryBuilder<ProductTag, Integer> productWithTag = getHelper().getProductTags().queryBuilder();
+                QueryBuilder<ProductTag, Integer> productWithTag = getHelper().fetchIntId(ProductTag.class).queryBuilder();
                 productWithTag.selectColumns("product_id").where().like("searchKey", "#"+category.toLowerCase()+"%");
 
                 whereProducts.and().in("id", productWithTag);
             }
 
-            QueryBuilder<Product, Integer> resultProducts = getHelper().getProducts().queryBuilder()
+            QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder()
                     .orderByRaw("name " + "COLLATE NOCASE ASC").limit(LIMIT).offset(offset);
             resultProducts.setWhere(whereProducts);
 
@@ -178,31 +178,31 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
         boolean includeSearchKey = !searchKey.equals("");
         boolean includeCategory = (!category.toLowerCase().equals("all") && hasCategories);
         try {
-            Where<DocumentLine, Integer> whereDocumentLines = getHelper().getDocumentLines().queryBuilder().where();
+            Where<DocumentLine, Integer> whereDocumentLines = getHelper().fetchIntId(DocumentLine.class).queryBuilder().where();
 
-            Where<Product, Integer> whereProducts = getHelper().getProducts().queryBuilder().where();
+            Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
             whereProducts.isNull("status");
             if(includeSearchKey) {
                 whereProducts.and().like("searchKey", "%" + searchKey + "%");
             }
             if(includeCategory) {
-                QueryBuilder<ProductTag, Integer> productWithTag = getHelper().getProductTags().queryBuilder();
+                QueryBuilder<ProductTag, Integer> productWithTag = getHelper().fetchIntId(ProductTag.class).queryBuilder();
                 productWithTag.selectColumns("product_id").where().like("searchKey", "#"+category.toLowerCase()+"%");
 
                 whereProducts.and().in("id", productWithTag);
             }
 
-            QueryBuilder<Product, Integer> resultProducts = getHelper().getProducts().queryBuilder()
+            QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder()
                     /*.orderByRaw("name " + "COLLATE NOCASE ASC").limit(LIMIT).offset(offset)*/;
             resultProducts.setWhere(whereProducts);
 
             whereDocumentLines.in("product_id", resultProducts.selectColumns("id"));
 
-            QueryBuilder<DocumentLine, Integer> resultDocumentLines = getHelper().getDocumentLines().queryBuilder()
+            QueryBuilder<DocumentLine, Integer> resultDocumentLines = getHelper().fetchIntId(DocumentLine.class).queryBuilder()
                     /*.orderBy("line_no",false)*/.limit(LIMIT).offset(offset);
             resultDocumentLines.setWhere(whereDocumentLines);
 
-            QueryBuilder<Document, Integer> documentQb = getHelper().getDocuments().queryBuilder();
+            QueryBuilder<Document, Integer> documentQb = getHelper().fetchIntId(Document.class).queryBuilder();
             documentQb.where().eq("reference", deliveryReceiptNo);
             resultDocumentLines.join(documentQb);
 

@@ -18,7 +18,7 @@ import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
@@ -92,7 +92,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     }
 
     @Override
-    public ImonggoDBHelper getHelper() {
+    public ImonggoDBHelper2 getHelper() {
         if(super.getHelper() == null)
             throw new ProductsFragmentException("dbHelper is null. Use "+this.getClass().getSimpleName()+".setHelper().");
         return super.getHelper();
@@ -105,20 +105,20 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         boolean includeCategory = (!category.toLowerCase().equals("all") && hasCategories);
         Log.e("includeCategory", includeCategory + "");
         try {
-            Where<Product, Integer> whereProducts = getHelper().getProducts().queryBuilder().where();
+            Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
             whereProducts.isNull("status");
             if(includeSearchKey)
                 whereProducts.and().like("searchKey", "%"+searchKey+"%");
             if(filterProductsBy.size() > 0)
                 whereProducts.and().in("id", filterProductsBy);
             if(includeCategory) {
-                QueryBuilder<ProductTag, Integer> productWithTag = getHelper().getProductTags().queryBuilder();
+                QueryBuilder<ProductTag, Integer> productWithTag = getHelper().fetchIntId(ProductTag.class).queryBuilder();
                 productWithTag.selectColumns("product_id").where().like("searchKey", "#"+category.toLowerCase()+"%");
 
                 whereProducts.and().in("id", productWithTag);
             }
 
-            QueryBuilder<Product, Integer> resultProducts = getHelper().getProducts().queryBuilder().orderByRaw("name COLLATE NOCASE ASC").limit(LIMIT).offset(offset);
+            QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder().orderByRaw("name COLLATE NOCASE ASC").limit(LIMIT).offset(offset);
             resultProducts.setWhere(whereProducts);
 
             products = resultProducts.query();

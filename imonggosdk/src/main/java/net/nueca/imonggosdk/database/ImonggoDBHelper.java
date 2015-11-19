@@ -16,7 +16,6 @@ import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductSalesPromotionAssoc;
-import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
@@ -55,12 +54,14 @@ import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 /**
  * Created by rhymart on 5/12/15.
  * ImonggoLibrary (c)2015
  */
+@Deprecated
 public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk.db";
@@ -499,6 +500,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             productSalesPromotionAssocs = getDao(ProductSalesPromotionAssoc.class);
         return productSalesPromotionAssocs;
     }
+
     /**
      * DROP Table
      */
@@ -1271,538 +1273,538 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    /**
-     * BATCH INSERT or UPDATE
-     */
-    public void batchCreateOrUpdateBranches(final BatchList branches, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<Branch, Integer> daoBranches = getBranches();
-            daoBranches.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Branch branch : ((BatchList<Branch>)branches))
-                        branch.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateBranchPrices(final BatchList branchPrices, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<BranchPrice, Integer> daoBranchPrices = getBranchPrices();
-            daoBranchPrices.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(BranchPrice branchPrice : ((BatchList<BranchPrice>)branchPrices))
-                        branchPrice.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateBranchTags(final BatchList branchTags, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<BranchTag, Integer> daoBranchTags = getBranchTags();
-            daoBranchTags.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(BranchTag branchTag : ((BatchList<BranchTag>)branchTags))
-                        branchTag.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void batchCreateOrUpdateBranchAssocs(final BatchList branchAssocs, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<BranchUserAssoc, Integer> daoBranchUserAssocs = getBranchUserAssocs();
-            daoBranchUserAssocs.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for (BranchUserAssoc branchUser : ((BatchList<BranchUserAssoc>) branchAssocs))
-                        branchUser.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateCustomers(final BatchList customers, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<Customer, Integer> daoCustomers = getCustomers();
-            daoCustomers.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Customer customer : ((BatchList<Customer>)customers))
-                        customer.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateInventories(final BatchList inventories, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<Inventory, Integer> daoInventories = getInventories();
-            daoInventories.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Inventory inventory : ((BatchList<Inventory>)inventories))
-                        inventory.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateProducts(final BatchList products, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<Product, Integer> daoProducts = getProducts();
-            daoProducts.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Product product : ((BatchList<Product>)products))
-                        product.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateProductTags(final BatchList productTags, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<ProductTag, Integer> daoProductTags = getProductTags();
-            daoProductTags.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(ProductTag productTag : ((BatchList<ProductTag>)productTags))
-                        productTag.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateProductExtras(final BatchList productExtras, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<Extras_2, Integer> daoProductExtras = getProductExtras();
-            daoProductExtras.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Extras_2 extras2 : ((BatchList<Extras_2>)productExtras))
-                        extras2.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateTaxRates(final BatchList taxRates, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<TaxRate, Integer> daoTaxRates = getTaxRates();
-            daoTaxRates.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(TaxRate taxRate : ((BatchList<TaxRate>)taxRates))
-                        taxRate.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateTaxSettings(final BatchList taxSettings, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<TaxSetting, Integer> daoTaxSettings = getTaxSettings();
-            daoTaxSettings.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(TaxSetting taxSetting : ((BatchList<TaxSetting>)taxSettings))
-                        taxSetting.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateUnits(final BatchList units, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<Unit, Integer> daoUnits = getUnits();
-            daoUnits.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Unit unit : ((BatchList<Unit>)units))
-                        unit.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateUsers(final BatchList users, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<User, Integer> daoUsers = getUsers();
-            daoUsers.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(User user : ((BatchList<User>)users))
-                        user.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateDocumentTypes(final BatchList documentTypes, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<DocumentType, Integer> daoDocumentTypes = getDocumentTypes();
-            daoDocumentTypes.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(DocumentType documentType : ((BatchList<DocumentType>)documentTypes))
-                        documentType.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateDocumentPurposes(final BatchList documentPurposes, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<DocumentPurpose, Integer> daoDocumentPurposes = getDocumentPurposes();
-            daoDocumentPurposes.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for (DocumentPurpose documentPurpose : ((BatchList<DocumentPurpose>)documentPurposes))
-                        documentPurpose.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateBranchUsers(final BatchList branchUserAssocs, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<BranchUserAssoc, Integer> daoBranchUsers = getBranchUserAssocs();
-            daoBranchUsers.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(BranchUserAssoc branchUserAssoc : ((BatchList<BranchUserAssoc>)branchUserAssocs))
-                        branchUserAssoc.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateProductTaxRates(final BatchList productTaxRateAssocs, final DatabaseOperation databaseOperations) {
-        try {
-            Dao<ProductTaxRateAssoc, Integer> daoProductTaxRates = getProductTaxRateAssocs();
-            daoProductTaxRates.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(ProductTaxRateAssoc productTaxRateAssoc : ((BatchList<ProductTaxRateAssoc>)productTaxRateAssocs))
-                        productTaxRateAssoc.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void batchCreateOrUpdateDocuments(final BatchList documents, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<Document, Integer> daoDocuments = getDocuments();
-            daoDocuments.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Document document : ((BatchList<Document>)documents))
-                        document.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void batchCreateOrUpdateDocumentLines(final BatchList documentLines, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<DocumentLine, Integer> daoDocumentLines = getDocumentLines();
-            daoDocumentLines.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(DocumentLine documentLine : ((BatchList<DocumentLine>)documentLines))
-                        documentLine.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /*public void batchCreateOrUpdateExtendedAttributes(final BatchList extendedAttributes, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<DocumentLineExtras, Integer> daoExtendedAttributes = getExtendedAttributes();
-            daoExtendedAttributes.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(DocumentLineExtras extendedAttribute : ((BatchList<DocumentLineExtras>)extendedAttributes))
-                        extendedAttribute.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
-    public void batchCreateOrUpdateDocumentLineExtras(final BatchList documentLineExtras, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<DocumentLineExtras, Integer> daoDocumentLineExtras = getDocumentLineExtras();
-            daoDocumentLineExtras.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(DocumentLineExtras documentLineExtra : ((BatchList<DocumentLineExtras>)documentLineExtras))
-                        documentLineExtra.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateOrders(final BatchList orders, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<Order, Integer> daoOrders = getOrders();
-            daoOrders.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Order order : ((BatchList<Order>)orders))
-                        order.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateOrderLines(final BatchList orderLines, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<OrderLine, Integer> daoOrderLines = getOrderLines();
-            daoOrderLines.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Order orderLine : ((BatchList<Order>)orderLines))
-                        orderLine.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void batchCreateOrUpdateInvoices(final BatchList invoices, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<Invoice, Integer> daoInvoices = getInvoices();
-            daoInvoices.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Invoice invoice : ((BatchList<Invoice>)invoices))
-                        invoice.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void batchCreateOrUpdateInvoiceLines(final BatchList invoiceLines, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<InvoiceLine, Integer> daoInvoiceLines = getInvoiceLines();
-            daoInvoiceLines.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(InvoiceLine invoiceLine : ((BatchList<InvoiceLine>)invoiceLines))
-                        invoiceLine.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void batchCreateOrUpdateInvoicePayments(final BatchList payments, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<InvoicePayment, Integer> daoInvoicePayments = getPayments();
-            daoInvoicePayments.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(InvoicePayment invoiceTaxRate : ((BatchList<InvoicePayment>)payments))
-                        invoiceTaxRate.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void batchCreateOrUpdateInvoiceTaxRates(final BatchList invoiceTaxRates, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<InvoiceTaxRate, Integer> daoInvoiceTaxRates = getInvoiceTaxRates();
-            daoInvoiceTaxRates.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(InvoiceTaxRate invoiceTaxRate : ((BatchList<InvoiceTaxRate>)invoiceTaxRates))
-                        invoiceTaxRate.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void batchCreateOrUpdatePaymentTypes(final BatchList paymentTypes, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<PaymentType, Integer> daoPaymentTypes = getPaymentTypes();
-            daoPaymentTypes.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(PaymentType paymentType : ((BatchList<PaymentType>)paymentTypes))
-                        paymentType.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // FOR REBISCO ---------------
-    public void batchCreateOrUpdatefExtras(final BatchList fExtras, final DatabaseOperation
-            databaseOperations) {
-        try {
-            Dao<Extras, String> daoExtras = getExtras();
-            daoExtras.callBatchTasks(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    for(Extras extras : ((BatchList<Extras>)fExtras))
-                        extras.dbOperation(ImonggoDBHelper.this, databaseOperations);
-                    return null;
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * BATCH INSERT or UPDATE
+//     */
+//    public void batchCreateOrUpdateBranches(final BatchList branches, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<Branch, Integer> daoBranches = getBranches();
+//            daoBranches.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(Branch branch : ((BatchList<Branch>)branches))
+//                        branch.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateBranchPrices(final BatchList branchPrices, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<BranchPrice, Integer> daoBranchPrices = getBranchPrices();
+//            daoBranchPrices.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(BranchPrice branchPrice : ((BatchList<BranchPrice>)branchPrices))
+//                        branchPrice.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateBranchTags(final BatchList branchTags, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<BranchTag, Integer> daoBranchTags = getBranchTags();
+//            daoBranchTags.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(BranchTag branchTag : ((BatchList<BranchTag>)branchTags))
+//                        branchTag.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//
+//    public void batchCreateOrUpdateBranchAssocs(final BatchList branchAssocs, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<BranchUserAssoc, Integer> daoBranchUserAssocs = getBranchUserAssocs();
+//            daoBranchUserAssocs.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for (BranchUserAssoc branchUser : ((BatchList<BranchUserAssoc>) branchAssocs))
+//                        branchUser.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateCustomers(final BatchList customers, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<Customer, Integer> daoCustomers = getCustomers();
+//            daoCustomers.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(Customer customer : ((BatchList<Customer>)customers))
+//                        customer.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateInventories(final BatchList inventories, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<Inventory, Integer> daoInventories = getInventories();
+//            daoInventories.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(Inventory inventory : ((BatchList<Inventory>)inventories))
+//                        inventory.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateProducts(final BatchList products, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<Product, Integer> daoProducts = getProducts();
+//            daoProducts.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(Product product : ((BatchList<Product>)products))
+//                        product.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateProductTags(final BatchList productTags, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<ProductTag, Integer> daoProductTags = getProductTags();
+//            daoProductTags.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(ProductTag productTag : ((BatchList<ProductTag>)productTags))
+//                        productTag.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateProductExtras(final BatchList productExtras, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<Extras, Integer> daoProductExtras = getProductExtras();
+//            daoProductExtras.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(Extras extras : ((BatchList<Extras>)productExtras))
+//                        extras.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateTaxRates(final BatchList taxRates, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<TaxRate, Integer> daoTaxRates = getTaxRates();
+//            daoTaxRates.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(TaxRate taxRate : ((BatchList<TaxRate>)taxRates))
+//                        taxRate.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateTaxSettings(final BatchList taxSettings, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<TaxSetting, Integer> daoTaxSettings = getTaxSettings();
+//            daoTaxSettings.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(TaxSetting taxSetting : ((BatchList<TaxSetting>)taxSettings))
+//                        taxSetting.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateUnits(final BatchList units, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<Unit, Integer> daoUnits = getUnits();
+//            daoUnits.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(Unit unit : ((BatchList<Unit>)units))
+//                        unit.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateUsers(final BatchList users, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<User, Integer> daoUsers = getUsers();
+//            daoUsers.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(User user : ((BatchList<User>)users))
+//                        user.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateDocumentTypes(final BatchList documentTypes, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<DocumentType, Integer> daoDocumentTypes = getDocumentTypes();
+//            daoDocumentTypes.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(DocumentType documentType : ((BatchList<DocumentType>)documentTypes))
+//                        documentType.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateDocumentPurposes(final BatchList documentPurposes, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<DocumentPurpose, Integer> daoDocumentPurposes = getDocumentPurposes();
+//            daoDocumentPurposes.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for (DocumentPurpose documentPurpose : ((BatchList<DocumentPurpose>)documentPurposes))
+//                        documentPurpose.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateBranchUsers(final BatchList branchUserAssocs, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<BranchUserAssoc, Integer> daoBranchUsers = getBranchUserAssocs();
+//            daoBranchUsers.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(BranchUserAssoc branchUserAssoc : ((BatchList<BranchUserAssoc>)branchUserAssocs))
+//                        branchUserAssoc.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateProductTaxRates(final BatchList productTaxRateAssocs, final DatabaseOperation databaseOperations) {
+//        try {
+//            Dao<ProductTaxRateAssoc, Integer> daoProductTaxRates = getProductTaxRateAssocs();
+//            daoProductTaxRates.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(ProductTaxRateAssoc productTaxRateAssoc : ((BatchList<ProductTaxRateAssoc>)productTaxRateAssocs))
+//                        productTaxRateAssoc.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//
+//    public void batchCreateOrUpdateDocuments(final BatchList documents, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<Document, Integer> daoDocuments = getDocuments();
+//            daoDocuments.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(Document document : ((BatchList<Document>)documents))
+//                        document.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    public void batchCreateOrUpdateDocumentLines(final BatchList documentLines, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<DocumentLine, Integer> daoDocumentLines = getDocumentLines();
+//            daoDocumentLines.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(DocumentLine documentLine : ((BatchList<DocumentLine>)documentLines))
+//                        documentLine.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    /*public void batchCreateOrUpdateExtendedAttributes(final BatchList extendedAttributes, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<DocumentLineExtras, Integer> daoExtendedAttributes = getExtendedAttributes();
+//            daoExtendedAttributes.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(DocumentLineExtras extendedAttribute : ((BatchList<DocumentLineExtras>)extendedAttributes))
+//                        extendedAttribute.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }*/
+//
+//    public void batchCreateOrUpdateDocumentLineExtras(final BatchList documentLineExtras, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<DocumentLineExtras, Integer> daoDocumentLineExtras = getDocumentLineExtras();
+//            daoDocumentLineExtras.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(DocumentLineExtras documentLineExtra : ((BatchList<DocumentLineExtras>)documentLineExtras))
+//                        documentLineExtra.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateOrders(final BatchList orders, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<Order, Integer> daoOrders = getOrders();
+//            daoOrders.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(Order order : ((BatchList<Order>)orders))
+//                        order.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateOrderLines(final BatchList orderLines, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<OrderLine, Integer> daoOrderLines = getOrderLines();
+//            daoOrderLines.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(Order orderLine : ((BatchList<Order>)orderLines))
+//                        orderLine.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void batchCreateOrUpdateInvoices(final BatchList invoices, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<Invoice, Integer> daoInvoices = getInvoices();
+//            daoInvoices.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(Invoice invoice : ((BatchList<Invoice>)invoices))
+//                        invoice.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    public void batchCreateOrUpdateInvoiceLines(final BatchList invoiceLines, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<InvoiceLine, Integer> daoInvoiceLines = getInvoiceLines();
+//            daoInvoiceLines.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(InvoiceLine invoiceLine : ((BatchList<InvoiceLine>)invoiceLines))
+//                        invoiceLine.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    public void batchCreateOrUpdateInvoicePayments(final BatchList payments, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<InvoicePayment, Integer> daoInvoicePayments = getPayments();
+//            daoInvoicePayments.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(InvoicePayment invoiceTaxRate : ((BatchList<InvoicePayment>)payments))
+//                        invoiceTaxRate.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    public void batchCreateOrUpdateInvoiceTaxRates(final BatchList invoiceTaxRates, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<InvoiceTaxRate, Integer> daoInvoiceTaxRates = getInvoiceTaxRates();
+//            daoInvoiceTaxRates.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(InvoiceTaxRate invoiceTaxRate : ((BatchList<InvoiceTaxRate>)invoiceTaxRates))
+//                        invoiceTaxRate.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    public void batchCreateOrUpdatePaymentTypes(final BatchList paymentTypes, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<PaymentType, Integer> daoPaymentTypes = getPaymentTypes();
+//            daoPaymentTypes.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(PaymentType paymentType : ((BatchList<PaymentType>)paymentTypes))
+//                        paymentType.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    // FOR REBISCO ---------------
+//    public void batchCreateOrUpdatefExtras(final BatchList fExtras, final DatabaseOperation
+//            databaseOperations) {
+//        try {
+//            Dao<net.nueca.imonggosdk.objects.base.Extras, String> daoExtras = getfExtras();
+//            daoExtras.callBatchTasks(new Callable<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    for(net.nueca.imonggosdk.objects.base.Extras extras : ((BatchList<net.nueca.imonggosdk.objects.base.Extras>)fExtras))
+//                        extras.dbOperation(ImonggoDBHelper.this, databaseOperations);
+//                    return null;
+//                }
+//            });
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void deleteAllDatabaseValues() {
         try {

@@ -45,7 +45,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
     protected List<OfflineData> getTransactions() { // TODO BUGGED!
         List<OfflineData> transactions = new ArrayList<>();
         try {
-            Where<OfflineData, Integer> whereOfflineData = getHelper().getOfflineData().queryBuilder().where();
+            Where<OfflineData, Integer> whereOfflineData = getHelper().fetchIntId(OfflineData.class).queryBuilder().where();
             boolean hasOne = false;
 //            whereOfflineData.eq("user_id", getSession().getUser().getId());
             if(transactionType > 0)
@@ -73,7 +73,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
                     whereOfflineData.eq("branch_id", branchId);
             }
 
-            QueryBuilder<OfflineData, Integer> resultTransactions = getHelper().getOfflineData().queryBuilder();
+            QueryBuilder<OfflineData, Integer> resultTransactions = getHelper().fetchIntId(OfflineData.class).queryBuilder();
             resultTransactions.orderBy("dateCreated", false);
             resultTransactions.setWhere(whereOfflineData);
 

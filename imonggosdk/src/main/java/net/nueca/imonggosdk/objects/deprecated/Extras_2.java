@@ -1,10 +1,13 @@
 package net.nueca.imonggosdk.objects.deprecated;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
@@ -45,36 +48,52 @@ public class Extras_2 extends BaseTable2 {
         this.batch_maintained = batch_maintained;
     }
 
-    @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.PRODUCT_EXTRAS, DatabaseOperation.INSERT);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.PRODUCT_EXTRAS, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.PRODUCT_EXTRAS, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+//    @Override
+//    public void insertTo(ImonggoDBHelper dbHelper) {
+//        try {
+//            dbHelper.dbOperations(this, Table.PRODUCT_EXTRAS, DatabaseOperation.INSERT);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Override
+//    public void deleteTo(ImonggoDBHelper dbHelper) {
+//        try {
+//            dbHelper.dbOperations(this, Table.PRODUCT_EXTRAS, DatabaseOperation.DELETE);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Override
+//    public void updateTo(ImonggoDBHelper dbHelper) {
+//        try {
+//            dbHelper.dbOperations(this, Table.PRODUCT_EXTRAS, DatabaseOperation.UPDATE);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public String toString() {
         Gson gson = new Gson();
         return gson.toJson(this);
+    }
+
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        Log.e("Ooops!--insertTo", "Please migrate to the new DBHelper");
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        Log.e("Ooops!--deleteTo", "Please migrate to the new DBHelper");
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        Log.e("Ooops!--updateTo", "Please migrate to the new DBHelper");
     }
 }

@@ -6,15 +6,20 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+
+import java.sql.SQLException;
 
 /**
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
  */
-public abstract class BaseTable {
+public abstract class BaseTable extends DBTable {
 
     public static final String TAG = "BASETABLE";
+
+    private Object obj;
 
     @DatabaseField(id=true)
     protected int id = -1;
@@ -68,23 +73,6 @@ public abstract class BaseTable {
 
     public void setExtras(Extras extras) {
         this.extras = extras;
-    }
-
-    public abstract void insertTo(ImonggoDBHelper dbHelper);
-    public abstract void deleteTo(ImonggoDBHelper dbHelper);
-    public abstract void updateTo(ImonggoDBHelper dbHelper);
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT) {
-            Log.e(TAG, "Inserting to database");
-            insertTo(dbHelper);
-        } else if(databaseOperation == DatabaseOperation.UPDATE) {
-            Log.e(TAG, "Updating to database");
-            updateTo(dbHelper);
-        } else if(databaseOperation == DatabaseOperation.DELETE) {
-            Log.e(TAG, "Deleting to database");
-            deleteTo(dbHelper);
-        }
     }
 
 }

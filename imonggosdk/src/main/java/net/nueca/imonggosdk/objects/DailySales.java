@@ -6,8 +6,10 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
@@ -16,7 +18,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class DailySales {
+public class DailySales extends DBTable {
     public static String TAG = "DailySales";
 
     @DatabaseField(generatedId = true)
@@ -133,42 +135,6 @@ public class DailySales {
         this.date_requested_at = date_requested_at;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.DAILY_SALES, DatabaseOperation.INSERT);
-            Log.e(TAG, "Inserting dailysales to database");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            Log.e(TAG, "Deleting dailysales to database");
-            dbHelper.dbOperations(this, Table.DAILY_SALES, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            Log.e(TAG, "updating dailysales to database");
-            dbHelper.dbOperations(this, Table.DAILY_SALES, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
-    }
-
     @Override
     public String toString() {
         return "DailySales{" +
@@ -184,5 +150,32 @@ public class DailySales {
                 ", amount_without_tax=" + amount_without_tax +
                 ", branch_id=" + branch_id +
                 '}';
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.insert(DailySales.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.delete(DailySales.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.update(DailySales.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

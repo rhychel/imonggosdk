@@ -3,17 +3,19 @@ package net.nueca.imonggosdk.objects.associatives;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
+import net.nueca.imonggosdk.objects.base.DBTable;
+import net.nueca.imonggosdk.objects.invoice.SalesPromotion;
 
 import java.sql.SQLException;
 
 /**
  * Created by rhymart on 11/11/15.
  */
-public class ProductSalesPromotionAssoc {
+public class ProductSalesPromotionAssoc extends DBTable {
     public static final String PRODUCT_ID_FIELD_NAME = "product_id";
     public static final String SALES_PROMOTION_ID_FIELD_NAME = "sales_promotion_id";
 
@@ -58,37 +60,30 @@ public class ProductSalesPromotionAssoc {
         this.salesPromotion = salesPromotion;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCT_SALES_PROMOTION, DatabaseOperation.INSERT);
+            dbHelper.insert(ProductSalesPromotionAssoc.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCT_SALES_PROMOTION, DatabaseOperation.DELETE);
+            dbHelper.delete(ProductSalesPromotionAssoc.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.PRODUCT_SALES_PROMOTION, DatabaseOperation.UPDATE);
+            dbHelper.update(ProductSalesPromotionAssoc.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
-    }
-
 }
