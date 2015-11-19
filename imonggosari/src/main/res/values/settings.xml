@@ -1,0 +1,45 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="sari_padding_horizontal">12dp</dimen>
+    <dimen name="sari_padding_vertical">6dp</dimen>
+    <dimen name="sari_items_padding">5dp</dimen>
+
+    <dimen name="sari_actionbar_height">48dp</dimen> <!-- 48dp 64dp -->
+
+    <dimen name="sari_store_name_height">24dp</dimen> <!-- 24dp 32dp -->
+    <dimen name="sari_store_name_fontsize">14sp</dimen> <!-- 16sp 18sp -->
+    <dimen name="sari_store_name_margin_vertical">12dp</dimen> <!-- 12dp 16dp -->
+
+    <dimen name="sari_store_sales_padding_top">12dp</dimen>
+    <dimen name="sari_store_sales_padding_bot">15dp</dimen>
+    <dimen name="sari_store_sales_fontsize">14sp</dimen>
+
+    <dimen name="sari_searchview_padding_left">8dp</dimen>
+    <dimen name="sari_searchview_fontsize">12sp</dimen>
+    <dimen name="sari_searchview_spacer">16dp</dimen>
+    <dimen name="sari_searchview_height">24dp</dimen>
+    <dimen name="sari_searchview_min_width">100dp</dimen>
+
+    <dimen name="sari_product_tile_dimens">131dp</dimen>
+    <dimen name="sari_product_tile_margin">5dp</dimen>
+    <dimen name="sari_product_tile_textbox_height">26dp</dimen>
+    <dimen name="sari_product_tile_textbox_padding">5dp</dimen>
+    <dimen name="sari_product_tile_textbox_fontsize">12sp</dimen>
+    <dimen name="sari_product_tile_textbox_spacer">3dp</dimen>
+
+    <dimen name="sari_product_list_dimens">60dp</dimen>
+    <dimen name="sari_product_list_fontsize">12sp</dimen>
+    <dimen name="sari_product_list_padding">2dp</dimen>
+
+    <dimen name="sari_sel_product_list_height">40dp</dimen>
+    <dimen name="sari_sel_product_list_fontsize">12sp</dimen>
+    <dimen name="sari_sel_product_list_v_padding">10dp</dimen>
+    <dimen name="sari_sel_product_list_h_padding">0dp</dimen>
+    <dimen name="sari_sel_product_spacer">5dp</dimen>
+
+    <dimen name="sari_product_remove_button">40dp</dimen>
+    <dimen name="sari_product_remove_fontsize">12sp</dimen>
+    <dimen name="sari_product_remove_button_padding">8dp</dimen>
+
+    <bool name="sari_is_big">false</bool>
+</resources>

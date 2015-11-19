@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#8bc34a</color> <!-- ffc107 -->
+    <color name="primary_dark">#689f38</color> <!-- ffa000 -->
+    <color name="primary_light">#dcedc8</color> <!-- ffecb3 -->
+    <color name="accent">#ff5722</color> <!-- 009688 -->
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="hint_text">#b6b6b6</color>
+    <color name="divider">#b6b6b6</color>
+
+    <color name="login_default_bg">#ffffff</color>
+    <color name="login_default_status_bg">#ffffff</color>
+
+    <color name="dialog_field_label">#689f38</color> <!-- ffa000 -->
+
+    <color name="mdtp_accent_color">#8bc34a</color> <!-- ffc107 -->
+    <color name="mdtp_accent_color_dark">#689f38</color> <!-- ffa000 -->
+
+    <color name="products_bgcolor">@android:color/transparent</color>
+
+    <!-- Colors -->
+    <color name="white_20">#22000000</color>
+    <color name="white_50">#44000000</color>
+
+    <color name="gray_50">#77363636</color>
+
+    <color name="black_60">#9000</color>
+</resources>

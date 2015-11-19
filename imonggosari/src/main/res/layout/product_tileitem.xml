@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="@dimen/sari_product_tile_dimens"
+                android:layout_height="@dimen/sari_product_tile_dimens"
+    >
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ivProductImage"
+        android:background="@android:color/white"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sari_product_tile_textbox_height"
+        android:layout_gravity="center_horizontal|bottom"
+        android:background="@color/black_60"
+        android:padding="@dimen/sari_product_tile_textbox_padding">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="Product Name"
+            android:id="@+id/tvProductName"
+            android:textColor="@android:color/white"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="@dimen/sari_product_tile_textbox_fontsize"
+            android:layout_marginRight="@dimen/sari_product_tile_textbox_spacer"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="P888,888.88"
+            android:id="@+id/tvRetailPrice"
+            android:textColor="@android:color/white"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="@dimen/sari_product_tile_textbox_fontsize"
+            android:layout_weight="0"/>
+    </LinearLayout>
+
+
+</FrameLayout>

@@ -65,7 +65,7 @@ public class SariProductsAdapter extends BaseProductsRecyclerAdapter<SariProduct
         holder.tvProductName.setText(product.getName());
 
         if(holder.tvRetailPrice != null)
-            holder.tvRetailPrice.setText(NumberTools.separateInCommas(product.getRetail_price()));
+            holder.tvRetailPrice.setText("P"+NumberTools.separateInCommas(product.getRetail_price()));
 
         if(holder.ivProductImage != null) {
             String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
@@ -111,7 +111,7 @@ public class SariProductsAdapter extends BaseProductsRecyclerAdapter<SariProduct
 
             tvProductName = (TextView) itemView.findViewById(R.id.tvProductName);
 
-            if(!isBig || itemLayout != null)
+            //if(!isBig || itemLayout != null)
                 tvRetailPrice = (TextView) itemView.findViewById(R.id.tvRetailPrice);
 
             if(itemLayout == null)

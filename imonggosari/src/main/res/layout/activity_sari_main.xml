@@ -1,0 +1,191 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="fill_parent"
+              android:layout_height="match_parent"
+              xmlns:sothree="http://schemas.android.com/apk/res-auto"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              tools:context=".SariLogin"
+              android:orientation="horizontal" >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:elevation="16dp"
+        android:background="@android:color/white"
+        android:divider="@android:drawable/divider_horizontal_bright"
+        android:showDividers="middle"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sari_store_name_height"
+            android:inputType="numberDecimal"
+            android:hint="Store Name"
+            android:textSize="@dimen/sari_store_name_fontsize"
+            android:text="Evelyn's Store"
+            android:id="@+id/tvStoreName"
+            android:textColor="@color/primary"
+            android:enabled="false"
+            android:focusable="false"
+            android:textStyle="bold"
+            android:layout_marginLeft="@dimen/sari_padding_horizontal"
+            android:layout_marginRight="@dimen/sari_padding_horizontal"
+            android:layout_marginTop="@dimen/sari_store_name_margin_vertical"
+            android:layout_marginBottom="@dimen/sari_store_name_margin_vertical"
+            android:paddingLeft="@dimen/sari_sel_product_list_h_padding"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/rvListProducts"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:paddingLeft="@dimen/sari_padding_horizontal"
+            android:paddingRight="@dimen/sari_padding_horizontal"
+            android:paddingTop="@dimen/sari_padding_vertical"
+            android:paddingBottom="@dimen/sari_padding_vertical"
+            />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sari_store_sales_padding_top"
+            android:layout_marginBottom="@dimen/sari_store_sales_padding_bot"
+            android:layout_marginLeft="@dimen/sari_padding_horizontal"
+            android:layout_marginRight="@dimen/sari_padding_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Today&apos;s Total"
+                android:id="@+id/tvTodaySalesLabel"
+                android:textSize="@dimen/sari_store_sales_fontsize"
+                android:layout_marginRight="10dp"
+                android:textColor="@color/primary"
+                android:textStyle="bold"
+                android:layout_marginLeft="@dimen/sari_sel_product_list_h_padding"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:hint="Today&apos;s Sales"
+                android:textSize="@dimen/sari_store_sales_fontsize"
+                android:text="P12,396.00"
+                android:id="@+id/tvTodaySales"
+                android:textColor="@color/secondary_text"
+                android:enabled="false"
+                android:focusable="false"
+                android:textStyle="bold"
+                android:gravity="right"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        >
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tbActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sari_actionbar_height"
+            android:background="?attr/colorPrimary"
+            sothree:theme="@style/ActionBar"
+            android:elevation="4dp"
+            android:paddingRight="@dimen/sari_padding_horizontal"
+            android:paddingLeft="@dimen/sari_padding_horizontal">
+
+            <!--android.support.v7.widget.SearchView
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:elevation="7dp"
+                android:id="@+id/mSearch"
+                app:iconifiedByDefault="false"
+                android:textSize="8sp"
+                android:padding="0dp"
+                android:text="TEST"
+                android:background="@android:color/white"/-->
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/sari_searchview_height"
+                android:background="@android:color/white"
+                android:id="@+id/llSearch"
+                android:paddingLeft="@dimen/sari_searchview_padding_left"
+                android:layout_weight="1"
+                android:animateLayoutChanges="true"
+                android:elevation="8dp"
+                >
+
+                <ImageView
+                    android:layout_width="@dimen/sari_searchview_height"
+                    android:layout_height="@dimen/sari_searchview_height"
+                    android:id="@+id/ivSearchIcon"
+                    android:src="@drawable/ic_search_gray"
+                    android:layout_marginRight="@dimen/sari_searchview_spacer"
+                    android:padding="0dp"/>
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/sari_searchview_height"
+                    android:id="@+id/etSearchField"
+                    android:minWidth="@dimen/sari_searchview_min_width"
+                    android:textSize="@dimen/sari_searchview_fontsize"
+                    android:padding="0dp"
+                    android:background="@android:color/transparent"
+                    android:hint="Search"
+                    android:singleLine="true"/>
+
+                <ImageButton
+                    android:layout_width="@dimen/sari_searchview_height"
+                    android:layout_height="@dimen/sari_searchview_height"
+                    android:id="@+id/ibtnSearchClear"
+                    android:src="@drawable/bs_ic_clear_light"
+                    android:background="@drawable/toolbar_ext_button"
+                    android:scaleType="fitXY"
+                    android:padding="2dp"
+                    android:visibility="invisible"/>
+            </LinearLayout>
+
+            <android.support.design.widget.TabLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tlSariTab"/>
+
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:id="@+id/rvGridProducts"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:paddingTop="8dp"
+            android:paddingLeft="@dimen/sari_padding_horizontal"
+            android:paddingRight="@dimen/sari_padding_horizontal"/>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="No product results for Beef category"
+            android:id="@+id/tvNoProducts"
+            android:gravity="center"
+            android:layout_weight="2"
+            android:background="@android:color/darker_gray"
+            android:padding="50dp"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+</LinearLayout>

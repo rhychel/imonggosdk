@@ -1,0 +1,117 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              xmlns:appstools="http://schemas.android.com/apk/res-auto"
+              tools:context=".SariLogin"
+              android:orientation="horizontal"
+    >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="20dp">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/tilStore"
+            android:gravity="center">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:hint="Store Name"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:text="Evelyn's Store"
+                android:id="@+id/etStoreName"
+                android:textColor="@android:color/darker_gray"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/tilTodaySales"
+            android:gravity="center">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:hint="Today&apos;s Sales"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:text="Php 12,396.00"
+                android:id="@+id/etTodaySales"
+                android:textColor="@android:color/darker_gray"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/tilYesterdaySales"
+            android:gravity="center">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:hint="Yesterday&apos;s Sales"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:text="Php 10,672.00"
+                android:id="@+id/etYesterdaySales"
+                android:textColor="@android:color/darker_gray"/>
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:orientation="horizontal"
+                      android:layout_width="match_parent"
+                      android:layout_height="50dp"
+                      android:gravity="center"
+                      android:paddingLeft="10dp"
+                      android:paddingRight="5dp"
+                      android:background="@color/accent">
+
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView5"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Product Name"
+                android:id="@+id/textView3"
+                android:layout_weight="3"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Price"
+                android:id="@+id/textView4"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/listView"
+            tools:listitem="@layout/list_item"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"/>
+    </LinearLayout>
+
+</LinearLayout>

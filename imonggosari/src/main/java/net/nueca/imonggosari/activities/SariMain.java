@@ -1,20 +1,35 @@
 package net.nueca.imonggosari.activities;
 
+import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.generalscan.NotifyStyle;
+import com.generalscan.OnConnectedListener;
+import com.generalscan.OnDisconnectListener;
+import com.generalscan.SendConstant;
+import com.generalscan.bluetooth.BluetoothConnect;
+import com.generalscan.bluetooth.BluetoothSettings;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
@@ -29,11 +44,13 @@ import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosari.R;
 import net.nueca.imonggosari.adapters.SariProductsAdapter;
+import net.nueca.imonggosari.receivers.GenScanReadBroadcast;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.tools.NumberTools;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,6 +62,9 @@ public class SariMain extends ModuleActivity {
 
     private TextView tvTodaySales, tvNoProducts;
     private RecyclerView rvProducts, rvSelectedProducts;
+
+    private EditText etSearchField;
+    private ImageButton ibtnSearchClear;
 
     private SariProductsAdapter selectedProductsAdapter;
     private SariProductsAdapter productsAdapter;
@@ -63,14 +83,18 @@ public class SariMain extends ModuleActivity {
 
     protected ListScrollListener listScrollListener;
 
+    private GenScanReadBroadcast readBroadcast;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sari_main2);
+        setContentView(R.layout.activity_sari_main);
 
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
         setSupportActionBar(tbActionBar);
-        tbActionBar.setNavigationIcon(R.drawable.ic_store_gray);
+        //tbActionBar.setNavigationIcon(R.drawable.ic_store_gray);
+
+        initCustomSearchView();
 
         tvTodaySales = (TextView) findViewById(R.id.tvTodaySales);
         tvNoProducts = (TextView) findViewById(R.id.tvNoProducts);
@@ -84,7 +108,7 @@ public class SariMain extends ModuleActivity {
         adapterHelper.setDbHelper(getHelper());
 
         total = BigDecimal.ZERO;
-        tvTodaySales.setText(NumberTools.separateInCommas(total));
+        tvTodaySales.setText("P"+NumberTools.separateInCommas(total));
 
         try {
             tbActionBar.setSubtitle(getUser().getName());
@@ -114,7 +138,7 @@ public class SariMain extends ModuleActivity {
                     selectedProductItem.addValues(value);
 
                     total = total.add(new BigDecimal(value.getSubtotal()));
-                    tvTodaySales.setText(NumberTools.separateInCommas(total));
+                    tvTodaySales.setText("P"+NumberTools.separateInCommas(total));
 
                     adapterHelper.getSelectedProductItems().add(selectedProductItem);
                 }
@@ -122,8 +146,8 @@ public class SariMain extends ModuleActivity {
 
             if(isBigSize) {
                 productsAdapter.initializeGridRecyclerView(this, rvProducts, 5);
-                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) rvProducts.getLayoutParams();
-                params.weight = 2f;
+                //LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) rvProducts.getLayoutParams();
+                //params.weight = 0f;
             }
             else {
                 productsAdapter.initializeGridRecyclerView(this, rvProducts, 2);
@@ -145,11 +169,17 @@ public class SariMain extends ModuleActivity {
                     Values value = selectedProductItem.getValues().get(0);
 
                     total = total.subtract(new BigDecimal(value.getSubtotal()));
-                    tvTodaySales.setText(NumberTools.separateInCommas(total));
+                    tvTodaySales.setText("P"+NumberTools.separateInCommas(total));
                 }
             });
 
             rvSelectedProducts.setAdapter(selectedProductsAdapter);
+
+            // UI adjustments
+            rvSelectedProducts.removeItemDecoration(selectedProductsAdapter.getDividerItemDecoration());
+            LinearLayoutManager layoutManager = (LinearLayoutManager)rvSelectedProducts.getLayoutManager();
+            layoutManager.setStackFromEnd(true);
+            rvSelectedProducts.setLayoutManager(layoutManager);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -159,27 +189,101 @@ public class SariMain extends ModuleActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_sari_main, menu);
 
-        mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
-        initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+        /*mSearch = (SearchView) findViewById(R.id.mSearch);
+        TextView tvSearchText = (TextView)findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        tvSearchText.setTextSize(12);
+
+        mSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                updateListWhenSearch(query);
+                return true;
+            }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 updateListWhenSearch(newText);
                 return true;
             }
-        });
+        });*/
+
+        /*initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                updateListWhenSearch(newText);
+                return true;
+            }
+        });*/
 
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == android.R.id.home) {
+            BluetoothSettings.SetScaner(this);
+            connectBarcodeScanner();
+        }
+        else if(id == R.id.mBarcodeScannerSet) {
+            BluetoothSettings.SetScaner(this);
+        }
+        else if(id == R.id.mBarcodeScannerConnect) {
+            Log.e("GenScan", "connecting");
+            try {
+                BluetoothConnect.Connect();
+            } catch (Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SariMain.this, "Please set Barcode Scanner", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initCustomSearchView() {
+        etSearchField = (EditText) super.findViewById(R.id.etSearchField);
+        ibtnSearchClear = (ImageButton) super.findViewById(R.id.ibtnSearchClear);
+
+        etSearchField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updateListWhenSearch(""+s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateListWhenSearch(""+s);
+                ibtnSearchClear.setVisibility(s.length() > 0 ? View.VISIBLE : View.INVISIBLE);
+            }
+        });
+        ibtnSearchClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etSearchField.setText("");
+                InputMethodManager inputManager = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null :
+                        getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                etSearchField.clearFocus();
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         adapterHelper.destroyProductAdapterHelper();
+        stopGenScan();
     }
 
     protected List<Product> getProducts() {
@@ -204,6 +308,8 @@ public class SariMain extends ModuleActivity {
                     whereProducts.and().in("id", productWithTag);
                 }
             }
+
+            whereProducts.or().like("barcode_list", "%"+searchKey+"%");
 
             QueryBuilder<Product, Integer> resultProducts = getHelper().getProducts().queryBuilder().orderByRaw("name COLLATE NOCASE ASC")
                     .limit(LIMIT).offset(offset);
@@ -268,5 +374,123 @@ public class SariMain extends ModuleActivity {
         rvProducts.setVisibility(show ? View.VISIBLE : View.GONE);
         tvNoProducts.setVisibility(show ? View.GONE : View.VISIBLE);
         tvNoProducts.setText(msg);
+    }
+
+    private void startGenScan() {
+        BluetoothConnect.CurrentNotifyStyle = NotifyStyle.NotificationStyle1;
+        BluetoothConnect.BindService(this);
+        BluetoothConnect.SetOnConnectedListener(new OnConnectedListener() {
+            @Override
+            public void Connected() {
+                Toast.makeText(SariMain.this, "Barcode Scanner connected", Toast.LENGTH_SHORT).show();
+            }
+        });
+        BluetoothConnect.SetOnDisconnectListener(new OnDisconnectListener() {
+            @Override
+            public void Disconnected() {
+                Toast.makeText(SariMain.this, "Barcode Scanner disconnected", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        connectBarcodeScanner();
+    }
+
+    private void setBroadcast() {
+        readBroadcast = new GenScanReadBroadcast(new GenScanReadBroadcast.ScannerListener() {
+            @Override
+            public void onGetBatteryData(String data) {
+
+            }
+
+            @Override
+            public void onGetData(String data) {
+                Log.e("DATA >>>", "^"+data+"^");
+
+                Product product = null;
+                try {
+                    product = getHelper().getProducts().queryBuilder().where().isNull("status")
+                            .and().like("barcode_list", "%" + data + "%").queryForFirst();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                if(product == null) {
+                    Toast.makeText(SariMain.this, "Product Not Found", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                selectedProductsAdapter.add(product);
+                rvSelectedProducts.smoothScrollToPosition(selectedProductsAdapter.getItemCount() - 1);
+
+                SelectedProductItem selectedProductItem = adapterHelper.getSelectedProductItems().getSelectedProductItem(product);
+                if (selectedProductItem == null) {
+                    selectedProductItem = new SelectedProductItem();
+                    selectedProductItem.setProduct(product);
+                }
+
+                Values value = new Values();
+                value.setQuantity("1");
+                selectedProductItem.addValues(value);
+
+                total = total.add(new BigDecimal(value.getSubtotal()));
+                tvTodaySales.setText("P"+NumberTools.separateInCommas(total));
+
+                adapterHelper.getSelectedProductItems().add(selectedProductItem);
+            }
+        });
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SendConstant.GetDataAction);
+        filter.addAction(SendConstant.GetReadDataAction);
+        filter.addAction(SendConstant.GetBatteryDataAction);
+        registerReceiver(readBroadcast, filter);
+    }
+
+    private void stopGenScan() {
+        BluetoothConnect.UnBindService(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        setBroadcast();
+        startGenScan();
+    }
+
+    @Override
+    protected void onStop() {
+        if (readBroadcast != null) {
+            unregisterReceiver(readBroadcast);
+        }
+        super.onStop();
+    }
+
+    private void connectBarcodeScanner() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                /** Try to connect **/
+                Log.e("GenScan", "connecting");
+                try {
+                    BluetoothConnect.Connect();
+                } catch (Exception e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SariMain.this, "Please set Barcode Scanner", Toast.LENGTH_SHORT).show();
+                            //BluetoothSettings.SetScaner(SariMain.this);
+                        }
+                    });
+                }
+            }
+
+        }.start();
     }
 }

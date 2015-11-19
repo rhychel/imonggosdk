@@ -103,7 +103,8 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         linearLayoutManager = new LinearLayoutManager(context);
         rvProducts.setLayoutManager(linearLayoutManager);
         rvProducts.setHasFixedSize(true);
-        rvProducts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL_LIST));
+        dividerItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL_LIST);
+        rvProducts.addItemDecoration(dividerItemDecoration);
     }
 
     public void initializeGridRecyclerView(Context context, RecyclerView rvProducts, int span) {
@@ -128,5 +129,11 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         public ViewHolder(View itemView) {
             super(itemView);
         }
+    }
+
+    private DividerItemDecoration dividerItemDecoration;
+
+    public DividerItemDecoration getDividerItemDecoration() {
+        return dividerItemDecoration;
     }
 }

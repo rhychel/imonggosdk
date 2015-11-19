@@ -26,7 +26,7 @@ public class SariLogin extends LoginActivity {
         super.initLoginEquipments();
         setServer(Server.IRETAILCLOUD_COM);
 
-        setRequireConcessioSettings(true);
+        setRequireConcessioSettings(false);
     }
 
     @Override
