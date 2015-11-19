@@ -6,15 +6,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.android.volley.toolbox.Volley;
+
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.RequestType;
+import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.AccountListener;
+import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.operations.http.ImonggoOperations;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.LoggingTools;
+
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -26,6 +36,8 @@ import java.util.List;
 public class C_Dashboard extends ImonggoAppCompatActivity {
 
     private Button btnSales, btnOrder, btnCount, btnReceive, btnPullout, btnUnlink;
+
+    private Button btnConcessio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +53,44 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
         btnReceive = (Button) findViewById(R.id.btnReceive);
         btnPullout = (Button) findViewById(R.id.btnPullout);
         btnUnlink = (Button) findViewById(R.id.btnUnlink);
+        btnConcessio = (Button) findViewById(R.id.btnConcessio);
 
         btnSales.setOnClickListener(onChooseModule);
         btnOrder.setOnClickListener(onChooseModule);
         btnCount.setOnClickListener(onChooseModule);
         btnReceive.setOnClickListener(onChooseModule);
         btnPullout.setOnClickListener(onChooseModule);
+        btnConcessio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    ImonggoOperations.getConcesioAppSettings(C_Dashboard.this, Volley.newRequestQueue(C_Dashboard.this), getSession(), new VolleyRequestListener() {
+                        @Override
+                        public void onStart(Table table, RequestType requestType) {
+                            Log.e("onStart", "Concessio Settings");
+                        }
+
+                        @Override
+                        public void onSuccess(Table table, RequestType requestType, Object response) {
+                            JSONObject jsonObject = (JSONObject) response;
+                            Log.e("onSuccess", jsonObject.toString());
+                        }
+
+                        @Override
+                        public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                            Log.e("onError", "hasInternet="+hasInternet+" || responseCode="+responseCode);
+                        }
+
+                        @Override
+                        public void onRequestError() {
+                            Log.e("onRequestError", "Concessio Settings");
+                        }
+                    }, Server.IRETAILCLOUD_NET, true, true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         btnUnlink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,7 +132,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
                     intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.RECEIVE.ordinal());
                 } break;
                 case R.id.btnPullout: {
-                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.PULLOUT.ordinal());
+                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.PULLOUT_REQUEST.ordinal());
                 } break;
             }
             startActivity(intent);

@@ -14,6 +14,7 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.LoginListener;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
@@ -157,7 +158,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
                         if (!getLoginSession().getApiAuthentication().equals("")) { // User is authenticated
                             setLoggedIn(true);
                             // check if sessions email exist in user's database
-                            if (getHelper().getUsers().queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
+                            if (getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
                                 //LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
                                 setLoggedIn(false);
                                 setUnlinked(true);

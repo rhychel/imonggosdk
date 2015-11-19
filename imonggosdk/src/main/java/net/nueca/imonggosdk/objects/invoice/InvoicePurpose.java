@@ -4,6 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
@@ -47,27 +48,27 @@ public class InvoicePurpose extends BaseTable {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICE_PURPOSES, DatabaseOperation.INSERT);
+            dbHelper.insert(InvoicePurpose.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICE_PURPOSES, DatabaseOperation.DELETE);
+            dbHelper.delete(InvoicePurpose.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICE_PURPOSES, DatabaseOperation.UPDATE);
+            dbHelper.update(InvoicePurpose.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }

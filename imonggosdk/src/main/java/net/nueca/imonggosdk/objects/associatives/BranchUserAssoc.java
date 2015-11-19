@@ -4,10 +4,12 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
@@ -16,7 +18,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class BranchUserAssoc {
+public class BranchUserAssoc extends DBTable {
     public static final String BRANCH_ID_FIELD_NAME = "branch_id";
     public static final String USER_ID_FIELD_NAME = "user_id";
 
@@ -60,39 +62,6 @@ public class BranchUserAssoc {
         this.user = user;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.BRANCH_USERS, DatabaseOperation.INSERT);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.BRANCH_USERS, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.BRANCH_USERS, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
-    }
-
     @Override
     public String toString() {
         return "BranchUserAssoc{" +
@@ -100,5 +69,32 @@ public class BranchUserAssoc {
                 ", branch=" + branch.getName() +
                 ", user=" + user.getName() +
                 '}';
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.insert(BranchUserAssoc.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.delete(BranchUserAssoc.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.update(BranchUserAssoc.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

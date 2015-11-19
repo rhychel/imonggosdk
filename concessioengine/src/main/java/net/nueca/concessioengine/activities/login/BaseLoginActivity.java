@@ -594,7 +594,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     private void deleteUserSessionData() {
         if (getHelper() != null) {
-            getHelper().deleteAllDatabaseValues();
+            try {
+                getHelper().deleteAllDatabaseValues();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
@@ -123,29 +124,27 @@ public class SalesPromotion extends BaseTable {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        convertToDate();
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SALES_PROMOTIONS, DatabaseOperation.INSERT);
+            dbHelper.insert(SalesPromotion.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        convertToDate();
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SALES_PROMOTIONS, DatabaseOperation.DELETE);
+            dbHelper.delete(SalesPromotion.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SALES_PROMOTIONS, DatabaseOperation.UPDATE);
+            dbHelper.update(SalesPromotion.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }

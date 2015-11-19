@@ -86,7 +86,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             lastUpdatedAt = null;
 
             // Get the last updated at
-            QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().getLastUpdatedAts().queryBuilder();
+            QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().fetchIntId(LastUpdatedAt.class).queryBuilder();
 
             if (mCurrentTableSyncing == Table.DOCUMENTS) {
                 document_type = "transfer_out";
@@ -94,13 +94,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 initializeFromTo();
 
-                branchUserAssoc = getHelper().getBranchUserAssocs().queryForAll();
+                branchUserAssoc = getHelper().fetchObjectsList(BranchUserAssoc.class);
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(mCurrentTableSyncing, getTargetBranchId(branchIndex) + ""));
             } else {
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(mCurrentTableSyncing));
             }
             // get the last updated at
-            lastUpdatedAt = getHelper().getLastUpdatedAts().queryForFirst(queryBuilder.prepare());
+            lastUpdatedAt = getHelper().fetchObjects(LastUpdatedAt.class).queryForFirst(queryBuilder.prepare());
 
             if (lastUpdatedAt != null) {
                 Log.e(TAG, "TABLE NAME: " + lastUpdatedAt.getTableName());
@@ -460,9 +460,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         BatchList<TaxRate> newTaxRates = new BatchList<>(DatabaseOperation.INSERT, getHelper());
 
                         JSONArray taxRateArray = jsonObject.getJSONArray("tax_rates");
-                        List<ProductTaxRateAssoc> productTaxRateAssocList = getHelper().getProductTaxRateAssocs().queryForAll();
+                        List<ProductTaxRateAssoc> productTaxRateAssocList = getHelper().fetchObjectsList(ProductTaxRateAssoc.class);
 
-                        List<TaxRate> oldTaxRateList = getHelper().getTaxRates().queryForAll();
+                        List<TaxRate> oldTaxRateList = getHelper().fetchObjectsList(TaxRate.class);
                         List<TaxRate> newTaxRateList = new ArrayList<>();
                         List<TaxRate> deletedTaxRateList = new ArrayList<>();
 
@@ -511,16 +511,16 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     for (TaxRate taxRate : deletedTaxRateList) {
                                         Log.e(TAG, "Deleting " + taxRate.getName());
-                                        getHelper().getTaxRates().deleteById(taxRate.getId());
+                                        getHelper().fetchIntId(TaxRate.class).deleteById(taxRate.getId());
                                     }
 
                                 }
                             }
 
-                            getHelper().dbOperations(null, Table.TAX_RATES, DatabaseOperation.DELETE_ALL);
+                            getHelper().deleteAll(TaxRate.class);
                         }
 
-                        newTaxRates.doOperation();
+                        newTaxRates.doOperation(TaxRate.class);
 
                         if (productTaxRateAssocList.size() == 0) {
                             Log.e(TAG, "Product Tax Rate is 0");
@@ -533,7 +533,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             for (int y = 0; y < deletedTaxRateList.size(); y++) {
                                 if (productTaxRateAssocList.get(i).getTaxRate().getId() == deletedTaxRateList.get(y).getId()) {
                                     Log.e(TAG, productTaxRateAssocList.get(i).getTaxRate().getName() + " matched! deleting it.");
-                                    getHelper().getProductTaxRateAssocs().deleteById(productTaxRateAssocList.get(i).getId());
+                                    getHelper().fetchIntId(ProductTaxRateAssoc.class).deleteById(productTaxRateAssocList.get(i).getId());
                                 }
                             }
                         }
@@ -611,9 +611,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
                             }
 
-                            newUsers.doOperation();
-                            updateUsers.doOperation();
-                            deleteUsers.doOperation();
+                            newUsers.doOperationBT(User.class);
+                            updateUsers.doOperationBT(User.class);
+                            deleteUsers.doOperationBT(User.class);
 
                             User current_user = getUser();
 
@@ -634,7 +634,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             return;
                         } else {
                             int current_branch_id = getSession().getCurrent_branch_id();
-                            Branch current_branch = getHelper().getBranches().queryForId(current_branch_id);
+                            Branch current_branch = getHelper().fetchIntId(Branch.class).queryForId(current_branch_id);
 
                             BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
@@ -650,7 +650,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     newProducts.add(product);
                                 } else {
                                     if (isExisting(product, Table.PRODUCTS)) {
-                                        DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
+                                        DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().fetchIntId(ProductTag.class).deleteBuilder();
                                         deleteProductsHelper.where().eq("product_id", product);
                                         deleteProductsHelper.delete();
 
@@ -671,13 +671,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 if (jsonObject.has("tax_rates")) {
 
                                     Log.e(TAG, "deleting product tax rates");
-                                    List<ProductTaxRateAssoc> pTaxRateList = getHelper().getProductTaxRateAssocs().queryForAll();
+                                    List<ProductTaxRateAssoc> pTaxRateList = getHelper().fetchObjectsList(ProductTaxRateAssoc.class);
 
                                     // Deleting Product's ProducTaxRate Entry
                                     for (ProductTaxRateAssoc pTaxRate : pTaxRateList) {
                                         if (product.getId() == pTaxRate.getProduct().getId()) {
                                             Log.e(TAG, "Deleting " + pTaxRate.getProduct().getName() + " Tax Rate is " + pTaxRate.getTaxRate().getName());
-                                            getHelper().getProductTaxRateAssocs().deleteById(pTaxRate.getId());
+                                            getHelper().fetchIntId(ProductTaxRateAssoc.class).deleteById(pTaxRate.getId());
                                         }
                                     }
 
@@ -695,7 +695,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
 
                                         ProductTaxRateAssoc productTaxRate;
-                                        TaxRate current_taxRate = getHelper().getTaxRates().queryForId(tax_rate_id);
+                                        TaxRate current_taxRate = getHelper().fetchIntId(TaxRate.class).queryForId(tax_rate_id);
 
                                         if (isExisting(tax_rate_id, Table.TAX_RATES)) {
                                             // get the tax rate from database
@@ -747,7 +747,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             if (branchPrice.getBranch().getId() == current_branch_id) {
                                                 Log.e(TAG, "Product " + branchPrice.getProduct().getName() +
                                                         " Content: " + branchPrice.toString());
-                                                getHelper().dbOperations(branchPrice, Table.BRANCH_PRICES, DatabaseOperation.DELETE);
+                                                getHelper().delete(BranchPrice.class, branchPrice);
                                                 branchPrice.dbOperation(getHelper(), DatabaseOperation.INSERT);
                                             }
                                         } else {
@@ -776,10 +776,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
                             }
 
-                            newProductTaxRates.doOperation();
-                            newProducts.doOperation();
-                            updateProducts.doOperation();
-                            deleteProducts.doOperation();
+                            newProductTaxRates.doOperation(ProductTaxRateAssoc.class);
+                            newProducts.doOperationBT(Product.class);
+                            updateProducts.doOperationBT(Product.class);
+                            deleteProducts.doOperationBT(Product.class);
                             updateNext(requestType, size);
                         }
                         break;
@@ -798,7 +798,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
 
-                                Product product = getHelper().getProducts().queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
+                                Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
 
                                 Log.e(TAG, "Unit Product ID: " + jsonObject.getString("product_id") + " name: " + product.getName());
 
@@ -826,9 +826,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
                             }
 
-                            newUnits.doOperation();
-                            updateUnits.doOperation();
-                            deleteUnits.doOperation();
+                            newUnits.doOperationBT(Unit.class);
+                            updateUnits.doOperationBT(Unit.class);
+                            deleteUnits.doOperationBT(Unit.class);
                             updateNext(requestType, size);
                         }
                         break;
@@ -891,14 +891,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     }
                                 }
                             }
-                            newBranches.doOperation();
-                            updateBranches.doOperation();
+                            newBranches.doOperationBT(Branch.class);
+                            updateBranches.doOperationBT(Branch.class);
 
-                            newBranchUserAssocs.doOperation();
-                            updateBranchUserAssocs.doOperation();
+                            newBranchUserAssocs.doOperation(BranchUserAssoc.class);
+                            updateBranchUserAssocs.doOperation(BranchUserAssoc.class);
 
-                            newBranchTags.doOperation();
-                            updateBranchTags.doOperation();
+                            newBranchTags.doOperation(BranchTag.class);
+                            updateBranchTags.doOperation(BranchTag.class);
 
                             updateNext(requestType, size);
                         }
@@ -933,9 +933,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
                             }
 
-                            newCustomer.doOperation();
-                            updateCustomer.doOperation();
-                            deleteCustomer.doOperation();
+                            newCustomer.doOperationBT(Customer.class);
+                            updateCustomer.doOperationBT(Customer.class);
+                            deleteCustomer.doOperationBT(Customer.class);
                             updateNext(requestType, size);
                         }
                         break;
@@ -964,8 +964,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
                             }
 
-                            newInventories.doOperation();
-                            updateInventories.doOperation();
+                            newInventories.doOperation(Inventory.class);
+                            updateInventories.doOperation(Inventory.class);
                             updateNext(requestType, size);
                         }
                         break;
@@ -978,7 +978,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             return;
                         } else {
 
-                            getHelper().dbOperations(null, Table.DOCUMENT_TYPES, DatabaseOperation.DELETE_ALL);
+                            getHelper().deleteAll(DocumentType.class);
 
                             for (int i = 0; i < size; i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -1004,7 +1004,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 Log.e(TAG, documentPurpose.toString());
 
                                 int document_id = jsonObject.getInt("document_type_id");
-                                DocumentType documentType = getHelper().getDocumentTypes().queryForId(document_id);
+                                DocumentType documentType = getHelper().fetchIntId(DocumentType.class).queryForId(document_id);
 
                                 if (isExisting(documentType, Table.DOCUMENT_TYPES)) {
                                     documentPurpose.setDocumentType(documentType);
@@ -1069,9 +1069,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             }
                         }
 
-                        newDocument.doOperation();
-                        updateDocument.doOperation();
-                        deleteDocument.doOperation();
+                        newDocument.doOperationBT(Document.class);
+                        updateDocument.doOperationBT(Document.class);
+                        deleteDocument.doOperationBT(Document.class);
                         updateNext(requestType, size);
                         break;
                     case SETTINGS:
@@ -1082,7 +1082,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             syncNext();
                             return;
                         } else {
-                            getHelper().getSettings().deleteBuilder().delete();
+                            getHelper().fetchObjects(Settings.class).deleteBuilder().delete();
+
                             for (int i = 0; i < size; i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Log.e(TAG, jsonObject.getString("name") + " - " + jsonObject.getString("value"));

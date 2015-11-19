@@ -6,8 +6,10 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
@@ -16,7 +18,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class LastUpdatedAt {
+public class LastUpdatedAt extends DBTable {
     public static String TAG = "LastUpdatedAt";
 
     @DatabaseField(id = true)
@@ -42,40 +44,38 @@ public class LastUpdatedAt {
         this.last_updated_at = last_updated_at;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.LAST_UPDATED_AT, DatabaseOperation.INSERT);
-            Log.e(TAG, "INSERTING to LastUpdatedAt tables");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.LAST_UPDATED_AT, DatabaseOperation.DELETE);
-            Log.e(TAG, "Deleting to LastUpdatedAt tables");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.LAST_UPDATED_AT, DatabaseOperation.UPDATE);
-            Log.e(TAG, "UPDATING to LastUpdatedAt tables");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public String toString() {
         return "LastUpdatedAt{" +
                 "tableName='" + tableName + '\'' +
                 ", last_updated_at='" + last_updated_at + '\'' +
                 '}';
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.insert(LastUpdatedAt.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.delete(LastUpdatedAt.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.update(LastUpdatedAt.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

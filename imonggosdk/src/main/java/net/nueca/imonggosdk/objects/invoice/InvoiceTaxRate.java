@@ -6,6 +6,7 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
@@ -107,27 +108,27 @@ public class InvoiceTaxRate extends BaseTable2 {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.INSERT);
+            dbHelper.insert(InvoiceTaxRate.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.DELETE);
+            dbHelper.delete(InvoiceTaxRate.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.UPDATE);
+            dbHelper.update(InvoiceTaxRate.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }

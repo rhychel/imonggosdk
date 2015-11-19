@@ -15,11 +15,6 @@
             android:name=".C_Login"
             android:label="@string/app_name"
             android:theme="@style/LoginTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".C_History"
@@ -28,7 +23,13 @@
         <activity
             android:name=".C_Customers"
             android:label="@string/title_activity_customers"
-            android:theme="@style/AppTheme.Concessio.NoActionBar" />
+            android:theme="@style/AppTheme.Concessio.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".C_HistoryDetails"
             android:label="@string/app_name"

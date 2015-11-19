@@ -9,7 +9,7 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseReceiveRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.objects.SelectedProductItem;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -24,7 +24,7 @@ import me.grantland.widget.AutofitTextView;
 public class SimpleReceiveRecyclerViewAdapter extends BaseReceiveRecyclerAdapter<SimpleReceiveRecyclerViewAdapter
         .ListViewHolder> {
 
-    public SimpleReceiveRecyclerViewAdapter(Context context, ImonggoDBHelper dbHelper) {
+    public SimpleReceiveRecyclerViewAdapter(Context context, ImonggoDBHelper2 dbHelper) {
         super(context, R.layout.simple_receive_listitem, dbHelper);
     }
 

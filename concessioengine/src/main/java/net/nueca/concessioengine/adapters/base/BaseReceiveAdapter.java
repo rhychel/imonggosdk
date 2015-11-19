@@ -7,7 +7,7 @@ import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
@@ -21,13 +21,13 @@ import java.util.List;
  * Created by gama on 9/3/15.
  */
 public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
-    private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper;
     protected boolean isManual = false, isReview = false;//, isMultiline = false;
     private int listItemRes;
     protected ReceivedProductItemList displayProductListItem = new ReceivedProductItemList();
     protected ReceivedProductItemList receivedProductListItem = new ReceivedProductItemList();
 
-    public BaseReceiveAdapter(Context context, int resource, ImonggoDBHelper dbHelper) {
+    public BaseReceiveAdapter(Context context, int resource, ImonggoDBHelper2 dbHelper) {
         super(context, resource, new ArrayList<DocumentLine>());
         listItemRes = resource;
         setHelper(dbHelper);
@@ -120,7 +120,7 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
 
             Unit unit = null;
             try {
-                unit = getHelper().getUnits().queryBuilder().where().eq("id", product.getUnit_id()).queryForFirst();
+                unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", product.getUnit_id()).queryForFirst();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -169,11 +169,11 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
         return displayProductListItem.size();
     }
 
-    public ImonggoDBHelper getHelper() {
+    public ImonggoDBHelper2 getHelper() {
         return dbHelper;
     }
 
-    public void setHelper(ImonggoDBHelper dbHelper) {
+    public void setHelper(ImonggoDBHelper2 dbHelper) {
         this.dbHelper = dbHelper;
     }
 

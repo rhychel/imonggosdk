@@ -11,7 +11,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseProductsAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 
@@ -29,7 +29,7 @@ public class SimpleProductListAdapter extends BaseProductsAdapter {
         super(context, R.layout.simple_product_listitem, objects);
     }
 
-    public SimpleProductListAdapter(Context context, ImonggoDBHelper dbHelper, List<Product> objects) {
+    public SimpleProductListAdapter(Context context, ImonggoDBHelper2 dbHelper, List<Product> objects) {
         super(context, R.layout.simple_product_listitem, objects);
         setDbHelper(dbHelper);
     }

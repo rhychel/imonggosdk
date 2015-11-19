@@ -11,7 +11,7 @@ import android.util.Log;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
@@ -74,36 +74,36 @@ public class SwableTools {
 	    return false;
 	}
 
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, User user, Object o, OfflineDataType type)
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, User user, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, user, o, type, "");
     }
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, User user, Object o, OfflineDataType type,
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, User user, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
         return sendTransaction(helper, user.getHome_branch_id(), o, type, parameters);
     }
 
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, Session session, Object o, OfflineDataType type)
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, Session session, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, session, o, type, "");
     }
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, Session session, Object o, OfflineDataType type,
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, Session session, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
-        if(helper.getUsers().queryForAll().size() <= 0) {
+        if(helper.fetchObjectsList(User.class).size() <= 0) {
             Log.e("SwableTools", "sendTransaction : no users in table, Users");
             return null;
         }
-        User user = helper.getUsers().queryBuilder().where().eq("email", session.getEmail()).query().get(0);
+        User user = helper.fetchObjects(User.class).queryBuilder().where().eq("email", session.getEmail()).query().get(0);
         return sendTransaction(helper, user.getHome_branch_id(), o, type, parameters);
     }
 
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, int branchId, Object o, OfflineDataType type)
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, int branchId, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, branchId, o, type, "");
     }
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, int branchId, Object o, OfflineDataType type,
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, int branchId, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
         if (type == OfflineDataType.CANCEL_ORDER || type == OfflineDataType.CANCEL_INVOICE ||
@@ -132,7 +132,7 @@ public class SwableTools {
         return offlineData;
     }
 
-    public static void voidTransaction(ImonggoDBHelper helper, String returnId, OfflineDataType type, String reason)
+    public static void voidTransaction(ImonggoDBHelper2 helper, String returnId, OfflineDataType type, String reason)
             throws SQLException {
         if (type == OfflineDataType.SEND_ORDER || type == OfflineDataType.SEND_INVOICE ||
                 type == OfflineDataType.SEND_DOCUMENT) {
@@ -142,7 +142,7 @@ public class SwableTools {
 
         /*List<OfflineData> transactions = helper.getOfflineData().queryBuilder().where().eq("returnId", returnId)
                 .query();*/
-        List<OfflineData> transactions = helper.getOfflineData().queryBuilder().where().like("returnId", "%" +
+        List<OfflineData> transactions = helper.fetchObjects(OfflineData.class).queryBuilder().where().like("returnId", "%" +
                 returnId + "%").query();
         if(transactions == null || transactions.size() <= 0) {
             Log.e("SwableTools", "voidTransaction : offlinedata with return id '" + returnId + "' not found");
@@ -169,7 +169,7 @@ public class SwableTools {
         forVoid.updateTo(helper);
     }
 
-    public static void voidTransaction(ImonggoDBHelper helper, OfflineData offlineData, OfflineDataType type, String reason)
+    public static void voidTransaction(ImonggoDBHelper2 helper, OfflineData offlineData, OfflineDataType type, String reason)
             throws SQLException {
         if (type == OfflineDataType.SEND_ORDER || type == OfflineDataType.SEND_INVOICE ||
                 type == OfflineDataType.SEND_DOCUMENT) {
@@ -324,8 +324,8 @@ public class SwableTools {
      *      .queue();
      */
     public static class Transaction {
-        private ImonggoDBHelper helper;
-        public Transaction(ImonggoDBHelper helper) {
+        private ImonggoDBHelper2 helper;
+        public Transaction(ImonggoDBHelper2 helper) {
             this.helper = helper;
         }
 
@@ -342,10 +342,10 @@ public class SwableTools {
 
         public static class CancelTransaction {
             private OfflineData offlineData;
-            private ImonggoDBHelper helper;
+            private ImonggoDBHelper2 helper;
             private String reason = "";
 
-            CancelTransaction(ImonggoDBHelper helper) {
+            CancelTransaction(ImonggoDBHelper2 helper) {
                 this.helper = helper;
             }
 
@@ -355,7 +355,7 @@ public class SwableTools {
             }
 
             public CancelTransaction objectContainingReturnId(String returnId) throws SQLException {
-                List<OfflineData> transactions = helper.getOfflineData().queryBuilder().where().like("returnId", "%" +
+                List<OfflineData> transactions = helper.fetchObjects(OfflineData.class).queryBuilder().where().like("returnId", "%" +
                         returnId + "%").query();
 
                 if(transactions == null || transactions.size() == 0)
@@ -429,11 +429,11 @@ public class SwableTools {
 
         public static class SendTransaction {
             private OfflineData offlineData;
-            private ImonggoDBHelper helper;
+            private ImonggoDBHelper2 helper;
             private Integer branchId;
             private String parameter = "";
 
-            SendTransaction(ImonggoDBHelper helper) {
+            SendTransaction(ImonggoDBHelper2 helper) {
                 this.helper = helper;
             }
 
@@ -504,7 +504,7 @@ public class SwableTools {
 
         public static class DirectTransaction {
             private OfflineData offlineData;
-            private ImonggoDBHelper helper;
+            private ImonggoDBHelper2 helper;
             private int type = -1; // 0 - cancel | 1 - send
 
             private Server server;
@@ -513,7 +513,7 @@ public class SwableTools {
             private RequestQueue queue;
             private Context context;
 
-            DirectTransaction(OfflineData offlineData, ImonggoDBHelper helper, int type) {
+            DirectTransaction(OfflineData offlineData, ImonggoDBHelper2 helper, int type) {
                 this.offlineData = offlineData;
                 this.helper = helper;
                 this.type = type;

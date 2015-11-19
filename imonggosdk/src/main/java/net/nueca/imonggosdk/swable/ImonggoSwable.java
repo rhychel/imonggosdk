@@ -62,7 +62,7 @@ public class ImonggoSwable extends SwableService {
     protected User getUser() {
         if(user == null) {
             try {
-                user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
+                user = getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
             }
             catch (SQLException e) {
                 e.printStackTrace();
@@ -131,7 +131,7 @@ public class ImonggoSwable extends SwableService {
                     //NOTIFICATION_ID++;
 
                     List<OfflineData> offlineDataList =
-                        getHelper().getOfflineData().queryBuilder().where()
+                        getHelper().fetchObjects(OfflineData.class).queryBuilder().where()
                                 .eq("isSynced", false).and()
                                 .eq("isSyncing", false).and()
                                 .eq("isQueued", false).and()

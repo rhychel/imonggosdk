@@ -15,7 +15,7 @@ import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.SelectedProductItem;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -30,7 +30,7 @@ import me.grantland.widget.AutofitTextView;
 public class SimpleSalesProductRecyclerAdapter extends BaseProductsRecyclerAdapter
         <SimpleSalesProductRecyclerAdapter.ListViewHolder> {
 
-    public SimpleSalesProductRecyclerAdapter(Context context, ImonggoDBHelper dbHelper, List<Product> productsList) {
+    public SimpleSalesProductRecyclerAdapter(Context context, ImonggoDBHelper2 dbHelper, List<Product> productsList) {
         super(context, dbHelper, productsList);
     }
 

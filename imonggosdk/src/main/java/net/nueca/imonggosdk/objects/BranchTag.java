@@ -4,8 +4,10 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
@@ -14,7 +16,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class BranchTag {
+public class BranchTag extends DBTable {
 
     @DatabaseField(generatedId=true)
     private int id;
@@ -101,5 +103,32 @@ public class BranchTag {
             updateTo(dbHelper);
         else if(databaseOperation == DatabaseOperation.DELETE)
             deleteTo(dbHelper);
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.insert(BranchTag.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.delete(BranchTag.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.update(BranchTag.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -17,6 +17,7 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
+import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -165,72 +166,72 @@ public abstract class BaseSyncService extends ImonggoService {
         switch (table) {
             case USERS: {
                 User user = (User) o;
-                return getHelper().getUsers().queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
             }
             case PRODUCTS: {
                 Product product = (Product) o;
-                return getHelper().getProducts().queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
             }
             case UNITS: {
                 Unit unit = (Unit) o;
-                return getHelper().getUnits().queryBuilder().where().eq("id", unit.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit.getId()).queryForFirst() != null;
             }
             case BRANCHES: {
                 Branch branch = (Branch) o;
-                return getHelper().getBranches().queryBuilder().where().eq("id", branch.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", branch.getId()).queryForFirst() != null;
             }
             case BRANCH_PRICES: {
                 BranchPrice branchPrice = (BranchPrice) o;
-                return getHelper().getBranchPrices().queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(BranchPrice.class).queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
             }
             case BRANCH_TAGS: {
                 BranchTag branchTag = (BranchTag) o;
-                return getHelper().getBranchTags().queryBuilder().where().eq("id", branchTag.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(BranchTag.class).queryBuilder().where().eq("id", branchTag.getId()).queryForFirst() != null;
             }
             case CUSTOMERS: {
                 Customer customer = (Customer) o;
-                return getHelper().getCustomers().queryBuilder().where().eq("id", customer.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", customer.getId()).queryForFirst() != null;
             }
             case INVENTORIES: {
                 Inventory inventory = (Inventory) o;
-                return getHelper().getInventories().queryBuilder().where().eq("id", inventory.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Inventory.class).queryBuilder().where().eq("id", inventory.getId()).queryForFirst() != null;
             }
             case TAX_SETTINGS: {
                 TaxSetting taxSetting = (TaxSetting) o;
-                return getHelper().getTaxSettings().queryBuilder().where().eq("id", taxSetting.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(TaxSetting.class).queryBuilder().where().eq("id", taxSetting.getId()).queryForFirst() != null;
             }
             case TAX_RATES: {
-                return getHelper().getTaxRates().queryBuilder().where().eq("tax_rate_id", id).queryForFirst() != null;
+                return getHelper().fetchObjects(TaxRate.class).queryBuilder().where().eq("tax_rate_id", id).queryForFirst() != null;
             }
             case PRODUCT_TAX_RATES: {
                 ProductTaxRateAssoc productTaxRateAssoc = (ProductTaxRateAssoc) o;
-                return getHelper().getProductTaxRateAssocs().queryBuilder().where().eq("id", productTaxRateAssoc.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(ProductTaxRateAssoc.class).queryBuilder().where().eq("id", productTaxRateAssoc.getId()).queryForFirst() != null;
             }
             case DOCUMENT_PURPOSES: {
                 DocumentPurpose documentPurpose = (DocumentPurpose) o;
-                return getHelper().getDocumentPurposes().queryBuilder().where().eq("id", documentPurpose.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(DocumentPurpose.class).queryBuilder().where().eq("id", documentPurpose.getId()).queryForFirst() != null;
             }
             case DOCUMENT_TYPES: {
                 DocumentType documentType = (DocumentType) o;
-                return getHelper().getDocumentTypes().queryBuilder().where().eq("id", documentType.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(DocumentType.class).queryBuilder().where().eq("id", documentType.getId()).queryForFirst() != null;
             }
             case PRODUCT_TAGS: {
                 ProductTag productTag = (ProductTag) o;
-                return getHelper().getProductTags().queryBuilder().where().eq("id", productTag.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("id", productTag.getId()).queryForFirst() != null;
             }
             case DOCUMENTS: {
                 Document document = (Document) o;
-                return getHelper().getDocuments().queryBuilder().where().eq("id", document.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Document.class).queryBuilder().where().eq("id", document.getId()).queryForFirst() != null;
             }
             case DAILY_SALES: {
 
                 DailySales dailySales = (DailySales) o;
 
                 if (dailySalesEnums == DailySalesEnums.DATE_OF_DAILY_SALES) {
-                    return getHelper().getDailySales().queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst() != null;
+                    return getHelper().fetchObjects(DailySales.class).queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst() != null;
                 } else if (dailySalesEnums == DailySalesEnums.DATE_REQUESTED) {
 
-                    DailySales dailySalesDB = getHelper().getDailySales().queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst();
+                    DailySales dailySalesDB = getHelper().fetchObjects(DailySales.class).queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst();
 
                     if (dailySalesDB != null) {
                         Log.e(TAG, "daily sales db: " + dailySalesDB.toString());
