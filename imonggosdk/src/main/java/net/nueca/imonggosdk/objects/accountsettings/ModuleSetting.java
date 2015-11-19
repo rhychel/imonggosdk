@@ -40,7 +40,7 @@ public class ModuleSetting extends DBTable {
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "manual_id")
     private transient Manual manual;
     @ForeignCollectionField
-    private transient ForeignCollection<ProductListing> productListings;
+    private transient ForeignCollection<ProductSorting> productSortings;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "debug_id")
     private transient DebugMode debugMode;
 
@@ -133,12 +133,12 @@ public class ModuleSetting extends DBTable {
         this.manual = manual;
     }
 
-    public ForeignCollection<ProductListing> getProductListings() {
-        return productListings;
+    public ForeignCollection<ProductSorting> getProductSortings() {
+        return productSortings;
     }
 
-    public void setProductListings(ForeignCollection<ProductListing> productListings) {
-        this.productListings = productListings;
+    public void setProductSortings(ForeignCollection<ProductSorting> productSortings) {
+        this.productSortings = productSortings;
     }
 
     public DebugMode getDebugMode() {
