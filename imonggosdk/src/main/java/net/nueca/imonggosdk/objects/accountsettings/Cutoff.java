@@ -67,6 +67,22 @@ public class Cutoff extends DBTable {
         this.repeat = repeat;
     }
 
+    public ModuleSetting getModuleSetting() {
+        return moduleSetting;
+    }
+
+    public void setModuleSetting(ModuleSetting moduleSetting) {
+        this.moduleSetting = moduleSetting;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
