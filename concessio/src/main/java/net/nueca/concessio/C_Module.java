@@ -37,6 +37,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
@@ -82,6 +83,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             public void onClick(View v) {
                 Gson gson = new GsonBuilder().serializeNulls().create();
                 Document document = generateDocument(C_Module.this, 341, DocumentTypeCode.RELEASE_SUPPLIER);
+                Extras extras = new Extras();
+                extras.setCustomer_id(182076);
+                document.setExtras(extras);
                 try {
                     JSONObject jsonObject = new JSONObject(gson.toJson(document));
                     Log.e("jsonObject", jsonObject.toString());
@@ -92,12 +96,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                         Log.e("Inventory", inventory.getProduct().getName()+" = "+inventory.getQuantity());
                     }
 
-                    new SwableTools.Transaction(getHelper())
-                            .toSend()
-                            .object(document)
-                            .forBranch(341)
-                            .queue();
-
+//                    new SwableTools.Transaction(getHelper())
+//                            .toSend()
+//                            .object(document)
+//                            .forBranch(341)
+//                            .queue();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (SQLException e) {

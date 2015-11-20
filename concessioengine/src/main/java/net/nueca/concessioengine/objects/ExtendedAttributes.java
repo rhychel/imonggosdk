@@ -1,5 +1,6 @@
 package net.nueca.concessioengine.objects;
 
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 
 /**
@@ -47,8 +48,19 @@ public class ExtendedAttributes {
         return batch_no;
     }
 
-    public DocumentLineExtras convertForDocumentLine() {
+    @Deprecated
+    public DocumentLineExtras convertForDocumentLine_old() {
         return new DocumentLineExtras.Builder()
+                .brand(getBrand())
+                .delivery_date(delivery_date)
+                .batch_no(batch_no)
+                .outright_return(outright_return)
+                .discrepancy(discrepancy)
+                .build();
+    }
+
+    public Extras convertForDocumentLine() {
+        return new Extras.Builder()
                 .brand(getBrand())
                 .delivery_date(delivery_date)
                 .batch_no(batch_no)

@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects.base;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -24,37 +25,51 @@ import java.sql.SQLException;
 public class Extras extends DBTable {
 
     @DatabaseField(id = true)
-    private String id;
+    private transient String id;
 
     // Product
+    @Expose
     @DatabaseField
-    private boolean batch_maintained; // true || false
+    private Boolean batch_maintained; // true || false
 
     // DocumentLine
+    @Expose
     @DatabaseField
     private String batch_no;
+    @Expose
     @DatabaseField
     private String delivery_date;
+    @Expose
     @DatabaseField
     private String brand;
+    @Expose
     @DatabaseField
     private String outright_return;
+    @Expose
     @DatabaseField
     private String discrepancy;
+    @Expose
+    @DatabaseField
+    private Integer customer_id;
 
     // Invoice
+    @Expose
     @DatabaseField
     private String longitude;
+    @Expose
     @DatabaseField
     private String latitude;
 
     // Customer
+    @Expose
     @DatabaseField
     private String checkin_count;
+    @Expose
     @DatabaseField
     private String last_checkin_at;
 
     // DocumentPurpose
+    @Expose
     @DatabaseField
     private String requires_expiry_date; // true || false
 
@@ -67,7 +82,7 @@ public class Extras extends DBTable {
     private transient Product product;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
     private transient Invoice invoice;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_id")
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_fr_id")
     private transient Customer customer;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
     private transient CustomerCategory customerCategory; // customer_type // (?)
@@ -78,6 +93,29 @@ public class Extras extends DBTable {
 
     public Extras(String tableName, int tableId) {
         this.id = tableName+"_"+tableId;
+    }
+
+    protected Extras(Builder builder) {
+        documentLine = builder.documentLine;
+        routePlan = builder.routePlan;
+        product = builder.product;
+        invoice = builder.invoice;
+        customer = builder.customer;
+        customerCategory = builder.customerCategory;
+        user = builder.user;
+        id = builder.id;
+        batch_maintained = builder.batch_maintained;
+        customer_id = builder.customer_id;
+        longitude = builder.longitude;
+        latitude = builder.latitude;
+        checkin_count = builder.checkin_count;
+        last_checkin_at = builder.last_checkin_at;
+        requires_expiry_date = builder.requires_expiry_date;
+        delivery_date = builder.delivery_date;
+        brand = builder.brand;
+        batch_no = builder.batch_no;
+        outright_return = builder.outright_return;
+        discrepancy = builder.discrepancy;
     }
 
     public String getId() {
@@ -220,20 +258,28 @@ public class Extras extends DBTable {
         this.batch_no = batch_no;
     }
 
-    public boolean isBatch_maintained() {
-        return batch_maintained;
-    }
-
-    public void setBatch_maintained(boolean batch_maintained) {
-        this.batch_maintained = batch_maintained;
-    }
-
     public RoutePlan getRoutePlan() {
         return routePlan;
     }
 
     public void setRoutePlan(RoutePlan routePlan) {
         this.routePlan = routePlan;
+    }
+
+    public Integer getCustomer_id() {
+        return customer_id;
+    }
+
+    public void setCustomer_id(Integer customer_id) {
+        this.customer_id = customer_id;
+    }
+
+    public Boolean isBatch_maintained() {
+        return batch_maintained;
+    }
+
+    public void setBatch_maintained(Boolean batch_maintained) {
+        this.batch_maintained = batch_maintained;
     }
 
     @Override
@@ -267,5 +313,150 @@ public class Extras extends DBTable {
         void insertExtrasTo(ImonggoDBHelper2 dbHelper);
         void deleteExtrasTo(ImonggoDBHelper2 dbHelper);
         void updateExtrasTo(ImonggoDBHelper2 dbHelper);
+    }
+
+
+    public static class Builder {
+        protected Boolean batch_maintained; // true || false
+        protected Integer customer_id;
+        protected String longitude;
+        protected String latitude;
+        protected String checkin_count;
+        protected String last_checkin_at;
+        protected String requires_expiry_date; // true || false
+        protected String id;
+        protected DocumentLine documentLine;
+        protected RoutePlan routePlan;
+        protected Product product;
+        protected Invoice invoice;
+        protected Customer customer;
+        protected CustomerCategory customerCategory;
+        protected User user;
+
+        protected String delivery_date;
+        protected String brand;
+        protected String batch_no;
+        protected String outright_return;
+        protected String discrepancy;
+
+        public Builder route_plan(RoutePlan routePlan) {
+            this.routePlan = routePlan;
+            return this;
+        }
+
+        public Builder product(Product product) {
+            this.product = product;
+            return this;
+        }
+
+        public Builder invoice(Invoice invoice) {
+            this.invoice = invoice;
+            return this;
+        }
+
+        public Builder customer(Customer customer) {
+            this.customer = customer;
+            return this;
+        }
+
+        public Builder customer_category(CustomerCategory customerCategory) {
+            this.customerCategory = customerCategory;
+            return this;
+        }
+
+        public Builder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public Builder document_line(DocumentLine documentLine) {
+            this.documentLine = documentLine;
+            return this;
+        }
+
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder delivery_date(String delivery_date) {
+            this.delivery_date = delivery_date;
+            return this;
+        }
+        public Builder brand(String brand) {
+            this.brand = brand;
+            return this;
+        }
+        public Builder batch_no(String batch_no) {
+            this.batch_no = batch_no;
+            return this;
+        }
+        public Builder outright_return(String outright_return) {
+            this.outright_return = outright_return;
+            return this;
+        }
+        public Builder discrepancy(String discrepancy) {
+            this.discrepancy = discrepancy;
+            return this;
+        }
+
+        public Builder batch_maintained(Boolean batch_maintained) {
+            this.batch_maintained = batch_maintained;
+            return this;
+        }
+
+        public Builder customer_id(Integer customer_id) {
+            this.customer_id = customer_id;
+            return this;
+        }
+
+        public Builder longitude(String longitude) {
+            this.longitude = longitude;
+            return this;
+        }
+
+        public Builder latitude(String latitude) {
+            this.latitude = latitude;
+            return this;
+        }
+
+        public Builder checkin_count(String checkin_count) {
+            this.checkin_count = checkin_count;
+            return this;
+        }
+
+        public Builder last_checkin_at(String last_checkin_at) {
+            this.last_checkin_at = last_checkin_at;
+            return this;
+        }
+
+        public Builder requires_expiry_date(String requires_expiry_date) {
+            this.requires_expiry_date = requires_expiry_date;
+            return this;
+        }
+
+        public boolean isEmpty() {
+            return  delivery_date == null &&
+                    brand == null &&
+                    batch_no == null &&
+                    outright_return == null &&
+                    discrepancy == null &&
+                    batch_maintained == null &&
+                    customer_id == null &&
+                    longitude == null &&
+                    latitude == null &&
+                    checkin_count == null &&
+                    last_checkin_at == null &&
+                    requires_expiry_date == null;
+        }
+
+        public Extras buildIfNotEmpty() {
+            if(isEmpty())
+                return null;
+            return new Extras(this);
+        }
+        public Extras build() {
+            return new Extras(this);
+        }
     }
 }

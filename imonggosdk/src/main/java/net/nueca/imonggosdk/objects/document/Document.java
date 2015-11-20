@@ -79,6 +79,8 @@ public class Document extends BaseTransactionTable {
     @DatabaseField
     protected transient boolean isOldPaging = false;
 
+    // Added by Rhy
+
     public Document() {
         //super(null);
         //remark = "page=1/1";
