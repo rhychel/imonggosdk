@@ -12,6 +12,8 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
@@ -47,6 +49,13 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     private CustomerCategory customerCategory; // customer_type_id (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private RoutePlan routePlan;
+    @ForeignCollectionField
+    private ForeignCollection<Invoice> invoices;
+    @ForeignCollectionField
+    private ForeignCollection<Document> documents;
+
+    public Customer() {
+    }
 
     public int getPoint_to_amount_ratio() {
         return point_to_amount_ratio;
@@ -334,6 +343,22 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     public void setRoutePlan(RoutePlan routePlan) {
         this.routePlan = routePlan;
+    }
+
+    public ForeignCollection<Invoice> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(ForeignCollection<Invoice> invoices) {
+        this.invoices = invoices;
+    }
+
+    public ForeignCollection<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(ForeignCollection<Document> documents) {
+        this.documents = documents;
     }
 
     @Override
