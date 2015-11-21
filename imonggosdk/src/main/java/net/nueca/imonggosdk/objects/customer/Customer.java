@@ -40,19 +40,19 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @DatabaseField
     private transient boolean is_favorite = false;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "price_list_id")
-    private PriceList priceList;
+    private transient PriceList priceList;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")
-    private Branch branch;
+    private transient Branch branch;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_terms_id")
-    private PaymentTerms paymentTerms;
+    private transient PaymentTerms paymentTerms;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
-    private CustomerCategory customerCategory; // customer_type_id (?)
+    private transient CustomerCategory customerCategory; // customer_type_id (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
-    private RoutePlan routePlan;
+    private transient RoutePlan routePlan;
     @ForeignCollectionField
-    private ForeignCollection<Invoice> invoices;
+    private transient ForeignCollection<Invoice> invoices;
     @ForeignCollectionField
-    private ForeignCollection<Document> documents;
+    private transient ForeignCollection<Document> documents;
 
     public Customer() {
     }
