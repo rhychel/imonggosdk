@@ -32,7 +32,7 @@ public class C_HistoryDetails extends ImonggoAppCompatActivity {
         selectedProductItems = ProductsAdapterHelper.getSelectedProductItems();
 
         ProductsAdapterHelper.getSelectedProductItems().clear();
-        try {
+        /*try {
             offlineData = getHelper().getOfflineData().queryBuilder()
                     .where()
                         .eq("id", getIntent().getIntExtra(SimpleTransactionDetailsFragment.TRANSACTION_ID, -1))
@@ -51,7 +51,7 @@ public class C_HistoryDetails extends ImonggoAppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.flContent, simpleTransactionDetailsFragment).commit();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override

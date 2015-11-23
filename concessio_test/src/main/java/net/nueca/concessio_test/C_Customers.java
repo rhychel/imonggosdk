@@ -13,10 +13,13 @@ import net.nueca.concessioengine.fragments.AddCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
-
+import java.util.List;
 
 public class C_Customers extends ImonggoAppCompatActivity implements SetupActionBar {
 
@@ -30,6 +33,35 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
         super.onCreate(savedInstanceState);
         initComponents();
         Log.e(TAG, "Customers Activity");
+
+
+        try {
+            List<CustomerGroup> customerGroup = getHelper().fetchObjectsList(CustomerGroup.class);
+            List<PriceList> priceLists = getHelper().fetchObjectsList(PriceList.class);
+
+            for(PriceList pl : priceLists) {
+                if(pl != null)
+                Log.e(TAG, "price_list: " + pl.toString());
+            }
+
+            /*
+            for (CustomerGroup cg : customerGroup) {
+                Log.e(TAG, "[\n\t{");
+                Log.e(TAG, "\t\tutc_created_at: " + cg.getUtc_created_at());
+                Log.e(TAG, "\t\tname: " + cg.getName());
+                Log.e(TAG, "\t\tutc_updated_at: " + cg.getUtc_updated_at());
+                Log.e(TAG, "\t\tcode: " + cg.getCode());
+                Log.e(TAG, "\t\tdiscount_text: " + cg.getDiscount_text());
+                Log.e(TAG, "\t\tid: " + cg.getId());
+*//*                if (cg.getPriceList() != null)
+                    Log.e(TAG, "\t\tprice_list_id: " + cg.getPriceList().getId());
+                else
+                    Log.e(TAG, "price_list_id: " )*//*
+                Log.e(TAG, "\t},");
+            }*/
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initComponents() {
@@ -62,7 +94,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
             getMenuInflater().inflate(R.menu.simple_customers_menu, menu);
             getSupportActionBar().setTitle("Customers");
             menu.findItem(R.id.mSearch).setVisible(false);
-        } else if(CurrentView.equals("Add Customers")) {
+        } else if (CurrentView.equals("Add Customers")) {
             getSupportActionBar().setTitle("Add Customers");
             getMenuInflater().inflate(R.menu.simple_add_customers_menu, menu);
         }
@@ -88,9 +120,19 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                 break;
 
             case net.nueca.concessioengine.R.id.mAddCustomerOkay:
-                Toast.makeText(C_Customers.this, "Adding Customers", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Add Customer");
 
-                onBackPressed();
+                if (addCustomersFragment != null) {
+
+                    if (addCustomersFragment.validateCustomerInput()) {
+                        addCustomersFragment.getCustomerData();
+                    }
+
+                } else {
+                    Log.e(TAG, "Fragment is Null!");
+                }
+
+               /* onBackPressed();*/
                 break;
             case net.nueca.concessioengine.R.id.mUnlink:
                 unlinkDevice();
@@ -118,7 +160,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
     public void onBackPressed() {
         super.onBackPressed();
 
-        if(CurrentView.equals("Add Customers"))
+        if (CurrentView.equals("Add Customers"))
             CurrentView = "Customers";
     }
 }

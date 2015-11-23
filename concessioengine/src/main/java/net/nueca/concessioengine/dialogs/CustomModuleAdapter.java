@@ -46,8 +46,6 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
             holder.showCircularProgressBar();
         }
 
-        Log.e("CustomModuleAdapter", getRetryButtonStatus(position) + " <<<<");
-
         if(getRetryButtonStatus(position)){
             holder.showRetryButton();
         }
@@ -185,5 +183,4 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
             updateRetryButton(position, true);
         }
     }
-
 }

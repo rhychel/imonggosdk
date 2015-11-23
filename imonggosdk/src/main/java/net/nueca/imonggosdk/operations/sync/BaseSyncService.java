@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.operations.sync;
 
+import android.content.ContentUris;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Bundle;
@@ -29,9 +30,13 @@ import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
+import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -163,6 +168,9 @@ public abstract class BaseSyncService extends ImonggoService {
      * @throws SQLException
      */
     public boolean isExisting(Object o, int id, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
+
+
+
         switch (table) {
             case USERS: {
                 User user = (User) o;
@@ -222,6 +230,22 @@ public abstract class BaseSyncService extends ImonggoService {
             case DOCUMENTS: {
                 Document document = (Document) o;
                 return getHelper().fetchObjects(Document.class).queryBuilder().where().eq("id", document.getId()).queryForFirst() != null;
+            }
+            case INVOICES: {
+                Invoice invoice = (Invoice) o;
+                return getHelper().fetchObjects(Invoice.class).queryBuilder().where().eq("id", invoice.getId()).queryForFirst() != null;
+            }
+            case INVOICE_PURPOSES: {
+                InvoicePurpose invoicePurpose = (InvoicePurpose) o;
+                return getHelper().fetchObjects(InvoicePurpose.class).queryBuilder().where().eq("id", invoicePurpose.getId()).queryForFirst() != null;
+            }
+            case PRICE_LISTS: {
+                PriceList priceList = (PriceList) o;
+                return getHelper().fetchObjects(InvoicePurpose.class).queryBuilder().where().eq("id", priceList.getId()).queryForFirst() != null;
+            }
+            case CUSTOMER_GROUPS: {
+                CustomerGroup customerGroup = (CustomerGroup) o;
+                return getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroup.getId()).queryForFirst() != null;
             }
             case DAILY_SALES: {
 

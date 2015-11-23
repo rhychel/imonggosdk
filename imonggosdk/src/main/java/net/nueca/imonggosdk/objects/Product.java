@@ -71,6 +71,9 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     @ForeignCollectionField
     private transient ForeignCollection<DocumentLine> documentLines;
 
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchPrice> branchPrices;
+
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
     private Inventory inventory;
 
@@ -344,6 +347,14 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
+    }
+
+    public ForeignCollection<BranchPrice> getBranchPrices() {
+        return branchPrices;
+    }
+
+    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
+        this.branchPrices = branchPrices;
     }
 
     @Override

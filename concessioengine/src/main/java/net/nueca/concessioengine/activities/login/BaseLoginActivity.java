@@ -277,8 +277,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mModulesToDownload = new ArrayList<>();
             }
 
-            for (int module : getModules()) {
 
+            for (int module : getModules()) {
                 for (Table table : Table.values()) {
                     if (module == table.ordinal()) {
                         switch (table) {
@@ -318,9 +318,21 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             case SETTINGS:
                                 mModulesToDownload.add("Settings");
                                 break;
+                            case INVOICES:
+                                mModulesToDownload.add("Invoices");
+                                break;
+                            case INVOICE_PURPOSES:
+                                mModulesToDownload.add("Invoice Purposes");
+                                break;
+                            case CUSTOMER_GROUPS:
+                                mModulesToDownload.add("Customer Groups");
+                                break;
+                            case PRICE_LISTS:
+                                mModulesToDownload.add("Price Lists");
+                                break;
                             default:
                                 LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
-                                Log.e(TAG, "You have added unsupported module. please check your code");
+                                Log.i(TAG, "You have added unsupported module. please check your code. " + table);
                                 break;
                         }
                     }
@@ -465,12 +477,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 etAccountID.setError(getString(R.string.LOGIN_FIELD_REQUIRED));
                 focusView = etAccountID;
                 cancelLogin = true;
-            } else if (TextUtils.isEmpty(email)) { // EMAIL
-                etEmail.setError(getString(R.string.LOGIN_FIELD_REQUIRED));
-                focusView = etEmail;
-                cancelLogin = true;
             } else if (!LoginTools.isValidEmail(email)) {
                 etEmail.setError(getString(R.string.LOGIN_INVALID_EMAIL));
+                focusView = etEmail;
+                cancelLogin = true;
+            } else if (TextUtils.isEmpty(email)) { // EMAIL
+                etEmail.setError(getString(R.string.LOGIN_FIELD_REQUIRED));
                 focusView = etEmail;
                 cancelLogin = true;
             }
@@ -564,7 +576,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
                             getCustomDialogFrameLayout().getCustomModuleAdapter().hideRetryButton(mModulesToDownload.indexOf(getStringOfCurrentTable(table)));
 
-                            mLoginState = LoginState.LOGIN_DOWNLOADING;
+                            mLoginState = LoginState.LOGIN_DOWNLOADING_DATA;
                             mSyncModules.startFetchingModules();
                         } else {
                             Log.e(TAG, "oops");
@@ -1001,6 +1013,18 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     case SETTINGS:
                         currentTable = "Settings";
                         break;
+                    case INVOICES:
+                        currentTable = "Invoices";
+                        break;
+                    case INVOICE_PURPOSES:
+                        currentTable = "Invoice Purposes";
+                        break;
+                    case CUSTOMER_GROUPS:
+                        currentTable = "Customer Groups";
+                        break;
+                    case PRICE_LISTS:
+                        currentTable = "Price Lists";
+                        break;
                     default:
                         break;
                 }
@@ -1014,15 +1038,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     public void onStartDownload(Table table) {
         setSyncFinished(BaseLoginActivity.this, false);
         Log.e(TAG, "onStartDownload");
-        mLoginState = LoginState.LOGIN_DOWNLOADING;
+        mLoginState = LoginState.LOGIN_DOWNLOADING_DATA;
     }
 
     @Override
     public void onDownloadProgress(Table table, int page, int max) {
         Log.e(TAG, "Downloading " + table + " " + page + " out of " + max);
+        int progress = 0;
         String currentTable = getStringOfCurrentTable(table);
-
-        int progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
+        
+        progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
 
         Log.e(TAG, table + " progress: " + progress);
         if (isUsingDefaultCustomDialogForSync()) {

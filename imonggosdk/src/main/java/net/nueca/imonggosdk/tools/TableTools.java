@@ -5,6 +5,10 @@ import net.nueca.imonggosdk.enums.Table;
 /**
  * Created by Jn on 17/11/15.
  * imonggosdk (c)2015
+ *
+ * returns enum TABLE equivalent of String
+ * e.g. 1 input: branch_prices, output: Table.BRANCH_PRICES
+ * e.g. 2 input: branch prices, output: Table.BRANCH_PRICES
  */
 public class TableTools {
 

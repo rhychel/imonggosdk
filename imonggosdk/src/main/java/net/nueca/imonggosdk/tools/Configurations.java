@@ -21,6 +21,7 @@ public class Configurations {
     private static String EMAIL_CACHE = "email_cache";
 
     private static SharedPreferences imonggoPreference;
+
     public static void initializePreference(Context context) {
         imonggoPreference = PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -78,8 +79,8 @@ public class Configurations {
             put(Table.DOCUMENTS, "documents.json");
             put(Table.DOCUMENT_TYPES, "document_types.json");
             put(Table.DOCUMENT_PURPOSES, "document_purposes.json");
-			put(Table.INVOICES, "invoices.json");
-			put(Table.DOCUMENTS, "documents.json");
+            put(Table.INVOICES, "invoices.json");
+            put(Table.DOCUMENTS, "documents.json");
             put(Table.ORDERS, "orders.json");
             put(Table.DAILY_SALES, "daily_sales/");
 
@@ -89,9 +90,8 @@ public class Configurations {
             put(Table.CUSTOMER_CATEGORIES, "customer_categories.json");
             put(Table.PAYMENT_TYPES, "payment_types.json");
 
-            /*put(Modules.CONCESSIO_SETTINGS, "application_settings/concesio.json");
-            put(Modules.POS_DEVICES, "pos_devices.json");
-            put(Modules.SALES_PROMOTIONS, "sales_promotions.json");*/
+            put(Table.CUSTOMER_GROUPS, "customer_groups.json");
+            put(Table.PRICE_LISTS, "price_lists.json");
 
         }
     };
@@ -117,13 +117,9 @@ public class Configurations {
             put(Table.DOCUMENT_TYPES, "document_types.json");
             put(Table.DOCUMENT_PURPOSES, "document_purposes.json");
             put(Table.ORDERS, "orders.json");
-            /*put(Modules.CONCESSIO_SETTINGS, "application_settings/concesio.json");
-            put(Modules.POS_DEVICES, "pos_devices.json");
-            put(Modules.SALES_PROMOTIONS, "sales_promotions.json");*/
-
             put(Table.INVOICES, "invoices");
             put(Table.DOCUMENTS, "documents");
-			put(Table.ORDERS, "orders");
+            put(Table.ORDERS, "orders");
             put(Table.APPLICATION_SETTINGS, "application_settings");
 
             // FOR REBISCO
@@ -131,10 +127,10 @@ public class Configurations {
             put(Table.PAYMENT_TERMS, "payment_terms");
             put(Table.CUSTOMER_CATEGORIES, "customer_categories");
             put(Table.PAYMENT_TYPES, "payment_types");
-//            put(Modules.CONCESSIO_SETTINGS, "application_settings");
-//            put(Modules.DISCOUNTS, "sales_promotions");
-//            put(Modules.DOCUMENT_TYPES, "document_types");
-//            put(Modules.DOCUMENT_PURPOSES, "document_purposes");
+
+            put(Table.CUSTOMER_GROUPS, "customer_groups.json");
+            put(Table.PRICE_LISTS, "price_list.json");
+
         }
     };
 

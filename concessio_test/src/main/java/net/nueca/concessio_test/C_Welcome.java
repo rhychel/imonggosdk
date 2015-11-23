@@ -82,7 +82,7 @@ public class C_Welcome extends ModuleActivity {
                 Intent intent = new Intent(C_Welcome.this, C_Dashboard.class);
                 startActivity(intent);
 
-                try {
+              /*  try {
                     Log.e("Document Query", "start");
                     for(Document document : getHelper().getDocuments().queryForAll()){//.queryBuilder().where()
                             //.eq("intransit_status", "Intransit").and()
@@ -94,7 +94,7 @@ public class C_Welcome extends ModuleActivity {
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
         });
     }

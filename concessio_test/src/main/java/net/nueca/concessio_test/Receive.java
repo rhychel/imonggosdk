@@ -34,6 +34,7 @@ public class Receive extends ModuleActivity implements SetupActionBar {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive);
+/*
 
         try {
             Log.e("Device ID", "" + getSession().getDevice_id());
@@ -87,6 +88,7 @@ public class Receive extends ModuleActivity implements SetupActionBar {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+*/
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
 

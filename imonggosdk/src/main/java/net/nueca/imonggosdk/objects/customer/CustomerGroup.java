@@ -28,6 +28,8 @@ public class CustomerGroup extends BaseTable {
     private String discount_text;
     @DatabaseField
     private String status;
+    @DatabaseField
+    private String code;
 
     public CustomerGroup() { }
 
@@ -61,6 +63,14 @@ public class CustomerGroup extends BaseTable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Override

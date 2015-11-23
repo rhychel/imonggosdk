@@ -38,6 +38,7 @@ import net.nueca.imonggosdk.tools.DialogTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -200,10 +201,16 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             quantityDialog.setSelectedProductItem(selectedProductItem);
             if(hasUnits) {
                 quantityDialog.setHasUnits(true);
-                quantityDialog.setUnitList(getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query(), true);
+//                product.getUnits()
+                // getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query()
+                quantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
+
+                Calendar calendar = Calendar.getInstance();
+                int week = calendar.get(Calendar.WEEK_OF_MONTH);
             }
             if(hasBrand) {
-                List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();
+//                List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();
+                List<ProductTag> tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
                 List<String> brands = new ArrayList<>();
 
                 for(ProductTag productTag : tags)
