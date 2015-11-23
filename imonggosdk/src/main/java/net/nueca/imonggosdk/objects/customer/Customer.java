@@ -49,7 +49,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     private transient CustomerCategory customerCategory; // customer_type_id (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private transient RoutePlan routePlan;
-    @ForeignCollectionField
+    @ForeignCollectionField(orderColumnName = "id")
     private transient ForeignCollection<Invoice> invoices;
     @ForeignCollectionField
     private transient ForeignCollection<Document> documents;
@@ -404,6 +404,19 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         }
 
         return address;
+    }
+
+    public String getLastPurchase() {
+        try {
+            Invoice invoice = invoices.closeableIterator().first();
+            invoices.closeLastIterator();
+
+            if(invoice != null)
+                return invoice.getInvoice_date();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     @Override

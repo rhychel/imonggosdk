@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -62,6 +63,7 @@ import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -71,7 +73,7 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchPrice.class, BranchTag.class, Customer.class,
@@ -208,6 +210,25 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Retrieve a List<D> the foreign collection for a specific table
+     * @param <D>
+     * @return
+     * @throws SQLException
+     */
+    public <D> List<D> fetchForeignCollection(CloseableIterator<D> iterator) throws SQLException {
+        List<D> theList = new ArrayList<>();
+        try {
+            while (iterator.hasNext()) {
+                theList.add(iterator.next());
+            }
+        } finally {
+            iterator.close();
+        }
+
+        return theList;
     }
 
 
