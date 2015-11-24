@@ -8,6 +8,12 @@ import android.view.View;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 11/19/15.
@@ -42,4 +48,26 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
     }
 
     protected abstract Bundle addExtras(ConcessioModule concessioModule);
+
+
+    /**
+     * Generate the user's branches.
+     * @return
+     */
+    public List<Branch> getBranches() {
+        List<Branch> assignedBranches = new ArrayList<>();
+        try {
+            List<BranchUserAssoc> branchUserAssocs = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
+            for(BranchUserAssoc branchUser : branchUserAssocs) {
+                if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
+                    assignedBranches.add(0, branchUser.getBranch());
+                else
+                    assignedBranches.add(branchUser.getBranch());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return assignedBranches;
+    }
+
 }

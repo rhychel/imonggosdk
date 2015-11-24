@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme.Concessio" parent="Theme.AppCompat.Light">
+    <style name="AppTheme.Concessio.Light" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
     </style>
 
-    <style name="AppTheme.Concessio.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Concessio.Light.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="popupTheme">@style/PopupMenu.Concessio</item>
+    </style>
+
+    <style name="AppTheme.Concessio" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="AppTheme.Concessio.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="popupTheme">@style/PopupMenu.Concessio</item>
+    </style>
+
+    <style name="PopupMenu.Concessio" parent="@android:style/Widget.PopupMenu">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textColor">@color/primary_light</item>
+    </style>
+
+    <style name="ThemeOverlay.ActionBar.Concessio" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="LoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/login_default_status_bg</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
         <item name="android:button">@color/primary</item>
     </style>
