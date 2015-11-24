@@ -16,6 +16,10 @@
         app:showAsAction="ifRoom" />
 
 
-
+    <item
+        android:id="@+id/mUnlink"
+        android:icon="@drawable/ic_exit"
+        android:title="Unlink Account"
+        app:showAsAction="ifRoom" />
 
 </menu>

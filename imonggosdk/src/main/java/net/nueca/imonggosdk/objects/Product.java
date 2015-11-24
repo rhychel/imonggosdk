@@ -24,7 +24,10 @@ import java.sql.SQLException;
 public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @DatabaseField
-    protected double cost = 0.0, retail_price = 0.0, wholesale_price = 0.0, wholesale_quantity = 0.0;
+    protected double cost = 0.0,
+            retail_price = 0.0,
+            wholesale_price = 0.0,
+            wholesale_quantity = 0.0;
     @DatabaseField
     protected String quantity = "",
             remaining = "",
