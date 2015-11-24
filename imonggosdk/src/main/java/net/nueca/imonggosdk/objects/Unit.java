@@ -8,6 +8,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import java.sql.SQLException;
 
@@ -16,7 +17,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Unit extends BaseTable {
+public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
 
     @DatabaseField
     private String product_stock_no, status, name, barcode;
@@ -140,5 +141,22 @@ public class Unit extends BaseTable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.setUnit(this);
+        extras.setId(Unit.class.getName().toUpperCase(), id);
+        extras.insertTo(dbHelper);
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.updateTo(dbHelper);
     }
 }

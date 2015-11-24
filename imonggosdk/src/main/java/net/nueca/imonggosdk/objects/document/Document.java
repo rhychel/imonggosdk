@@ -16,6 +16,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.swable.SwableTools;
 
 import org.apache.commons.lang3.StringUtils;
@@ -79,6 +80,11 @@ public class Document extends BaseTransactionTable {
     @DatabaseField
     protected transient boolean isOldPaging = false;
 
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
+    protected transient Customer customer;
+
+    // Added by Rhy
+
     public Document() {
         //super(null);
         //remark = "page=1/1";
@@ -107,6 +113,7 @@ public class Document extends BaseTransactionTable {
         utc_created_at = builder.utc_created_at;
         utc_updated_at = builder.utc_updated_at;
         utc_document_date = builder.utc_document_date;
+        customer = builder.customer;
 
         parent_document_id = builder.parent_document_id;
 
@@ -215,6 +222,14 @@ public class Document extends BaseTransactionTable {
 
     public Integer getParent_document_id() {
         return parent_document_id;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public void setParent_document_id(Integer parent_document_id) {
@@ -374,6 +389,12 @@ public class Document extends BaseTransactionTable {
         protected String utc_updated_at;
         protected String utc_document_date;
         protected Integer parent_document_id;
+        protected Customer customer;
+
+        public Builder customer(Customer customer) {
+            this.customer = customer;
+            return this;
+        }
 
         public Builder parent_document_id(Integer parent_document_id) {
             this.parent_document_id = parent_document_id;

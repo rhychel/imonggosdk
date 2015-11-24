@@ -1,12 +1,13 @@
 package net.nueca.concessio;
 
 import android.content.Intent;
+import android.widget.Button;
+import android.widget.EditText;
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.SettingTools;
@@ -49,7 +50,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? C_Welcome.class : C_Dashboard.class));
+        Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? C_Welcome.class : C_Dashboard_old.class));
         startActivity(intent);
     }
 
@@ -105,6 +106,12 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
+        setContentView(R.layout.c_login);
+
+        setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
+                (EditText)findViewById(R.id.etEmail),
+                (EditText)findViewById(R.id.etPassword),
+                (Button)findViewById(R.id.btnLogin));
 
         setEditTextAccountID("retailpos");
         setEditTextEmail("retailpos@test.com");

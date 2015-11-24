@@ -243,6 +243,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, RequestType.POST);
 
+        Log.e("POST Url", ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.POST,
                 ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter), jsonObject,
                 new Response.Listener<JSONObject>() {

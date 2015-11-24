@@ -112,6 +112,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                         if (selectedProductItem == null) {
                             selectedProductItem = new SelectedProductItem();
                             selectedProductItem.setProduct(product);
+                            selectedProductItem.setInventory(product.getInventory()); // add the inventory object
                         }
                         showQuantityDialog(position, product, selectedProductItem);
                     }
@@ -149,6 +150,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                         if (selectedProductItem == null) {
                             selectedProductItem = new SelectedProductItem();
                             selectedProductItem.setProduct(product);
+                            selectedProductItem.setInventory(product.getInventory()); // add the inventory object
                         }
 
                         showQuantityDialog(position, product, selectedProductItem);
@@ -204,9 +206,6 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 //                product.getUnits()
                 // getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query()
                 quantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
-
-                Calendar calendar = Calendar.getInstance();
-                int week = calendar.get(Calendar.WEEK_OF_MONTH);
             }
             if(hasBrand) {
 //                List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();

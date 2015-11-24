@@ -12,6 +12,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.*;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.price.Price;
 
 import java.sql.SQLException;
 

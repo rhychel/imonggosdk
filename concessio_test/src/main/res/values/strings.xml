@@ -6,4 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_sample_sales">SampleSales</string>
+    <string name="title_activity_card_view_tests">CardViewTests</string>
+    <string name="title_activity_customer_list">CustomerList</string>
 </resources>

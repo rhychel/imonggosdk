@@ -49,6 +49,12 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         concessioModule = ConcessioModule.values()[getIntent().getIntExtra(CONCESSIO_MODULE, ConcessioModule.ORDERS.ordinal())];
     }
 
+    @Override
+    protected void onDestroy() {
+        ProductsAdapterHelper.clearSelectedProductItemList();
+        super.onDestroy();
+    }
+
     protected ModuleSetting getModuleSetting() {
         try {
             return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(concessioModule)).queryForFirst();
@@ -323,6 +329,9 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 updateInventory.setProduct(selectedProductItem.getProduct());
                 updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
                 updateInventory.insertTo(getHelper());
+                Product product = selectedProductItem.getProduct();
+                product.setInventory(updateInventory);
+                product.updateTo(getHelper());
                 updated++;
             }
         }
