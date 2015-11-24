@@ -70,7 +70,7 @@ public class Configurations {
             put(Table.CUSTOMERS, "customers.json");
             put(Table.UNITS, "units.json");
             put(Table.TAX_SETTINGS, "tax_settings.json");
-            put(Table.PRODUCTS, "products.json");
+            put(Table.PRODUCTS, "branch_products.json");
             put(Table.INVENTORIES, "inventories.json");
             put(Table.SETTINGS, "settings.json");
             put(Table.TOKENS, "tokens.json");
@@ -107,7 +107,7 @@ public class Configurations {
             put(Table.CUSTOMERS, "customers.json");
             put(Table.UNITS, "units.json");
             put(Table.TAX_SETTINGS, "tax_settings.json");
-            put(Table.PRODUCTS, "products.json");
+            put(Table.PRODUCTS, "branch_products.json");
             put(Table.INVENTORIES, "inventories.json");
             put(Table.SETTINGS, "settings.json");
             put(Table.TOKENS, "tokens.json");

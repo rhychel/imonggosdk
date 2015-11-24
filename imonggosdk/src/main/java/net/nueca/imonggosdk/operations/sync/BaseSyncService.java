@@ -352,7 +352,6 @@ public abstract class BaseSyncService extends ImonggoService {
 
         // Log.e(TAG, "Current Index: " + mModulesIndex + " Length: " + length + " new length: " + newlength);
 
-
         if (newlength != 0) {
             int x = 0;
             for (int i = mModulesIndex; i < length; i++) {
@@ -362,7 +361,6 @@ public abstract class BaseSyncService extends ImonggoService {
             mModulesToSync = temp;
             //  Log.e(TAG, "Temp length is " + temp.length);
         }
-
 
         // reset variable
         page = 0;

@@ -35,33 +35,6 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
         Log.e(TAG, "Customers Activity");
 
 
-        try {
-            List<CustomerGroup> customerGroup = getHelper().fetchObjectsList(CustomerGroup.class);
-            List<PriceList> priceLists = getHelper().fetchObjectsList(PriceList.class);
-
-            for(PriceList pl : priceLists) {
-                if(pl != null)
-                Log.e(TAG, "price_list: " + pl.toString());
-            }
-
-            /*
-            for (CustomerGroup cg : customerGroup) {
-                Log.e(TAG, "[\n\t{");
-                Log.e(TAG, "\t\tutc_created_at: " + cg.getUtc_created_at());
-                Log.e(TAG, "\t\tname: " + cg.getName());
-                Log.e(TAG, "\t\tutc_updated_at: " + cg.getUtc_updated_at());
-                Log.e(TAG, "\t\tcode: " + cg.getCode());
-                Log.e(TAG, "\t\tdiscount_text: " + cg.getDiscount_text());
-                Log.e(TAG, "\t\tid: " + cg.getId());
-*//*                if (cg.getPriceList() != null)
-                    Log.e(TAG, "\t\tprice_list_id: " + cg.getPriceList().getId());
-                else
-                    Log.e(TAG, "price_list_id: " )*//*
-                Log.e(TAG, "\t},");
-            }*/
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     private void initComponents() {
@@ -125,14 +98,15 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                 if (addCustomersFragment != null) {
 
                     if (addCustomersFragment.validateCustomerInput()) {
+                        // get the data
                         addCustomersFragment.getCustomerData();
+                        onBackPressed();
                     }
 
                 } else {
                     Log.e(TAG, "Fragment is Null!");
                 }
 
-               /* onBackPressed();*/
                 break;
             case net.nueca.concessioengine.R.id.mUnlink:
                 unlinkDevice();

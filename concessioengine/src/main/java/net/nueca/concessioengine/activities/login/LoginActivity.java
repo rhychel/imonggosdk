@@ -55,11 +55,6 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             setIsUsingDefaultLoginLayout(true);
         }
 
-        // TODO: Delete this autofill login data
-        /*  setEditTextAccountID("ourlovelybotique");               // ACCOUNT ID
-        setEditTextEmail("owner@ourlovelybotique.com");             // EMAIL
-        setEditTextPassword("ourlovelybotique");                    // PASSWORD*/
-
         try {
             getHelper().deleteAllDatabaseValues();
         } catch (SQLException e) {

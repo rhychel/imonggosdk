@@ -38,10 +38,10 @@ public class C_Login extends LoginActivity {
         setModulesToSync(
                 Table.USERS.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
-                Table.PRODUCTS.ordinal(),
-                Table.UNITS.ordinal(),
+                Table.PRODUCTS.ordinal());
+             /*   Table.UNITS.ordinal(),
                 Table.CUSTOMER_GROUPS.ordinal(),
-                Table.PRICE_LISTS.ordinal());
+                Table.PRICE_LISTS.ordinal());*/
 
     }
 
