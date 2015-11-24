@@ -57,10 +57,6 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     public Customer() {
     }
 
-    public Customer() {
-
-    }
-
     public Customer(String first_name, String last_name, String name, String company_name, String telephone, String mobile, String fax, String email, String street, String city, String zipcode, String country, String state, String tin, String gender) {
         this.first_name = first_name;
         this.last_name = last_name;
