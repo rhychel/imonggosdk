@@ -55,27 +55,6 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     private transient ForeignCollection<Document> documents;
 
     public Customer() {
-    }
-
-    public Customer(String first_name, String last_name, String name, String company_name, String telephone, String mobile, String fax, String email, String street, String city, String zipcode, String country, String state, String tin, String gender) {
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.name = name;
-        this.company_name = company_name;
-        this.telephone = telephone;
-        this.mobile = mobile;
-        this.fax = fax;
-        this.email = email;
-        this.street = street;
-        this.city = city;
-        this.zipcode = zipcode;
-        this.country = country;
-        this.state = state;
-        this.tin = tin;
-        this.gender = gender;
-    }
-
-    public Customer() {
 
     }
 
