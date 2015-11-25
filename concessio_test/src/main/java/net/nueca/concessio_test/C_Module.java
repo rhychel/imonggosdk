@@ -100,8 +100,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
         switch (concessioModule) {
             case SALES: {
-                simpleProductsFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
-                finalizeFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
+                SimpleSalesProductRecyclerAdapter salesAdapter = new SimpleSalesProductRecyclerAdapter(this, getHelper());
+                try {
+                    salesAdapter.setBranch(getHelper().getDao(Branch.class).queryBuilder().where()
+                            .eq("id", getSession().getCurrent_branch_id()).queryForFirst());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                simpleProductsFragment.setProductsRecyclerAdapter(salesAdapter);
+                finalizeFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this, getHelper()));
             }
             case ORDERS: {
                 simpleProductsFragment.setHasUnits(true);

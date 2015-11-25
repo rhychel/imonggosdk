@@ -84,7 +84,7 @@ public class C_Welcome extends ModuleActivity {
 
                 try {
                     Log.e("Document Query", "start");
-                    for(Document document : getHelper().getDocuments().queryForAll()){//.queryBuilder().where()
+                    for(Document document : getHelper().getDao(Document.class).queryForAll()){//.queryBuilder().where()
                             //.eq("intransit_status", "Intransit").and()
                             //.eq("branch_id", 277).or().eq("target_branch_id", 277).query()) {
                         if(document.getId() == 0)

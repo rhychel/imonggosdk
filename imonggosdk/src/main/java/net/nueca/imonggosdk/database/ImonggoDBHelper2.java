@@ -55,7 +55,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
-import net.nueca.imonggosdk.objects.invoice.SalesPromotion;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.price.Price;
@@ -71,7 +71,7 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 6;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchPrice.class, BranchTag.class, Customer.class,

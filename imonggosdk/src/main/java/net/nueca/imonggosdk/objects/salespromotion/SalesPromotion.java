@@ -190,7 +190,7 @@ public class SalesPromotion extends BaseTable {
             for (Discount discount : discounts) {
                 discount.setSalesPromotion(this);
                 try {
-                    Product product = dbHelper.getProducts().queryBuilder().where().eq("id", discount.getProduct_id())
+                    Product product = dbHelper.getDao(Product.class).queryBuilder().where().eq("id", discount.getProduct_id())
                             .queryForFirst();
                     if (product != null)
                         discount.setProduct(product);
@@ -231,7 +231,7 @@ public class SalesPromotion extends BaseTable {
             for (Discount discount : discounts) {
                 discount.setSalesPromotion(this);
                 try {
-                    Product product = dbHelper.getProducts().queryBuilder().where().eq("id", discount.getProduct_id())
+                    Product product = dbHelper.getDao(Product.class).queryBuilder().where().eq("id", discount.getProduct_id())
                             .queryForFirst();
                     if (product != null)
                         discount.setProduct(product);

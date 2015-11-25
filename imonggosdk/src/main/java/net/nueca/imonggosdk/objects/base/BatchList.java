@@ -10,7 +10,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.customer.Customer;
-import net.nueca.imonggosdk.objects.deprecated.Extras;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
@@ -97,58 +97,8 @@ public class BatchList<T> extends ArrayList<T> {
             Log.e(TAG, "Ooops! There's nothing to " + databaseOperation.toString());
             return;
         }
-        if(get(0) instanceof User) {
-            dbHelper.batchCreateOrUpdateUsers(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Users table");
-        }
-        if(get(0) instanceof Product) {
-            dbHelper.batchCreateOrUpdateProducts(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Product table");
-        }
-        if(get(0) instanceof ProductTag) {
-            dbHelper.batchCreateOrUpdateProductTags(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to ProductTag table");
-        }
-        if(get(0) instanceof Extras) {
-            dbHelper.batchCreateOrUpdateProductExtras(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to ProductExtras table");
-        }
-        if(get(0) instanceof Unit) {
-            dbHelper.batchCreateOrUpdateUnits(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Unit table");
-        }
-        if(get(0) instanceof Branch) {
-            dbHelper.batchCreateOrUpdateBranches(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Branch table");
-        }
-        if(get(0) instanceof BranchTag) {
-            dbHelper.batchCreateOrUpdateBranchTags(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to BranchTag table");
-        }
-        if(get(0) instanceof BranchUserAssoc) {
-            dbHelper.batchCreateOrUpdateBranchUsers(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to BranchUser Assoc table");
-        }
-        if(get(0) instanceof Customer) {
-            dbHelper.batchCreateOrUpdateCustomers(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Customer table");
-        }
-        if(get(0) instanceof Inventory) {
-            dbHelper.batchCreateOrUpdateInventories(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to Inventory table");
-        }
-        if(get(0) instanceof TaxSetting) {
-            dbHelper.batchCreateOrUpdateTaxSettings(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to TaxSetting table");
-        }
-        if(get(0) instanceof TaxRate) {
-            dbHelper.batchCreateOrUpdateTaxRates(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to TaxRate table");
-        }
-        if(get(0) instanceof ProductTaxRateAssoc) {
-            dbHelper.batchCreateOrUpdateProductTaxRates(this, databaseOperation);
-            Log.e(TAG, databaseOperation.toString() + "ING to ProductTaxRate Assoc table");
-        }
+        dbHelper.batchCreateOrUpdateBT(objClass, this, databaseOperation);
+    }
 
     public <T extends BaseTable2> void doOperationBT2(Class<T> objClass) {
         if(dbHelper2 == null)

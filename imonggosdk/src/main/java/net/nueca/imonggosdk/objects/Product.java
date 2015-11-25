@@ -12,6 +12,8 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.*;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.salespromotion.Discount;
 
 import java.sql.SQLException;
@@ -76,6 +78,12 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @ForeignCollectionField
     private transient ForeignCollection<Discount> discounts;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchPrice> branchPrices;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<Price> prices;
 
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
     private Inventory inventory;
@@ -362,6 +370,22 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
+    }
+
+    public ForeignCollection<BranchPrice> getBranchPrices() {
+        return branchPrices;
+    }
+
+    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
+        this.branchPrices = branchPrices;
+    }
+
+    public ForeignCollection<Price> getPrices() {
+        return prices;
+    }
+
+    public void setPrices(ForeignCollection<Price> prices) {
+        this.prices = prices;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package net.nueca.imonggosdk.objects;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -8,6 +10,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.price.Price;
 
 import java.sql.SQLException;
 
@@ -24,6 +27,10 @@ public class Unit extends BaseTable {
     private double cost, quantity, retail_price;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<Price> prices;
+
     @DatabaseField
     private boolean is_default_ordering_unit = false;
 
@@ -103,6 +110,14 @@ public class Unit extends BaseTable {
 
     public void setIs_default_ordering_unit(boolean is_default_ordering_unit) {
         this.is_default_ordering_unit = is_default_ordering_unit;
+    }
+
+    public ForeignCollection<Price> getPrices() {
+        return prices;
+    }
+
+    public void setPrices(ForeignCollection<Price> prices) {
+        this.prices = prices;
     }
 
     @Override

@@ -37,21 +37,21 @@ public class Receive extends ModuleActivity implements SetupActionBar {
 
         try {
             Log.e("Device ID", "" + getSession().getDevice_id());
-            List<Document> documents = getHelper().getDocuments().queryForAll();
+            List<Document> documents = getHelper().getDao(Document.class).queryForAll();
             for(Document doc : documents)
                 if(doc.getDocument_lines().size() >= 30) {
                     Log.e("Doc", doc.getReference());
                     break;
                 }
-            if(getHelper().getDocuments().queryForAll().size() <= 30) {
+            if(getHelper().getDao(Document.class).queryForAll().size() <= 30) {
                 Document document = new Document.Builder()
-                        .id(getHelper().getDocuments().queryForAll().size() + 1)
+                        .id(getHelper().getDao(Document.class).queryForAll().size() + 1)
                         .generateReference(this, getSession().getDevice_id())
                         .document_type_code(DocumentTypeCode.RECEIVE_BRANCH)
                         .target_branch_id(357)
                         .build();
 
-                for (Product product : getHelper().getProducts().queryForAll()) {
+                for (Product product : getHelper().getDao(Product.class).queryForAll()) {
                     document.addDocumentLine(
                             new DocumentLine.Builder()
                                     .autoLine_no()

@@ -75,24 +75,24 @@ public class SwableTools {
 	}
 
     @Deprecated
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, User user, Object o, OfflineDataType type)
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, User user, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, user, o, type, "");
     }
     @Deprecated
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, User user, Object o, OfflineDataType type,
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, User user, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
         return sendTransaction(helper, user.getHome_branch_id(), o, type, parameters);
     }
 
     @Deprecated
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, Session session, Object o, OfflineDataType type)
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, Session session, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, session, o, type, "");
     }
     @Deprecated
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, Session session, Object o, OfflineDataType type,
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, Session session, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
         if(helper.fetchObjectsList(User.class).size() <= 0) {
@@ -104,12 +104,12 @@ public class SwableTools {
     }
 
     @Deprecated
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, int branchId, Object o, OfflineDataType type)
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, int branchId, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, branchId, o, type, "");
     }
     @Deprecated
-    public static OfflineData sendTransaction(ImonggoDBHelper helper, int branchId, Object o, OfflineDataType type,
+    public static OfflineData sendTransaction(ImonggoDBHelper2 helper, int branchId, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
         if (type == OfflineDataType.CANCEL_ORDER || type == OfflineDataType.CANCEL_INVOICE ||
@@ -139,7 +139,7 @@ public class SwableTools {
     }
 
     @Deprecated
-    public static void voidTransaction(ImonggoDBHelper helper, String returnId, OfflineDataType type, String reason)
+    public static void voidTransaction(ImonggoDBHelper2 helper, String returnId, OfflineDataType type, String reason)
             throws SQLException {
         if (type == OfflineDataType.SEND_ORDER || type == OfflineDataType.SEND_INVOICE ||
                 type == OfflineDataType.SEND_DOCUMENT) {
@@ -177,7 +177,7 @@ public class SwableTools {
     }
 
     @Deprecated
-    public static void voidTransaction(ImonggoDBHelper helper, OfflineData offlineData, OfflineDataType type, String reason)
+    public static void voidTransaction(ImonggoDBHelper2 helper, OfflineData offlineData, OfflineDataType type, String reason)
             throws SQLException {
         if (type == OfflineDataType.SEND_ORDER || type == OfflineDataType.SEND_INVOICE ||
                 type == OfflineDataType.SEND_DOCUMENT) {

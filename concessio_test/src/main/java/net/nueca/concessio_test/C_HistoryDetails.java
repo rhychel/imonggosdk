@@ -33,7 +33,7 @@ public class C_HistoryDetails extends ImonggoAppCompatActivity {
 
         ProductsAdapterHelper.getSelectedProductItems().clear();
         try {
-            offlineData = getHelper().getOfflineData().queryBuilder()
+            offlineData = getHelper().getDao(OfflineData.class).queryBuilder()
                     .where()
                         .eq("id", getIntent().getIntExtra(SimpleTransactionDetailsFragment.TRANSACTION_ID, -1))
                     .queryForFirst();

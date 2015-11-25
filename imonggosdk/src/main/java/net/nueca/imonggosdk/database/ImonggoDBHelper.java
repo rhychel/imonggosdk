@@ -16,6 +16,7 @@ import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductSalesPromotionAssoc;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;

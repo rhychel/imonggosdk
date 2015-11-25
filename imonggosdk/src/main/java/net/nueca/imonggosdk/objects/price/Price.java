@@ -19,7 +19,6 @@ import java.sql.SQLException;
 @DatabaseTable
 public class Price extends BaseTable {
 
-
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "price_list_id")
     private PriceList priceList;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_id")

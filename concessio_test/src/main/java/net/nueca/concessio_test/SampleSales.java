@@ -52,8 +52,8 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
         finalizeFragment.setHelper(getHelper());
         finalizeFragment.setSetupActionBar(this);
 
-        simpleProductsFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
-        finalizeFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
+        simpleProductsFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this, getHelper()));
+        finalizeFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this, getHelper()));
 
         simpleProductsFragment.setHasUnits(true);
         simpleProductsFragment.setProductCategories(getProductCategories(true));
