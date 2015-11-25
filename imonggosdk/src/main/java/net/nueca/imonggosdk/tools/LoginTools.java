@@ -29,7 +29,7 @@ public class LoginTools {
      * @return true if length of password is greater or equal than 5, false otherwise.
      */
     public static boolean isValidPassword(CharSequence password) {
-        return password.length() >= 5;
+        return password.length() >= 4;
     }
 
     /**

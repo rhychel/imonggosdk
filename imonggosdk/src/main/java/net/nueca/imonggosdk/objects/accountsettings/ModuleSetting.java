@@ -31,6 +31,8 @@ public class ModuleSetting extends DBTable {
     private boolean is_enabled = false;
     @DatabaseField
     private boolean has_store_transfer = false;
+    @DatabaseField
+    private boolean require_document_reason = false;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_listing_id")
@@ -163,6 +165,14 @@ public class ModuleSetting extends DBTable {
 
     public void setHas_disable_image(boolean has_disable_image) {
         this.has_disable_image = has_disable_image;
+    }
+
+    public boolean isRequire_document_reason() {
+        return require_document_reason;
+    }
+
+    public void setRequire_document_reason(boolean require_document_reason) {
+        this.require_document_reason = require_document_reason;
     }
 
     public ConcessioModule getModuleType() {

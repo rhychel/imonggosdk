@@ -66,15 +66,15 @@ public class InitializeActivity extends ImonggoAppCompatActivity {
                     }
                     batchList.add(product);
                 }
-                batchList.doOperation(Product.class);
-                productTagBatchList.doOperation(ProductTag.class);
+                batchList.doOperation();
+                productTagBatchList.doOperation();
 
                 JSONArray jsonUnits = new JSONArray(unitsList);
                 for(int i = 0;i < jsonUnits.length();i++) {
                     Unit unit = gson.fromJson(jsonUnits.get(i).toString(), Unit.class);
                     batchListUnits.add(unit);
                 }
-                batchListUnits.doOperation(Unit.class);
+                batchListUnits.doOperation();
 
                 Intent intent = new Intent(this, C_Module.class);
                 startActivity(intent);

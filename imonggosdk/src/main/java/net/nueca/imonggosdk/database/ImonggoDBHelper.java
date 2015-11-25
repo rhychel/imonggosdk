@@ -16,12 +16,12 @@ import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductSalesPromotionAssoc;
-import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
-import net.nueca.imonggosdk.objects.deprecated.Extras_2;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
@@ -53,6 +53,7 @@ import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import java.sql.SQLException;
 import java.util.Objects;
@@ -75,7 +76,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
     private Dao<Inventory, Integer> inventories = null;
     private Dao<Product, Integer> products = null;
     private Dao<ProductTag, Integer> productTags = null;
-    private Dao<Extras_2, Integer> extras_2 = null;
+    private Dao<Extras, Integer> extras = null;
     private Dao<Session, Integer> sessions = null;
     private Dao<TaxRate, Integer> taxRates = null;
     private Dao<TaxSetting, Integer> taxSettings = null;
@@ -95,7 +96,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
     private Dao<Document, Integer> documents = null;
     private Dao<DocumentLine, Integer> documentLines = null;
-    private Dao<DocumentLineExtras, Integer> documentLineExtras = null;
+    //private Dao<DocumentLineExtras, Integer> documentLineExtras = null;
     //private Dao<DocumentLineExtras_Old, Integer> documentLineExtras = null;
 
     private Dao<Order, Integer> orders = null;
@@ -117,7 +118,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
      **/
 
     /** added by RHY for REBISCO **/
-    private Dao<Extras, String> extras = null; // e.g. PRODUCT_<id>
+    private Dao<net.nueca.imonggosdk.objects.base.Extras, String> fExtras = null; // e.g. PRODUCT_<id>
     private Dao<CustomerCategory, Integer> customerCategories = null;
     private Dao<CustomerGroup, Integer> customerGroups = null;
     private Dao<InvoicePurpose, Integer> invoicePurposes = null;
@@ -147,7 +148,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Inventory.class);
             TableUtils.createTable(connectionSource, Product.class);
             TableUtils.createTable(connectionSource, ProductTag.class);
-            TableUtils.createTable(connectionSource, Extras_2.class);
+            TableUtils.createTable(connectionSource, Extras.class);
             TableUtils.createTable(connectionSource, Session.class);
             TableUtils.createTable(connectionSource, TaxRate.class);
             TableUtils.createTable(connectionSource, TaxSetting.class);
@@ -175,7 +176,6 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, InvoiceTaxRate.class);
 
             // FOR REBISCO
-            TableUtils.createTable(connectionSource, Extras.class);
             TableUtils.createTable(connectionSource, CustomerCategory.class);
             TableUtils.createTable(connectionSource, CustomerGroup.class);
             TableUtils.createTable(connectionSource, InvoicePurpose.class);
@@ -203,7 +203,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, Inventory.class, true);
             TableUtils.dropTable(connectionSource, Product.class, true);
             TableUtils.dropTable(connectionSource, ProductTag.class, true);
-            TableUtils.dropTable(connectionSource, Extras_2.class, true);
+            TableUtils.dropTable(connectionSource, Extras.class, true);
             TableUtils.dropTable(connectionSource, Session.class, true);
             TableUtils.dropTable(connectionSource, TaxRate.class, true);
             TableUtils.dropTable(connectionSource, TaxSetting.class, true);
@@ -233,7 +233,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, InvoiceTaxRate.class, true);
 
             // FOR REBISCO
-            TableUtils.dropTable(connectionSource, Extras.class, true);
+            TableUtils.dropTable(connectionSource, net.nueca.imonggosdk.objects.base.Extras.class, true);
             TableUtils.dropTable(connectionSource, CustomerCategory.class, true);
             TableUtils.dropTable(connectionSource, CustomerGroup.class, true);
             TableUtils.dropTable(connectionSource, InvoicePurpose.class, true);
@@ -298,10 +298,10 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
         return productTags;
     }
 
-    public Dao<Extras_2, Integer> getProductExtras() throws SQLException {
-        if(extras_2 == null)
-            extras_2 = getDao(Extras_2.class);
-        return extras_2;
+    public Dao<Extras, Integer> getProductExtras() throws SQLException {
+        if(extras == null)
+            extras = getDao(Extras.class);
+        return extras;
     }
 
     public Dao<Session, Integer> getSessions() throws SQLException {
@@ -380,11 +380,11 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             documentLines = getDao(DocumentLine.class);
         return documentLines;
     }
-    public Dao<DocumentLineExtras, Integer> getDocumentLineExtras() throws SQLException {
+/*    public Dao<DocumentLineExtras, Integer> getDocumentLineExtras() throws SQLException {
         if(documentLineExtras == null)
             documentLineExtras = getDao(DocumentLineExtras.class);
         return documentLineExtras;
-    }
+    }*.
     /*public Dao<DocumentLineExtras_Old, Integer> getDocumentLineExtras() throws SQLException {
         if(documentLineExtras == null)
             documentLineExtras = getDao(DocumentLineExtras_Old.class);
@@ -438,10 +438,10 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
     }
 
     // --------------------------------- FOR REBISCO
-    public Dao<Extras, String> getExtras() throws SQLException {
-        if(extras == null)
-            extras = getDao(Extras.class);
-        return extras;
+    public Dao<net.nueca.imonggosdk.objects.base.Extras, String> getfExtras() throws SQLException {
+        if(fExtras == null)
+            fExtras = getDao(net.nueca.imonggosdk.objects.base.Extras.class);
+        return fExtras;
     }
     public Dao<CustomerCategory, Integer> getCustomerCategory() throws SQLException {
         if(customerCategories == null)
@@ -610,7 +610,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
             // FOR REBISCO
             case EXTRAS: {
-                TableUtils.dropTable(getConnectionSource(), Extras.class, true);
+                TableUtils.dropTable(getConnectionSource(), net.nueca.imonggosdk.objects.base.Extras.class, true);
             } break;
             case CUSTOMER_CATEGORIES: {
                 TableUtils.dropTable(getConnectionSource(), CustomerCategory.class, true);
@@ -696,7 +696,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 getProductTags().create((ProductTag) object);
                 break;
             case PRODUCT_EXTRAS:
-                getProductExtras().create((Extras_2) object);
+                getProductExtras().create((Extras) object);
                 break;
             case SESSIONS:
                 getSessions().create((Session) object);
@@ -736,9 +736,11 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             /*case EXTENDED_ATTRIBUTES:
                 getExtendedAttributes().create((DocumentLineExtras) object);
                 break;*/
+/*
             case DOCUMENT_LINE_EXTRAS:
                 getDocumentLineExtras().create((DocumentLineExtras) object);
                 break;
+*/
 
             case ORDERS:
                 getOrders().create((Order) object);
@@ -776,7 +778,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
             // FOR REBISCO
             case EXTRAS: {
-                getExtras().create((Extras) object);
+                getfExtras().create((net.nueca.imonggosdk.objects.base.Extras) object);
             } break;
             case CUSTOMER_CATEGORIES: {
                 getCustomerCategory().create((CustomerCategory) object);
@@ -846,7 +848,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 getProductTags().delete((ProductTag) object);
                 break;
             case PRODUCT_EXTRAS:
-                getProductExtras().delete((Extras_2) object);
+                getProductExtras().delete((Extras) object);
                 break;
             case SESSIONS:
                 getSessions().delete((Session) object);
@@ -886,9 +888,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             /*case EXTENDED_ATTRIBUTES:
                 getExtendedAttributes().delete((DocumentLineExtras) object);
                 break;*/
-            case DOCUMENT_LINE_EXTRAS:
+/*            case DOCUMENT_LINE_EXTRAS:
                 getDocumentLineExtras().delete((DocumentLineExtras) object);
-                break;
+                break;*/
 
             case ORDERS:
                 getOrders().delete((Order) object);
@@ -927,7 +929,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
             // FOR REBISCO
             case EXTRAS: {
-                getExtras().delete((Extras) object);
+                getfExtras().delete((net.nueca.imonggosdk.objects.base.Extras) object);
             } break;
             case CUSTOMER_CATEGORIES: {
                 getCustomerCategory().delete((CustomerCategory) object);
@@ -1037,9 +1039,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             /*case EXTENDED_ATTRIBUTES:
                 getExtendedAttributes().deleteBuilder().delete();
                 break;*/
-            case DOCUMENT_LINE_EXTRAS:
+/*            case DOCUMENT_LINE_EXTRAS:
                 getDocumentLineExtras().deleteBuilder().delete();
-                break;
+                break;*/
 
             case ORDERS:
                 getOrders().deleteBuilder().delete();
@@ -1077,7 +1079,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
             // FOR REBISCO
             case EXTRAS: {
-                getExtras().deleteBuilder().delete();
+                getfExtras().deleteBuilder().delete();
             } break;
             case CUSTOMER_CATEGORIES: {
                 getCustomerCategory().deleteBuilder().delete();
@@ -1148,7 +1150,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
                 getProductTags().update((ProductTag) object);
                 break;
             case PRODUCT_EXTRAS:
-                getProductExtras().update((Extras_2) object);
+                getProductExtras().update((Extras) object);
                 break;
             case SESSIONS:
                 getSessions().update((Session) object);
@@ -1188,9 +1190,9 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             /*case EXTENDED_ATTRIBUTES:
                 getExtendedAttributes().update((DocumentLineExtras) object);
                 break;*/
-            case DOCUMENT_LINE_EXTRAS:
+/*            case DOCUMENT_LINE_EXTRAS:
                 getDocumentLineExtras().update((DocumentLineExtras) object);
-                break;
+                break;*/
 
             case ORDERS:
                 getOrders().update((Order) object);
@@ -1229,7 +1231,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
 
             // FOR REBISCO
             case EXTRAS: {
-                getExtras().update((Extras) object);
+                getfExtras().update((net.nueca.imonggosdk.objects.base.Extras) object);
             } break;
             case CUSTOMER_CATEGORIES: {
                 getCustomerCategory().update((CustomerCategory) object);
@@ -1829,7 +1831,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             getDocuments().deleteBuilder().delete();
             getDocumentLines().deleteBuilder().delete();
             //getExtendedAttributes().deleteBuilder().delete();
-            getDocumentLineExtras().deleteBuilder().delete();
+            //getDocumentLineExtras().deleteBuilder().delete();
 
             getOrders().deleteBuilder().delete();
             getOrderLines().deleteBuilder().delete();
@@ -1847,7 +1849,7 @@ public class ImonggoDBHelper extends OrmLiteSqliteOpenHelper {
             getSettings().deleteBuilder().delete();
 
             // FOR REBISCO
-            getExtras().deleteBuilder().delete();
+            getfExtras().deleteBuilder().delete();
             getCustomerCategory().deleteBuilder().delete();
             getCustomerGroup().deleteBuilder().delete();
             getInvoicePurposes().deleteBuilder().delete();

@@ -13,6 +13,7 @@ import net.nueca.imonggosdk.objects.base.*;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.salespromotion.Discount;
 
@@ -28,7 +29,10 @@ import java.util.List;
 public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @DatabaseField
-    protected double cost = 0.0, retail_price = 0.0, wholesale_price = 0.0, wholesale_quantity = 0.0;
+    protected double cost = 0.0,
+            retail_price = 0.0,
+            wholesale_price = 0.0,
+            wholesale_quantity = 0.0;
     @DatabaseField
     protected String quantity = "",
             remaining = "",
@@ -84,6 +88,9 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @ForeignCollectionField
     private transient ForeignCollection<Price> prices;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchPrice> branchPrices;
 
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
     private Inventory inventory;
@@ -370,6 +377,14 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
+    }
+
+    public ForeignCollection<BranchPrice> getBranchPrices() {
+        return branchPrices;
+    }
+
+    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
+        this.branchPrices = branchPrices;
     }
 
     public ForeignCollection<BranchPrice> getBranchPrices() {

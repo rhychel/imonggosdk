@@ -12,6 +12,8 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
@@ -38,15 +40,62 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @DatabaseField
     private transient boolean is_favorite = false;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "price_list_id")
-    private PriceList priceList;
+    private transient PriceList priceList;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")
-    private Branch branch;
+    private transient Branch branch;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_terms_id")
-    private PaymentTerms paymentTerms;
+    private transient PaymentTerms paymentTerms;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
-    private CustomerCategory customerCategory; // customer_type_id (?)
+    private transient CustomerCategory customerCategory; // customer_type_id (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
-    private RoutePlan routePlan;
+    private transient RoutePlan routePlan;
+    @ForeignCollectionField(orderColumnName = "id")
+    private transient ForeignCollection<Invoice> invoices;
+    @ForeignCollectionField
+    private transient ForeignCollection<Document> documents;
+
+    public Customer() {
+    }
+
+    public Customer(String first_name, String last_name, String name, String company_name, String telephone, String mobile, String fax, String email, String street, String city, String zipcode, String country, String state, String tin, String gender) {
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.name = name;
+        this.company_name = company_name;
+        this.telephone = telephone;
+        this.mobile = mobile;
+        this.fax = fax;
+        this.email = email;
+        this.street = street;
+        this.city = city;
+        this.zipcode = zipcode;
+        this.country = country;
+        this.state = state;
+        this.tin = tin;
+        this.gender = gender;
+    }
+
+    public Customer() {
+
+    }
+
+    public Customer(String first_name, String last_name, String name, String company_name, String telephone, String mobile, String fax, String email, String street, String city, String zipcode, String country, String state, String tin, String gender) {
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.name = name;
+        this.company_name = company_name;
+        this.telephone = telephone;
+        this.mobile = mobile;
+        this.fax = fax;
+        this.email = email;
+        this.street = street;
+        this.city = city;
+        this.zipcode = zipcode;
+        this.country = country;
+        this.state = state;
+        this.tin = tin;
+        this.gender = gender;
+    }
 
     public int getPoint_to_amount_ratio() {
         return point_to_amount_ratio;
@@ -336,6 +385,22 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.routePlan = routePlan;
     }
 
+    public ForeignCollection<Invoice> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(ForeignCollection<Invoice> invoices) {
+        this.invoices = invoices;
+    }
+
+    public ForeignCollection<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(ForeignCollection<Document> documents) {
+        this.documents = documents;
+    }
+
     @Override
     public boolean equals(Object o) {
         return (o instanceof Customer) && ((Customer)o).getId() == id;
@@ -379,6 +444,19 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         }
 
         return address;
+    }
+
+    public String getLastPurchase() {
+        try {
+            Invoice invoice = invoices.closeableIterator().first();
+            invoices.closeLastIterator();
+
+            if(invoice != null)
+                return invoice.getInvoice_date();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     @Override

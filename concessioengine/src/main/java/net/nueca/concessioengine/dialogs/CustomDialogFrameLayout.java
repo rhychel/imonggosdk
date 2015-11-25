@@ -3,12 +3,17 @@ package net.nueca.concessioengine.dialogs;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import net.nueca.concessioengine.R;
+import net.nueca.imonggosdk.interfaces.LoginListener;
+import net.nueca.imonggosdk.tools.LoggingTools;
+import net.nueca.imonggosdk.tools.TableTools;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -23,6 +28,8 @@ public class CustomDialogFrameLayout extends FrameLayout {
     private LinearLayoutManager mLinearLayoutManager;
     private CustomModuleAdapter customModuleAdapter;
     private List<String> mModuleName;
+    private LoginListener mLoginListener;
+    private static String TAG = "CustomDialogFrameLayout";
 
     public CustomDialogFrameLayout(final Context context, final List<String> moduleName) {
         super(context);
@@ -45,9 +52,11 @@ public class CustomDialogFrameLayout extends FrameLayout {
 
         customModuleAdapter.setOnItemClickListener(new BaseCustomDialogRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemClicked(View view, int position) {
-                /*LoggingTools.showToast(context, "OnItemClicked" + getCustomModuleAdapter[().getModuleAt(position));
+            public void onItemClicked(View view, int position) throws SQLException {
+                Log.e(TAG, "OnItemClicked " + getCustomModuleAdapter().getModuleAt(position));
+               /* LoggingTools.showToast(context, "OnItemClicked" + getCustomModuleAdapter().getModuleAt(position));
                 view.setBackgroundColor(mContext.getResources().getColor(android.R.color.darker_gray));*/
+                mLoginListener.onRetryButtonPressed(TableTools.convertStringToTableName(getCustomModuleAdapter().getModuleAt(position)));
             }
         });
 
@@ -60,6 +69,10 @@ public class CustomDialogFrameLayout extends FrameLayout {
 
         mRecyclerView.setAdapter(customModuleAdapter);
         addView(mView);
+    }
+
+    public void setLoginListener(LoginListener loginListener) {
+        this.mLoginListener = loginListener;
     }
 
     public CustomModuleAdapter getCustomModuleAdapter() {

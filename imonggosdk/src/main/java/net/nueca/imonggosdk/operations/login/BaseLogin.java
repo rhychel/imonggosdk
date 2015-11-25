@@ -216,7 +216,7 @@ public class BaseLogin {
      *
      * @param server
      */
-    private void requestForAccountUrl(final Server server) {
+    private void  requestForAccountUrl(final Server server) {
         StringRequest stringRequestURL = new StringRequest(Request.Method.GET,
                 LoginTools.getAPIUrl(mContext, server, mAccountId), new Response.Listener<String>() {
             @Override
@@ -232,7 +232,6 @@ public class BaseLogin {
                 // Insert Session to Database
                 mSession.insertTo(mDBHelper);
 
-
                 // show Toast Message
                 Log.i("Jn-BaseLogin", "Account URL Request Successful");
 
@@ -245,11 +244,6 @@ public class BaseLogin {
 
                 Log.e("Jn-BaseLogin", "onErrorResponse : " + volleyError.toString());
 
-                // Execute Listener onStopLogin
-                if (mLoginListener != null) {
-                    mLoginListener.onStopLogin();
-                }
-
                 // if account id is invalid
                 if (volleyError.networkResponse != null) {
                     DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
@@ -260,6 +254,11 @@ public class BaseLogin {
                                 public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
                                     materialDialog.dismiss();
                                     mLoginListener.onPositiveButtonPressed();
+
+                                    // Execute Listener onStopLogin
+                                    if (mLoginListener != null) {
+                                        mLoginListener.onStopLogin();
+                                    }
                                 }
                             }, null, null);
 
@@ -275,6 +274,11 @@ public class BaseLogin {
                                     public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
                                         materialDialog.dismiss();
                                         mLoginListener.onPositiveButtonPressed();
+
+                                        // Execute Listener onStopLogin
+                                        if (mLoginListener != null) {
+                                            mLoginListener.onStopLogin();
+                                        }
                                     }
                                 }, null, null);
                         //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_NETWORK_ERROR));
@@ -292,6 +296,7 @@ public class BaseLogin {
                         //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR));
                     }
                 }
+
             }
         });
         stringRequestURL.setTag(LOGIN_TAG);

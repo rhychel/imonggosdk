@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
 import net.nueca.imonggosdk.objects.base.BatchList;
+import net.nueca.imonggosdk.objects.customer.Customer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +63,9 @@ public class Invoice extends BaseTransactionTable2 {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
     protected transient OfflineData offlineData;
 
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
+    protected transient Customer customer;
+
     public Invoice() {}
 
     public Invoice(Builder builder) {
@@ -75,6 +79,7 @@ public class Invoice extends BaseTransactionTable2 {
         invoice_lines = builder.invoice_lines;
         invoice_tax_rates = builder.invoice_tax_rates;
         payments = builder.payments;
+        customer = builder.customer;
     }
 
     public void setInvoice_date(String date) { invoice_date = date; }
@@ -159,6 +164,14 @@ public class Invoice extends BaseTransactionTable2 {
         this.offlineData = offlineData;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     public static Invoice fromJSONString(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         return fromJSONObject(jsonObject);
@@ -206,6 +219,12 @@ public class Invoice extends BaseTransactionTable2 {
         protected List<InvoiceLine> invoice_lines = new ArrayList<>();
         protected List<InvoicePayment> payments = new ArrayList<>();
         protected List<InvoiceTaxRate> invoice_tax_rates = new ArrayList<>();
+        protected Customer customer;
+
+        public Builder customer(Customer customer) {
+            this.customer = customer;
+            return this;
+        }
 
         public Builder invoice_date(String invoice_date) {
             this.invoice_date = invoice_date;

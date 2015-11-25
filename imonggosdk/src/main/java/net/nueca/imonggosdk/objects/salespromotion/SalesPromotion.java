@@ -35,11 +35,16 @@ public class SalesPromotion extends BaseTable {
 
     @Expose
     @DatabaseField
-    private String settings = "", promotion_type_name = "", status = null, name = "",
+    private String settings = "",
+            promotion_type_name = "", // Generate a [__promotion_type_name__] for every purchase amount given below. <---- rebisco, points
+            status = null, name = "",
             code = "", photos_ids = "", to_date = "", from_date = "";
 
     @DatabaseField
     private transient Date toDate, fromDate;
+
+    @DatabaseField
+    private transient String salesPromotionType; // type=custom[rewards points], type=sales_push[sales push products]
 
     @Expose
     protected List<Discount> discounts;

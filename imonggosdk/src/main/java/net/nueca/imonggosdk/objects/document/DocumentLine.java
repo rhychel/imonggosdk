@@ -12,6 +12,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.BaseTransactionLine;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 
 import org.json.JSONException;
@@ -32,10 +33,12 @@ public class DocumentLine extends BaseTransactionLine {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
     protected transient Document document;
+/*
 
     @Expose
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
     protected DocumentLineExtras extras;
+*/
 
     //@Expose
     //@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
@@ -89,13 +92,13 @@ public class DocumentLine extends BaseTransactionLine {
         this.line_no = line_no;
     }
 
-    public DocumentLineExtras getDocumentLineExtras() {
-        return extras;
-    }
-
-    public void setDocumentLineExtras(DocumentLineExtras extras) {
-        this.extras = extras;
-    }
+//    public DocumentLineExtras getDocumentLineExtras() {
+//        return extras;
+//    }
+//
+//    public void setDocumentLineExtras(DocumentLineExtras extras) {
+//        this.extras = extras;
+//    }
 
     public String getDiscount_text() {
         return discount_text;
@@ -219,7 +222,8 @@ public class DocumentLine extends BaseTransactionLine {
 
     public static class Builder extends BaseTransactionLine.Builder<Builder> {
         protected int line_no = 0;
-        protected DocumentLineExtras extras;
+//        protected DocumentLineExtras extras;
+        protected Extras extras;
         protected String discount_text;
         protected Double price;
         protected Document document;
@@ -288,7 +292,11 @@ public class DocumentLine extends BaseTransactionLine {
             this.line_no = line_no;
             return this;
         }
-        public Builder extras(DocumentLineExtras extras) {
+//        public Builder extras(DocumentLineExtras extras) {
+//            this.extras = extras;
+//            return this;
+//        }
+        public Builder extras(Extras extras) {
             this.extras = extras;
             return this;
         }
