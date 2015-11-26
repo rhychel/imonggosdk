@@ -5,10 +5,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.customer.Customer;
@@ -20,7 +17,7 @@ import java.sql.SQLException;
  * Created by rhymart on 11/10/15.
  */
 @DatabaseTable
-public class PriceList extends BaseTable {
+public class  PriceList extends BaseTable {
 
     @DatabaseField
     private String code;
@@ -28,8 +25,8 @@ public class PriceList extends BaseTable {
     private Branch branch;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_group_id")
     private CustomerGroup customerGroup; //can be null
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_id")
-    private Customer customer; // can be null
+    @ForeignCollectionField(columnName = "customer_id")
+    private ForeignCollection<Customer> customer; // can be null
     @ForeignCollectionField
     private ForeignCollection<Price> foreignPrices;
     @DatabaseField
@@ -71,12 +68,16 @@ public class PriceList extends BaseTable {
         this.customerGroup = customerGroup;
     }
 
-    public Customer getCustomer() {
+    public ForeignCollection<Customer> getCustomer() {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
+    public void setCustomer(ForeignCollection<Customer> customer) {
         this.customer = customer;
+    }
+
+    public void addCustomer(Customer customer) {
+        this.customer.add(customer);
     }
 
     public ForeignCollection<Price> getForeignPrices() {
@@ -99,6 +100,7 @@ public class PriceList extends BaseTable {
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(PriceList.class, this);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

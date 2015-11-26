@@ -3,6 +3,7 @@ package net.nueca.imonggosdk.operations.sync;
 import android.os.Handler;
 import android.util.Log;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 
@@ -15,8 +16,7 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
-import net.nueca.imonggosdk.objects.Session;
-import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -31,13 +31,13 @@ import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BatchList;
+import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
-import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
@@ -220,7 +220,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
 
                 // Custom for Products & Customers
-                if (mCurrentTableSyncing == Table.PRODUCTS || mCurrentTableSyncing == Table.CUSTOMERS) {
+                if (mCurrentTableSyncing == Table.PRODUCTS || mCurrentTableSyncing == Table.CUSTOMERS || mCurrentTableSyncing == Table.BRANCH_PRODUCTS) {
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.BRANCH_ID),
                             String.valueOf(page), getSession().getCurrent_branch_id());
                 }
@@ -313,8 +313,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     private boolean syncNext() {
-        //Log.e(TAG, mModulesIndex + "<= " + mModulesToSync.length);
-
         if (mModulesIndex == (mModulesToSync.length - 1)) {  // this is when there are no left tables to sync
             if (mCurrentTableSyncing == Table.DOCUMENTS) {
                 if (branchIndex < (getUserBranchesSize() - 1)) {
@@ -515,7 +513,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 JSONObject jsonObject2 = taxRateArray.getJSONObject(x);
                                 TaxRate taxRate = gson.fromJson(jsonObject2.toString(), TaxRate.class);
 
-                                Log.e(TAG, taxRate.getName());
 
                                 newTaxRates.add(taxRate);
                                 newTaxRateList.add(taxRate);
@@ -548,7 +545,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Log.e(TAG, "There's " + deletedTaxRateList.size() + " to be deleted tax rates");
 
                                     for (TaxRate taxRate : deletedTaxRateList) {
-                                        Log.e(TAG, "Deleting " + taxRate.getName());
+
                                         getHelper().fetchIntId(TaxRate.class).deleteById(taxRate.getId());
                                     }
 
@@ -606,668 +603,781 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     syncNext();
                 }
                 // JSONArray
-            } else if (response instanceof JSONArray) {
-                JSONArray jsonArray = (JSONArray) response;
-                int size = jsonArray.length();
-                Log.e(TAG, "content size: " + size);
+            } else {
+                if (response instanceof JSONArray) {
+                    JSONArray jsonArray = (JSONArray) response;
+                    int size = jsonArray.length();
 
-                switch (module) { //
-                    case USERS:
-                        Log.e(TAG, mCurrentTableSyncing + " | size: " + size + " page: " + page + " max page: " + numberOfPages);
-                        if (size == 0) {
-                            mSyncModulesListener.onDownloadProgress(module, 1, 1);
-                            syncNext();
-                            return;
-                        } else {
-                            // batch list object holder
-                            BatchList<User> newUsers = new BatchList<>(DatabaseOperation.INSERT, getHelper()); // container for the new users
-                            BatchList<User> updateUsers = new BatchList<>(DatabaseOperation.UPDATE, getHelper()); // container for the updated users
-                            BatchList<User> deleteUsers = new BatchList<>(DatabaseOperation.DELETE, getHelper()); // container for the deleted users
+                    switch (module) { //
+                        case USERS:
+                            Log.e(TAG, mCurrentTableSyncing + " | size: " + size + " page: " + page + " max page: " + numberOfPages);
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(module, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
+                                // batch list object holder
+                                BatchList<User> newUsers = new BatchList<>(DatabaseOperation.INSERT, getHelper()); // container for the new users
+                                BatchList<User> updateUsers = new BatchList<>(DatabaseOperation.UPDATE, getHelper()); // container for the updated users
+                                BatchList<User> deleteUsers = new BatchList<>(DatabaseOperation.DELETE, getHelper()); // container for the deleted users
 
-                            for (int i = 0; i < size; i++) {
-                                //get the object in the array
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                User user = gson.fromJson(jsonObject.toString(), User.class);
-                                if (initialSync || lastUpdatedAt == null) {
-                                    newUsers.add(user);
-                                } else {
-                                    // check if the user tables exist in the database
-                                    if (isExisting(user, Table.USERS)) {
-                                        if (user.getStatus() == null) {
-                                            updateUsers.add(user);
-                                            if (user.getId() == getSession().getUser().getId()) {
-                                                Log.e(TAG, "Updating sessions user from " + getSession().getUser().getName() + " to " + user.getName());
-                                            }
-                                        } else {
-                                            deleteUsers.add(user);
-                                        }
-                                    } else {  // if not then add it
-                                        Log.e(TAG, "adding user entry to be inserted");
+                                for (int i = 0; i < size; i++) {
+                                    //get the object in the array
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    User user = gson.fromJson(jsonObject.toString(), User.class);
+                                    if (initialSync || lastUpdatedAt == null) {
                                         newUsers.add(user);
-                                    }
-
-                                }
-                            }
-
-                            newUsers.doOperationBT(User.class);
-                            updateUsers.doOperationBT(User.class);
-                            deleteUsers.doOperationBT(User.class);
-
-                            User current_user = getUser();
-
-                            getSession().setUser(current_user);
-                            getSession().setCurrent_branch_id(current_user.getHome_branch_id());
-                            Log.e(TAG, "User Home Branch ID: " + current_user.getHome_branch_id());
-                            getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
-
-                            updateNext(requestType, size);
-                        }
-                        break;
-                    case PRODUCTS:
-                        Log.e(TAG, mCurrentTableSyncing + " | size: " + size + " page: " + page + " max page: " + numberOfPages);
-                        Log.e(TAG, "Syncing Page " + page);
-                        if (size == 0) {
-                            syncNext();
-                            return;
-                        } else {
-                            int current_branch_id = getSession().getCurrent_branch_id();
-                            Branch current_branch = getHelper().fetchIntId(Branch.class).queryForId(current_branch_id);
-
-                            BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                            BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                            BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-                            BatchList<ProductTaxRateAssoc> newProductTaxRates = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Product product = gson.fromJson(jsonObject.toString(), Product.class);
-
-                                if (initialSync || lastUpdatedAt == null) {
-                                    product.setSearchKey(product.getName() + product.getStock_no());
-                                    newProducts.add(product);
-                                } else {
-                                    if (isExisting(product, Table.PRODUCTS)) {
-                                        DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().fetchIntId(ProductTag.class).deleteBuilder();
-                                        deleteProductsHelper.where().eq("product_id", product);
-                                        deleteProductsHelper.delete();
-
-                                        if (product.getStatus() == null) {
-                                            updateProducts.add(product);
-                                        } else {
-                                            deleteProducts.add(product);
-                                        }
                                     } else {
-                                        newProducts.add(product);
-                                    }
-                                }
-
-                                Log.e(TAG, "checking tax rates...");
-
-                                int tax_branch_id;
-                                int tax_rate_id;
-                                if (jsonObject.has("tax_rates")) {
-
-                                    Log.e(TAG, "deleting product tax rates");
-                                    List<ProductTaxRateAssoc> pTaxRateList = getHelper().fetchObjectsList(ProductTaxRateAssoc.class);
-
-                                    // Deleting Product's ProducTaxRate Entry
-                                    for (ProductTaxRateAssoc pTaxRate : pTaxRateList) {
-                                        if (product.getId() == pTaxRate.getProduct().getId()) {
-                                            Log.e(TAG, "Deleting " + pTaxRate.getProduct().getName() + " Tax Rate is " + pTaxRate.getTaxRate().getName());
-                                            getHelper().fetchIntId(ProductTaxRateAssoc.class).deleteById(pTaxRate.getId());
-                                        }
-                                    }
-
-                                    JSONArray taxRatesArray = jsonObject.getJSONArray("tax_rates");
-                                    int taxRateSize = taxRatesArray.length();
-                                    for (int x = 0; x < taxRateSize; x++) {
-                                        JSONObject jsonTaxRateObject = taxRatesArray.getJSONObject(x);
-
-                                        tax_rate_id = jsonTaxRateObject.getInt("id");
-
-                                        if (!jsonTaxRateObject.getString("branch_id").equals("null")) {
-                                            tax_branch_id = jsonTaxRateObject.getInt("branch_id");
-                                        } else {
-                                            tax_branch_id = 0;
-                                        }
-
-                                        ProductTaxRateAssoc productTaxRate;
-                                        TaxRate current_taxRate = getHelper().fetchIntId(TaxRate.class).queryForId(tax_rate_id);
-
-                                        if (isExisting(tax_rate_id, Table.TAX_RATES)) {
-                                            // get the tax rate from database
-
-                                            Log.e(TAG, "Product " + product.getName() + " tax is " + current_taxRate.getName());
-
-                                            current_taxRate.setUtc_created_at(jsonTaxRateObject.getString("utc_created_at")); // Created At
-                                            current_taxRate.setUtc_updated_at(jsonTaxRateObject.getString("utc_updated_at")); // Updated At
-                                            Log.e(TAG, "tax branch id = " + tax_branch_id + ". current branch id " + current_branch_id);
-
-
-                                            if (!jsonObject.getBoolean("tax_exempt")) {
-                                                Log.e(TAG, "Product is not tax exempted");
-                                                if (tax_branch_id != 0) {
-                                                    // check if the tax rate is for you branch
-                                                    if (tax_branch_id == current_branch_id) {
-                                                        Log.e(TAG, "The product tax rate is for your branch inserting it to database...");
-                                                        current_taxRate.setBranch(current_branch);
-                                                        productTaxRate = new ProductTaxRateAssoc(product, current_taxRate);
-                                                        newProductTaxRates.add(productTaxRate);
-                                                    } else {
-                                                        Log.e(TAG, "The product tax rate is not for your branch. skipping...");
-                                                    }
-                                                } else {
-                                                    productTaxRate = new ProductTaxRateAssoc(product, current_taxRate);
-                                                    Log.e(TAG, "new product tax rate, inserting it to database...");
-                                                    newProductTaxRates.add(productTaxRate);
+                                        // check if the user tables exist in the database
+                                        if (isExisting(user, Table.USERS)) {
+                                            if (user.getStatus() == null) {
+                                                updateUsers.add(user);
+                                                if (user.getId() == getSession().getUser().getId()) {
+                                                    Log.e(TAG, "Updating sessions user from " + getSession().getUser().getName() + " to " + user.getName());
                                                 }
                                             } else {
-                                                Log.e(TAG, "Product is tax excempted");
+                                                deleteUsers.add(user);
                                             }
+                                        } else {  // if not then add it
+                                            Log.e(TAG, "adding user entry to be inserted");
+                                            newUsers.add(user);
                                         }
-                                    }
-                                } else {
-                                    Log.e(TAG, "Product don't have tax rate");
-                                }
 
-                                if (jsonObject.has("branch_prices")) {
-                                    JSONArray branchPricesArray = jsonObject.getJSONArray("branch_prices");
-                                    int branchPriceSize = branchPricesArray.length();
-                                    for (int y = 0; y < branchPriceSize; y++) {
-                                        JSONObject jsonBranchPriceObject = branchPricesArray.getJSONObject(y);
-                                        BranchPrice branchPrice = gson.fromJson(jsonBranchPriceObject.toString(), BranchPrice.class);
-
-                                        if (isExisting(current_branch, Table.BRANCHES)) {
-                                            branchPrice.setBranch(current_branch);
-                                            branchPrice.setProduct(product);
-                                            // check if current branch matches with this branch price
-                                            if (branchPrice.getBranch().getId() == current_branch_id) {
-                                                Log.e(TAG, "Product " + branchPrice.getProduct().getName() +
-                                                        " Content: " + branchPrice.toString());
-                                                getHelper().delete(BranchPrice.class, branchPrice);
-                                                branchPrice.dbOperation(getHelper(), DatabaseOperation.INSERT);
-                                            }
-                                        } else {
-                                            Log.e(TAG, "Branch ID " + current_branch_id + "does not exist. Skipping Branch Prices");
-                                        }
                                     }
                                 }
 
-                                if (jsonObject.has("tag_list")) {
-                                    // Save tags to the database
-                                    JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
-                                    int tagsSize = tagsListArray.length();
-                                    for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
-                                        Log.e(TAG, tagsListArray.getString(tagsI));
-                                        ProductTag productTag = new ProductTag(tagsListArray.getString(tagsI), product);
-                                        if (initialSync || lastUpdatedAt == null) {
-                                            productTag.dbOperation(getHelper(), DatabaseOperation.INSERT);
-                                        } else {
-                                            if (isExisting(productTag, Table.PRODUCT_TAGS)) {
-                                                productTag.dbOperation(getHelper(), DatabaseOperation.UPDATE);
+                                newUsers.doOperationBT(User.class);
+                                updateUsers.doOperationBT(User.class);
+                                deleteUsers.doOperationBT(User.class);
+
+                                User current_user = getUser();
+
+                                getSession().setUser(current_user);
+                                getSession().setCurrent_branch_id(current_user.getHome_branch_id());
+                                Log.e(TAG, "User Home Branch ID: " + current_user.getHome_branch_id());
+                                getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
+
+                                updateNext(requestType, size);
+                            }
+                            break;
+                        case BRANCH_PRODUCTS:
+                        case PRODUCTS:
+
+                            Table productTable = Table.PRODUCTS;
+
+                            Log.e(TAG, productTable + " | size: " + size + " page: " + page + " max page: " + numberOfPages);
+                            Log.e(TAG, "Syncing Page " + page);
+                            if (size == 0) {
+                                syncNext();
+                                return;
+                            } else {
+                                int current_branch_id = getSession().getCurrent_branch_id();
+                                Branch current_branch = getHelper().fetchIntId(Branch.class).queryForId(current_branch_id);
+
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Product product = gson.fromJson(jsonObject.toString(), Product.class);
+                                    Extras product_extras = new Extras();
+
+                                    if (jsonObject.has("extras")) {
+                                        JSONObject json_extras = jsonObject.getJSONObject("extras");
+
+                                        String default_selling_unit = "";
+                                        String default_ordering_unit_id = "";
+
+                                        if (json_extras.has("default_selling_unit")) {
+                                            default_selling_unit = json_extras.getString("default_selling_unit");
+                                        }
+
+                                        if (json_extras.has("default_ordering_unit")) {
+                                            default_ordering_unit_id = json_extras.getString("default_ordering_unit_id");
+                                        }
+
+                                        product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
+                                        product_extras.setDefault_selling_unit(default_selling_unit);
+
+                                        product.setExtras(product_extras);
+
+                                    } else {
+                                        Log.e(TAG, "This Product don't have extras");
+                                    }
+
+                                    int tax_branch_id;
+                                    int tax_rate_id;
+                                    if (jsonObject.has("tax_rates")) {
+
+                                        List<ProductTaxRateAssoc> pTaxRateList = getHelper().fetchObjectsList(ProductTaxRateAssoc.class);
+
+                                        // Deleting Product's ProducTaxRate Entry
+                                        for (ProductTaxRateAssoc pTaxRate : pTaxRateList) {
+                                            if (product.getId() == pTaxRate.getProduct().getId()) {
+                                                Log.e(TAG, "Deleting " + pTaxRate.getProduct().getName() + " Tax Rate is " + pTaxRate.getTaxRate().getName());
+                                                getHelper().fetchIntId(ProductTaxRateAssoc.class).deleteById(pTaxRate.getId());
+                                            }
+                                        }
+
+                                        JSONArray taxRatesArray = jsonObject.getJSONArray("tax_rates");
+                                        int taxRateSize = taxRatesArray.length();
+                                        for (int x = 0; x < taxRateSize; x++) {
+                                            JSONObject jsonTaxRateObject = taxRatesArray.getJSONObject(x);
+
+                                            tax_rate_id = jsonTaxRateObject.getInt("id");
+
+                                            if (!jsonTaxRateObject.getString("branch_id").equals("null")) {
+                                                tax_branch_id = jsonTaxRateObject.getInt("branch_id");
                                             } else {
-                                                productTag.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                                tax_branch_id = 0;
+                                            }
+
+                                            ProductTaxRateAssoc productTaxRate;
+                                            TaxRate current_taxRate = getHelper().fetchIntId(TaxRate.class).queryForId(tax_rate_id);
+
+                                            if (isExisting(tax_rate_id, Table.TAX_RATES)) {
+                                                // get the tax rate from database
+
+                                                Log.e(TAG, "Product " + product.getName() + " tax is " + current_taxRate.getName());
+
+                                                current_taxRate.setUtc_created_at(jsonTaxRateObject.getString("utc_created_at")); // Created At
+                                                current_taxRate.setUtc_updated_at(jsonTaxRateObject.getString("utc_updated_at")); // Updated At
+                                                Log.e(TAG, "tax branch id = " + tax_branch_id + ". current branch id " + current_branch_id);
+
+
+                                                if (!jsonObject.getBoolean("tax_exempt")) {
+                                                    Log.e(TAG, "Product is not tax exempted");
+                                                    if (tax_branch_id != 0) {
+                                                        // check if the tax rate is for you branch
+                                                        if (tax_branch_id == current_branch_id) {
+                                                            Log.e(TAG, "The product tax rate is for your branch inserting it to database...");
+                                                            current_taxRate.setBranch(current_branch);
+                                                            productTaxRate = new ProductTaxRateAssoc(product, current_taxRate);
+                                                            productTaxRate.insertTo(getHelper());
+                                                        } else {
+                                                            Log.e(TAG, "The product tax rate is not for your branch. skipping...");
+                                                        }
+                                                    } else {
+                                                        productTaxRate = new ProductTaxRateAssoc(product, current_taxRate);
+                                                        Log.e(TAG, "new product tax rate, inserting it to database...");
+                                                        productTaxRate.insertTo(getHelper());
+                                                    }
+                                                } else {
+                                                    Log.e(TAG, "Product is tax exempted");
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        Log.e(TAG, "Product don't have tax rate");
+                                    }
+
+                                    if (jsonObject.has("branch_prices")) {
+                                        JSONArray branchPricesArray = jsonObject.getJSONArray("branch_prices");
+                                        int branchPriceSize = branchPricesArray.length();
+                                        for (int y = 0; y < branchPriceSize; y++) {
+                                            JSONObject jsonBranchPriceObject = branchPricesArray.getJSONObject(y);
+                                            BranchPrice branchPrice = gson.fromJson(jsonBranchPriceObject.toString(), BranchPrice.class);
+
+                                            if (isExisting(current_branch, Table.BRANCHES)) {
+                                                branchPrice.setBranch(current_branch);
+                                                branchPrice.setProduct(product);
+                                                // check if current branch matches with this branch price
+                                                if (branchPrice.getBranch().getId() == current_branch_id) {
+                                                    Log.e(TAG, "Product " + branchPrice.getProduct().getName() +
+                                                            " Content: " + branchPrice.toString());
+                                                    getHelper().delete(BranchPrice.class, branchPrice);
+                                                    branchPrice.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                                }
+
+
+                                            } else {
+                                                Log.e(TAG, "Branch ID " + current_branch_id + "does not exist. Skipping Branch Prices");
                                             }
                                         }
                                     }
-                                }
-                            }
 
-                            newProductTaxRates.doOperation(ProductTaxRateAssoc.class);
-                            newProducts.doOperationBT(Product.class);
-                            updateProducts.doOperationBT(Product.class);
-                            deleteProducts.doOperationBT(Product.class);
-                            updateNext(requestType, size);
-                        }
-                        break;
-                    case UNITS:
-                        if (size == 0) {
-                            syncNext();
-                            return;
-                        } else {
-                            BatchList<Unit> newUnits = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                            BatchList<Unit> updateUnits = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                            BatchList<Unit> deleteUnits = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
-
-                                Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
-                                if(product == null)
-                                    continue;
-                                Log.e(TAG, "Unit Product ID: " + jsonObject.getString("product_id") + " name: " + product.getName());
-
-                                unit.setProduct(product);
-                                Log.e(TAG, unit.getName());
-                                if (initialSync || lastUpdatedAt == null) {
-                                    if (initialSync)
-                                        Log.e(TAG, "initial sync units");
-                                    if (lastUpdatedAt == null)
-                                        Log.e(TAG, "last Updated At units");
-                                    newUnits.add(unit);
-                                } else {
-                                    if (isExisting(unit, Table.UNITS)) {
-                                        if (unit.getStatus() == null) {
-                                            Log.e(TAG, "adding user entry to be updated");
-                                            updateUnits.add(unit);
-                                        } else {
-                                            Log.e(TAG, "adding user entry to be deleted");
-                                            deleteUnits.add(unit);
+                                    if (jsonObject.has("tag_list")) {
+                                        // Save tags to the database
+                                        JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
+                                        int tagsSize = tagsListArray.length();
+                                        for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
+                                            Log.e(TAG, tagsListArray.getString(tagsI));
+                                            ProductTag productTag = new ProductTag(tagsListArray.getString(tagsI), product);
+                                            if (initialSync || lastUpdatedAt == null) {
+                                                productTag.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                            } else {
+                                                if (isExisting(productTag, Table.PRODUCT_TAGS)) {
+                                                    productTag.dbOperation(getHelper(), DatabaseOperation.UPDATE);
+                                                } else {
+                                                    productTag.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                                }
+                                            }
                                         }
+                                    }
+
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        product.setSearchKey(product.getName() + product.getStock_no());
+                                        product.insertExtrasTo(getHelper());
+                                        product.insertTo(getHelper());
+
                                     } else {
-                                        Log.e(TAG, "adding user entry to be inserted");
+                                        if (isExisting(product, Table.PRODUCTS)) {
+                                            DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().fetchIntId(ProductTag.class).deleteBuilder();
+                                            deleteProductsHelper.where().eq("product_id", product);
+                                            deleteProductsHelper.delete();
+
+                                            if (product.getStatus() == null) {
+                                                product.updateExtrasTo(getHelper());
+                                                product.updateTo(getHelper());
+                                            } else {
+                                                product.deleteExtrasTo(getHelper());
+                                                product.deleteTo(getHelper());
+                                            }
+                                        } else {
+                                            product.insertExtrasTo(getHelper());
+                                            product.insertTo(getHelper());
+                                        }
+                                    }
+
+                                }
+                                updateNext(requestType, size);
+                            }
+                            break;
+                        case UNITS:
+                            if (size == 0) {
+                                syncNext();
+                                return;
+                            } else {
+                                BatchList<Unit> newUnits = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                                BatchList<Unit> updateUnits = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                                BatchList<Unit> deleteUnits = new BatchList<>(DatabaseOperation.DELETE, getHelper());
+
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
+
+                                    Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
+                                    unit.setProduct(product);
+
+                                    if (initialSync || lastUpdatedAt == null) {
                                         newUnits.add(unit);
+                                    } else {
+                                        if (isExisting(unit, Table.UNITS)) {
+                                            if (unit.getStatus() == null) {
+                                                updateUnits.add(unit);
+                                            } else {
+                                                deleteUnits.add(unit);
+                                            }
+                                        } else {
+                                            newUnits.add(unit);
+                                        }
                                     }
                                 }
+
+                                newUnits.doOperationBT(Unit.class);
+                                updateUnits.doOperationBT(Unit.class);
+                                deleteUnits.doOperationBT(Unit.class);
+                                updateNext(requestType, size);
                             }
+                            break;
+                        case BRANCH_USERS:
+                            if (size == 0) {
+                                syncNext();
+                                return;
+                            } else {
 
-                            newUnits.doOperationBT(Unit.class);
-                            updateUnits.doOperationBT(Unit.class);
-                            deleteUnits.doOperationBT(Unit.class);
-                            updateNext(requestType, size);
-                        }
-                        break;
-                    case BRANCH_USERS:
-                        if (size == 0) {
-                            syncNext();
-                            return;
-                        } else {
+                                BatchList<Branch> newBranches = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                                BatchList<Branch> updateBranches = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
-                            BatchList<Branch> newBranches = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                            BatchList<Branch> updateBranches = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                                BatchList<BranchTag> newBranchTags = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                                BatchList<BranchTag> updateBranchTags = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
-                            BatchList<BranchTag> newBranchTags = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                            BatchList<BranchTag> updateBranchTags = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                                BatchList<BranchUserAssoc> newBranchUserAssocs = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                                BatchList<BranchUserAssoc> updateBranchUserAssocs = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
-                            BatchList<BranchUserAssoc> newBranchUserAssocs = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                            BatchList<BranchUserAssoc> updateBranchUserAssocs = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Branch branch = gson.fromJson(jsonObject.toString(), Branch.class);
 
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Branch branch = gson.fromJson(jsonObject.toString(), Branch.class);
-                                if (branch.getSite_type() != null && branch.getSite_type().equals("head_office"))
-                                    continue;
-                                BranchUserAssoc branchUserAssoc = new BranchUserAssoc(branch, getUser());
+                                    if (branch.getSite_type() != null && branch.getSite_type().equals("head_office"))
+                                        continue;
 
-                                //  if (jsonArray.getJSONObject(i).getString("site_type").equals("null")) {
-                                Log.e(TAG, jsonArray.getJSONObject(i).toString());
+                                    BranchUserAssoc branchUserAssoc = new BranchUserAssoc(branch, getUser());
 
-                                if (initialSync || lastUpdatedAt == null) {
-                                    newBranches.add(branch);
-                                    newBranchUserAssocs.add(branchUserAssoc);
-                                } else {
-                                    if (isExisting(branch, Table.BRANCHES)) {
-                                        updateBranches.add(branch);
-                                        updateBranchUserAssocs.add(branchUserAssoc);
-                                    } else {
+                                    //  if (jsonArray.getJSONObject(i).getString("site_type").equals("null")) {
+                                    Log.e(TAG, jsonArray.getJSONObject(i).toString());
+
+                                    if (initialSync || lastUpdatedAt == null) {
                                         newBranches.add(branch);
                                         newBranchUserAssocs.add(branchUserAssoc);
+                                    } else {
+                                        if (isExisting(branch, Table.BRANCHES)) {
+                                            updateBranches.add(branch);
+                                            updateBranchUserAssocs.add(branchUserAssoc);
+                                        } else {
+                                            newBranches.add(branch);
+                                            newBranchUserAssocs.add(branchUserAssoc);
+                                        }
+                                    }
+                                    // }
+
+                                    if (jsonObject.has("tag_list")) {
+                                        JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
+                                        int tagsSize = tagsListArray.length();
+
+                                        for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
+                                            BranchTag branchTag = new BranchTag(tagsListArray.getString(tagsI), branch);
+                                            if (initialSync || lastUpdatedAt == null) {
+                                                if (isExisting(branchTag, Table.BRANCH_TAGS)) {
+                                                    updateBranchTags.add(branchTag);
+                                                } else {
+                                                    newBranchTags.add(branchTag);
+                                                }
+                                            } else {
+                                                updateBranchTags.add(branchTag);
+                                            }
+                                        }
                                     }
                                 }
-                                // }
+                                newBranches.doOperationBT(Branch.class);
+                                updateBranches.doOperationBT(Branch.class);
 
-                                if (jsonObject.has("tag_list")) {
-                                    JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
-                                    int tagsSize = tagsListArray.length();
+                                newBranchUserAssocs.doOperation(BranchUserAssoc.class);
+                                updateBranchUserAssocs.doOperation(BranchUserAssoc.class);
 
-                                    for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
-                                        BranchTag branchTag = new BranchTag(tagsListArray.getString(tagsI), branch);
-                                        if (initialSync || lastUpdatedAt == null) {
-                                            if (isExisting(branchTag, Table.BRANCH_TAGS)) {
-                                                updateBranchTags.add(branchTag);
+                                newBranchTags.doOperation(BranchTag.class);
+                                updateBranchTags.doOperation(BranchTag.class);
+
+                                updateNext(requestType, size);
+                            }
+                            break;
+                        case CUSTOMERS:
+                            if (size == 0) {
+                                syncNext();
+                                return;
+                            } else {
+                                String name_customer_category = "customer_category_id";
+                                String name_user_id = "user_id";
+                                String name_extras = "extras";
+
+                                int user_id;
+                                int customer_category_id;
+
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
+                                    Extras customer_extras = new Extras();
+
+                                    if (jsonObject.has(name_extras)) {
+                                        JSONObject json_extras = jsonObject.getJSONObject(name_extras);
+
+                                        user_id = 0;
+                                        customer_category_id = 0;
+
+                                        if (json_extras.has(name_user_id)) {
+                                            if (json_extras.getString(name_user_id) != null || json_extras.getString(name_user_id).equals("")) {
+                                                user_id = json_extras.getInt(name_user_id);
+                                            }
+                                        }
+
+                                        if (json_extras.has(name_customer_category)) {
+                                            if (json_extras.getString(name_customer_category) != null || json_extras.get(name_customer_category).equals("")) {
+                                                customer_category_id = json_extras.getInt(name_customer_category);
+                                            }
+                                        }
+                                        User user;
+                                        if (user_id != 0) {
+                                            user = getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user_id).queryForFirst();
+                                            if (user != null) {
+                                                customer_extras.setUser(user);
                                             } else {
-                                                newBranchTags.add(branchTag);
+                                                Log.e(TAG, "User not found");
+                                            }
+                                        }
+                                        CustomerCategory customerCategory = null;
+                                        if (customer_category_id != 0) {
+                                            customerCategory = getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customer_category_id).queryForFirst();
+
+                                            if (customerCategory != null) {
+                                                customer_extras.setCustomerCategory(customerCategory);
+                                            } else {
+                                                Log.e(TAG, "Customer Category not found");
+                                            }
+                                        }
+
+                                        customer.setExtras(customer_extras);
+                                    }
+
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        customer.insertExtrasTo(getHelper());
+                                        customer.insertTo(getHelper());
+                                    } else {
+                                        if (isExisting(customer, Table.CUSTOMERS)) {
+                                            if (customer.getStatus() == null) {
+                                                customer.updateExtrasTo(getHelper());
+                                                customer.updateTo(getHelper());
+                                            } else {
+                                                customer.deleteExtrasTo(getHelper());
+                                                customer.deleteTo(getHelper());
                                             }
                                         } else {
-                                            updateBranchTags.add(branchTag);
+                                            customer.insertExtrasTo(getHelper());
+                                            customer.insertTo(getHelper());
+
                                         }
                                     }
                                 }
+
+                                updateNext(requestType, size);
                             }
-                            newBranches.doOperationBT(Branch.class);
-                            updateBranches.doOperationBT(Branch.class);
-
-                            newBranchUserAssocs.doOperation(BranchUserAssoc.class);
-                            updateBranchUserAssocs.doOperation(BranchUserAssoc.class);
-
-                            newBranchTags.doOperation(BranchTag.class);
-                            updateBranchTags.doOperation(BranchTag.class);
-
-                            updateNext(requestType, size);
-                        }
-                        break;
-                    case CUSTOMERS:
-                        if (size == 0) {
-                            syncNext();
-                            return;
-                        } else {
-
-                            BatchList<Customer> newCustomer = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                            BatchList<Customer> updateCustomer = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                            BatchList<Customer> deleteCustomer = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
-
-                                if (initialSync || lastUpdatedAt == null) {
-                                    newCustomer.add(customer);
-                                } else {
-                                    if (isExisting(customer, Table.CUSTOMERS)) {
-                                        if (customer.getStatus() == null) {
-                                            updateCustomer.add(customer);
-                                        } else {
-                                            deleteCustomer.add(customer);
-                                        }
-                                    } else {
-                                        newCustomer.add(customer);
-                                    }
-                                }
-                            }
-
-                            newCustomer.doOperationBT(Customer.class);
-                            updateCustomer.doOperationBT(Customer.class);
-                            deleteCustomer.doOperationBT(Customer.class);
-                            updateNext(requestType, size);
-                        }
-                        break;
-                    case INVENTORIES:
-                        if (size == 0) {
-                            syncNext();
-                            return;
-                        } else {
-                            BatchList<Inventory> newInventories = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                            BatchList<Inventory> updateInventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Inventory inventory = gson.fromJson(jsonObject.toString(), Inventory.class);
-                                //inventory.setProduct();
-                                if (initialSync || lastUpdatedAt == null) {
-                                    newInventories.add(inventory);
-                                } else {
-                                    if (isExisting(inventory, Table.INVENTORIES)) {
-                                        updateInventories.add(inventory);
-                                    } else {
-                                        newInventories.add(inventory);
-                                    }
-                                }
-                            }
-
-                            newInventories.doOperation(Inventory.class);
-                            updateInventories.doOperation(Inventory.class);
-                            updateNext(requestType, size);
-                        }
-                        break;
-                    case DOCUMENT_TYPES:
-                        if (size == 0) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-                            syncNext();
-                            return;
-                        } else {
-
-                            getHelper().deleteAll(DocumentType.class);
-
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                DocumentType documentType = gson.fromJson(jsonObject.toString(), DocumentType.class);
-                                documentType.dbOperation(getHelper(), DatabaseOperation.INSERT);
-                                Log.e(TAG, documentType.toString());
-                            }
-                        }
-                        updateNext(requestType, size);
-                        break;
-                    case DOCUMENT_PURPOSES:
-                        if (size == 0) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-                            syncNext();
-                            return;
-                        } else {
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                DocumentPurpose documentPurpose = gson.fromJson(jsonObject.toString(), DocumentPurpose.class);
-
-                                Log.e(TAG, documentPurpose.toString());
-
-                                int document_id = jsonObject.getInt("document_type_id");
-                                DocumentType documentType = getHelper().fetchIntId(DocumentType.class).queryForId(document_id);
-
-                                if (isExisting(documentType, Table.DOCUMENT_TYPES)) {
-                                    documentPurpose.setDocumentType(documentType);
-                                } else {
-                                    Log.e(TAG, "Document Type's don't have Doc Type");
-                                }
-
-                                if (initialSync || lastUpdatedAt == null) {
-                                    documentPurpose.dbOperation(getHelper(), DatabaseOperation.INSERT);
-                                } else {
-                                    if (isExisting(documentPurpose, Table.DOCUMENT_PURPOSES)) {
-                                        if (documentPurpose.getStatus().equalsIgnoreCase("D")) {
-                                            documentPurpose.dbOperation(getHelper(), DatabaseOperation.DELETE);
-                                        } else {
-                                            documentPurpose.dbOperation(getHelper(), DatabaseOperation.UPDATE);
-                                        }
-                                    } else {
-                                        documentPurpose.dbOperation(getHelper(), DatabaseOperation.INSERT);
-                                    }
-                                }
-                            }
-                        }
-                        updateNext(requestType, size);
-                        break;
-                    case DOCUMENTS:
-                        BatchList<Document> newDocument = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                        BatchList<Document> updateDocument = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                        BatchList<Document> deleteDocument = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-
-                        if (size == 0) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, branchIndex, getUserBranchesSize());
-                            syncNext();
-                            return;
-                        } else {
-                            int progress = (int) Math.ceil((((double) branchIndex / (double) getUserBranchesSize()) * 100.0));
-                            int progress2 = (int) Math.ceil((((double) page / (double) progress) * 100.0));
-                            int progress3 = (int) Math.ceil((((double) size / (double) progress2) * 100.0));
-
-                            for (int i = 0; i < size; i++) {
-                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, i, progress3);
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Document document = gson.fromJson(jsonObject.toString(), Document.class);
-
-                                if (initialSync || lastUpdatedAt == null) {
-                                    if (!document.getIntransit_status().equalsIgnoreCase("received")) {
-                                        newDocument.add(document);
-                                    }
-                                } else {
-                                    if (isExisting(document, Table.DOCUMENTS)) {
-
-                                        if (document.getIntransit_status().equalsIgnoreCase("received")) {
-                                            deleteDocument.add(document);
-                                        } else {
-                                            updateDocument.add(document);
-                                        }
-                                    } else {
-                                        newDocument.add(document);
-                                    }
-                                }
-                                Log.e(TAG, "Document Content: " + document.toString());
-                            }
-                        }
-
-                        newDocument.doOperationBT(Document.class);
-                        updateDocument.doOperationBT(Document.class);
-                        deleteDocument.doOperationBT(Document.class);
-                        updateNext(requestType, size);
-                        break;
-                    case SETTINGS:
-                        if (size == 0) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-                            syncNext();
-                            return;
-                        } else {
-                            getHelper().fetchObjects(Settings.class).deleteBuilder().delete();
-
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Log.e(TAG, jsonObject.getString("name") + " - " + jsonObject.getString("value"));
-                                Settings settings = new Settings(i, jsonObject.getString("name"), jsonObject.getString("value"));
-                                settings.insertTo(getHelper());
-                            }
-
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-                        }
-
-                        syncNext();
-                        break;
-
-                    case INVOICES:
-                        BatchList<Invoice> newInvoice = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                        BatchList<Invoice> updateInvoice = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-
-                        if (size == 0) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-                            syncNext();
-                            return;
-                        } else {
-
-
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Invoice invoice = gson.fromJson(jsonObject.toString(), Invoice.class);
-
-                                if (initialSync || lastUpdatedAt == null) {
-                                    newInvoice.add(invoice);
-                                } else {
-                                    if (isExisting(invoice, Table.INVOICES)) {
-                                        updateInvoice.add(invoice);
-                                    } else {
-                                        newInvoice.add(invoice);
-                                    }
-                                }
-                                newInvoice.doOperationBT2(Invoice.class);
-                                updateInvoice.doOperationBT2(Invoice.class);
-                            }
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
-                        }
-
-                        updateNext(requestType, size);
-                        break;
-                    case INVOICE_PURPOSES:
-                        BatchList<InvoicePurpose> newInvoicePurpose = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                        BatchList<InvoicePurpose> updateInvoicePurpose = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-
-                        if (size == 0) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-                            syncNext();
-                            return;
-                        } else {
-
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                InvoicePurpose invoicePurpose = gson.fromJson(jsonObject.toString(), InvoicePurpose.class);
-
-                                if (initialSync || lastUpdatedAt == null) {
-                                    newInvoicePurpose.add(invoicePurpose);
-                                } else {
-                                    if (isExisting(invoicePurpose, Table.INVOICE_PURPOSES)) {
-                                        updateInvoicePurpose.add(invoicePurpose);
-                                    } else {
-                                        newInvoicePurpose.add(invoicePurpose);
-                                    }
-                                }
-                            }
-
-                            newInvoicePurpose.doOperationBT(InvoicePurpose.class);
-                            updateInvoicePurpose.doOperationBT(InvoicePurpose.class);
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
-                        }
-                        updateNext(requestType, size);
-                        break;
-                    case PRICE_LISTS:
-                        if (size == 0) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-                            syncNext();
-                            return;
-                        } else {
-
-                            JSONObject jsonObject = jsonArray.getJSONObject(0);
-                            PriceList priceList = gson.fromJson(jsonObject.toString(), PriceList.class);
-
-                            // Get The Branch ID
-                            int branch_id = jsonObject.getInt("branch_id");
-                            // Query Branch
-                            Branch branch = (Branch) getHelper().fetchObjects(Branch.class);
-                            // Set The Branch
-                            priceList.setBranch(branch);
-
-
-
-
-
-
-                        // TODO: CHANGE THIS
-                            if (initialSync || lastUpdatedAt == null) {
-                                priceList.insertTo(getHelper());
+                            break;
+                        case INVENTORIES:
+                            if (size == 0) {
+                                syncNext();
+                                return;
                             } else {
-                                if (isExisting(priceList, Table.PRICE_LISTS)) {
-                                    priceList.updateTo(getHelper());
-                                } else {
-                                    priceList.insertTo(getHelper());
-                                }
-                            }
-                        }
+                                BatchList<Inventory> newInventories = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                                BatchList<Inventory> updateInventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
-                        updateNext(requestType, count);
-                        break;
-                    case CUSTOMER_GROUPS:
-                        BatchList<CustomerGroup> newCustomerGroups = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                        BatchList<CustomerGroup> updateCustomerGroups = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-
-                        if (size == 0) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-                            syncNext();
-                            return;
-                        } else {
-                            for (int i = 0; i < size; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                CustomerGroup customerGroup = gson.fromJson(jsonObject.toString(), CustomerGroup.class);
-
-
-                                // TODO: CUSTOMERS!!!
-
-
-                                if (initialSync || lastUpdatedAt != null) {
-                                    newCustomerGroups.add(customerGroup);
-                                } else {
-                                    if (isExisting(customerGroup, Table.CUSTOMER_GROUPS)) {
-                                        updateCustomerGroups.add(customerGroup);
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Inventory inventory = gson.fromJson(jsonObject.toString(), Inventory.class);
+                                    //inventory.setProduct();
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        newInventories.add(inventory);
                                     } else {
-                                        newCustomerGroups.add(customerGroup);
+                                        if (isExisting(inventory, Table.INVENTORIES)) {
+                                            updateInventories.add(inventory);
+                                        } else {
+                                            newInventories.add(inventory);
+                                        }
                                     }
                                 }
 
-                                // TODO: add this
-                                int price_list_id = jsonObject.getInt("price_list_id");
+                                newInventories.doOperation(Inventory.class);
+                                updateInventories.doOperation(Inventory.class);
+                                updateNext(requestType, size);
+                            }
+                            break;
+                        case DOCUMENT_TYPES:
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
 
-                                Log.e(TAG, "price_list_id: " + price_list_id);
+                                getHelper().deleteAll(DocumentType.class);
 
-                                if (jsonObject.has("customers")) {
-                                    Log.e(TAG, "has CUSTOMERS");
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    DocumentType documentType = gson.fromJson(jsonObject.toString(), DocumentType.class);
+                                    documentType.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                    Log.e(TAG, documentType.toString());
+                                }
+                            }
+                            updateNext(requestType, size);
+                            break;
+                        case DOCUMENT_PURPOSES:
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    DocumentPurpose documentPurpose = gson.fromJson(jsonObject.toString(), DocumentPurpose.class);
+
+                                    Log.e(TAG, documentPurpose.toString());
+
+                                    int document_id = jsonObject.getInt("document_type_id");
+                                    DocumentType documentType = getHelper().fetchIntId(DocumentType.class).queryForId(document_id);
+
+                                    if (isExisting(documentType, Table.DOCUMENT_TYPES)) {
+                                        documentPurpose.setDocumentType(documentType);
+                                    } else {
+                                        Log.e(TAG, "Document Type's don't have Doc Type");
+                                    }
+
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        documentPurpose.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                    } else {
+                                        if (isExisting(documentPurpose, Table.DOCUMENT_PURPOSES)) {
+                                            if (documentPurpose.getStatus().equalsIgnoreCase("D")) {
+                                                documentPurpose.dbOperation(getHelper(), DatabaseOperation.DELETE);
+                                            } else {
+                                                documentPurpose.dbOperation(getHelper(), DatabaseOperation.UPDATE);
+                                            }
+                                        } else {
+                                            documentPurpose.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                        }
+                                    }
+                                }
+                            }
+                            updateNext(requestType, size);
+                            break;
+                        case DOCUMENTS:
+                            BatchList<Document> newDocument = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<Document> updateDocument = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                            BatchList<Document> deleteDocument = new BatchList<>(DatabaseOperation.DELETE, getHelper());
+
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, branchIndex, getUserBranchesSize());
+                                syncNext();
+                                return;
+                            } else {
+                                int progress = (int) Math.ceil((((double) branchIndex / (double) getUserBranchesSize()) * 100.0));
+                                int progress2 = (int) Math.ceil((((double) page / (double) progress) * 100.0));
+                                int progress3 = (int) Math.ceil((((double) size / (double) progress2) * 100.0));
+
+                                for (int i = 0; i < size; i++) {
+                                    mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, i, progress3);
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Document document = gson.fromJson(jsonObject.toString(), Document.class);
+
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        if (!document.getIntransit_status().equalsIgnoreCase("received")) {
+                                            newDocument.add(document);
+                                        }
+                                    } else {
+                                        if (isExisting(document, Table.DOCUMENTS)) {
+
+                                            if (document.getIntransit_status().equalsIgnoreCase("received")) {
+                                                deleteDocument.add(document);
+                                            } else {
+                                                updateDocument.add(document);
+                                            }
+                                        } else {
+                                            newDocument.add(document);
+                                        }
+                                    }
+                                    Log.e(TAG, "Document Content: " + document.toString());
+                                }
+                            }
+
+                            newDocument.doOperationBT(Document.class);
+                            updateDocument.doOperationBT(Document.class);
+                            deleteDocument.doOperationBT(Document.class);
+                            updateNext(requestType, size);
+                            break;
+                        case SETTINGS:
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
+                                getHelper().fetchObjects(Settings.class).deleteBuilder().delete();
+
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Log.e(TAG, jsonObject.getString("name") + " - " + jsonObject.getString("value"));
+                                    Settings settings = new Settings(i, jsonObject.getString("name"), jsonObject.getString("value"));
+                                    settings.insertTo(getHelper());
                                 }
 
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                            }
+
+                            syncNext();
+                            break;
+
+                        case INVOICES:
+                            BatchList<Invoice> newInvoice = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<Invoice> updateInvoice = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
+
+
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Invoice invoice = gson.fromJson(jsonObject.toString(), Invoice.class);
+
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        newInvoice.add(invoice);
+                                    } else {
+                                        if (isExisting(invoice, Table.INVOICES)) {
+                                            updateInvoice.add(invoice);
+                                        } else {
+                                            newInvoice.add(invoice);
+                                        }
+                                    }
+                                    newInvoice.doOperationBT2(Invoice.class);
+                                    updateInvoice.doOperationBT2(Invoice.class);
+                                }
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
+                            }
+
+                            updateNext(requestType, size);
+                            break;
+                        case INVOICE_PURPOSES:
+                            BatchList<InvoicePurpose> newInvoicePurpose = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<InvoicePurpose> updateInvoicePurpose = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
+
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    InvoicePurpose invoicePurpose = gson.fromJson(jsonObject.toString(), InvoicePurpose.class);
+
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        newInvoicePurpose.add(invoicePurpose);
+                                    } else {
+                                        if (isExisting(invoicePurpose, Table.INVOICE_PURPOSES)) {
+                                            updateInvoicePurpose.add(invoicePurpose);
+                                        } else {
+                                            newInvoicePurpose.add(invoicePurpose);
+                                        }
+                                    }
+                                }
+
+                                newInvoicePurpose.doOperationBT(InvoicePurpose.class);
+                                updateInvoicePurpose.doOperationBT(InvoicePurpose.class);
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
+                            }
+                            updateNext(requestType, size);
+                            break;
+                        case PRICE_LISTS:
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                PriceList priceList = gson.fromJson(jsonObject.toString(), PriceList.class);
+
+
+                                if(jsonObject.has("branch_id")) {
+                                    // Get The Branch ID
+                                    int branch_id = !jsonObject.getString("branch_id").equals("") ? jsonObject.getInt("branch_id") : 0;
+
+                                    if (branch_id != 0) {
+                                        Branch branch_pricelist;
+                                        branch_pricelist = getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", branch_id).queryForFirst();
+
+                                        if (branch_pricelist == null) {
+                                            Log.e(TAG, "can't find branch");
+                                        } else {
+                                            Log.e(TAG, "Branch is " + branch_pricelist.toString());
+                                            priceList.setBranch(branch_pricelist);
+                                        }
+                                    }
+                                } else {
+                                    Log.e(TAG, "PRICE_LIST API don't have 'branch_id' field");
+                                }
+
+                                if(jsonObject.has("customers")) {
+
+                                    JSONArray customerJsonArray = jsonObject.getJSONArray("customers");
+                                    for(int i=0; i<customerJsonArray.length(); i++) {
+                                        JSONObject customerJsonObject = customerJsonArray.getJSONObject(i);
+                                        if(customerJsonObject.has("id")) {
+                                            int customer_id = !customerJsonObject.getString("id").equals("") ? customerJsonObject.getInt("id") : 0;
+                                            if(customer_id != 0) {
+                                                Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", customer_id).queryForFirst();
+
+                                                if(customer == null) {
+                                                    Log.e(TAG, "can't find customer");
+                                                } else {
+                                                    Log.e(TAG, "Customer Name: " + customer.getName() + priceList.getId());
+
+                                                    customer.setPriceList(priceList);
+                                                }
+                                            }
+                                        } else {
+                                            Log.e(TAG, "PRICE_LIST API dont have 'id' field in customers json array");
+                                        }
+                                    }
+                                } else {
+                                    Log.e(TAG, "PRICE_LIST API don't have 'customers' field");
+                                }
+
+                                if (initialSync || lastUpdatedAt == null) {
+                                    priceList.insertTo(getHelper());
+                                } else {
+                                    if (isExisting(priceList, Table.PRICE_LISTS)) {
+                                        priceList.updateTo(getHelper());
+                                    } else {
+                                        priceList.insertTo(getHelper());
+                                    }
+                                }
 
                             }
 
-                            newCustomerGroups.doOperationBT(CustomerGroup.class);
-                            updateCustomerGroups.doOperationBT(CustomerGroup.class);
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
-                        }
-                        updateNext(requestType, size);
-                        break;
-                    default:
-                        updateNext(requestType, size);
-                        break;
+                            updateNext(requestType, count);
+                            break;
+                        case CUSTOMER_GROUPS:
+                            BatchList<CustomerGroup> newCustomerGroups = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<CustomerGroup> updateCustomerGroups = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    CustomerGroup customerGroup = gson.fromJson(jsonObject.toString(), CustomerGroup.class);
+
+                                    // TODO: add the price list object
+                                    String price_list_id = jsonObject.getString("price_list_id");
+                                    customerGroup.setPriceList(null);
+
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        newCustomerGroups.add(customerGroup);
+                                    } else {
+                                        if (isExisting(customerGroup, Table.CUSTOMER_GROUPS)) {
+                                            updateCustomerGroups.add(customerGroup);
+                                        } else {
+                                            newCustomerGroups.add(customerGroup);
+                                        }
+                                    }
+                                }
+
+                                newCustomerGroups.doOperationBT(CustomerGroup.class);
+                                updateCustomerGroups.doOperationBT(CustomerGroup.class);
+                            }
+
+                            updateNext(requestType, size);
+                            break;
+                        case CUSTOMER_CATEGORIES:
+                            BatchList<CustomerCategory> newCustomerCategory = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<CustomerCategory> updateCustomerCategory = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    CustomerCategory customerCategory = gson.fromJson(jsonObject.toString(), CustomerCategory.class);
+
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        newCustomerCategory.add(customerCategory);
+                                    } else {
+                                        if (isExisting(customerCategory, Table.CUSTOMER_CATEGORIES)) {
+                                            updateCustomerCategory.add(customerCategory);
+                                        } else {
+                                            newCustomerCategory.add(customerCategory);
+                                        }
+                                    }
+                                }
+
+                                newCustomerCategory.doOperationBT(CustomerCategory.class);
+                                updateCustomerCategory.doOperationBT(CustomerCategory.class);
+                            }
+
+                            updateNext(requestType, size);
+                            break;
+                        default:
+                            syncNext();
+                            break;
+                    }
                 }
             }
         } catch (SQLException | JSONException e) {
@@ -1280,7 +1390,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
         if (mSyncModulesListener != null) {
             if (size != 0) {
-                Log.e(TAG, "Size is not 0 it is " + size);
                 if (mCurrentTableSyncing == Table.DOCUMENTS) {
                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, branchIndex, getUserBranchesSize());
                 } else if (mCurrentTableSyncing == Table.PRICE_LISTS) {

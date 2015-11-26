@@ -74,6 +74,17 @@ public class CustomerGroup extends BaseTable {
     }
 
     @Override
+    public String toString() {
+        return "CustomerGroup{" +
+                "name='" + name + '\'' +
+                ", priceList=" + priceList +
+                ", discount_text='" + discount_text + '\'' +
+                ", status='" + status + '\'' +
+                ", code='" + code + '\'' +
+                '}';
+    }
+
+    @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(CustomerGroup.class, this);

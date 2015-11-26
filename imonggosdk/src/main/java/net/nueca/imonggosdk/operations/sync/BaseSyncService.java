@@ -176,6 +176,7 @@ public abstract class BaseSyncService extends ImonggoService {
                 User user = (User) o;
                 return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
             }
+            case BRANCH_PRODUCTS:
             case PRODUCTS: {
                 Product product = (Product) o;
                 return getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
