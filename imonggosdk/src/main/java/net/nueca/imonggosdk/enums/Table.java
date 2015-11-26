@@ -11,6 +11,7 @@ public enum Table {
     CUSTOMERS,
     INVENTORIES,
     PRODUCTS,
+    BRANCH_PRODUCTS,
     PRODUCT_TAGS,
     PRODUCT_EXTRAS,
     SESSIONS,
