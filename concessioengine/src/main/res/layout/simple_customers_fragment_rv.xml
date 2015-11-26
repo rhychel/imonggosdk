@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,9 +7,14 @@
         android:id="@+id/tbActionBar"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        sothree:theme="@style/ActionBar"
         android:layout_width="match_parent"
-        android:elevation="3dp"/>
+        android:elevation="8dp"
+        android:theme="@style/ThemeOverlay.ActionBar.Concessio"/>
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:theme="@style/ThemeOverlay.ActionBar.Concessio">-->
+    <!--</android.support.design.widget.AppBarLayout>-->
 
     <android.support.v7.widget.RecyclerView
         android:layout_weight="1"

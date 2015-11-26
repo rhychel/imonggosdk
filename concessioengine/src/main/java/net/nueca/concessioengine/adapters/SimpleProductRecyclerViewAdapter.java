@@ -5,16 +5,16 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 
 import net.nueca.concessioengine.R;
-import net.nueca.concessioengine.adapters.base.BaseAdapter;
 import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
+import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
-import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 
@@ -42,7 +42,12 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
 
     @Override
     public SimpleProductRecyclerViewAdapter.ListViewHolder onCreateViewHolder(ViewGroup parent, int viewtype) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem, parent, false);
+        View v;
+        if(listingType == ListingType.BASIC)
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem, parent, false);
+        else
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem2, parent, false);
+
 
         ListViewHolder lvh = new ListViewHolder(v);
         return lvh;
@@ -52,10 +57,21 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
     public void onBindViewHolder(SimpleProductRecyclerViewAdapter.ListViewHolder viewHolder, int position) {
         Product product = getItem(position);
 
-        viewHolder.tvProductName.setText(Html.fromHtml(product.getName()+getSelectedProductItems().getUnitName(product).toLowerCase()));
-        viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
         String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
         viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
+
+        if(listingType == ListingType.BASIC) {
+            viewHolder.tvProductName.setText(Html.fromHtml(product.getName() + getSelectedProductItems().getUnitName(product).toLowerCase()));
+            viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
+        }
+        else {
+            viewHolder.tvProductName.setText(product.getName());
+            viewHolder.tvInStock.setText("In Stock: "+product.getInventory().getInventory());
+            viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
+            double subtotal = product.getRetail_price()*Double.valueOf(getSelectedProductItems().getQuantity(product));
+            viewHolder.tvQuantity.setText("P"+subtotal);
+            viewHolder.tvRetailPrice.setText("P"+product.getRetail_price());
+        }
     }
 
     @Override
@@ -69,6 +85,10 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
     public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {
         public NetworkImageView ivProductImage;
         public AutofitTextView tvProductName, tvQuantity;
+
+        public AutofitTextView tvInStock;
+        public TextView tvRetailPrice, tvSubtotal;
+
         public View root;
 
         public ListViewHolder(View itemView) {
@@ -77,6 +97,12 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             ivProductImage = (NetworkImageView) itemView.findViewById(R.id.ivProductImage);
             tvProductName = (AutofitTextView) itemView.findViewById(R.id.tvProductName);
             tvQuantity = (AutofitTextView) itemView.findViewById(R.id.tvQuantity);
+
+            if(listingType == ListingType.SALES) {
+                tvInStock = (AutofitTextView) itemView.findViewById(R.id.tvInStock);
+                tvRetailPrice = (TextView) itemView.findViewById(R.id.tvRetailPrice);
+                tvSubtotal = (TextView) itemView.findViewById(R.id.tvSubtotal);
+            }
 
             ivProductImage.setDefaultImageResId(R.drawable.no_image);
             ivProductImage.setErrorImageResId(R.drawable.no_image);

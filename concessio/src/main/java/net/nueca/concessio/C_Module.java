@@ -16,9 +16,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
+import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
+import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleInventoryFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.SimplePulloutFragment;
@@ -63,6 +65,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
 
     private SimpleInventoryFragment simpleInventoryFragment;
+
+    private SimpleCustomersFragment simpleCustomersFragment;
 
     // For the pullout module
     private SimplePulloutFragment simplePulloutFragment;
@@ -117,7 +121,22 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         finalizeFragment.setHelper(getHelper());
         finalizeFragment.setSetupActionBar(this);
         switch (concessioModule) {
-            case ORDERS: {
+            case CUSTOMERS: {
+                simpleCustomersFragment = new SimpleCustomersFragment();
+                simpleCustomersFragment.setHelper(getHelper());
+                simpleCustomersFragment.setSetupActionBar(this);
+                simpleCustomersFragment.setListingType(ListingType.LETTER_HEADER);
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.flContent, simpleCustomersFragment)
+                        .commit();
+
+                btnSummary.setVisibility(View.GONE);
+            } break;
+            case ORDERS:
+            case SALES: {
+                simpleProductsFragment.setListingType(ListingType.SALES);
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
                 simpleProductsFragment.setShowCategoryOnStart(getModuleSetting().getProductListing().isShow_categories_on_start());
@@ -269,13 +288,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         super.onBackPressed();
         btnSummary.setText("Summary");
 
-        if(getModuleSetting().isRequire_document_reason()) {
-            if (concessioModule == ConcessioModule.PULLOUT_REQUEST) {
-                if (simplePulloutToolbarExt != null)
-                    simplePulloutToolbarExt.attachAfter(this, toolbar);
-            } else {
-                if (simplePulloutToolbarExt != null)
-                    simplePulloutToolbarExt.detach();
+        if(getModuleSetting() != null) {
+            if (getModuleSetting().isRequire_document_reason()) {
+                if (concessioModule == ConcessioModule.PULLOUT_REQUEST) {
+                    if (simplePulloutToolbarExt != null)
+                        simplePulloutToolbarExt.attachAfter(this, toolbar);
+                } else {
+                    if (simplePulloutToolbarExt != null)
+                        simplePulloutToolbarExt.detach();
+                }
             }
         }
     }
@@ -283,18 +304,34 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (hasMenu) {
-            getMenuInflater().inflate(R.menu.simple_products_menu, menu);
-            menu.findItem(R.id.mHistory).setVisible(false);
-            menu.findItem(R.id.mLogout).setVisible(false);
+            if(concessioModule == ConcessioModule.CUSTOMERS) {
+                getMenuInflater().inflate(R.menu.simple_customers_menu, menu);
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                getSupportActionBar().setTitle("Customers");
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
+                initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        simpleCustomersFragment.updateListWhenSearch(newText);
+                        return true;
+                    }
+                });
+            }
+            else {
+                getMenuInflater().inflate(R.menu.simple_products_menu, menu);
+                menu.findItem(R.id.mHistory).setVisible(false);
+                menu.findItem(R.id.mLogout).setVisible(false);
 
-            mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
-            initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    simpleProductsFragment.updateListWhenSearch(newText);
-                    return true;
-                }
-            });
+                mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
+                initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        simpleProductsFragment.updateListWhenSearch(newText);
+                        return true;
+                    }
+                });
+            }
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -303,21 +340,29 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     public void setupActionBar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         this.toolbar = toolbar;
-        if(getModuleSetting().isRequire_document_reason()) {
-            if (concessioModule == ConcessioModule.PULLOUT_REQUEST) {
-                if (simplePulloutToolbarExt == null)
-                    simplePulloutToolbarExt = new SimplePulloutToolbarExt();
-                simplePulloutToolbarExt.attachAfter(this, this.toolbar);
-                simplePulloutToolbarExt.setOnClickListener(new SimplePulloutToolbarExt.OnToolbarClickedListener() {
-                    @Override
-                    public void onClick() {
-                        simplePulloutRequestDialog.show();
-                    }
-                });
-            } else {
-                if (simplePulloutToolbarExt != null)
-                    simplePulloutToolbarExt.detach();
+        if(getModuleSetting() != null) {
+            if (getModuleSetting().isRequire_document_reason()) {
+                if (concessioModule == ConcessioModule.PULLOUT_REQUEST) {
+                    if (simplePulloutToolbarExt == null)
+                        simplePulloutToolbarExt = new SimplePulloutToolbarExt();
+                    simplePulloutToolbarExt.attachAfter(this, this.toolbar);
+                    simplePulloutToolbarExt.setOnClickListener(new SimplePulloutToolbarExt.OnToolbarClickedListener() {
+                        @Override
+                        public void onClick() {
+                            simplePulloutRequestDialog.show();
+                        }
+                    });
+                } else {
+                    if (simplePulloutToolbarExt != null)
+                        simplePulloutToolbarExt.detach();
+                }
             }
         }
     }
