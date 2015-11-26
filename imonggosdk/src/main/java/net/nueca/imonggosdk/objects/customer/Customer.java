@@ -491,6 +491,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         extras.setCustomer(this);
         extras.setId(Customer.class.getName().toUpperCase(), id);
         extras.insertTo(dbHelper);
+
     }
 
     @Override
