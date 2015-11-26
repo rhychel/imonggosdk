@@ -23,7 +23,7 @@ public class CustomerGroup extends BaseTable {
     @DatabaseField
     private String name;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "price_list_id")
-    private PriceList priceList;
+    private transient PriceList priceList;
     @DatabaseField
     private String discount_text;
     @DatabaseField

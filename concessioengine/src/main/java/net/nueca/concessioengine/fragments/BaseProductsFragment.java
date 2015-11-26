@@ -12,6 +12,7 @@ import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.base.BaseProductsAdapter;
 import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
+import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.exceptions.ProductsFragmentException;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
@@ -45,6 +46,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     private int prevLast = -1;
     private String searchKey = "", category = "";
     private List<Product> filterProductsBy = new ArrayList<>();
+    protected ListingType listingType = ListingType.BASIC;
 
     protected ArrayAdapter<String> productCategoriesAdapter;
     protected List<String> productCategories = new ArrayList<>();
@@ -198,6 +200,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public String getCategory() {
         return category;
+    }
+
+    public void setListingType(ListingType listingType) {
+        this.listingType = listingType;
     }
 
     public String messageCategory() {

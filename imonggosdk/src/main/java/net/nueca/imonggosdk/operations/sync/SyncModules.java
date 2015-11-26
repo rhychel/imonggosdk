@@ -834,7 +834,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
 
                                 Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
-
+                                if(product == null)
+                                    continue;
                                 Log.e(TAG, "Unit Product ID: " + jsonObject.getString("product_id") + " name: " + product.getName());
 
                                 unit.setProduct(product);

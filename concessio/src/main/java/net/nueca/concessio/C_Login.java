@@ -50,7 +50,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? C_Welcome.class : C_Dashboard_old.class));
+        Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? C_Welcome.class : C_Dashboard.class));
         startActivity(intent);
     }
 
@@ -113,8 +113,8 @@ public class C_Login extends LoginActivity {
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
 
-        setEditTextAccountID("retailpos");
-        setEditTextEmail("retailpos@test.com");
-        setEditTextPassword("retailpos");
+        setEditTextAccountID("C5015");
+        setEditTextEmail("C5015@test.com");
+        setEditTextPassword("C5015");
     }
 }

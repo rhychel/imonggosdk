@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/llCustomerItem"
+    android:padding="12dp">
+
+    <me.grantland.widget.AutofitTextView
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="John of the Cross"
+        android:textSize="20sp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        autofit:minTextSize="12sp"
+        android:id="@+id/tvCustomerName"
+        android:textStyle="bold"
+        android:layout_weight="1"/>
+
+    <me.grantland.widget.AutofitTextView
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Unit 403B DECA Corporate Center, Panganiban Drive, Barangay Tinago, Naga City, Philippines 4400"
+        android:singleLine="false"
+        autofit:minTextSize="12sp"
+        android:id="@+id/tvAddress"
+        android:maxLines="2"
+        android:layout_weight="1"
+        android:textSize="12sp"/>
+</LinearLayout>

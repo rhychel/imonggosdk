@@ -54,6 +54,16 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @ForeignCollectionField
     private transient ForeignCollection<Document> documents;
 
+    /**
+     * THESE ARE FOR THE LETTER HEADER
+     */
+    private transient int sectionFirstPosition = -1;
+    private transient boolean isHeader = false;
+    private transient String letterHeader = "A";
+    /** -- END --
+     * THESE ARE FOR THE LETTER HEADER
+     */
+
     public Customer() {
 
     }
@@ -378,6 +388,30 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     public void setDocuments(ForeignCollection<Document> documents) {
         this.documents = documents;
+    }
+
+    public int getSectionFirstPosition() {
+        return sectionFirstPosition;
+    }
+
+    public void setSectionFirstPosition(int sectionFirstPosition) {
+        this.sectionFirstPosition = sectionFirstPosition;
+    }
+
+    public boolean isHeader() {
+        return isHeader;
+    }
+
+    public void setIsHeader(boolean isHeader) {
+        this.isHeader = isHeader;
+    }
+
+    public String getLetterHeader() {
+        return letterHeader;
+    }
+
+    public void setLetterHeader(String letterHeader) {
+        this.letterHeader = letterHeader;
     }
 
     @Override
