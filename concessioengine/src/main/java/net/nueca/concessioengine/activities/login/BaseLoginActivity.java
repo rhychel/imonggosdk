@@ -289,6 +289,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             case PRODUCTS:
                                 mModulesToDownload.add("Products");
                                 break;
+                            case UNITS_BRANCH:
                             case UNITS:
                                 mModulesToDownload.add("Units");
                                 break;
@@ -334,6 +335,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                 break;
                             case CUSTOMER_CATEGORIES:
                                 mModulesToDownload.add("Customer Categories");
+                                break;
+                            case PAYMENT_TYPES:
+                                mModulesToDownload.add("Payment Types");
+                                break;
+                            case PAYMENT_TERMS:
+                                mModulesToDownload.add("Payment Terms");
                                 break;
                             default:
                                 LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
@@ -1008,6 +1015,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     case DOCUMENT_PURPOSES:
                         currentTable = "Document Purposes";
                         break;
+                    case UNITS_BRANCH:
                     case UNITS:
                         currentTable = "Units";
                         break;
@@ -1031,6 +1039,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         break;
                     case CUSTOMER_CATEGORIES:
                         currentTable = "Customer Categories";
+                        break;
+                    case PAYMENT_TYPES:
+                        currentTable = "Payment Types";
+                        break;
+                    case PAYMENT_TERMS:
+                        currentTable = "Payment Terms";
+                        break;
                     default:
                         break;
                 }

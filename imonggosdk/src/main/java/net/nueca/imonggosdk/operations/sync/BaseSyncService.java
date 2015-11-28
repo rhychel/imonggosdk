@@ -36,6 +36,7 @@ import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
+import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
@@ -181,6 +182,7 @@ public abstract class BaseSyncService extends ImonggoService {
                 Product product = (Product) o;
                 return getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
             }
+            case UNITS_BRANCH:
             case UNITS: {
                 Unit unit = (Unit) o;
                 return getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit.getId()).queryForFirst() != null;
@@ -247,6 +249,10 @@ public abstract class BaseSyncService extends ImonggoService {
             case CUSTOMER_GROUPS: {
                 CustomerGroup customerGroup = (CustomerGroup) o;
                 return getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroup.getId()).queryForFirst() != null;
+            }
+            case PAYMENT_TERMS: {
+                PaymentTerms paymentTerms = (PaymentTerms) o;
+                return getHelper().fetchObjects(PaymentTerms.class).queryBuilder().where().eq("id", paymentTerms.getId()).queryForFirst() != null;
             }
             case DAILY_SALES: {
 

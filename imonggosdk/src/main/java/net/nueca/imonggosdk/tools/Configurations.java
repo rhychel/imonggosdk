@@ -68,6 +68,7 @@ public class Configurations {
             put(Table.BRANCHES, "branches.json");
             put(Table.BRANCH_USERS, "branches.json");
             put(Table.CUSTOMERS, "customers.json");
+            put(Table.UNITS_BRANCH, "units.json");
             put(Table.UNITS, "units.json");
             put(Table.TAX_SETTINGS, "tax_settings.json");
             put(Table.PRODUCTS, "products.json");
@@ -80,17 +81,15 @@ public class Configurations {
             put(Table.DOCUMENTS, "documents.json");
             put(Table.DOCUMENT_TYPES, "document_types.json");
             put(Table.DOCUMENT_PURPOSES, "document_purposes.json");
-            put(Table.INVOICES, "invoices.json");
-            put(Table.DOCUMENTS, "documents.json");
             put(Table.ORDERS, "orders.json");
-            put(Table.DAILY_SALES, "daily_sales/");
+            put(Table.APPLICATION_SETTINGS, "application_settings.json");
+            put(Table.DAILY_SALES, "daily_sales.json");
 
             // FOR REBISCO
             put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
             put(Table.PAYMENT_TERMS, "payment_terms.json");
             put(Table.CUSTOMER_CATEGORIES, "customer_categories.json");
             put(Table.PAYMENT_TYPES, "payment_types.json");
-
             put(Table.CUSTOMER_GROUPS, "customer_groups.json");
             put(Table.PRICE_LISTS, "price_lists.json");
 
@@ -102,10 +101,11 @@ public class Configurations {
         private static final long serialVersionUID = 9136022492409598128L;
 
         {
-            put(Table.BRANCHES, "branches.json");
             put(Table.USERS, "users.json");
+            put(Table.BRANCHES, "branches.json");
             put(Table.BRANCH_USERS, "branches.json");
             put(Table.CUSTOMERS, "customers.json");
+            put(Table.UNITS_BRANCH, "units.json");
             put(Table.UNITS, "units.json");
             put(Table.TAX_SETTINGS, "tax_settings.json");
             put(Table.PRODUCTS, "products.json");
@@ -119,17 +119,14 @@ public class Configurations {
             put(Table.DOCUMENT_TYPES, "document_types.json");
             put(Table.DOCUMENT_PURPOSES, "document_purposes.json");
             put(Table.ORDERS, "orders.json");
-            put(Table.INVOICES, "invoices");
-            put(Table.DOCUMENTS, "documents");
-            put(Table.ORDERS, "orders");
-            put(Table.APPLICATION_SETTINGS, "application_settings");
+            put(Table.APPLICATION_SETTINGS, "application_settings.json");
+            put(Table.DAILY_SALES, "daily_sales.json");
 
             // FOR REBISCO
-            put(Table.INVOICE_PURPOSES, "invoice_purposes");
-            put(Table.PAYMENT_TERMS, "payment_terms");
-            put(Table.CUSTOMER_CATEGORIES, "customer_categories");
-            put(Table.PAYMENT_TYPES, "payment_types");
-
+            put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
+            put(Table.PAYMENT_TERMS, "payment_terms.json");
+            put(Table.CUSTOMER_CATEGORIES, "customer_categories.sjon");
+            put(Table.PAYMENT_TYPES, "payment_types.json");
             put(Table.CUSTOMER_GROUPS, "customer_groups.json");
             put(Table.PRICE_LISTS, "price_list.json");
 

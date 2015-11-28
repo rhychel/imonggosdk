@@ -18,6 +18,7 @@ public enum Table {
     TAX_RATES,
     TAX_SETTINGS,
     UNITS,
+    UNITS_BRANCH,
     USERS,
 
     BRANCH_USERS,

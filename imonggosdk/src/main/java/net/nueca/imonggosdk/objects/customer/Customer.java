@@ -64,26 +64,27 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
      * THESE ARE FOR THE LETTER HEADER
      */
 
-    public Customer() {
 
+    public Customer(String s, String s1, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String gender) {
+        this.first_name = s;
+        this.last_name =s1;
+        this.name = s2;
+        this.company_name = s3;
+        this.telephone = s4;
+        this.mobile = s5;
+        this.email = s6;
+        this.street = s7;
+        this.city = s8;
+        this.zipcode = s9;
+        this.country = s10;
+        this.state = s11;
+        this.tin = s12;
+        this.gender = gender;
     }
 
-    public Customer(String first_name, String last_name, String name, String company_name, String telephone, String mobile, String fax, String email, String street, String city, String zipcode, String country, String state, String tin, String gender) {
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.name = name;
-        this.company_name = company_name;
-        this.telephone = telephone;
-        this.mobile = mobile;
-        this.fax = fax;
-        this.email = email;
-        this.street = street;
-        this.city = city;
-        this.zipcode = zipcode;
-        this.country = country;
-        this.state = state;
-        this.tin = tin;
-        this.gender = gender;
+
+    public Customer() {
+
     }
 
     public int getPoint_to_amount_ratio() {
@@ -475,6 +476,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
+            insertExtrasTo(dbHelper);
             dbHelper.insert(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -484,6 +486,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
+            deleteExtrasTo(dbHelper);
             dbHelper.delete(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -493,6 +496,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
+            updateExtrasTo(dbHelper);
             dbHelper.update(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
