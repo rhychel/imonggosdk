@@ -2,6 +2,7 @@ package net.nueca.concessio_test;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -38,14 +39,16 @@ public class C_Login extends LoginActivity {
         setModulesToSync(
                 Table.USERS.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
-/*                Table.CUSTOMER_CATEGORIES.ordinal(),
+                Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_GROUPS.ordinal(),
                 Table.CUSTOMERS.ordinal(),
                 Table.BRANCH_PRODUCTS.ordinal(),
                 Table.UNITS_BRANCH.ordinal(),
-                Table.PRICE_LISTS.ordinal(),*/
+                Table.PRICE_LISTS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
-                Table.PAYMENT_TERMS.ordinal());
+                Table.PAYMENT_TERMS.ordinal(),
+                Table.SALES_PUSH.ordinal(),
+                Table.ROUTE_PLANS.ordinal());
 
     }
 
@@ -60,7 +63,7 @@ public class C_Login extends LoginActivity {
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
         setEditTextAccountID("C5015");
-        setEditTextEmail("OSS1@test.com");
-        setEditTextPassword("OSS1");
+        setEditTextEmail("C5015@test.com");
+        setEditTextPassword("C5015");
     }
 }

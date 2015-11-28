@@ -61,5 +61,6 @@ public enum Table {
     INVOICE_PURPOSES,
     PAYMENT_TERMS,
     PAYMENT_TYPES,
-    EXTRAS
+    EXTRAS,
+    SALES_PUSH
 }

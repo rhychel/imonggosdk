@@ -342,6 +342,15 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             case PAYMENT_TERMS:
                                 mModulesToDownload.add("Payment Terms");
                                 break;
+                            case SALES_PUSH:
+                                mModulesToDownload.add("Sales Push");
+                                break;
+                            case SALES_PROMOTIONS:
+                                mModulesToDownload.add("Sales Promotion");
+                                break;
+                            case ROUTE_PLANS:
+                                mModulesToDownload.add("Route Plans");
+                                break;
                             default:
                                 LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
                                 Log.i(TAG, "You have added unsupported module. please check your code. " + table);
@@ -448,7 +457,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnSignIn.setEnabled(false);
                 initLogin();
             }
         });
@@ -520,7 +528,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 }
 
                 // BaseLogin Function
-                Log.i(TAG, "Loggin in...");
+                btnSignIn.setEnabled(false);
                 startLogin(getApplicationContext(), accountId, email, password, getServer());
             }
         }
@@ -1046,6 +1054,14 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     case PAYMENT_TERMS:
                         currentTable = "Payment Terms";
                         break;
+                    case SALES_PUSH:
+                        currentTable = "Sales Push";
+                        break;
+                    case SALES_PROMOTIONS:
+                        currentTable = "Sales Promotions";
+                        break;
+                    case ROUTE_PLANS:
+                        currentTable = "Route Plans";
                     default:
                         break;
                 }

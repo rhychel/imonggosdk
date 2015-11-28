@@ -92,6 +92,9 @@ public class Configurations {
             put(Table.PAYMENT_TYPES, "payment_types.json");
             put(Table.CUSTOMER_GROUPS, "customer_groups.json");
             put(Table.PRICE_LISTS, "price_lists.json");
+            put(Table.SALES_PROMOTIONS, "sales_promotions.json");
+            put(Table.SALES_PUSH, "sales_promotions.json?type=sales_push");
+            put(Table.ROUTE_PLANS, "route_plans.json");
 
         }
     };
@@ -129,7 +132,9 @@ public class Configurations {
             put(Table.PAYMENT_TYPES, "payment_types.json");
             put(Table.CUSTOMER_GROUPS, "customer_groups.json");
             put(Table.PRICE_LISTS, "price_list.json");
-
+            put(Table.SALES_PROMOTIONS, "sales_promotions.json");
+            put(Table.SALES_PUSH, "sales_promotions.xml?type=sales_push");
+            put(Table.ROUTE_PLANS, "route_plans.json");
         }
     };
 
