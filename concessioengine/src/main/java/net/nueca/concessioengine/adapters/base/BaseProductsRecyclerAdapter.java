@@ -2,6 +2,7 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
+import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;

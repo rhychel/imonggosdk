@@ -11,12 +11,14 @@ public enum Table {
     CUSTOMERS,
     INVENTORIES,
     PRODUCTS,
+    BRANCH_PRODUCTS,
     PRODUCT_TAGS,
     PRODUCT_EXTRAS,
     SESSIONS,
     TAX_RATES,
     TAX_SETTINGS,
     UNITS,
+    UNITS_BRANCH,
     USERS,
 
     BRANCH_USERS,
@@ -60,5 +62,6 @@ public enum Table {
     INVOICE_PURPOSES,
     PAYMENT_TERMS,
     PAYMENT_TYPES,
-    EXTRAS
+    EXTRAS,
+    SALES_PUSH
 }

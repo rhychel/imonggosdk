@@ -33,6 +33,13 @@ public class Extras extends DBTable {
     @Expose
     @DatabaseField
     private Boolean batch_maintained; // true || false
+    @Expose
+    @DatabaseField
+    private String default_selling_unit; // unit_id
+    @Expose
+    @DatabaseField
+    private String default_ordering_unit_id; // unit_id
+
 
     // DocumentLine
     @Expose
@@ -223,6 +230,8 @@ public class Extras extends DBTable {
         invoice_purpose_code = builder.invoice_purpose_code;
         invoice_purpose_name = builder.invoice_purpose_name;
         expiry_date = builder.expiry_date;
+        default_selling_unit = builder.default_selling_unit;
+        default_ordering_unit_id = builder.default_ordering_unit_id;
     }
 
     public String getId() {
@@ -592,6 +601,22 @@ public class Extras extends DBTable {
         this.expiry_date = expiry_date;
     }
 
+    public String getDefault_selling_unit() {
+        return default_selling_unit;
+    }
+
+    public void setDefault_selling_unit(String default_selling_unit) {
+        this.default_selling_unit = default_selling_unit;
+    }
+
+    public String getDefault_ordering_unit_id() {
+        return default_ordering_unit_id;
+    }
+
+    public void setDefault_ordering_unit_id(String default_ordering_unit_id) {
+        this.default_ordering_unit_id = default_ordering_unit_id;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
@@ -655,7 +680,8 @@ public class Extras extends DBTable {
         protected String check_number;
         protected String bank_branch;
         protected String check_date;
-
+        protected String default_selling_unit;
+        protected String default_ordering_unit_id;
 
         protected Integer payment_term_id;
         protected String payment_term_code;
@@ -675,6 +701,16 @@ public class Extras extends DBTable {
         protected String invoice_purpose_code;
         protected String invoice_purpose_name;
         protected String expiry_date;
+
+        public Builder default_selling_unit(String default_selling_unit) {
+            this.default_selling_unit = default_selling_unit;
+            return this;
+        }
+
+        public Builder default_ordering_unit_id(String default_ordering_unit_id) {
+            this.default_ordering_unit_id = default_ordering_unit_id;
+            return this;
+        }
 
         public Builder payment_term_id(Integer payment_term_id) {
             this.payment_term_id = payment_term_id;

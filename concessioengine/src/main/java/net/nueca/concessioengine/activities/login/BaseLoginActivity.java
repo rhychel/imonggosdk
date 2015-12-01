@@ -285,13 +285,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             case USERS:
                                 mModulesToDownload.add("Users");
                                 break;
+                            case BRANCH_PRODUCTS:
                             case PRODUCTS:
                                 mModulesToDownload.add("Products");
                                 break;
+                            case UNITS_BRANCH:
                             case UNITS:
                                 mModulesToDownload.add("Units");
                                 break;
                             case BRANCH_USERS:
+                            case BRANCHES:
                                 mModulesToDownload.add("Branches");
                                 break;
                             case CUSTOMERS:
@@ -329,6 +332,24 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                 break;
                             case PRICE_LISTS:
                                 mModulesToDownload.add("Price Lists");
+                                break;
+                            case CUSTOMER_CATEGORIES:
+                                mModulesToDownload.add("Customer Categories");
+                                break;
+                            case PAYMENT_TYPES:
+                                mModulesToDownload.add("Payment Types");
+                                break;
+                            case PAYMENT_TERMS:
+                                mModulesToDownload.add("Payment Terms");
+                                break;
+                            case SALES_PUSH:
+                                mModulesToDownload.add("Sales Push");
+                                break;
+                            case SALES_PROMOTIONS:
+                                mModulesToDownload.add("Sales Promotion");
+                                break;
+                            case ROUTE_PLANS:
+                                mModulesToDownload.add("Route Plans");
                                 break;
                             default:
                                 LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
@@ -436,7 +457,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnSignIn.setEnabled(false);
                 initLogin();
             }
         });
@@ -508,7 +528,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 }
 
                 // BaseLogin Function
-                Log.i(TAG, "Loggin in...");
+                btnSignIn.setEnabled(false);
                 startLogin(getApplicationContext(), accountId, email, password, getServer());
             }
         }
@@ -978,14 +998,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         currentTable = "Users";
                         break;
                     case BRANCHES:
-                        currentTable = "Branches";
-                        break;
                     case BRANCH_USERS:
                         currentTable = "Branches";
                         break;
                     case TAX_SETTINGS:
                         currentTable = "Tax Settings";
                         break;
+                    case BRANCH_PRODUCTS:
                     case PRODUCTS:
                         currentTable = "Products";
                         break;
@@ -1004,6 +1023,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     case DOCUMENT_PURPOSES:
                         currentTable = "Document Purposes";
                         break;
+                    case UNITS_BRANCH:
                     case UNITS:
                         currentTable = "Units";
                         break;
@@ -1025,6 +1045,23 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     case PRICE_LISTS:
                         currentTable = "Price Lists";
                         break;
+                    case CUSTOMER_CATEGORIES:
+                        currentTable = "Customer Categories";
+                        break;
+                    case PAYMENT_TYPES:
+                        currentTable = "Payment Types";
+                        break;
+                    case PAYMENT_TERMS:
+                        currentTable = "Payment Terms";
+                        break;
+                    case SALES_PUSH:
+                        currentTable = "Sales Push";
+                        break;
+                    case SALES_PROMOTIONS:
+                        currentTable = "Sales Promotions";
+                        break;
+                    case ROUTE_PLANS:
+                        currentTable = "Route Plans";
                     default:
                         break;
                 }

@@ -64,6 +64,15 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @ForeignCollectionField
     private transient ForeignCollection<Document> documents;
 
+    /**
+     * THESE ARE FOR THE LETTER HEADER
+     */
+    private transient int sectionFirstPosition = -1;
+    private transient boolean isHeader = false;
+    private transient String letterHeader = "A";
+    /** -- END --
+     * THESE ARE FOR THE LETTER HEADER
+     */
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
     protected transient OfflineData offlineData;
 
@@ -81,6 +90,25 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.telephone = telephone;
         this.mobile = mobile;
         this.fax = fax;
+        this.email = email;
+        this.street = street;
+        this.city = city;
+        this.zipcode = zipcode;
+        this.country = country;
+        this.state = state;
+        this.tin = tin;
+        this.gender = gender;
+    }
+    
+    public Customer(String first_name, String last_name, String name, String company_name,
+                    String telephone, String mobile, String email, String street,
+                    String city, String zipcode, String country, String state, String tin, String gender) {
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.name = name;
+        this.company_name = company_name;
+        this.telephone = telephone;
+        this.mobile = mobile;
         this.email = email;
         this.street = street;
         this.city = city;
@@ -403,6 +431,30 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.offlineData = offlineData;
     }
 
+    public int getSectionFirstPosition() {
+        return sectionFirstPosition;
+    }
+
+    public void setSectionFirstPosition(int sectionFirstPosition) {
+        this.sectionFirstPosition = sectionFirstPosition;
+    }
+
+    public boolean isHeader() {
+        return isHeader;
+    }
+
+    public void setIsHeader(boolean isHeader) {
+        this.isHeader = isHeader;
+    }
+
+    public String getLetterHeader() {
+        return letterHeader;
+    }
+
+    public void setLetterHeader(String letterHeader) {
+        this.letterHeader = letterHeader;
+    }
+
     @Override
     public boolean equals(Object o) {
         return (o instanceof Customer) && ((Customer)o).getId() == id;
@@ -478,6 +530,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
+            insertExtrasTo(dbHelper);
             dbHelper.insert(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -487,6 +540,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
+            deleteExtrasTo(dbHelper);
             dbHelper.delete(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -496,6 +550,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
+            updateExtrasTo(dbHelper);
             dbHelper.update(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -507,6 +562,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         extras.setCustomer(this);
         extras.setId(Customer.class.getName().toUpperCase(), id);
         extras.insertTo(dbHelper);
+
     }
 
     @Override

@@ -136,7 +136,10 @@ public class ImonggoOperations {
                                     Server server, RequestType requestType, String parameter, String TAG) {
 
         Log.e(TAG, "RequestType: " + requestType);
-        if (requestType == RequestType.LAST_UPDATED_AT || requestType == RequestType.COUNT || table == Table.TAX_SETTINGS || table == Table.DAILY_SALES) {
+        if (requestType == RequestType.LAST_UPDATED_AT
+                || requestType == RequestType.COUNT
+                || table == Table.TAX_SETTINGS
+                || table == Table.DAILY_SALES) {
             JsonObjectRequest request = HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, server, table, requestType, parameter);
             request.setTag(TAG);
             request.setShouldCache(false);

@@ -9,15 +9,17 @@ import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
+import net.nueca.concessioengine.objects.DashboardTile;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 
 import java.util.List;
 
 /**
  * Created by rhymart on 11/24/15.
  */
-public class DashboardRecyclerAdapter extends BaseRecyclerAdapter<DashboardRecyclerAdapter.DashboardViewHolder, String> {
+public class DashboardRecyclerAdapter extends BaseRecyclerAdapter<DashboardRecyclerAdapter.DashboardViewHolder, DashboardTile> {
 
-    public DashboardRecyclerAdapter(Context context, List<String> list) {
+    public DashboardRecyclerAdapter(Context context, List<DashboardTile> list) {
         super(context, list);
     }
 
@@ -32,9 +34,8 @@ public class DashboardRecyclerAdapter extends BaseRecyclerAdapter<DashboardRecyc
 
     @Override
     public void onBindViewHolder(DashboardViewHolder holder, int position) {
-
-        holder.tvTitle.setText(getItem(position));
-
+        holder.concessioModule = getItem(position).getConcessioModule();
+        holder.tvTitle.setText(getItem(position).getLabel());
     }
 
     @Override
@@ -46,17 +47,22 @@ public class DashboardRecyclerAdapter extends BaseRecyclerAdapter<DashboardRecyc
 
         ImageView ivLogo;
         TextView tvTitle;
+        ConcessioModule concessioModule;
 
         public DashboardViewHolder(View itemView) {
             super(itemView);
 
             ivLogo = (ImageView) itemView.findViewById(R.id.ivLogo);
             tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
+
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-
+            v.setTag(concessioModule);
+            if(onItemClickListener != null)
+                onItemClickListener.onItemClicked(v, getLayoutPosition());
         }
 
         @Override

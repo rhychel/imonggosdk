@@ -7,12 +7,18 @@ package net.nueca.imonggosdk.enums;
 public enum ConcessioModule {
     ORDERS,
     PHYSICAL_COUNT,
-    SALES,
+    SALES, // BOOKING
     RECEIVE,
     PULLOUT_REQUEST,
     PULLOUT_CONFIRMATION,
 
     INVENTORY,
+    CUSTOMERS,
+    ADJUSTMENT_OUT, // MSO
+    ADJUSTMENT_IN,
 
-    APP
+    APP,
+
+    HISTORY,
+    LAYAWAY
 }

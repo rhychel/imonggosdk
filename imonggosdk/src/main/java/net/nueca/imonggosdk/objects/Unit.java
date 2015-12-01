@@ -12,6 +12,8 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import java.sql.SQLException;
 
@@ -34,6 +36,8 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
 
     @DatabaseField
     private boolean is_default_ordering_unit = false;
+    @DatabaseField
+    private String discount_text;
 
     public Unit() { }
 
@@ -111,6 +115,14 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
 
     public void setIs_default_ordering_unit(boolean is_default_ordering_unit) {
         this.is_default_ordering_unit = is_default_ordering_unit;
+    }
+
+    public String getDiscount_text() {
+        return discount_text;
+    }
+
+    public void setDiscount_text(String discount_text) {
+        this.discount_text = discount_text;
     }
 
     public ForeignCollection<Price> getPrices() {

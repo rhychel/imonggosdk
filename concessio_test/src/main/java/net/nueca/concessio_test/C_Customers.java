@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.concessioengine.fragments.AddCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
@@ -42,6 +43,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
         mSimpleCustomersFragment = new SimpleCustomersFragment();
         mSimpleCustomersFragment.setHelper(getHelper());
         mSimpleCustomersFragment.setSetupActionBar(this);
+        mSimpleCustomersFragment.setListingType(ListingType.LETTER_HEADER);
 
         getSupportFragmentManager()
                 .beginTransaction()

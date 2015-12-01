@@ -18,6 +18,7 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
+import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
@@ -36,6 +37,8 @@ import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
+import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
@@ -176,10 +179,12 @@ public abstract class BaseSyncService extends ImonggoService {
                 User user = (User) o;
                 return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
             }
+            case BRANCH_PRODUCTS:
             case PRODUCTS: {
                 Product product = (Product) o;
                 return getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
             }
+            case UNITS_BRANCH:
             case UNITS: {
                 Unit unit = (Unit) o;
                 return getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit.getId()).queryForFirst() != null;
@@ -246,6 +251,18 @@ public abstract class BaseSyncService extends ImonggoService {
             case CUSTOMER_GROUPS: {
                 CustomerGroup customerGroup = (CustomerGroup) o;
                 return getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroup.getId()).queryForFirst() != null;
+            }
+            case PAYMENT_TERMS: {
+                PaymentTerms paymentTerms = (PaymentTerms) o;
+                return getHelper().fetchObjects(PaymentTerms.class).queryBuilder().where().eq("id", paymentTerms.getId()).queryForFirst() != null;
+            }
+            case PAYMENT_TYPES: {
+                PaymentType paymentType = (PaymentType) o;
+                return getHelper().fetchObjects(PaymentType.class).queryBuilder().where().eq("id", paymentType.getId()).queryForFirst() != null;
+            }
+            case ROUTE_PLANS: {
+                RoutePlan routePlan = (RoutePlan) o;
+                return getHelper().fetchObjects(RoutePlan.class).queryBuilder().where().eq("id", routePlan.getId()).queryForFirst() != null;
             }
             case DAILY_SALES: {
 

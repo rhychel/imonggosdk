@@ -32,7 +32,7 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
             concessioModule = (ConcessioModule)view.getTag();
         }
         else {
-            Log.e("Ooops!", "no tag for this button");
+            Log.e("Ooops!", "no tag for this button. e.g.: view.setTag(ConcessioModule.ORDERS)");
             return;
         }
         if(nextActivityClass == null) {

@@ -63,6 +63,16 @@ public class Price extends BaseTable {
     }
 
     @Override
+    public String toString() {
+        return "Price{" +
+                "priceList=" + priceList +
+                ", product=" + product +
+                ", unit=" + unit +
+                ", retail_price=" + retail_price +
+                '}';
+    }
+
+    @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(Price.class, this);
