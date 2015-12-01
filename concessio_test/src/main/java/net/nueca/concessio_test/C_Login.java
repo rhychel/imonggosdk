@@ -38,7 +38,8 @@ public class C_Login extends LoginActivity {
         setModulesToSync(
                 Table.USERS.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
-                Table.PRODUCTS.ordinal());
+                Table.PRODUCTS.ordinal()
+                );
              /*   Table.UNITS.ordinal(),
                 Table.CUSTOMER_GROUPS.ordinal(),
                 Table.PRICE_LISTS.ordinal());*/
@@ -57,8 +58,8 @@ public class C_Login extends LoginActivity {
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
 
-        setEditTextAccountID("nuecaonly");
-        setEditTextEmail("nuecaonly@test.com");
-        setEditTextPassword("nuecaonly");
+        setEditTextAccountID("retailpos");
+        setEditTextEmail("retailpos@test.com");
+        setEditTextPassword("retailpos");
     }
 }

@@ -84,9 +84,6 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     private transient ForeignCollection<Discount> discounts;
 
     @ForeignCollectionField
-    private transient ForeignCollection<BranchPrice> branchPrices;
-
-    @ForeignCollectionField
     private transient ForeignCollection<Price> prices;
 
     @ForeignCollectionField
@@ -377,14 +374,6 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
-    }
-
-    public ForeignCollection<BranchPrice> getBranchPrices() {
-        return branchPrices;
-    }
-
-    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
-        this.branchPrices = branchPrices;
     }
 
     public ForeignCollection<BranchPrice> getBranchPrices() {

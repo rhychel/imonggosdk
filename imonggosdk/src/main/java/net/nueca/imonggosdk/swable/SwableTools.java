@@ -288,6 +288,9 @@ public class SwableTools {
             case DOCUMENTS:
                 transaction.put("document", jsonObject);
                 break;
+            case CUSTOMERS:
+                transaction.put("customer", jsonObject);
+                break;
         }
         return transaction;
     }
@@ -304,6 +307,9 @@ public class SwableTools {
                 break;
             case SEND_DOCUMENT:
                 transaction.put("document", jsonObject);
+                break;
+            case ADD_CUSTOMER:
+                transaction.put("customer", jsonObject);
                 break;
         }
         return transaction;

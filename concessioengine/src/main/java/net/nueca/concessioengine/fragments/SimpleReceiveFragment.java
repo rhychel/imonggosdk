@@ -283,12 +283,12 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
 
             Values values = new Values();
             ExtendedAttributes extendedAttributes = new ExtendedAttributes(0d, documentLine.getQuantity());
-            if(documentLine.getDocumentLineExtras() != null) {
-                extendedAttributes.setBatch_no(documentLine.getDocumentLineExtras().getBatch_no());
+            if(documentLine.getExtras() != null) {
+                extendedAttributes.setBatch_no(documentLine.getExtras().getBatch_no());
             }
-            if(documentLine.getDocumentLineExtras() != null) {
-                extendedAttributes.setDelivery_date(documentLine.getDocumentLineExtras().getDelivery_date());
-                extendedAttributes.setBrand(documentLine.getDocumentLineExtras().getBrand());
+            if(documentLine.getExtras() != null) {
+                extendedAttributes.setDelivery_date(documentLine.getExtras().getDelivery_date());
+                extendedAttributes.setBrand(documentLine.getExtras().getBrand());
             }
             if(unit == null) {
                 if(documentLine.getUnit_name() != null)

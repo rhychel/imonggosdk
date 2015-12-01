@@ -1,5 +1,8 @@
 package net.nueca.imonggosdk.objects.customer;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -10,6 +13,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.Document;
@@ -17,6 +21,9 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 
@@ -27,14 +34,17 @@ import java.sql.SQLException;
 @DatabaseTable
 public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
 
+    @Expose
     @DatabaseField
     private int point_to_amount_ratio;
+    @Expose
     @DatabaseField
     private String code, alternate_code, first_name, last_name, name, company_name,
             tin, street = "", city, state, zipcode, country, telephone = "", fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
             membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+    @Expose
     @DatabaseField
     private boolean tax_exempt;
     @DatabaseField
@@ -54,32 +64,16 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @ForeignCollectionField
     private transient ForeignCollection<Document> documents;
 
-    public Customer() {
-    }
-
-    public Customer(String first_name, String last_name, String name, String company_name, String telephone, String mobile, String fax, String email, String street, String city, String zipcode, String country, String state, String tin, String gender) {
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.name = name;
-        this.company_name = company_name;
-        this.telephone = telephone;
-        this.mobile = mobile;
-        this.fax = fax;
-        this.email = email;
-        this.street = street;
-        this.city = city;
-        this.zipcode = zipcode;
-        this.country = country;
-        this.state = state;
-        this.tin = tin;
-        this.gender = gender;
-    }
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
+    protected transient OfflineData offlineData;
 
     public Customer() {
 
     }
 
-    public Customer(String first_name, String last_name, String name, String company_name, String telephone, String mobile, String fax, String email, String street, String city, String zipcode, String country, String state, String tin, String gender) {
+    public Customer(String first_name, String last_name, String name, String company_name,
+                    String telephone, String mobile, String fax, String email, String street,
+                    String city, String zipcode, String country, String state, String tin, String gender) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.name = name;
@@ -401,6 +395,14 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.documents = documents;
     }
 
+    public OfflineData getOfflineData() {
+        return offlineData;
+    }
+
+    public void setOfflineData(OfflineData offlineData) {
+        this.offlineData = offlineData;
+    }
+
     @Override
     public boolean equals(Object o) {
         return (o instanceof Customer) && ((Customer)o).getId() == id;
@@ -412,6 +414,20 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         int result = 17;
         result = 31 * result + id;
         return result;
+    }
+
+    public JSONObject toJSONObject() throws JSONException {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return new JSONObject(gson.toJson(this));
+    }
+
+    public static Customer fromJSONObject(JSONObject jsonObject) throws JSONException {
+        Gson gson = new Gson();
+        if(jsonObject.has("customer")) {
+            jsonObject = jsonObject.getJSONObject("customer");
+        }
+        Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
+        return customer;
     }
 
     @Override
@@ -501,5 +517,11 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
         extras.updateTo(dbHelper);
+    }
+
+    public static class Builder {
+        protected Extras extras;
+        protected String utc_created_at;
+        protected String utc_updated_at;
     }
 }
