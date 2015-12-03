@@ -49,6 +49,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
     protected ListScrollListener listScrollListener;
 
     protected abstract void toggleNoItems(String msg, boolean show);
+    protected abstract void whenListEndReached(List<Customer> customers);
 
     protected List<Customer> getCustomers() {
         List<Customer> customers = new ArrayList<>();
@@ -193,8 +194,6 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
             }
         }
     };
-
-    protected abstract void whenListEndReached(List<Customer> customers);
 
     protected RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
         @Override

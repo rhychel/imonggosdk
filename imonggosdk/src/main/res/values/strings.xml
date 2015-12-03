@@ -43,7 +43,7 @@
     <string name="LOGIN_PROGRESS_DIALOG_TITLE_UNLINK">Unlink Account</string>
     <string name="LOGIN_PROGRESS_DIALOG_CONTENT">Please wait...</string>
 
-    <string name="FETCHING_MODULE_TITLE">Connecting you to the world</string>
+    <string name="FETCHING_MODULE_TITLE">Downloading...</string>
     <string name="FETCH_NO_MODULE_SELECTED_TITLE">Download Failed</string>
     <string name="FETCH_NO_MODULE_SELECTED">Modules to download is not set.</string>
     <string name="FETCH_NO_MODULE_POSTIVE_BUTTON">Alright</string>

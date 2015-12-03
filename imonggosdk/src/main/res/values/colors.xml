@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--<color name="primary">#50d2c2</color>-->
+    <!--<color name="primary_dark">#41aa9d</color>-->
+    <!--<color name="primary_light">#c8f0eb</color>-->
+    <!--<color name="accent">#50d2c2</color>-->
+
+    <!-- On Dark Background Specs -->
+    <color name="primary">#EF6C00</color>
+    <color name="primary_dark">#E65100</color>
+    <color name="primary_light">#FFCC80</color>
+    <color name="accent">#BDBDBD</color>
+    <color name="hint_text">#E0E0E0</color>
+    <color name="secondary_text">#BCBCBC</color>
+    <color name="primary_text">#FFFFFF</color>
+    <color name="divider">#3C3C3C</color>
+
+    <!-- On Light Background Specs -->
+    <color name="primaryL">#EF6C00</color>
+    <color name="primary_darkL">#E65100</color>
+    <color name="primary_lightL">#FFCC80</color>
+    <color name="accentL">#FFFFFF</color>
+    <color name="hint_textL">#9B9B9B</color>
+    <color name="secondary_textL">#737373</color>
+    <color name="primary_textL">#212121</color>
+    <color name="dividerL">#DBDBDB</color>
+
+    <color name="payment_color">#00BFA5</color>
+    <color name="red">#F44336</color>
+
+    <color name="title_text">#ffffff</color>
+    <color name="white">#ffffff</color>
+
+    <color name="login_default_bg">#ffffff</color>
+    <color name="login_default_status_bg">#ffffff</color>
+
+    <color name="dialog_field_label">#00A599</color>
+
+    <color name="mdtp_accent_color">#00ffff</color>
+    <color name="mdtp_accent_color_dark">#41aa9d</color>
+
+    <color name="products_bgcolor">@android:color/transparent</color>
+
+    <!-- Colors -->
+    <color name="white_20">#22000000</color>
+    <color name="white_50">#44000000</color>
+
+    <color name="gray_50">#77363636</color>
+</resources>

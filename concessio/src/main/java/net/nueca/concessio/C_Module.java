@@ -5,12 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SearchViewCompat;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,16 +23,20 @@ import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
+import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
+import net.nueca.concessioengine.fragments.SimpleCustomerDetailsFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleInventoryFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.SimplePulloutFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
+import net.nueca.concessioengine.fragments.SimpleRoutePlanFragment;
 import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
+import net.nueca.concessioengine.tools.AnimationTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -39,6 +47,7 @@ import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
@@ -53,10 +62,12 @@ import java.util.List;
  * Created by rhymart on 8/21/15.
  * imonggosdk2 (c)2015
  */
-public class C_Module extends ModuleActivity implements SetupActionBar {
+public class C_Module extends ModuleActivity implements SetupActionBar, BaseProductsFragment.ProductsFragmentListener, SimpleRoutePlanFragment.RoutePlanListener {
 
     private SimpleProductsFragment simpleProductsFragment, finalizeFragment;
-    private Button btnSummary;
+    private Button btn1, btn2;
+    private TextView tvItems;
+    private LinearLayout llReview, llBalance;
 
     private Toolbar toolbar;
     private boolean hasMenu = true;
@@ -68,6 +79,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
     private SimpleCustomersFragment simpleCustomersFragment;
 
+    private SimpleRoutePlanFragment simpleRoutePlanFragment;
+    private SimpleCustomerDetailsFragment simpleCustomerDetailsFragment;
+
     // For the pullout module
     private SimplePulloutFragment simplePulloutFragment;
     private SimplePulloutToolbarExt simplePulloutToolbarExt;
@@ -76,12 +90,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.c_module);
 
-        btnSummary = (Button) findViewById(R.id.btnSummary);
-
-        btnSummary.setOnClickListener(new View.OnClickListener() {
+        btn1 = (Button) findViewById(R.id.btn1);
+        btn2 = (Button) findViewById(R.id.btn2);
+        tvItems = (TextView) findViewById(R.id.tvItems);
+        llReview = (LinearLayout) findViewById(R.id.llReview);
+        llBalance = (LinearLayout) findViewById(R.id.llBalance);
+/*
+        btnReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Gson gson = new GsonBuilder().serializeNulls().create();
@@ -98,12 +115,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                     for(Inventory inventory : inventoryList) {
                         Log.e("Inventory", inventory.getProduct().getName()+" = "+inventory.getQuantity());
                     }
-
-//                    new SwableTools.Transaction(getHelper())
-//                            .toSend()
-//                            .object(document)
-//                            .forBranch(341)
-//                            .queue();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (SQLException e) {
@@ -111,7 +122,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 }
             }
         }); //onClickSummary
-
+*/
         simpleProductsFragment = SimpleProductsFragment.newInstance();
         finalizeFragment = SimpleProductsFragment.newInstance();
 
@@ -121,6 +132,45 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         finalizeFragment.setHelper(getHelper());
         finalizeFragment.setSetupActionBar(this);
         switch (concessioModule) {
+            case ROUTE_PLAN: {
+                simpleRoutePlanFragment = new SimpleRoutePlanFragment();
+                simpleRoutePlanFragment.setHelper(getHelper());
+                simpleRoutePlanFragment.setSetupActionBar(this);
+                simpleRoutePlanFragment.setRoutePlanListener(this);
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.flContent, simpleRoutePlanFragment)
+                        .commit();
+            } break;
+            case CUSTOMER_DETAILS: {
+                Log.e("Customer Details", "Yeah");
+                simpleCustomerDetailsFragment = new SimpleCustomerDetailsFragment();
+                simpleCustomerDetailsFragment.setHelper(getHelper());
+                simpleCustomerDetailsFragment.setSetupActionBar(this);
+
+                llReview.setVisibility(View.VISIBLE);
+                if(isFromCustomersList)
+                    btn1.setText("VIEW HISTORY");
+                else {
+                    btn1.setText("TRANSACT");
+                    btn2.setText("HISTORY");
+                    btn2.setVisibility(View.VISIBLE);
+                    btn2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(C_Module.this, C_Module.class);
+                            intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.SALES.ordinal());
+                            startActivity(intent);
+                        }
+                    });
+                }
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.flContent, simpleCustomerDetailsFragment)
+                        .commit();
+            } break;
             case CUSTOMERS: {
                 simpleCustomersFragment = new SimpleCustomersFragment();
                 simpleCustomersFragment.setHelper(getHelper());
@@ -131,8 +181,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                         .beginTransaction()
                         .add(R.id.flContent, simpleCustomersFragment)
                         .commit();
-
-                btnSummary.setVisibility(View.GONE);
             } break;
             case ORDERS:
             case SALES: {
@@ -140,13 +188,17 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
                 simpleProductsFragment.setShowCategoryOnStart(getModuleSetting().getProductListing().isShow_categories_on_start());
+                simpleProductsFragment.setProductsFragmentListener(this);
 
                 finalizeFragment.setHasCategories(false);
                 finalizeFragment.setHasBrand(false);
                 finalizeFragment.setHasDeliveryDate(false);
                 finalizeFragment.setHasUnits(true);
 
-                btnSummary.setVisibility(View.VISIBLE);
+                llReview.setVisibility(View.VISIBLE);
+                llReview.setTranslationY(1000f);
+                tvItems.setVisibility(View.VISIBLE);
+
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.flContent, simpleProductsFragment)
                         .commit();
@@ -161,7 +213,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 finalizeFragment.setMultipleInput(true);
                 finalizeFragment.setMultiInputListener(multiInputListener);
 
-                btnSummary.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction()
                     .add(R.id.flContent, simpleProductsFragment)
                     .commit();
@@ -196,7 +247,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                 .commit();
                     }
                 });
-                btnSummary.setVisibility(View.GONE);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.flContent, simpleReceiveFragment)
                         .commit();
@@ -250,11 +300,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             @Override
             public void onBackStackChanged() {
                 hasMenu = false;
-                btnSummary.setText("Send");
+//                btnSummary.setText("Send");
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        btnSummary.setText("Summary");
+//                        btnSummary.setText("Summary");
                         hasMenu = true;
                         onBackPressed();
                         getSupportActionBar().invalidateOptionsMenu();
@@ -286,7 +336,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        btnSummary.setText("Summary");
+//        btnSummary.setText("Summary");
 
         if(getModuleSetting() != null) {
             if (getModuleSetting().isRequire_document_reason()) {
@@ -309,28 +359,54 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
                 getSupportActionBar().setTitle("Customers");
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
                 mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
-                initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+                initializeSearchViewEx(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String newText) {
+                        simpleCustomersFragment.updateListWhenSearch(newText);
+                        return true;
+                    }
+
                     @Override
                     public boolean onQueryTextChange(String newText) {
                         simpleCustomersFragment.updateListWhenSearch(newText);
                         return true;
                     }
+
                 });
             }
-            else {
+            else if(concessioModule == ConcessioModule.CUSTOMER_DETAILS) {
+                if(isFromCustomersList)
+                    getMenuInflater().inflate(R.menu.simple_edit_menu, menu);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+            else if(concessioModule != ConcessioModule.ROUTE_PLAN) {
                 getMenuInflater().inflate(R.menu.simple_products_menu, menu);
                 menu.findItem(R.id.mHistory).setVisible(false);
                 menu.findItem(R.id.mLogout).setVisible(false);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
                 mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
-                initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+                mSearch.setQueryHint("Search product");
+                initializeSearchViewEx(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String newText) {
+                        simpleProductsFragment.updateListWhenSearch(newText);
+                        return true;
+                    }
+
                     @Override
                     public boolean onQueryTextChange(String newText) {
                         simpleProductsFragment.updateListWhenSearch(newText);
                         return true;
                     }
+
                 });
+            }
+            else {
+                getMenuInflater().inflate(R.menu.simple_search_menu, menu);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
         }
         return super.onCreateOptionsMenu(menu);
@@ -365,6 +441,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 }
             }
         }
+        if(concessioModule == ConcessioModule.ROUTE_PLAN) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        if(concessioModule == ConcessioModule.CUSTOMER_DETAILS) {
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setTitle("Juan Dela Cruz");
+        }
     }
 
     private MultiInputListener multiInputListener = new MultiInputListener() {
@@ -376,68 +459,83 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         }
     };
 
-    private View.OnClickListener onClickSummary = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (btnSummary.getText().equals("Send")) {
-                DialogTools.showSelectionDialog(C_Module.this,
-                        new ArrayAdapter<>(C_Module.this, android.R.layout.simple_list_item_single_choice, getBranches()),
-                        "Yes", new DialogTools.OnItemSelected<Branch>() {
-                            @Override
-                            public void itemChosen(final Branch branch) {
-                                final Branch warehouse = getWarehouse();
-                                if (warehouse == null)
-                                    DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.");
-                                else {
-                                    DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            switch (concessioModule) {
-                                                case ORDERS: {
-                                                    try {
-                                                        SwableTools.sendTransaction(getHelper(), branch.getId(),
-                                                                generateOrder(C_Module.this, warehouse.getId()), OfflineDataType.SEND_ORDER);
-                                                        onBackPressed();
-                                                        ProductsAdapterHelper.clearSelectedProductItemList();
-                                                        simpleProductsFragment.refreshList();
-                                                    } catch (SQLException | JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                                break;
-                                                case PHYSICAL_COUNT: {
-                                                    try {
-                                                        OfflineData offlineData = SwableTools.sendTransaction(getHelper(), branch.getId(),
-                                                                generateDocument(C_Module.this), OfflineDataType.SEND_DOCUMENT);
+    @Override
+    public void whenItemsSelectedUpdated() {
+        int size = ProductsAdapterHelper.getSelectedProductItems().size();
+        tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
+        AnimationTools.toggleShowHide(llReview, false, 300);
+    }
 
-                                                        Log.e("PCount", offlineData.getObjectFromData().toString());
-                                                        onBackPressed();
-                                                        ProductsAdapterHelper.clearSelectedProductItemList();
-                                                        simpleProductsFragment.refreshList();
-                                                    } catch (SQLException | JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                                break;
-                                            }
-                                        }
-                                    }, "No");
-                                }
-                            }
-                        }, "No");
-            } else {
-                if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
-                    DialogTools.showDialog(C_Module.this, "Ooops!", "You have no selected items. Kindly select first products.");
-                else {
-                    btnSummary.setText("Send");
-                    finalizeFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
-                    getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                            .add(R.id.flContent, finalizeFragment, "finalize")
-                            .addToBackStack("finalizer")
-                            .commit();
-                }
-            }
-        }
-    };
+    @Override
+    public void itemClicked(Customer customer) {
+        Log.e("Customer Details", "Clicked!");
+        Intent intent = new Intent(this, C_Module.class);
+        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
+        startActivity(intent);
+    }
+
+//    private View.OnClickListener onClickSummary = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//            if (btnSummary.getText().equals("Send")) {
+//                DialogTools.showSelectionDialog(C_Module.this,
+//                        new ArrayAdapter<>(C_Module.this, android.R.layout.simple_list_item_single_choice, getBranches()),
+//                        "Yes", new DialogTools.OnItemSelected<Branch>() {
+//                            @Override
+//                            public void itemChosen(final Branch branch) {
+//                                final Branch warehouse = getWarehouse();
+//                                if (warehouse == null)
+//                                    DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.");
+//                                else {
+//                                    DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(DialogInterface dialogInterface, int i) {
+//                                            switch (concessioModule) {
+//                                                case ORDERS: {
+//                                                    try {
+//                                                        SwableTools.sendTransaction(getHelper(), branch.getId(),
+//                                                                generateOrder(C_Module.this, warehouse.getId()), OfflineDataType.SEND_ORDER);
+//                                                        onBackPressed();
+//                                                        ProductsAdapterHelper.clearSelectedProductItemList();
+//                                                        simpleProductsFragment.refreshList();
+//                                                    } catch (SQLException | JSONException e) {
+//                                                        e.printStackTrace();
+//                                                    }
+//                                                }
+//                                                break;
+//                                                case PHYSICAL_COUNT: {
+//                                                    try {
+//                                                        OfflineData offlineData = SwableTools.sendTransaction(getHelper(), branch.getId(),
+//                                                                generateDocument(C_Module.this), OfflineDataType.SEND_DOCUMENT);
+//
+//                                                        Log.e("PCount", offlineData.getObjectFromData().toString());
+//                                                        onBackPressed();
+//                                                        ProductsAdapterHelper.clearSelectedProductItemList();
+//                                                        simpleProductsFragment.refreshList();
+//                                                    } catch (SQLException | JSONException e) {
+//                                                        e.printStackTrace();
+//                                                    }
+//                                                }
+//                                                break;
+//                                            }
+//                                        }
+//                                    }, "No");
+//                                }
+//                            }
+//                        }, "No");
+//            } else {
+//                if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
+//                    DialogTools.showDialog(C_Module.this, "Ooops!", "You have no selected items. Kindly select first products.");
+//                else {
+//                    btnSummary.setText("Send");
+//                    finalizeFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
+//                    getSupportFragmentManager().beginTransaction()
+//                            .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+//                            .add(R.id.flContent, finalizeFragment, "finalize")
+//                            .addToBackStack("finalizer")
+//                            .commit();
+//                }
+//            }
+//        }
+//    };
 }
