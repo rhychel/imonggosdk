@@ -213,7 +213,8 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     protected void showCustomDownloadDialog() {
         if (isUsingDefaultCustomDialogForSync()) {
             setIsUsingDefaultLoginLayout(true);
-            createNewCustomDialogFrameLayout(LoginActivity.this, getModulesToSync());
+            Log.e(TAG, getTableToSync().toString());
+            createNewCustomDialogFrameLayout(getTableToSync(), LoginActivity.this);
             createNewCustomDialog(LoginActivity.this, R.style.AppCompatDialogStyle);
             setCustomDialogTitle(getString(R.string.FETCHING_MODULE_TITLE));
             setCustomDialogContentView(getCustomDialogFrameLayout());
