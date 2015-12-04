@@ -23,8 +23,8 @@ public class  PriceList extends BaseTable {
     private String code;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")
     private Branch branch;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_group_id")
-    private CustomerGroup customerGroup; //can be null
+    @ForeignCollectionField(columnName = "customer_group_id")
+    private ForeignCollection<CustomerGroup> customerGroup; //can be null
     @ForeignCollectionField(columnName = "customer_id")
     private ForeignCollection<Customer> customer; // can be null
     @ForeignCollectionField
@@ -60,11 +60,11 @@ public class  PriceList extends BaseTable {
         this.branch = branch;
     }
 
-    public CustomerGroup getCustomerGroup() {
+    public ForeignCollection<CustomerGroup> getCustomerGroup() {
         return customerGroup;
     }
 
-    public void setCustomerGroup(CustomerGroup customerGroup) {
+    public void setCustomerGroup(ForeignCollection<CustomerGroup> customerGroup) {
         this.customerGroup = customerGroup;
     }
 

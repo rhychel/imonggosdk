@@ -1,15 +1,10 @@
 package net.nueca.imonggosdk.objects.invoice;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.SalesPushSettings;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 
 import java.sql.SQLException;
@@ -25,10 +20,16 @@ import java.util.Date;
 public class SalesPromotion extends BaseTable {
 
     @DatabaseField
-    private String settings = "",
-            promotion_type_name = "", // Generate a [__promotion_type_name__] for every purchase amount given below. <---- rebisco, points
-            status = null, name = "",
-            code = "", photos_ids = "", to_date = "", from_date = "";
+    private String promotion_type_name = "", // Generate a [__promotion_type_name__] for every purchase amount given below. <---- rebisco, points
+            status = null,
+            name = "",
+            code = "",
+            photos_ids = "",
+            to_date = "",
+            from_date = "";
+
+    @DatabaseField(foreign = true, foreignAutoCreate = true)
+    private SalesPushSettings settings;
 
     @DatabaseField
     private transient Date toDate, fromDate;
@@ -38,11 +39,11 @@ public class SalesPromotion extends BaseTable {
 
     public SalesPromotion() { }
 
-    public String getSettings() {
+    public SalesPushSettings getSettings() {
         return settings;
     }
 
-    public void setSettings(String settings) {
+    public void setSettings(SalesPushSettings    settings) {
         this.settings = settings;
     }
 

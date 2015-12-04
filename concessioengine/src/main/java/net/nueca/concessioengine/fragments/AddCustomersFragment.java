@@ -136,10 +136,21 @@ public class AddCustomersFragment extends BaseCustomersFragment {
     public Customer getCustomerData() {
         String gender = mGender.getSelectedItem().toString();
 
-        current_customer = new Customer(mFirstName.getText().toString(), mLastName.getText().toString(), mFirstName.getText().toString() + " " + mLastName.getText().toString(),
-                mCompanyName.getText().toString(), mTelephone.getText().toString(), mMobile.getText().toString(), mMobile.getText().toString(), mEmail.getText().toString(),
-                mStreet.getText().toString(), mCity.getText().toString(), mZipCode.getText().toString(), mCountry.getText().toString(),
-                mState.getText().toString(), mTIN.getText().toString(), mGender.getSelectedItem().toString().equals("Gender") ? "" : gender);
+        current_customer = new Customer(
+                mFirstName.getText().toString(),
+                mLastName.getText().toString(),
+                mFirstName.getText().toString() + " " + mLastName.getText().toString(),
+                mCompanyName.getText().toString(),
+                mTelephone.getText().toString(),
+                mMobile.getText().toString(),
+                mEmail.getText().toString(),
+                mStreet.getText().toString(),
+                mCity.getText().toString(),
+                mZipCode.getText().toString(),
+                mCountry.getText().toString(),
+                mState.getText().toString(),
+                mTIN.getText().toString(),
+                mGender.getSelectedItem().toString().equals("Gender") ? "" : gender);
 
         Log.e(TAG, "Add This Customer: " + current_customer.toString() + " with gender: " + (mGender.getSelectedItem().toString().equals("Gender") ? "no input" : gender));
         LoggingTools.showToast(addCustomerView.getContext(), "Adding Customer");

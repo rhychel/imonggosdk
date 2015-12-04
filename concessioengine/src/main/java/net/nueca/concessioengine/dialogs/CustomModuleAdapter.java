@@ -25,8 +25,14 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
     private ViewGroup mViewGroupParent;
     private int mItemLayout;
 
+    @Deprecated
     public CustomModuleAdapter(Context context, int itemLayout, List<String> moduleName) {
         super(context, moduleName);
+        this.mItemLayout = itemLayout;
+    }
+
+    public CustomModuleAdapter(List<?> moduleName, Context context, int itemLayout) {
+        super(moduleName, context);
         this.mItemLayout = itemLayout;
     }
 

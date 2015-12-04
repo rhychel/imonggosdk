@@ -36,7 +36,7 @@ x`
         <activity
             android:name=".C_Customers"
             android:label="@string/title_activity_customers"
-            android:theme="@style/AppTheme.Concessio.NoActionBar">
+            android:theme="@style/AppTheme.Concessio.Light.NoActionBar">
         </activity>
         <activity
             android:name=".C_HistoryDetails"
