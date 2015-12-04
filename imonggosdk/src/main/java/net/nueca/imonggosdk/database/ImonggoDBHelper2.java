@@ -20,6 +20,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.RoutePlan;
+import net.nueca.imonggosdk.objects.SalesPushSettings;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.TaxRate;
@@ -73,7 +74,7 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 19;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchPrice.class, BranchTag.class, Customer.class,
@@ -87,8 +88,7 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
             PaymentTerms.class, PaymentType.class, SalesPromotion.class, Price.class,
             PriceList.class, RoutePlan.class, CustomerCustomerGroupAssoc.class, ProductSalesPromotionAssoc.class,
             ModuleSetting.class, DebugMode.class, ProductSorting.class, Cutoff.class,
-            ProductListing.class, QuantityInput.class, Manual.class
-                                            };
+            ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};
 
     public ImonggoDBHelper2(Context context) { super(context, DATABASE_NAME, null, DATABASE_VERSION); }
 
@@ -230,6 +230,7 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
         return theList;
     }
+
 
 
 }

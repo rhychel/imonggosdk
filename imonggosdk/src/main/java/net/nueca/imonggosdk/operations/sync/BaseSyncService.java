@@ -1,6 +1,5 @@
 package net.nueca.imonggosdk.operations.sync;
 
-import android.content.ContentUris;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Bundle;
@@ -20,6 +19,7 @@ import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.TaxRate;
+import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -57,28 +57,32 @@ public abstract class BaseSyncService extends ImonggoService {
     public static final String PARAMS_INITIAL_SYNC = "initial_sync";
     public static final String PARAMS_SERVER = "mServer";
     public static final String TAG = "BaseSyncService";
-    protected IBinder mLocalBinder = new LocalBinder();
-    protected SyncModulesListener mSyncModulesListener = null;
-    protected VolleyRequestListener mVolleyRequestListener = null;
-    protected Server mServer;
+    protected static int max_size_per_page = 50;
+    protected boolean syncAllModules;
+    protected boolean initialSync;
     protected int page = 1;
     protected int count = 0;
     protected int numberOfPages = 1;
-    protected LastUpdatedAt lastUpdatedAt;
-    protected LastUpdatedAt newLastUpdatedAt;
-    protected String from = "", to = "";
-    protected Gson gson = new GsonBuilder().serializeNulls().create();
-    protected Table mCurrentTableSyncing;
-    protected List<BranchUserAssoc> branchUserAssoc;
-    protected Table[] mModulesToSync;
-    protected int[] branches;
     protected int branchIndex = 0;
     protected int mModulesIndex = 0;
-    protected boolean syncAllModules;
-    protected boolean initialSync;
+    protected int responseCode = 200;
+    protected int[] branches;
+    protected Table[] mModulesToSync;
+    protected Table mCurrentTableSyncing;
+    protected Server mServer;
+    protected List<BranchUserAssoc> branchUserAssoc;
+    protected List<? extends BaseTable> listOfIds;
+    protected String from = "", to = "";
     protected String document_type;
     protected String intransit_status;
-    protected int responseCode = 200;
+    protected LastUpdatedAt lastUpdatedAt;
+    protected LastUpdatedAt newLastUpdatedAt;
+    protected IBinder mLocalBinder = new LocalBinder();
+    protected VolleyRequestListener mVolleyRequestListener = null;
+    protected SyncModulesListener mSyncModulesListener = null;
+
+    protected Gson gson = new GsonBuilder().serializeNulls().create();
+
 
     /**
      * Empty Constructor
@@ -184,7 +188,7 @@ public abstract class BaseSyncService extends ImonggoService {
                 Product product = (Product) o;
                 return getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
             }
-            case UNITS_BRANCH:
+            case BRANCH_UNITS:
             case UNITS: {
                 Unit unit = (Unit) o;
                 return getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit.getId()).queryForFirst() != null;

@@ -62,7 +62,7 @@ public class SimpleCustomerRecyclerViewAdapter extends
 
     @Override
     public void setListingType(ListingType listingType) {
-        super.setListingType(listingType);
+        super.  setListingType(listingType);
         if(listingType == ListingType.LETTER_HEADER) {
             headerDisplay = getContext().getResources().getInteger(R.integer.default_header_display);
             marginsFixed = getContext().getResources().getBoolean(R.bool.default_margins_fixed);
