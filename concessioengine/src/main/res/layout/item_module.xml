@@ -14,7 +14,6 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:padding="7dp"
-
         android:text="Module Name"
         android:gravity="start"
         android:textSize="16sp" />

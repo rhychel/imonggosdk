@@ -14,11 +14,13 @@ public enum ConcessioModule {
 
     INVENTORY,
     CUSTOMERS,
+    CUSTOMER_DETAILS,
     ADJUSTMENT_OUT, // MSO
     ADJUSTMENT_IN,
 
     APP,
 
     HISTORY,
-    LAYAWAY
+    LAYAWAY,
+    ROUTE_PLAN
 }

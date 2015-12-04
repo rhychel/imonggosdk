@@ -220,7 +220,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
 
                 // Custom for Products & Customers
-                if (mCurrentTableSyncing == Table.PRODUCTS || mCurrentTableSyncing == Table.CUSTOMERS || mCurrentTableSyncing == Table.BRANCH_PRODUCTS) {
+                if (mCurrentTableSyncing == Table.CUSTOMERS || mCurrentTableSyncing == Table.BRANCH_PRODUCTS) {
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.BRANCH_ID),
                             String.valueOf(page), getSession().getCurrent_branch_id());
                 }
@@ -253,7 +253,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
 
                 // Custom for Products & Customers
-                if (mCurrentTableSyncing == Table.PRODUCTS || mCurrentTableSyncing == Table.CUSTOMERS) {
+                if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS || mCurrentTableSyncing == Table.CUSTOMERS) {
                     String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.BRANCH_ID, Parameter.AFTER),
                             String.valueOf(page),
                             getSession().getCurrent_branch_id(),
@@ -854,6 +854,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
 
                                     Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
+                                    unit.setProduct(product);
 
                                     if (initialSync || lastUpdatedAt == null) {
                                         newUnits.add(unit);
@@ -1285,6 +1286,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     Log.e(TAG, "Customer Name: " + customer.getName() + priceList.getId());
 
                                                     customer.setPriceList(priceList);
+                                                    customer.updateTo(getHelper());
                                                 }
                                             }
                                         } else {
@@ -1412,7 +1414,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     }
                 }
             } else {
-                if (size < 50) {
+                if (size <= 50) {
                     Log.e(TAG, "Syncing next table");
                     syncNext();
                 } else {

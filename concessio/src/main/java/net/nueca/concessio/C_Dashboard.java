@@ -37,13 +37,15 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     private DashboardRecyclerAdapter dashboardRecyclerAdapter;
 
     private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>(){{
-        add(new DashboardTile(ConcessioModule.SALES, "Booking"));
-        add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers"));
-        add(new DashboardTile(ConcessioModule.RECEIVE, "Receiving"));
-        add(new DashboardTile(ConcessioModule.PULLOUT_REQUEST, "Pullout"));
-        add(new DashboardTile(ConcessioModule.ADJUSTMENT_OUT, "MSO"));
-        add(new DashboardTile(ConcessioModule.LAYAWAY, "Layaway"));
-        add(new DashboardTile(ConcessioModule.HISTORY, "History"));
+//        add(new DashboardTile(ConcessioModule.SALES, "Sales", R.drawable.ic_booking));
+        add(new DashboardTile(ConcessioModule.ROUTE_PLAN, "Sales", R.drawable.ic_booking));
+        add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers", R.drawable.ic_customers));
+        add(new DashboardTile(ConcessioModule.RECEIVE, "Receiving", R.drawable.ic_receiving));
+        add(new DashboardTile(ConcessioModule.PULLOUT_REQUEST, "Pullout", R.drawable.ic_pullout));
+        add(new DashboardTile(ConcessioModule.ADJUSTMENT_OUT, "MSO", R.drawable.ic_mso));
+        add(new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
+        add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Physical Count", R.drawable.ic_physical_count));
+        add(new DashboardTile(ConcessioModule.HISTORY, "History", R.drawable.ic_history));
     }};
 
     @Override
@@ -57,11 +59,10 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         rvModules = (RecyclerView) findViewById(R.id.rvModules);
         spBranches = (Spinner) findViewById(R.id.spBranches);
         setSupportActionBar(tbActionBar);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle("Concessio");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        branchesAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, getBranches());
-        branchesAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+        branchesAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_dark, getBranches());
+        branchesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
         spBranches.setAdapter(branchesAdapter);
 
         rvModules.setHasFixedSize(true);

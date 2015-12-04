@@ -1,6 +1,7 @@
 package net.nueca.imonggosdk.operations.login;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -248,19 +249,33 @@ public class BaseLogin {
                 if (volleyError.networkResponse != null) {
                     DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                             mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID),
-                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                            new MaterialDialog.SingleButtonCallback() {
+                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                            new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                    materialDialog.dismiss();
+                                public void onClick(DialogInterface dialog, int which) {
                                     mLoginListener.onPositiveButtonPressed();
-
                                     // Execute Listener onStopLogin
                                     if (mLoginListener != null) {
                                         mLoginListener.onStopLogin();
                                     }
                                 }
-                            }, null, null);
+                            }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+//                            mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID),
+//                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                            new MaterialDialog.SingleButtonCallback() {
+//                                @Override
+//                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                    materialDialog.dismiss();
+//                                    mLoginListener.onPositiveButtonPressed();
+//
+//                                    // Execute Listener onStopLogin
+//                                    if (mLoginListener != null) {
+//                                        mLoginListener.onStopLogin();
+//                                    }
+//                                }
+//                            }, null, null);
 
                     //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID));
                 } else { // if URL is invalid, or not connected to internet.
@@ -268,31 +283,55 @@ public class BaseLogin {
                     if (!NetworkTools.isInternetAvailable(mContext)) {
                         DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                                 mContext.getString(R.string.LOGIN_NETWORK_ERROR),
-                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                                new MaterialDialog.SingleButtonCallback() {
+                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                        materialDialog.dismiss();
+                                    public void onClick(DialogInterface dialog, int which) {
                                         mLoginListener.onPositiveButtonPressed();
-
                                         // Execute Listener onStopLogin
                                         if (mLoginListener != null) {
                                             mLoginListener.onStopLogin();
                                         }
                                     }
-                                }, null, null);
+                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+//                                mContext.getString(R.string.LOGIN_NETWORK_ERROR),
+//                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                                new MaterialDialog.SingleButtonCallback() {
+//                                    @Override
+//                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                        materialDialog.dismiss();
+//                                        mLoginListener.onPositiveButtonPressed();
+//
+//                                        // Execute Listener onStopLogin
+//                                        if (mLoginListener != null) {
+//                                            mLoginListener.onStopLogin();
+//                                        }
+//                                    }
+//                                }, null, null);
                         //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_NETWORK_ERROR));
                     } else { // AUTHENTICATION ERROR
                         DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                                 mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR),
-                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                                new MaterialDialog.SingleButtonCallback() {
+                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                        materialDialog.dismiss();
+                                    public void onClick(DialogInterface dialog, int which) {
                                         mLoginListener.onPositiveButtonPressed();
                                     }
-                                }, null, null);
+                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+//                                mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR),
+//                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                                new MaterialDialog.SingleButtonCallback() {
+//                                    @Override
+//                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                        materialDialog.dismiss();
+//                                        mLoginListener.onPositiveButtonPressed();
+//                                    }
+//                                }, null, null);
                         //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR));
                     }
                 }
@@ -336,14 +375,24 @@ public class BaseLogin {
                     }
                     DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                             mContext.getString(R.string.LOGIN_INVALID_CREDENTIALS) + ", " + mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD),
-                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                            new MaterialDialog.SingleButtonCallback() {
+                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                            new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                    materialDialog.dismiss();
+                                public void onClick(DialogInterface dialog, int which) {
                                     mLoginListener.onPositiveButtonPressed();
                                 }
-                            }, null, null);
+                            }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+//                            mContext.getString(R.string.LOGIN_INVALID_CREDENTIALS) + ", " + mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD),
+//                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                            new MaterialDialog.SingleButtonCallback() {
+//                                @Override
+//                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                    materialDialog.dismiss();
+//                                    mLoginListener.onPositiveButtonPressed();
+//                                }
+//                            }, null, null);
                     // Show Toast
                     //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_INVALID_CREDENTIALS) + ", " + mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD));
                     // if Account Unlinked delete the session
@@ -432,40 +481,72 @@ public class BaseLogin {
 
                     DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                             mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD),
-                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                            new MaterialDialog.SingleButtonCallback() {
+                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                            new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                    materialDialog.dismiss();
+                                public void onClick(DialogInterface dialog, int which) {
                                     mLoginListener.onPositiveButtonPressed();
                                 }
-                            }, null, null);
+                            }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+//                            mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD),
+//                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                            new MaterialDialog.SingleButtonCallback() {
+//                                @Override
+//                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                    materialDialog.dismiss();
+//                                    mLoginListener.onPositiveButtonPressed();
+//                                }
+//                            }, null, null);
+
                     // Show Toast Message
                     //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD));
                 } else { // invalid url or not connected to a network
                     if (!NetworkTools.isInternetAvailable(mContext)) {
                         DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                                 mContext.getString(R.string.LOGIN_NETWORK_ERROR),
-                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                                new MaterialDialog.SingleButtonCallback() {
+                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                        materialDialog.dismiss();
+                                    public void onClick(DialogInterface dialog, int which) {
                                         mLoginListener.onPositiveButtonPressed();
                                     }
-                                }, null, null);
+                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+//                                mContext.getString(R.string.LOGIN_NETWORK_ERROR),
+//                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                                new MaterialDialog.SingleButtonCallback() {
+//                                    @Override
+//                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                        materialDialog.dismiss();
+//                                        mLoginListener.onPositiveButtonPressed();
+//                                    }
+//                                }, null, null);
+
                         //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_NETWORK_ERROR));
                     } else {
                         DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                                 mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR),
-                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                                new MaterialDialog.SingleButtonCallback() {
+                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                        materialDialog.dismiss();
+                                    public void onClick(DialogInterface dialog, int which) {
                                         mLoginListener.onPositiveButtonPressed();
                                     }
-                                }, null, null);
+                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+//                                mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR),
+//                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                                new MaterialDialog.SingleButtonCallback() {
+//                                    @Override
+//                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                        materialDialog.dismiss();
+//                                        mLoginListener.onPositiveButtonPressed();
+//                                    }
+//                                }, null, null);
                         //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR));
                     }
                 }
@@ -609,18 +690,28 @@ public class BaseLogin {
                                     public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
                                         DialogTools.hideIndeterminateProgressDialog();
                                         Log.e("Rhy-BaseLogin[" + responseCode + "]", (response == null) ? "null" : ((String) response));
-
                                         DialogTools.showBasicWithTitle(mContext,
                                                 mContext.getString(R.string.LOGIN_FAILED_TITLE),
                                                 mContext.getString(R.string.LOGIN_CONCESSIO_SETTINGS_ERROR),
-                                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                                                new MaterialDialog.SingleButtonCallback() {
+                                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                                new DialogInterface.OnClickListener() {
                                                     @Override
-                                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                                        materialDialog.dismiss();
+                                                    public void onClick(DialogInterface dialog, int which) {
                                                         mLoginListener.onPositiveButtonPressed();
                                                     }
-                                                }, null, null);
+                                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                                        DialogTools.showBasicWithTitle(mContext,
+//                                                mContext.getString(R.string.LOGIN_FAILED_TITLE),
+//                                                mContext.getString(R.string.LOGIN_CONCESSIO_SETTINGS_ERROR),
+//                                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                                                new MaterialDialog.SingleButtonCallback() {
+//                                                    @Override
+//                                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                                        materialDialog.dismiss();
+//                                                        mLoginListener.onPositiveButtonPressed();
+//                                                    }
+//                                                }, null, null);
 
 
                                         if (mLoginListener != null) {
@@ -658,25 +749,45 @@ public class BaseLogin {
                 if (requires_premium_subscription.equals(response.toString())) {
                     DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.error_dialog_title_requires_premium_subscription),
                             mContext.getString(R.string.error_dialog_message_requires_premium_subscription),
-                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                            new MaterialDialog.SingleButtonCallback() {
+                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                            new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                    materialDialog.dismiss();
+                                public void onClick(DialogInterface dialog, int which) {
                                     mLoginListener.onPositiveButtonPressed();
                                 }
-                            }, null, null);
+                            }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.error_dialog_title_requires_premium_subscription),
+//                            mContext.getString(R.string.error_dialog_message_requires_premium_subscription),
+//                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                            new MaterialDialog.SingleButtonCallback() {
+//                                @Override
+//                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                    materialDialog.dismiss();
+//                                    mLoginListener.onPositiveButtonPressed();
+//                                }
+//                            }, null, null);
                 } else {
                     DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                             mContext.getString(R.string.LOGIN_NETWORK_ERROR),
-                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                            new MaterialDialog.SingleButtonCallback() {
+                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                            new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                    materialDialog.dismiss();
+                                public void onClick(DialogInterface dialog, int which) {
                                     mLoginListener.onPositiveButtonPressed();
                                 }
-                            }, null, null);
+                            }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+//                            mContext.getString(R.string.LOGIN_NETWORK_ERROR),
+//                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                            new MaterialDialog.SingleButtonCallback() {
+//                                @Override
+//                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                    materialDialog.dismiss();
+//                                    mLoginListener.onPositiveButtonPressed();
+//                                }
+//                            }, null, null);
 
                 }
 

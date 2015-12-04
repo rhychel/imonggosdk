@@ -33,8 +33,6 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
     private Numpad npInput;
     private LinearLayout llBrand, llDeliveryDate;
 
-    private ArrayAdapter<Unit> unitsAdapter;
-    private ArrayAdapter<String> brandsAdapter;
 
     protected SimpleQuantityDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);

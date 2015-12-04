@@ -1,5 +1,6 @@
 package net.nueca.concessioengine.fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,6 +8,7 @@ import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,22 +25,24 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
+import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.interfaces.OnItemLongClickListener;
+import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
+import net.nueca.concessioengine.dialogs.SimpleSalesQuantityDialog;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.objects.AccountSettings;
+import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
-import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -79,7 +83,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         tvNoProducts = (TextView) view.findViewById(R.id.tvNoProducts);
 
         if(hasCategories) {
-            productCategoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, productCategories);
+            productCategoriesAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_dark, productCategories);
+            productCategoriesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
             spCategories.setAdapter(productCategoriesAdapter);
             spCategories.setOnItemSelectedListener(onCategorySelected);
             setCategory(productCategories.get(0));
@@ -98,15 +103,15 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 productRecyclerViewAdapter.setDbHelper(getHelper());
                 productRecyclerViewAdapter.setList(getProducts());
             }
+            productRecyclerViewAdapter.setListingType(listingType);
             productRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClicked(View view, int position) {
                     Product product = productRecyclerViewAdapter.getItem(position);
-                    if(multipleInput) {
-                        if(multiInputListener != null)
+                    if (multipleInput) {
+                        if (multiInputListener != null)
                             multiInputListener.showInputScreen(product);
-                    }
-                    else {
+                    } else {
                         SelectedProductItem selectedProductItem = productRecyclerViewAdapter.getSelectedProductItems()
                                 .getSelectedProductItem(product);
                         if (selectedProductItem == null) {
@@ -127,6 +132,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             });
 
             productRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
+
             rvProducts.setAdapter(productRecyclerViewAdapter);
             rvProducts.addOnScrollListener(rvScrollListener);
 
@@ -171,6 +177,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             toggleNoItems("No products available.", (productListAdapter.getCount() > 0));
         }
 
+        if(!hasToolBar)
+            tbActionBar.setVisibility(View.GONE);
+
         return view;
     }
 
@@ -199,46 +208,82 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         Log.e("SimpleProductFragment", "RetailPrice: " + selectedProductItem.getRetailPriceWithTax());
 
         try {
-            SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
-            quantityDialog.setSelectedProductItem(selectedProductItem);
-            if(hasUnits) {
-                quantityDialog.setHasUnits(true);
-//                product.getUnits()
-                // getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query()
-                quantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
-            }
-            if(hasBrand) {
-//                List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();
-                List<ProductTag> tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
-                List<String> brands = new ArrayList<>();
-
-                for(ProductTag productTag : tags)
-                    if(productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
-                        brands.add(productTag.getTag().replaceAll("##", ""));
-                quantityDialog.setBrandList(brands, true);
-                quantityDialog.setHasBrand(true);
-            }
-            quantityDialog.setHasDeliveryDate(hasDeliveryDate);
-            quantityDialog.setFragmentManager(getActivity().getFragmentManager());
-            quantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
-                @Override
-                public void onSave(SelectedProductItem selectedProductItem) {
-                    if(useRecyclerView) {
-                        productRecyclerViewAdapter.getSelectedProductItems().add(selectedProductItem);
-                        productRecyclerViewAdapter.notifyItemChanged(position);
-                    }
-                    else {
-                        productListAdapter.getSelectedProductItems().add(selectedProductItem);
-                        productListAdapter.notifyItemChanged(lvProducts, position);
-                    }
-                    if(productsFragmentListener != null)
-                        productsFragmentListener.whenItemsSelectedUpdated();
+            if(listingType == ListingType.SALES) {
+                SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
+                simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
+                List<BranchPrice> branchPrices = getHelper().fetchForeignCollection(product.getBranchPrices().closeableIterator());
+                double subtotal = product.getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
+                if(branchPrices.size() > 0) {
+                    simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", branchPrices.get(0).getRetail_price()));
+                    subtotal = branchPrices.get(0).getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
                 }
+                else
+                    simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
+                simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
+                simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
+                simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
+                simpleSalesQuantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
+                    @Override
+                    public void onSave(SelectedProductItem selectedProductItem) {
+                        if (useRecyclerView) {
+                            productRecyclerViewAdapter.getSelectedProductItems().add(selectedProductItem);
+                            productRecyclerViewAdapter.notifyItemChanged(position);
+                        } else {
+                            productListAdapter.getSelectedProductItems().add(selectedProductItem);
+                            productListAdapter.notifyItemChanged(lvProducts, position);
+                        }
+                        if (productsFragmentListener != null)
+                            productsFragmentListener.whenItemsSelectedUpdated();
+                    }
 
-                @Override
-                public void onDismiss() { }
-            });
-            quantityDialog.show();
+                    @Override
+                    public void onDismiss() {
+                    }
+                });
+                simpleSalesQuantityDialog.show();
+            }
+            else {
+                SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
+                quantityDialog.setSelectedProductItem(selectedProductItem);
+                if (hasUnits) {
+                    quantityDialog.setHasUnits(true);
+//                product.getUnits()
+                    // getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query()
+                    quantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
+                }
+                if (hasBrand) {
+//                List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();
+                    List<ProductTag> tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
+                    List<String> brands = new ArrayList<>();
+
+                    for (ProductTag productTag : tags)
+                        if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
+                            brands.add(productTag.getTag().replaceAll("##", ""));
+                    quantityDialog.setBrandList(brands, true);
+                    quantityDialog.setHasBrand(true);
+                }
+                quantityDialog.setHasDeliveryDate(hasDeliveryDate);
+                quantityDialog.setFragmentManager(getActivity().getFragmentManager());
+                quantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
+                    @Override
+                    public void onSave(SelectedProductItem selectedProductItem) {
+                        if (useRecyclerView) {
+                            productRecyclerViewAdapter.getSelectedProductItems().add(selectedProductItem);
+                            productRecyclerViewAdapter.notifyItemChanged(position);
+                        } else {
+                            productListAdapter.getSelectedProductItems().add(selectedProductItem);
+                            productListAdapter.notifyItemChanged(lvProducts, position);
+                        }
+                        if (productsFragmentListener != null)
+                            productsFragmentListener.whenItemsSelectedUpdated();
+                    }
+
+                    @Override
+                    public void onDismiss() {
+                    }
+                });
+                quantityDialog.show();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -42,7 +42,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             hasCategories = true,
             multipleInput = false,
             showCategoryOnStart = false,
-            lockCategory = false;
+            lockCategory = false,
+            hasToolBar = true;
     private int prevLast = -1;
     private String searchKey = "", category = "";
     private List<Product> filterProductsBy = new ArrayList<>();
@@ -244,5 +245,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setFilterProductsBy(List<Product> filterProductsBy) {
         this.filterProductsBy = filterProductsBy;
+    }
+
+    public void setHasToolBar(boolean hasToolBar) {
+        this.hasToolBar = hasToolBar;
     }
 }
