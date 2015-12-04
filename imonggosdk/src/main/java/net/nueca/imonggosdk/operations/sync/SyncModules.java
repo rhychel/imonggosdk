@@ -3,6 +3,7 @@ package net.nueca.imonggosdk.operations.sync;
 import android.os.Handler;
 import android.util.Log;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 
@@ -955,8 +956,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
 
                                     Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
-
-                                    //Log.e(TAG, "Product name: " + product.getName());
+                                    unit.setProduct(product);
 
                                     if (initialSync || lastUpdatedAt == null) {
                                         newUnits.add(unit);

@@ -70,7 +70,7 @@ public class InvoicePayment extends BaseTable2 {
     public InvoicePayment(Builder builder) {
         payment_type_id = builder.payment_type_id;
         amount = builder.amount;
-        tender = builder.amount;
+        tender = builder.tender;
     }
 
     public InvoicePayment(int payment_type_id, double amount, double tender) {

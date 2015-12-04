@@ -36,6 +36,7 @@ public class DashboardRecyclerAdapter extends BaseRecyclerAdapter<DashboardRecyc
     public void onBindViewHolder(DashboardViewHolder holder, int position) {
         holder.concessioModule = getItem(position).getConcessioModule();
         holder.tvTitle.setText(getItem(position).getLabel());
+        holder.ivLogo.setImageResource(getItem(position).getImageResource());
     }
 
     @Override

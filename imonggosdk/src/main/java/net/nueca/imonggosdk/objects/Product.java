@@ -349,6 +349,12 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
         this.inventory = inventory;
     }
 
+    public String getInStock() {
+        if(inventory == null)
+            return "0";
+        return inventory.getInventory();
+    }
+
     public ForeignCollection<BranchPrice> getBranchPrices() {
         return branchPrices;
     }

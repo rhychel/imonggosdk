@@ -3,6 +3,7 @@ package net.nueca.concessioengine.activities.login;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.EditText;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.dialogs.CustomDialog;
@@ -53,7 +55,6 @@ import java.util.List;
  * imonggosdk (c)2015
  */
 public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
-
     private BaseLogin mBaseLogin = null;
     private Boolean isUnlinked = true;
     private Boolean isLoggedIn = false;
@@ -243,19 +244,27 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     customDialog.dismiss();
                 }
                 startSyncService();
-
-                DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
-                        "Sync failed. Login Again ",
-                        "Ok", "", false,
-                        new MaterialDialog.SingleButtonCallback() {
+                DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Syncing Failed",
+                        "Sync failed. Login again.",
+                        "Okay", null, null,
+                        new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(MaterialDialog dialog, DialogAction dialogAction) {
-                                bindSyncService();
-                                dialog.dismiss();
-                                dialogPositiveButtonAction();
+                            public void onClick(DialogInterface dialog, int which) {
                                 btnSignIn.setEnabled(true);
                             }
-                        }, null, null);
+                        }, null, null, false, R.style.AppCompatDialogStyle_NoTitle);
+//                DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
+//                        "Sync failed. Login Again ",
+//                        "Ok", "", false,
+//                        new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(MaterialDialog dialog, DialogAction dialogAction) {
+//                                bindSyncService();
+//                                dialog.dismiss();
+//                                dialogPositiveButtonAction();
+//                                btnSignIn.setEnabled(true);
+//                            }
+//                        }, null, null);
             }
         } else {
 
@@ -445,17 +454,25 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private void initLogin() {
 
         if (!NetworkTools.isInternetAvailable(this)) {
-            DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE),
-                    "No network connection",
-                    getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                    new MaterialDialog.SingleButtonCallback() {
+            DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE), "No network connection", getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                    new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                        public void onClick(DialogInterface dialog, int which) {
                             dialogPositiveButtonAction();
                             btnSignIn.setEnabled(true);
-                            materialDialog.dismiss();
                         }
-                    }, null, null);
+                    }, null, null, false, R.style.AppCompatDialogStyle_NoTitle);
+//            DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE),
+//                    "No network connection",
+//                    getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                    new MaterialDialog.SingleButtonCallback() {
+//                        @Override
+//                        public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                            dialogPositiveButtonAction();
+//                            btnSignIn.setEnabled(true);
+//                            materialDialog.dismiss();
+//                        }
+//                    }, null, new Theme);
         } else {
             Boolean cancelLogin = false;
             // Set error to null
@@ -499,7 +516,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 if (isUsingDefaultDialog()) {
                     DialogTools.showIndeterminateProgressDialog(BaseLoginActivity.this,
                             null,
-                            getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), false);
+                            getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), false, R.style.AppCompatDialogStyle_Light_NoTitle);
                 } else {
                     showProgressDialog(DialogType.INDETERDMINATE, getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), "", "");
                 }
@@ -553,18 +570,27 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             public void onRetryButtonPressed(Table table) throws SQLException {
                 Log.e(TAG, table.getStringName());
                 if (mLoginState == LoginState.LOGIN_FAILED) {
-                    if (!NetworkTools.isInternetAvailable(BaseLoginActivity.this)) {
-                        DialogTools.showBasicWithTitle(
-                                BaseLoginActivity.this,
-                                "Failed to Re-Sync Data",
+                    if(!NetworkTools.isInternetAvailable(BaseLoginActivity.this)) {
+
+                        DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Failed to Re-Sync Data",
                                 getString(R.string.LOGIN_NETWORK_ERROR),
-                                "Okay", null, false,
-                                new MaterialDialog.SingleButtonCallback() {
+                                "Okay", null, null,
+                                new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(@NonNull MaterialDialog materialDialog, DialogAction dialogAction) {
-                                        materialDialog.dismiss();
+                                    public void onClick(DialogInterface dialog, int which) {
                                     }
-                                }, null, null);
+                                }, null, null, false, R.style.AppCompatDialogStyle_NoTitle);
+//                        DialogTools.showBasicWithTitle(
+//                                BaseLoginActivity.this,
+//                                "Failed to Re-Sync Data",
+//                                getString(R.string.LOGIN_NETWORK_ERROR),
+//                                "Okay", null, false,
+//                                new MaterialDialog.SingleButtonCallback() {
+//                                    @Override
+//                                    public void onClick(@NonNull MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                        materialDialog.dismiss();
+//                                    }
+//                                }, null, null);
                     } else {
                         if (table == mSyncModules.getCurrentTableSyncing()) {
                             Log.e(TAG, "retrying sync table " + table);

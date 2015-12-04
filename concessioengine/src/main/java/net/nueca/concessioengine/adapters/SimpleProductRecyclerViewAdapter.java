@@ -5,6 +5,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -14,10 +15,13 @@ import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import me.grantland.widget.AutofitTextView;
@@ -65,12 +69,27 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
         }
         else {
+            viewHolder.llQuantity.setVisibility(View.GONE);
             viewHolder.tvProductName.setText(product.getName());
-            viewHolder.tvInStock.setText("In Stock: "+product.getInventory().getInventory());
-            viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
-            double subtotal = product.getRetail_price()*Double.valueOf(getSelectedProductItems().getQuantity(product));
-            viewHolder.tvQuantity.setText("P"+subtotal);
-            viewHolder.tvRetailPrice.setText("P"+product.getRetail_price());
+            viewHolder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+            try {
+                List<BranchPrice> branchPrices = getAdapterHelper().getDbHelper().fetchForeignCollection(product.getBranchPrices().closeableIterator());
+                double subtotal = product.getRetail_price()*Double.valueOf(getSelectedProductItems().getQuantity(product));
+                if(branchPrices.size() > 0) {
+                    viewHolder.tvRetailPrice.setText(String.format("P%.2f", branchPrices.get(0).getRetail_price()));
+                    subtotal = branchPrices.get(0).getRetail_price()*Double.valueOf(getSelectedProductItems().getQuantity(product));
+                }
+                else
+                    viewHolder.tvRetailPrice.setText(String.format("P%.2f", product.getRetail_price()));
+
+                if(getSelectedProductItems().hasSelectedProductItem(product)) {
+                    viewHolder.llQuantity.setVisibility(View.VISIBLE);
+                    viewHolder.tvQuantity.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(product), product.getBase_unit_name()));
+                    viewHolder.tvSubtotal.setText(String.format("P%.2f", subtotal));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -88,6 +107,7 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
 
         public AutofitTextView tvInStock;
         public TextView tvRetailPrice, tvSubtotal;
+        public LinearLayout llQuantity;
 
         public View root;
 
@@ -102,10 +122,11 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
                 tvInStock = (AutofitTextView) itemView.findViewById(R.id.tvInStock);
                 tvRetailPrice = (TextView) itemView.findViewById(R.id.tvRetailPrice);
                 tvSubtotal = (TextView) itemView.findViewById(R.id.tvSubtotal);
+                llQuantity = (LinearLayout) itemView.findViewById(R.id.llQuantity);
             }
 
-            ivProductImage.setDefaultImageResId(R.drawable.no_image);
-            ivProductImage.setErrorImageResId(R.drawable.no_image);
+            ivProductImage.setDefaultImageResId(R.drawable.ic_tag_grey);
+            ivProductImage.setErrorImageResId(R.drawable.ic_tag_grey);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
