@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import net.nueca.concessioengine.R;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.LoginListener;
 import net.nueca.imonggosdk.tools.LoggingTools;
 import net.nueca.imonggosdk.tools.TableTools;
@@ -28,14 +29,32 @@ public class CustomDialogFrameLayout extends FrameLayout {
     private LinearLayoutManager mLinearLayoutManager;
     private CustomModuleAdapter customModuleAdapter;
     private List<String> mModuleName;
+    private List<Table> mTableNames;
     private LoginListener mLoginListener;
     private static String TAG = "CustomDialogFrameLayout";
 
-    public CustomDialogFrameLayout(final Context context, final List<String> moduleName) {
+    @Deprecated
+    public CustomDialogFrameLayout(Context context, List<String> moduleName) {
         super(context);
-        this.mContext = context;
-        this.mModuleName = moduleName;
 
+        customDialogFrameLayout(context, moduleName, moduleName.getClass());
+    }
+
+
+
+    public CustomDialogFrameLayout(final List<?> moduleName, final Context context) {
+       super(context);
+
+
+    }
+
+    private void customDialogFrameLayout(final Context context, final List<?> moduleName, final Class<?> clas) {
+        this.mContext = context;
+        if(clas == Table.class) {
+            this.mTableNames = (List<Table>) moduleName;
+        } else if(clas == String.class) {
+            this.mModuleName = (List<String>) moduleName;
+        }
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater != null) {
             mView = inflater.inflate(R.layout.concessioengine_download_layout, null, false);
@@ -48,7 +67,8 @@ public class CustomDialogFrameLayout extends FrameLayout {
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        customModuleAdapter = new CustomModuleAdapter(mContext, R.layout.item_module, mModuleName);
+        //customModuleAdapter = new CustomModuleAdapter(mContext, R.layout.item_module, mModuleName);
+        customModuleAdapter = new CustomModuleAdapter(mTableNames, mContext, R.layout.item_module);
 
         customModuleAdapter.setOnItemClickListener(new BaseCustomDialogRecyclerAdapter.OnItemClickListener() {
             @Override

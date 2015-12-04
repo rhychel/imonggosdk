@@ -84,6 +84,19 @@ public class RoutePlan extends BaseTable {
     }
 
     @Override
+    public String toString() {
+        return "RoutePlan{" +
+                "id='" + id + '\'' +
+                ", code='" + code + '\'' +
+                ", route_day='" + route_day + '\'' +
+                ", frequency='" + frequency + '\'' +
+                ", user=" + user +
+                ", branch=" + branch +
+                ", foreignCustomers=" + foreignCustomers +
+                '}';
+    }
+
+    @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(RoutePlan.class, this);

@@ -156,20 +156,20 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected abstract void showProgressDialog(DialogType type, String message, String positiveText, String negativeText);
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         Log.e(TAG, "OnStart()");
     }
 
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Log.e(TAG, "OnResume()");
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         Log.e(TAG, "onPause()");
     }
@@ -287,70 +287,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mModulesToDownload = new ArrayList<>();
             }
 
-
             for (int module : getModules()) {
-                for (Table table : Table.values()) {
-                    if (module == table.ordinal()) {
-                        switch (table) {
-                            case USERS:
-                                mModulesToDownload.add("Users");
-                                break;
-                            case BRANCH_PRODUCTS:
-                            case PRODUCTS:
-                                mModulesToDownload.add("Products");
-                                break;
-                            case UNITS:
-                                mModulesToDownload.add("Units");
-                                break;
-                            case BRANCH_USERS:
-                            case BRANCHES:
-                                mModulesToDownload.add("Branches");
-                                break;
-                            case CUSTOMERS:
-                                mModulesToDownload.add("Customers");
-                                break;
-                            case INVENTORIES:
-                                mModulesToDownload.add("Inventories");
-                                break;
-                            case TAX_SETTINGS:
-                                mModulesToDownload.add("Tax Settings");
-                                break;
-                            case DOCUMENTS:
-                                mModulesToDownload.add("Documents");
-                                break;
-                            case DOCUMENT_TYPES:
-                                mModulesToDownload.add("Document Types");
-                                break;
-                            case DOCUMENT_PURPOSES:
-                                mModulesToDownload.add("Document Purposes");
-                                break;
-                            case DAILY_SALES:
-                                mModulesToDownload.add("Daily Sales");
-                                break;
-                            case SETTINGS:
-                                mModulesToDownload.add("Settings");
-                                break;
-                            case INVOICES:
-                                mModulesToDownload.add("Invoices");
-                                break;
-                            case INVOICE_PURPOSES:
-                                mModulesToDownload.add("Invoice Purposes");
-                                break;
-                            case CUSTOMER_GROUPS:
-                                mModulesToDownload.add("Customer Groups");
-                                break;
-                            case PRICE_LISTS:
-                                mModulesToDownload.add("Price Lists");
-                                break;
-                            case CUSTOMER_CATEGORIES:
-                                mModulesToDownload.add("Customer Categories");
-                                break;
-                            default:
-                                LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
-                                Log.i(TAG, "You have added unsupported module. please check your code. " + table);
-                                break;
-                        }
-                    }
+
+                Table table = Table.values()[module];
+
+                if (table.isAPI()) {
+
+                    mModulesToDownload.add(table.getStringName());
+                } else {
+                    LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
+                    Log.i(TAG, "You have added unsupported module. please check your code. " + table);
                 }
             }
         } else { // if you don't set custom modules to download. Sync All
@@ -451,7 +397,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnSignIn.setEnabled(false);
                 initLogin();
             }
         });
@@ -531,7 +476,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 }
 
                 // BaseLogin Function
-                Log.i(TAG, "Loggin in...");
+                btnSignIn.setEnabled(false);
                 startLogin(getApplicationContext(), accountId, email, password, getServer());
             }
         }
@@ -577,7 +522,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
             @Override
             public void onRetryButtonPressed(Table table) throws SQLException {
-
+                Log.e(TAG, table.getStringName());
                 if (mLoginState == LoginState.LOGIN_FAILED) {
                     if(!NetworkTools.isInternetAvailable(BaseLoginActivity.this)) {
 
@@ -1000,71 +945,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     private String getStringOfCurrentTable(Table table) {
-
-        String currentTable = "";
-
-        for (Table tableN : Table.values()) {
-            if (table == tableN) {
-                switch (tableN) {
-                    case USERS:
-                        currentTable = "Users";
-                        break;
-                    case BRANCHES:
-                    case BRANCH_USERS:
-                        currentTable = "Branches";
-                        break;
-                    case TAX_SETTINGS:
-                        currentTable = "Tax Settings";
-                        break;
-                    case BRANCH_PRODUCTS:
-                    case PRODUCTS:
-                        currentTable = "Products";
-                        break;
-                    case INVENTORIES:
-                        currentTable = "Inventories";
-                        break;
-                    case CUSTOMERS:
-                        currentTable = "Customers";
-                        break;
-                    case DOCUMENTS:
-                        currentTable = "Documents";
-                        break;
-                    case DOCUMENT_TYPES:
-                        currentTable = "Document Types";
-                        break;
-                    case DOCUMENT_PURPOSES:
-                        currentTable = "Document Purposes";
-                        break;
-                    case UNITS:
-                        currentTable = "Units";
-                        break;
-                    case DAILY_SALES:
-                        currentTable = "Daily Sales";
-                        break;
-                    case SETTINGS:
-                        currentTable = "Settings";
-                        break;
-                    case INVOICES:
-                        currentTable = "Invoices";
-                        break;
-                    case INVOICE_PURPOSES:
-                        currentTable = "Invoice Purposes";
-                        break;
-                    case CUSTOMER_GROUPS:
-                        currentTable = "Customer Groups";
-                        break;
-                    case PRICE_LISTS:
-                        currentTable = "Price Lists";
-                        break;
-                    case CUSTOMER_CATEGORIES:
-                        currentTable = "Customer Categories";
-                    default:
-                        break;
-                }
-            }
-        }
-
-        return currentTable;
+        return table.getStringName();
     }
 
     @Override
@@ -1079,7 +960,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         Log.e(TAG, "Downloading " + table + " " + page + " out of " + max);
         int progress = 0;
         String currentTable = getStringOfCurrentTable(table);
-        
+
         progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
 
         Log.e(TAG, table + " progress: " + progress);
@@ -1143,7 +1024,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     @Override
     public void onDestroy() {
-        Log.e(TAG, "onDestroy");
+        Log.e(TAG, "onDestroy()");
 
         if (isUnlinked() && !isLoggedIn()) {
             if (getBaseLogin() != null) {
