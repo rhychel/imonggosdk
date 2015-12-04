@@ -55,7 +55,6 @@ import java.util.List;
  * imonggosdk (c)2015
  */
 public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
-
     private BaseLogin mBaseLogin = null;
     private Boolean isUnlinked = true;
     private Boolean isLoggedIn = false;
