@@ -41,7 +41,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public static final String CONCESSIO_MODULE = "concessio_module";
     public static final String FROM_CUSTOMERS_LIST = "from_customers_list";
 
-    protected ConcessioModule concessioModule = ConcessioModule.ORDERS;
+    protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
     protected boolean isMultiInput = false;
     private ModuleSetting moduleSetting;
@@ -49,7 +49,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        concessioModule = ConcessioModule.values()[getIntent().getIntExtra(CONCESSIO_MODULE, ConcessioModule.ORDERS.ordinal())];
+        concessioModule = ConcessioModule.values()[getIntent().getIntExtra(CONCESSIO_MODULE, ConcessioModule.STOCK_REQUEST.ordinal())];
         isFromCustomersList = getIntent().getBooleanExtra(FROM_CUSTOMERS_LIST, false);
     }
 

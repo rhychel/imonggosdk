@@ -631,6 +631,10 @@ public class BaseLogin {
 
                                                         moduleSetting.setDebugMode(debugMode);
                                                     }
+                                                    else if(key.equals("customers")) {
+                                                        moduleSetting.insertTo(mDBHelper);
+                                                        continue;
+                                                    }
                                                     else {
                                                         moduleSetting.insertTo(mDBHelper);
 
