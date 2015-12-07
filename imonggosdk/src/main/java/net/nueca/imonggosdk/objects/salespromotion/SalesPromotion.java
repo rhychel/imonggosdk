@@ -5,9 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.SalesPushSettings;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BatchList;

@@ -55,8 +55,6 @@ public enum Table {
     DOCUMENT_LINES(API_TYPE.NON_API, "Document Lines"),
     EXTENDED_ATTRIBUTES(API_TYPE.NON_API, "Extended Attributes"),
     EXTRAS(API_TYPE.NON_API, "Extras"),
-    SALES_PROMOTIONS,
-    SALES_PROMOTION_LINES,
 
     // ----- FOR REBISCO
     BRANCH_PRODUCTS(API_TYPE.API, "Products"),
