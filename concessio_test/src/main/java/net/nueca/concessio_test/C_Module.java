@@ -265,13 +265,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 menu.findItem(R.id.mLogout).setVisible(false);
 
                 mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
-                initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+                /*initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
                     @Override
                     public boolean onQueryTextChange(String newText) {
                         simpleProductsFragment.updateListWhenSearch(newText);
                         return true;
                         }
-                });
+                });*/
             }
         }
 
