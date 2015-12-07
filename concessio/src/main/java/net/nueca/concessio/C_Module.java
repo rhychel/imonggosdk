@@ -160,7 +160,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(C_Module.this, C_Module.class);
-                            intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.SALES.ordinal());
+                            intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.INVOICE.ordinal());
                             startActivity(intent);
                         }
                     });
@@ -182,8 +182,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .add(R.id.flContent, simpleCustomersFragment)
                         .commit();
             } break;
-            case ORDERS:
-            case SALES: {
+            case STOCK_REQUEST:
+            case INVOICE: {
                 simpleProductsFragment.setListingType(ListingType.SALES);
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
@@ -218,7 +218,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     .commit();
             }
             break;
-            case RECEIVE: {
+            case RECEIVE_BRANCH: {
                 simpleReceiveFragment = new SimpleReceiveFragment();
                 simpleReceiveFragment.setHelper(getHelper());
                 simpleReceiveFragment.setSetupActionBar(this);
@@ -252,7 +252,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .commit();
             }
             break;
-            case INVENTORY: {
+            case RECEIVE_SUPPLIER: {
                 if(getModuleSetting() != null)
                     Log.e("moduleSetting", "Yeah");
                 simpleInventoryFragment = new SimpleInventoryFragment();
@@ -266,7 +266,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .replace(R.id.flContent, simpleInventoryFragment)
                         .commit();
             } break;
-            case PULLOUT_REQUEST: {
+            case RELEASE_BRANCH: {
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
                 simplePulloutRequestDialog.setTitle("Choose a reason");
                 simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
@@ -340,7 +340,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
         if(getModuleSetting() != null) {
             if (getModuleSetting().isRequire_document_reason()) {
-                if (concessioModule == ConcessioModule.PULLOUT_REQUEST) {
+                if (concessioModule == ConcessioModule.RELEASE_BRANCH) {
                     if (simplePulloutToolbarExt != null)
                         simplePulloutToolbarExt.attachAfter(this, toolbar);
                 } else {
@@ -425,7 +425,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         this.toolbar = toolbar;
         if(getModuleSetting() != null) {
             if (getModuleSetting().isRequire_document_reason()) {
-                if (concessioModule == ConcessioModule.PULLOUT_REQUEST) {
+                if (concessioModule == ConcessioModule.RELEASE_BRANCH) {
                     if (simplePulloutToolbarExt == null)
                         simplePulloutToolbarExt = new SimplePulloutToolbarExt();
                     simplePulloutToolbarExt.attachAfter(this, this.toolbar);

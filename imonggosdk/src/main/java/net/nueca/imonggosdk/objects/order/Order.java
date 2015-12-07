@@ -164,7 +164,7 @@ public class Order extends BaseTransactionTable2 {
     public static class Builder extends BaseTransactionTable2.Builder<Builder> {
         private String target_delivery_date = ""; // current_date+2days
         private String remark = "";
-        private String order_type_code = "stock_request";
+        private String order_type_code = "stock_request"; // purchase order
         private int serving_branch_id = 0;
         private List<OrderLine> order_lines = new ArrayList<>();
 
