@@ -4,7 +4,7 @@
     android:id="@+id/cvTile"
     android:layout_gravity="center"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginLeft="1dp"
     android:layout_marginBottom="1dp"
     app:cardCornerRadius="0dp">
@@ -17,8 +17,8 @@
         android:paddingBottom="15dp">
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:id="@+id/ivLogo"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_store_gray" />
@@ -30,7 +30,7 @@
             android:text="Large Text"
             android:id="@+id/tvTitle"
             android:layout_gravity="center_horizontal"
-            android:textColor="@color/primary_light"
+            android:textColor="@color/secondary_textL"
             android:textSize="16sp"
             android:textStyle="bold"/>
 

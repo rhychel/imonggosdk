@@ -9,13 +9,11 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:layout_width="match_parent"
-        android:elevation="8dp"
-        app:theme="@style/ThemeOverlay.ActionBar.Concessio">
+        android:elevation="8dp">
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/spBranches"
-            android:visibility="gone"/>
+            android:id="@+id/spBranches"/>
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView

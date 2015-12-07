@@ -2,7 +2,7 @@ package net.nueca.concessioengine.activities.module;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.widget.SearchViewCompat;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
@@ -39,7 +39,10 @@ import java.util.List;
 public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     public static final String CONCESSIO_MODULE = "concessio_module";
+    public static final String FROM_CUSTOMERS_LIST = "from_customers_list";
+
     protected ConcessioModule concessioModule = ConcessioModule.ORDERS;
+    protected boolean isFromCustomersList = false;
     protected boolean isMultiInput = false;
     private ModuleSetting moduleSetting;
 
@@ -47,6 +50,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         concessioModule = ConcessioModule.values()[getIntent().getIntExtra(CONCESSIO_MODULE, ConcessioModule.ORDERS.ordinal())];
+        isFromCustomersList = getIntent().getBooleanExtra(FROM_CUSTOMERS_LIST, false);
     }
 
     @Override
@@ -78,24 +82,25 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     }
     protected SearchViewEx mSearch;
 
-    protected void initializeSearchViewEx(SearchViewCompat.OnQueryTextListenerCompat queryTextListenerCompat) {
+    protected void initializeSearchViewEx(SearchView.OnQueryTextListener queryTextListenerCompat) {
         if(mSearch != null) {
             mSearch.setSearchViewExListener(new SearchViewEx.SearchViewExListener() {
                 @Override
                 public void whenBackPressed() {
-                    if(!mSearch.isIconified())
+                    if (!mSearch.isIconified())
                         mSearch.setIconified(true);
                 }
             });
             mSearch.setIconifiedByDefault(true);
-            SearchViewCompat.setOnQueryTextListener(mSearch, queryTextListenerCompat);
+            mSearch.setOnQueryTextListener(queryTextListenerCompat);
+//            SearchViewCompat.setOnQueryTextListener(mSearch, queryTextListenerCompat);
         }
     }
 
     @Override
     public void onBackPressed() {
         if(mSearch != null) {
-            if(!SearchViewCompat.isIconified(mSearch))
+            if(!mSearch.isIconified())
                 closeSearchField(mSearch);
             else
                 super.onBackPressed();
@@ -216,8 +221,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * @param searchView
      */
     protected void closeSearchField(SearchViewEx searchView) {
-        SearchViewCompat.setQuery(searchView, "", false);
-        SearchViewCompat.setIconified(searchView, true);
+        searchView.setQuery("", false);
+        searchView.setIconified(true);
+//        SearchViewCompat.setQuery(searchView, "", false);
+//        SearchViewCompat.setIconified(searchView, true);
     }
 
     /**

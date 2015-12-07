@@ -10,6 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
+import net.nueca.imonggosdk.enums.Table;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -25,8 +26,17 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
     private ViewGroup mViewGroupParent;
     private int mItemLayout;
 
+    /**
+     * @deprecated use {@link #CustomModuleAdapter(List, Context, int)} instead.
+     */
+    @Deprecated
     public CustomModuleAdapter(Context context, int itemLayout, List<String> moduleName) {
         super(context, moduleName);
+        this.mItemLayout = itemLayout;
+    }
+
+    public CustomModuleAdapter(List<Table> moduleName, Context context, int itemLayout) {
+        super(moduleName, context);
         this.mItemLayout = itemLayout;
     }
 

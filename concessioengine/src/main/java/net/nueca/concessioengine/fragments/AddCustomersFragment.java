@@ -40,7 +40,7 @@ public class AddCustomersFragment extends BaseCustomersFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        addCustomerView = inflater.inflate(R.layout.add_customers_fragment, container, false);
+        addCustomerView = inflater.inflate(R.layout.add_customer_fragment, container, false);
         ArrayAdapter<String> genderAdapter;
         ArrayAdapter<String> civilStatusAdapter;
 

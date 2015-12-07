@@ -75,13 +75,13 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
         if(btnReview != null && btnReview.getText().toString().equals(REVIEW_LABEL)) {
             getMenuInflater().inflate(R.menu.menu_sample_sales, menu);
             mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
-            initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+            /*initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     simpleProductsFragment.updateListWhenSearch(newText);
                     return true;
                 }
-            });
+            });*/
 
 
             miSearch = menu.findItem(R.id.mSearch);

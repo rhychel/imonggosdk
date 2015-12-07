@@ -2,6 +2,8 @@ package net.nueca.imonggosdk.dialogs;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -103,6 +105,20 @@ public class DialogTools {
 
     }
 
+    public static void showBasicWithTitle(Context context, String title, String message, String positiveText, String negativeText, String neutralText,
+                                          DialogInterface.OnClickListener positive,
+                                          DialogInterface.OnClickListener negative,
+                                          DialogInterface.OnClickListener neutral, boolean isCancellable, int theme) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, theme)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(positiveText, positive)
+                .setNegativeButton(negativeText, negative)
+                .setNeutralButton(neutralText, neutral)
+                .setCancelable(isCancellable);
+        builder.show();
+    }
+
     /**
      * Simple Indeterminate Progress Dialog
      *
@@ -111,9 +127,19 @@ public class DialogTools {
      * @param content    Message of the Progress Dialog
      * @param cancelable True if you want to cancel dialog by tapping the side of the screen
      */
+
     public static void showIndeterminateProgressDialog(Context context, String title,
                                                        String content, Boolean cancelable) {
-        mProgressDialog = new ProgressDialog(context);
+        showIndeterminateProgressDialog(context, title, content, cancelable, 0);
+    }
+
+    public static void showIndeterminateProgressDialog(Context context, String title,
+                                                       String content, Boolean cancelable, int theme) {
+        if(theme != 0) {
+            mProgressDialog = new ProgressDialog(context, theme);
+        } else {
+            mProgressDialog = new ProgressDialog(context);
+        }
 
         mProgressDialog.setIndeterminate(true);
 

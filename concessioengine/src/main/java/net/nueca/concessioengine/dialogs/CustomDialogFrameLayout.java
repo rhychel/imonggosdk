@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import net.nueca.concessioengine.R;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.LoginListener;
 import net.nueca.imonggosdk.tools.LoggingTools;
 import net.nueca.imonggosdk.tools.TableTools;
@@ -28,13 +29,23 @@ public class CustomDialogFrameLayout extends FrameLayout {
     private LinearLayoutManager mLinearLayoutManager;
     private CustomModuleAdapter customModuleAdapter;
     private List<String> mModuleName;
+    private List<Table> mTableNames;
     private LoginListener mLoginListener;
     private static String TAG = "CustomDialogFrameLayout";
 
-    public CustomDialogFrameLayout(final Context context, final List<String> moduleName) {
+    @Deprecated
+    public CustomDialogFrameLayout(Context context, List<String> moduleName) {
         super(context);
+        //customDialogFrameLayout(context, moduleName);
+    }
+
+    public CustomDialogFrameLayout(final List<Table> moduleName, final Context context) {
+       super(context);
+        customDialogFrameLayout(context, moduleName);
+    }
+
+    private void customDialogFrameLayout(final Context context, final List<Table> moduleName) {
         this.mContext = context;
-        this.mModuleName = moduleName;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater != null) {
@@ -48,7 +59,8 @@ public class CustomDialogFrameLayout extends FrameLayout {
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        customModuleAdapter = new CustomModuleAdapter(mContext, R.layout.item_module, mModuleName);
+        //customModuleAdapter = new CustomModuleAdapter(mContext, R.layout.item_module, mModuleName);
+        customModuleAdapter = new CustomModuleAdapter(moduleName, mContext, R.layout.item_module);
 
         customModuleAdapter.setOnItemClickListener(new BaseCustomDialogRecyclerAdapter.OnItemClickListener() {
             @Override
@@ -56,7 +68,8 @@ public class CustomDialogFrameLayout extends FrameLayout {
                 Log.e(TAG, "OnItemClicked " + getCustomModuleAdapter().getModuleAt(position));
                /* LoggingTools.showToast(context, "OnItemClicked" + getCustomModuleAdapter().getModuleAt(position));
                 view.setBackgroundColor(mContext.getResources().getColor(android.R.color.darker_gray));*/
-                mLoginListener.onRetryButtonPressed(TableTools.convertStringToTableName(getCustomModuleAdapter().getModuleAt(position)));
+                //mLoginListener.onRetryButtonPressed(TableTools.convertStringToTableName(getCustomModuleAdapter().getModuleAt(position)));
+                mLoginListener.onRetryButtonPressed(getCustomModuleAdapter().getTableAt(position));
             }
         });
 

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
+import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
@@ -25,13 +26,32 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
     private ImonggoDBHelper2 dbHelper;
 
     public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper2 dbHelper) {
-        super(context, R.layout.simple_checkout_payment_item);
-        this.dbHelper = dbHelper;
+        this(context, dbHelper, ListingType.BASIC_PAYMENTS);
     }
 
     public SimpleSplitPaymentAdapter(Context context, List<InvoicePayment> payments, ImonggoDBHelper2 dbHelper) {
-        super(context, R.layout.simple_checkout_payment_item, payments);
+        this(context, payments, dbHelper, ListingType.BASIC_PAYMENTS);
+    }
+
+    public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper2 dbHelper, ListingType listingType) {
+        super(context, chooseLayout(listingType));
         this.dbHelper = dbHelper;
+        this.listingType = listingType;
+    }
+
+    public SimpleSplitPaymentAdapter(Context context, List<InvoicePayment> payments, ImonggoDBHelper2 dbHelper, ListingType listingType) {
+        super(context, chooseLayout(listingType), payments);
+        this.dbHelper = dbHelper;
+        this.listingType = listingType;
+    }
+
+    private static int chooseLayout(ListingType listingType) {
+        switch (listingType) {
+            case COLORED_PAYMENTS:
+                return R.layout.simple_checkout_payment_item2;
+            default:
+                return R.layout.simple_checkout_payment_item;
+        }
     }
 
     @Override
@@ -44,20 +64,32 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
 
     @Override
     public void onBindViewHolder(ListViewHolder lvh, final int position) {
-        if(position < getCount()) {
+        if (position < getCount()) {
             InvoicePayment invoicePayment = getItem(position);
 
             lvh.tvPaymentType.setText(getPaymentTypeWithId(invoicePayment.getPayment_type_id()).getName());
-            lvh.tvPaymentValue.setText(NumberTools.separateInCommas(invoicePayment.getTender()));
+            lvh.tvPaymentValue.setText("P" + NumberTools.separateInCommas(invoicePayment.getTender()));
             lvh.tvPaymentValue.setVisibility(View.VISIBLE);
+            if(listingType == ListingType.COLORED_PAYMENTS)
+                lvh.tvPaymentValue.setTextColor(getContext().getResources().getColor(R.color.payment_color));
             lvh.isAdd = false;
+            lvh.isLastItem = false;
         } else {
-            lvh.tvPaymentType.setText("Tap to add payment...");
-            lvh.tvPaymentValue.setText(NumberTools.separateInCommas(""));
-            lvh.tvPaymentValue.setVisibility(View.GONE);
-            lvh.isAdd = true;
+            if(listingType == ListingType.COLORED_PAYMENTS) {
+                lvh.tvPaymentType.setText("Total Amount");
+                lvh.tvPaymentValue.setText("P"+NumberTools.separateInCommas("2500"));
+                lvh.tvPaymentValue.setTextColor(getContext().getResources().getColor(R.color.primary));
+                lvh.isLastItem = true;
+            }
+            else if(listingType == ListingType.BASIC_PAYMENTS) {
+                lvh.tvPaymentType.setText("Tap to add payment...");
+                lvh.tvPaymentValue.setText(NumberTools.separateInCommas(""));
+                lvh.tvPaymentValue.setVisibility(View.GONE);
+                lvh.isAdd = true;
+            }
         }
         lvh.position = position;
+
         //lvh.showButtons(false);
     }
 
@@ -72,6 +104,7 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         //ImageButton ibtnEdit, ibtnDelete;
         //View llButtons;
         int position;
+        boolean isLastItem = false;
 
         public ListViewHolder(View itemView) {
             super(itemView);
@@ -125,6 +158,10 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
 
         public boolean isAdd() {
             return isAdd;
+        }
+
+        public boolean isLastItem() {
+            return isLastItem;
         }
 
         public int getItemIndex() {

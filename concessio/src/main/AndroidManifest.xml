@@ -2,13 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.nueca.concessio">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -28,7 +27,6 @@
 
         <activity
             android:name=".C_Welcome"
-
             android:label="@string/app_name"
             android:theme="@style/LoginTheme"/>
 
@@ -47,6 +45,16 @@
             android:name="net.nueca.concessio.C_MultiInput"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Concessio.NoActionBar"/>
+
+        <activity
+            android:name="net.nueca.concessio.C_Finalize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Concessio.Light.NoActionBar"/>
+
+        <activity
+            android:name="net.nueca.concessio.C_Checkout"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Concessio.Light.NoActionBar"/>
 
         <!-- Services -->
         <service android:name="net.nueca.imonggosdk.swable.ImonggoSwable"

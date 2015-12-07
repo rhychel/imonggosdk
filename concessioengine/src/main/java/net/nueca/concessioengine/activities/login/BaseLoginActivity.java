@@ -3,6 +3,7 @@ package net.nueca.concessioengine.activities.login;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.EditText;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.dialogs.CustomDialog;
@@ -53,7 +55,6 @@ import java.util.List;
  * imonggosdk (c)2015
  */
 public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
-
     private BaseLogin mBaseLogin = null;
     private Boolean isUnlinked = true;
     private Boolean isLoggedIn = false;
@@ -71,6 +72,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private CustomDialogFrameLayout customDialogFrameLayout = null;
     private Intent mServiceIntent = null;
     private List<String> mModulesToDownload = null;
+    private List<Table> mTablesToDownload = null;
     private String TAG = "BaseLoginActivity";
     private SyncModules mSyncModules = null;
     private Boolean mBounded = false;
@@ -154,20 +156,20 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected abstract void showProgressDialog(DialogType type, String message, String positiveText, String negativeText);
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         Log.e(TAG, "OnStart()");
     }
 
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Log.e(TAG, "OnResume()");
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         Log.e(TAG, "onPause()");
     }
@@ -228,7 +230,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     public void startSyncingImonggoModules() throws SQLException {
         if (isSyncServiceBinded()) {
-            setUpModuleNamesForCustomDialog();
+            setUpTableNamesForCustomDialog();
+            //setUpModuleNamesForCustomDialog();
             showCustomDownloadDialog();
 
             Log.e(TAG, "Starting Module Download");
@@ -241,19 +244,27 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     customDialog.dismiss();
                 }
                 startSyncService();
-
-                DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
-                        "Sync failed. Login Again ",
-                        "Ok", "", false,
-                        new MaterialDialog.SingleButtonCallback() {
+                DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Syncing Failed",
+                        "Sync failed. Login again.",
+                        "Okay", null, null,
+                        new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(MaterialDialog dialog, DialogAction dialogAction) {
-                                bindSyncService();
-                                dialog.dismiss();
-                                dialogPositiveButtonAction();
+                            public void onClick(DialogInterface dialog, int which) {
                                 btnSignIn.setEnabled(true);
                             }
-                        }, null, null);
+                        }, null, null, false, R.style.AppCompatDialogStyle_NoTitle);
+//                DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
+//                        "Sync failed. Login Again ",
+//                        "Ok", "", false,
+//                        new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(MaterialDialog dialog, DialogAction dialogAction) {
+//                                bindSyncService();
+//                                dialog.dismiss();
+//                                dialogPositiveButtonAction();
+//                                btnSignIn.setEnabled(true);
+//                            }
+//                        }, null, null);
             }
         } else {
 
@@ -267,8 +278,46 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     /**
      * This populates list of module names that
-     * the custom dialog needs based on your list.
+     * the custom dialog needs based on your Table list.
      */
+    private void setUpTableNamesForCustomDialog() {
+        if (getModules() != null) {
+            if (mTablesToDownload != null) {
+                mTablesToDownload.clear();
+            } else {
+                mTablesToDownload = new ArrayList<>();
+            }
+
+            for (int module : getModules()) {
+                Table table = Table.values()[module];
+
+                if (table.isAPI()) {
+                    mTablesToDownload.add(table);
+                } else {
+                    LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
+                    Log.i(TAG, "You have added unsupported module. please check your code. " + table);
+                }
+            }
+        } else {
+            mTablesToDownload.add(Table.USERS);
+            mTablesToDownload.add(Table.BRANCHES);
+            mTablesToDownload.add(Table.TAX_SETTINGS);
+            mTablesToDownload.add(Table.PRODUCTS);
+            mTablesToDownload.add(Table.CUSTOMERS);
+            mTablesToDownload.add(Table.UNITS);
+            mTablesToDownload.add(Table.DOCUMENTS);
+            mTablesToDownload.add(Table.DOCUMENT_TYPES);
+            mTablesToDownload.add(Table.DOCUMENT_PURPOSES);
+        }
+    }
+
+    /**
+     * This populates list of module names that
+     * the custom dialog needs based on your String list.
+     *
+     * @deprecated use {@link #setUpTableNamesForCustomDialog()} instead.
+     */
+    @Deprecated
     private void setUpModuleNamesForCustomDialog() {
         if (getModules() != null) { // manually set modules to download see /**/
             if (mModulesToDownload != null) {
@@ -277,86 +326,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mModulesToDownload = new ArrayList<>();
             }
 
-
             for (int module : getModules()) {
-                for (Table table : Table.values()) {
-                    if (module == table.ordinal()) {
-                        switch (table) {
-                            case USERS:
-                                mModulesToDownload.add("Users");
-                                break;
-                            case BRANCH_PRODUCTS:
-                            case PRODUCTS:
-                                mModulesToDownload.add("Products");
-                                break;
-                            case UNITS_BRANCH:
-                            case UNITS:
-                                mModulesToDownload.add("Units");
-                                break;
-                            case BRANCH_USERS:
-                            case BRANCHES:
-                                mModulesToDownload.add("Branches");
-                                break;
-                            case CUSTOMERS:
-                                mModulesToDownload.add("Customers");
-                                break;
-                            case INVENTORIES:
-                                mModulesToDownload.add("Inventories");
-                                break;
-                            case TAX_SETTINGS:
-                                mModulesToDownload.add("Tax Settings");
-                                break;
-                            case DOCUMENTS:
-                                mModulesToDownload.add("Documents");
-                                break;
-                            case DOCUMENT_TYPES:
-                                mModulesToDownload.add("Document Types");
-                                break;
-                            case DOCUMENT_PURPOSES:
-                                mModulesToDownload.add("Document Purposes");
-                                break;
-                            case DAILY_SALES:
-                                mModulesToDownload.add("Daily Sales");
-                                break;
-                            case SETTINGS:
-                                mModulesToDownload.add("Settings");
-                                break;
-                            case INVOICES:
-                                mModulesToDownload.add("Invoices");
-                                break;
-                            case INVOICE_PURPOSES:
-                                mModulesToDownload.add("Invoice Purposes");
-                                break;
-                            case CUSTOMER_GROUPS:
-                                mModulesToDownload.add("Customer Groups");
-                                break;
-                            case PRICE_LISTS:
-                                mModulesToDownload.add("Price Lists");
-                                break;
-                            case CUSTOMER_CATEGORIES:
-                                mModulesToDownload.add("Customer Categories");
-                                break;
-                            case PAYMENT_TYPES:
-                                mModulesToDownload.add("Payment Types");
-                                break;
-                            case PAYMENT_TERMS:
-                                mModulesToDownload.add("Payment Terms");
-                                break;
-                            case SALES_PUSH:
-                                mModulesToDownload.add("Sales Push");
-                                break;
-                            case SALES_PROMOTIONS:
-                                mModulesToDownload.add("Sales Promotion");
-                                break;
-                            case ROUTE_PLANS:
-                                mModulesToDownload.add("Route Plans");
-                                break;
-                            default:
-                                LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
-                                Log.i(TAG, "You have added unsupported module. please check your code. " + table);
-                                break;
-                        }
-                    }
+
+                Table table = Table.values()[module];
+
+                if (table.isAPI()) {
+
+                    mModulesToDownload.add(table.getStringName());
+                } else {
+                    LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
+                    Log.i(TAG, "You have added unsupported module. please check your code. " + table);
                 }
             }
         } else { // if you don't set custom modules to download. Sync All
@@ -372,8 +351,15 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
+    @Deprecated
     public void createNewCustomDialogFrameLayout(Context context, List<String> moduleName) {
         customDialogFrameLayout = new CustomDialogFrameLayout(context, moduleName);
+        customDialogFrameLayout.setLoginListener(mBaseLogin.getLoginListener());
+    }
+
+
+    public void createNewCustomDialogFrameLayout(List<Table> moduleName, Context context) {
+        customDialogFrameLayout = new CustomDialogFrameLayout(moduleName, context);
         customDialogFrameLayout.setLoginListener(mBaseLogin.getLoginListener());
     }
 
@@ -468,17 +454,25 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private void initLogin() {
 
         if (!NetworkTools.isInternetAvailable(this)) {
-            DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE),
-                    "No network connection",
-                    getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-                    new MaterialDialog.SingleButtonCallback() {
+            DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE), "No network connection", getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                    new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                        public void onClick(DialogInterface dialog, int which) {
                             dialogPositiveButtonAction();
                             btnSignIn.setEnabled(true);
-                            materialDialog.dismiss();
                         }
-                    }, null, null);
+                    }, null, null, false, R.style.AppCompatDialogStyle_NoTitle);
+//            DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE),
+//                    "No network connection",
+//                    getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
+//                    new MaterialDialog.SingleButtonCallback() {
+//                        @Override
+//                        public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+//                            dialogPositiveButtonAction();
+//                            btnSignIn.setEnabled(true);
+//                            materialDialog.dismiss();
+//                        }
+//                    }, null, new Theme);
         } else {
             Boolean cancelLogin = false;
             // Set error to null
@@ -574,27 +568,36 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
             @Override
             public void onRetryButtonPressed(Table table) throws SQLException {
-
+                Log.e(TAG, table.getStringName());
                 if (mLoginState == LoginState.LOGIN_FAILED) {
                     if(!NetworkTools.isInternetAvailable(BaseLoginActivity.this)) {
-                        DialogTools.showBasicWithTitle(
-                                BaseLoginActivity.this,
-                                "Failed to Re-Sync Data",
+
+                        DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Failed to Re-Sync Data",
                                 getString(R.string.LOGIN_NETWORK_ERROR),
-                                "Okay", null, false,
-                                new MaterialDialog.SingleButtonCallback() {
+                                "Okay", null, null,
+                                new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(@NonNull MaterialDialog materialDialog, DialogAction dialogAction) {
-                                        materialDialog.dismiss();
+                                    public void onClick(DialogInterface dialog, int which) {
                                     }
-                                }, null, null);
+                                }, null, null, false, R.style.AppCompatDialogStyle_NoTitle);
+//                        DialogTools.showBasicWithTitle(
+//                                BaseLoginActivity.this,
+//                                "Failed to Re-Sync Data",
+//                                getString(R.string.LOGIN_NETWORK_ERROR),
+//                                "Okay", null, false,
+//                                new MaterialDialog.SingleButtonCallback() {
+//                                    @Override
+//                                    public void onClick(@NonNull MaterialDialog materialDialog, DialogAction dialogAction) {
+//                                        materialDialog.dismiss();
+//                                    }
+//                                }, null, null);
                     } else {
                         if (table == mSyncModules.getCurrentTableSyncing()) {
                             Log.e(TAG, "retrying sync table " + table);
                             mSyncModules.prepareModulesToReSync();
                             Log.e(TAG, "Number of Modules to re-Sync: " + mSyncModules.getModulesToSync().length);
 
-                            getCustomDialogFrameLayout().getCustomModuleAdapter().hideRetryButton(mModulesToDownload.indexOf(getStringOfCurrentTable(table)));
+                            getCustomDialogFrameLayout().getCustomModuleAdapter().hideRetryButton(mTablesToDownload.indexOf(table));
 
                             mLoginState = LoginState.LOGIN_DOWNLOADING_DATA;
                             mSyncModules.startFetchingModules();
@@ -756,8 +759,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return this.mSession;
     }
 
+    /**
+     * @deprecated use {@link #getTableToSync()}  instead.
+     */
+    @Deprecated
     protected List<String> getModulesToSync() {
         return this.mModulesToDownload;
+    }
+
+    protected List<Table> getTableToSync() {
+        return this.mTablesToDownload;
     }
 
     protected String getTag() {
@@ -988,87 +999,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     private String getStringOfCurrentTable(Table table) {
-
-        String currentTable = "";
-
-        for (Table tableN : Table.values()) {
-            if (table == tableN) {
-                switch (tableN) {
-                    case USERS:
-                        currentTable = "Users";
-                        break;
-                    case BRANCHES:
-                    case BRANCH_USERS:
-                        currentTable = "Branches";
-                        break;
-                    case TAX_SETTINGS:
-                        currentTable = "Tax Settings";
-                        break;
-                    case BRANCH_PRODUCTS:
-                    case PRODUCTS:
-                        currentTable = "Products";
-                        break;
-                    case INVENTORIES:
-                        currentTable = "Inventories";
-                        break;
-                    case CUSTOMERS:
-                        currentTable = "Customers";
-                        break;
-                    case DOCUMENTS:
-                        currentTable = "Documents";
-                        break;
-                    case DOCUMENT_TYPES:
-                        currentTable = "Document Types";
-                        break;
-                    case DOCUMENT_PURPOSES:
-                        currentTable = "Document Purposes";
-                        break;
-                    case UNITS_BRANCH:
-                    case UNITS:
-                        currentTable = "Units";
-                        break;
-                    case DAILY_SALES:
-                        currentTable = "Daily Sales";
-                        break;
-                    case SETTINGS:
-                        currentTable = "Settings";
-                        break;
-                    case INVOICES:
-                        currentTable = "Invoices";
-                        break;
-                    case INVOICE_PURPOSES:
-                        currentTable = "Invoice Purposes";
-                        break;
-                    case CUSTOMER_GROUPS:
-                        currentTable = "Customer Groups";
-                        break;
-                    case PRICE_LISTS:
-                        currentTable = "Price Lists";
-                        break;
-                    case CUSTOMER_CATEGORIES:
-                        currentTable = "Customer Categories";
-                        break;
-                    case PAYMENT_TYPES:
-                        currentTable = "Payment Types";
-                        break;
-                    case PAYMENT_TERMS:
-                        currentTable = "Payment Terms";
-                        break;
-                    case SALES_PUSH:
-                        currentTable = "Sales Push";
-                        break;
-                    case SALES_PROMOTIONS:
-                        currentTable = "Sales Promotions";
-                        break;
-                    case ROUTE_PLANS:
-                        currentTable = "Route Plans";
-                    default:
-                        break;
-                }
-            }
-        }
-
-        return currentTable;
+        return table.getStringName();
     }
 
     @Override
@@ -1083,14 +1014,24 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         Log.e(TAG, "Downloading " + table + " " + page + " out of " + max);
         int progress = 0;
         String currentTable = getStringOfCurrentTable(table);
-        
+
         progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
 
         Log.e(TAG, table + " progress: " + progress);
         if (isUsingDefaultCustomDialogForSync()) {
-            customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(mModulesToDownload.indexOf(currentTable));
-            customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), progress);
+
+            if (mModulesToDownload != null && mTablesToDownload == null)
+                updateDownloadProgress(mModulesToDownload.indexOf(currentTable), progress);
+
+            if(mTablesToDownload != null &&
+                    mModulesToDownload == null)
+                updateDownloadProgress(mTablesToDownload.indexOf(table), progress);
         }
+    }
+
+    private void updateDownloadProgress(int position, int progress) {
+        customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(position);
+        customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(position, progress);
     }
 
     @Override
@@ -1115,7 +1056,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         Log.e(TAG, "error downloading " + table + " " + message);
         mLoginState = LoginState.LOGIN_FAILED;
 
-        getCustomDialogFrameLayout().getCustomModuleAdapter().showRetryButton(mModulesToDownload.indexOf(getStringOfCurrentTable(table)));
+        getCustomDialogFrameLayout().getCustomModuleAdapter().showRetryButton(mTablesToDownload.indexOf(table));
 
         LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed, Tap " + table + " module to retry");
         stopLogin();
@@ -1147,7 +1088,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     @Override
     public void onDestroy() {
-        Log.e(TAG, "onDestroy");
+        Log.e(TAG, "onDestroy()");
 
         if (isUnlinked() && !isLoggedIn()) {
             if (getBaseLogin() != null) {

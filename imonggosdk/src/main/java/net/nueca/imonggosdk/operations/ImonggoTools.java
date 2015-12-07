@@ -51,8 +51,8 @@ public class ImonggoTools {
                     parameterStr += "branch_id=%"+stringInputCount+"$s&";
                     stringInputCount++;
                     break;
-                case SALES_PROMOTION_DETAIL:
-                    parameterStr += "q=details&";
+                case SALES_PUSH:
+                    parameterStr += "type=sales_push&";
                     break;
                 case FROM:
                     parameterStr += "from=%"+stringInputCount+"$s&";
@@ -78,6 +78,9 @@ public class ImonggoTools {
                     parameterStr = "";
                     parameterStr += "%"+stringInputCount+"$s.json?";
                     stringInputCount++;
+                    break;
+                case DETAILS:
+                    parameterStr += "q=details&";
                     break;
             }
         }

@@ -9,6 +9,9 @@ public enum ListingType {
 
     SALES, // Product
 
-    LETTER_HEADER // Customer
+    LETTER_HEADER, // Customer
+
+    BASIC_PAYMENTS,
+    COLORED_PAYMENTS // Payments List
 
 }

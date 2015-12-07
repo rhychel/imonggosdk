@@ -243,6 +243,12 @@ public class TableTools {
             case "EXTRAS":
                 return Table.EXTRAS;
 
+            case "SALES_PUSH":
+                return Table.SALES_PUSH;
+
+            case "SALES PUSH":
+                return Table.SALES_PUSH;
+
             default:
                 return null;
         }
