@@ -33,6 +33,10 @@ public class ModuleSetting extends DBTable {
     private boolean has_store_transfer = false;
     @DatabaseField
     private boolean require_document_reason = false;
+    @DatabaseField
+    private boolean has_route_plan = false;
+    @DatabaseField
+    private String show_in = "beginning"; // beginning, middle, last
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_listing_id")
@@ -176,20 +180,20 @@ public class ModuleSetting extends DBTable {
     }
 
     public ConcessioModule getModuleType() {
-        if(module_type.equals("order"))
-            return ConcessioModule.ORDERS;
-        if(module_type.equals("count"))
+        if(module_type.equals("stock_request"))
+            return ConcessioModule.STOCK_REQUEST;
+        if(module_type.equals("physical_count"))
             return ConcessioModule.PHYSICAL_COUNT;
-        if(module_type.equals("receive"))
-            return ConcessioModule.RECEIVE;
-        if(module_type.equals("pullout_request"))
-            return ConcessioModule.PULLOUT_REQUEST;
-        if(module_type.equals("pullout_confirmation"))
-            return ConcessioModule.PULLOUT_CONFIRMATION;
-        if(module_type.equals("inventory"))
-            return ConcessioModule.INVENTORY;
-        if(module_type.equals("sales"))
-            return ConcessioModule.SALES;
+        if(module_type.equals("receive_branch"))
+            return ConcessioModule.RECEIVE_BRANCH;
+        if(module_type.equals("release_branch"))
+            return ConcessioModule.RECEIVE_BRANCH;
+        if(module_type.equals("receive_branch_pullout"))
+            return ConcessioModule.RECEIVE_BRANCH_PULLOUT;
+        if(module_type.equals("receive_supplier"))
+            return ConcessioModule.RECEIVE_SUPPLIER;
+        if(module_type.equals("invoice"))
+            return ConcessioModule.INVOICE;
         return ConcessioModule.APP;
     }
 

@@ -27,12 +27,12 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
     }
 
     public void moduleSelected(View view) {
-        ConcessioModule concessioModule = ConcessioModule.ORDERS;
+        ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
         if(view.getTag() != null) {
             concessioModule = (ConcessioModule)view.getTag();
         }
         else {
-            Log.e("Ooops!", "no tag for this button. e.g.: view.setTag(ConcessioModule.ORDERS)");
+            Log.e("Ooops!", "no tag for this button. e.g.: view.setTag(ConcessioModule.STOCK_REQUEST)");
             return;
         }
         if(nextActivityClass == null) {
