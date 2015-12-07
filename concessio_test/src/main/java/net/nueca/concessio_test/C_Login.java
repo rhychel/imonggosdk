@@ -2,11 +2,8 @@ package net.nueca.concessio_test;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
 
 import com.crashlytics.android.Crashlytics;
-
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
@@ -45,15 +42,15 @@ public class C_Login extends LoginActivity {
                 Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_GROUPS.ordinal(),
                 Table.BRANCH_CUSTOMERS.ordinal(),
-//                Table.BRANCH_PRODUCTS.ordinal(),
+                Table.BRANCH_PRODUCTS.ordinal(),
                 Table.BRANCH_UNITS.ordinal(),
-                Table.BRANCH_PRICE_LISTS.ordinal(),
+                Table.BRANCH_PRICE_LISTS.ordinal()/*,
                 //Table.PRICE_LISTS_DETAILS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
                 Table.PAYMENT_TERMS.ordinal(),
                 Table.INVOICES.ordinal(),
                 Table.INVOICE_PURPOSES.ordinal(),
-                Table.SALES_PUSH.ordinal()
+                Table.SALES_PUSH.ordinal()*/
                 //Table.SALES_PROMOTIONS_DISCOUNT.ordinal(),
                 /*Table.BRANCH_ROUTE_PLANS.ordinal()*/);
 
@@ -62,7 +59,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, ( C_Customers.class));
+        Intent intent = new Intent(this, (C_Customers.class));
         startActivity(intent);
     }
 

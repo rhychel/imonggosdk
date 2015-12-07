@@ -134,10 +134,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             // get the last updated at
             lastUpdatedAt = getHelper().fetchObjects(LastUpdatedAt.class).queryForFirst(queryBuilder.prepare());
 
-            if (lastUpdatedAt != null) {
-                Log.e(TAG, "TABLE NAME: " + lastUpdatedAt.getTableName());
-            }
-
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this, mCurrentTableSyncing,
                     getSession().getServer(), requestType, getParameters(requestType));
 
@@ -788,10 +784,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         if (json_extras.has("default_selling_unit")) {
                                             default_selling_unit = json_extras.getString("default_selling_unit");
+                                        } else {
+                                            Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_selling_unit'");
                                         }
 
-                                        if (json_extras.has("default_ordering_unit")) {
+                                        if (json_extras.has("default_ordering_unit_id")) {
                                             default_ordering_unit_id = json_extras.getString("default_ordering_unit_id");
+                                        } else {
+                                            Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_ordering_unit_id'");
                                         }
 
                                         product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
@@ -824,7 +824,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                             tax_rate_id = jsonTaxRateObject.getInt("id");
 
-                                            if (!jsonTaxRateObject.getString("branch_id").equals("null")) {
+                                            if (!jsonTaxRateObject.getString("branch_id").equals("null") || !jsonTaxRateObject.isNull("branch_id")) {
                                                 tax_branch_id = jsonTaxRateObject.getInt("branch_id");
                                             } else {
                                                 tax_branch_id = 0;
@@ -1402,111 +1402,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Log.e(TAG, "PRICE_LIST API don't have 'branch_id' field");
                                 }
 
-                                if (jsonObject.has("customers")) {
-                                    JSONArray customerJsonArray = jsonObject.getJSONArray("customers");
-                                    for (int i = 0; i < customerJsonArray.length(); i++) {
-                                        JSONObject customerJsonObject = customerJsonArray.getJSONObject(i);
-                                        if (customerJsonObject.has("id")) {
-                                            int customer_id = !customerJsonObject.getString("id").equals("") ? customerJsonObject.getInt("id") : 0;
-                                            if (customer_id != 0) {
-                                                Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", customer_id).queryForFirst();
-
-                                                if (customer == null) {
-                                                    Log.e(TAG, "can't find customer");
-                                                } else {
-                                                    Log.e(TAG, "Customer Name: " + customer.getName() + priceList.getId());
-                                                    customer.setPriceList(priceList);
-                                                    updateCustomerPriceList.add(customer);
-                                                    ;
-                                                }
-                                            }
-                                        } else {
-                                            Log.e(TAG, "PRICE_LIST API dont have 'id' field in customers json array");
-                                        }
-                                    }
-                                } else {
-                                    Log.e(TAG, "PRICE_LIST API don't have 'customers' field");
-                                }
-
-                                if (jsonObject.has("customer_groups")) {
-                                    JSONArray customerGroupsJsonArray = jsonObject.getJSONArray("customer_groups");
-                                    for (int i = 0; i < customerGroupsJsonArray.length(); i++) {
-                                        JSONObject customerGroupJsonObject = customerGroupsJsonArray.getJSONObject(i);
-                                        if (customerGroupJsonObject.has("id")) {
-                                            int customer_group_id = !customerGroupJsonObject.getString("id").equals("") ? customerGroupJsonObject.getInt("id") : 0;
-
-                                            if (customer_group_id != 0) {
-                                                CustomerGroup customerGroup = getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customer_group_id).queryForFirst();
-
-                                                if (customerGroup == null) {
-                                                    Log.e(TAG, "Can't find Customer Group");
-                                                } else {
-                                                    Log.e(TAG, "Customer Group Name: " + customerGroup.getName() + priceList.getId());
-                                                    customerGroup.setPriceList(priceList);
-
-                                                    updateCustomerGroup.add(customerGroup);
-                                                }
-
-                                            }
-                                        } else {
-                                            Log.e(TAG, "PRICE_LIST API don't have 'id' field in customer_groups array");
-                                        }
-                                    }
-                                } else {
-                                    Log.e(TAG, "PRICE_LIST API don't have 'customers_group' field ");
-                                }
-
-                                if (jsonObject.has("price_list_items")) {
-                                    JSONArray priceListJsonArray = jsonObject.getJSONArray("price_list_items");
-
-                                    for (int i = 0; i < priceListJsonArray.length(); i++) {
-                                        JSONObject priceListJsonObject = priceListJsonArray.getJSONObject(i);
-
-                                        Price price = gson.fromJson(priceListJsonObject.toString(), Price.class);
-
-                                        // PRODUCT
-                                        if (priceListJsonObject.has("product_id")) {
-                                            if (priceListJsonObject.getString("product_id").equals("") || priceListJsonObject.isNull("product_id")) {
-                                                Log.e(TAG, "product_id field is null");
-                                            } else {
-                                                int product_id = priceListJsonObject.getInt("product_id");
-                                                Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product_id).queryForFirst();
-                                                if (product != null) {
-                                                    Log.e(TAG, "Product: " + product.getName());
-                                                    price.setProduct(product);
-                                                } else {
-                                                    Log.e(TAG, "Can't find product with id " + priceListJsonObject.getInt("product_id"));
-                                                }
-                                            }
-                                        } else {
-                                            Log.e(TAG, "PRICE_LIST API don't have 'product_id' field in price_list_items array");
-                                        }
-
-                                        // UNITS
-                                        if (priceListJsonObject.has("unit_id")) {
-                                            if (priceListJsonObject.getString("unit_id").equals("") || priceListJsonObject.isNull("unit_id")) {
-                                                Log.e(TAG, "unit_id field is null");
-                                            } else {
-                                                int unit_id = priceListJsonObject.getInt("unit_id");
-                                                Unit unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit_id).queryForFirst();
-                                                if (unit != null) {
-                                                    Log.e(TAG, "Unit: " + unit.getName());
-                                                    price.setUnit(unit);
-                                                } else {
-                                                    Log.e(TAG, "Can't find unit with id " + priceListJsonObject.getInt("unit_id"));
-                                                }
-                                            }
-                                        } else {
-                                            Log.e(TAG, "PRICE_LIST API don't have 'unit_id' field in price_list_items array");
-                                        }
-
-                                        price.setPriceList(priceList);
-                                        newPrice.add(price);
-                                    }
-                                } else {
-                                    Log.e(TAG, "PRICE_LIST API don't have 'price_list_items field");
-                                }
-
                                 if (initialSync || lastUpdatedAt == null) {
                                     newPriceList.add(priceList);
                                 } else {
@@ -1776,7 +1671,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             e.printStackTrace();
         }
     }
-
 
     @Override
     public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
