@@ -39,17 +39,17 @@ public class C_Login extends LoginActivity {
         setModulesToSync(
                 Table.USERS.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
-                Table.PRODUCTS.ordinal(),
                 Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_GROUPS.ordinal(),
                 Table.CUSTOMERS.ordinal(),
                 Table.BRANCH_PRODUCTS.ordinal(),
+                Table.PRODUCTS.ordinal(),
                 Table.UNITS_BRANCH.ordinal(),
-                Table.PRICE_LISTS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
                 Table.PAYMENT_TERMS.ordinal(),
+                Table.PRICE_LISTS.ordinal()/*,
                 Table.SALES_PUSH.ordinal(),
-                Table.ROUTE_PLANS.ordinal());
+                Table.ROUTE_PLANS.ordinal()*/);
 
     }
 
@@ -64,9 +64,8 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
-
-        setEditTextAccountID("retailpos");
-        setEditTextEmail("retailpos@test.com");
-        setEditTextPassword("retailpos");
+        setEditTextAccountID("C5015");
+        setEditTextEmail("C5015@test.com");
+        setEditTextPassword("C5015");
     }
 }

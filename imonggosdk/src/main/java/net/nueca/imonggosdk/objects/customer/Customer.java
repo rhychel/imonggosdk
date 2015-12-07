@@ -119,6 +119,25 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.gender = gender;
     }
 
+    // TODO: complete all fields
+    public Customer(Builder builder) {
+        this.first_name = builder.first_name;
+        this.last_name = builder.last_name;
+        this.name = builder.name;
+        this.company_name = builder.company_name;
+        this.telephone = builder.telephone;
+        this.mobile = builder.mobile;
+        this.fax = builder.fax;
+        this.email = builder.email;
+        this.street = builder.street;
+        this.city = builder.city;
+        this.zipcode = builder.zipcode;
+        this.country = builder.country;
+        this.state = builder.state;
+        this.tin = builder.tin;
+        this.gender = builder.gender;
+    }
+
     public int getPoint_to_amount_ratio() {
         return point_to_amount_ratio;
     }
@@ -472,6 +491,10 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return new JSONObject(gson.toJson(this));
     }
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
+    }
 
     public static Customer fromJSONObject(JSONObject jsonObject) throws JSONException {
         Gson gson = new Gson();
@@ -575,9 +598,100 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         extras.updateTo(dbHelper);
     }
 
+    // TODO: complete all fields
     public static class Builder {
         protected Extras extras;
-        protected String utc_created_at;
-        protected String utc_updated_at;
+        protected String utc_created_at, utc_updated_at,
+                code, alternate_code, first_name, last_name, name, company_name,
+                tin, street, city, state, zipcode, country, telephone, fax,
+                mobile, email, remark, customer_type_id, customer_type_name,
+                discount_text, available_points, birthdate, status, birthday,
+                membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+
+        public Customer build() {
+            return new Customer(this);
+        }
+
+        public Builder first_name(String first_name) {
+            this.first_name = first_name;
+            return this;
+        }
+        public Builder last_name(String last_name) {
+            this.last_name = last_name;
+            return this;
+        }
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        public Builder company_name(String company_name) {
+            this.company_name = company_name;
+            return this;
+        }
+        public Builder code(String code) {
+            this.code = code;
+            return this;
+        }
+        public Builder alternate_code(String alternate_code) {
+            this.alternate_code = alternate_code;
+            return this;
+        }
+        public Builder tin(String tin) {
+            this.tin = tin;
+            return this;
+        }
+        public Builder street(String street) {
+            this.street = street;
+            return this;
+        }
+        public Builder city(String city) {
+            this.city = city;
+            return this;
+        }
+        public Builder state(String state) {
+            this.state = state;
+            return this;
+        }
+        public Builder zipcode(String zipcode) {
+            this.zipcode = zipcode;
+            return this;
+        }
+        public Builder country(String country) {
+            this.country = country;
+            return this;
+        }
+        public Builder telephone(String telephone) {
+            this.telephone = telephone;
+            return this;
+        }
+        public Builder fax(String fax) {
+            this.fax = fax;
+            return this;
+        }
+        public Builder mobile(String mobile) {
+            this.mobile = mobile;
+            return this;
+        }
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+        public Builder remark(String remark) {
+            this.remark = remark;
+            return this;
+        }
+        public Builder birthdate(String birthdate) {
+            this.birthdate = birthdate;
+            return this;
+        }
+        public Builder birthday(String birthday) {
+            this.birthday = birthday;
+            return this;
+        }
+        public Builder status(String status) {
+            this.status = status;
+            return this;
+        }
+
     }
 }

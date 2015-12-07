@@ -16,6 +16,7 @@ import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
@@ -64,18 +65,28 @@ public class SimpleSalesProductRecyclerAdapter extends BaseProductsRecyclerAdapt
         holder.tvProductName.setText(Html.fromHtml(product.getName() + getSelectedProductItems().getUnitName(product).toLowerCase()));
 
         SelectedProductItem selectedProductItem = getSelectedProductItems().getSelectedProductItem(product);
-        Double retail_price = identifyRetailPrice(product);
+        Double retail_price = PriceTools.identifyRetailPrice(getHelper(),product,branch,customerGroup,customer);
 
         holder.tvSubtotal.setText("");
         if(selectedProductItem != null) {
-            retail_price = selectedProductItem.getRetail_price() == null ? retail_price : selectedProductItem.getRetail_price();
+            selectedProductItem.setRetail_price(retail_price);
+            //retail_price = selectedProductItem.getRetail_price() == null ? retail_price : selectedProductItem.getRetail_price();
             double subtotal = NumberTools.toDouble(selectedProductItem.getQuantity()) * retail_price;
             holder.tvSubtotal.setText(NumberTools.separateInCommas(subtotal));
         }
         holder.tvRetailPrice.setText(NumberTools.separateInCommas(retail_price));
-        holder.tvInventoryCount.setText("0 pcs");
+        holder.tvInventoryCount.setText("? pcs");
+        holder.tvInventoryCount.setVisibility(View.GONE);
 
-        holder.tvQuantity.setText(NumberTools.separateInSpaceHideZeroDecimals(getSelectedProductItems().getQuantity(product)) + " pcs");
+        if(selectedProductItem != null && selectedProductItem.getQuantity() != null &&
+                NumberTools.toDouble(selectedProductItem.getQuantity()) != 0d) {
+            double qty = NumberTools.toDouble(selectedProductItem.getQuantity());
+            holder.tvQuantity.setText(NumberTools.separateInSpaceHideZeroDecimals(qty) + (qty == 1? " pc" : " pcs"));
+            holder.tvQuantity.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvQuantity.setVisibility(View.GONE);
+        }
+
 
         String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
                 ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
@@ -156,7 +167,7 @@ public class SimpleSalesProductRecyclerAdapter extends BaseProductsRecyclerAdapt
         return getAdapterHelper().getDbHelper();
     }
 
-    public Double identifyRetailPrice(Product product) {
+    /*public Double identifyRetailPrice(Product product) {
         Double retail_price = product.getRetail_price();
         //Log.e("Product", "retail_price:" + retail_price + " for " + product.getName());
         try {
@@ -171,7 +182,7 @@ public class SimpleSalesProductRecyclerAdapter extends BaseProductsRecyclerAdapt
             }
 
             // Using PriceList
-            Log.e("PriceList", "count : " + getHelper().getDao(PriceList.class).countOf());
+            Log.e("PriceList", "count : " + getHelper().getDao(PriceList.class).countOf() + " for " + product.getName() + "~" + product.getId());
             List<PriceList> priceLists = null;
             String t = "NULL";
             if(branch != null) {
@@ -203,5 +214,5 @@ public class SimpleSalesProductRecyclerAdapter extends BaseProductsRecyclerAdapt
         }
 
         return retail_price;
-    }
+    }*/
 }

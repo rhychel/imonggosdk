@@ -42,8 +42,11 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
@@ -51,6 +54,7 @@ import net.nueca.imonggosdk.tools.DialogTools;
 import org.json.JSONException;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by rhymart on 8/21/15.
@@ -64,6 +68,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     private Toolbar toolbar;
     private boolean hasMenu = true;
 
+    private Customer selectedCustomer;
+
     private SimpleReceiveFragment simpleReceiveFragment;
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
 
@@ -76,6 +82,50 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SwableTools.startSwable(this);
+
+        try {
+            Branch branch = getHelper().getDao(Branch.class).queryBuilder().where().eq("id", getSession().getCurrent_branch_id()).queryForFirst();
+            List<Product> products = getHelper().getDao(Product.class).queryForAll();
+            List<PriceList> priceLists = getHelper().getDao(PriceList.class).queryForAll();
+            if(priceLists.size() == 1)
+                priceLists.get(0).deleteTo(getHelper());
+
+            priceLists = getHelper().getDao(PriceList.class).queryForAll();
+            if(priceLists.size() == 0) {
+                PriceList.Builder builder = new PriceList.Builder();
+                builder.branch(branch);
+
+                PriceList priceList = builder.build();
+                priceList.setId(priceLists.size() + 1);
+                priceList.insertTo(getHelper());
+                for(int i=0; i<15;i++) {
+                    Price price = new Price();
+                    price.setId(i + 8);
+                    price.setPriceList(priceList);
+                    price.setProduct(products.get(((int) (Math.random() * 10000)) % products.size()));
+                    price.setRetail_price( (((int)(Math.random() * 1000000) ) % 1000)/100 );
+                    price.insertTo(getHelper());
+                }
+                priceList.updateTo(getHelper());
+            }
+            priceLists = getHelper().getDao(PriceList.class).queryForAll();
+            Log.e("PRICE_LIST", priceLists.size() + "");
+            for(PriceList priceList : priceLists) {
+                Log.e("###", priceList.toString());
+                for(Price price : priceList.getPrices())
+                    Log.e("######", price.toString());
+            }
+
+
+            selectedCustomer = getHelper().getDao(Customer.class).queryForAll().get(0);
+            Log.e("CUSTOMER", selectedCustomer.getName());
+            selectedCustomer.setPriceList(priceLists.get(0));
+            selectedCustomer.updateTo(getHelper());
+            priceLists.get(0).updateTo(getHelper());
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         setContentView(R.layout.c_module);
 
@@ -104,6 +154,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 try {
                     salesAdapter.setBranch(getHelper().getDao(Branch.class).queryBuilder().where()
                             .eq("id", getSession().getCurrent_branch_id()).queryForFirst());
+                    //salesAdapter.setCustomer(selectedCustomer);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -310,7 +361,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 }
             }, "No");
         } else if(id == R.id.mCustomer) {
-
+            SimpleCustomersFragment customersFragment = new SimpleCustomersFragment();
+            customersFragment.setHelper(getHelper());
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
+                            R.anim.slide_in_left, R.anim.slide_out_right)
+                    .replace(R.id.flContent, customersFragment)
+                    .addToBackStack("customer_fragment")
+                    .commit();
         }
 
         return super.onOptionsItemSelected(item);

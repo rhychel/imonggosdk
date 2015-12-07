@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -25,11 +26,13 @@ import java.util.List;
 @DatabaseTable
 public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
+    @Expose
     @DatabaseField
     protected double cost = 0.0,
             retail_price = 0.0,
             wholesale_price = 0.0,
             wholesale_quantity = 0.0;
+    @Expose
     @DatabaseField
     protected String quantity = "",
             remaining = "",
@@ -38,8 +41,10 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
             description = "",
             thumbnail_url = "",
             barcode_list = "";
+    @Expose
     @DatabaseField
     protected String status = "";
+    @Expose
     @DatabaseField
     protected boolean allow_decimal_quantities = false,
             enable_decimal_quantities = false,
@@ -47,6 +52,7 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
             disable_inventory = false,
             enable_open_price = false,
             tax_exempt = false;
+    @Expose
     @DatabaseField
     protected String base_unit_name = "";
 
@@ -86,6 +92,7 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     @ForeignCollectionField
     private transient ForeignCollection<BranchPrice> branchPrices;
 
+    @Expose
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
     private Inventory inventory;
 

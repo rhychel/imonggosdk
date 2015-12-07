@@ -41,7 +41,7 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
-import net.nueca.imonggosdk.objects.invoice.SalesPromotion;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.operations.ImonggoTools;
@@ -1652,12 +1652,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     }
                 }
             } else {
-                if (size < 50) {
+                if (size <= 50) {
                     Log.e(TAG, "Syncing next table");
                     syncNext();
                 } else {
                     Log.e(TAG, "Downloading next page");
                     page++;
+                    Log.e(TAG, "PAGES : " + page + " of " + numberOfPages);
                     if (page <= numberOfPages) {
                         startSyncModuleContents(requestType);
                     }
