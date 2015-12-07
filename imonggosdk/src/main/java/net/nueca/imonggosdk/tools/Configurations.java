@@ -78,7 +78,7 @@ public class Configurations {
             put(Table.BRANCHES, "branches.json");
             put(Table.INVOICES, "invoices.json");
             put(Table.SETTINGS, "settings.json");
-            put(Table.APPLICATION_SETTINGS, "application_settings.json");
+            put(Table.APPLICATION_SETTINGS, "application_settings");
             put(Table.ORDERS, "orders.json");
             put(Table.POS_DEVICES, "pos_devices.json");
             put(Table.DAILY_SALES, "daily_sales.json");
@@ -125,7 +125,7 @@ public class Configurations {
             put(Table.BRANCHES, "branches.json");
             put(Table.INVOICES, "invoices.json");
             put(Table.SETTINGS, "settings.json");
-            put(Table.APPLICATION_SETTINGS, "application_settings.json");
+            put(Table.APPLICATION_SETTINGS, "application_settings");
             put(Table.ORDERS, "orders.json");
             put(Table.POS_DEVICES, "pos_devices.json");
             put(Table.DAILY_SALES, "daily_sales.json");

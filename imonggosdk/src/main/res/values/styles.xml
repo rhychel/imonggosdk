@@ -79,6 +79,7 @@
         <item name="colorAccent">@android:color/white</item>
         <!--<item name="android:background">@color/primary</item>-->
         <item name="buttonStyle">@style/LoginTheme.Button</item>
+
         <item name="colorControlNormal">@color/accent</item>
         <item name="colorControlActivated">@android:color/white</item>
     </style>
