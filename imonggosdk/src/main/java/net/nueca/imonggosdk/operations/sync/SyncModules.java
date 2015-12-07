@@ -1083,13 +1083,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         customer_category_id = 0;
 
                                         if (json_extras.has(name_user_id)) {
-                                            if (json_extras.getString(name_user_id) != null || json_extras.getString(name_user_id).equals("")) {
+                                            if (!json_extras.getString(name_user_id).isEmpty()) {
                                                 user_id = json_extras.getInt(name_user_id);
                                             }
                                         }
 
+
+
                                         if (json_extras.has(name_customer_category)) {
-                                            if (json_extras.getString(name_customer_category) != null || json_extras.get(name_customer_category).equals("")) {
+                                            if (!json_extras.getString(name_customer_category).isEmpty()) {
                                                 customer_category_id = json_extras.getInt(name_customer_category);
                                             }
                                         }
@@ -1760,10 +1762,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                if (size <= max_size_per_page) {
                     Log.e(TAG, "Syncing next table");
                    page++;
-                   if(page > numberOfPages) {
-                       syncNext();
-                   } else {
+                   if(page <= numberOfPages) {
                        startSyncModuleContents(requestType);
+                   } else {
+                       syncNext();
                    }
                 } else {
                     Log.e(TAG, "Error Page Size Exceeded Max Size Per Page");

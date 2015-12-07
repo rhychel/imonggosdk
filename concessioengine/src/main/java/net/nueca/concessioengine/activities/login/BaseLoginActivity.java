@@ -516,7 +516,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 if (isUsingDefaultDialog()) {
                     DialogTools.showIndeterminateProgressDialog(BaseLoginActivity.this,
                             null,
-                            getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                            getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), false);
                 } else {
                     showProgressDialog(DialogType.INDETERDMINATE, getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), "", "");
                 }
