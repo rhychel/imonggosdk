@@ -72,6 +72,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private CustomDialogFrameLayout customDialogFrameLayout = null;
     private Intent mServiceIntent = null;
     private List<String> mModulesToDownload = null;
+    private List<Table> mTablesToDownload = null;
     private String TAG = "BaseLoginActivity";
     private SyncModules mSyncModules = null;
     private Boolean mBounded = false;
@@ -229,7 +230,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     public void startSyncingImonggoModules() throws SQLException {
         if (isSyncServiceBinded()) {
-            setUpModuleNamesForCustomDialog();
+            setUpTableNamesForCustomDialog();
+            //setUpModuleNamesForCustomDialog();
             showCustomDownloadDialog();
 
             Log.e(TAG, "Starting Module Download");
@@ -276,8 +278,46 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     /**
      * This populates list of module names that
-     * the custom dialog needs based on your list.
+     * the custom dialog needs based on your Table list.
      */
+    private void setUpTableNamesForCustomDialog() {
+        if (getModules() != null) {
+            if (mTablesToDownload != null) {
+                mTablesToDownload.clear();
+            } else {
+                mTablesToDownload = new ArrayList<>();
+            }
+
+            for (int module : getModules()) {
+                Table table = Table.values()[module];
+
+                if (table.isAPI()) {
+                    mTablesToDownload.add(table);
+                } else {
+                    LoggingTools.showToast(BaseLoginActivity.this, "You have added unsupported module. please check your code");
+                    Log.i(TAG, "You have added unsupported module. please check your code. " + table);
+                }
+            }
+        } else {
+            mTablesToDownload.add(Table.USERS);
+            mTablesToDownload.add(Table.BRANCHES);
+            mTablesToDownload.add(Table.TAX_SETTINGS);
+            mTablesToDownload.add(Table.PRODUCTS);
+            mTablesToDownload.add(Table.CUSTOMERS);
+            mTablesToDownload.add(Table.UNITS);
+            mTablesToDownload.add(Table.DOCUMENTS);
+            mTablesToDownload.add(Table.DOCUMENT_TYPES);
+            mTablesToDownload.add(Table.DOCUMENT_PURPOSES);
+        }
+    }
+
+    /**
+     * This populates list of module names that
+     * the custom dialog needs based on your String list.
+     *
+     * @deprecated use {@link #setUpTableNamesForCustomDialog()} instead.
+     */
+    @Deprecated
     private void setUpModuleNamesForCustomDialog() {
         if (getModules() != null) { // manually set modules to download see /**/
             if (mModulesToDownload != null) {
@@ -311,8 +351,15 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
+    @Deprecated
     public void createNewCustomDialogFrameLayout(Context context, List<String> moduleName) {
         customDialogFrameLayout = new CustomDialogFrameLayout(context, moduleName);
+        customDialogFrameLayout.setLoginListener(mBaseLogin.getLoginListener());
+    }
+
+
+    public void createNewCustomDialogFrameLayout(List<Table> moduleName, Context context) {
+        customDialogFrameLayout = new CustomDialogFrameLayout(moduleName, context);
         customDialogFrameLayout.setLoginListener(mBaseLogin.getLoginListener());
     }
 
@@ -469,7 +516,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 if (isUsingDefaultDialog()) {
                     DialogTools.showIndeterminateProgressDialog(BaseLoginActivity.this,
                             null,
-                            getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                            getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), false);
                 } else {
                     showProgressDialog(DialogType.INDETERDMINATE, getString(R.string.LOGIN_PROGRESS_DIALOG_CONTENT), "", "");
                 }
@@ -550,7 +597,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             mSyncModules.prepareModulesToReSync();
                             Log.e(TAG, "Number of Modules to re-Sync: " + mSyncModules.getModulesToSync().length);
 
-                            getCustomDialogFrameLayout().getCustomModuleAdapter().hideRetryButton(mModulesToDownload.indexOf(getStringOfCurrentTable(table)));
+                            getCustomDialogFrameLayout().getCustomModuleAdapter().hideRetryButton(mTablesToDownload.indexOf(table));
 
                             mLoginState = LoginState.LOGIN_DOWNLOADING_DATA;
                             mSyncModules.startFetchingModules();
@@ -712,8 +759,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return this.mSession;
     }
 
+    /**
+     * @deprecated use {@link #getTableToSync()}  instead.
+     */
+    @Deprecated
     protected List<String> getModulesToSync() {
         return this.mModulesToDownload;
+    }
+
+    protected List<Table> getTableToSync() {
+        return this.mTablesToDownload;
     }
 
     protected String getTag() {
@@ -964,9 +1019,19 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
         Log.e(TAG, table + " progress: " + progress);
         if (isUsingDefaultCustomDialogForSync()) {
-            customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(mModulesToDownload.indexOf(currentTable));
-            customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(mModulesToDownload.indexOf(currentTable), progress);
+
+            if (mModulesToDownload != null && mTablesToDownload == null)
+                updateDownloadProgress(mModulesToDownload.indexOf(currentTable), progress);
+
+            if(mTablesToDownload != null &&
+                    mModulesToDownload == null)
+                updateDownloadProgress(mTablesToDownload.indexOf(table), progress);
         }
+    }
+
+    private void updateDownloadProgress(int position, int progress) {
+        customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(position);
+        customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(position, progress);
     }
 
     @Override
@@ -991,7 +1056,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         Log.e(TAG, "error downloading " + table + " " + message);
         mLoginState = LoginState.LOGIN_FAILED;
 
-        getCustomDialogFrameLayout().getCustomModuleAdapter().showRetryButton(mModulesToDownload.indexOf(getStringOfCurrentTable(table)));
+        getCustomDialogFrameLayout().getCustomModuleAdapter().showRetryButton(mTablesToDownload.indexOf(table));
 
         LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed, Tap " + table + " module to retry");
         stopLogin();

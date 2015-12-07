@@ -127,9 +127,19 @@ public class DialogTools {
      * @param content    Message of the Progress Dialog
      * @param cancelable True if you want to cancel dialog by tapping the side of the screen
      */
+
+    public static void showIndeterminateProgressDialog(Context context, String title,
+                                                       String content, Boolean cancelable) {
+        showIndeterminateProgressDialog(context, title, content, cancelable, 0);
+    }
+
     public static void showIndeterminateProgressDialog(Context context, String title,
                                                        String content, Boolean cancelable, int theme) {
-        mProgressDialog = new ProgressDialog(context, theme);
+        if(theme != 0) {
+            mProgressDialog = new ProgressDialog(context, theme);
+        } else {
+            mProgressDialog = new ProgressDialog(context);
+        }
 
         mProgressDialog.setIndeterminate(true);
 

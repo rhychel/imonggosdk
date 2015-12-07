@@ -36,25 +36,17 @@ public class CustomDialogFrameLayout extends FrameLayout {
     @Deprecated
     public CustomDialogFrameLayout(Context context, List<String> moduleName) {
         super(context);
-
-        customDialogFrameLayout(context, moduleName, moduleName.getClass());
+        //customDialogFrameLayout(context, moduleName);
     }
 
-
-
-    public CustomDialogFrameLayout(final List<?> moduleName, final Context context) {
+    public CustomDialogFrameLayout(final List<Table> moduleName, final Context context) {
        super(context);
-
-
+        customDialogFrameLayout(context, moduleName);
     }
 
-    private void customDialogFrameLayout(final Context context, final List<?> moduleName, final Class<?> clas) {
+    private void customDialogFrameLayout(final Context context, final List<Table> moduleName) {
         this.mContext = context;
-        if(clas == Table.class) {
-            this.mTableNames = (List<Table>) moduleName;
-        } else if(clas == String.class) {
-            this.mModuleName = (List<String>) moduleName;
-        }
+
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater != null) {
             mView = inflater.inflate(R.layout.concessioengine_download_layout, null, false);
@@ -68,7 +60,7 @@ public class CustomDialogFrameLayout extends FrameLayout {
         mRecyclerView.setHasFixedSize(true);
 
         //customModuleAdapter = new CustomModuleAdapter(mContext, R.layout.item_module, mModuleName);
-        customModuleAdapter = new CustomModuleAdapter(mTableNames, mContext, R.layout.item_module);
+        customModuleAdapter = new CustomModuleAdapter(moduleName, mContext, R.layout.item_module);
 
         customModuleAdapter.setOnItemClickListener(new BaseCustomDialogRecyclerAdapter.OnItemClickListener() {
             @Override
@@ -76,7 +68,8 @@ public class CustomDialogFrameLayout extends FrameLayout {
                 Log.e(TAG, "OnItemClicked " + getCustomModuleAdapter().getModuleAt(position));
                /* LoggingTools.showToast(context, "OnItemClicked" + getCustomModuleAdapter().getModuleAt(position));
                 view.setBackgroundColor(mContext.getResources().getColor(android.R.color.darker_gray));*/
-                mLoginListener.onRetryButtonPressed(TableTools.convertStringToTableName(getCustomModuleAdapter().getModuleAt(position)));
+                //mLoginListener.onRetryButtonPressed(TableTools.convertStringToTableName(getCustomModuleAdapter().getModuleAt(position)));
+                mLoginListener.onRetryButtonPressed(getCustomModuleAdapter().getTableAt(position));
             }
         });
 

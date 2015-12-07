@@ -50,7 +50,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             setupLayoutEquipments((EditText) findViewById(R.id.etAccountId),
                     (EditText) findViewById(R.id.etEmail),
                     (EditText) findViewById(R.id.etPassword),
-                    (Button) findViewById(R.id.btnSignIn));
+                    (Button) findViewById(R.id.btnLogin));
 
             setIsUsingDefaultLoginLayout(true);
         }
@@ -213,7 +213,8 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     protected void showCustomDownloadDialog() {
         if (isUsingDefaultCustomDialogForSync()) {
             setIsUsingDefaultLoginLayout(true);
-            createNewCustomDialogFrameLayout(LoginActivity.this, getModulesToSync());
+            //createNewCustomDialogFrameLayout(LoginActivity.this, getModulesToSync());
+            createNewCustomDialogFrameLayout(getTableToSync(), LoginActivity.this);
             createNewCustomDialog(LoginActivity.this, R.style.LoginTheme_DialogFrameLayout);
             setCustomDialogTitle(getString(R.string.FETCHING_MODULE_TITLE));
             setCustomDialogContentView(getCustomDialogFrameLayout());
