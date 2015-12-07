@@ -19,20 +19,20 @@ public class ModuleSettingTools {
 
     public static String getModuleToString(ConcessioModule concessioModule) {
         switch (concessioModule) {
-            case ORDERS:
-                return "order";
+            case STOCK_REQUEST:
+                return "stock_request";
             case PHYSICAL_COUNT:
-                return "count";
-            case RECEIVE:
-                return "receive";
-            case PULLOUT_REQUEST:
-                return "pullout_request";
-            case PULLOUT_CONFIRMATION:
-                return "pullout_confirmation";
-            case INVENTORY:
-                return "inventory";
-            case SALES:
-                return "sales";
+                return "physical_count";
+            case RECEIVE_BRANCH:
+                return "receive_branch";
+            case RELEASE_BRANCH:
+                return "release_branch";
+            case RECEIVE_BRANCH_PULLOUT:
+                return "receive_branch_pullout";
+            case RECEIVE_ADJUSTMENT:
+                return "receive_adjustment";
+            case INVOICE:
+                return "invoice";
             default:
                 return "app";
         }

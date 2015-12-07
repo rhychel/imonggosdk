@@ -251,7 +251,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             public void onClick(DialogInterface dialog, int which) {
                                 btnSignIn.setEnabled(true);
                             }
-                        }, null, null, false, R.style.AppCompatDialogStyle_NoTitle);
+                        }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
 //                DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
 //                        "Sync failed. Login Again ",
 //                        "Ok", "", false,
@@ -415,7 +415,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             dialogPositiveButtonAction();
                             btnSignIn.setEnabled(true);
                         }
-                    }, null, null, false, R.style.AppCompatDialogStyle_NoTitle);
+                    }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
 //            DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE),
 //                    "No network connection",
 //                    getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
@@ -533,7 +533,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                     }
-                                }, null, null, false, R.style.AppCompatDialogStyle_NoTitle);
+                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
 //                        DialogTools.showBasicWithTitle(
 //                                BaseLoginActivity.this,
 //                                "Failed to Re-Sync Data",

@@ -3,6 +3,7 @@ package net.nueca.concessio;
 import android.content.Intent;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -61,20 +62,20 @@ public class C_Login extends LoginActivity {
 
         try {
             List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.PULLOUT_REQUEST, ConcessioModule.SALES, ConcessioModule.RECEIVE)).query();
+                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.RELEASE_BRANCH, ConcessioModule.INVOICE, ConcessioModule.RECEIVE_BRANCH)).query();
 
             for(ModuleSetting moduleSetting : moduleSettings) {
                 if(!moduleSetting.is_enabled())
                     continue;
-                if(moduleSetting.getModuleType() == ConcessioModule.PULLOUT_REQUEST) {
+                if(moduleSetting.getModuleType() == ConcessioModule.RELEASE_BRANCH) {
                     hasPulloutRequest = true;
                     modulesToDownload += 2;
                 }
-                if(moduleSetting.getModuleType() == ConcessioModule.SALES && moduleSetting.is_enabled()) {
+                if(moduleSetting.getModuleType() == ConcessioModule.INVOICE && moduleSetting.is_enabled()) {
                     hasSales = true;
                     modulesToDownload++;
                 }
-                if(moduleSetting.getModuleType() == ConcessioModule.RECEIVE) {
+                if(moduleSetting.getModuleType() == ConcessioModule.RECEIVE_BRANCH) {
                     hasReceive = true;
                     modulesToDownload++;
                 }

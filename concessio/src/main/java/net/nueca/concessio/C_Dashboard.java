@@ -40,9 +40,9 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 //        add(new DashboardTile(ConcessioModule.SALES, "Sales", R.drawable.ic_booking));
         add(new DashboardTile(ConcessioModule.ROUTE_PLAN, "Sales", R.drawable.ic_booking));
         add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers", R.drawable.ic_customers));
-        add(new DashboardTile(ConcessioModule.RECEIVE, "Receiving", R.drawable.ic_receiving));
-        add(new DashboardTile(ConcessioModule.PULLOUT_REQUEST, "Pullout", R.drawable.ic_pullout));
-        add(new DashboardTile(ConcessioModule.ADJUSTMENT_OUT, "MSO", R.drawable.ic_mso));
+        add(new DashboardTile(ConcessioModule.RECEIVE_SUPPLIER, "Receiving", R.drawable.ic_receiving));
+        add(new DashboardTile(ConcessioModule.RELEASE_SUPPLIER, "Pullout", R.drawable.ic_pullout));
+        add(new DashboardTile(ConcessioModule.RELEASE_ADJUSTMENT, "MSO", R.drawable.ic_mso));
         add(new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
         add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Physical Count", R.drawable.ic_physical_count));
         add(new DashboardTile(ConcessioModule.HISTORY, "History", R.drawable.ic_history));
