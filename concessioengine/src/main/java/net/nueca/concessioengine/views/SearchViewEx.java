@@ -9,6 +9,7 @@ import android.view.KeyEvent;
  * Created by rhymart on 7/27/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 public class SearchViewEx extends SearchView {
 
     public interface SearchViewExListener {

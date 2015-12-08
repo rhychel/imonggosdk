@@ -123,7 +123,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
                     intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.INVOICE.ordinal());
                 } break;
                 case R.id.btnOrder: {
-                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.PURCHASE_ORDERS.ordinal());
+                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.STOCK_REQUEST.ordinal());
                 } break;
                 case R.id.btnCount: {
                     intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.PHYSICAL_COUNT.ordinal());
@@ -132,7 +132,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
                     intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.RECEIVE_BRANCH.ordinal());
                 } break;
                 case R.id.btnPullout: {
-                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.RECEIVE_BRANCH_PULLOUT.ordinal());
+                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.RELEASE_BRANCH.ordinal());
                 } break;
             }
             startActivity(intent);

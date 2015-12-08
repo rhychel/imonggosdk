@@ -18,6 +18,9 @@
     <string name="API_MODULE_ID_URL">http://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
     <string name="API_MODULE_ID_URL_SECURED">https://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
 
+    <string name="API_MODULE_REFERENCE_URL">http://%1$s:x@%2$s/api/%3$s?reference=%4$s</string>
+    <string name="API_MODULE_REFERENCE_URL_SECURED">https://%1$s:x@%2$s/api/%3$s?reference=%4$s</string>
+
     <string name="PRODUCT_IMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg</string>
     <string name="PRODUCT_IMAGE_URL_SECURED">https://%1$s:x@%2$s/api/products/%3$s.jpg</string>
     <string name="PRODUCT_LARGEIMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>

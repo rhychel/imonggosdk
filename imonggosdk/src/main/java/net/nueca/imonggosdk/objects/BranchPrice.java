@@ -19,7 +19,6 @@ import java.sql.SQLException;
  */
 @DatabaseTable
 public class BranchPrice extends DBTable {
-
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField

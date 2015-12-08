@@ -1,7 +1,6 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
-import android.util.Log;
 
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
@@ -11,7 +10,6 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

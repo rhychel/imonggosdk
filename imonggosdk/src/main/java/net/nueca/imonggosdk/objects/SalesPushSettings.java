@@ -5,7 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.base.DBTable;
-import net.nueca.imonggosdk.objects.invoice.SalesPromotion;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 
 import java.sql.SQLException;
 

@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -9,8 +10,14 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.salespromotion.Discount;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 5/12/15.
@@ -19,11 +26,13 @@ import java.sql.SQLException;
 @DatabaseTable
 public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
+    @Expose
     @DatabaseField
     protected double cost = 0.0,
             retail_price = 0.0,
             wholesale_price = 0.0,
             wholesale_quantity = 0.0;
+    @Expose
     @DatabaseField
     protected String quantity = "",
             remaining = "",
@@ -32,8 +41,10 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
             description = "",
             thumbnail_url = "",
             barcode_list = "";
+    @Expose
     @DatabaseField
     protected String status = "";
+    @Expose
     @DatabaseField
     protected boolean allow_decimal_quantities = false,
             enable_decimal_quantities = false,
@@ -41,6 +52,7 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
             disable_inventory = false,
             enable_open_price = false,
             tax_exempt = false;
+    @Expose
     @DatabaseField
     protected String base_unit_name = "";
 
@@ -72,8 +84,15 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     private transient ForeignCollection<DocumentLine> documentLines;
 
     @ForeignCollectionField
+    private transient ForeignCollection<Discount> discounts;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<Price> prices;
+
+    @ForeignCollectionField
     private transient ForeignCollection<BranchPrice> branchPrices;
 
+    @Expose
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
     private Inventory inventory;
 
@@ -337,6 +356,18 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
         this.documentLines = documentLines;
     }
 
+    public ForeignCollection<Discount> getDiscounts() {
+        return discounts;
+    }
+
+    public List<Discount> getDiscountsList() {
+        return new ArrayList<>(discounts);
+    }
+
+    public void setDiscounts(ForeignCollection<Discount> discounts) {
+        this.discounts = discounts;
+    }
+
     public void setUnits(ForeignCollection<Unit> units) {
         this.units = units;
     }
@@ -361,6 +392,14 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
         this.branchPrices = branchPrices;
+    }
+
+    public ForeignCollection<Price> getPrices() {
+        return prices;
+    }
+
+    public void setPrices(ForeignCollection<Price> prices) {
+        this.prices = prices;
     }
 
     @Override
