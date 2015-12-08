@@ -133,8 +133,7 @@ public class Extras extends DBTable {
     @DatabaseField
     private String expiry_date;
 
-    // InvoicePurpose
-    @Expose
+    // DocumentPurpose
     @DatabaseField
     private String requires_expiry_date; // true || false
 

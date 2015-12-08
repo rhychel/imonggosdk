@@ -1,6 +1,8 @@
 package net.nueca.imonggosdk.objects;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -9,6 +11,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.base.Extras;
 
@@ -27,6 +30,10 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
     private double cost, quantity, retail_price;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<Price> prices;
+
     @DatabaseField
     private boolean is_default_ordering_unit = false;
     @DatabaseField
@@ -116,6 +123,14 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
 
     public void setDiscount_text(String discount_text) {
         this.discount_text = discount_text;
+    }
+
+    public ForeignCollection<Price> getPrices() {
+        return prices;
+    }
+
+    public void setPrices(ForeignCollection<Price> prices) {
+        this.prices = prices;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -21,8 +22,10 @@ import java.sql.SQLException;
 @DatabaseTable
 public class Branch extends BaseTable {
 
+    @Expose
     @DatabaseField
     private int subscription_type;
+    @Expose
     @DatabaseField
     private String name, city, zipcode, tin, country, street, state, site_type, status = "A";
     @ForeignCollectionField

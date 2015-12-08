@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -28,7 +29,7 @@ public class C_Welcome extends ModuleActivity {
 
     private TextView tvAgentName, tvLogout;
     private Spinner spBranch;
-    private Button btnBegin;
+    private ImageButton btnBegin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class C_Welcome extends ModuleActivity {
         tvAgentName = (TextView) findViewById(R.id.tvAgentName);
         tvLogout = (TextView) findViewById(R.id.tvLogout);
         spBranch = (Spinner) findViewById(R.id.spBranch);
-        btnBegin = (Button) findViewById(R.id.btnBegin);
+        btnBegin = (ImageButton) findViewById(R.id.ibtnBegin);
 
         tvLogout.setText(Html.fromHtml("<u><i>Not you?<br/>Logout</i></u>"));
 

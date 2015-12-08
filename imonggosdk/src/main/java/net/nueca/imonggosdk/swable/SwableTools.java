@@ -74,20 +74,24 @@ public class SwableTools {
 	    return false;
 	}
 
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, User user, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, user, o, type, "");
     }
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, User user, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
         return sendTransaction(helper, user.getHome_branch_id(), o, type, parameters);
     }
 
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, Session session, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, session, o, type, "");
     }
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, Session session, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
@@ -99,10 +103,12 @@ public class SwableTools {
         return sendTransaction(helper, user.getHome_branch_id(), o, type, parameters);
     }
 
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, int branchId, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, branchId, o, type, "");
     }
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, int branchId, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
@@ -132,6 +138,7 @@ public class SwableTools {
         return offlineData;
     }
 
+    @Deprecated
     public static void voidTransaction(ImonggoDBHelper2 helper, String returnId, OfflineDataType type, String reason)
             throws SQLException {
         if (type == OfflineDataType.SEND_ORDER || type == OfflineDataType.SEND_INVOICE ||
@@ -169,6 +176,7 @@ public class SwableTools {
         forVoid.updateTo(helper);
     }
 
+    @Deprecated
     public static void voidTransaction(ImonggoDBHelper2 helper, OfflineData offlineData, OfflineDataType type, String reason)
             throws SQLException {
         if (type == OfflineDataType.SEND_ORDER || type == OfflineDataType.SEND_INVOICE ||
@@ -187,19 +195,23 @@ public class SwableTools {
             voidTransaction(helper, offlineData.getReturnId(), type, reason);
     }
 
+    @Deprecated
     public static void sendOrderNow(Context context, Session session, Server server, Order order, int branchId,
                                       String parameters, @Nullable VolleyRequestListener listener) {
         sendTransactionNow(context, session, server, Table.ORDERS, order, branchId, parameters, listener);
     }
+    @Deprecated
     public static void sendInvoiceNow(Context context, Session session, Server server, Invoice invoice, int branchId,
                                       String parameters, @Nullable VolleyRequestListener listener) {
         sendTransactionNow(context, session, server, Table.INVOICES, invoice, branchId, parameters, listener);
     }
+    @Deprecated
     public static void sendDocumentNow(Context context, Session session, Server server, Document document, int branchId,
                                       String parameters, @Nullable VolleyRequestListener listener) {
         sendTransactionNow(context, session, server, Table.INVOICES, document, branchId, parameters, listener);
     }
 
+    @Deprecated
     private static void sendTransactionNow(Context context, Session session, Server server, Table table, final Object
             data, int branchId, String parameters, @Nullable VolleyRequestListener listener) {
         if(parameters.length() > 0 && parameters.charAt(0) != '&')
@@ -276,6 +288,9 @@ public class SwableTools {
             case DOCUMENTS:
                 transaction.put("document", jsonObject);
                 break;
+            case CUSTOMERS:
+                transaction.put("customer", jsonObject);
+                break;
         }
         return transaction;
     }
@@ -292,6 +307,9 @@ public class SwableTools {
                 break;
             case SEND_DOCUMENT:
                 transaction.put("document", jsonObject);
+                break;
+            case ADD_CUSTOMER:
+                transaction.put("customer", jsonObject);
                 break;
         }
         return transaction;

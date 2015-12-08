@@ -1,5 +1,8 @@
 package net.nueca.imonggosdk.objects.price;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -19,12 +22,16 @@ import java.sql.SQLException;
 @DatabaseTable
 public class Price extends BaseTable {
 
+    @Expose
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "price_list_id")
     private PriceList priceList;
+    @Expose
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_id")
     private Product product;
+    @Expose
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "unit_id")
     private Unit unit;
+    @Expose
     @DatabaseField
     private double retail_price = 0.0;
 
@@ -62,14 +69,20 @@ public class Price extends BaseTable {
         this.priceList = priceList;
     }
 
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
+    }
+
     @Override
     public String toString() {
-        return "Price{" +
+        /*return "Price{" +
                 "priceList=" + priceList +
                 ", product=" + product +
                 ", unit=" + unit +
                 ", retail_price=" + retail_price +
-                '}';
+                '}';*/
+        return "Price(id=" + id + ")\n" + toJSONString();
     }
 
     @Override

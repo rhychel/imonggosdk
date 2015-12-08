@@ -21,7 +21,7 @@ import java.sql.SQLException;
  */
 @Deprecated
 @DatabaseTable
-public class Extras extends BaseTable2 {
+public class Extras_2 extends BaseTable2 {
 
     @DatabaseField
     private String batch_maintained = "";
@@ -29,9 +29,9 @@ public class Extras extends BaseTable2 {
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
 
-    public Extras() {}
+    public Extras_2() {}
 
-    public Extras(String batch_maintained, Product product) {
+    public Extras_2(String batch_maintained, Product product) {
         this.batch_maintained = batch_maintained;
         this.product = product;
     }
