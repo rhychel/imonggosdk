@@ -92,11 +92,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         finalizeFragment.setProductsRecyclerAdapter(null);
 
         switch (concessioModule) {
-            case SALES: {
+            case INVOICE: {
                 simpleProductsFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
                 finalizeFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
             }
-            case ORDERS: {
+            case PURCHASE_ORDERS: {
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setProductCategories(getProductCategories(true));
 
@@ -118,7 +118,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
                 btnReview.setVisibility(View.VISIBLE);
             } break;
-            case PULLOUT_REQUEST: {
+            case RECEIVE_BRANCH_PULLOUT: {
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
                 simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
                     @Override
@@ -150,7 +150,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
                 btnReview.setVisibility(View.VISIBLE);
             } break;
-            case RECEIVE: {
+            case RECEIVE_BRANCH: {
                 simpleReceiveFragment = new SimpleReceiveFragment();
                 simpleReceiveFragment.setHelper(getHelper());
                 simpleReceiveFragment.setSetupActionBar(this);
@@ -228,13 +228,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         super.onBackPressed();
         hasMenu = true;
         if(!btnReview.getText().toString().equals("Review")) {
-            if(concessioModule == ConcessioModule.SALES && btnReview.getText().toString().equals("Send"))
+            if(concessioModule == ConcessioModule.INVOICE && btnReview.getText().toString().equals("Send"))
                 btnReview.setText("Checkout");
             else
                 btnReview.setText("Review");
         }
 
-        if(concessioModule == ConcessioModule.PULLOUT_REQUEST && btnReview.getText().equals("Review")) {
+        if(concessioModule == ConcessioModule.PURCHASE_ORDERS && btnReview.getText().equals("Review")) {
             if(simplePulloutToolbarExt != null)
                 simplePulloutToolbarExt.attachAfter(this, toolbar);
         } else {
@@ -248,12 +248,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     public boolean onCreateOptionsMenu(Menu menu) {
         if(!btnReview.getText().toString().equals("Review")) {
             setTitle("Review");
-            if(concessioModule == ConcessioModule.SALES && btnReview.getText().toString().equals("Send"))
+            if(concessioModule == ConcessioModule.INVOICE && btnReview.getText().toString().equals("Send"))
                 setTitle("Checkout");
         }
 
         if(!btnReview.getText().toString().equals("Review")) {
-            if(concessioModule == ConcessioModule.SALES && getTitle().toString().equals("Checkout"))
+            if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER && getTitle().toString().equals("Checkout"))
                 getMenuInflater().inflate(R.menu.simple_checkout_menu, menu);
             else
                 getMenuInflater().inflate(R.menu.simple_review_products_menu, menu);
@@ -307,7 +307,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         setSupportActionBar(toolbar);
         this.toolbar = toolbar;
 
-        if(concessioModule == ConcessioModule.PULLOUT_REQUEST && btnReview.getText().equals("Review")) {
+        if(concessioModule == ConcessioModule.PURCHASE_ORDERS && btnReview.getText().equals("Review")) {
             if(simplePulloutToolbarExt == null)
                 simplePulloutToolbarExt = new SimplePulloutToolbarExt();
             simplePulloutToolbarExt.attachAfter(this, this.toolbar);
@@ -349,7 +349,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             switch (concessioModule) {
-                                                case ORDERS: {
+                                                case PURCHASE_ORDERS: {
                                                     try {
                                                         SwableTools.sendTransaction(getHelper(), branch.getId(),
                                                                 generateOrder(C_Module.this, warehouse.getId()), OfflineDataType.SEND_ORDER);
@@ -375,7 +375,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                                     }
                                                 }
                                                 break;
-                                                case PULLOUT_REQUEST: {
+                                                case RECEIVE_BRANCH: {
                                                     try {
                                                         Document pulloutDoc = generateDocument(C_Module.this,
                                                                 simplePulloutRequestDialog
@@ -427,7 +427,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
                     DialogTools.showDialog(C_Module.this, "Ooops!", "You haven't selected anything.");
                 else {
-                    if (concessioModule == ConcessioModule.SALES)
+                    if (concessioModule == ConcessioModule.RECEIVE_ADJUSTMENT)
                         btnReview.setText("Checkout");
                     else
                         btnReview.setText("Send");

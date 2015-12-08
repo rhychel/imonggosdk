@@ -82,6 +82,11 @@ public class ImonggoTools {
                 case DETAILS:
                     parameterStr += "q=details&";
                     break;
+                case ID:
+                    parameterStr = "";
+                    parameterStr += "/%"+stringInputCount+"$s.json?";
+                    stringInputCount++;
+                    break;
             }
         }
         if(!parameterStr.equals("?"))
