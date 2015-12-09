@@ -804,13 +804,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         if (json_extras.has("default_selling_unit")) {
                                             default_selling_unit = json_extras.getString("default_selling_unit");
                                         } else {
-                                            Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_selling_unit'");
+                                            Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_selling_unit' on " + product.getName());
                                         }
 
                                         if (json_extras.has("default_ordering_unit_id")) {
                                             default_ordering_unit_id = json_extras.getString("default_ordering_unit_id");
                                         } else {
-                                            Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_ordering_unit_id'");
+                                            Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_ordering_unit_id' on " + product.getName());
                                         }
 
                                         product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
@@ -1138,8 +1138,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     }
 
                                     // PRICE_LIST
-                                    if(jsonObject.has("price_list_id")) {
-                                        if(!jsonObject.getString("price_list_id").isEmpty() && !jsonObject.get("price_list_id").equals(null)) {
+                                    if (jsonObject.has("price_list_id")) {
+                                        if (!jsonObject.getString("price_list_id").isEmpty() && !jsonObject.get("price_list_id").equals(null)) {
                                             int price_list_id = jsonObject.getInt("price_list_id");
 
                                             priceList = getHelper().fetchObjects(PriceList.class).queryBuilder().where().eq("id", price_list_id).queryForFirst();
@@ -1154,7 +1154,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             Log.e(TAG, "price_list_id don't have value");
                                         }
                                     } else {
-                                        Log.e(TAG, mCurrentTableSyncing + " API don't have 'price_list_id' field" );
+                                        Log.e(TAG, mCurrentTableSyncing + " API don't have 'price_list_id' field");
                                     }
 
 
@@ -1165,7 +1165,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             if (customer.getStatus() == null) {
                                                 updateCustomer.add(customer);
                                             } else {
-                                                deleteCustomer.add(customer);}
+                                                deleteCustomer.add(customer);
+                                            }
                                         } else {
                                             newCustomer.add(customer);
                                         }
@@ -1630,8 +1631,21 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                             for (int i = 0; i < size; i++) {
                                 JSONObject priceListJsonObject = jsonArray.getJSONObject(i);
+                                Price price = new Price();
+                                price.setId(-1);
+                                price = gson.fromJson(priceListJsonObject.toString(), Price.class);
 
-                                Price price = gson.fromJson(priceListJsonObject.toString(), Price.class);
+                                if (price.getId() == -1) {
+                                    Log.e(TAG, ">>> manual set id");
+                                    price.setId(priceListJsonObject.getInt("id"));
+                                }
+
+                                if (price.getId() != -1) {
+                                    Log.e(TAG, "Price List ID: " + price.getId());
+                                } else {
+                                    Log.e(TAG, "ID is null");
+                                }
+
                                 price.setUtc_created_at(priceListJsonObject.getString("created_at"));
                                 price.setUtc_updated_at(priceListJsonObject.getString("updated_at"));
 
@@ -1682,12 +1696,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
 
                                 price.setPriceList(priceList);
-
-                                newPrice.doOperation(Price.class);
-                                updatePrice.doOperation(Price.class);
-
                             }
 
+                            newPrice.doOperation(Price.class);
+                            updatePrice.doOperation(Price.class);
 
                             Log.e(TAG, "Price List Details");
                             updateNext(requestType, count);

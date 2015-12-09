@@ -291,7 +291,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        hasMenu = true;
+      /*  hasMenu = true;
         if(!btnReview.getText().toString().equals("Review")) {
             if(concessioModule == ConcessioModule.INVOICE && btnReview.getText().toString().equals("Send"))
                 btnReview.setText("Checkout");
@@ -306,12 +306,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             if(simplePulloutToolbarExt != null)
                 simplePulloutToolbarExt.detach();
         }
-        invalidateOptionsMenu();
+        invalidateOptionsMenu();*/
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(!btnReview.getText().toString().equals("Review")) {
+      /*  if(!btnReview.getText().toString().equals("Review")) {
             setTitle("Review");
             if(concessioModule == ConcessioModule.INVOICE && btnReview.getText().toString().equals("Send"))
                 setTitle("Checkout");
@@ -330,20 +330,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 menu.findItem(R.id.mLogout).setVisible(false);
 
                 mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
-                /*initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+                *//*initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
                     @Override
                     public boolean onQueryTextChange(String newText) {
                         simpleProductsFragment.updateListWhenSearch(newText);
                         return true;
                         }
-                });*/
+                });*//*
             }
         }
 
         getSupportActionBar().setDisplayShowTitleEnabled(!btnReview.getText().equals("Review"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(!btnReview.getText().equals("Review"));
         getSupportActionBar().setHomeButtonEnabled(!btnReview.getText().equals("Review"));
-
+*/
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -378,7 +378,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     public void setupActionBar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         this.toolbar = toolbar;
-
+/*
         if(concessioModule == ConcessioModule.PULLOUT_REQUEST && btnReview.getText().equals("Review")) {
             if(simplePulloutToolbarExt == null)
                 simplePulloutToolbarExt = new SimplePulloutToolbarExt();
@@ -392,7 +392,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         } else {
             if(simplePulloutToolbarExt != null)
                 simplePulloutToolbarExt.detach();
-        }
+        }*/
     }
 
     private MultiInputListener multiInputListener = new MultiInputListener() {
