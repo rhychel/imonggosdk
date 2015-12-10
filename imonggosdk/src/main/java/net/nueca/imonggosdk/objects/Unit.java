@@ -146,6 +146,7 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
+            insertExtrasTo(dbHelper);
             dbHelper.insert(Unit.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -155,6 +156,7 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
+            deleteExtrasTo(dbHelper);
             dbHelper.delete(Unit.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -164,6 +166,7 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
+            updateExtrasTo(dbHelper);
             dbHelper.update(Unit.class, this);
         } catch (SQLException e) {
             e.printStackTrace();

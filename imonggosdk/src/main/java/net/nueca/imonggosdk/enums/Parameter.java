@@ -23,5 +23,7 @@ public enum Parameter {
     CURRENT_DATE,
     SALES_PUSH,
     DETAILS,
-    SALES_PROMOTION_ID
+    SALES_PROMOTION_ID,
+    ID,
+    UNITS
 }

@@ -65,7 +65,7 @@ public enum Table {
     CUSTOMER_GROUPS(API_TYPE.API, "Customer Groups"),
     PRICE_LISTS(API_TYPE.API, "Price Lists"),
     BRANCH_PRICE_LISTS(API_TYPE.API, "Price Lists"),
-    PRICE_LISTS_DETAILS(API_TYPE.API, "Details"),
+    PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details"),
     SALES_PROMOTIONS(API_TYPE.API, "Sales Promotions"),
     SALES_PROMOTIONS_DISCOUNT(API_TYPE.API, "Discount"),
     SALES_PUSH(API_TYPE.API, "Sales Push"),

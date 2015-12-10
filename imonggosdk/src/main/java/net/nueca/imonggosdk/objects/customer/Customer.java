@@ -99,25 +99,6 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.tin = tin;
         this.gender = gender;
     }
-    
-    public Customer(String first_name, String last_name, String name, String company_name,
-                    String telephone, String mobile, String email, String street,
-                    String city, String zipcode, String country, String state, String tin, String gender) {
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.name = name;
-        this.company_name = company_name;
-        this.telephone = telephone;
-        this.mobile = mobile;
-        this.email = email;
-        this.street = street;
-        this.city = city;
-        this.zipcode = zipcode;
-        this.country = country;
-        this.state = state;
-        this.tin = tin;
-        this.gender = gender;
-    }
 
     // TODO: complete all fields
     public Customer(Builder builder) {
@@ -136,6 +117,10 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.state = builder.state;
         this.tin = builder.tin;
         this.gender = builder.gender;
+    }
+
+    public Customer(String s, String s1, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String gender) {
+        super();
     }
 
     public int getPoint_to_amount_ratio() {

@@ -39,6 +39,7 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
@@ -64,6 +65,7 @@ public abstract class BaseSyncService extends ImonggoService {
     protected int count = 0;
     protected int numberOfPages = 1;
     protected int branchIndex = 0;
+    protected int mCustomIndex = 0;
     protected int mModulesIndex = 0;
     protected int responseCode = 200;
     protected int[] branches;
@@ -268,10 +270,11 @@ public abstract class BaseSyncService extends ImonggoService {
                 RoutePlan routePlan = (RoutePlan) o;
                 return getHelper().fetchObjects(RoutePlan.class).queryBuilder().where().eq("id", routePlan.getId()).queryForFirst() != null;
             }
+            case PRICE_LISTS_DETAILS:
+                Price price = (Price) o;
+                return  getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst() != null;
             case DAILY_SALES: {
-
                 DailySales dailySales = (DailySales) o;
-
                 if (dailySalesEnums == DailySalesEnums.DATE_OF_DAILY_SALES) {
                     return getHelper().fetchObjects(DailySales.class).queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst() != null;
                 } else if (dailySalesEnums == DailySalesEnums.DATE_REQUESTED) {

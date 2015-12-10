@@ -88,11 +88,11 @@ public class Configurations {
 
             // ----- APIs With Branch IDs
             put(Table.BRANCH_USERS, "branches.json");
-            put(Table.BRANCH_UNITS, "units.json");
             put(Table.BRANCH_CUSTOMERS, "customers.json");
             put(Table.BRANCH_ROUTE_PLANS, "route_plans.json");
 
             // ----- FOR REBISCO
+            put(Table.BRANCH_UNITS, "branch_products");
             put(Table.BRANCH_PRODUCTS, "branch_products.json");
             put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
             put(Table.PAYMENT_TERMS, "payment_terms.json");
@@ -135,11 +135,11 @@ public class Configurations {
 
             // ----- APIs With Branch IDs
             put(Table.BRANCH_USERS, "branches.json");
-            put(Table.BRANCH_UNITS, "units.json");
             put(Table.BRANCH_CUSTOMERS, "customers.json");
             put(Table.BRANCH_ROUTE_PLANS, "route_plans.json");
 
             // ----- FOR REBISCO
+            put(Table.BRANCH_UNITS, "branch_products");
             put(Table.BRANCH_PRODUCTS, "branch_products.json");
             put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
             put(Table.PAYMENT_TERMS, "payment_terms.json");
