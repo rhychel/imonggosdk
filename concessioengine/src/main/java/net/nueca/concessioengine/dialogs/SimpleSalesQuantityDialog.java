@@ -3,6 +3,7 @@ package net.nueca.concessioengine.dialogs;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,8 +15,10 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import me.grantland.widget.AutofitTextView;
 
@@ -69,6 +72,10 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         tvProductName.setText(product.getName());
         tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
 
+        if(getHelper() != null && (salesCustomer != null || salesCustomerGroup != null || salesBranch != null)) {
+            retailPrice = "P"+NumberTools.separateInCommas(PriceTools.identifyRetailPrice(getHelper(), product,
+                    salesBranch, salesCustomerGroup, salesCustomer));
+        }
         tvRetailPrice.setText(retailPrice);
         tvSubtotal.setText(subtotal);
         if (isMultiValue) {
@@ -115,10 +122,20 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 return;
             } else {
                 Unit unit = hasUnits ? ((Unit) spUnits.getSelectedItem()) : null;
-                Values values = new Values(unit, quantity);
+                Values values = getHelper() == null?
+                        new Values(unit, quantity) :
+                        new Values(unit, quantity,
+                                PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
+                                        salesBranch, salesCustomerGroup, salesCustomer));
                 if (valuePosition > -1) {
                     values = selectedProductItem.getValues().get(valuePosition);
-                    values.setValue(quantity, unit);
+                    Log.e("Helper >>>>>", (getHelper() == null)+"");
+                    if(getHelper() == null)
+                        values.setValue(quantity, unit);
+                    else
+                        values.setValue(quantity, unit,
+                                PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
+                                        salesBranch, salesCustomerGroup, salesCustomer));
                 }
                 if (isMultiValue) {
                     if (multiQuantityDialogListener != null)

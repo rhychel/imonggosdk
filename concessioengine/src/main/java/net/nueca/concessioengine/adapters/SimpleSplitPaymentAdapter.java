@@ -136,6 +136,9 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                         InvoicePayment.Builder builder = new InvoicePayment.Builder();
                         builder.amount(NumberTools.toDouble(paymentValue));
 
+                        // TODO: must set tender to be able to compute
+                        builder.tender(NumberTools.toDouble(paymentValue));
+
                         if(paymentType != null)
                             builder.payment_type_id(paymentType.getId());
 

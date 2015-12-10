@@ -12,19 +12,13 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 
 import net.nueca.concessioengine.R;
-import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
+import net.nueca.concessioengine.adapters.base.BaseSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
-import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.customer.Customer;
-import net.nueca.imonggosdk.objects.customer.CustomerGroup;
-import net.nueca.imonggosdk.objects.price.Price;
-import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -37,12 +31,8 @@ import me.grantland.widget.AutofitTextView;
 /**
  * Created by gama on 22/10/2015.
  */
-public class SimpleSalesProductRecyclerAdapter extends BaseProductsRecyclerAdapter
+public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerAdapter
         <SimpleSalesProductRecyclerAdapter.ListViewHolder> {
-
-    private Customer customer;
-    private CustomerGroup customerGroup;
-    private Branch branch;
 
     public SimpleSalesProductRecyclerAdapter(Context context, ImonggoDBHelper2 dbHelper, List<Product> productsList) {
         super(context, dbHelper, productsList);
@@ -83,15 +73,17 @@ public class SimpleSalesProductRecyclerAdapter extends BaseProductsRecyclerAdapt
             double qty = NumberTools.toDouble(selectedProductItem.getQuantity());
             holder.tvQuantity.setText(NumberTools.separateInSpaceHideZeroDecimals(qty) + (qty == 1? " pc" : " pcs"));
             holder.tvQuantity.setVisibility(View.VISIBLE);
+            holder.tvSubtotal.setVisibility(View.VISIBLE);
         } else {
             holder.tvQuantity.setVisibility(View.GONE);
+            holder.tvSubtotal.setVisibility(View.GONE);
         }
 
 
-        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
+        /*String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
                 ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
 
-        holder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
+        holder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));*/
     }
 
     @Override
@@ -137,34 +129,6 @@ public class SimpleSalesProductRecyclerAdapter extends BaseProductsRecyclerAdapt
                 onItemLongClickListener.onItemLongClicked(view, getLayoutPosition());
             return true;
         }
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public CustomerGroup getCustomerGroup() {
-        return customerGroup;
-    }
-
-    public void setCustomerGroup(CustomerGroup customerGroup) {
-        this.customerGroup = customerGroup;
-    }
-
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
-
-    private ImonggoDBHelper2 getHelper() {
-        return getAdapterHelper().getDbHelper();
     }
 
     /*public Double identifyRetailPrice(Product product) {

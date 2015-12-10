@@ -507,7 +507,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     @Override
     public String toString() {
-        return name;
+        return name + " = {" + toJSONString() + "}";
     }
 
     public String getFullAddress() {

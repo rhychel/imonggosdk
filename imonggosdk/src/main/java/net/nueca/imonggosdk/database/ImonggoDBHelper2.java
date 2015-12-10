@@ -231,6 +231,9 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
         return theList;
     }
 
-
-
+    @Deprecated
+    @Override
+    public <D extends Dao<T, ?>, T> D getDao(Class<T> clazz) throws SQLException {
+        return super.getDao(clazz);
+    }
 }

@@ -167,7 +167,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:measureWithLargestChild="true"
-        android:gravity="right">
+        android:gravity="right"
+        >
 
         <Button
             style="?android:attr/borderlessButtonStyle"
@@ -186,7 +187,7 @@
             android:text="Save"
             android:id="@+id/btnSave"
             android:textSize="16sp"
-            android:textColor="@color/primary" />
+            android:textColor="@color/primary"/>
     </LinearLayout>
 
 </LinearLayout>

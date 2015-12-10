@@ -1,5 +1,7 @@
 package net.nueca.concessioengine.tools;
 
+import android.util.Log;
+
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
@@ -35,10 +37,10 @@ public class InvoiceTools {
                         .multiply(new BigDecimal(retail_price));
                 BigDecimal subtotal = new BigDecimal(itemValue.getSubtotal());
 
-                if(subtotal.compareTo(BigDecimal.ZERO) == 0)
+                if(subtotal.doubleValue() == 0d)
                     builder.subtotal(t_subtotal.toPlainString());
                 else
-                    builder.subtotal(itemValue.getSubtotal());
+                    builder.subtotal(""+itemValue.getSubtotal());
 
                 invoiceLines.add(builder.build());
             }
@@ -105,6 +107,13 @@ public class InvoiceTools {
                 if (!list.contains(invoiceLine))
                     removeInvoiceLine(i);
             }
+        }
+
+        public void clearAll() {
+            invoiceLines = new ArrayList<>();
+            payments = new ArrayList<>();
+            total_payable = BigDecimal.ZERO;
+            total_payment_made = BigDecimal.ZERO;
         }
 
         public BigDecimal getTotalPaymentMade() {

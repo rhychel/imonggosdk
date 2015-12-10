@@ -899,7 +899,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
                                         int tagsSize = tagsListArray.length();
                                         for (int tagsI = 0; tagsI < tagsSize; tagsI++) {
-                                            Log.e(TAG, tagsListArray.getString(tagsI));
+                                            //Log.e(TAG, tagsListArray.getString(tagsI));
                                             ProductTag productTag = new ProductTag(tagsListArray.getString(tagsI), product);
                                             if (initialSync || lastUpdatedAt == null) {
                                                 productTag.dbOperation(getHelper(), DatabaseOperation.INSERT);

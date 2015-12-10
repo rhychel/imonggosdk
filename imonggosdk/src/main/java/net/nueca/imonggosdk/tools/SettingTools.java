@@ -7,7 +7,11 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.SettingsName;
+import net.nueca.imonggosdk.objects.Settings;
+
+import java.sql.SQLException;
 
 /**
  * Created by Jn on 6/19/2015.
@@ -161,5 +165,10 @@ public class SettingTools {
            // Log.e("Key[currentServer]", "Not Found");
             return "";
         }
+    }
+
+    public static String getSettingsValue(ImonggoDBHelper2 helper, SettingsName settingsName) throws SQLException {
+        return helper.fetchObjects(Settings.class).queryBuilder().where().eq(Settings.SETTINGS_NAME_FIELD_NAME, settingsName.getValue())
+                .queryForFirst().getValue();
     }
 }
