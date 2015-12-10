@@ -13,9 +13,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.Product;
@@ -69,6 +68,8 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
         }
         else {
+            if(!hasSubtotal)
+                viewHolder.tvSubtotal.setVisibility(View.GONE);
             viewHolder.llQuantity.setVisibility(View.GONE);
             viewHolder.tvProductName.setText(product.getName());
             viewHolder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
@@ -84,8 +85,9 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
 
                 if(getSelectedProductItems().hasSelectedProductItem(product)) {
                     viewHolder.llQuantity.setVisibility(View.VISIBLE);
-                    viewHolder.tvQuantity.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(product), product.getBase_unit_name()));
-                    viewHolder.tvSubtotal.setText(String.format("P%.2f", subtotal));
+                    viewHolder.tvQuantity.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(product), getSelectedProductItems().getUnitName(product, false)));
+                    if(hasSubtotal)
+                        viewHolder.tvSubtotal.setText(String.format("P%.2f", subtotal));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

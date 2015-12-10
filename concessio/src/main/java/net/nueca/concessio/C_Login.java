@@ -1,6 +1,7 @@
 package net.nueca.concessio;
 
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -51,33 +52,43 @@ public class C_Login extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? C_Welcome.class : C_Finalize.class));
+        Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? C_Welcome.class : C_Dashboard.class));
         startActivity(intent);
     }
 
     private int[] generateModules(boolean includeUsers) {
+        Log.e("generateModules", "here");
         getSyncModules().setSyncAllModules(false);
         int modulesToDownload = includeUsers ? 4 : 2;
         boolean hasReceive = false, hasPulloutRequest = false, hasSales = false;
 
         try {
             List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.RELEASE_BRANCH, ConcessioModule.INVOICE, ConcessioModule.RECEIVE_BRANCH)).query();
+                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.RELEASE_BRANCH, ConcessioModule.RELEASE_ADJUSTMENT, ConcessioModule.INVOICE, ConcessioModule.RECEIVE_BRANCH)).query();
 
             for(ModuleSetting moduleSetting : moduleSettings) {
+                Log.e("FOR---"+moduleSetting.getModule_type(), moduleSetting.is_enabled()+"");
                 if(!moduleSetting.is_enabled())
                     continue;
-                if(moduleSetting.getModuleType() == ConcessioModule.RELEASE_BRANCH) {
-                    hasPulloutRequest = true;
-                    modulesToDownload += 2;
-                }
-                if(moduleSetting.getModuleType() == ConcessioModule.INVOICE && moduleSetting.is_enabled()) {
-                    hasSales = true;
-                    modulesToDownload++;
-                }
-                if(moduleSetting.getModuleType() == ConcessioModule.RECEIVE_BRANCH) {
-                    hasReceive = true;
-                    modulesToDownload++;
+                switch (moduleSetting.getModuleType()) {
+                    case RELEASE_BRANCH:
+                    case RELEASE_ADJUSTMENT: {
+                        Log.e("RELEASE", "yeah"+hasPulloutRequest);
+                        if(!hasPulloutRequest) {
+                            Log.e("RELEASE", "changed to true");
+                            hasPulloutRequest = true;
+                            modulesToDownload += 2;
+                        }
+                        Log.e("RELEASE", "yeah"+hasPulloutRequest);
+                    } break;
+                    case INVOICE: {
+                        hasSales = true;
+                        modulesToDownload++;
+                    } break;
+                    case RECEIVE_BRANCH: {
+                        hasReceive = true;
+                        modulesToDownload++;
+                    } break;
                 }
             }
         } catch (SQLException e) {
@@ -92,6 +103,7 @@ public class C_Login extends LoginActivity {
         }
         modules[modulesToDownload-(index--)] = Table.PRODUCTS.ordinal();
         modules[modulesToDownload-(index--)] = Table.UNITS.ordinal();
+        Log.e("hasPulloutRequest", hasPulloutRequest+"");
         if(hasPulloutRequest) {
             modules[modulesToDownload-(index--)] = Table.DOCUMENT_TYPES.ordinal();
             modules[modulesToDownload-(index--)] = Table.DOCUMENT_PURPOSES.ordinal();

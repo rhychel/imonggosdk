@@ -2,7 +2,6 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
-import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
@@ -18,6 +17,7 @@ import java.util.List;
 public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHolder> extends BaseRecyclerAdapter<T, Product> {
 
     private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
+    protected boolean hasSubtotal = false;
 
     public BaseProductsRecyclerAdapter(Context context) {
         super(context);
@@ -45,6 +45,10 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
 
     protected ProductsAdapterHelper getAdapterHelper() {
         return productsAdapterHelper;
+    }
+
+    public void setHasSubtotal(boolean hasSubtotal) {
+        this.hasSubtotal = hasSubtotal;
     }
 
     public void setDbHelper(ImonggoDBHelper2 dbHelper) {

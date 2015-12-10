@@ -48,7 +48,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected ArrayAdapter<Unit> unitsAdapter;
     protected ArrayAdapter<String> brandsAdapter;
 
-    protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, hasBatchNo = false, isMultiValue = false;
+    protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, hasBatchNo = false, isMultiValue = false, hasSubtotal = false;
     protected int valuePosition = -1;
 
     public BaseQuantityDialog(Context context) {
@@ -128,6 +128,10 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setValuePosition(int valuePosition) {
         this.valuePosition = valuePosition;
+    }
+
+    public void setHasSubtotal(boolean hasSubtotal) {
+        this.hasSubtotal = hasSubtotal;
     }
 
     @Override

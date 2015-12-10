@@ -2,7 +2,7 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
-import net.nueca.concessioengine.adapters.enums.CustomerDetail;
+import net.nueca.concessioengine.enums.CustomerDetail;
 
 import java.util.List;
 

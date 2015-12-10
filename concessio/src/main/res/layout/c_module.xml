@@ -8,9 +8,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:layout_weight="1"
-        android:id="@+id/flContent">
-
-    </FrameLayout>
+        android:elevation="1dp"
+        android:id="@+id/flContent"/>
 
     <include
         android:layout_width="match_parent"

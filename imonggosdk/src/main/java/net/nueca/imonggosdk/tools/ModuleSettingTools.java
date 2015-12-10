@@ -23,16 +23,29 @@ public class ModuleSettingTools {
                 return "stock_request";
             case PHYSICAL_COUNT:
                 return "physical_count";
+            case INVOICE:
+                return "invoice";
+
             case RECEIVE_BRANCH:
                 return "receive_branch";
             case RELEASE_BRANCH:
                 return "release_branch";
             case RECEIVE_BRANCH_PULLOUT:
-                return "receive_branch_pullout";
+                return "receive_branch_pullout"; // Pullout Confirmation
+
             case RECEIVE_ADJUSTMENT:
                 return "receive_adjustment";
-            case INVOICE:
-                return "invoice";
+            case RELEASE_ADJUSTMENT:
+                return "release_adjustment";
+
+            case RECEIVE_SUPPLIER:
+                return "receive_supplier";
+            case RELEASE_SUPPLIER:
+                return "release_supplier";
+
+            case CUSTOMERS:
+                return "customers";
+
             default:
                 return "app";
         }

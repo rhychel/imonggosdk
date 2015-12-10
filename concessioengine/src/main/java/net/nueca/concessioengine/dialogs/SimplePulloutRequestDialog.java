@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -23,9 +24,12 @@ import java.util.List;
  * Created by gama on 10/5/15.
  */
 public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
-    private TextView tvSourceBranchLabel, tvDestinationBranchLabel;
-
+//    private TextView tvSourceBranchLabel, tvDestinationBranchLabel;
     private Button btnSave, btnCancel;
+    private TextView tvTitle;
+    private LinearLayout llSourceBranch, llDestinationBranch;
+
+    private String dTitle = "Pullout Reason";
 
     private PulloutRequestDialogListener listener;
 
@@ -40,21 +44,26 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setContentView(R.layout.simple_pullout_reason_dialog);
+        super.setContentView(R.layout.simple_pullout_reason_dialog2);
         super.setCancelable(false);
 
-        tvSourceBranchLabel = (TextView) super.findViewById(R.id.tvSourceBranchLabel);
-        tvDestinationBranchLabel = (TextView) super.findViewById(R.id.tvDestinationBranchLabel);
-
+        llSourceBranch = (LinearLayout) super.findViewById(R.id.llSourceBranch);
+        llDestinationBranch = (LinearLayout) super.findViewById(R.id.llDestinationBranch);
+        tvTitle = (TextView) super.findViewById(R.id.tvTitle);
         spnReason = (Spinner) super.findViewById(R.id.spnReason);
         spnSourceBranch = (Spinner) super.findViewById(R.id.spnSourceBranch);
         spnDestinationBranch = (Spinner) super.findViewById(R.id.spnDestinationBranch);
 
-        spnReason.setAdapter( new ArrayAdapter<>(getContext(), R.layout.simple_spinner_item, getReasonList()) );
+        tvTitle.setText(dTitle);
 
-        spnSourceBranch.setAdapter(new ArrayAdapter<>(getContext(), R.layout.simple_spinner_item, getSourceBranch()));
+        ArrayAdapter<DocumentPurpose> reasonAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, getReasonList());
+        ArrayAdapter<String> sourceBranchAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, getSourceBranch());
+        spnReason.setAdapter(reasonAdapter);
+        spnSourceBranch.setAdapter(sourceBranchAdapter);
+
         try {
-            spnDestinationBranch.setAdapter(new ArrayAdapter<>(getContext(), R.layout.simple_spinner_item, getDestinationBranch()));
+            ArrayAdapter<String> destinationBranchAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, getDestinationBranch());
+            spnDestinationBranch.setAdapter(destinationBranchAdapter);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -116,8 +125,10 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
     @Override
     public void showBranchSelection(boolean shouldShow) {
         super.showBranchSelection(shouldShow);
-        tvSourceBranchLabel.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
-        tvDestinationBranchLabel.setVisibility(shouldShow? View.VISIBLE : View.GONE);
+    }
+
+    public void setDTitle(String title) {
+        this.dTitle = title;
     }
 
     public void setListener(PulloutRequestDialogListener listener) {

@@ -12,7 +12,7 @@ import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.base.BaseProductsAdapter;
 import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.exceptions.ProductsFragmentException;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
@@ -43,7 +43,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             multipleInput = false,
             showCategoryOnStart = false,
             lockCategory = false,
-            hasToolBar = true;
+            hasToolBar = true,
+            hasSubtotal = false,
+            isFinalize = false;
     private int prevLast = -1;
     private String searchKey = "", category = "";
     private List<Product> filterProductsBy = new ArrayList<>();
@@ -249,5 +251,13 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setHasToolBar(boolean hasToolBar) {
         this.hasToolBar = hasToolBar;
+    }
+
+    public void setHasSubtotal(boolean hasSubtotal) {
+        this.hasSubtotal = hasSubtotal;
+    }
+
+    public void setIsFinalize(boolean isFinalize) {
+        this.isFinalize = isFinalize;
     }
 }

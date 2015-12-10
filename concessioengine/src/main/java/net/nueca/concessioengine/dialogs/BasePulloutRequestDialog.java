@@ -2,6 +2,7 @@ package net.nueca.concessioengine.dialogs;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
     protected Spinner spnReason, spnSourceBranch, spnDestinationBranch;
+    protected LinearLayout llSourceBranch, llDestinationBranch;
 
     private ImonggoDBHelper2 dbHelper;
 
@@ -62,8 +64,8 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
     //public abstract void populateBranchSelectors();
 
     public void showBranchSelection(boolean shouldShow) {
-        spnSourceBranch.setVisibility(shouldShow? View.VISIBLE : View.GONE);
-        spnDestinationBranch.setVisibility(shouldShow? View.VISIBLE : View.GONE);
+        llSourceBranch.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
+        llDestinationBranch.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
     }
 
     public Branch getSelectedBranch(Spinner spinner) throws SQLException {

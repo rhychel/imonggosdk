@@ -10,6 +10,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
+import net.nueca.concessioengine.activities.welcome.WelcomeActivity;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Branch;
@@ -22,7 +23,7 @@ import java.sql.SQLException;
  * Created by rhymart on 8/20/15.
  * imonggosdk2 (c)2015
  */
-public class C_Welcome extends ModuleActivity {
+public class C_Welcome extends WelcomeActivity {
 
     private TextView tvAgentName, tvLogout;
     private Spinner spBranch;

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.Concessio.Light" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="AppTheme.Concessio.Light.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accentL</item>
+        <item name="android:textColorPrimary">@color/primary_textL</item>
+        <item name="android:textColorSecondary">@color/secondary_textL</item>
+        <item name="android:textColorHint">@color/hint_text</item>
+        <item name="colorControlNormal">@color/accentL</item>
+        <item name="colorControlActivated">@android:color/white</item>
+        <item name="popupTheme">@style/PopupMenu.Concessio</item>
+
+        <!--LATER!!!-->
+        <!--<item name="divider">@android:color/transparent</item>-->
+        <!--<item name="android:listDivider">@color/dividerL</item>-->
+    </style>
+
+
+    <style name="AppTheme.Concessio" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accentL</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:textColorSecondary">@color/secondary_textL</item>
+        <item name="android:textColorHint">@color/hint_text</item>
+        <item name="colorControlNormal">@color/accentL</item>
+        <item name="colorControlActivated">@android:color/white</item>
+        <item name="popupTheme">@style/PopupMenu.Concessio</item>
+    </style>
+
+    <style name="AppTheme.Concessio.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="popupTheme">@style/PopupMenu.Concessio</item>
+    </style>
+
+    <style name="AppTheme.Concessio.DarkActionBar.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="popupTheme">@style/PopupMenu.Concessio</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+<!-- Popup menu here -->
+    <style name="ThemeOverlay.ActionBar.Concessio" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!--primary-->
+    <!--primary_dark-->
+    <!--primary_light-->
+    <!--accent-->
+    <!--primary_text_color-->
+    <!--secondary_text_color-->
+    <!--hint_text_color-->
+    <!--divider-->
+
+    <!-- Login Theme -->
+    <style name="LoginTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:textColorHint">@color/hint_text</item>
+        <item name="colorAccent">@android:color/white</item>
+        <!--<item name="android:background">@color/primary</item>-->
+        <item name="buttonStyle">@style/LoginTheme.Button</item>
+
+        <item name="colorControlNormal">@color/accent</item>
+        <item name="colorControlActivated">@android:color/white</item>
+    </style>
+
+    <!-- Login button here -->
+
+    <style name="LoginTheme.DialogFrameLayout" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:background">@android:color/white</item>
+        <item name="colorControlNormal">@color/accentL</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="android:textColorHint">@color/accentL</item>
+        <item name="android:textColorPrimary">@color/primary_textL</item>
+    </style>
+    <!-- Login Theme - END -->
+
+    <!-- AppCompatDialog -->
+    <style name="AppCompatDialogStyle.Light.NoTitle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="android:textColorPrimary">@color/primary_textL</item>
+        <item name="android:background">#FFFFFF</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="colorControlNormal">@color/accent</item>
+        <item name="colorControlActivated">@color/primary</item>
+    </style>
+
+    <style name="AppCompatDialogStyle.Light" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowMinWidthMajor">95%</item>
+        <item name="android:windowMinWidthMinor">95%</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="android:textColorPrimary">@color/primary_textL</item>
+        <item name="android:textColorSecondary">@color/primary</item>
+        <item name="android:background">#FFFFFF</item>
+        <item name="windowNoTitle">false</item>
+
+        <item name="colorControlNormal">@color/accent</item>
+        <item name="colorControlActivated">@color/primary</item>
+    </style>
+
+
+
+    <style name="AppCompatDialogStyle.NoTitle" parent="Theme.AppCompat.Dialog">
+        <item name="android:minWidth">@dimen/abc_dialog_fixed_width_major</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:background">#FFFFFF</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Dialog">
+        <item name="colorAccent">@color/primary</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:background">#FFFFFF</item>
+        <item name="windowNoTitle">false</item>
+    </style>
+    <!-- AppCompatDialog - END -->
+</resources>
