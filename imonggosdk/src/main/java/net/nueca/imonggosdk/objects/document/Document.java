@@ -373,6 +373,7 @@ public class Document extends BaseTransactionTable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        Log.e("DOCUMENT", "update " + id + " ~ " + offlineData.getId());
     }
 
     public static class Builder extends BaseTransactionTable.Builder<Builder> {

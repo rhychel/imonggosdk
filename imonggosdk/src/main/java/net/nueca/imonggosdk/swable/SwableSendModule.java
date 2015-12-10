@@ -63,6 +63,7 @@ public class SwableSendModule {
                 return;
             }
 
+            //JSONObject data;
             JSONObject jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
                     offlineData.getData());
             //Log.e("JSON", jsonObject.toString());

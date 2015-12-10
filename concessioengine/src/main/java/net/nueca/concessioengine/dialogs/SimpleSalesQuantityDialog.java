@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -62,6 +64,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         btnCancel = (Button) super.findViewById(R.id.btnCancel);
         btnSave = (Button) super.findViewById(R.id.btnSave);
 
+        etQuantity.setSelectAllOnFocus(true);
+
         unitsAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_dark, unitList);
         unitsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
 //        unitsAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, unitList);
@@ -96,8 +100,22 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             @Override
             public void onShow(DialogInterface dialog) {
                 offsetSpinnerBelowv21(spUnits);
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
             }
         });
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        View focused = getCurrentFocus();
+        if(focused == null) {
+            focused = etQuantity;
+            focused.requestFocus();
+        }
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(focused.getWindowToken(), 0);
     }
 
     public void setRetailPrice(String retailPrice) {

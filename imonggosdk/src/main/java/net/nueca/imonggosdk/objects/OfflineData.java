@@ -263,7 +263,6 @@ public class OfflineData extends BaseTable2 {
                         documentData.addAllDocumentLine(document.getDocument_lines());
                 }
             }
-
         }
 
         return documentData;
