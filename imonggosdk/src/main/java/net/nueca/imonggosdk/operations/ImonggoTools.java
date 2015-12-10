@@ -87,6 +87,9 @@ public class ImonggoTools {
                     parameterStr += "/%"+stringInputCount+"$s.json?";
                     stringInputCount++;
                     break;
+                case UNITS:
+                    parameterStr += "q=units&";
+                    break;
             }
         }
         if(!parameterStr.equals("?"))
