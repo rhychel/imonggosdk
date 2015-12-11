@@ -27,7 +27,6 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
 //    private TextView tvSourceBranchLabel, tvDestinationBranchLabel;
     private Button btnSave, btnCancel;
     private TextView tvTitle;
-    private LinearLayout llSourceBranch, llDestinationBranch;
 
     private String dTitle = "Pullout Reason";
 
@@ -37,8 +36,16 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
         super(context, imonggoDBHelper);
     }
 
+    public SimplePulloutRequestDialog(Context context, ImonggoDBHelper2 dbHelper, int theme) {
+        super(context, dbHelper, theme);
+    }
+
     public SimplePulloutRequestDialog(Context context, List<DocumentPurpose> reasons, ImonggoDBHelper2 imonggoDBHelper) {
         super(context, reasons, imonggoDBHelper);
+    }
+
+    public SimplePulloutRequestDialog(Context context, List<DocumentPurpose> reasons, ImonggoDBHelper2 dbHelper, int theme) {
+        super(context, reasons, dbHelper, theme);
     }
 
     @Override
@@ -59,6 +66,10 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
         ArrayAdapter<DocumentPurpose> reasonAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, getReasonList());
         ArrayAdapter<String> sourceBranchAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, getSourceBranch());
         spnReason.setAdapter(reasonAdapter);
+
+        int indexSelection = getReasonList().indexOf(currentReason);
+        if(indexSelection > -1)
+            spnReason.setSelection(indexSelection);
         spnSourceBranch.setAdapter(sourceBranchAdapter);
 
         try {
@@ -104,7 +115,7 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
             public void onClick(View v) {
                 if(listener != null)
                     try {
-                        listener.onSave(((DocumentPurpose)spnReason.getSelectedItem()).getName(),
+                        listener.onSave(((DocumentPurpose)spnReason.getSelectedItem()),
                                 getSelectedBranch(spnSourceBranch), getSelectedBranch(spnDestinationBranch));
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -120,11 +131,8 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
                 cancel();
             }
         });
-    }
 
-    @Override
-    public void showBranchSelection(boolean shouldShow) {
-        super.showBranchSelection(shouldShow);
+        showBranchSelection(shouldShowBranchSelection);
     }
 
     public void setDTitle(String title) {
@@ -136,7 +144,7 @@ public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
     }
 
     public interface PulloutRequestDialogListener {
-        void onSave(String reason, Branch source, Branch destination);
+        void onSave(DocumentPurpose reason, Branch source, Branch destination);
         void onCancel();
     }
 

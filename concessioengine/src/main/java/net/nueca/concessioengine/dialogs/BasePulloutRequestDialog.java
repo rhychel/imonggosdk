@@ -20,33 +20,42 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
     protected Spinner spnReason, spnSourceBranch, spnDestinationBranch;
     protected LinearLayout llSourceBranch, llDestinationBranch;
 
+    protected DocumentPurpose currentReason = null;
+
     private ImonggoDBHelper2 dbHelper;
 
     private List<String> branchListStr;
     private List<Branch> branchList;
     private List<DocumentPurpose> reasonList;
 
+    protected boolean shouldShowBranchSelection = false;
+
+
     public BasePulloutRequestDialog(Context context, ImonggoDBHelper2 dbHelper) {
         super(context);
-        this.dbHelper = dbHelper;
-        try {
-            this.reasonList = dbHelper.fetchObjects(DocumentPurpose.class).queryBuilder().where().eq("status", "A").query();
-            branchList = dbHelper.fetchObjects(Branch.class).queryForAll();
-            for(Branch branch : branchList) {
-                if(branchListStr == null)
-                    branchListStr = new ArrayList<>();
-                branchListStr.add(branch.getName());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        initializeData(dbHelper, true);
+    }
+
+    public BasePulloutRequestDialog(Context context, ImonggoDBHelper2 dbHelper, int theme) {
+        super(context, theme);
+        initializeData(dbHelper, true);
     }
 
     public BasePulloutRequestDialog(Context context, List<DocumentPurpose> reasons, ImonggoDBHelper2 dbHelper) {
         super(context);
-        reasonList = reasons;
+        initializeData(dbHelper, reasons == null);
+    }
+
+    public BasePulloutRequestDialog(Context context, List<DocumentPurpose> reasons, ImonggoDBHelper2 dbHelper, int theme) {
+        super(context, theme);
+        initializeData(dbHelper, reasons == null);
+    }
+
+    private void initializeData(ImonggoDBHelper2 dbHelper, boolean queryReasons) {
         this.dbHelper = dbHelper;
         try {
+            if(queryReasons)
+                this.reasonList = dbHelper.fetchObjects(DocumentPurpose.class).queryBuilder().where().eq("status", "A").query();
             branchList = dbHelper.fetchObjects(Branch.class).queryForAll();
             for(Branch branch : branchList) {
                 if(branchListStr == null)
@@ -63,7 +72,12 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
     }
     //public abstract void populateBranchSelectors();
 
-    public void showBranchSelection(boolean shouldShow) {
+
+    public void setShouldShowBranchSelection(boolean shouldShowBranchSelection) {
+        this.shouldShowBranchSelection = shouldShowBranchSelection;
+    }
+
+    protected void showBranchSelection(boolean shouldShow) {
         llSourceBranch.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
         llDestinationBranch.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
     }
@@ -90,5 +104,9 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
             destinationBranches.add(branch.getName());
         }
         return destinationBranches;
+    }
+
+    public void setCurrentReason(DocumentPurpose currentReason) {
+        this.currentReason = currentReason;
     }
 }

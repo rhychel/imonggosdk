@@ -30,6 +30,7 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
 
     private TextView tvNoCustomers;
     private boolean isMultiSelect = false;
+    private boolean hasSelected = false;
     private Integer color, highlightColor;
     private OnCustomerSelectedListener onCustomerSelectedListener;
 
@@ -101,6 +102,7 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
                     else {
                         if(onCustomerSelectedListener != null)
                             onCustomerSelectedListener.onCustomerSelected(simpleCustomerRecyclerViewAdapter.getSelectedCustomers().get(0));
+                        hasSelected = true;
                     }
                 }
             });
@@ -180,5 +182,13 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
 
     public void setOnCustomerSelectedListener(OnCustomerSelectedListener onCustomerSelectedListener) {
         this.onCustomerSelectedListener = onCustomerSelectedListener;
+    }
+
+    public boolean isHasSelected() {
+        return hasSelected;
+    }
+
+    public void setHasSelected(boolean hasSelected) {
+        this.hasSelected = hasSelected;
     }
 }

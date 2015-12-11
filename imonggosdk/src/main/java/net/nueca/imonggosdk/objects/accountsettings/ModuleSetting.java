@@ -39,6 +39,10 @@ public class ModuleSetting extends DBTable {
     private String show_in = "beginning"; // beginning, middle, last
     @DatabaseField
     private boolean require_warehouse = false;
+    @DatabaseField
+    private boolean with_purpose = false;
+    @DatabaseField
+    private boolean with_customer = false;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_listing_id")
@@ -203,6 +207,22 @@ public class ModuleSetting extends DBTable {
 
     public void setRequire_warehouse(boolean require_warehouse) {
         this.require_warehouse = require_warehouse;
+    }
+
+    public boolean isWith_purpose() {
+        return with_purpose;
+    }
+
+    public void setWith_purpose(boolean with_purpose) {
+        this.with_purpose = with_purpose;
+    }
+
+    public boolean isWith_customer() {
+        return with_customer;
+    }
+
+    public void setWith_customer(boolean with_customer) {
+        this.with_customer = with_customer;
     }
 
     public ConcessioModule getModuleType() {

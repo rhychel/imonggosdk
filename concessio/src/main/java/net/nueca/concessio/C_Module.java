@@ -45,8 +45,10 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
@@ -97,6 +99,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         llReview = (LinearLayout) findViewById(R.id.llReview);
         llBalance = (LinearLayout) findViewById(R.id.llBalance);
         llFooter = (LinearLayout) findViewById(R.id.llFooter);
+
 /*
         btnReview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,9 +197,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setHasDeliveryDate(false);
                 finalizeFragment.setHasUnits(true);
 
-                llFooter.setVisibility(View.VISIBLE);
-                llFooter.setTranslationY(1000f);
-                tvItems.setVisibility(View.VISIBLE);
+                prepareFooter();
 
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.flContent, simpleProductsFragment)
@@ -248,9 +249,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     }
                 });
 
-                llFooter.setVisibility(View.VISIBLE);
-                llFooter.setTranslationY(1000f);
-                tvItems.setVisibility(View.VISIBLE);
+                prepareFooter();
 
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.flContent, simpleReceiveFragment)
@@ -279,9 +278,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setHasDeliveryDate(false);
                 finalizeFragment.setHasUnits(true);
 
-                llFooter.setVisibility(View.VISIBLE);
-                llFooter.setTranslationY(1000f);
-                tvItems.setVisibility(View.VISIBLE);
+                prepareFooter();
 
                 btn1.setOnClickListener(nextClickedListener);
 
@@ -292,17 +289,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             case RELEASE_BRANCH: {
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
                 simplePulloutRequestDialog.setTitle("Choose a reason");
-                simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
-                    @Override
-                    public void onSave(String reason, Branch source, Branch destination) {
-                        Log.e("Reason", reason);
-                    }
-
-                    @Override
-                    public void onCancel() {
-
-                    }
-                });
                 if(getModuleSetting().isRequire_document_reason())
                     simplePulloutRequestDialog.show();
 
@@ -324,19 +310,43 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleCustomersFragment.setListingType(ListingType.LETTER_HEADER);
                 simpleCustomersFragment.setOnCustomerSelectedListener(new SimpleCustomersFragment.OnCustomerSelectedListener() {
                     @Override
-                    public void onCustomerSelected(Customer customer) {
-                        SimplePulloutRequestDialog simplePulloutRequestDialog = new SimplePulloutRequestDialog(C_Module.this, getHelper());
+                    public void onCustomerSelected(final Customer customer) {
+                        SimplePulloutRequestDialog simplePulloutRequestDialog = new SimplePulloutRequestDialog(C_Module.this, getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
                         simplePulloutRequestDialog.setDTitle("MSO");
+                        simplePulloutRequestDialog.setShouldShowBranchSelection(false);
                         simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
                             @Override
-                            public void onSave(String reason, Branch source, Branch destination) {
+                            public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
+                                Log.e("Reason", reason.getName());
+                                ProductsAdapterHelper.setSelectedCustomer(customer);
+                                ProductsAdapterHelper.setReason(reason);
+                                simpleProductsFragment.setHasSubtotal(false);
+                                simpleProductsFragment.setReason(reason);
+                                simpleProductsFragment.setListingType(ListingType.SALES);
+                                simpleProductsFragment.setHasUnits(true);
+                                simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
+                                simpleProductsFragment.setShowCategoryOnStart(getModuleSetting().getProductListing().isShow_categories_on_start());
+                                simpleProductsFragment.setProductsFragmentListener(C_Module.this);
 
+                                initializeFinalize();
+                                finalizeFragment.setHasCategories(false);
+                                finalizeFragment.setHasBrand(false);
+                                finalizeFragment.setHasDeliveryDate(false);
+                                finalizeFragment.setHasUnits(true);
+                                finalizeFragment.setListingType(ListingType.SALES);
+                                finalizeFragment.setReason(reason);
+
+                                prepareFooter();
+
+                                btn1.setOnClickListener(nextClickedListener);
+
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.flContent, simpleProductsFragment)
+                                        .commit();
                             }
 
                             @Override
-                            public void onCancel() {
-
-                            }
+                            public void onCancel() { }
                         });
                         simplePulloutRequestDialog.show();
                     }
@@ -344,7 +354,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .add(R.id.flContent, simpleCustomersFragment)
+                        .replace(R.id.flContent, simpleCustomersFragment)
                         .commit();
             } break;
         }
@@ -396,7 +406,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     public void onBackPressed() {
         super.onBackPressed();
         btn1.setText("REVIEW");
-        if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER)
+        if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER)
             simpleInventoryFragment.refreshList();
         if(getModuleSetting() != null) {
             if (getModuleSetting().isRequire_document_reason()) {
@@ -508,6 +518,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setTitle("Juan Dela Cruz");
         }
+        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+            if(!simpleCustomersFragment.isHasSelected()) {
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                getSupportActionBar().setTitle("MSO");
+            }
+        }
     }
 
     private MultiInputListener multiInputListener = new MultiInputListener() {
@@ -534,6 +550,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         startActivity(intent);
     }
 
+    private void prepareFooter() {
+        llFooter.setVisibility(View.VISIBLE);
+        llFooter.setTranslationY(1000f);
+        tvItems.setVisibility(View.VISIBLE);
+    }
+
     private View.OnClickListener nextClickedListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -551,7 +573,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             Gson gson = new GsonBuilder().serializeNulls().create();
-                                            Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.RECEIVE_SUPPLIER);
+                                            Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
+                                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                                document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
+                                                document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
+
+                                                Extras extras = new Extras();
+                                                extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getId());
+                                                document.setExtras(extras);
+                                            }
                                             try {
                                                 JSONObject jsonObject = new JSONObject(gson.toJson(document));
                                                 Log.e("jsonObject", jsonObject.toString());
@@ -561,13 +591,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                 for(Inventory inventory : inventoryList) {
                                                     Log.e("Inventory", inventory.getProduct().getName()+" = "+inventory.getQuantity());
                                                 }
-                                                new SwableTools.Transaction(getHelper())
+
+                                                OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                                         .toSend()
                                                         .forBranch(branch.getId())
                                                         .object(document)
                                                         .queue();
-
-                                                OfflineData offlineData = SwableTools.sendTransaction(getHelper(), branch.getId(), document, OfflineDataType.SEND_DOCUMENT);
 
                                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
                                                 TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
@@ -578,6 +607,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                     public void whenDismissed() {
                                                         ProductsAdapterHelper.clearSelectedProductItemList();
                                                         onBackPressed();
+                                                        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                                            llFooter.setVisibility(View.GONE);
+                                                            simpleCustomersFragment.setHasSelected(false);
+                                                            simpleCustomersFragment.onViewCreated(null, null);
+                                                            getSupportFragmentManager()
+                                                                    .beginTransaction()
+                                                                    .replace(R.id.flContent, simpleCustomersFragment)
+                                                                    .commit();
+                                                        }
                                                     }
                                                 });
                                                 transactionDialog.show();

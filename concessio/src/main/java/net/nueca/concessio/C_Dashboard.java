@@ -18,6 +18,7 @@ import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -54,6 +55,9 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         setContentView(R.layout.c_dashboard);
 
         setNextActivityClass(C_Module.class);
+
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.startSwable(this);
 
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
         rvModules = (RecyclerView) findViewById(R.id.rvModules);
@@ -114,5 +118,12 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     @Override
     public void onItemClicked(View view, int position) {
         moduleSelected(view);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.stopSwable(this);
+        super.onDestroy();
     }
 }

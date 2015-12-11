@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
+import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.interfaces.OnItemLongClickListener;
@@ -33,9 +36,11 @@ import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleSalesQuantityDialog;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.objects.AccountSettings;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
@@ -58,6 +63,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     private NetworkImageView ivProductImage;
     private TextView tvProductName, tvProductDescription, tvNoProducts;
     private Spinner spCategories;
+
+    private LinearLayout llReason;
+    private TextView tvReason;
+    private ImageView ivEdit;
 
     private boolean useRecyclerView = true;
     private int prevLast = -1, prevSelectedCategory = 0;
@@ -94,6 +103,37 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         offset = 0l;
 
         if(useRecyclerView) {
+            llReason = (LinearLayout) view.findViewById(R.id.llReason);
+            if(reason != null) {
+                llReason.setVisibility(View.VISIBLE);
+                tvReason = (TextView) view.findViewById(R.id.tvReason);
+                ivEdit = (ImageView) view.findViewById(R.id.ivEdit);
+
+                tvReason.setText(reason.getName());
+                ivEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SimplePulloutRequestDialog simplePulloutRequestDialog = new SimplePulloutRequestDialog(getActivity(), getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
+                        simplePulloutRequestDialog.setDTitle("MSO");
+                        simplePulloutRequestDialog.setShouldShowBranchSelection(false);
+                        simplePulloutRequestDialog.setCurrentReason(reason);
+                        simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+                            @Override
+                            public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
+                                SimpleProductsFragment.this.reason = reason;
+                                ProductsAdapterHelper.setReason(reason);
+                                tvReason.setText(reason.getName());
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        });
+                        simplePulloutRequestDialog.show();
+                    }
+                });
+            }
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
             if(!isCustomAdapter)
                 productRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());

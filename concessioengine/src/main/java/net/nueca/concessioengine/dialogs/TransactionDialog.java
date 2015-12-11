@@ -93,6 +93,8 @@ public class TransactionDialog extends BaseAppCompatDialog {
                 return "Received Items Saved";
             case RELEASE_SUPPLIER:
                 return "Pullout Successful";
+            case RELEASE_ADJUSTMENT:
+                return "MSO Successful";
             default:
                 return "Sales Items Saved";
         }
