@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by gama on 7/20/15.
  */
-public class Document extends BaseTransactionTable {
+public class Document extends BaseTransactionTable implements Extras.DoOperationsForExtras {
     public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 5;
 
     @Expose
@@ -291,6 +291,7 @@ public class Document extends BaseTransactionTable {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -328,6 +329,7 @@ public class Document extends BaseTransactionTable {
 
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        deleteExtrasTo(dbHelper);
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -356,6 +358,7 @@ public class Document extends BaseTransactionTable {
 
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
+        updateExtrasTo(dbHelper);
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -374,6 +377,30 @@ public class Document extends BaseTransactionTable {
             e.printStackTrace();
         }
         Log.e("DOCUMENT", "update " + id + " ~ " + offlineData.getId());
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.setDocument(this);
+        extras.setId(Document.class.getName().toUpperCase(), id);
+        extras.insertTo(dbHelper);
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        String idstr = Document.class.getName().toUpperCase() + id;
+        if(idstr.equals(extras.getId()))
+            extras.updateTo(dbHelper);
+        else {
+            extras.deleteTo(dbHelper);
+            extras.setId(Document.class.getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
     }
 
     public static class Builder extends BaseTransactionTable.Builder<Builder> {

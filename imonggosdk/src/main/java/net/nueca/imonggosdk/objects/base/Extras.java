@@ -14,6 +14,7 @@ import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -134,6 +135,7 @@ public class Extras extends DBTable {
     private String expiry_date;
 
     // DocumentPurpose
+    @Expose
     @DatabaseField
     private String requires_expiry_date; // true || false
 
@@ -159,6 +161,8 @@ public class Extras extends DBTable {
     /** FOREIGN TABLES **/
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private transient RoutePlan routePlan;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_id")
+    private transient Document document;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_line_id")
     private transient DocumentLine documentLine;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_id")
@@ -284,6 +288,14 @@ public class Extras extends DBTable {
 
     public void setRequires_expiry_date(String requires_expiry_date) {
         this.requires_expiry_date = requires_expiry_date;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
     public DocumentLine getDocumentLine() {

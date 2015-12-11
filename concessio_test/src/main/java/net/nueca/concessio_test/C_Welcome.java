@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -45,29 +46,26 @@ public class C_Welcome extends ModuleActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_welcome);
 
-        /*Document.Builder builder = new Document.Builder();
+        Document.Builder builder = new Document.Builder();
         try {
             builder.addDocumentLine(new DocumentLine.Builder()
                     .line_no(1)
-                    .product_id(192565)
-                    .quantity(50)
-                    .retail_price(0)
-                    .build());
-            builder.addDocumentLine(new DocumentLine.Builder()
-                    .line_no(2)
                     .unit_content_quantity(200)
                     .unit_id(31167)
                     .unit_name("Bndl(s)")
                     .unit_quantity(60)
                     .unit_retail_price(0)
-                    .product_id(192570)
-                    .quantity(12000)
+                    .product_id(192565)
+                    .quantity(20)
                     .retail_price(0)
                     .build());
 
             builder.generateReference(this, getSession().getDevice_id());
             builder.target_branch_id(getSession().getCurrent_branch_id());
             builder.document_type_code(DocumentTypeCode.RECEIVE_SUPPLIER);
+            builder.extras(new Extras.Builder()
+                    .customer_id(182557)
+                    .build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -101,7 +99,7 @@ public class C_Welcome extends ModuleActivity {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
-        }*/
+        }
 
         tvAgentName = (TextView) findViewById(R.id.tvAgentName);
         tvLogout = (TextView) findViewById(R.id.tvLogout);

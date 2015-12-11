@@ -48,7 +48,7 @@ public class C_Login extends LoginActivity {
                 Table.CUSTOMER_GROUPS.ordinal(),
                 Table.BRANCH_CUSTOMERS.ordinal(),
                 Table.PRODUCTS.ordinal(),
-                Table.BRANCH_UNITS.ordinal(),
+                //Table.BRANCH_UNITS.ordinal(),
                 Table.BRANCH_PRICE_LISTS.ordinal(),
                 Table.PRICE_LISTS_DETAILS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
