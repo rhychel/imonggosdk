@@ -50,7 +50,7 @@ public class C_Login extends LoginActivity {
                 Table.PRODUCTS.ordinal(),
                 Table.BRANCH_UNITS.ordinal(),
                 Table.BRANCH_PRICE_LISTS.ordinal(),
-                //Table.PRICE_LISTS_DETAILS.ordinal(),
+                Table.PRICE_LISTS_DETAILS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
                 Table.PAYMENT_TERMS.ordinal(),
                 Table.INVOICES.ordinal(),
@@ -72,7 +72,7 @@ public class C_Login extends LoginActivity {
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
         setEditTextAccountID("C5015");
-        setEditTextEmail("C5015@test.com");
-        setEditTextPassword("C5015");
+        setEditTextEmail("OSS1@test.com");
+        setEditTextPassword("OSS1");
     }
 }
