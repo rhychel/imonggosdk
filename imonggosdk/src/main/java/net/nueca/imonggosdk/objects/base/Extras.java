@@ -29,6 +29,11 @@ public class Extras extends DBTable {
     @DatabaseField(id = true)
     private transient String id;
 
+    // Users
+    @Expose
+    @DatabaseField
+    private int is_salesman;
+
     // Product
     @Expose
     @DatabaseField
@@ -183,6 +188,7 @@ public class Extras extends DBTable {
     }
 
     protected Extras(Builder builder) {
+        is_salesman = builder.is_salesman;
         documentLine = builder.documentLine;
         routePlan = builder.routePlan;
         product = builder.product;
@@ -232,6 +238,14 @@ public class Extras extends DBTable {
         expiry_date = builder.expiry_date;
         default_selling_unit = builder.default_selling_unit;
         default_ordering_unit_id = builder.default_ordering_unit_id;
+    }
+
+    public int getIs_salesman() {
+        return is_salesman;
+    }
+
+    public void setIs_salesman(int is_salesman) {
+        this.is_salesman = is_salesman;
     }
 
     public String getId() {
@@ -652,6 +666,7 @@ public class Extras extends DBTable {
 
 
     public static class Builder {
+        protected int is_salesman;
         protected Boolean batch_maintained; // true || false
         protected Integer customer_id;
         protected String longitude;
@@ -706,6 +721,12 @@ public class Extras extends DBTable {
             this.default_selling_unit = default_selling_unit;
             return this;
         }
+
+        public Builder is_salesman(int is_saleman) {
+            this.is_salesman = is_saleman;
+            return this;
+        }
+
 
         public Builder default_ordering_unit_id(String default_ordering_unit_id) {
             this.default_ordering_unit_id = default_ordering_unit_id;

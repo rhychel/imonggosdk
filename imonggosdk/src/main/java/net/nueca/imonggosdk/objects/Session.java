@@ -17,9 +17,9 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Session extends DBTable{
+public class Session extends DBTable {
 
-    @DatabaseField(generatedId=true)
+    @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField
     private String email = "";
@@ -45,10 +45,13 @@ public class Session extends DBTable{
     private Server server;
     @DatabaseField
     private int current_branch_id;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "user")
     private User user;
+    @DatabaseField
+    private String user_id;
 
-    public Session() { }
+    public Session() {
+    }
 
     public int getId() {
         return id;
@@ -164,6 +167,46 @@ public class Session extends DBTable{
 
     public void setCurrent_branch_id(int current_branch_id) {
         this.current_branch_id = current_branch_id;
+    }
+
+    public String getApi_token() {
+        return api_token;
+    }
+
+    public void setApi_token(String api_token) {
+        this.api_token = api_token;
+    }
+
+    public String getAccount_id() {
+        return account_id;
+    }
+
+    public void setAccount_id(String account_id) {
+        this.account_id = account_id;
+    }
+
+    public String getAccount_url() {
+        return account_url;
+    }
+
+    public void setAccount_url(String account_url) {
+        this.account_url = account_url;
+    }
+
+    public String getApi_authentication() {
+        return api_authentication;
+    }
+
+    public void setApi_authentication(String api_authentication) {
+        this.api_authentication = api_authentication;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
     @Override

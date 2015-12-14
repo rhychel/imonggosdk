@@ -31,6 +31,7 @@ import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
@@ -257,6 +258,10 @@ public abstract class BaseSyncService extends ImonggoService {
             case CUSTOMER_GROUPS: {
                 CustomerGroup customerGroup = (CustomerGroup) o;
                 return getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroup.getId()).queryForFirst() != null;
+            }
+            case CUSTOMER_CATEGORIES: {
+                CustomerCategory customerCategory = (CustomerCategory) o;
+                return getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customerCategory.getId()).queryForFirst() != null;
             }
             case PAYMENT_TERMS: {
                 PaymentTerms paymentTerms = (PaymentTerms) o;
