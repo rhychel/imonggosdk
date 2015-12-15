@@ -18,6 +18,7 @@ import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -55,11 +56,16 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
         setNextActivityClass(C_Module.class);
 
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.startSwable(this);
+
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
         rvModules = (RecyclerView) findViewById(R.id.rvModules);
         spBranches = (Spinner) findViewById(R.id.spBranches);
         setSupportActionBar(tbActionBar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_app_logo);
 
         branchesAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_dark, getBranches());
         branchesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
@@ -114,5 +120,12 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     @Override
     public void onItemClicked(View view, int position) {
         moduleSelected(view);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.stopSwable(this);
+        super.onDestroy();
     }
 }

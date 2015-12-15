@@ -37,6 +37,13 @@ public class DialogTools<T> {
         });
         dialog.show();
     }
+    public static void showDialog(Context context, String title, String message, String btnText, DialogInterface.OnClickListener callback, int theme) {
+        AlertDialog.Builder dialog = (theme == NO_THEME) ? new AlertDialog.Builder(context) : new AlertDialog.Builder(context, theme);
+        dialog.setTitle(title);
+        dialog.setMessage(message);
+        dialog.setPositiveButton(btnText, callback);
+        dialog.show();
+    }
 
     public static void showConfirmationDialog(Context context, String title, String message,
                                               String positiveText, DialogInterface.OnClickListener positiveCallback,
@@ -70,9 +77,15 @@ public class DialogTools<T> {
 
     public static void showSelectionDialog(Context context, final ArrayAdapter<?> objects, String positiveText,
                                            final OnItemSelected onItemSelected, String negativeText) {
+        showSelectionDialog(context, objects, positiveText, onItemSelected, negativeText, NO_THEME);
+    }
+
+    public static void showSelectionDialog(Context context, final ArrayAdapter<?> objects, String positiveText,
+                                           final OnItemSelected onItemSelected, String negativeText, int theme) {
         selectedIndex = 0;
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        AlertDialog.Builder dialog = theme == NO_THEME ? new AlertDialog.Builder(context) : new AlertDialog.Builder(context, theme);
         dialog.setTitle("Choose branch");
+        int index = 0;
         dialog.setSingleChoiceItems(objects, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int selected) {

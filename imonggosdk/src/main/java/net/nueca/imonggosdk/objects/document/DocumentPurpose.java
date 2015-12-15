@@ -121,4 +121,8 @@ public class DocumentPurpose extends BaseTable {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return id == ((DocumentPurpose)o).getId();
+    }
 }

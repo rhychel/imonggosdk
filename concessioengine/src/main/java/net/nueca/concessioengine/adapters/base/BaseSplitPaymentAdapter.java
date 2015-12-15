@@ -2,7 +2,7 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 

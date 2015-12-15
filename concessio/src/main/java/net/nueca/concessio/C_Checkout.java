@@ -11,8 +11,8 @@ import android.widget.LinearLayout;
 
 import net.nueca.concessioengine.activities.checkout.CheckoutActivity;
 import net.nueca.concessioengine.adapters.SimpleSplitPaymentAdapter;
-import net.nueca.concessioengine.adapters.enums.DialogType;
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.enums.DialogType;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
 import net.nueca.concessioengine.dialogs.TransactionDialog;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;

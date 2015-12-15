@@ -10,7 +10,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
-import net.nueca.concessioengine.adapters.enums.DialogType;
+import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.widgets.Numpad;
 

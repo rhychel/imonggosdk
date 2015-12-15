@@ -52,7 +52,8 @@
         android:layout_height="wrap_content"
         android:paddingLeft="9dp"
         android:paddingTop="9dp"
-        android:paddingBottom="9dp" />
+        android:paddingBottom="9dp"
+        android:indeterminateTint="@color/primary"/>
 
     <ImageView
         android:id="@+id/ivRetrySync"
