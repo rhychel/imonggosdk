@@ -73,13 +73,10 @@ public class C_Login extends LoginActivity {
                 switch (moduleSetting.getModuleType()) {
                     case RELEASE_ADJUSTMENT:
                     case RELEASE_BRANCH: {
-                        Log.e("RELEASE", "yeah"+hasPulloutRequest);
                         if(!hasPulloutRequest) {
-                            Log.e("RELEASE", "changed to true");
                             hasPulloutRequest = true;
                             modulesToDownload += 2;
                         }
-                        Log.e("RELEASE", "yeah"+hasPulloutRequest);
                     } break;
                     case INVOICE: {
                         hasSales = true;
