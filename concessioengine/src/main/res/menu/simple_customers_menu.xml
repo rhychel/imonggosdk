@@ -21,6 +21,6 @@
         android:icon="@drawable/ic_exit"
         android:title="Unlink Account"
         app:showAsAction="ifRoom"
-        android:visible="true"/>
+        android:visible="false"/>
 
 </menu>
