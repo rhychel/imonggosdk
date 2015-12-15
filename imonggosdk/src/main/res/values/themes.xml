@@ -69,24 +69,29 @@
     <style name="LoginTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="android:textColorPrimary">@color/primary_text</item>
-        <item name="android:textColorHint">@color/hint_text</item>
-        <item name="colorAccent">@android:color/white</item>
-        <!--<item name="android:background">@color/primary</item>-->
+        <item name="android:textColorPrimary">@color/accentLogin</item>
+        <item name="android:textColorHint">@color/hint_textL</item>
+        <item name="colorAccent">@color/accentLogin</item>
+        <item name="android:background">@android:color/white</item>
         <item name="buttonStyle">@style/LoginTheme.Button</item>
 
         <item name="colorControlNormal">@color/accent</item>
-        <item name="colorControlActivated">@android:color/white</item>
+        <item name="colorControlActivated">@color/accentLogin</item>
     </style>
-
     <!-- Login button here -->
-
     <style name="LoginTheme.DialogFrameLayout" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:background">@android:color/white</item>
         <item name="colorControlNormal">@color/accentL</item>
         <item name="colorControlActivated">@color/primary</item>
         <item name="android:textColorHint">@color/accentL</item>
         <item name="android:textColorPrimary">@color/primary_textL</item>
+    </style>
+
+    <style name="WelcomeTheme" parent="LoginTheme">
+        <item name="android:textColorPrimary">@color/primary_textL</item>
+
+        <item name="colorControlNormal">@color/accent</item>
+        <item name="colorControlActivated">@color/primary_textL</item>
     </style>
     <!-- Login Theme - END -->
 

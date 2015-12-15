@@ -64,6 +64,8 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         spBranches = (Spinner) findViewById(R.id.spBranches);
         setSupportActionBar(tbActionBar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_app_logo);
 
         branchesAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_dark, getBranches());
         branchesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);

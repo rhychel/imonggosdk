@@ -6,7 +6,7 @@
         android:title="Update App"
         android:orderInCategory="100"
         app:showAsAction="always"
-        android:icon="@drawable/ic_update_app"/>
+        android:icon="@drawable/ic_sync_white"/>
 
     <item android:id="@+id/mSettings"
         android:title="Settings"

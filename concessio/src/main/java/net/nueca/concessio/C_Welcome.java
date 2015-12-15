@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.activities.welcome.WelcomeActivity;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.interfaces.AccountListener;
@@ -25,9 +24,9 @@ import java.sql.SQLException;
  */
 public class C_Welcome extends WelcomeActivity {
 
-    private TextView tvAgentName, tvLogout;
+    private TextView tvAgentName;
     private Spinner spBranch;
-    private Button btnBegin;
+    private Button btnBegin, btnNotYou;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,16 +34,14 @@ public class C_Welcome extends WelcomeActivity {
         setContentView(R.layout.c_welcome);
 
         tvAgentName = (TextView) findViewById(R.id.tvAgentName);
-        tvLogout = (TextView) findViewById(R.id.tvLogout);
+        btnNotYou = (Button) findViewById(R.id.btnNotYou);
         spBranch = (Spinner) findViewById(R.id.spBranch);
         btnBegin = (Button) findViewById(R.id.btnBegin);
-
-        tvLogout.setText(Html.fromHtml("<u><i>Not you?<br/>Logout</i></u>"));
 
         ArrayAdapter<Branch> branchArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, getBranches());
         spBranch.setAdapter(branchArrayAdapter);
 
-        tvLogout.setOnClickListener(new View.OnClickListener() {
+        btnNotYou.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
