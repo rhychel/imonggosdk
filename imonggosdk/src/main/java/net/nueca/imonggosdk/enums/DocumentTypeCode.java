@@ -29,4 +29,14 @@ public enum DocumentTypeCode {
         }
         return PHYSICAL_COUNT;
     }
+
+    public static DocumentTypeCode identify(ConcessioModule concessioModule) {
+        if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT)
+            concessioModule = ConcessioModule.RECEIVE_BRANCH;
+        for(DocumentTypeCode documentTypeCode : values()) {
+            if(documentTypeCode.name.equals(concessioModule.toString()))
+                return documentTypeCode;
+        }
+        return PHYSICAL_COUNT;
+    }
 }

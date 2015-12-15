@@ -9,7 +9,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;

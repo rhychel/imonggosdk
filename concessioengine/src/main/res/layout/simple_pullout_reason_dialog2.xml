@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/tvTitle"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:textIsSelectable="false"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+
+        <TextView
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:text="Reason"
+            android:id="@+id/tvReasonLabel"
+            android:textSize="12sp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:id="@+id/spnReason"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:id="@+id/llSourceBranch">
+
+        <TextView
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:text="Source Branch"
+            android:id="@+id/tvSourceBranchLabel"
+            android:textSize="12sp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Spinner
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:id="@+id/spnSourceBranch"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:id="@+id/llDestinationBranch">
+
+        <TextView
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:text="Destination Branch"
+            android:id="@+id/tvDestinationBranchLabel"
+            android:textSize="12sp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Spinner
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:id="@+id/spnDestinationBranch"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:animateLayoutChanges="false"
+        android:layout_gravity="right"
+        android:measureWithLargestChild="true"
+        android:layout_marginTop="16dp">
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="Cancel"
+            android:id="@+id/btnCancel"
+            android:layout_toLeftOf="@+id/btnSave"
+            android:layout_toStartOf="@+id/btnSave"
+            android:layout_alignTop="@+id/btnSave"
+            android:textSize="16sp"
+            android:textColor="@color/primary" />
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="Save"
+            android:id="@+id/btnSave"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/llContent"
+            android:textSize="16sp"
+            android:textColor="@color/primary" />
+    </LinearLayout>
+</LinearLayout>

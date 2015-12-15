@@ -37,6 +37,12 @@ public class ModuleSetting extends DBTable {
     private boolean has_route_plan = false;
     @DatabaseField
     private String show_in = "beginning"; // beginning, middle, last
+    @DatabaseField
+    private boolean require_warehouse = false;
+    @DatabaseField
+    private boolean with_purpose = false;
+    @DatabaseField
+    private boolean with_customer = false;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_listing_id")
@@ -179,19 +185,69 @@ public class ModuleSetting extends DBTable {
         this.require_document_reason = require_document_reason;
     }
 
+    public String getShow_in() {
+        return show_in;
+    }
+
+    public void setShow_in(String show_in) {
+        this.show_in = show_in;
+    }
+
+    public boolean isHas_route_plan() {
+        return has_route_plan;
+    }
+
+    public void setHas_route_plan(boolean has_route_plan) {
+        this.has_route_plan = has_route_plan;
+    }
+
+    public boolean isRequire_warehouse() {
+        return require_warehouse;
+    }
+
+    public void setRequire_warehouse(boolean require_warehouse) {
+        this.require_warehouse = require_warehouse;
+    }
+
+    public boolean isWith_purpose() {
+        return with_purpose;
+    }
+
+    public void setWith_purpose(boolean with_purpose) {
+        this.with_purpose = with_purpose;
+    }
+
+    public boolean isWith_customer() {
+        return with_customer;
+    }
+
+    public void setWith_customer(boolean with_customer) {
+        this.with_customer = with_customer;
+    }
+
     public ConcessioModule getModuleType() {
         if(module_type.equals("stock_request"))
             return ConcessioModule.STOCK_REQUEST;
         if(module_type.equals("physical_count"))
             return ConcessioModule.PHYSICAL_COUNT;
+
         if(module_type.equals("receive_branch"))
             return ConcessioModule.RECEIVE_BRANCH;
         if(module_type.equals("release_branch"))
-            return ConcessioModule.RECEIVE_BRANCH;
+            return ConcessioModule.RELEASE_BRANCH;
         if(module_type.equals("receive_branch_pullout"))
             return ConcessioModule.RECEIVE_BRANCH_PULLOUT;
+
+        if(module_type.equals("receive_adjustment"))
+            return ConcessioModule.RECEIVE_ADJUSTMENT;
+        if(module_type.equals("release_adjustment"))
+            return ConcessioModule.RELEASE_ADJUSTMENT;
+
         if(module_type.equals("receive_supplier"))
             return ConcessioModule.RECEIVE_SUPPLIER;
+        if(module_type.equals("release_supplier"))
+            return ConcessioModule.RELEASE_SUPPLIER;
+
         if(module_type.equals("invoice"))
             return ConcessioModule.INVOICE;
         return ConcessioModule.APP;

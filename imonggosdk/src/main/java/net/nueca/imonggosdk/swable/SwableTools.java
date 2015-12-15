@@ -404,7 +404,7 @@ public class SwableTools {
                 return this;
             }
 
-            public void queue() {
+            public OfflineData queue() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : SendTransaction : Transaction Object is null");
                 if(reason == null || reason.isEmpty())
@@ -423,6 +423,7 @@ public class SwableTools {
                 }
 
                 offlineData.updateTo(helper);
+                return offlineData;
             }
 
             public DirectTransaction directCancel() {
@@ -479,7 +480,7 @@ public class SwableTools {
                 offlineData = new OfflineData(invoice, OfflineDataType.UNKNOWN);
                 return this;
             }
-            public void queue() {
+            public OfflineData queue() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : SendTransaction : Transaction Object is null");
                 if(branchId == null)
@@ -498,6 +499,7 @@ public class SwableTools {
                 }
 
                 offlineData.insertTo(helper);
+                return offlineData;
             }
             public DirectTransaction directSend() {
                 if(offlineData == null)

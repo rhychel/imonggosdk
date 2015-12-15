@@ -2,7 +2,6 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
-import net.nueca.concessioengine.adapters.enums.ListingType;
 import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.util.ArrayList;
