@@ -29,6 +29,21 @@ public class SalesPushSettings extends DBTable {
     private SalesPromotion salesPromotion;
 
     @Override
+    public String toString() {
+        return "SalesPushSettings{" +
+                "id=" + id +
+                ", enable_threshold=" + enable_threshold +
+                ", threshold=" + threshold +
+                ", return_trigger=" + return_trigger +
+                ", offline_message='" + offline_message + '\'' +
+                ", encouragement_message='" + encouragement_message + '\'' +
+                ", trigger='" + trigger + '\'' +
+                ", congratulation_message='" + congratulation_message + '\'' +
+                ", salesPromotion=" + salesPromotion +
+                '}';
+    }
+
+    @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(SalesPushSettings.class, this);

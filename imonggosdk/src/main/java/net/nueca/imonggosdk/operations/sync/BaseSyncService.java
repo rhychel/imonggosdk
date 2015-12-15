@@ -259,6 +259,9 @@ public abstract class BaseSyncService extends ImonggoService {
                 CustomerGroup customerGroup = (CustomerGroup) o;
                 return getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroup.getId()).queryForFirst() != null;
             }
+            case CUSTOMER_CUSTOMER_GROUP: {
+
+            }
             case CUSTOMER_CATEGORIES: {
                 CustomerCategory customerCategory = (CustomerCategory) o;
                 return getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customerCategory.getId()).queryForFirst() != null;
