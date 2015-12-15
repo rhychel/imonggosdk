@@ -80,13 +80,26 @@
             android:layout_gravity="center_vertical"
             android:textSize="30sp"
             android:textColor="@android:color/white"
-            android:singleLine="false" />
+            android:singleLine="false"
+            android:layout_margin="5dp"/>
 
         <Button
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:id="@+id/btnBegin"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:drawableRight="@android:drawable/ic_media_play"
+            android:background="@android:color/transparent"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/ibtnBegin"
+            android:src="@drawable/ic_store"
+            android:scaleType="fitCenter"
+            android:backgroundTint="#8000"
+            />
     </LinearLayout>
 
     <LinearLayout

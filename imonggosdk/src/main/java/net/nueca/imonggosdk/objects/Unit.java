@@ -1,6 +1,8 @@
 package net.nueca.imonggosdk.objects;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -9,6 +11,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.base.Extras;
 
@@ -27,6 +30,10 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
     private double cost, quantity, retail_price;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<Price> prices;
+
     @DatabaseField
     private boolean is_default_ordering_unit = false;
     @DatabaseField
@@ -118,6 +125,14 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
         this.discount_text = discount_text;
     }
 
+    public ForeignCollection<Price> getPrices() {
+        return prices;
+    }
+
+    public void setPrices(ForeignCollection<Price> prices) {
+        this.prices = prices;
+    }
+
     @Override
     public boolean equals(Object o) {
         return id == ((Unit)o).getId();
@@ -131,6 +146,7 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
+            insertExtrasTo(dbHelper);
             dbHelper.insert(Unit.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -140,6 +156,7 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
+            deleteExtrasTo(dbHelper);
             dbHelper.delete(Unit.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -149,6 +166,7 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
+            updateExtrasTo(dbHelper);
             dbHelper.update(Unit.class, this);
         } catch (SQLException e) {
             e.printStackTrace();

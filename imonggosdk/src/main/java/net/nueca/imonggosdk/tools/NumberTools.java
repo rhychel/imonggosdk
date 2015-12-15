@@ -118,13 +118,13 @@ public class NumberTools {
         return separateInCommas(unparsedNum).replace(',', ' ');
     }
     public static String separateInSpaces(BigDecimal num) {
-        return separateInSpaces(num).replace(',', ' ');
+        return separateInCommas(num).replace(',', ' ');
     }
     public static String separateInSpaces(Double num) {
-        return separateInSpaces(num).replace(',', ' ');
+        return separateInCommas(num).replace(',', ' ');
     }
     public static String separateInSpaces(int num) {
-        return separateInSpaces(num).replace(',', ' ');
+        return separateInCommas(num).replace(',', ' ');
     }
 
     public static final DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###,##0.##");

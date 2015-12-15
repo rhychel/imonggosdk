@@ -1,22 +1,26 @@
 package net.nueca.imonggosdk.objects.customer;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.RoutePlan;
+import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
-import net.nueca.imonggosdk.objects.price.PriceList;
-import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
+import net.nueca.imonggosdk.objects.price.PriceList;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 
@@ -27,14 +31,17 @@ import java.sql.SQLException;
 @DatabaseTable
 public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
 
+    @Expose
     @DatabaseField
     private int point_to_amount_ratio;
+    @Expose
     @DatabaseField
     private String code, alternate_code, first_name, last_name, name, company_name,
             tin, street = "", city, state, zipcode, country, telephone = "", fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
             membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+    @Expose
     @DatabaseField
     private boolean tax_exempt;
     @DatabaseField
@@ -63,28 +70,54 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     /** -- END --
      * THESE ARE FOR THE LETTER HEADER
      */
-
-
-    public Customer(String s, String s1, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String gender) {
-        this.first_name = s;
-        this.last_name =s1;
-        this.name = s2;
-        this.company_name = s3;
-        this.telephone = s4;
-        this.mobile = s5;
-        this.email = s6;
-        this.street = s7;
-        this.city = s8;
-        this.zipcode = s9;
-        this.country = s10;
-        this.state = s11;
-        this.tin = s12;
-        this.gender = gender;
-    }
-
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
+    protected transient OfflineData offlineData;
 
     public Customer() {
 
+    }
+
+    public Customer(String first_name, String last_name, String name, String company_name,
+                    String telephone, String mobile, String fax, String email, String street,
+                    String city, String zipcode, String country, String state, String tin, String gender) {
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.name = name;
+        this.company_name = company_name;
+        this.telephone = telephone;
+        this.mobile = mobile;
+        this.fax = fax;
+        this.email = email;
+        this.street = street;
+        this.city = city;
+        this.zipcode = zipcode;
+        this.country = country;
+        this.state = state;
+        this.tin = tin;
+        this.gender = gender;
+    }
+
+    // TODO: complete all fields
+    public Customer(Builder builder) {
+        this.first_name = builder.first_name;
+        this.last_name = builder.last_name;
+        this.name = builder.name;
+        this.company_name = builder.company_name;
+        this.telephone = builder.telephone;
+        this.mobile = builder.mobile;
+        this.fax = builder.fax;
+        this.email = builder.email;
+        this.street = builder.street;
+        this.city = builder.city;
+        this.zipcode = builder.zipcode;
+        this.country = builder.country;
+        this.state = builder.state;
+        this.tin = builder.tin;
+        this.gender = builder.gender;
+    }
+
+    public Customer(String s, String s1, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String gender) {
+        super();
     }
 
     public int getPoint_to_amount_ratio() {
@@ -391,6 +424,14 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.documents = documents;
     }
 
+    public OfflineData getOfflineData() {
+        return offlineData;
+    }
+
+    public void setOfflineData(OfflineData offlineData) {
+        this.offlineData = offlineData;
+    }
+
     public int getSectionFirstPosition() {
         return sectionFirstPosition;
     }
@@ -426,6 +467,24 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         int result = 17;
         result = 31 * result + id;
         return result;
+    }
+
+    public JSONObject toJSONObject() throws JSONException {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return new JSONObject(gson.toJson(this));
+    }
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
+    }
+
+    public static Customer fromJSONObject(JSONObject jsonObject) throws JSONException {
+        Gson gson = new Gson();
+        if(jsonObject.has("customer")) {
+            jsonObject = jsonObject.getJSONObject("customer");
+        }
+        Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
+        return customer;
     }
 
     @Override
@@ -519,5 +578,102 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
         extras.updateTo(dbHelper);
+    }
+
+    // TODO: complete all fields
+    public static class Builder {
+        protected Extras extras;
+        protected String utc_created_at, utc_updated_at,
+                code, alternate_code, first_name, last_name, name, company_name,
+                tin, street, city, state, zipcode, country, telephone, fax,
+                mobile, email, remark, customer_type_id, customer_type_name,
+                discount_text, available_points, birthdate, status, birthday,
+                membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+
+        public Customer build() {
+            return new Customer(this);
+        }
+
+        public Builder first_name(String first_name) {
+            this.first_name = first_name;
+            return this;
+        }
+        public Builder last_name(String last_name) {
+            this.last_name = last_name;
+            return this;
+        }
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        public Builder company_name(String company_name) {
+            this.company_name = company_name;
+            return this;
+        }
+        public Builder code(String code) {
+            this.code = code;
+            return this;
+        }
+        public Builder alternate_code(String alternate_code) {
+            this.alternate_code = alternate_code;
+            return this;
+        }
+        public Builder tin(String tin) {
+            this.tin = tin;
+            return this;
+        }
+        public Builder street(String street) {
+            this.street = street;
+            return this;
+        }
+        public Builder city(String city) {
+            this.city = city;
+            return this;
+        }
+        public Builder state(String state) {
+            this.state = state;
+            return this;
+        }
+        public Builder zipcode(String zipcode) {
+            this.zipcode = zipcode;
+            return this;
+        }
+        public Builder country(String country) {
+            this.country = country;
+            return this;
+        }
+        public Builder telephone(String telephone) {
+            this.telephone = telephone;
+            return this;
+        }
+        public Builder fax(String fax) {
+            this.fax = fax;
+            return this;
+        }
+        public Builder mobile(String mobile) {
+            this.mobile = mobile;
+            return this;
+        }
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+        public Builder remark(String remark) {
+            this.remark = remark;
+            return this;
+        }
+        public Builder birthdate(String birthdate) {
+            this.birthdate = birthdate;
+            return this;
+        }
+        public Builder birthday(String birthday) {
+            this.birthday = birthday;
+            return this;
+        }
+        public Builder status(String status) {
+            this.status = status;
+            return this;
+        }
+
     }
 }

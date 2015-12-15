@@ -14,6 +14,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
@@ -33,17 +36,25 @@ import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
+import net.nueca.imonggosdk.enums.RequestType;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
 import org.json.JSONException;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by rhymart on 8/21/15.
@@ -57,6 +68,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     private Toolbar toolbar;
     private boolean hasMenu = true;
 
+    private Customer selectedCustomer;
+
     private SimpleReceiveFragment simpleReceiveFragment;
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
 
@@ -69,6 +82,50 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SwableTools.startSwable(this);
+
+        try {
+            Branch branch = getHelper().getDao(Branch.class).queryBuilder().where().eq("id", getSession().getCurrent_branch_id()).queryForFirst();
+            List<Product> products = getHelper().getDao(Product.class).queryForAll();
+            List<PriceList> priceLists = getHelper().getDao(PriceList.class).queryForAll();
+            if(priceLists.size() == 1)
+                priceLists.get(0).deleteTo(getHelper());
+
+            priceLists = getHelper().getDao(PriceList.class).queryForAll();
+            if(priceLists.size() == 0) {
+                PriceList.Builder builder = new PriceList.Builder();
+                builder.branch(branch);
+
+                PriceList priceList = builder.build();
+                priceList.setId(priceLists.size() + 1);
+                priceList.insertTo(getHelper());
+                for(int i=0; i<(products.size() % 16);i++) {
+                    Price price = new Price();
+                    price.setId(i + 8);
+                    price.setPriceList(priceList);
+                    price.setProduct(products.get(((int) (Math.random() * 10000)) % products.size()));
+                    price.setRetail_price( (((int)(Math.random() * 1000000) ) % 1000)/100 );
+                    price.insertTo(getHelper());
+                }
+                priceList.updateTo(getHelper());
+            }
+            priceLists = getHelper().getDao(PriceList.class).queryForAll();
+            Log.e("PRICE_LIST", priceLists.size() + "");
+            for(PriceList priceList : priceLists) {
+                Log.e("###", priceList.toString());
+                for(Price price : priceList.getPrices())
+                    Log.e("######", price.toString());
+            }
+
+
+            selectedCustomer = getHelper().getDao(Customer.class).queryForAll().get(0);
+            Log.e("CUSTOMER", selectedCustomer.getName());
+            selectedCustomer.setPriceList(priceLists.get(0));
+            selectedCustomer.updateTo(getHelper());
+            priceLists.get(0).updateTo(getHelper());
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         setContentView(R.layout.c_module);
 
@@ -92,11 +149,19 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         finalizeFragment.setProductsRecyclerAdapter(null);
 
         switch (concessioModule) {
-            case SALES: {
-                simpleProductsFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
-                finalizeFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this));
+            case INVOICE: {
+                SimpleSalesProductRecyclerAdapter salesAdapter = new SimpleSalesProductRecyclerAdapter(this, getHelper());
+                try {
+                    salesAdapter.setBranch(getHelper().getDao(Branch.class).queryBuilder().where()
+                            .eq("id", getSession().getCurrent_branch_id()).queryForFirst());
+                    //salesAdapter.setCustomer(selectedCustomer);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                simpleProductsFragment.setProductsRecyclerAdapter(salesAdapter);
+                finalizeFragment.setProductsRecyclerAdapter(new SimpleSalesProductRecyclerAdapter(this, getHelper()));
             }
-            case ORDERS: {
+            case STOCK_REQUEST: {
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setProductCategories(getProductCategories(true));
 
@@ -118,7 +183,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
                 btnReview.setVisibility(View.VISIBLE);
             } break;
-            case PULLOUT_REQUEST: {
+            case RELEASE_BRANCH: {
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
                 simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
                     @Override
@@ -150,7 +215,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
                 btnReview.setVisibility(View.VISIBLE);
             } break;
-            case RECEIVE: {
+            case RECEIVE_BRANCH: {
                 simpleReceiveFragment = new SimpleReceiveFragment();
                 simpleReceiveFragment.setHelper(getHelper());
                 simpleReceiveFragment.setSetupActionBar(this);
@@ -226,9 +291,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        hasMenu = true;
+      /*  hasMenu = true;
         if(!btnReview.getText().toString().equals("Review")) {
-            if(concessioModule == ConcessioModule.SALES && btnReview.getText().toString().equals("Send"))
+            if(concessioModule == ConcessioModule.INVOICE && btnReview.getText().toString().equals("Send"))
                 btnReview.setText("Checkout");
             else
                 btnReview.setText("Review");
@@ -241,14 +306,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             if(simplePulloutToolbarExt != null)
                 simplePulloutToolbarExt.detach();
         }
-        invalidateOptionsMenu();
+        invalidateOptionsMenu();*/
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(!btnReview.getText().toString().equals("Review")) {
+      /*  if(!btnReview.getText().toString().equals("Review")) {
             setTitle("Review");
-            if(concessioModule == ConcessioModule.SALES && btnReview.getText().toString().equals("Send"))
+            if(concessioModule == ConcessioModule.INVOICE && btnReview.getText().toString().equals("Send"))
                 setTitle("Checkout");
         }
 
@@ -265,20 +330,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 menu.findItem(R.id.mLogout).setVisible(false);
 
                 mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
-                /*initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
+                *//*initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
                     @Override
                     public boolean onQueryTextChange(String newText) {
                         simpleProductsFragment.updateListWhenSearch(newText);
                         return true;
                         }
-                });*/
+                });*//*
             }
         }
 
         getSupportActionBar().setDisplayShowTitleEnabled(!btnReview.getText().equals("Review"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(!btnReview.getText().equals("Review"));
         getSupportActionBar().setHomeButtonEnabled(!btnReview.getText().equals("Review"));
-
+*/
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -296,7 +361,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 }
             }, "No");
         } else if(id == R.id.mCustomer) {
-
+            SimpleCustomersFragment customersFragment = new SimpleCustomersFragment();
+            customersFragment.setHelper(getHelper());
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
+                            R.anim.slide_in_left, R.anim.slide_out_right)
+                    .replace(R.id.flContent, customersFragment)
+                    .addToBackStack("customer_fragment")
+                    .commit();
         }
 
         return super.onOptionsItemSelected(item);
@@ -306,7 +378,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     public void setupActionBar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         this.toolbar = toolbar;
-
+/*
         if(concessioModule == ConcessioModule.PULLOUT_REQUEST && btnReview.getText().equals("Review")) {
             if(simplePulloutToolbarExt == null)
                 simplePulloutToolbarExt = new SimplePulloutToolbarExt();
@@ -320,7 +392,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         } else {
             if(simplePulloutToolbarExt != null)
                 simplePulloutToolbarExt.detach();
-        }
+        }*/
     }
 
     private MultiInputListener multiInputListener = new MultiInputListener() {
@@ -349,7 +421,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             switch (concessioModule) {
-                                                case ORDERS: {
+                                                case STOCK_REQUEST: {
                                                     try {
                                                         SwableTools.sendTransaction(getHelper(), branch.getId(),
                                                                 generateOrder(C_Module.this, warehouse.getId()), OfflineDataType.SEND_ORDER);
@@ -375,7 +447,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                                     }
                                                 }
                                                 break;
-                                                case PULLOUT_REQUEST: {
+                                                case RELEASE_BRANCH: {
                                                     try {
                                                         Document pulloutDoc = generateDocument(C_Module.this,
                                                                 simplePulloutRequestDialog
@@ -427,7 +499,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
                     DialogTools.showDialog(C_Module.this, "Ooops!", "You haven't selected anything.");
                 else {
-                    if (concessioModule == ConcessioModule.SALES)
+                    if (concessioModule == ConcessioModule.INVOICE)
                         btnReview.setText("Checkout");
                     else
                         btnReview.setText("Send");

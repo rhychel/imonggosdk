@@ -5,7 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.base.DBTable;
-import net.nueca.imonggosdk.objects.invoice.SalesPromotion;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 
 import java.sql.SQLException;
 
@@ -27,6 +27,21 @@ public class SalesPushSettings extends DBTable {
 
     @DatabaseField(foreign = true, columnName = "sales_push")
     private SalesPromotion salesPromotion;
+
+    @Override
+    public String toString() {
+        return "SalesPushSettings{" +
+                "id=" + id +
+                ", enable_threshold=" + enable_threshold +
+                ", threshold=" + threshold +
+                ", return_trigger=" + return_trigger +
+                ", offline_message='" + offline_message + '\'' +
+                ", encouragement_message='" + encouragement_message + '\'' +
+                ", trigger='" + trigger + '\'' +
+                ", congratulation_message='" + congratulation_message + '\'' +
+                ", salesPromotion=" + salesPromotion +
+                '}';
+    }
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {

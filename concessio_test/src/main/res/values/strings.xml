@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Concessio</string>
+    <string name="app_name">Concessio Test</string>
     <string name="title_activity_receive">Receive</string>
     <string name="title_activity_customers">Customers</string>
 

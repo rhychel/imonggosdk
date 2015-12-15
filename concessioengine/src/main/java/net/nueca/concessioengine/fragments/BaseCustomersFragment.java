@@ -17,6 +17,7 @@ import net.nueca.concessioengine.adapters.SimpleCustomerRecyclerViewAdapter;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.customer.Customer;
 
