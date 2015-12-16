@@ -232,6 +232,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 else
                     simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
                 simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
+                simpleSalesQuantityDialog.setHasUnits(hasUnits);
+                Log.e("UNITS", "" + product.getUnits().size());
+                Log.e("UNITS",""+getHelper().fetchForeignCollection(product.getUnits().closeableIterator()).size());
                 simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
                 simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
                 simpleSalesQuantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {

@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by gama on 7/20/15.
  */
-public class Document extends BaseTransactionTable implements Extras.DoOperationsForExtras {
+public class Document extends BaseTransactionTable {
     public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 5;
 
     @Expose
@@ -291,7 +291,6 @@ public class Document extends BaseTransactionTable implements Extras.DoOperation
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
-        insertExtrasTo(dbHelper);
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -303,6 +302,7 @@ public class Document extends BaseTransactionTable implements Extras.DoOperation
             }
             return;
         }
+        insertExtrasTo(dbHelper);
 
         try {
             dbHelper.insert(Document.class, this);
@@ -325,11 +325,14 @@ public class Document extends BaseTransactionTable implements Extras.DoOperation
                 documentLine.insertTo(dbHelper);
             }
         }
+
+        updateExtrasTo(dbHelper);
+
+        Log.e("DOCUMENT", "insert " + id + " ~ " + (offlineData != null? offlineData.getId() : "null") );
     }
 
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
-        deleteExtrasTo(dbHelper);
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -354,11 +357,12 @@ public class Document extends BaseTransactionTable implements Extras.DoOperation
         for(DocumentLine documentLine : document_lines) {
             documentLine.deleteTo(dbHelper);
         }
+
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
-        updateExtrasTo(dbHelper);
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -376,30 +380,38 @@ public class Document extends BaseTransactionTable implements Extras.DoOperation
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        updateExtrasTo(dbHelper);
+
         Log.e("DOCUMENT", "update " + id + " ~ " + offlineData.getId());
     }
 
     @Override
     public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.setDocument(this);
-        extras.setId(Document.class.getName().toUpperCase(), id);
-        extras.insertTo(dbHelper);
+        if(extras != null) {
+            extras.setDocument(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
     }
 
     @Override
     public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.deleteTo(dbHelper);
+        if(extras != null)
+            extras.deleteTo(dbHelper);
     }
 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
-        String idstr = Document.class.getName().toUpperCase() + id;
-        if(idstr.equals(extras.getId()))
-            extras.updateTo(dbHelper);
-        else {
-            extras.deleteTo(dbHelper);
-            extras.setId(Document.class.getName().toUpperCase(), id);
-            extras.insertTo(dbHelper);
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() +"_"+ id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
         }
     }
 

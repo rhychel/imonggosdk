@@ -2,6 +2,7 @@ package net.nueca.concessio_test;
 
 import android.support.v4.widget.SearchViewCompat;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -117,6 +118,9 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
         simpleProductsFragment.setUseRecyclerView(true);
         finalizeFragment.setUseRecyclerView(true);
 
+        simpleProductsFragment.setHasUnits(true);
+        finalizeFragment.setHasUnits(true);
+
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
 
@@ -124,13 +128,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
         finalizeFragment.setSetupActionBar(this);
 
         salesAdapter = new SimpleSalesProductRecyclerAdapter(this, getHelper());
-        try {
-            salesAdapter.setBranch(getHelper().fetchObjects(Branch.class).queryBuilder().where()
-                    .eq("id", getSession().getCurrent_branch_id()).queryForFirst());
-            //salesAdapter.setCustomer(selectedCustomer);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
         simpleProductsFragment.setProductsRecyclerAdapter(salesAdapter);
         simpleProductsFragment.setListingType(ListingType.SALES);
         finalizeFragment.setProductsRecyclerAdapter(salesAdapter);
@@ -160,7 +158,23 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
     public boolean onCreateOptionsMenu(Menu menu) {
         if(btnReview != null && btnReview.getText().toString().equals(REVIEW_LABEL)) {
             getMenuInflater().inflate(R.menu.menu_sample_sales, menu);
-            mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
+            SearchView mSearch = (SearchView) menu.findItem(R.id.mSearch).getActionView();
+
+            mSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    simpleProductsFragment.setSearchKey(query);
+                    simpleProductsFragment.refreshList();
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    simpleProductsFragment.setSearchKey(newText);
+                    simpleProductsFragment.refreshList();
+                    return true;
+                }
+            });
             /*initializeSearchViewEx(new SearchViewCompat.OnQueryTextListenerCompat() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
@@ -265,8 +279,13 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
                 selectedCustomer = customersFragment.getSelectedCustomers().get(0);
             else
                 selectedCustomer = null;
-            salesAdapter.setCustomer(selectedCustomer);
-            //simpleProductsFragment.setProductsRecyclerAdapter(salesAdapter);
+            try {
+                salesAdapter.setBranch(getHelper().fetchObjects(Branch.class).queryBuilder().where()
+                        .eq("id", getSession().getCurrent_branch_id()).queryForFirst());
+                salesAdapter.setCustomer(selectedCustomer);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
                             R.anim.slide_in_left, R.anim.slide_out_right)

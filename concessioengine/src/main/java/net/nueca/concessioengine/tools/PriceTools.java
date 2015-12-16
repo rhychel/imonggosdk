@@ -78,7 +78,7 @@ public class PriceTools {
                 type = "CUSTOMER";
             }
 
-            //Log.e("Price-" + type, "retail_price:" + retail_price + " for " + product.getName());
+            Log.e("Price-" + type, "retail_price:" + retail_price + " for " + product.getName());
         } catch (SQLException e) {
             e.printStackTrace();
             return product.getRetail_price();

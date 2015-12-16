@@ -16,8 +16,15 @@ import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
+import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
 
 import java.sql.SQLException;
 
@@ -161,14 +168,8 @@ public class Extras extends DBTable {
     /** FOREIGN TABLES **/
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private transient RoutePlan routePlan;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_id")
-    private transient Document document;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_line_id")
-    private transient DocumentLine documentLine;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
-    private transient Invoice invoice;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_fr_id")
     private transient Customer customer;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
@@ -177,8 +178,29 @@ public class Extras extends DBTable {
     private transient User user;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "unit_id")
     private transient Unit unit;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_id")
+    private transient Document document;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_line_id")
+    private transient DocumentLine documentLine;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_purpose_id")
+    private transient DocumentPurpose documentPurpose;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_type_id")
+    private transient DocumentType documentType;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "order_id")
+    private transient Order order;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "order_line_id")
+    private transient OrderLine orderLine;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
+    private transient Invoice invoice;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_line_id")
+    private transient InvoiceLine invoiceLine;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_id")
     private transient InvoicePayment invoicePayment;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_tax_rate_id")
+    private transient InvoiceTaxRate invoiceTaxRate;
 
     public Extras() { }
 
@@ -627,6 +649,54 @@ public class Extras extends DBTable {
 
     public void setDefault_ordering_unit_id(String default_ordering_unit_id) {
         this.default_ordering_unit_id = default_ordering_unit_id;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public OrderLine getOrderLine() {
+        return orderLine;
+    }
+
+    public void setOrderLine(OrderLine orderLine) {
+        this.orderLine = orderLine;
+    }
+
+    public InvoiceLine getInvoiceLine() {
+        return invoiceLine;
+    }
+
+    public void setInvoiceLine(InvoiceLine invoiceLine) {
+        this.invoiceLine = invoiceLine;
+    }
+
+    public DocumentType getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
+    }
+
+    public DocumentPurpose getDocumentPurpose() {
+        return documentPurpose;
+    }
+
+    public void setDocumentPurpose(DocumentPurpose documentPurpose) {
+        this.documentPurpose = documentPurpose;
+    }
+
+    public InvoiceTaxRate getInvoiceTaxRate() {
+        return invoiceTaxRate;
+    }
+
+    public void setInvoiceTaxRate(InvoiceTaxRate invoiceTaxRate) {
+        this.invoiceTaxRate = invoiceTaxRate;
     }
 
     @Override

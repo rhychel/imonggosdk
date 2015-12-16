@@ -46,7 +46,7 @@ public class C_Welcome extends ModuleActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_welcome);
 
-        Document.Builder builder = new Document.Builder();
+        /*Document.Builder builder = new Document.Builder();
         try {
             builder.addDocumentLine(new DocumentLine.Builder()
                     .line_no(1)
@@ -62,41 +62,60 @@ public class C_Welcome extends ModuleActivity {
 
             builder.generateReference(this, getSession().getDevice_id());
             builder.target_branch_id(getSession().getCurrent_branch_id());
-            builder.document_type_code(DocumentTypeCode.RECEIVE_SUPPLIER);
-            builder.extras(new Extras.Builder()
-                    .customer_id(182557)
-                    .build());
+            builder.document_type_code(DocumentTypeCode.RELEASE_ADJUSTMENT);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        Document document = builder.build();
+        Document document1 = builder.build();
+        document1.setReference(document1.getReference()+"a");
+        document1.setExtras(new Extras.Builder()
+                .customer_id(182556)
+                .build());
+        Document document2 = builder.build();
+        document2.setReference(document2.getReference()+"b");
+        document2.setExtras(new Extras.Builder()
+                .customer_id(182557)
+                .build());
 
         try {
-            Document t = getHelper().fetchObjects(Document.class).queryBuilder().where().eq("id", document.getId()).queryForFirst();
-            if(t != null)
-                t.deleteTo(getHelper());
 
             for(OfflineData to : getHelper().fetchObjects(OfflineData.class).queryForAll())
                 to.deleteTo(getHelper());
 
-            Log.e("DOCUMENT", document.getReference());
-            Log.e("DOCUMENT", document.toJSONString());
+            Log.e("DOCUMENT", document1.getReference() + " " + document1.getId());
+            Log.e("DOCUMENT", document1.toJSONString());
 
             OfflineData offlineData = new SwableTools.Transaction(getHelper())
                     .toSend()
-                    .forBranch(document.getTarget_branch_id())
-                    .object(document)
+                    .forBranch(document1.getTarget_branch_id())
+                    .object(document1)
                     .queue();
-            Log.e("OFFLINEDATA " + offlineData.getId(), ((Document)offlineData.getObjectFromData()).getId() + " ~~~ " + offlineData.getData().toString
+            new SwableTools.Transaction(getHelper())
+                    .toSend()
+                    .forBranch(document2.getTarget_branch_id())
+                    .object(document2)
+                    .queue();
+            Log.e("OFFLINEDATA " + offlineData.getId(), ((Document)offlineData.getObjectFromData()).getId() + " ~~~ " + offlineData.getObjectFromData().toString
                     ());
             int id = offlineData.getId();
             offlineData = null;
             offlineData = getHelper().fetchObjects(OfflineData.class).queryBuilder().where().eq("id", id).queryForFirst();
-            Log.e("OFFLINEDATA " + offlineData.getId(), ((Document)offlineData.getObjectFromData()).getId() + " ~~~ " + offlineData.getData().toString
-                    ());
-        } catch (JSONException e) {
+            Log.e("OFFLINEDATA " + offlineData.getId(), offlineData.getObjectFromData() != null ? ((Document)offlineData
+                    .getObjectFromData()).getId() + "" : "null");
+            Log.e("OFFLINEDATA JSON", offlineData.getObjectFromData().toString());
+
+        }*//* catch (JSONException e) {
             e.printStackTrace();
+        }*//* catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+        try {
+            Log.e("UNITS count", getHelper().fetchObjectsList(Unit.class).size() + "");
+            for(Unit unit : getHelper().fetchObjectsList(Unit.class)) {
+                Log.e("UNIT " + unit.getId(), unit.toString());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
