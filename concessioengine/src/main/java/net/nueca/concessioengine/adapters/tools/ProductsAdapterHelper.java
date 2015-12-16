@@ -16,6 +16,8 @@ import net.nueca.concessioengine.adapters.interfaces.ImageLoaderListener;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.ProductListTools;
 
@@ -33,6 +35,8 @@ public class ProductsAdapterHelper {
     private static ImageLoader imageLoader;
     private static ImonggoDBHelper2 dbHelper;
     private static Session session;
+    private static Customer selectedCustomer;
+    private static DocumentPurpose reason;
     private static SelectedProductItemList selectedProductItems = null;
     public static ImageLoaderListener imageLoaderListener = null;
 
@@ -114,6 +118,7 @@ public class ProductsAdapterHelper {
     public static void clearSelectedProductItemList() {
         if(selectedProductItems != null)
             selectedProductItems.clear();
+        selectedCustomer = null;
         ProductListTools.restartLineNo();
     }
 
@@ -121,6 +126,7 @@ public class ProductsAdapterHelper {
         if(selectedProductItems != null)
             selectedProductItems.clear();
         selectedProductItems = null;
+        selectedCustomer = null;
     }
 
     public static void destroyProductAdapterHelper() {
@@ -129,5 +135,22 @@ public class ProductsAdapterHelper {
         imageLoader = null;
         imageRequestQueue = null;
         selectedProductItems = null;
+        selectedCustomer = null;
+    }
+
+    public static void setSelectedCustomer(Customer selectedCustomer) {
+        ProductsAdapterHelper.selectedCustomer = selectedCustomer;
+    }
+
+    public static Customer getSelectedCustomer() {
+        return selectedCustomer;
+    }
+
+    public static DocumentPurpose getReason() {
+        return reason;
+    }
+
+    public static void setReason(DocumentPurpose reason) {
+        ProductsAdapterHelper.reason = reason;
     }
 }

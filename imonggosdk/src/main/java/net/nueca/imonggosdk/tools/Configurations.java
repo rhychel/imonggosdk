@@ -13,10 +13,10 @@ import java.util.EnumMap;
 public class Configurations {
     public static final String CONCESSIO_JSON = "concesio";
     public static final String[] MODULE_KEYS = {"stock_request", "physical_count",
-                                        "transfer_in_receive", "transfer_in_pullout",
-                                        "transfer_out","invoice",
+                                        "receive_branch", "receive_branch_pullout",
+                                        "release_branch","invoice",
                                         "receive_adjustment", "release_adjustment",
-                                        "receive_from_supplier", "release_to_supplier", "customers", "app"};
+                                        "receive_supplier", "release_supplier", "customers", "app"};
 
     public static String API_AUTHENTICATION = "";
 
@@ -75,6 +75,7 @@ public class Configurations {
             put(Table.TAX_SETTINGS, "tax_settings.json");
             put(Table.UNITS, "units.json");
             put(Table.USERS, "users.json");
+            put(Table.USERS_ME, "users");
             put(Table.BRANCHES, "branches.json");
             put(Table.INVOICES, "invoices.json");
             put(Table.SETTINGS, "settings.json");
@@ -99,6 +100,7 @@ public class Configurations {
             put(Table.CUSTOMER_CATEGORIES, "customer_categories.json");
             put(Table.PAYMENT_TYPES, "payment_types.json");
             put(Table.CUSTOMER_GROUPS, "customer_groups.json");
+            put(Table.CUSTOMER_BY_SALESMAN, "customers.json");
             put(Table.PRICE_LISTS, "price_lists.json");
             put(Table.BRANCH_PRICE_LISTS, "price_lists.json");
             put(Table.PRICE_LISTS_DETAILS, "price_lists");
@@ -122,6 +124,7 @@ public class Configurations {
             put(Table.TAX_SETTINGS, "tax_settings.json");
             put(Table.UNITS, "units.json");
             put(Table.USERS, "users.json");
+            put(Table.USERS_ME, "users");
             put(Table.BRANCHES, "branches.json");
             put(Table.INVOICES, "invoices.json");
             put(Table.SETTINGS, "settings.json");
@@ -144,6 +147,7 @@ public class Configurations {
             put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
             put(Table.PAYMENT_TERMS, "payment_terms.json");
             put(Table.CUSTOMER_CATEGORIES, "customer_categories.json");
+            put(Table.CUSTOMER_BY_SALESMAN, "customers.json");
             put(Table.PAYMENT_TYPES, "payment_types.json");
             put(Table.CUSTOMER_GROUPS, "customer_groups.json");
             put(Table.PRICE_LISTS, "price_lists.json");

@@ -2,7 +2,6 @@ package net.nueca.concessio;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,17 +9,14 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.enums.ListingType;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
-import net.nueca.imonggosdk.fragments.ImonggoFragment;
 
 /**
  * Created by rhymart on 8/22/15.
@@ -31,6 +27,7 @@ public class C_Finalize extends ModuleActivity {
     private Toolbar tbActionBar;
     private TabLayout tlTotal;
     private ViewPager vpReview;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +100,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setHasUnits(true);
             simpleProductsFragment.setHasToolBar(false);
             simpleProductsFragment.setHasCategories(false);
+            simpleProductsFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
             return simpleProductsFragment;
         }
 

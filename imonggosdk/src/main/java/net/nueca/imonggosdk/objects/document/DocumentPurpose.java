@@ -157,4 +157,8 @@ public class DocumentPurpose extends BaseTable implements Extras.DoOperationsFor
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return id == ((DocumentPurpose)o).getId();
+    }
 }

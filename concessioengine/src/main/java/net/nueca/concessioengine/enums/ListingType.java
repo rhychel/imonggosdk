@@ -1,4 +1,4 @@
-package net.nueca.concessioengine.adapters.enums;
+package net.nueca.concessioengine.enums;
 
 /**
  * Created by rhymart on 11/26/15.

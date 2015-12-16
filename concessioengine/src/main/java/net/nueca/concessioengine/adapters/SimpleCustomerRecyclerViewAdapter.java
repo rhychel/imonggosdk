@@ -19,7 +19,7 @@ import com.tonicartos.superslim.LinearSLM;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseCustomersRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.imonggosdk.objects.customer.Customer;
 
 import org.apache.commons.lang3.StringUtils;

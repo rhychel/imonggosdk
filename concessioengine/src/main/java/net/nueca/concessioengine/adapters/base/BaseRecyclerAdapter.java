@@ -8,7 +8,7 @@ import android.view.View;
 
 import com.tonicartos.superslim.LayoutManager;
 
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.interfaces.OnItemLongClickListener;
 import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;

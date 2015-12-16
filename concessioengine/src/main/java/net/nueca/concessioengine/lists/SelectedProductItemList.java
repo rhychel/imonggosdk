@@ -76,11 +76,18 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     }
 
     public String getUnitName(Product product) {
+        return getUnitName(product, true);
+    }
+
+    public String getUnitName(Product product, boolean withFormat) {
         SelectedProductItem selectedProductItem = getSelectedProductItem(product);
         if(selectedProductItem == null)
             return "";
-        if(selectedProductItem.getValues().get(0).getUnit() != null)
-            return "<i>["+selectedProductItem.getValues().get(0).getUnit().getName()+"]</i>";
+        if(selectedProductItem.getValues().get(0).getUnit() != null) {
+            if (withFormat)
+                return "<i>[" + selectedProductItem.getValues().get(0).getUnit().getName() + "]</i>";
+            return selectedProductItem.getValues().get(0).getUnit().getName();
+        }
         return "";
     }
 

@@ -25,5 +25,4 @@
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
     android:paddingRight="?android:attr/listPreferredItemPaddingRight"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:textColor="?android:textColorPrimary"
-    android:textStyle="bold"/>
+    android:textColor="@android:color/black"/>

@@ -13,6 +13,7 @@ public enum Table {
     TAX_SETTINGS(API_TYPE.API, "Tax Settings"),
     UNITS(API_TYPE.API, "Units"),
     USERS(API_TYPE.API, "Users"),
+    USERS_ME(API_TYPE.API, "Users"),
     BRANCHES(API_TYPE.API, "Branches"),
     INVOICES(API_TYPE.API, "Invoices"),
     SETTINGS(API_TYPE.API, "Settings"),
@@ -57,6 +58,7 @@ public enum Table {
     EXTRAS(API_TYPE.NON_API, "Extras"),
 
     // ----- FOR REBISCO
+    CUSTOMER_BY_SALESMAN(API_TYPE.API, "Customers"),
     BRANCH_PRODUCTS(API_TYPE.API, "Products"),
     INVOICE_PURPOSES(API_TYPE.API, "Invoice Purposes"),
     PAYMENT_TERMS(API_TYPE.API, "Payment Terms"),

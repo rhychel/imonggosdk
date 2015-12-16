@@ -139,6 +139,10 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
         this.valuePosition = valuePosition;
     }
 
+    public void setHasSubtotal(boolean hasSubtotal) {
+        this.hasSubtotal = hasSubtotal;
+    }
+
     @Override
     public void dismiss() {
         super.dismiss();

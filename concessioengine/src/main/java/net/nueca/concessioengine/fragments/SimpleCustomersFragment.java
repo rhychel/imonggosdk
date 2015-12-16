@@ -1,11 +1,9 @@
 package net.nueca.concessioengine.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +24,19 @@ import java.util.List;
  * Created by gama on 8/11/15.
  */
 public class SimpleCustomersFragment extends BaseCustomersFragment {
+
+    public interface OnCustomerSelectedListener {
+        void onCustomerSelected(Customer customer);
+    }
+
     private TextView tvNoCustomers;
     private boolean isMultiSelect = false;
+    private boolean hasSelected = false;
     private Integer color, highlightColor;
 
     public void setMultiSelect(boolean isMultiSelect) {
         this.isMultiSelect = isMultiSelect;
     }
-
     public void setColor(Integer color) {
         this.color = color;
     }
@@ -90,7 +93,19 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
                 simpleCustomerRecyclerViewAdapter.setCircleColor(color);
                 tbActionBar.setBackgroundColor(color);
             }*/
+            simpleCustomerRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClicked(View view, int position) {
+                    if(isMultiSelect) {
 
+                    }
+                    else {
+                        if(onCustomerSelectedListener != null)
+                            onCustomerSelectedListener.onCustomerSelected(simpleCustomerRecyclerViewAdapter.getSelectedCustomers().get(0));
+                        hasSelected = true;
+                    }
+                }
+            });
             simpleCustomerRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvCustomers);
             rvCustomers.setAdapter(simpleCustomerRecyclerViewAdapter);
 
@@ -163,5 +178,17 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
         else
             toggleNoItems("No results for \"" + searchKey + "\"" + ".",
                     simpleCustomerListAdapter.updateList(getCustomers()));
+    }
+
+    public void setOnCustomerSelectedListener(OnCustomerSelectedListener onCustomerSelectedListener) {
+        this.onCustomerSelectedListener = onCustomerSelectedListener;
+    }
+
+    public boolean isHasSelected() {
+        return hasSelected;
+    }
+
+    public void setHasSelected(boolean hasSelected) {
+        this.hasSelected = hasSelected;
     }
 }

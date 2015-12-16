@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -34,6 +35,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
     private EditText etQuantity;
     private Spinner spUnits;
     private Button btnCancel, btnSave;
+    private LinearLayout llSubtotal;
 
     private String subtotal, retailPrice;
 
@@ -63,14 +65,20 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         spUnits = (Spinner) super.findViewById(R.id.spUnits);
         btnCancel = (Button) super.findViewById(R.id.btnCancel);
         btnSave = (Button) super.findViewById(R.id.btnSave);
+        llSubtotal = (LinearLayout) super.findViewById(R.id.llSubtotal);
 
         etQuantity.setSelectAllOnFocus(true);
-
-        unitsAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_dark, unitList);
+        
+        unitsAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, unitList);
         unitsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
-//        unitsAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, unitList);
-//        unitsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
         spUnits.setAdapter(unitsAdapter);
+        if (selectedProductItem.getValues().size() > 0) {
+            if (isMultiValue) {
+                if (valuePosition > -1)
+                    spUnits.setSelection(unitList.indexOf(selectedProductItem.getValues().get(valuePosition).getUnit()));
+            } else
+                spUnits.setSelection(unitList.indexOf(selectedProductItem.getValues().get(0).getUnit()));
+        }
 
         Product product = selectedProductItem.getProduct();
         tvProductName.setText(product.getName());
@@ -88,6 +96,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         } else
             etQuantity.setText(selectedProductItem.getQuantity());
 
+        llSubtotal.setVisibility(!hasSubtotal ? View.GONE : View.VISIBLE);
+
         btnSave.setOnClickListener(onSaveClicked);
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,23 +109,12 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         setOnShowListener(new OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                offsetSpinnerBelowv21(spUnits);
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                imm.showSoftInput(etQuantity, InputMethodManager.SHOW_IMPLICIT);
+
+                offsetSpinnerBelowv21(spUnits);
             }
         });
-    }
-
-    @Override
-    public void dismiss() {
-        super.dismiss();
-        View focused = getCurrentFocus();
-        if(focused == null) {
-            focused = etQuantity;
-            focused.requestFocus();
-        }
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(focused.getWindowToken(), 0);
     }
 
     public void setRetailPrice(String retailPrice) {

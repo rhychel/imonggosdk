@@ -11,6 +11,9 @@ import android.view.ViewGroup;
  * imonggosdk (c)2015
  */
 public class BaseAppCompatDialog extends AppCompatDialog {
+
+    protected static int NO_THEME = -1;
+
     public BaseAppCompatDialog(Context context) {
         super(context);
     }

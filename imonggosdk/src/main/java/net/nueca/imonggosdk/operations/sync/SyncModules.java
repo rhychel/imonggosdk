@@ -28,6 +28,7 @@ import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.Extras;
@@ -41,9 +42,9 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
-import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
 import net.nueca.imonggosdk.tools.DateTimeTools;
@@ -103,7 +104,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().fetchIntId(LastUpdatedAt.class).queryBuilder();
 
             if (mCurrentTableSyncing == Table.DOCUMENTS) {
-                document_type = "transfer_out";
+                document_type = "adjustment_out";
                 intransit_status = "1";
 
                 initializeFromTo();
@@ -241,6 +242,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             // Custom for Tax Settings
             if (mCurrentTableSyncing == Table.TAX_SETTINGS)
                 return "";
+
+            if (mCurrentTableSyncing == Table.USERS_ME) {
+                return String.format(ImonggoTools.generateParameter(Parameter.ID), getSession().getUser_id());
+            }
 
             if (initialSync || lastUpdatedAt == null) {
                 if (mCurrentTableSyncing == Table.BRANCH_USERS)
@@ -518,7 +523,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
             //check if branch_products is existing
             if (getHelper().fetchObjectsList(Product.class).size() != 0) {
-
                 startSyncModuleContents(RequestType.LAST_UPDATED_AT);
             } else {
                 Log.e(TAG, "There's no Products... Downloading Next Module");
@@ -755,6 +759,62 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         syncNext();
                     }
 
+                    if (mCurrentTableSyncing == Table.USERS_ME) {
+                        if (!jsonObject.isNull("id")) {
+                            User user = gson.fromJson(jsonObject.toString(), User.class);
+                            Extras extras = new Extras();
+
+                            if (jsonObject.has("extras")) {
+                                JSONObject json_extras = jsonObject.getJSONObject("extras");
+                                if (json_extras.has("is_salesman")) {
+                                    if (!json_extras.getString("is_salesman").isEmpty()) {
+                                        extras.setIs_salesman(json_extras.getInt("is_salesman"));
+                                    } else {
+                                        Log.e(TAG, "User's Extras' 'is_salesman' field don't have value");
+                                    }
+                                } else {
+                                    Log.e(TAG, "USER Extras don't have 'is_salesman' field");
+                                }
+
+                            } else {
+                                Log.e(TAG, "USER API don't have field 'extras'");
+                            }
+
+                            if (initialSync || lastUpdatedAt == null) {
+                                user.insertTo(getHelper());
+                            } else {
+                                // check if the user tables exist in the database
+                                if (isExisting(user, Table.USERS)) {
+                                    if (user.getStatus() == null) {
+                                        user.updateTo(getHelper());
+                                        if (user.getId() == getSession().getUser().getId()) {
+                                            Log.e(TAG, "Updating sessions user from " + getSession().getUser().getName() + " to " + user.getName());
+                                        }
+                                    } else {
+                                        user.deleteTo(getHelper());
+                                    }
+                                } else {  // if not then add it
+                                    Log.e(TAG, "adding user entry to be inserted");
+                                    user.insertTo(getHelper());
+                                }
+                            }
+
+                            getSession().setUser(user);
+                            getSession().setCurrent_branch_id(user.getHome_branch_id());
+                            getSession().updateTo(getHelper());
+
+                            Log.e(TAG, "User: " + user.getName() + "User Home Branch ID: " + user.getHome_branch_id());
+
+
+                        } else {
+                            String message = "Something went wrong.. please contact developer and tell them that there's No User Found";
+                            Log.e(TAG, message);
+                            LoggingTools.showToast(getApplicationContext(), message);
+                        }
+
+                        mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                        syncNext();
+                    }
                 } else if (requestType == RequestType.DAILY_SALES_TODAY) {
 
                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
@@ -805,6 +865,27 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     //get the object in the array
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     User user = gson.fromJson(jsonObject.toString(), User.class);
+                                    Extras users_extras = new Extras();
+
+                                    if (jsonObject.has("extras")) {
+                                        JSONObject json_extras = jsonObject.getJSONObject("extras");
+                                        if (json_extras.has("is_salesman")) {
+                                            if (!json_extras.getString("is_salesman").isEmpty()) {
+                                                // get the extras in json
+                                                users_extras.setIs_salesman(json_extras.getInt("is_salesman"));
+
+                                                // set the extras to users
+                                                user.setExtras(users_extras);
+
+                                            } else {
+                                                Log.e(TAG, "is_salesman field is empty");
+                                            }
+                                        } else {
+                                            Log.e(TAG, "Users' extras don't have 'is_salesman' field.");
+                                        }
+                                    } else {
+                                        Log.e(TAG, "Users don't have 'extras' field.");
+                                    }
                                     if (initialSync || lastUpdatedAt == null) {
                                         newUsers.add(user);
                                     } else {
@@ -1031,7 +1112,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         case BRANCH_UNITS:
                         case UNITS:
                             if (size == 0) {
-
                                 if (mCurrentTableSyncing == Table.BRANCH_UNITS) {
                                     updateNext(requestType, count);
                                 } else {
@@ -1051,12 +1131,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Unit unit = gson.fromJson(jsonObject.toString(), Unit.class);
 
 
-                                    if(jsonObject.has("extras")) {
+                                    if (jsonObject.has("extras")) {
                                         JSONObject json_extras = jsonObject.getJSONObject("extras");
 
-                                        if(json_extras.has("is_default_selling_unit")) {
+                                        if (json_extras.has("is_default_selling_unit")) {
 
-                                            if(!json_extras.getString("is_default_selling_unit").isEmpty()) {
+                                            if (!json_extras.getString("is_default_selling_unit").isEmpty()) {
                                                 // get the boolean from extras
                                                 Boolean is_default_selling_unit = json_extras.getBoolean("is_default_selling_unit");
                                                 branch_unit_extras.setIs_default_selling_unit(is_default_selling_unit);
@@ -1182,6 +1262,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             BatchList<Customer> deleteCustomer = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
 
+                            BatchList<CustomerGroup> newCustomerGroupsCustomer = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<CustomerCustomerGroupAssoc> newCustomerCustomerGroupAssocs = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+
                             if (size == 0) {
                                 syncNext();
                                 return;
@@ -1242,7 +1325,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     // PRICE_LIST
                                     if (jsonObject.has("price_list_id")) {
-                                        if (!jsonObject.getString("price_list_id").isEmpty() && !jsonObject.get("price_list_id").equals(null)) {
+                                        if (!jsonObject.isNull("price_list_id")) {
                                             int price_list_id = jsonObject.getInt("price_list_id");
 
                                             priceList = getHelper().fetchObjects(PriceList.class).queryBuilder().where().eq("id", price_list_id).queryForFirst();
@@ -1260,6 +1343,59 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         Log.e(TAG, mCurrentTableSyncing + " API don't have 'price_list_id' field");
                                     }
 
+                                    // Customer Group get the ID
+                                    if (jsonObject.has("customer_groups")) {
+
+                                        JSONArray customer_group_array = jsonObject.getJSONArray("customer_groups");
+
+                                        for (int ii = 0; ii < customer_group_array.length(); ii++) {
+                                            JSONObject customer_group_object = customer_group_array.getJSONObject(0);
+
+                                            if (!customer_group_object.isNull("id")) {
+
+                                                CustomerGroup customerGroup = gson.fromJson(customer_group_object.toString(), CustomerGroup.class);
+
+                                                if (customer_group_object.has("price_list_id")) {
+
+                                                    if (!jsonObject.getString("price_list_id").isEmpty() && !jsonObject.isNull("price_list_id")) {
+                                                        int price_list_id = jsonObject.getInt("price_list_id");
+
+                                                        PriceList priceListCG = getHelper().fetchObjects(PriceList.class).queryBuilder().where().eq("id", price_list_id).queryForFirst();
+
+                                                        if (priceListCG != null) {
+                                                            Log.e(TAG, "Price Lists priceListCG! " + priceListCG.toString());
+                                                            customerGroup.setPriceList(priceList); // Connected
+                                                        } else {
+                                                            Log.e(TAG, "Price Lists not found!");
+                                                        }
+                                                    } else {
+                                                        Log.e(TAG, "Price List ID don't have value");
+                                                    }
+
+                                                    customerGroup.setPriceList(priceList);
+
+                                                } else {
+                                                    Log.e(TAG, mCurrentTableSyncing + " API don't have field 'price_list_id'");
+                                                }
+
+                                                Log.e(TAG, "Customer Group Name: " + customerGroup.getName());
+                                                if (!isExisting(customerGroup, Table.CUSTOMER_GROUPS)) {
+                                                    newCustomerGroupsCustomer.add(customerGroup);
+                                                } else {
+                                                    Log.e(TAG, "Customer Group Exists.. Skipping...");
+                                                }
+
+
+                                                CustomerCustomerGroupAssoc customerCustomerGroupAssoc = new CustomerCustomerGroupAssoc(customer, customerGroup);
+                                                newCustomerCustomerGroupAssocs.add(customerCustomerGroupAssoc);
+                                            } else {
+                                                Log.e(TAG, "Error! Customer Group Object don't have ID");
+                                            }
+                                        }
+
+                                    } else {
+                                        Log.e(TAG, "Customers don't have 'customer_group array field");
+                                    }
 
                                     if (initialSync || lastUpdatedAt == null) {
                                         newCustomer.add(customer);
@@ -1279,6 +1415,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 newCustomer.doOperationBT(Customer.class);
                                 updateCustomer.doOperationBT(Customer.class);
                                 deleteCustomer.doOperationBT(Customer.class);
+
+                                newCustomerGroupsCustomer.doOperation(CustomerGroup.class);
+                                newCustomerCustomerGroupAssocs.doOperation(CustomerCustomerGroupAssoc.class);
 
                                 updateNext(requestType, size);
                             }
@@ -1480,6 +1619,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     InvoicePurpose invoicePurpose = gson.fromJson(jsonObject.toString(), InvoicePurpose.class);
+                                    Extras extras = new Extras();
+                                    if (jsonObject.has("extras")) {
+                                        // TODO: nothing yet
+                                        // Do Something With extras, no no no.. not that. I mean someting. ugghh.. nvm.
+                                    } else {
+                                        Log.e(TAG, mCurrentTableSyncing + "API don't have 'extras' field");
+                                    }
 
                                     if (initialSync || lastUpdatedAt == null) {
                                         newInvoicePurpose.add(invoicePurpose);
@@ -1501,7 +1647,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         case CUSTOMER_GROUPS:
                             BatchList<CustomerGroup> newCustomerGroups = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<CustomerGroup> updateCustomerGroups = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-
 
                             if (size == 0) {
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
@@ -1535,15 +1680,22 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         Log.e(TAG, mCurrentTableSyncing + " API don't have field 'price_list_id'");
                                     }
 
-                                    if (initialSync || lastUpdatedAt == null) {
-                                        newCustomerGroups.add(customerGroup);
-                                    } else {
+                                    CustomerCustomerGroupAssoc customerCustomerGroupAssoc =
+                                            getHelper().fetchObjects(CustomerCustomerGroupAssoc.class).queryBuilder().where().eq("customer_group_id", customerGroup).queryForFirst();
+
+                                    if (customerCustomerGroupAssoc != null) {
+                                        Log.e(TAG, "CustomerGroup is Assoc: " + customerCustomerGroupAssoc.getCustomerGroup().getName());
+
                                         if (isExisting(customerGroup, Table.CUSTOMER_GROUPS)) {
                                             updateCustomerGroups.add(customerGroup);
                                         } else {
                                             newCustomerGroups.add(customerGroup);
                                         }
+
+                                    } else {
+                                        Log.e(TAG, "CustomerGroup not found");
                                     }
+
                                 }
 
                                 newCustomerGroups.doOperationBT(CustomerGroup.class);
@@ -1649,12 +1801,20 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-
                                     SalesPromotion salesPromotion = gson.fromJson(jsonObject.toString(), SalesPromotion.class);
 
                                     if (jsonObject.has("settings")) {
-                                        SalesPushSettings salesPushSettings = gson.fromJson(jsonObject.getString("settings"), SalesPushSettings.class);
-                                        salesPromotion.setSettings(salesPushSettings);
+                                        JSONObject object = jsonObject.getJSONObject("settings");
+                                        Log.e(TAG, ">>>> " + object.toString());
+                                        if(jsonObject.getJSONObject("settings") != null) {
+                                            SalesPushSettings salesPushSettings = gson.fromJson(jsonObject.getString("settings"), SalesPushSettings.class);
+                                            salesPromotion.setSettings(salesPushSettings);
+
+                                        } else {
+                                            Log.e(TAG, "settings don't have value");
+                                        }
+                                    } else {
+                                        Log.e(TAG, mCurrentTableSyncing + "API don't have 'settings' field");
                                     }
 
                                     if (initialSync || lastUpdatedAt == null) {
@@ -1857,11 +2017,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
             if (mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS ||
                     mCurrentTableSyncing == Table.BRANCH_UNITS) {
-
-                Log.e(TAG, "Custom Index1: " + mCustomIndex + " Size: " + size);
                 mCustomIndex++;
-                Log.e(TAG, "Custom Index2: " + mCustomIndex + " Size: " + size);
-
                 if (mSyncModulesListener != null) {
                     if (mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS ||
                             mCurrentTableSyncing == Table.BRANCH_UNITS) {
@@ -1887,7 +2043,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     }
                 }
 
-                Log.e(TAG, "Size: " + size);
                 if (size <= max_size_per_page) {
                     Log.e(TAG, "Syncing next table");
                     page++;
@@ -1933,8 +2088,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             Log.e(TAG, t.toString());
         }
 
-        if (mCurrentTableSyncing == Table.USERS) {
-            startSyncModuleContents(RequestType.LAST_UPDATED_AT);
+        if (mCurrentTableSyncing == Table.USERS_ME) {
+            startSyncModuleContents(RequestType.API_CONTENT);
         } else if (mCurrentTableSyncing == Table.DAILY_SALES) {
             startSyncModuleContents(RequestType.DAILY_SALES_TODAY);
         } else {

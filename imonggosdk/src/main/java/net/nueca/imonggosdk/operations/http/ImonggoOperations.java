@@ -139,7 +139,8 @@ public class ImonggoOperations {
         if (requestType == RequestType.LAST_UPDATED_AT
                 || requestType == RequestType.COUNT
                 || table == Table.TAX_SETTINGS
-                || table == Table.DAILY_SALES) {
+                || table == Table.DAILY_SALES
+                || table == Table.USERS_ME) {
             JsonObjectRequest request = HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, server, table, requestType, parameter);
             request.setTag(TAG);
             request.setShouldCache(false);
