@@ -101,10 +101,10 @@ public class C_Login extends LoginActivity {
 
         }
         modules[modulesToDownload-(index--)] = Table.SETTINGS.ordinal();
-//        modules[modulesToDownload-(index--)] = Table.PRODUCTS.ordinal();
-//        modules[modulesToDownload-(index--)] = Table.UNITS.ordinal();
-        modules[modulesToDownload-(index--)] = Table.BRANCH_PRODUCTS.ordinal();
-        modules[modulesToDownload-(index--)] = Table.BRANCH_UNITS.ordinal();
+        modules[modulesToDownload-(index--)] = Table.PRODUCTS.ordinal();
+        modules[modulesToDownload-(index--)] = Table.UNITS.ordinal();
+//        modules[modulesToDownload-(index--)] = Table.BRANCH_PRODUCTS.ordinal();
+//        modules[modulesToDownload-(index--)] = Table.BRANCH_UNITS.ordinal();
         Log.e("hasPulloutRequest", hasPulloutRequest+"");
         if(hasPulloutRequest) {
             modules[modulesToDownload-(index--)] = Table.DOCUMENT_TYPES.ordinal();
@@ -115,7 +115,7 @@ public class C_Login extends LoginActivity {
         if(hasSales) {
             modules[modulesToDownload - (index--)] = Table.CUSTOMER_CATEGORIES.ordinal();
             modules[modulesToDownload - (index--)] = Table.BRANCH_CUSTOMERS.ordinal();
-            modules[modulesToDownload - (index--)] = Table.CUSTOMER_CATEGORIES.ordinal();
+            modules[modulesToDownload - (index--)] = Table.CUSTOMER_GROUPS.ordinal();
             modules[modulesToDownload - (index--)] = Table.PAYMENT_TERMS.ordinal();
         }
 

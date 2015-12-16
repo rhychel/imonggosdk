@@ -11,6 +11,8 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
@@ -38,6 +40,10 @@ public class Branch extends BaseTable {
     private transient ForeignCollection<RoutePlan> routePlans;
     @ForeignCollectionField
     private transient ForeignCollection<BranchPrice> branchPrices;
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchProduct> branchProducts;
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchUnit> branchUnits;
 
     public Branch() { }
 
@@ -158,6 +164,22 @@ public class Branch extends BaseTable {
 
     public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
         this.branchPrices = branchPrices;
+    }
+
+    public ForeignCollection<BranchProduct> getBranchProducts() {
+        return branchProducts;
+    }
+
+    public void setBranchProducts(ForeignCollection<BranchProduct> branchProducts) {
+        this.branchProducts = branchProducts;
+    }
+
+    public ForeignCollection<BranchUnit> getBranchUnits() {
+        return branchUnits;
+    }
+
+    public void setBranchUnits(ForeignCollection<BranchUnit> branchUnits) {
+        this.branchUnits = branchUnits;
     }
 
     @Override

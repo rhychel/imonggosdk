@@ -31,6 +31,36 @@ import java.sql.SQLException;
 @DatabaseTable
 public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
 
+    public static final String CODE = "code";
+    public static final String CODE = "alternate_code";
+    public static final String CODE = "first_name";
+    public static final String CODE = "last_name";
+    public static final String CODE = "company_name";
+    public static final String CODE = "tin";
+    public static final String CODE = "street";
+    public static final String CODE = "city";
+    public static final String CODE = "state";
+    public static final String CODE = "zipcode";
+    public static final String CODE = "country";
+    public static final String CODE = "telephone";
+    public static final String CODE = "fax";
+    public static final String CODE = "mobile";
+    public static final String CODE = "email";
+    public static final String CODE = "remark";
+    public static final String CODE = "customer_type_id";
+    public static final String CODE = "customer_type_name";
+    public static final String CODE = "discount_text";
+    public static final String CODE = "available_points";
+    public static final String CODE = "birthdate";
+    public static final String CODE = "status";
+    public static final String CODE = "birthday";
+    public static final String CODE = "membership_expired_at";
+    public static final String CODE = "membership_start_at";
+    public static final String CODE = "biometric_signature";
+    public static final String CODE = "gender";
+    public static final String CODE = "point_to_amount_ratio";
+    public static final String CODE = "tax_exempt";
+
     @Expose
     @DatabaseField
     private int point_to_amount_ratio;

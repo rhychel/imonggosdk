@@ -19,15 +19,15 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColorHint="@color/hint_text"
-        android:layout_marginLeft="16dp">
-
+        android:textColorHint="@color/secondary_textL"
+        android:layout_marginLeft="16dp"
+        android:hint="Yeah"
+        android:id="@+id/tilEt">
         <EditText
             android:id="@+id/etField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:hint="Name"
             android:inputType="text"
             android:textAlignment="center"
             android:textColor="@color/primary_text" />

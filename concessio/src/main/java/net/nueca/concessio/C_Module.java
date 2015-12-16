@@ -8,6 +8,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import net.nueca.concessioengine.activities.AddCustomerActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
@@ -177,6 +179,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleCustomersFragment.setHelper(getHelper());
                 simpleCustomersFragment.setSetupActionBar(this);
                 simpleCustomersFragment.setListingType(ListingType.LETTER_HEADER);
+                simpleCustomersFragment.setOnCustomerSelectedListener(new SimpleCustomersFragment.OnCustomerSelectedListener() {
+                    @Override
+                    public void onCustomerSelected(Customer customer) {
+                        Intent intent = new Intent(C_Module.this, C_Module.class);
+                        intent.putExtra(ModuleActivity.FROM_CUSTOMERS_LIST, isFromCustomersList);
+                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
+                        startActivity(intent);
+                    }
+                });
 
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -480,6 +491,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.mAddCustomer) {
+            Intent intent = new Intent(this, AddCustomerActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

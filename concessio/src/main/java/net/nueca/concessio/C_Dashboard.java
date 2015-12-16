@@ -114,7 +114,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
     @Override
     protected Bundle addExtras(ConcessioModule concessioModule) {
-        return null;
+        Bundle bundle = new Bundle();
+        if(concessioModule == ConcessioModule.CUSTOMERS) {
+            bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, true);
+        }
+        return bundle;
     }
 
     @Override

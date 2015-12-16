@@ -200,10 +200,10 @@ public abstract class BaseSyncService extends ImonggoService {
                 Branch branch = (Branch) o;
                 return getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", branch.getId()).queryForFirst() != null;
             }
-            case BRANCH_PRICES: {
-                BranchPrice branchPrice = (BranchPrice) o;
-                return getHelper().fetchObjects(BranchPrice.class).queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
-            }
+//            case BRANCH_PRICES: { // Change algorithm
+//                BranchPrice branchPrice = (BranchPrice) o;
+//                return getHelper().fetchObjects(BranchPrice.class).queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
+//            }
             case BRANCH_TAGS: {
                 BranchTag branchTag = (BranchTag) o;
                 return getHelper().fetchObjects(BranchTag.class).queryBuilder().where().eq("id", branchTag.getId()).queryForFirst() != null;

@@ -3,8 +3,12 @@ package net.nueca.concessioengine.activities;
 import android.content.Context;
 import android.media.Image;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -18,6 +22,7 @@ import net.nueca.concessioengine.adapters.base.BaseAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 
 import java.sql.SQLException;
@@ -29,7 +34,9 @@ import java.util.List;
  */
 public class AddCustomerActivity extends ImonggoAppCompatActivity {
 
+    private Toolbar tbAddCustomer;
     private RecyclerView rvFields;
+
     private ArrayList<CustomerField> customerFieldArrayList = new ArrayList<>();
 
     @Override
@@ -37,15 +44,30 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_customer_activity);
         rvFields = (RecyclerView) findViewById(R.id.rvFields);
+        tbAddCustomer = (Toolbar) findViewById(R.id.tbAddCustomer);
 
-        customerFieldArrayList.add(new CustomerField("Name", FieldType.EDITTEXT));
-        customerFieldArrayList.add(new CustomerField("Mobile", FieldType.EDITTEXT));
+        setSupportActionBar(tbAddCustomer);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        tbAddCustomer.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        customerFieldArrayList.add(new CustomerField("Last Name", FieldType.EDITTEXT, "last_name"));
+        customerFieldArrayList.add(new CustomerField("First Name", FieldType.EDITTEXT));
+        customerFieldArrayList.add(new CustomerField("Middle Name", FieldType.EDITTEXT));
+        customerFieldArrayList.add(new CustomerField("Mobile", FieldType.EDITTEXT, R.drawable.ic_phone_orange));
         customerFieldArrayList.add(new CustomerField("Work", FieldType.EDITTEXT));
-        customerFieldArrayList.add(new CustomerField("Company", FieldType.EDITTEXT));
+        customerFieldArrayList.add(new CustomerField("Company", FieldType.EDITTEXT, R.drawable.ic_branch_orange));
         customerFieldArrayList.add(new CustomerField("Address", FieldType.EDITTEXT));
         try {
             List<PaymentTerms> paymentTerms = getHelper().fetchObjectsList(PaymentTerms.class);
-            customerFieldArrayList.add(new CustomerField<PaymentTerms>("Business", paymentTerms, FieldType.SPINNER));
+            List<CustomerCategory> customerCategories = getHelper().fetchObjectsList(CustomerCategory.class);
+
+            customerFieldArrayList.add(new CustomerField<CustomerCategory>("Outlet Type", customerCategories, FieldType.SPINNER));
+            customerFieldArrayList.add(new CustomerField<PaymentTerms>("Payment Terms", paymentTerms, FieldType.SPINNER));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -55,6 +77,20 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
         rvFields.setAdapter(customerFieldsAdapter);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.simple_add_customers_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.mSaveCustomer) {
+            Customer customer;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public enum FieldType {
         EDITTEXT,
         SPINNER
@@ -62,23 +98,43 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
 
     public class CustomerField<T> {
         private String label;
+        private String fieldName;
         private List<T> values;
         private FieldType fieldType;
+        private int iconField = -1;
 
-        public CustomerField(String label, FieldType fieldType) {
+        public CustomerField(String label, FieldType fieldType, String fieldName) {
             this.label = label;
             this.fieldType = fieldType;
+            this.fieldName = fieldName;
         }
 
-        public CustomerField(String label, List<T> values, FieldType fieldType) {
+        public CustomerField(String label, List<T> values, FieldType fieldType, String fieldName) {
             this.label = label;
             this.values = values;
             this.fieldType = fieldType;
+            this.fieldName = fieldName;
         }
 
-        public CustomerField(String label, List<T> values) {
+        public CustomerField(String label, FieldType fieldType, int iconField, String fieldName) {
+            this.label = label;
+            this.fieldType = fieldType;
+            this.iconField = iconField;
+            this.fieldName = fieldName;
+        }
+
+        public CustomerField(String label, List<T> values, FieldType fieldType, int iconField, String fieldName) {
             this.label = label;
             this.values = values;
+            this.fieldType = fieldType;
+            this.iconField = iconField;
+            this.fieldName = fieldName;
+        }
+
+        public CustomerField(String label, List<T> values, String fieldName) {
+            this.label = label;
+            this.values = values;
+            this.fieldName = fieldName;
         }
 
         public String getLabel() {
@@ -103,6 +159,22 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
 
         public void setFieldType(FieldType fieldType) {
             this.fieldType = fieldType;
+        }
+
+        public int getIconField() {
+            return iconField;
+        }
+
+        public void setIconField(int iconField) {
+            this.iconField = iconField;
+        }
+
+        public String getFieldName() {
+            return fieldName;
+        }
+
+        public void setFieldName(String fieldName) {
+            this.fieldName = fieldName;
         }
     }
 
@@ -130,8 +202,9 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
         @Override
         public void onBindViewHolder(ListItemView holder, int position) {
             FieldType fieldType = FieldType.values()[getItemViewType(position)];
-            if(fieldType == FieldType.EDITTEXT)
-                holder.etField.setHint(getItem(position).getLabel());
+            if(fieldType == FieldType.EDITTEXT) {
+                holder.tilEt.setHint(getItem(position).getLabel());
+            }
             else {
                 holder.tvLabel.setText(getItem(position).getLabel());
                 ArrayAdapter<?> valuesAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, getItem(position).getValues());
@@ -156,6 +229,7 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
             EditText etField;
             TextView tvLabel;
             Spinner spOptions;
+            TextInputLayout tilEt;
 
             FieldType fieldType = FieldType.EDITTEXT;
 
@@ -164,8 +238,10 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
                 this.fieldType = fieldType;
                 ivIcon = (ImageView) itemView.findViewById(R.id.ivIcon);
 
-                if(fieldType == FieldType.EDITTEXT)
+                if(fieldType == FieldType.EDITTEXT) {
                     etField = (EditText) itemView.findViewById(R.id.etField);
+                    tilEt = (TextInputLayout) itemView.findViewById(R.id.tilEt);
+                }
                 else {
                     tvLabel = (TextView) itemView.findViewById(R.id.tvLabel);
                     spOptions = (Spinner) itemView.findViewById(R.id.spOptions);
