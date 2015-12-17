@@ -183,6 +183,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     @Override
                     public void onCustomerSelected(Customer customer) {
                         Intent intent = new Intent(C_Module.this, C_Module.class);
+                        intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
                         intent.putExtra(ModuleActivity.FROM_CUSTOMERS_LIST, isFromCustomersList);
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
                         startActivity(intent);

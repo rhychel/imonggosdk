@@ -6,24 +6,35 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -38,6 +49,7 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
     private RecyclerView rvFields;
 
     private ArrayList<CustomerField> customerFieldArrayList = new ArrayList<>();
+    private CustomerFieldsAdapter customerFieldsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,24 +67,24 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
             }
         });
 
-        customerFieldArrayList.add(new CustomerField("Last Name", FieldType.EDITTEXT, "last_name"));
-        customerFieldArrayList.add(new CustomerField("First Name", FieldType.EDITTEXT));
-        customerFieldArrayList.add(new CustomerField("Middle Name", FieldType.EDITTEXT));
-        customerFieldArrayList.add(new CustomerField("Mobile", FieldType.EDITTEXT, R.drawable.ic_phone_orange));
-        customerFieldArrayList.add(new CustomerField("Work", FieldType.EDITTEXT));
-        customerFieldArrayList.add(new CustomerField("Company", FieldType.EDITTEXT, R.drawable.ic_branch_orange));
-        customerFieldArrayList.add(new CustomerField("Address", FieldType.EDITTEXT));
+        customerFieldArrayList.add(new CustomerField("Last Name", FieldType.EDITTEXT, Customer.LAST_NAME));
+        customerFieldArrayList.add(new CustomerField("First Name", FieldType.EDITTEXT, Customer.FIRST_NAME));
+        customerFieldArrayList.add(new CustomerField("Middle Name", FieldType.EDITTEXT, Customer.MIDDLE_NAME));
+        customerFieldArrayList.add(new CustomerField("Mobile", FieldType.EDITTEXT, R.drawable.ic_phone_orange, Customer.MOBILE));
+        customerFieldArrayList.add(new CustomerField("Work", FieldType.EDITTEXT, Customer.TELEPHONE));
+        customerFieldArrayList.add(new CustomerField("Company", FieldType.EDITTEXT, R.drawable.ic_branch_orange, Customer.COMPANY_NAME));
+        customerFieldArrayList.add(new CustomerField("Address", FieldType.EDITTEXT, Customer.STREET));
         try {
             List<PaymentTerms> paymentTerms = getHelper().fetchObjectsList(PaymentTerms.class);
             List<CustomerCategory> customerCategories = getHelper().fetchObjectsList(CustomerCategory.class);
 
-            customerFieldArrayList.add(new CustomerField<CustomerCategory>("Outlet Type", customerCategories, FieldType.SPINNER));
-            customerFieldArrayList.add(new CustomerField<PaymentTerms>("Payment Terms", paymentTerms, FieldType.SPINNER));
+            customerFieldArrayList.add(new CustomerField<CustomerCategory>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.EXTRAS_CATEGORY_ID));
+            customerFieldArrayList.add(new CustomerField<PaymentTerms>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.PAYMENT_TERMS_ID));
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        CustomerFieldsAdapter customerFieldsAdapter = new CustomerFieldsAdapter(this, customerFieldArrayList);
+        customerFieldsAdapter = new CustomerFieldsAdapter(this, customerFieldArrayList);
         customerFieldsAdapter.initializeRecyclerView(this, rvFields);
         rvFields.setAdapter(customerFieldsAdapter);
     }
@@ -86,7 +98,7 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mSaveCustomer) {
-            Customer customer;
+            Log.e("JSON", customerFieldsAdapter.toJSONObject());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -102,6 +114,9 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
         private List<T> values;
         private FieldType fieldType;
         private int iconField = -1;
+        private int selectedIndex = 0;
+        private String editTextValue = "";
+        private boolean hasTextChangedListener = false;
 
         public CustomerField(String label, FieldType fieldType, String fieldName) {
             this.label = label;
@@ -176,6 +191,30 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
         public void setFieldName(String fieldName) {
             this.fieldName = fieldName;
         }
+
+        public int getSelectedIndex() {
+            return selectedIndex;
+        }
+
+        public void setSelectedIndex(int selectedIndex) {
+            this.selectedIndex = selectedIndex;
+        }
+
+        public String getEditTextValue() {
+            return editTextValue;
+        }
+
+        public void setEditTextValue(String editTextValue) {
+            this.editTextValue = editTextValue;
+        }
+
+        public boolean isHasTextChangedListener() {
+            return hasTextChangedListener;
+        }
+
+        public void setHasTextChangedListener(boolean hasTextChangedListener) {
+            this.hasTextChangedListener = hasTextChangedListener;
+        }
     }
 
     public class CustomerFieldsAdapter extends BaseRecyclerAdapter<CustomerFieldsAdapter.ListItemView, CustomerField> {
@@ -195,21 +234,33 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
             else { // SPINNER
                 view = LayoutInflater.from(getContext()).inflate(R.layout.add_customer_spinneritem, parent, false);
             }
-            ListItemView listItemView = new ListItemView(view, fieldType);
+            ListItemView listItemView = new ListItemView(view, new EditTextWatcher(), fieldType);
             return listItemView;
         }
 
         @Override
-        public void onBindViewHolder(ListItemView holder, int position) {
+        public void onBindViewHolder(ListItemView holder, final int position) {
             FieldType fieldType = FieldType.values()[getItemViewType(position)];
             if(fieldType == FieldType.EDITTEXT) {
                 holder.tilEt.setHint(getItem(position).getLabel());
+                holder.editTextWatcher.setPosition(position);
+                holder.etField.setText(getItem(position).getEditTextValue());
             }
             else {
                 holder.tvLabel.setText(getItem(position).getLabel());
                 ArrayAdapter<?> valuesAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, getItem(position).getValues());
                 valuesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
                 holder.spOptions.setAdapter(valuesAdapter);
+                holder.spOptions.setSelection(getItem(position).getSelectedIndex());
+                holder.spOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int selectedPosition, long id) {
+                        getItem(position).setSelectedIndex(selectedPosition);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) { }
+                });
             }
         }
 
@@ -223,6 +274,48 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
             return getItem(position).getFieldType().ordinal();
         }
 
+        public String toJSONObject() {
+            Customer customer = null;
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            JSONObject jsonObject = new JSONObject();
+            try {
+                Extras extras = new Extras();
+                extras.setSalesman_id(getSession().getUser_id());
+                PaymentTerms paymentTerm = null;
+                CustomerCategory customerCategory = null;
+                for(CustomerField customerField : getList()) {
+                    if(customerField.getFieldName().equals(Customer.EXTRAS_CATEGORY_ID)) {
+                        CustomerField<CustomerCategory> category = (CustomerField<CustomerCategory>)customerField;
+                        customerCategory = category.getValues().get(category.getSelectedIndex());
+                        extras.setCategory_id(String.valueOf(customerCategory.getId()));
+                        continue;
+                    }
+                    if(customerField.getFieldName().equals(Customer.PAYMENT_TERMS_ID)) {
+                        CustomerField<PaymentTerms> paymentTerms = (CustomerField<PaymentTerms>)customerField;
+                        paymentTerm = paymentTerms.getValues().get(paymentTerms.getSelectedIndex());
+                        jsonObject.put(Customer.PAYMENT_TERMS_ID, paymentTerm.getId());
+                        continue;
+                    }
+
+                    jsonObject.put(customerField.getFieldName(), customerField.getEditTextValue());
+                }
+
+                customer = gson.fromJson(jsonObject.toString(), Customer.class);
+                customer.setExtras(extras);
+                customer.setPaymentTerms(paymentTerm);
+            } catch (SQLException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            return customer.toJSONString();
+        }
+
+        private Extras getExtras(Extras extras) {
+            if(extras == null)
+                extras = new Extras();
+            return extras;
+        }
+
         public class ListItemView extends BaseRecyclerAdapter.ViewHolder {
 
             ImageView ivIcon;
@@ -232,14 +325,18 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
             TextInputLayout tilEt;
 
             FieldType fieldType = FieldType.EDITTEXT;
+            EditTextWatcher editTextWatcher;
 
-            public ListItemView(View itemView, FieldType fieldType) {
+            public ListItemView(View itemView, EditTextWatcher editTextWatcher, FieldType fieldType) {
                 super(itemView);
+                this.editTextWatcher = editTextWatcher;
                 this.fieldType = fieldType;
+
                 ivIcon = (ImageView) itemView.findViewById(R.id.ivIcon);
 
                 if(fieldType == FieldType.EDITTEXT) {
                     etField = (EditText) itemView.findViewById(R.id.etField);
+                    etField.addTextChangedListener(editTextWatcher);
                     tilEt = (TextInputLayout) itemView.findViewById(R.id.tilEt);
                 }
                 else {
@@ -258,6 +355,34 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
                 return false;
             }
         }
+
+
+        public class EditTextWatcher implements TextWatcher {
+
+            private int position = 0;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.e("Position", position+"");
+                getItem(position).setEditTextValue(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            public void setPosition(int position) {
+                this.position = position;
+            }
+        }
+
+
 
     }
 

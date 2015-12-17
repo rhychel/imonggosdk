@@ -21,6 +21,7 @@ import java.util.List;
  * Created by rhymart on 12/2/15.
  */
 public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
+    private Customer customer;
 
     private SimpleCustomerDetailsRecyclerViewAdapter simpleCustomerDetailsRecyclerViewAdapter;
     private ArrayList<CustomerDetail> customerDetails = new ArrayList<CustomerDetail>(){{

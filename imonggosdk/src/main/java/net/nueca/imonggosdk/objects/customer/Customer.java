@@ -32,41 +32,49 @@ import java.sql.SQLException;
 public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
 
     public static final String CODE = "code";
-    public static final String CODE = "alternate_code";
-    public static final String CODE = "first_name";
-    public static final String CODE = "last_name";
-    public static final String CODE = "company_name";
-    public static final String CODE = "tin";
-    public static final String CODE = "street";
-    public static final String CODE = "city";
-    public static final String CODE = "state";
-    public static final String CODE = "zipcode";
-    public static final String CODE = "country";
-    public static final String CODE = "telephone";
-    public static final String CODE = "fax";
-    public static final String CODE = "mobile";
-    public static final String CODE = "email";
-    public static final String CODE = "remark";
-    public static final String CODE = "customer_type_id";
-    public static final String CODE = "customer_type_name";
-    public static final String CODE = "discount_text";
-    public static final String CODE = "available_points";
-    public static final String CODE = "birthdate";
-    public static final String CODE = "status";
-    public static final String CODE = "birthday";
-    public static final String CODE = "membership_expired_at";
-    public static final String CODE = "membership_start_at";
-    public static final String CODE = "biometric_signature";
-    public static final String CODE = "gender";
-    public static final String CODE = "point_to_amount_ratio";
-    public static final String CODE = "tax_exempt";
+    public static final String ALTERNATE_CODE = "alternate_code";
+    public static final String FIRST_NAME = "first_name";
+    public static final String MIDDLE_NAME = "middle_name";
+    public static final String LAST_NAME = "last_name";
+    public static final String COMPANY_NAME = "company_name";
+    public static final String TIN = "tin";
+    public static final String STREET = "street";
+    public static final String CITY = "city";
+    public static final String STATE = "state";
+    public static final String ZIPCODE = "zipcode";
+    public static final String COUNTRY = "country";
+    public static final String TELEPHONE = "telephone";
+    public static final String FAX = "fax";
+    public static final String MOBILE = "mobile";
+    public static final String EMAIL = "email";
+    public static final String REMARK = "remark";
+    public static final String CUSTOMER_TYPE_ID = "customer_type_id";
+    public static final String CUSTOMER_TYPE_NAME = "customer_type_name";
+    public static final String DISCOUNT_TEXT = "discount_text";
+    public static final String AVAILABLE_POINTS = "available_points";
+    public static final String BIRTHDATE = "birthdate";
+    public static final String STATUS = "status";
+    public static final String BIRTHDAY = "birthday";
+    public static final String MEMBERSHIP_EXPIRED_AT = "membership_expired_at";
+    public static final String MEMBERSHIP_START_AT = "membership_start_at";
+    public static final String BIOMETRIC_SIGNATURE = "biometric_signature";
+    public static final String GENDER = "gender";
+    public static final String POINT_TO_AMOUNT_RATIO = "point_to_amount_ratio";
+    public static final String TAX_EXEMPT = "tax_exempt";
+    public static final String PAYMENT_TERMS_ID = "payment_terms_id";
+
+    public static final String EXTRAS_CATEGORY_ID = "category_id";
+    public static final String EXTRAS_SALESMAN_ID = "salesman_id";
 
     @Expose
     @DatabaseField
     private int point_to_amount_ratio;
     @Expose
     @DatabaseField
-    private String code, alternate_code, first_name, last_name, name, company_name,
+    private int payment_terms_id;
+    @Expose
+    @DatabaseField
+    private String code, alternate_code, first_name, middle_name, last_name, name, company_name,
             tin, street = "", city, state, zipcode, country, telephone = "", fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
@@ -80,7 +88,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     private transient PriceList priceList;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")
     private transient Branch branch;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_terms_id")
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_term_id")
     private transient PaymentTerms paymentTerms;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
     private transient CustomerCategory customerCategory; // customer_type_id (?)
@@ -484,6 +492,22 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     public void setLetterHeader(String letterHeader) {
         this.letterHeader = letterHeader;
+    }
+
+    public String getMiddle_name() {
+        return middle_name;
+    }
+
+    public void setMiddle_name(String middle_name) {
+        this.middle_name = middle_name;
+    }
+
+    public int getPayment_terms_id() {
+        return payment_terms_id;
+    }
+
+    public void setPayment_terms_id(int payment_terms_id) {
+        this.payment_terms_id = payment_terms_id;
     }
 
     @Override

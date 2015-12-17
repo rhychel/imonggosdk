@@ -32,7 +32,7 @@ public class Extras extends DBTable {
     // Users
     @Expose
     @DatabaseField
-    private int is_salesman;
+    private Integer is_salesman;
 
     // Product
     @Expose
@@ -73,6 +73,12 @@ public class Extras extends DBTable {
     @Expose
     @DatabaseField
     private String last_checkin_at;
+    @Expose
+    @DatabaseField
+    private String category_id;
+    @Expose
+    @DatabaseField
+    private String salesman_id;
 
     // Invoice
     @Expose
@@ -238,6 +244,8 @@ public class Extras extends DBTable {
         expiry_date = builder.expiry_date;
         default_selling_unit = builder.default_selling_unit;
         default_ordering_unit_id = builder.default_ordering_unit_id;
+        salesman_id = builder.salesman_id;
+        category_id = builder.category_id;
     }
 
     public int getIs_salesman() {
@@ -631,6 +639,22 @@ public class Extras extends DBTable {
         this.default_ordering_unit_id = default_ordering_unit_id;
     }
 
+    public String getCategory_id() {
+        return category_id;
+    }
+
+    public void setCategory_id(String category_id) {
+        this.category_id = category_id;
+    }
+
+    public String getSalesman_id() {
+        return salesman_id;
+    }
+
+    public void setSalesman_id(String salesman_id) {
+        this.salesman_id = salesman_id;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
@@ -716,6 +740,18 @@ public class Extras extends DBTable {
         protected String invoice_purpose_code;
         protected String invoice_purpose_name;
         protected String expiry_date;
+        protected String salesman_id;
+        protected String category_id;
+
+        public Builder salesman_id(String salesman_id) {
+            this.salesman_id = salesman_id;
+            return this;
+        }
+
+        public Builder category_id(String category_id) {
+            this.category_id = category_id;
+            return this;
+        }
 
         public Builder default_selling_unit(String default_selling_unit) {
             this.default_selling_unit = default_selling_unit;

@@ -1037,30 +1037,30 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         Log.e(TAG, "Product don't have tax rate");
                                     }
 
-                                    if (jsonObject.has("branch_prices")) {
-                                        JSONArray branchPricesArray = jsonObject.getJSONArray("branch_prices");
-                                        int branchPriceSize = branchPricesArray.length();
-                                        for (int y = 0; y < branchPriceSize; y++) {
-                                            JSONObject jsonBranchPriceObject = branchPricesArray.getJSONObject(y);
-                                            BranchPrice branchPrice = gson.fromJson(jsonBranchPriceObject.toString(), BranchPrice.class);
-
-                                            if (isExisting(current_branch, Table.BRANCHES)) {
-                                                branchPrice.setBranch(current_branch);
-                                                branchPrice.setProduct(product);
-                                                // check if current branch matches with this branch price
-                                                if (branchPrice.getBranch().getId() == current_branch_id) {
-                                                    Log.e(TAG, "Product " + branchPrice.getProduct().getName() +
-                                                            " Content: " + branchPrice.toString());
-                                                    getHelper().delete(BranchPrice.class, branchPrice);
-                                                    branchPrice.dbOperation(getHelper(), DatabaseOperation.INSERT);
-                                                }
-
-
-                                            } else {
-                                                Log.e(TAG, "Branch ID " + current_branch_id + "does not exist. Skipping Branch Prices");
-                                            }
-                                        }
-                                    }
+//                                    if (jsonObject.has("branch_prices")) {
+//                                        JSONArray branchPricesArray = jsonObject.getJSONArray("branch_prices");
+//                                        int branchPriceSize = branchPricesArray.length();
+//                                        for (int y = 0; y < branchPriceSize; y++) {
+//                                            JSONObject jsonBranchPriceObject = branchPricesArray.getJSONObject(y);
+//                                            BranchPrice branchPrice = gson.fromJson(jsonBranchPriceObject.toString(), BranchPrice.class);
+//
+//                                            if (isExisting(current_branch, Table.BRANCHES)) {
+//                                                branchPrice.setBranch(current_branch);
+//                                                branchPrice.setProduct(product);
+//                                                // check if current branch matches with this branch price
+//                                                if (branchPrice.getBranch().getId() == current_branch_id) {
+//                                                    Log.e(TAG, "Product " + branchPrice.getProduct().getName() +
+//                                                            " Content: " + branchPrice.toString());
+//                                                    getHelper().delete(BranchPrice.class, branchPrice);
+//                                                    branchPrice.dbOperation(getHelper(), DatabaseOperation.INSERT);
+//                                                }
+//
+//
+//                                            } else {
+//                                                Log.e(TAG, "Branch ID " + current_branch_id + "does not exist. Skipping Branch Prices");
+//                                            }
+//                                        }
+//                                    }
 
                                     if (jsonObject.has("tag_list")) {
                                         // Save tags to the database
