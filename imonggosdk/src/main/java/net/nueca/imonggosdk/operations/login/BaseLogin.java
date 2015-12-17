@@ -606,6 +606,7 @@ public class BaseLogin {
                                                     JSONObject module = concesio.getJSONObject(key);
                                                     ModuleSetting moduleSetting = gson.fromJson(module.toString(), ModuleSetting.class);
                                                     moduleSetting.setModule_type(key);
+                                                    Log.e("Key", key);
                                                     if(key.equals("app")) {
                                                         moduleSetting.insertTo(mDBHelper);
 

@@ -105,7 +105,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().fetchIntId(LastUpdatedAt.class).queryBuilder();
 
             if (mCurrentTableSyncing == Table.DOCUMENTS) {
-                document_type = "transfer_out";
+                document_type = "adjustment_out";
                 intransit_status = "1";
 
                 initializeFromTo();

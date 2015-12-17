@@ -1,19 +1,20 @@
 package net.nueca.concessioengine.fragments;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,19 +26,21 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.interfaces.OnItemLongClickListener;
-import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleSalesQuantityDialog;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.objects.AccountSettings;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
@@ -60,6 +63,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     private NetworkImageView ivProductImage;
     private TextView tvProductName, tvProductDescription, tvNoProducts;
     private Spinner spCategories;
+
+    private LinearLayout llReason;
+    private TextView tvReason;
+    private ImageView ivEdit;
 
     private boolean useRecyclerView = true;
     private int prevLast = -1, prevSelectedCategory = 0;
@@ -96,6 +103,37 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         offset = 0l;
 
         if(useRecyclerView) {
+            llReason = (LinearLayout) view.findViewById(R.id.llReason);
+            if(reason != null) {
+                llReason.setVisibility(View.VISIBLE);
+                tvReason = (TextView) view.findViewById(R.id.tvReason);
+                ivEdit = (ImageView) view.findViewById(R.id.ivEdit);
+
+                tvReason.setText(reason.getName());
+                ivEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SimplePulloutRequestDialog simplePulloutRequestDialog = new SimplePulloutRequestDialog(getActivity(), getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
+                        simplePulloutRequestDialog.setDTitle("MSO");
+                        simplePulloutRequestDialog.setShouldShowBranchSelection(false);
+                        simplePulloutRequestDialog.setCurrentReason(reason);
+                        simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+                            @Override
+                            public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
+                                SimpleProductsFragment.this.reason = reason;
+                                ProductsAdapterHelper.setReason(reason);
+                                tvReason.setText(reason.getName());
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        });
+                        simplePulloutRequestDialog.show();
+                    }
+                });
+            }
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
             if(!isCustomAdapter)
                 productRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
@@ -103,6 +141,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 productRecyclerViewAdapter.setDbHelper(getHelper());
                 productRecyclerViewAdapter.setList(getProducts());
             }
+            productRecyclerViewAdapter.setHasSubtotal(hasSubtotal);
             productRecyclerViewAdapter.setListingType(listingType);
             productRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -136,6 +175,11 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             rvProducts.setAdapter(productRecyclerViewAdapter);
             rvProducts.addOnScrollListener(rvScrollListener);
 
+            if(isFinalize) {
+                ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+                itemTouchHelper.attachToRecyclerView(rvProducts);
+            }
+
             toggleNoItems("No products available.", (productRecyclerViewAdapter.getItemCount() > 0));
         }
         else {
@@ -146,11 +190,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                     Product product = productListAdapter.getItem(position);
-                    if(multipleInput) {
-                        if(multiInputListener != null)
+                    if (multipleInput) {
+                        if (multiInputListener != null)
                             multiInputListener.showInputScreen(product);
-                    }
-                    else {
+                    } else {
                         SelectedProductItem selectedProductItem = productListAdapter.getSelectedProductItems().getSelectedProductItem(product);
 
                         if (selectedProductItem == null) {
@@ -202,6 +245,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         this.useRecyclerView = useRecyclerView;
     }
 
+
     @Override
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
         Log.e("SimpleProductFragment", selectedProductItem.toString());
@@ -211,6 +255,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             if(listingType == ListingType.SALES) {
                 SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
                 simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
+                simpleSalesQuantityDialog.setHasSubtotal(hasSubtotal);
+                simpleSalesQuantityDialog.setHasUnits(true);
                 List<BranchPrice> branchPrices = getHelper().fetchForeignCollection(product.getBranchPrices().closeableIterator());
                 double subtotal = product.getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
                 if(branchPrices.size() > 0) {
@@ -412,4 +458,40 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             toggleNoItems("No products available.", productListAdapter.updateList(new ArrayList<Product>()));
         }
     }
+
+    // ---------------------- Return
+
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            if(target != null)
+                Log.e("target", "Not null");
+
+            if(viewHolder != null)
+                Log.e("viewHolder", "Not null");
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            Log.e("onSwiped", "Index=" + viewHolder.getAdapterPosition());
+            SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().getSelectedProductItem(productRecyclerViewAdapter.getItem(viewHolder.getAdapterPosition()));
+            Log.e("onSwiped", ProductsAdapterHelper.getSelectedProductItems().size()+"-before");
+            ProductsAdapterHelper.getSelectedProductItems().remove(selectedProductItem);
+            Log.e("onSwiped", ProductsAdapterHelper.getSelectedProductItems().size() + "-after");
+            productRecyclerViewAdapter.remove(viewHolder.getAdapterPosition());
+            productRecyclerViewAdapter.notifyItemChanged(0);
+            productRecyclerViewAdapter.notifyDataSetChanged();
+
+            if (productsFragmentListener != null)
+                productsFragmentListener.whenItemsSelectedUpdated();
+        }
+
+        @Override
+        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            Log.e("getSwipeDirs", "Yeah");
+            return super.getSwipeDirs(recyclerView, viewHolder);
+        }
+    };
+
 }

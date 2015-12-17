@@ -10,9 +10,8 @@ import android.view.ViewGroup;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleCustomerDetailsRecyclerViewAdapter;
-import net.nueca.concessioengine.adapters.enums.CustomerDetail;
+import net.nueca.concessioengine.enums.CustomerDetail;
 import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
-import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.util.ArrayList;
