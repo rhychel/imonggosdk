@@ -20,6 +20,8 @@ import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -180,18 +182,15 @@ public abstract class BaseSyncService extends ImonggoService {
     public boolean isExisting(Object o, int id, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
 
 
-
         switch (table) {
             case USERS: {
                 User user = (User) o;
                 return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
             }
-            case BRANCH_PRODUCTS:
             case PRODUCTS: {
                 Product product = (Product) o;
                 return getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
             }
-            case BRANCH_UNITS:
             case UNITS: {
                 Unit unit = (Unit) o;
                 return getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit.getId()).queryForFirst() != null;
@@ -200,10 +199,10 @@ public abstract class BaseSyncService extends ImonggoService {
                 Branch branch = (Branch) o;
                 return getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", branch.getId()).queryForFirst() != null;
             }
-            case BRANCH_PRICES: {
-                BranchPrice branchPrice = (BranchPrice) o;
-                return getHelper().fetchObjects(BranchPrice.class).queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
-            }
+//            case BRANCH_PRICES: { // Change algorithm
+//                BranchPrice branchPrice = (BranchPrice) o;
+//                return getHelper().fetchObjects(BranchPrice.class).queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
+//            }
             case BRANCH_TAGS: {
                 BranchTag branchTag = (BranchTag) o;
                 return getHelper().fetchObjects(BranchTag.class).queryBuilder().where().eq("id", branchTag.getId()).queryForFirst() != null;
@@ -259,9 +258,6 @@ public abstract class BaseSyncService extends ImonggoService {
                 CustomerGroup customerGroup = (CustomerGroup) o;
                 return getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroup.getId()).queryForFirst() != null;
             }
-            case CUSTOMER_CUSTOMER_GROUP: {
-
-            }
             case CUSTOMER_CATEGORIES: {
                 CustomerCategory customerCategory = (CustomerCategory) o;
                 return getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customerCategory.getId()).queryForFirst() != null;
@@ -278,9 +274,17 @@ public abstract class BaseSyncService extends ImonggoService {
                 RoutePlan routePlan = (RoutePlan) o;
                 return getHelper().fetchObjects(RoutePlan.class).queryBuilder().where().eq("id", routePlan.getId()).queryForFirst() != null;
             }
+            case BRANCH_PRODUCTS: {
+                BranchProduct branchProduct = (BranchProduct) o;
+                return getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("product_id", branchProduct.getProduct()).and().eq("branch_id", branchProduct.getBranch()).queryForFirst() != null;
+            }
+            case BRANCH_UNITS: {
+                BranchUnit branchUnit = (BranchUnit) o;
+                return getHelper().fetchObjects(BranchUnit.class).queryBuilder().where().eq("unit_id", branchUnit.getUnit()).and().eq("branch_id", branchUnit.getBranch()).queryForFirst() != null;
+            }
             case PRICE_LISTS_DETAILS:
                 Price price = (Price) o;
-                return  getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst() != null;
             case DAILY_SALES: {
                 DailySales dailySales = (DailySales) o;
                 if (dailySalesEnums == DailySalesEnums.DATE_OF_DAILY_SALES) {
@@ -408,6 +412,21 @@ public abstract class BaseSyncService extends ImonggoService {
 
     public void setSyncModulesListener(SyncModulesListener syncModulesListener) {
         this.mSyncModulesListener = syncModulesListener;
+    }
+
+    public Branch getBranchWithID(int id) throws SQLException {
+        return getHelper().fetchIntId(Branch.class).queryForId(id);
+
+    }
+
+    public Product getProductWithID(int id) throws SQLException {
+        return getHelper().fetchIntId(Product.class).queryForId(id);
+
+    }
+
+    public Unit getUnitWithID(int id) throws SQLException {
+        return getHelper().fetchIntId(Unit.class).queryForId(id);
+
     }
 
     public VolleyRequestListener getVolleyRequestListener() {

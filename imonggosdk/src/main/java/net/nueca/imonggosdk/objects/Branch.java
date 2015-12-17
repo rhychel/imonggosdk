@@ -11,6 +11,8 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
@@ -38,6 +40,10 @@ public class Branch extends BaseTable {
     private transient ForeignCollection<RoutePlan> routePlans;
     @ForeignCollectionField
     private transient ForeignCollection<BranchPrice> branchPrices;
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchProduct> branchProducts;
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchUnit> branchUnits;
 
     public Branch() { }
 

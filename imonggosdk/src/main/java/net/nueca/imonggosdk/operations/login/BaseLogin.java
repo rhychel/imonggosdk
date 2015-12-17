@@ -245,72 +245,88 @@ public class BaseLogin {
 
                 Log.e("Jn-BaseLogin", "onErrorResponse : " + volleyError.toString() + "Status Code: " + volleyError.networkResponse.statusCode);
 
+                if(volleyError != null) {
 
-                // if account id is invalid
-                if (volleyError.networkResponse != null) {
+                    // if account id is invalid
+                    if (volleyError.networkResponse != null) {
 
-                    if(volleyError.networkResponse.statusCode == 500 ||
-                            volleyError.networkResponse.statusCode == 501 ||
-                            volleyError.networkResponse.statusCode == 502 ||
-                            volleyError.networkResponse.statusCode == 503 ||
-                            volleyError.networkResponse.statusCode == 504 ||
-                            volleyError.networkResponse.statusCode == 505) {
-                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-                                mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID),
-                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mLoginListener.onPositiveButtonPressed();
-                                        // Execute Listener onStopLogin
-                                        if (mLoginListener != null) {
-                                            mLoginListener.onStopLogin();
+                        if (volleyError.networkResponse.statusCode == 500 ||
+                                volleyError.networkResponse.statusCode == 501 ||
+                                volleyError.networkResponse.statusCode == 502 ||
+                                volleyError.networkResponse.statusCode == 503 ||
+                                volleyError.networkResponse.statusCode == 504 ||
+                                volleyError.networkResponse.statusCode == 505) {
+                            DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                                    mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID),
+                                    mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mLoginListener.onPositiveButtonPressed();
+                                            // Execute Listener onStopLogin
+                                            if (mLoginListener != null) {
+                                                mLoginListener.onStopLogin();
+                                            }
                                         }
-                                    }
-                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-                    } else {
+                                    }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                        } else {
 
-                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-                                mContext.getString(R.string.LOGIN_FAILED_SERVER_ERROR),
-                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mLoginListener.onPositiveButtonPressed();
-                                        // Execute Listener onStopLogin
-                                        if (mLoginListener != null) {
-                                            mLoginListener.onStopLogin();
+                            DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                                    mContext.getString(R.string.LOGIN_FAILED_SERVER_ERROR),
+                                    mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mLoginListener.onPositiveButtonPressed();
+                                            // Execute Listener onStopLogin
+                                            if (mLoginListener != null) {
+                                                mLoginListener.onStopLogin();
+                                            }
                                         }
-                                    }
-                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                    }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                        }
+                    } else { // if URL is invalid, or not connected to internet.
+                        // OFFLINE
+                        if (!NetworkTools.isInternetAvailable(mContext)) {
+                            DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                                    mContext.getString(R.string.LOGIN_NETWORK_ERROR),
+                                    mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mLoginListener.onPositiveButtonPressed();
+                                            // Execute Listener onStopLogin
+                                            if (mLoginListener != null) {
+                                                mLoginListener.onStopLogin();
+                                            }
+                                        }
+                                    }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                        } else { // AUTHENTICATION ERROR
+                            DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                                    mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR),
+                                    mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mLoginListener.onPositiveButtonPressed();
+                                        }
+                                    }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                        }
                     }
-                } else { // if URL is invalid, or not connected to internet.
-                    // OFFLINE
-                    if (!NetworkTools.isInternetAvailable(mContext)) {
-                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-                                mContext.getString(R.string.LOGIN_NETWORK_ERROR),
-                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mLoginListener.onPositiveButtonPressed();
-                                        // Execute Listener onStopLogin
-                                        if (mLoginListener != null) {
-                                            mLoginListener.onStopLogin();
-                                        }
+                } else {
+                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                            "Login Failed Please Try Again Later..",
+                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mLoginListener.onPositiveButtonPressed();
+                                    // Execute Listener onStopLogin
+                                    if (mLoginListener != null) {
+                                        mLoginListener.onStopLogin();
                                     }
-                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-                    } else { // AUTHENTICATION ERROR
-                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-                                mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR),
-                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mLoginListener.onPositiveButtonPressed();
-                                    }
-                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-                    }
+                                }
+                            }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
                 }
 
             }
