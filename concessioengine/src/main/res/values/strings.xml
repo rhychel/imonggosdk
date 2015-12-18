@@ -25,5 +25,10 @@
         <item>Widow (er)</item>
     </string-array>
 
+    <plurals name="items">
+        <item quantity="zero">No Item</item>
+        <item quantity="one">%d Item</item>
+        <item quantity="other">%d Items</item>
+    </plurals>
 
 </resources>

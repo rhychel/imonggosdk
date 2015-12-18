@@ -1,20 +1,27 @@
 package net.nueca.imonggosdk.objects.customer;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.RoutePlan;
-import net.nueca.imonggosdk.objects.base.Extras;
-import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
+import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 
@@ -25,28 +32,132 @@ import java.sql.SQLException;
 @DatabaseTable
 public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
 
+    public static final String CODE = "code";
+    public static final String ALTERNATE_CODE = "alternate_code";
+    public static final String FIRST_NAME = "first_name";
+    public static final String MIDDLE_NAME = "middle_name";
+    public static final String LAST_NAME = "last_name";
+    public static final String COMPANY_NAME = "company_name";
+    public static final String TIN = "tin";
+    public static final String STREET = "street";
+    public static final String CITY = "city";
+    public static final String STATE = "state";
+    public static final String ZIPCODE = "zipcode";
+    public static final String COUNTRY = "country";
+    public static final String TELEPHONE = "telephone";
+    public static final String FAX = "fax";
+    public static final String MOBILE = "mobile";
+    public static final String EMAIL = "email";
+    public static final String REMARK = "remark";
+    public static final String CUSTOMER_TYPE_ID = "customer_type_id";
+    public static final String CUSTOMER_TYPE_NAME = "customer_type_name";
+    public static final String DISCOUNT_TEXT = "discount_text";
+    public static final String AVAILABLE_POINTS = "available_points";
+    public static final String BIRTHDATE = "birthdate";
+    public static final String STATUS = "status";
+    public static final String BIRTHDAY = "birthday";
+    public static final String MEMBERSHIP_EXPIRED_AT = "membership_expired_at";
+    public static final String MEMBERSHIP_START_AT = "membership_start_at";
+    public static final String BIOMETRIC_SIGNATURE = "biometric_signature";
+    public static final String GENDER = "gender";
+    public static final String POINT_TO_AMOUNT_RATIO = "point_to_amount_ratio";
+    public static final String TAX_EXEMPT = "tax_exempt";
+    public static final String PAYMENT_TERMS_ID = "payment_terms_id";
+
+    public static final String EXTRAS_CATEGORY_ID = "category_id";
+    public static final String EXTRAS_SALESMAN_ID = "salesman_id";
+
+    @Expose
     @DatabaseField
     private int point_to_amount_ratio;
+    @Expose
     @DatabaseField
-    private String code, alternate_code, first_name, last_name, name, company_name,
+    private int payment_terms_id;
+    @Expose
+    @DatabaseField
+    private String code, alternate_code, first_name, middle_name, last_name, name, company_name,
             tin, street = "", city, state, zipcode, country, telephone = "", fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
             membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+    @Expose
     @DatabaseField
     private boolean tax_exempt;
     @DatabaseField
     private transient boolean is_favorite = false;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "price_list_id")
-    private PriceList priceList;
+    private transient PriceList priceList;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")
-    private Branch branch;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_terms_id")
-    private PaymentTerms paymentTerms;
+    private transient Branch branch;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_term_id")
+    private transient PaymentTerms paymentTerms;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
-    private CustomerCategory customerCategory; // customer_type_id (?)
+    private transient CustomerCategory customerCategory; // customer_type_id (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
-    private RoutePlan routePlan;
+    private transient RoutePlan routePlan;
+    @ForeignCollectionField(orderColumnName = "id")
+    private transient ForeignCollection<Invoice> invoices;
+    @ForeignCollectionField
+    private transient ForeignCollection<Document> documents;
+    @ForeignCollectionField
+    private transient ForeignCollection<RoutePlanDetail> routePlanDetails;
+
+    /**
+     * THESE ARE FOR THE LETTER HEADER
+     */
+    private transient int sectionFirstPosition = -1;
+    private transient boolean isHeader = false;
+    private transient String letterHeader = "A";
+    /** -- END --
+     * THESE ARE FOR THE LETTER HEADER
+     */
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
+    protected transient OfflineData offlineData;
+
+    public Customer() { }
+
+    public Customer(String first_name, String last_name, String name, String company_name,
+                    String telephone, String mobile, String fax, String email, String street,
+                    String city, String zipcode, String country, String state, String tin, String gender) {
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.name = name;
+        this.company_name = company_name;
+        this.telephone = telephone;
+        this.mobile = mobile;
+        this.fax = fax;
+        this.email = email;
+        this.street = street;
+        this.city = city;
+        this.zipcode = zipcode;
+        this.country = country;
+        this.state = state;
+        this.tin = tin;
+        this.gender = gender;
+    }
+
+    // TODO: complete all fields
+    public Customer(Builder builder) {
+        this.first_name = builder.first_name;
+        this.last_name = builder.last_name;
+        this.name = builder.name;
+        this.company_name = builder.company_name;
+        this.telephone = builder.telephone;
+        this.mobile = builder.mobile;
+        this.fax = builder.fax;
+        this.email = builder.email;
+        this.street = builder.street;
+        this.city = builder.city;
+        this.zipcode = builder.zipcode;
+        this.country = builder.country;
+        this.state = builder.state;
+        this.tin = builder.tin;
+        this.gender = builder.gender;
+    }
+
+    public Customer(String s, String s1, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String gender) {
+        super();
+    }
 
     public int getPoint_to_amount_ratio() {
         return point_to_amount_ratio;
@@ -336,6 +447,78 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.routePlan = routePlan;
     }
 
+    public ForeignCollection<Invoice> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(ForeignCollection<Invoice> invoices) {
+        this.invoices = invoices;
+    }
+
+    public ForeignCollection<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(ForeignCollection<Document> documents) {
+        this.documents = documents;
+    }
+
+    public OfflineData getOfflineData() {
+        return offlineData;
+    }
+
+    public void setOfflineData(OfflineData offlineData) {
+        this.offlineData = offlineData;
+    }
+
+    public int getSectionFirstPosition() {
+        return sectionFirstPosition;
+    }
+
+    public void setSectionFirstPosition(int sectionFirstPosition) {
+        this.sectionFirstPosition = sectionFirstPosition;
+    }
+
+    public boolean isHeader() {
+        return isHeader;
+    }
+
+    public void setIsHeader(boolean isHeader) {
+        this.isHeader = isHeader;
+    }
+
+    public String getLetterHeader() {
+        return letterHeader;
+    }
+
+    public void setLetterHeader(String letterHeader) {
+        this.letterHeader = letterHeader;
+    }
+
+    public String getMiddle_name() {
+        return middle_name;
+    }
+
+    public void setMiddle_name(String middle_name) {
+        this.middle_name = middle_name;
+    }
+
+    public int getPayment_terms_id() {
+        return payment_terms_id;
+    }
+
+    public void setPayment_terms_id(int payment_terms_id) {
+        this.payment_terms_id = payment_terms_id;
+    }
+
+    public ForeignCollection<RoutePlanDetail> getRoutePlanDetails() {
+        return routePlanDetails;
+    }
+
+    public void setRoutePlanDetails(ForeignCollection<RoutePlanDetail> routePlanDetails) {
+        this.routePlanDetails = routePlanDetails;
+    }
+
     @Override
     public boolean equals(Object o) {
         return (o instanceof Customer) && ((Customer)o).getId() == id;
@@ -349,8 +532,45 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         return result;
     }
 
+    public JSONObject toJSONObject() throws JSONException {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return new JSONObject(gson.toJson(this));
+    }
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
+    }
+
+    public static Customer fromJSONObject(JSONObject jsonObject) throws JSONException {
+        Gson gson = new Gson();
+        if(jsonObject.has("customer")) {
+            jsonObject = jsonObject.getJSONObject("customer");
+        }
+        Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
+        return customer;
+    }
+
     @Override
     public String toString() {
+        return name;
+    }
+
+    public String generateFullName() {
+        String name = "";
+        if(first_name != null && !first_name.isEmpty()) {
+            name += first_name;
+        }
+        if(middle_name != null && !middle_name.isEmpty()) {
+            if(!name.isEmpty())
+                name += " ";
+            name += middle_name;
+        }
+        if(last_name != null && !last_name.isEmpty()) {
+            if(!name.isEmpty())
+                name += " ";
+            name += last_name;
+        }
+        this.name = name;
         return name;
     }
 
@@ -381,9 +601,23 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         return address;
     }
 
+    public String getLastPurchase() {
+        try {
+            Invoice invoice = invoices.closeableIterator().first();
+            invoices.closeLastIterator();
+
+            if(invoice != null)
+                return invoice.getInvoice_date();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
+            insertExtrasTo(dbHelper);
             dbHelper.insert(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -393,6 +627,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
+            deleteExtrasTo(dbHelper);
             dbHelper.delete(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -402,6 +637,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
+            updateExtrasTo(dbHelper);
             dbHelper.update(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -413,6 +649,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         extras.setCustomer(this);
         extras.setId(Customer.class.getName().toUpperCase(), id);
         extras.insertTo(dbHelper);
+
     }
 
     @Override
@@ -423,5 +660,102 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
         extras.updateTo(dbHelper);
+    }
+
+    // TODO: complete all fields
+    public static class Builder {
+        protected Extras extras;
+        protected String utc_created_at, utc_updated_at,
+                code, alternate_code, first_name, last_name, name, company_name,
+                tin, street, city, state, zipcode, country, telephone, fax,
+                mobile, email, remark, customer_type_id, customer_type_name,
+                discount_text, available_points, birthdate, status, birthday,
+                membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+
+        public Customer build() {
+            return new Customer(this);
+        }
+
+        public Builder first_name(String first_name) {
+            this.first_name = first_name;
+            return this;
+        }
+        public Builder last_name(String last_name) {
+            this.last_name = last_name;
+            return this;
+        }
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        public Builder company_name(String company_name) {
+            this.company_name = company_name;
+            return this;
+        }
+        public Builder code(String code) {
+            this.code = code;
+            return this;
+        }
+        public Builder alternate_code(String alternate_code) {
+            this.alternate_code = alternate_code;
+            return this;
+        }
+        public Builder tin(String tin) {
+            this.tin = tin;
+            return this;
+        }
+        public Builder street(String street) {
+            this.street = street;
+            return this;
+        }
+        public Builder city(String city) {
+            this.city = city;
+            return this;
+        }
+        public Builder state(String state) {
+            this.state = state;
+            return this;
+        }
+        public Builder zipcode(String zipcode) {
+            this.zipcode = zipcode;
+            return this;
+        }
+        public Builder country(String country) {
+            this.country = country;
+            return this;
+        }
+        public Builder telephone(String telephone) {
+            this.telephone = telephone;
+            return this;
+        }
+        public Builder fax(String fax) {
+            this.fax = fax;
+            return this;
+        }
+        public Builder mobile(String mobile) {
+            this.mobile = mobile;
+            return this;
+        }
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+        public Builder remark(String remark) {
+            this.remark = remark;
+            return this;
+        }
+        public Builder birthdate(String birthdate) {
+            this.birthdate = birthdate;
+            return this;
+        }
+        public Builder birthday(String birthday) {
+            this.birthday = birthday;
+            return this;
+        }
+        public Builder status(String status) {
+            this.status = status;
+            return this;
+        }
+
     }
 }

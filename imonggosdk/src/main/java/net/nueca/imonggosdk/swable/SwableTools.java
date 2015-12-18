@@ -20,6 +20,7 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
@@ -74,20 +75,24 @@ public class SwableTools {
 	    return false;
 	}
 
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, User user, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, user, o, type, "");
     }
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, User user, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
         return sendTransaction(helper, user.getHome_branch_id(), o, type, parameters);
     }
 
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, Session session, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, session, o, type, "");
     }
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, Session session, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
@@ -99,10 +104,12 @@ public class SwableTools {
         return sendTransaction(helper, user.getHome_branch_id(), o, type, parameters);
     }
 
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, int branchId, Object o, OfflineDataType type)
             throws SQLException, JSONException {
         return sendTransaction(helper, branchId, o, type, "");
     }
+    @Deprecated
     public static OfflineData sendTransaction(ImonggoDBHelper2 helper, int branchId, Object o, OfflineDataType type,
                                               String parameters)
             throws SQLException, JSONException {
@@ -132,6 +139,7 @@ public class SwableTools {
         return offlineData;
     }
 
+    @Deprecated
     public static void voidTransaction(ImonggoDBHelper2 helper, String returnId, OfflineDataType type, String reason)
             throws SQLException {
         if (type == OfflineDataType.SEND_ORDER || type == OfflineDataType.SEND_INVOICE ||
@@ -169,6 +177,7 @@ public class SwableTools {
         forVoid.updateTo(helper);
     }
 
+    @Deprecated
     public static void voidTransaction(ImonggoDBHelper2 helper, OfflineData offlineData, OfflineDataType type, String reason)
             throws SQLException {
         if (type == OfflineDataType.SEND_ORDER || type == OfflineDataType.SEND_INVOICE ||
@@ -187,19 +196,23 @@ public class SwableTools {
             voidTransaction(helper, offlineData.getReturnId(), type, reason);
     }
 
+    @Deprecated
     public static void sendOrderNow(Context context, Session session, Server server, Order order, int branchId,
                                       String parameters, @Nullable VolleyRequestListener listener) {
         sendTransactionNow(context, session, server, Table.ORDERS, order, branchId, parameters, listener);
     }
+    @Deprecated
     public static void sendInvoiceNow(Context context, Session session, Server server, Invoice invoice, int branchId,
                                       String parameters, @Nullable VolleyRequestListener listener) {
         sendTransactionNow(context, session, server, Table.INVOICES, invoice, branchId, parameters, listener);
     }
+    @Deprecated
     public static void sendDocumentNow(Context context, Session session, Server server, Document document, int branchId,
                                       String parameters, @Nullable VolleyRequestListener listener) {
         sendTransactionNow(context, session, server, Table.INVOICES, document, branchId, parameters, listener);
     }
 
+    @Deprecated
     private static void sendTransactionNow(Context context, Session session, Server server, Table table, final Object
             data, int branchId, String parameters, @Nullable VolleyRequestListener listener) {
         if(parameters.length() > 0 && parameters.charAt(0) != '&')
@@ -276,6 +289,9 @@ public class SwableTools {
             case DOCUMENTS:
                 transaction.put("document", jsonObject);
                 break;
+            case CUSTOMERS:
+                transaction.put("customer", jsonObject);
+                break;
         }
         return transaction;
     }
@@ -292,6 +308,9 @@ public class SwableTools {
                 break;
             case SEND_DOCUMENT:
                 transaction.put("document", jsonObject);
+                break;
+            case ADD_CUSTOMER:
+                transaction.put("customer", jsonObject);
                 break;
         }
         return transaction;
@@ -324,6 +343,7 @@ public class SwableTools {
      *      .queue();
      */
     public static class Transaction {
+
         private ImonggoDBHelper2 helper;
         public Transaction(ImonggoDBHelper2 helper) {
             this.helper = helper;
@@ -386,7 +406,7 @@ public class SwableTools {
                 return this;
             }
 
-            public void queue() {
+            public OfflineData queue() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : SendTransaction : Transaction Object is null");
                 if(reason == null || reason.isEmpty())
@@ -402,9 +422,12 @@ public class SwableTools {
                         offlineData.setOfflineDataTransactionType(OfflineDataType.CANCEL_INVOICE); break;
                     case OfflineData.DOCUMENT:
                         offlineData.setOfflineDataTransactionType(OfflineDataType.CANCEL_DOCUMENT); break;
+                    case OfflineData.CUSTOMER:
+                        offlineData.setOfflineDataTransactionType(OfflineDataType.DELETE_CUSTOMER); break;
                 }
 
                 offlineData.updateTo(helper);
+                return offlineData;
             }
 
             public DirectTransaction directCancel() {
@@ -422,6 +445,8 @@ public class SwableTools {
                         offlineData.setOfflineDataTransactionType(OfflineDataType.CANCEL_INVOICE); break;
                     case OfflineData.DOCUMENT:
                         offlineData.setOfflineDataTransactionType(OfflineDataType.CANCEL_DOCUMENT); break;
+                    case OfflineData.CUSTOMER:
+                        offlineData.setOfflineDataTransactionType(OfflineDataType.DELETE_CUSTOMER); break;
                 }
                 return new DirectTransaction(offlineData, helper, 0);
             }
@@ -461,14 +486,19 @@ public class SwableTools {
                 offlineData = new OfflineData(invoice, OfflineDataType.UNKNOWN);
                 return this;
             }
-            public void queue() {
+            public SendTransaction object(Customer customer) {
+                offlineData = new OfflineData(customer, OfflineDataType.UNKNOWN);
+                return this;
+            }
+            public OfflineData queue() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : SendTransaction : Transaction Object is null");
-                if(branchId == null)
+                if(branchId == null && offlineData.getType() != OfflineData.CUSTOMER)
                     throw new NullPointerException("SwableTools : SendTransaction : Branch ID is null");
 
                 offlineData.setParameters(parameter);
-                offlineData.setBranch_id(branchId);
+                if(branchId != null)
+                    offlineData.setBranch_id(branchId);
 
                 switch (offlineData.getType()) {
                     case OfflineData.ORDER:
@@ -477,18 +507,22 @@ public class SwableTools {
                         offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_INVOICE); break;
                     case OfflineData.DOCUMENT:
                         offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_DOCUMENT); break;
+                    case OfflineData.CUSTOMER:
+                        offlineData.setOfflineDataTransactionType(OfflineDataType.ADD_CUSTOMER); break;
                 }
 
                 offlineData.insertTo(helper);
+                return offlineData;
             }
             public DirectTransaction directSend() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : SendTransaction : Transaction Object is null");
-                if(branchId == null)
+                if(branchId == null && offlineData.getType() != OfflineData.CUSTOMER)
                     throw new NullPointerException("SwableTools : SendTransaction : Branch ID is null");
 
                 offlineData.setParameters(parameter);
-                offlineData.setBranch_id(branchId);
+                if(branchId != null)
+                    offlineData.setBranch_id(branchId);
 
                 switch (offlineData.getType()) {
                     case OfflineData.ORDER:
@@ -497,6 +531,8 @@ public class SwableTools {
                         offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_INVOICE); break;
                     case OfflineData.DOCUMENT:
                         offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_DOCUMENT); break;
+                    case OfflineData.CUSTOMER:
+                        offlineData.setOfflineDataTransactionType(OfflineDataType.ADD_CUSTOMER); break;
                 }
                 return new DirectTransaction(offlineData, helper, 1);
             }
@@ -540,10 +576,12 @@ public class SwableTools {
                 this.context = activity.getApplicationContext();
                 queue = Volley.newRequestQueue(context);
                 Table table;
+
                 switch (offlineData.getType()) {
                     case OfflineData.ORDER: table = Table.ORDERS; break;
                     case OfflineData.INVOICE: table = Table.INVOICES; break;
                     case OfflineData.DOCUMENT: table = Table.DOCUMENTS; break;
+                    case OfflineData.CUSTOMER: table = Table.CUSTOMERS; break;
                     default: table = Table.ORDERS; break;
                 }
 
@@ -635,7 +673,9 @@ public class SwableTools {
                                         offlineData.updateTo(helper);
                                     }
                                 }, server, table, SwableTools.prepareTransactionJSON(table, offlineData.getData()),
-                                "?branch=" + offlineData.getBranch_id() + offlineData.getParameters())
+                                    (offlineData.getType() != OfflineData.CUSTOMER?
+                                            "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() : offlineData
+                                            .getParametersAsFirstParameter()))
                         );
                 } else {
                     if(offlineData.isPagedRequest())
@@ -697,9 +737,10 @@ public class SwableTools {
                                             offlineData.updateTo(helper);
                                         }
                                     }, server, table, offlineData.getReturnId(),
-                                    "?branch=" + offlineData.getBranch_id() + "&reason="
-                                    + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8")
-                                    + offlineData.getParameters())
+                                        (offlineData.getType() != OfflineData.CUSTOMER?
+                                                "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() : offlineData
+                                                .getParametersAsFirstParameter())
+                                                + "&reason=" + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8") )
                             );
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
@@ -753,6 +794,16 @@ public class SwableTools {
                                 sendThisPage(table, i+1, max_page, childDocuments.get(i).toJSONObject(), offlineData);
                             }
                         }
+                    }
+                    else if(table == Table.INVOICES) {
+                        Invoice invoice = (Invoice)offlineData.getObjectFromData();
+
+                        sendThisPage(table, 1, 1, invoice.toJSONObject(), offlineData);
+                    }
+                    else if(table == Table.CUSTOMERS) {
+                        Customer customer = (Customer)offlineData.getObjectFromData();
+
+                        sendThisPage(table, 1, 1, customer.toJSONObject(), offlineData);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -866,8 +917,8 @@ public class SwableTools {
                                 parent.setQueued(false);
                                 parent.setSynced(false);
                             }
-                        }, server, table, jsonObject, "?branch_id="+ parent.getBranch_id() + parent
-                                .getParameters())
+                        }, server, table, jsonObject, (offlineData.getType() != OfflineData.CUSTOMER?
+                                "?branch_id="+ parent.getBranch_id() + parent.getParameters() : parent.getParametersAsFirstParameter()) )
                 );
 
                 getQueue().start();
@@ -938,8 +989,10 @@ public class SwableTools {
                                         offlineData.setCancelled(false);
                                         offlineData.updateTo(helper);
                                     }
-                                }, server, table, id, "branch_id=" + offlineData.getBranch_id() + "&reason="
-                                        + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8") + offlineData.getParameters())
+                                }, server, table, id, (offlineData.getType() != OfflineData.CUSTOMER?
+                                        "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() :
+                                        offlineData.getParametersAsFirstParameter()) +
+                                        "&reason=" + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8"))
                         );
                     }
                 } catch (UnsupportedEncodingException e) {

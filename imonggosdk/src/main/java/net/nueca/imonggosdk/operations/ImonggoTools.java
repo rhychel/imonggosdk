@@ -51,8 +51,8 @@ public class ImonggoTools {
                     parameterStr += "branch_id=%"+stringInputCount+"$s&";
                     stringInputCount++;
                     break;
-                case SALES_PROMOTION_DETAIL:
-                    parameterStr += "q=details&";
+                case SALES_PUSH:
+                    parameterStr += "type=sales_push&";
                     break;
                 case FROM:
                     parameterStr += "from=%"+stringInputCount+"$s&";
@@ -78,6 +78,17 @@ public class ImonggoTools {
                     parameterStr = "";
                     parameterStr += "%"+stringInputCount+"$s.json?";
                     stringInputCount++;
+                    break;
+                case DETAILS:
+                    parameterStr += "q=details&";
+                    break;
+                case ID:
+                    parameterStr = "";
+                    parameterStr += "/%"+stringInputCount+"$s.json?";
+                    stringInputCount++;
+                    break;
+                case UNITS:
+                    parameterStr += "q=units&";
                     break;
             }
         }
@@ -264,4 +275,24 @@ public class ImonggoTools {
 		}
 	}
 
+    /**
+     *
+     * Build URL for a specific module with reference.
+     *
+     * @param context
+     * @param apiToken
+     * @param accountUrlNoProtocol
+     * @param module
+     * @param reference
+     * @param isSecured
+     * @return
+     */
+    public static String buildAPIModuleReferenceURL(Context context, String apiToken, String accountUrlNoProtocol,
+                                             Table module, String reference, boolean isSecured) {
+        if(isSecured)
+            return String.format(context.getString(R.string.API_MODULE_REFERENCE_URL_SECURED), apiToken, accountUrlNoProtocol,
+                    Configurations.API_MODULES.get(module), reference);
+        return String.format(context.getString(R.string.API_MODULE_REFERENCE_URL), apiToken, accountUrlNoProtocol,
+                Configurations.API_MODULES.get(module), reference);
+    }
 }

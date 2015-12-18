@@ -1,7 +1,6 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
-import android.util.Log;
 
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
@@ -11,7 +10,6 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -105,7 +103,8 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
                 selectedProductItem = new SelectedProductItem();
                 selectedProductItem.setProduct(product);
                 if(product.getExtras() != null)
-                    selectedProductItem.setIsMultiline(product.getExtras().isBatch_maintained());
+                    selectedProductItem.setIsMultiline(product.getExtras().isBatch_maintained() == null?
+                            false : product.getExtras().isBatch_maintained());
 
                 /*Log.e("Adding", product.getName() + " " + displayProductListItem.add(selectedProductItem));
                 Log.e("Size", displayProductListItem.size() + "");*/

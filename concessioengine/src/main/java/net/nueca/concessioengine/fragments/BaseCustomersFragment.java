@@ -3,6 +3,7 @@ package net.nueca.concessioengine.fragments;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
@@ -13,8 +14,10 @@ import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.SimpleCustomerListAdapter;
 import net.nueca.concessioengine.adapters.SimpleCustomerRecyclerViewAdapter;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.customer.Customer;
 
@@ -30,6 +33,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
     protected long offset = 0l;
     private int prevLast = -1;
     protected boolean useRecyclerView = true;
+    protected ListingType listingType = ListingType.BASIC;
 
     protected SimpleCustomerListAdapter simpleCustomerListAdapter;
     protected SimpleCustomerRecyclerViewAdapter simpleCustomerRecyclerViewAdapter;
@@ -44,6 +48,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
     protected ListScrollListener listScrollListener;
 
     protected abstract void toggleNoItems(String msg, boolean show);
+    protected abstract void whenListEndReached(List<Customer> customers);
 
     protected List<Customer> getCustomers() {
         List<Customer> customers = new ArrayList<>();
@@ -70,6 +75,58 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
         return customers;
     }
 
+    protected List<Customer> processCustomersForLetterHeader(List<Customer> newCustomers) {
+        return processCustomersForLetterHeader(newCustomers, null, 0);
+    }
+
+    protected List<Customer> processCustomersForLetterHeader(List<Customer> newCustomers, Customer lastCustomer, int lastIndex) {
+
+        ArrayList<Customer> finalCustomers = new ArrayList<>();
+        String lastHeader = "";
+        int sectionFirstPosition = 0;
+        if(lastCustomer != null) {
+            sectionFirstPosition = lastCustomer.getSectionFirstPosition();
+            lastHeader = lastCustomer.getLetterHeader();
+        }
+        int sectionItemCount = lastIndex;
+        int headerCtr = 0;
+        for (int i = 0; i < newCustomers.size(); i++) {
+            Customer customer = newCustomers.get(i);
+            String name;
+            if(customer.getName() != null && customer.getName().length() > 0)
+                name = customer.getName();
+            else
+                name = customer.getFirst_name() + " " + customer.getLast_name();
+            name = name.trim();
+            String header = name.substring(0, 1).toUpperCase();
+
+            if(customer.isHeader() || customer.getSectionFirstPosition() > -1) {
+                sectionItemCount++;
+                continue;
+            }
+
+            if (!TextUtils.equals(lastHeader, header)) {
+                sectionFirstPosition = sectionItemCount;
+                lastHeader = header;
+
+                Customer customerHeader = new Customer();
+                customerHeader.setIsHeader(true);
+                customerHeader.setSectionFirstPosition(sectionFirstPosition);
+                customerHeader.setLetterHeader(header);
+
+                finalCustomers.add(customerHeader);
+                sectionItemCount++;
+            }
+            customer.setIsHeader(false);
+            customer.setSectionFirstPosition(sectionFirstPosition);
+            customer.setLetterHeader(header);
+            finalCustomers.add(customer);
+            sectionItemCount++;
+        }
+
+        return finalCustomers;
+    }
+
     protected void setSearchKey(String searchKey) {
         this.searchKey = searchKey;
     }
@@ -88,6 +145,14 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
 
     public void setActionBar(Toolbar tbActionBar) {
         this.tbActionBar = tbActionBar;
+    }
+
+    public void setListingType(ListingType listingType) {
+        this.listingType = listingType;
+    }
+
+    public void setUseRecyclerView(boolean useRecyclerView) {
+        this.useRecyclerView = useRecyclerView;
     }
 
     @Override
@@ -129,8 +194,6 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
         }
     };
 
-    protected abstract void whenListEndReached(List<Customer> customers);
-
     protected RecyclerView.OnScrollListener rvScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView view, int scrollState) {
@@ -152,16 +215,33 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
             super.onScrolled(recyclerView, dx, dy);
 
             int visibleItemCount = rvCustomers.getChildCount();
-            int totalItemCount = simpleCustomerRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
-            int firstVisibleItem = simpleCustomerRecyclerViewAdapter.getLinearLayoutManager()
-                    .findFirstVisibleItemPosition();
+            int totalItemCount = 0;
+            int firstVisibleItem = 0;
+            if(listingType == ListingType.LETTER_HEADER) {
+                totalItemCount = simpleCustomerRecyclerViewAdapter.getLayoutManager().getItemCount();
+                firstVisibleItem = simpleCustomerRecyclerViewAdapter.getLayoutManager().findFirstVisibleItemPosition();
 
+//                totalItemCount = simpleCustomerRecyclerViewAdapter2.getLayoutManager().getItemCount();
+//                firstVisibleItem = simpleCustomerRecyclerViewAdapter2.getLayoutManager().findFirstVisibleItemPosition();
+            }
+            else {
+                totalItemCount = simpleCustomerRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
+                firstVisibleItem = simpleCustomerRecyclerViewAdapter.getLinearLayoutManager()
+                        .findFirstVisibleItemPosition();
+            }
             int lastItem = firstVisibleItem + visibleItemCount;
 
             if(lastItem == totalItemCount) {
                 if(prevLast != lastItem) {
                     offset += LIMIT;
-                    whenListEndReached(getCustomers());
+                    if(listingType == ListingType.LETTER_HEADER) {
+                        Customer lastCustomer = simpleCustomerRecyclerViewAdapter.getItem(lastItem-1);
+                        List<Customer> customersToBeAdded = getCustomers();
+
+                        whenListEndReached(processCustomersForLetterHeader(customersToBeAdded, lastCustomer, lastItem));
+                    }
+                    else
+                        whenListEndReached(getCustomers());
                     prevLast = lastItem;
                 }
             }
@@ -176,8 +256,9 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
     }
 
     public List<Customer> getSelectedCustomers() {
-        if(useRecyclerView)
+        if(useRecyclerView) {
             return simpleCustomerRecyclerViewAdapter.getSelectedCustomers();
+        }
         else
             return simpleCustomerListAdapter.getSelectedCustomers();
     }

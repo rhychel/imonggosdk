@@ -27,7 +27,8 @@ public abstract class BaseTable extends DBTable {
     @DatabaseField
     protected String searchKey = "";
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
+    @Expose
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras_id")
     protected Extras extras;
 
     @Expose

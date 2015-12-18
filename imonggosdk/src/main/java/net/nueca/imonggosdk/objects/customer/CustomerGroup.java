@@ -23,11 +23,13 @@ public class CustomerGroup extends BaseTable {
     @DatabaseField
     private String name;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "price_list_id")
-    private PriceList priceList;
+    private transient PriceList priceList;
     @DatabaseField
     private String discount_text;
     @DatabaseField
     private String status;
+    @DatabaseField
+    private String code;
 
     public CustomerGroup() { }
 
@@ -61,6 +63,25 @@ public class CustomerGroup extends BaseTable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return "CustomerGroup{" +
+                "name='" + name + '\'' +
+                ", priceList=" + priceList +
+                ", discount_text='" + discount_text + '\'' +
+                ", status='" + status + '\'' +
+                ", code='" + code + '\'' +
+                '}';
     }
 
     @Override

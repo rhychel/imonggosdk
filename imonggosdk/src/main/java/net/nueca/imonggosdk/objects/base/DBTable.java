@@ -18,13 +18,13 @@ public abstract class DBTable {
     public abstract void updateTo(ImonggoDBHelper2 dbHelper);
     public void dbOperation(ImonggoDBHelper2 dbHelper, DatabaseOperation databaseOperation) {
         if(databaseOperation == DatabaseOperation.INSERT) {
-            Log.e(TAG, "Inserting to database");
+           // Log.e(TAG, "Inserting to database");
             insertTo(dbHelper);
         } else if(databaseOperation == DatabaseOperation.UPDATE) {
-            Log.e(TAG, "Updating to database");
+            //Log.e(TAG, "Updating to database");
             updateTo(dbHelper);
         } else if(databaseOperation == DatabaseOperation.DELETE) {
-            Log.e(TAG, "Deleting to database");
+            //Log.e(TAG, "Deleting to database");
             deleteTo(dbHelper);
         }
     }

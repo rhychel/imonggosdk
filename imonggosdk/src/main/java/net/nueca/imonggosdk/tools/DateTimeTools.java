@@ -133,7 +133,7 @@ public class DateTimeTools {
      */
     public static String getCurrentDateTimeWithFormat(String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-        Date currentDateTime= new Date();
+        Date currentDateTime = new Date();
         String currentDate = dateFormat.format(currentDateTime);
         //Log.e(TAG, currentDate);
         return currentDate;
@@ -268,5 +268,10 @@ public class DateTimeTools {
         }
 
         return "";
+    }
+
+    public static Date stringToDate(String dateTime) throws ParseException {
+        SimpleDateFormat convertStringToDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
+        return convertStringToDate.parse(dateTime);
     }
 }

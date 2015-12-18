@@ -17,7 +17,11 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
+import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.TaxRate;
+import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -29,9 +33,17 @@ import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.customer.CustomerCategory;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
+import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -49,29 +61,33 @@ public abstract class BaseSyncService extends ImonggoService {
     public static final String PARAMS_INITIAL_SYNC = "initial_sync";
     public static final String PARAMS_SERVER = "mServer";
     public static final String TAG = "BaseSyncService";
-    protected IBinder mLocalBinder = new LocalBinder();
-    protected SyncModulesListener mSyncModulesListener = null;
-    protected VolleyRequestListener mVolleyRequestListener = null;
-    protected Server mServer;
+    protected static int max_size_per_page = 50;
+    protected boolean syncAllModules;
+    protected boolean initialSync;
     protected int page = 1;
     protected int count = 0;
     protected int numberOfPages = 1;
-    protected LastUpdatedAt lastUpdatedAt;
-    protected LastUpdatedAt newLastUpdatedAt;
-    protected String from = "", to = "";
-    protected Gson gson = new GsonBuilder().serializeNulls().create();
-    protected Table mCurrentTableSyncing;
-    protected List<BranchUserAssoc> branchUserAssoc;
-    protected Table[] mModulesToSync;
-    protected int[] branches;
     protected int branchIndex = 0;
+    protected int mCustomIndex = 0;
     protected int mModulesIndex = 0;
-    protected boolean syncAllModules;
-    protected boolean initialSync;
+    protected int responseCode = 200;
+    protected int[] branches;
+    protected Table[] mModulesToSync;
+    protected Table mCurrentTableSyncing;
+    protected Server mServer;
+    protected List<BranchUserAssoc> branchUserAssoc;
+    protected List<? extends BaseTable> listOfIds;
+    protected String from = "", to = "";
     protected String document_type;
     protected String intransit_status;
-    protected int responseCode = 200;
-    private int NOTIFICATION_ID = 200;
+    protected LastUpdatedAt lastUpdatedAt;
+    protected LastUpdatedAt newLastUpdatedAt;
+    protected IBinder mLocalBinder = new LocalBinder();
+    protected VolleyRequestListener mVolleyRequestListener = null;
+    protected SyncModulesListener mSyncModulesListener = null;
+
+    protected Gson gson = new GsonBuilder().serializeNulls().create();
+
 
     /**
      * Empty Constructor
@@ -164,6 +180,8 @@ public abstract class BaseSyncService extends ImonggoService {
      * @throws SQLException
      */
     public boolean isExisting(Object o, int id, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
+
+
         switch (table) {
             case USERS: {
                 User user = (User) o;
@@ -181,10 +199,10 @@ public abstract class BaseSyncService extends ImonggoService {
                 Branch branch = (Branch) o;
                 return getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", branch.getId()).queryForFirst() != null;
             }
-            case BRANCH_PRICES: {
-                BranchPrice branchPrice = (BranchPrice) o;
-                return getHelper().fetchObjects(BranchPrice.class).queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
-            }
+//            case BRANCH_PRICES: { // Change algorithm
+//                BranchPrice branchPrice = (BranchPrice) o;
+//                return getHelper().fetchObjects(BranchPrice.class).queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
+//            }
             case BRANCH_TAGS: {
                 BranchTag branchTag = (BranchTag) o;
                 return getHelper().fetchObjects(BranchTag.class).queryBuilder().where().eq("id", branchTag.getId()).queryForFirst() != null;
@@ -224,10 +242,51 @@ public abstract class BaseSyncService extends ImonggoService {
                 Document document = (Document) o;
                 return getHelper().fetchObjects(Document.class).queryBuilder().where().eq("id", document.getId()).queryForFirst() != null;
             }
+            case INVOICES: {
+                Invoice invoice = (Invoice) o;
+                return getHelper().fetchObjects(Invoice.class).queryBuilder().where().eq("id", invoice.getId()).queryForFirst() != null;
+            }
+            case INVOICE_PURPOSES: {
+                InvoicePurpose invoicePurpose = (InvoicePurpose) o;
+                return getHelper().fetchObjects(InvoicePurpose.class).queryBuilder().where().eq("id", invoicePurpose.getId()).queryForFirst() != null;
+            }
+            case PRICE_LISTS: {
+                PriceList priceList = (PriceList) o;
+                return getHelper().fetchObjects(InvoicePurpose.class).queryBuilder().where().eq("id", priceList.getId()).queryForFirst() != null;
+            }
+            case CUSTOMER_GROUPS: {
+                CustomerGroup customerGroup = (CustomerGroup) o;
+                return getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroup.getId()).queryForFirst() != null;
+            }
+            case CUSTOMER_CATEGORIES: {
+                CustomerCategory customerCategory = (CustomerCategory) o;
+                return getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customerCategory.getId()).queryForFirst() != null;
+            }
+            case PAYMENT_TERMS: {
+                PaymentTerms paymentTerms = (PaymentTerms) o;
+                return getHelper().fetchObjects(PaymentTerms.class).queryBuilder().where().eq("id", paymentTerms.getId()).queryForFirst() != null;
+            }
+            case PAYMENT_TYPES: {
+                PaymentType paymentType = (PaymentType) o;
+                return getHelper().fetchObjects(PaymentType.class).queryBuilder().where().eq("id", paymentType.getId()).queryForFirst() != null;
+            }
+            case ROUTE_PLANS: {
+                RoutePlan routePlan = (RoutePlan) o;
+                return getHelper().fetchObjects(RoutePlan.class).queryBuilder().where().eq("id", routePlan.getId()).queryForFirst() != null;
+            }
+            case BRANCH_PRODUCTS: {
+                BranchProduct branchProduct = (BranchProduct) o;
+                return getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("product_id", branchProduct.getProduct()).and().eq("branch_id", branchProduct.getBranch()).queryForFirst() != null;
+            }
+            case BRANCH_UNITS: {
+                BranchUnit branchUnit = (BranchUnit) o;
+                return getHelper().fetchObjects(BranchUnit.class).queryBuilder().where().eq("unit_id", branchUnit.getUnit()).and().eq("branch_id", branchUnit.getBranch()).queryForFirst() != null;
+            }
+            case PRICE_LISTS_DETAILS:
+                Price price = (Price) o;
+                return getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst() != null;
             case DAILY_SALES: {
-
                 DailySales dailySales = (DailySales) o;
-
                 if (dailySalesEnums == DailySalesEnums.DATE_OF_DAILY_SALES) {
                     return getHelper().fetchObjects(DailySales.class).queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst() != null;
                 } else if (dailySalesEnums == DailySalesEnums.DATE_REQUESTED) {
@@ -309,9 +368,65 @@ public abstract class BaseSyncService extends ImonggoService {
         }
     }
 
+    public Table getCurrentTableSyncing() {
+        return mCurrentTableSyncing;
+    }
+
+
+    /**
+     * removes modules from array for Re-Sync
+     */
+    public void prepareModulesToReSync() {
+
+        int length = mModulesToSync.length;
+        int newlength = 0;
+
+        //Log.e(TAG, "Tables To Sync:");
+
+        newlength = length - mModulesIndex;
+        Table[] temp = new Table[newlength];
+
+        // Log.e(TAG, "Current Index: " + mModulesIndex + " Length: " + length + " new length: " + newlength);
+
+        if (newlength != 0) {
+            int x = 0;
+            for (int i = mModulesIndex; i < length; i++) {
+                temp[x] = Table.values()[mModulesToSync[i].ordinal()];
+                x++;
+            }
+            mModulesToSync = temp;
+            //  Log.e(TAG, "Temp length is " + temp.length);
+        }
+
+        // reset variable
+        page = 0;
+        numberOfPages = 0;
+        count = 0;
+        branchIndex = 0;
+        mModulesIndex = 0;
+    }
+
+    public Table[] getModulesToSync() {
+        return mModulesToSync;
+    }
 
     public void setSyncModulesListener(SyncModulesListener syncModulesListener) {
         this.mSyncModulesListener = syncModulesListener;
+    }
+
+    public Branch getBranchWithID(int id) throws SQLException {
+        return getHelper().fetchIntId(Branch.class).queryForId(id);
+
+    }
+
+    public Product getProductWithID(int id) throws SQLException {
+        return getHelper().fetchIntId(Product.class).queryForId(id);
+
+    }
+
+    public Unit getUnitWithID(int id) throws SQLException {
+        return getHelper().fetchIntId(Unit.class).queryForId(id);
+
     }
 
     public VolleyRequestListener getVolleyRequestListener() {

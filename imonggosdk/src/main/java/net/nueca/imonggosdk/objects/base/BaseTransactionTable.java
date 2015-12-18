@@ -17,7 +17,7 @@ import org.json.JSONObject;
 /**
  * Created by gama on 04/11/2015.
  */
-public abstract class BaseTransactionTable extends BaseTable {
+public abstract class BaseTransactionTable extends BaseTable implements Extras.DoOperationsForExtras {
     @Expose
     @DatabaseField
     protected String reference;
@@ -34,6 +34,7 @@ public abstract class BaseTransactionTable extends BaseTable {
         this.utc_created_at = builder.utc_created_at;
         this.utc_updated_at = builder.utc_updated_at;
         this.searchKey = builder.searchKey;
+        this.extras = builder.extras;
     }
 
     public String getReference() {
@@ -61,9 +62,15 @@ public abstract class BaseTransactionTable extends BaseTable {
     protected static class Builder <T extends Builder> {
         private String reference = "";
         private String searchKey = "";
+        private Extras extras;
         private String utc_created_at, utc_updated_at, utc_document_date;
 
         public Builder() {}
+
+        public T extras(Extras extras) {
+            this.extras = extras;
+            return (T)this;
+        }
 
         public T reference(String reference) {
             this.reference = reference;
@@ -112,7 +119,7 @@ public abstract class BaseTransactionTable extends BaseTable {
 
     @Override
     public String toString() {
-        return toJSONString();
+        return "ID: " + id + " ExtrasID: " + (extras != null? extras.getId() : "null") + " " + toJSONString();
     }
 
     public JSONObject toJSONObject() throws JSONException {

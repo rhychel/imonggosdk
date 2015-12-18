@@ -18,6 +18,9 @@
     <string name="API_MODULE_ID_URL">http://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
     <string name="API_MODULE_ID_URL_SECURED">https://%1$s:x@%2$s/api/%3$s/%4$s.json?%5$s</string>
 
+    <string name="API_MODULE_REFERENCE_URL">http://%1$s:x@%2$s/api/%3$s?reference=%4$s</string>
+    <string name="API_MODULE_REFERENCE_URL_SECURED">https://%1$s:x@%2$s/api/%3$s?reference=%4$s</string>
+
     <string name="PRODUCT_IMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg</string>
     <string name="PRODUCT_IMAGE_URL_SECURED">https://%1$s:x@%2$s/api/products/%3$s.jpg</string>
     <string name="PRODUCT_LARGEIMAGE_URL">http://%1$s:x@%2$s/api/products/%3$s.jpg?size=large</string>
@@ -31,6 +34,7 @@
     <string name="LOGIN_INVALID_PASSWORD">Invalid password, the length of Password should be at least 5 characters.</string>
     <string name="LOGIN_INVALID_CREDENTIALS">Invalid Credential.</string>
     <string name="LOGIN_FAILED_ACCOUNT_ID">Incorrect account id.</string>
+    <string name="LOGIN_FAILED_SERVER_ERROR">The Server is having maintenance, Please retry again later...</string>
     <string name="LOGIN_FAILED_OFFLINE">You are offline.</string>
     <string name="LOGIN_DIALOG_POSITIVE_BUTTON"> Ok </string>
     <string name="LOGIN_DIALOG_NEGATIVE_BUTTON"> Cancel </string>
@@ -43,7 +47,7 @@
     <string name="LOGIN_PROGRESS_DIALOG_TITLE_UNLINK">Unlink Account</string>
     <string name="LOGIN_PROGRESS_DIALOG_CONTENT">Please wait...</string>
 
-    <string name="FETCHING_MODULE_TITLE">Connecting you to the world</string>
+    <string name="FETCHING_MODULE_TITLE">Downloading...</string>
     <string name="FETCH_NO_MODULE_SELECTED_TITLE">Download Failed</string>
     <string name="FETCH_NO_MODULE_SELECTED">Modules to download is not set.</string>
     <string name="FETCH_NO_MODULE_POSTIVE_BUTTON">Alright</string>

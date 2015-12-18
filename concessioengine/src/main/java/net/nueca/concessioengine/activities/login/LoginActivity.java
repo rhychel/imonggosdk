@@ -11,6 +11,9 @@ import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.DialogType;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.interfaces.LoginListener;
+import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -22,7 +25,7 @@ import java.sql.SQLException;
  * Created by Jn on 7/12/2015.
  * imonggosdk (c)2015
  */
-public class LoginActivity extends BaseLoginActivity {
+public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
     public static String TAG = "LoginActivity";
     private boolean isUsingDefaultLoginLayout = true;
@@ -47,15 +50,10 @@ public class LoginActivity extends BaseLoginActivity {
             setupLayoutEquipments((EditText) findViewById(R.id.etAccountId),
                     (EditText) findViewById(R.id.etEmail),
                     (EditText) findViewById(R.id.etPassword),
-                    (Button) findViewById(R.id.btnSignIn));
+                    (Button) findViewById(R.id.btnLogin));
 
             setIsUsingDefaultLoginLayout(true);
         }
-
-        // TODO: Delete this autofill login data
-      /*  setEditTextAccountID("ourlovelybotique");                   // ACCOUNT ID
-        setEditTextEmail("owner@ourlovelybotique.com");             // EMAIL
-        setEditTextPassword("ourlovelybotique");                    // PASSWORD*/
 
         try {
             getHelper().deleteAllDatabaseValues();
@@ -215,8 +213,9 @@ public class LoginActivity extends BaseLoginActivity {
     protected void showCustomDownloadDialog() {
         if (isUsingDefaultCustomDialogForSync()) {
             setIsUsingDefaultLoginLayout(true);
-            createNewCustomDialogFrameLayout(LoginActivity.this, getModulesToSync());
-            createNewCustomDialog(LoginActivity.this, R.style.AppCompatDialogStyle);
+            //createNewCustomDialogFrameLayout(LoginActivity.this, getModulesToSync());
+            createNewCustomDialogFrameLayout(getTableToSync(), LoginActivity.this);
+            createNewCustomDialog(LoginActivity.this, R.style.LoginTheme_DialogFrameLayout);
             setCustomDialogTitle(getString(R.string.FETCHING_MODULE_TITLE));
             setCustomDialogContentView(getCustomDialogFrameLayout());
             setCustomDialogCancelable(false);
@@ -228,6 +227,36 @@ public class LoginActivity extends BaseLoginActivity {
     protected void onPause() {
         super.onPause();
         DialogTools.hideIndeterminateProgressDialog();
+    }
+
+    @Override
+    public void onStartLogin() {
+
+    }
+
+    @Override
+    public void onLoginSuccess(Session session) {
+
+    }
+
+    @Override
+    public void onPositiveButtonPressed() {
+
+    }
+
+    @Override
+    public void onNegativeButtonPressed() {
+
+    }
+
+    @Override
+    public void onRetryButtonPressed(Table table) {
+
+    }
+
+    @Override
+    public void onStopLogin() {
+
     }
 
     private class StartSyncServiceAsyncTask extends AsyncTask<String, Void, String> {

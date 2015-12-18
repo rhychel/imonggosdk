@@ -2,6 +2,7 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 
@@ -19,6 +20,8 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
     private HashMap<Integer, PaymentType> paymentTypes;
 
     protected boolean isFullyPaid = false;
+
+    protected ListingType listingType = ListingType.BASIC_PAYMENTS;
 
     public BaseSplitPaymentAdapter(Context context, int listItemRes) {
         super(context, new ArrayList<InvoicePayment>());

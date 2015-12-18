@@ -5,14 +5,21 @@ import android.content.Context;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
 import java.util.List;
@@ -41,6 +48,16 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected MultiQuantityDialogListener multiQuantityDialogListener;
     protected FragmentManager fragmentManager;
     protected String deliveryDate;
+
+    protected boolean hasSubtotal = false;
+
+    protected ArrayAdapter<Unit> unitsAdapter;
+    protected ArrayAdapter<String> brandsAdapter;
+
+    private ImonggoDBHelper2 dbHelper2;
+    protected Customer salesCustomer;
+    protected CustomerGroup salesCustomerGroup;
+    protected Branch salesBranch;
 
     protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, hasBatchNo = false, isMultiValue = false;
     protected int valuePosition = -1;
@@ -124,6 +141,10 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
         this.valuePosition = valuePosition;
     }
 
+    public void setHasSubtotal(boolean hasSubtotal) {
+        this.hasSubtotal = hasSubtotal;
+    }
+
     @Override
     public void dismiss() {
         super.dismiss();
@@ -159,5 +180,38 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
             }
         }, Integer.valueOf(date[0]), Integer.valueOf(date[1]) - 1, Integer.valueOf(date[2]));
         deliveryDatePicker.show(fragmentManager, "delivery_date_picker");
+    }
+
+
+    public ImonggoDBHelper2 getHelper() {
+        return dbHelper2;
+    }
+
+    public void setHelper(ImonggoDBHelper2 dbHelper2) {
+        this.dbHelper2 = dbHelper2;
+    }
+
+    public Customer getSalesCustomer() {
+        return salesCustomer;
+    }
+
+    public void setSalesCustomer(Customer salesCustomer) {
+        this.salesCustomer = salesCustomer;
+    }
+
+    public CustomerGroup getSalesCustomerGroup() {
+        return salesCustomerGroup;
+    }
+
+    public void setSalesCustomerGroup(CustomerGroup salesCustomerGroup) {
+        this.salesCustomerGroup = salesCustomerGroup;
+    }
+
+    public Branch getSalesBranch() {
+        return salesBranch;
+    }
+
+    public void setSalesBranch(Branch salesBranch) {
+        this.salesBranch = salesBranch;
     }
 }

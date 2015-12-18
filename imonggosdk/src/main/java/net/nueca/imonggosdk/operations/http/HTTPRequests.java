@@ -40,7 +40,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
-        Log.e(TAG, ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
+        Log.e(TAG, "-" + ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
@@ -54,7 +54,6 @@ public class HTTPRequests {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, error.getLocalizedMessage());
                         if (volleyRequestListener != null) {
                             if (error.networkResponse != null)
                                 volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
@@ -82,7 +81,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
-        Log.e(TAG, ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+        Log.e(TAG, "*" + ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
@@ -123,7 +122,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
-        Log.e(TAG, ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+        Log.e(TAG, "^" + ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter),
                 new Response.Listener<JSONArray>() {
@@ -163,7 +162,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, RequestType.GET);
 
-        Log.e("Request-URL", ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
+        Log.e(TAG, "@" + ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
@@ -204,7 +203,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, RequestType.GET);
 
-        Log.e("Request-URL", ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
+        Log.e(TAG, "~" + ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),
                 new Response.Listener<JSONArray>() {
@@ -244,6 +243,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, RequestType.POST);
 
+        Log.e("POST Url", ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.POST,
                 ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter), jsonObject,
                 new Response.Listener<JSONObject>() {
@@ -372,7 +372,7 @@ public class HTTPRequests {
         else
             parameter = "?post=0&branch_id=" + branch_id;
 
-        Log.e("HTTPRequests", "sendPOSTRequest2 : " + ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+        Log.e(TAG, "sendPOSTRequest2 : " + ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.POST,
                 ImonggoOperations.getAPIModuleURL(context, session, table, server,
@@ -422,7 +422,7 @@ public class HTTPRequests {
         else
             parameter = "post=" + (isLastPage ? "1" : "0") + "&branch_id=" + branch_id;
 
-        Log.e("HTTPRequests", "sendPUTRequest2 : " + ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
+        Log.e(TAG, "sendPUTRequest2 : " + ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.PUT,
                 ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter), jsonObject,
@@ -455,5 +455,89 @@ public class HTTPRequests {
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
+    }
+
+    /**
+     *  For requests by reference
+     **/
+    public static JsonObjectRequest sendGETRequest(Context context, final Session session,
+                                                   final VolleyRequestListener volleyRequestListener, Server server,
+                                                   final Table table, String reference) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(table, RequestType.GET);
+
+        Log.e("Request-URL", ImonggoOperations.getAPIModuleReferenceURL(context, session, table, server, reference));
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
+                ImonggoOperations.getAPIModuleReferenceURL(context, session, table, server, reference),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (volleyRequestListener != null)
+                            volleyRequestListener.onSuccess(table, RequestType.GET, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null) {
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            } else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                String auth = "Basic " + session.getApiAuthentication();
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        return jsonObjectRequest;
+    }
+
+    public static JsonArrayRequest sendGETJsonArrayRequest(Context context, final Session session,
+                                                           final VolleyRequestListener volleyRequestListener, Server server,
+                                                           final Table table, String reference) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(table, RequestType.GET);
+
+        Log.e("Request-URL", ImonggoOperations.getAPIModuleReferenceURL(context, session, table, server, reference));
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(ImonggoOperations.getAPIModuleReferenceURL(context, session, table, server, reference),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (volleyRequestListener != null)
+                            volleyRequestListener.onSuccess(table, RequestType.GET, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null)
+                                volleyRequestListener.onError(table, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            else
+                                volleyRequestListener.onError(table, false, null, 0);
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                String auth = "Basic " + session.getApiAuthentication();
+                params.put("Authorization", auth);
+                return params;
+            }
+        };
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonArrayRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        return jsonArrayRequest;
     }
 }

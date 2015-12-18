@@ -1,118 +1,1 @@
-package net.nueca.concessioengine.dialogs;
-
-import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * Created by Jn on 7/6/2015.
- * imonggosdk (c)2015
- */
-public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.ViewHolder>
-        extends RecyclerView.Adapter<BaseCustomDialogRecyclerAdapter.VH> {
-
-    private Context mContext;
-    private List<String> mModuleName;
-    private List<Integer> mDownloadProgress;
-    private List<Boolean> mCircularProgress;
-    protected OnItemClickListener mOnItemClickListener;
-    protected OnItemLongClickListener mOnItemLongClickListener;
-
-
-    public interface OnItemClickListener {
-        void onItemClicked(View view, int position);
-    }
-
-    public interface OnItemLongClickListener {
-        void onItemLongClicked(View view, int position);
-    }
-
-
-    public abstract void onBindViewHolderHelper(BaseCustomDialogRecyclerAdapter.VH holder, int position);
-
-
-
-    public BaseCustomDialogRecyclerAdapter(Context context, List<String> moduleName) {
-        this.mContext = context;
-        this.mModuleName = moduleName;
-        this.mDownloadProgress = new ArrayList<>();
-        this.mCircularProgress = new ArrayList<>();
-
-        // TODO: change this
-        for(int i=0; i< mModuleName.size(); i++) {
-            this.mDownloadProgress.add(i,0);
-        }
-
-        for (int y=0; y< mModuleName.size(); y++) {
-            this.mCircularProgress.add(y, false);
-        }
-    }
-
-    public BaseCustomDialogRecyclerAdapter() {
-
-    }
-
-    public void setDownloadProgress(int position, int progress) {
-        this.mDownloadProgress.set(position, progress);
-        notifyDataSetChanged();
-    }
-
-    public void updateCircularProgressBar(int position, Boolean choice) {
-        this.mCircularProgress.set(position, choice);
-        notifyItemChanged(position);
-    }
-
-
-    @Override
-    public void onBindViewHolder(BaseCustomDialogRecyclerAdapter.VH holder, int position) {
-        onBindViewHolderHelper(holder, position);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mModuleName.size();
-    }
-
-    public Boolean getCircularProgressBar(int position){
-        return mCircularProgress.get(position);
-    }
-
-    public String getModuleAt (int position) {
-        if (position < mModuleName.size() && mModuleName != null) {
-            return mModuleName.get(position);
-        } else {
-            return null;
-        }
-    }
-
-    public Integer getProgressAt (int position) {
-        if (position < mDownloadProgress.size() && mDownloadProgress != null) {
-            return mDownloadProgress.get(position);
-        } else {
-            return null;
-        }
-    }
-
-    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
-        this.mOnItemClickListener = mOnItemClickListener;
-    }
-
-    public void setOnItemLongClickListener(OnItemLongClickListener mOnItemLongClickListener) {
-        this.mOnItemLongClickListener = mOnItemLongClickListener;
-    }
-
-    // View Holder
-    public abstract static class VH extends RecyclerView.ViewHolder  implements View.OnClickListener, View.OnLongClickListener {
-
-        public VH(View itemView) {
-            super(itemView);
-        }
-
-        public abstract void bind(String name, int progress);
-        public abstract void hideCircularProgressBar();
-        public abstract void showCircularProgressBar();
-    }
-}
+package net.nueca.concessioengine.dialogs;import android.content.Context;import android.support.v7.widget.RecyclerView;import android.util.Log;import android.view.View;import net.nueca.imonggosdk.enums.Table;import java.sql.SQLException;import java.util.ArrayList;import java.util.List;/** * Created by Jn on 7/6/2015. * imonggosdk (c)2015 */public abstract class BaseCustomDialogRecyclerAdapter<VH extends RecyclerView.ViewHolder>        extends RecyclerView.Adapter<BaseCustomDialogRecyclerAdapter.VH> {    private static String TAG = "BaseCustomDialogRecyclerAdapter";    private Context mContext;    private List<String> mModuleName;    private List<Table> mTableNames;    private List<Integer> mDownloadProgress;    private List<Boolean> mCircularProgress;    private List<Boolean> mRetryButton;    protected OnItemClickListener mOnItemClickListener;    protected OnItemLongClickListener mOnItemLongClickListener;    public interface OnItemClickListener {        void onItemClicked(View view, int position) throws SQLException;    }    public interface OnItemLongClickListener {        void onItemLongClicked(View view, int position);    }    public abstract void onBindViewHolderHelper(BaseCustomDialogRecyclerAdapter.VH holder, int position);    /**     * @deprecated use {@link #BaseCustomDialogRecyclerAdapter(List, Context)} ()} instead.     */    @Deprecated    public BaseCustomDialogRecyclerAdapter(Context context, List<String> moduleName) {        baseCustomDialogRecyclerAdapter(context, moduleName, moduleName.getClass());    }    public BaseCustomDialogRecyclerAdapter(List<Table> tableName, Context context) {        baseCustomDialogRecyclerAdapter(context, tableName, Table.class);    }    @SuppressWarnings("unchecked")    private void baseCustomDialogRecyclerAdapter(Context context, List<?> moduleName, Class<?> clas) {        this.mContext = context;        this.mDownloadProgress = new ArrayList<>();        this.mCircularProgress = new ArrayList<>();        this.mRetryButton = new ArrayList<>();        // TODO: change this        for (int i = 0; i < moduleName.size(); i++) {            Log.e(TAG, "Setting up Download Progess");            this.mDownloadProgress.add(i, 0);        }        for (int y = 0; y < moduleName.size(); y++) {            Log.e(TAG, "Setting Up Circular Progress Bar");            this.mCircularProgress.add(y, false);        }        for (int x = 0; x < moduleName.size(); x++) {            Log.e(TAG, "Populating Retry Buttons");            this.mRetryButton.add(x, false);        }        if(clas == Table.class) {            Log.e(TAG, "You are using table");            this.mTableNames = (List<Table>) moduleName;            mModuleName = null;        } else if(clas == String.class) {            Log.e(TAG, "You are using string");            this.mModuleName = (List<String>) moduleName;            mTableNames = null;        } else {            Log.e(TAG, "JOKE JOKE JOKE");        }    }    public BaseCustomDialogRecyclerAdapter() {    }    public void setDownloadProgress(int position, int progress) {        this.mDownloadProgress.set(position, progress);        notifyDataSetChanged();    }    public void updateCircularProgressBar(int position, Boolean choice) {        this.mCircularProgress.set(position, choice);        notifyItemChanged(position);    }    public void updateRetryButton(int position, Boolean choice) {        this.mRetryButton.set(position, choice);        notifyItemChanged(position);    }    @Override    public void onBindViewHolder(BaseCustomDialogRecyclerAdapter.VH holder, int position) {        onBindViewHolderHelper(holder, position);    }    @Override    public int getItemCount() {        if(mModuleName == null && mTableNames != null) {            return mTableNames.size();        }        if(mTableNames == null && mModuleName != null) {            return mModuleName.size();        }        Log.e(TAG, "count is 0");        return 0;    }    public Boolean getCircularProgressBar(int position) {        return mCircularProgress.get(position);    }    public Boolean getRetryButtonStatus(int position) {        return mRetryButton.get(position);    }    public Table getTableAt(int position) {        if(position < mTableNames.size() && mTableNames != null) {            return mTableNames.get(position);        } else {            return null;        }    }    public String getModuleAt(int position) {        if(mModuleName != null) {            if (position < mModuleName.size() && mModuleName != null) {                return mModuleName.get(position);            }        }        if(mTableNames != null) {            if(position < mTableNames.size() && mTableNames != null) {                return mTableNames.get(position).getStringName();            }        }        Log.e(TAG, "can't find your module");        return "";    }    public Integer getProgressAt(int position) {        if (position < mDownloadProgress.size() && mDownloadProgress != null) {            return mDownloadProgress.get(position);        } else {            return null;        }    }    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {        this.mOnItemClickListener = mOnItemClickListener;    }    public void setOnItemLongClickListener(OnItemLongClickListener mOnItemLongClickListener) {        this.mOnItemLongClickListener = mOnItemLongClickListener;    }    // View Holder    public abstract static class VH extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {        public VH(View itemView) {            super(itemView);        }        public abstract void bind(String name, int progress);        public abstract void hideCircularProgressBar();        public abstract void showCircularProgressBar();        public abstract void showRetryButton();        public abstract void hideRetryButton();    }}

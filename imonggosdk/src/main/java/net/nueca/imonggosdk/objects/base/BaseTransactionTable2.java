@@ -17,7 +17,7 @@ import org.json.JSONObject;
 /**
  * Created by gama on 04/11/2015.
  */
-public abstract class BaseTransactionTable2 extends BaseTable2 {
+public abstract class BaseTransactionTable2 extends BaseTable2 implements Extras.DoOperationsForExtras {
     @Expose
     @DatabaseField
     protected String reference;

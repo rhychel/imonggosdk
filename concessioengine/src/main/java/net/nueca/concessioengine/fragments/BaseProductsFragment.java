@@ -12,6 +12,7 @@ import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.base.BaseProductsAdapter;
 import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.exceptions.ProductsFragmentException;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
@@ -22,6 +23,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,10 +43,15 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             hasCategories = true,
             multipleInput = false,
             showCategoryOnStart = false,
-            lockCategory = false;
+            lockCategory = false,
+            hasToolBar = true,
+            hasSubtotal = false,
+            isFinalize = false;
     private int prevLast = -1;
     private String searchKey = "", category = "";
+    protected DocumentPurpose reason = null;
     private List<Product> filterProductsBy = new ArrayList<>();
+    protected ListingType listingType = ListingType.BASIC;
 
     protected ArrayAdapter<String> productCategoriesAdapter;
     protected List<String> productCategories = new ArrayList<>();
@@ -99,11 +106,11 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     }
 
     protected List<Product> getProducts() {
+        Log.e(getClass().getSimpleName(), "getProducts");
         List<Product> products = new ArrayList<>();
 
         boolean includeSearchKey = !searchKey.equals("");
         boolean includeCategory = (!category.toLowerCase().equals("all") && hasCategories);
-        Log.e("includeCategory", includeCategory + "");
         try {
             Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
             whereProducts.isNull("status");
@@ -200,6 +207,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         return category;
     }
 
+    public void setListingType(ListingType listingType) {
+        this.listingType = listingType;
+    }
+
     public String messageCategory() {
         return category.toLowerCase().equals("All") ? "" : " in \""+category+"\" category";
     }
@@ -238,5 +249,21 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setFilterProductsBy(List<Product> filterProductsBy) {
         this.filterProductsBy = filterProductsBy;
+    }
+
+    public void setHasToolBar(boolean hasToolBar) {
+        this.hasToolBar = hasToolBar;
+    }
+
+    public void setHasSubtotal(boolean hasSubtotal) {
+        this.hasSubtotal = hasSubtotal;
+    }
+
+    public void setIsFinalize(boolean isFinalize) {
+        this.isFinalize = isFinalize;
+    }
+
+    public void setReason(DocumentPurpose reason) {
+        this.reason = reason;
     }
 }

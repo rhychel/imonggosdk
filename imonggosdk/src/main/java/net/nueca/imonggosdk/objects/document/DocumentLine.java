@@ -12,6 +12,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.BaseTransactionLine;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 
 import org.json.JSONException;
@@ -32,10 +33,12 @@ public class DocumentLine extends BaseTransactionLine {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
     protected transient Document document;
+/*
 
     @Expose
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
     protected DocumentLineExtras extras;
+*/
 
     //@Expose
     //@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
@@ -89,13 +92,13 @@ public class DocumentLine extends BaseTransactionLine {
         this.line_no = line_no;
     }
 
-    public DocumentLineExtras getExtras() {
-        return extras;
-    }
-
-    public void setExtras(DocumentLineExtras extras) {
-        this.extras = extras;
-    }
+//    public DocumentLineExtras getDocumentLineExtras() {
+//        return extras;
+//    }
+//
+//    public void setDocumentLineExtras(DocumentLineExtras extras) {
+//        this.extras = extras;
+//    }
 
     public String getDiscount_text() {
         return discount_text;
@@ -160,27 +163,14 @@ public class DocumentLine extends BaseTransactionLine {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
-        if(extras != null)
-            extras.insertTo(dbHelper);
 
-        if(extras != null)
-            extras.insertTo(dbHelper);
-
+        insertExtrasTo(dbHelper);
         try {
             dbHelper.insert(DocumentLine.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        if(extras != null) {
-            extras.setDocumentLine(this);
-            extras.updateTo(dbHelper);
-        }
-
-        if(extras != null) {
-            extras.setDocumentLine(this);
-            extras.updateTo(dbHelper);
-        }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
@@ -191,13 +181,7 @@ public class DocumentLine extends BaseTransactionLine {
             e.printStackTrace();
         }
 
-        if(extras != null) {
-            extras.deleteTo(dbHelper);
-        }
-
-        if(extras != null) {
-            extras.deleteTo(dbHelper);
-        }
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
@@ -208,18 +192,42 @@ public class DocumentLine extends BaseTransactionLine {
             e.printStackTrace();
         }
 
-        if(extras != null) {
-            extras.updateTo(dbHelper);
-        }
+        updateExtrasTo(dbHelper);
+    }
 
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
         if(extras != null) {
-            extras.updateTo(dbHelper);
+            extras.setDocumentLine(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
         }
     }
 
     public static class Builder extends BaseTransactionLine.Builder<Builder> {
         protected int line_no = 0;
-        protected DocumentLineExtras extras;
+//        protected DocumentLineExtras extras;
+        protected Extras extras;
         protected String discount_text;
         protected Double price;
         protected Document document;
@@ -288,7 +296,11 @@ public class DocumentLine extends BaseTransactionLine {
             this.line_no = line_no;
             return this;
         }
-        public Builder extras(DocumentLineExtras extras) {
+//        public Builder extras(DocumentLineExtras extras) {
+//            this.extras = extras;
+//            return this;
+//        }
+        public Builder extras(Extras extras) {
             this.extras = extras;
             return this;
         }

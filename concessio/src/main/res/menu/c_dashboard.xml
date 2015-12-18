@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/mUpdateApp"
+        android:title="Update App"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_sync_white"/>
+
+    <item android:id="@+id/mSettings"
+        android:title="Settings"
+        android:orderInCategory="200"
+        app:showAsAction="never"/>
+    <item android:id="@+id/mHelp"
+        android:title="Help"
+        android:orderInCategory="300"
+        app:showAsAction="never"/>
+    <item android:id="@+id/mLogout"
+        android:title="Logout"
+        android:orderInCategory="400"
+        app:showAsAction="never"/>
+    <item android:id="@+id/mUnlink"
+        android:title="Unlink"
+        android:orderInCategory="500"
+        app:showAsAction="never"/>
+</menu>

@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -19,7 +20,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class User extends BaseTable {
+public class User extends BaseTable implements Extras.DoOperationsForExtras {
     @DatabaseField
     private int home_branch_id = 0;
     @DatabaseField
@@ -120,14 +121,7 @@ public class User extends BaseTable {
     @Override
     public String toString() {
         return "User{" +
-                "home_branch_id=" + home_branch_id +
                 ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", role_code='" + role_code + '\'' +
-                ", status='" + status + '\'' +
-                ", sequenceNumber=" + sequenceNumber +
-                ", session=" + session +
-                ", isSelected=" + isSelected +
                 '}';
     }
 
@@ -139,6 +133,7 @@ public class User extends BaseTable {
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
+            insertExtrasTo(dbHelper);
             dbHelper.insert(User.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -148,6 +143,7 @@ public class User extends BaseTable {
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
+            updateExtrasTo(dbHelper);
             dbHelper.delete(User.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -157,9 +153,27 @@ public class User extends BaseTable {
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
+            updateExtrasTo(dbHelper);
             dbHelper.update(User.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.setUser(this);
+        extras.setId(User.class.getName().toUpperCase(), id);
+        extras.insertTo(dbHelper);
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.updateTo(dbHelper);
     }
 }

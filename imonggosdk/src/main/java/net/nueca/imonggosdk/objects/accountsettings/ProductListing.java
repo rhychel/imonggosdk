@@ -22,6 +22,10 @@ public class ProductListing extends DBTable {
     private boolean show_unit = false;
     @DatabaseField
     private boolean lock_category = false;
+    @DatabaseField
+    private boolean show_on_hand = false;
+    @DatabaseField
+    private boolean show_categories_on_start = false;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "module_setting_id")
     private transient ModuleSetting moduleSetting;
 
@@ -65,6 +69,22 @@ public class ProductListing extends DBTable {
 
     public void setModuleSetting(ModuleSetting moduleSetting) {
         this.moduleSetting = moduleSetting;
+    }
+
+    public boolean isShow_on_hand() {
+        return show_on_hand;
+    }
+
+    public void setShow_on_hand(boolean show_on_hand) {
+        this.show_on_hand = show_on_hand;
+    }
+
+    public boolean isShow_categories_on_start() {
+        return show_categories_on_start;
+    }
+
+    public void setShow_categories_on_start(boolean show_categories_on_start) {
+        this.show_categories_on_start = show_categories_on_start;
     }
 
     @Override

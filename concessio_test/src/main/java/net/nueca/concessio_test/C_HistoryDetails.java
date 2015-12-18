@@ -32,26 +32,26 @@ public class C_HistoryDetails extends ImonggoAppCompatActivity {
         selectedProductItems = ProductsAdapterHelper.getSelectedProductItems();
 
         ProductsAdapterHelper.getSelectedProductItems().clear();
-        try {
-            offlineData = getHelper().getOfflineData().queryBuilder()
-                    .where()
-                        .eq("id", getIntent().getIntExtra(SimpleTransactionDetailsFragment.TRANSACTION_ID, -1))
-                    .queryForFirst();
-
-            List<Product> orderedItems = new ArrayList<>();
-            if(offlineData != null) {
-                //Log.e("Data", offlineData.getData().toString());
-                orderedItems = TransactionsAdapterHelper.generateTransactionItems(offlineData, getHelper());
-            }
-
-            SimpleTransactionDetailsFragment simpleTransactionDetailsFragment = new SimpleTransactionDetailsFragment();
-            simpleTransactionDetailsFragment.setHelper(getHelper());
-            simpleTransactionDetailsFragment.setFilterProductsBy(orderedItems);
-
-            getSupportFragmentManager().beginTransaction().add(R.id.flContent, simpleTransactionDetailsFragment).commit();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            offlineData = getHelper().getOfflineData().queryBuilder()
+//                    .where()
+//                        .eq("id", getIntent().getIntExtra(SimpleTransactionDetailsFragment.TRANSACTION_ID, -1))
+//                    .queryForFirst();
+//
+//            List<Product> orderedItems = new ArrayList<>();
+//            if(offlineData != null) {
+//                //Log.e("Data", offlineData.getData().toString());
+//                orderedItems = TransactionsAdapterHelper.generateTransactionItems(offlineData, getHelper());
+//            }
+//
+//            SimpleTransactionDetailsFragment simpleTransactionDetailsFragment = new SimpleTransactionDetailsFragment();
+//            simpleTransactionDetailsFragment.setHelper(getHelper());
+//            simpleTransactionDetailsFragment.setFilterProductsBy(orderedItems);
+//
+//            getSupportFragmentManager().beginTransaction().add(R.id.flContent, simpleTransactionDetailsFragment).commit();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override

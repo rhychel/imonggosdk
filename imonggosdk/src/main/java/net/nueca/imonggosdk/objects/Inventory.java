@@ -64,9 +64,12 @@ public class Inventory extends DBTable {
         String inventoryQty = String.valueOf(quantity);
         if(inventoryQty.contains(".")) {
             String[] values = inventoryQty.split(".");
-            if(Integer.valueOf(values[1]) > 0)
-                return inventoryQty;
-            return values[0];
+            if(values.length > 0) {
+                if (Integer.valueOf(values[1]) > 0)
+                    return inventoryQty;
+                return values[0];
+            }
+            return inventoryQty;
         }
         return inventoryQty;
     }
@@ -93,6 +96,14 @@ public class Inventory extends DBTable {
 
     public void setUtc_created_at(String utc_created_at) {
         this.utc_created_at = utc_created_at;
+    }
+
+    public void addQuantity(double addQuantity) {
+        this.quantity += addQuantity;
+    }
+
+    public void subtractQuantity(double subtractQuantity) {
+        this.quantity -= subtractQuantity;
     }
 
     @Override

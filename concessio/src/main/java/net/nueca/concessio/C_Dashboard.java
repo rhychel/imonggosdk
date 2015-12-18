@@ -2,144 +2,103 @@ package net.nueca.concessio;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import net.nueca.concessioengine.activities.module.ModuleActivity;
-import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.concessioengine.activities.DashboardActivity;
+import net.nueca.concessioengine.adapters.DashboardRecyclerAdapter;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.enums.ConcessioModule;
-import net.nueca.imonggosdk.enums.RequestType;
-import net.nueca.imonggosdk.enums.Server;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.AccountListener;
-import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
-import net.nueca.imonggosdk.objects.Session;
-import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
-import net.nueca.imonggosdk.operations.ImonggoTools;
-import net.nueca.imonggosdk.operations.http.ImonggoOperations;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
-import net.nueca.imonggosdk.tools.Configurations;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.sql.SQLException;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
- * Created by rhymart on 8/21/15.
- * imonggosdk2 (c)2015
+ * Created by rhymart on 11/23/15.
  */
-public class C_Dashboard extends ImonggoAppCompatActivity {
+public class C_Dashboard extends DashboardActivity implements OnItemClickListener {
 
-    private Button btnOrder, btnCount, btnReceive, btnUnlink;
-    private Button btnConcessio;
+    private Toolbar tbActionBar;
+    private Spinner spBranches;
+    private RecyclerView rvModules;
+    private RecyclerView.LayoutManager layoutManager;
 
-    private Gson gson = new GsonBuilder().serializeNulls().create();
+    private ArrayAdapter<Branch> branchesAdapter;
+    private DashboardRecyclerAdapter dashboardRecyclerAdapter;
+
+    private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>(){{
+//        add(new DashboardTile(ConcessioModule.SALES, "Sales", R.drawable.ic_booking));
+        add(new DashboardTile(ConcessioModule.ROUTE_PLAN, "Sales", R.drawable.ic_booking));
+        add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers", R.drawable.ic_customers));
+        add(new DashboardTile(ConcessioModule.RECEIVE_SUPPLIER, "Receiving", R.drawable.ic_receiving));
+        add(new DashboardTile(ConcessioModule.RELEASE_SUPPLIER, "Pullout", R.drawable.ic_pullout));
+        add(new DashboardTile(ConcessioModule.RELEASE_ADJUSTMENT, "MSO", R.drawable.ic_mso));
+        add(new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
+        add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Physical Count", R.drawable.ic_physical_count));
+        add(new DashboardTile(ConcessioModule.HISTORY, "History", R.drawable.ic_history));
+    }};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
 
-//        if(!SwableTools.isImonggoSwableRunning(this))
-//            SwableTools.startSwable(this);
+        Log.e("ClassName", Customer.class.getSimpleName());
 
-        btnOrder = (Button) findViewById(R.id.btnOrder);
-        btnCount = (Button) findViewById(R.id.btnCount);
-        btnReceive = (Button) findViewById(R.id.btnReceive);
-        btnUnlink = (Button) findViewById(R.id.btnUnlink);
-        btnConcessio = (Button) findViewById(R.id.btnConcessio);
+        setNextActivityClass(C_Module.class);
 
-        try {
-            List<ModuleSetting> moduleSettings = getHelper().fetchObjectsList(ModuleSetting.class);
-            for(ModuleSetting moduleSetting : moduleSettings) {
-                if(moduleSetting.getLabel() != null)
-                    Log.e("moduleSetting[label]", moduleSetting.getLabel());
-                else
-                    Log.e("moduleSetting[app]", moduleSetting.getModule_type());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.startSwable(this);
 
-        btnOrder.setOnClickListener(onChooseModule);
-        btnCount.setOnClickListener(onChooseModule);
-        btnReceive.setOnClickListener(onChooseModule);
-        btnConcessio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                try {
-//
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-                /**
-                 * 6267fdfb17d6ea90916e8230e82be969f316d5d0
-                 * retailpos.iretailcloud.net
-                 *
-                 * getSession()
-                 */
+        tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
+        rvModules = (RecyclerView) findViewById(R.id.rvModules);
+        spBranches = (Spinner) findViewById(R.id.spBranches);
+        setSupportActionBar(tbActionBar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_app_logo);
+
+        branchesAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_dark, getBranches());
+        branchesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
+        spBranches.setAdapter(branchesAdapter);
+
+        rvModules.setHasFixedSize(true);
+        layoutManager = new GridLayoutManager(this, 2);
+        rvModules.setLayoutManager(layoutManager);
+
+        dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
+        dashboardRecyclerAdapter.setOnItemClickListener(this);
+        rvModules.setAdapter(dashboardRecyclerAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.c_dashboard, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mUnlink:{
                 try {
-                    ImonggoOperations.getConcesioAppSettings(C_Dashboard.this, Volley.newRequestQueue(C_Dashboard.this), getSession(), new VolleyRequestListener() {
-                        @Override
-                        public void onStart(Table table, RequestType requestType) {
-                            Log.e("onStart", "Concessio Settings");
-                        }
-
-                        @Override
-                        public void onSuccess(Table table, RequestType requestType, Object response) {
-                            JSONObject jsonObject = (JSONObject) response;
-                            Log.e("onSuccess", jsonObject.toString());
-                            try {
-                                getHelper().deleteAllDatabaseValues();
-                                for(String key : Configurations.MODULE_KEYS) {
-                                    JSONObject module = jsonObject.getJSONObject(key);
-                                    ModuleSetting moduleSetting = gson.fromJson(module.toString(), ModuleSetting.class);
-                                    moduleSetting.setModule_type(key);
-                                    if(key.equals("app")) {
-                                        moduleSetting.insertTo(getHelper());
-                                    }
-                                    else {
-                                        moduleSetting.insertTo(getHelper());
-                                    }
-                                }
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-
-                        @Override
-                        public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                            Log.e("onError", "hasInternet=" + hasInternet + " || responseCode=" + responseCode);
-                        }
-
-                        @Override
-                        public void onRequestError() {
-                            Log.e("onRequestError", "Concessio Settings");
-                        }
-                    }, Server.IRETAILCLOUD_NET, true, true);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        btnUnlink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    AccountTools.unlinkAccount(C_Dashboard.this, getHelper(), new AccountListener() {
+                    AccountTools.unlinkAccount(this, getHelper(), new AccountListener() {
                         @Override
                         public void onLogoutAccount() {
+
                         }
 
                         @Override
@@ -153,25 +112,28 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
                     e.printStackTrace();
                 }
             }
-        });
+        }
+        return super.onOptionsItemSelected(item);
     }
 
-    private View.OnClickListener onChooseModule = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent intent = new Intent(C_Dashboard.this, C_Module.class);
-            switch(view.getId()) {
-                case R.id.btnOrder: {
-                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.ORDERS.ordinal());
-                } break;
-                case R.id.btnCount: {
-                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.PHYSICAL_COUNT.ordinal());
-                } break;
-                case R.id.btnReceive: {
-                    intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.RECEIVE.ordinal());
-                } break;
-            }
-            startActivity(intent);
+    @Override
+    protected Bundle addExtras(ConcessioModule concessioModule) {
+        Bundle bundle = new Bundle();
+        if(concessioModule == ConcessioModule.CUSTOMERS) {
+            bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, true);
         }
-    };
+        return bundle;
+    }
+
+    @Override
+    public void onItemClicked(View view, int position) {
+        moduleSelected(view);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.stopSwable(this);
+        super.onDestroy();
+    }
 }

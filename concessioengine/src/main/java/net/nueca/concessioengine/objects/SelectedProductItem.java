@@ -61,10 +61,18 @@ public class SelectedProductItem {
         if(!isMultiline) {
             if(valuesList.size() == 1) {
                 //Log.e(TAG, "Index is 1 setting the value");
-                if(value.getExtendedAttributes() == null)
-                    setValues(0, value.getQuantity(), value.getUnit());
-                else
-                    setValues(0, value.getQuantity(), value.getUnit(),value.getExtendedAttributes());
+                if(value.getExtendedAttributes() == null) {
+                    if(value.getRetail_price() != null)
+                        setValues(0, value.getQuantity(), value.getUnit(), value.getRetail_price());
+                    else
+                        setValues(0, value.getQuantity(), value.getUnit());
+                }
+                else {
+                    if(value.getRetail_price() != null)
+                        setValues(0, value.getQuantity(), value.getUnit(), value.getExtendedAttributes(), value.getRetail_price());
+                    else
+                        setValues(0, value.getQuantity(), value.getUnit(), value.getExtendedAttributes());
+                }
                 return -1;
             }
         }
@@ -99,7 +107,12 @@ public class SelectedProductItem {
     }
 
     public void setValues(int position, Values values) {
-        this.valuesList.get(position).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
+        if(values.getRetail_price() != null) {
+            this.valuesList.get(position).setValue(values.getQuantity(), values.getUnit(), values.getRetail_price());
+            this.valuesList.get(position).setExtendedAttributes(values.getExtendedAttributes());
+        } else {
+            this.valuesList.get(position).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
+        }
         setValues();
     }
 
@@ -109,6 +122,16 @@ public class SelectedProductItem {
     }
     public void setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes) {
         this.valuesList.get(position).setValue(quantity, unit, extendedAttributes);
+        setValues();
+    }
+    public void setValues(int position, String quantity, Unit unit, double retail_price) {
+        this.valuesList.get(position).setValue(quantity, unit, retail_price);
+        setValues();
+    }
+
+    public void setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes, double retail_price) {
+        this.valuesList.get(position).setValue(quantity, unit, retail_price);
+        this.valuesList.get(position).setExtendedAttributes(extendedAttributes);
         setValues();
     }
 
@@ -142,11 +165,13 @@ public class SelectedProductItem {
         this.inventory = inventory;
     }
 
-    public String updatedInventory() {
+    public String updatedInventory(boolean shouldAdd) {
         if(inventory == null)
-            return "0";
+            return valuesList.getActualQuantity();
         BigDecimal currentInventory = new BigDecimal(inventory.getQuantity());
-        BigDecimal totalQuantity = new BigDecimal(total_quantity);
+        BigDecimal totalQuantity = new BigDecimal(valuesList.getActualQuantity());
+        if(shouldAdd)
+            return currentInventory.add(totalQuantity).toPlainString();
         return currentInventory.subtract(totalQuantity).toPlainString();
     }
 

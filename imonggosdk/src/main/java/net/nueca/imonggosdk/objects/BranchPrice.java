@@ -17,35 +17,29 @@ import java.sql.SQLException;
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 @DatabaseTable
 public class BranchPrice extends DBTable {
-
-    @DatabaseField(generatedId = true)
-    private int id;
-    @DatabaseField
-    private double wholesale_price = 0.0;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_id")
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_id", uniqueCombo = true)
     private transient Branch branch;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id")
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id", uniqueCombo = true)
     private transient Product product;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "unit_id", uniqueCombo = true)
+    private transient Unit unit;
     @DatabaseField
     private double retail_price = 0.0;
     @DatabaseField
     protected String utc_created_at, utc_updated_at;
+    @DatabaseField
+    private String name, description;
+    @DatabaseField
+    private double unit_retail_price = 0.0;
 
     public BranchPrice() { }
 
     public BranchPrice(Branch branch, Product product) {
         this.branch = branch;
         this.product = product;
-    }
-
-    public double getWholesale_price() {
-        return wholesale_price;
-    }
-
-    public void setWholesale_price(double wholesale_price) {
-        this.wholesale_price = wholesale_price;
     }
 
     public Branch getBranch() {
@@ -72,12 +66,12 @@ public class BranchPrice extends DBTable {
         this.retail_price = retail_price;
     }
 
-    public int getId() {
-        return id;
+    public Unit getUnit() {
+        return unit;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUnit(Unit unit) {
+        this.unit = unit;
     }
 
     public String getUtc_created_at() {
@@ -96,12 +90,34 @@ public class BranchPrice extends DBTable {
         this.utc_updated_at = utc_updated_at;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getUnit_retail_price() {
+        return unit_retail_price;
+    }
+
+    public void setUnit_retail_price(double unit_retail_price) {
+        this.unit_retail_price = unit_retail_price;
+    }
+
     @Override
     public String toString() {
         return "BranchPrice{" +
-                "id=" + id +
-                ", wholesale_price=" + wholesale_price +
-                ", branch=" + branch +
+                "branch=" + branch +
                 ", product=" + product +
                 ", retail_price=" + retail_price +
                 ", utc_created_at='" + utc_created_at + '\'' +

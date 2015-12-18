@@ -1,14 +1,15 @@
 package net.nueca.concessioengine.views;
 
 import android.content.Context;
+import android.support.v7.widget.SearchView;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
-import android.widget.SearchView;
 
 /**
  * Created by rhymart on 7/27/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 public class SearchViewEx extends SearchView {
 
     public interface SearchViewExListener {

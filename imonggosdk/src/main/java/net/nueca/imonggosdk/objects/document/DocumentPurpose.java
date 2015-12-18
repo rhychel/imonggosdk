@@ -8,6 +8,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import java.sql.SQLException;
 
@@ -26,7 +27,7 @@ import java.sql.SQLException;
  * }
  */
 @DatabaseTable
-public class DocumentPurpose extends BaseTable {
+public class DocumentPurpose extends BaseTable implements Extras.DoOperationsForExtras {
 
     @DatabaseField
     private String status = "A";
@@ -77,11 +78,13 @@ public class DocumentPurpose extends BaseTable {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
             dbHelper.insert(DocumentPurpose.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
@@ -91,6 +94,8 @@ public class DocumentPurpose extends BaseTable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
@@ -99,6 +104,37 @@ public class DocumentPurpose extends BaseTable {
             dbHelper.update(DocumentPurpose.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setDocumentPurpose(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
         }
     }
 
@@ -121,4 +157,8 @@ public class DocumentPurpose extends BaseTable {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return id == ((DocumentPurpose)o).getId();
+    }
 }

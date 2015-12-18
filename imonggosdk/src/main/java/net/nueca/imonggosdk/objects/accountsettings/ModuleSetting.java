@@ -31,6 +31,18 @@ public class ModuleSetting extends DBTable {
     private boolean is_enabled = false;
     @DatabaseField
     private boolean has_store_transfer = false;
+    @DatabaseField
+    private boolean require_document_reason = false;
+    @DatabaseField
+    private boolean has_route_plan = false;
+    @DatabaseField
+    private String show_in = "beginning"; // beginning, middle, last
+    @DatabaseField
+    private boolean require_warehouse = false;
+    @DatabaseField
+    private boolean with_purpose = false;
+    @DatabaseField
+    private boolean with_customer = false;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_listing_id")
@@ -40,7 +52,7 @@ public class ModuleSetting extends DBTable {
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "manual_id")
     private transient Manual manual;
     @ForeignCollectionField
-    private transient ForeignCollection<ProductListing> productListings;
+    private transient ForeignCollection<ProductSorting> productSortings;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "debug_id")
     private transient DebugMode debugMode;
 
@@ -133,12 +145,12 @@ public class ModuleSetting extends DBTable {
         this.manual = manual;
     }
 
-    public ForeignCollection<ProductListing> getProductListings() {
-        return productListings;
+    public ForeignCollection<ProductSorting> getProductSortings() {
+        return productSortings;
     }
 
-    public void setProductListings(ForeignCollection<ProductListing> productListings) {
-        this.productListings = productListings;
+    public void setProductSortings(ForeignCollection<ProductSorting> productSortings) {
+        this.productSortings = productSortings;
     }
 
     public DebugMode getDebugMode() {
@@ -165,21 +177,79 @@ public class ModuleSetting extends DBTable {
         this.has_disable_image = has_disable_image;
     }
 
+    public boolean isRequire_document_reason() {
+        return require_document_reason;
+    }
+
+    public void setRequire_document_reason(boolean require_document_reason) {
+        this.require_document_reason = require_document_reason;
+    }
+
+    public String getShow_in() {
+        return show_in;
+    }
+
+    public void setShow_in(String show_in) {
+        this.show_in = show_in;
+    }
+
+    public boolean isHas_route_plan() {
+        return has_route_plan;
+    }
+
+    public void setHas_route_plan(boolean has_route_plan) {
+        this.has_route_plan = has_route_plan;
+    }
+
+    public boolean isRequire_warehouse() {
+        return require_warehouse;
+    }
+
+    public void setRequire_warehouse(boolean require_warehouse) {
+        this.require_warehouse = require_warehouse;
+    }
+
+    public boolean isWith_purpose() {
+        return with_purpose;
+    }
+
+    public void setWith_purpose(boolean with_purpose) {
+        this.with_purpose = with_purpose;
+    }
+
+    public boolean isWith_customer() {
+        return with_customer;
+    }
+
+    public void setWith_customer(boolean with_customer) {
+        this.with_customer = with_customer;
+    }
+
     public ConcessioModule getModuleType() {
-        if(module_type.equals("order"))
-            return ConcessioModule.ORDERS;
-        if(module_type.equals("count"))
+        if(module_type.equals("stock_request"))
+            return ConcessioModule.STOCK_REQUEST;
+        if(module_type.equals("physical_count"))
             return ConcessioModule.PHYSICAL_COUNT;
-        if(module_type.equals("receive"))
-            return ConcessioModule.RECEIVE;
-        if(module_type.equals("pullout_request"))
-            return ConcessioModule.PULLOUT_REQUEST;
-        if(module_type.equals("pullout_confirmation"))
-            return ConcessioModule.PULLOUT_CONFIRMATION;
-        if(module_type.equals("inventory"))
-            return ConcessioModule.INVENTORY;
-        if(module_type.equals("sales"))
-            return ConcessioModule.SALES;
+
+        if(module_type.equals("receive_branch"))
+            return ConcessioModule.RECEIVE_BRANCH;
+        if(module_type.equals("release_branch"))
+            return ConcessioModule.RELEASE_BRANCH;
+        if(module_type.equals("receive_branch_pullout"))
+            return ConcessioModule.RECEIVE_BRANCH_PULLOUT;
+
+        if(module_type.equals("receive_adjustment"))
+            return ConcessioModule.RECEIVE_ADJUSTMENT;
+        if(module_type.equals("release_adjustment"))
+            return ConcessioModule.RELEASE_ADJUSTMENT;
+
+        if(module_type.equals("receive_supplier"))
+            return ConcessioModule.RECEIVE_SUPPLIER;
+        if(module_type.equals("release_supplier"))
+            return ConcessioModule.RELEASE_SUPPLIER;
+
+        if(module_type.equals("invoice"))
+            return ConcessioModule.INVOICE;
         return ConcessioModule.APP;
     }
 
@@ -209,4 +279,5 @@ public class ModuleSetting extends DBTable {
             e.printStackTrace();
         }
     }
+
 }
