@@ -143,6 +143,7 @@ public class AddCustomersFragment extends BaseCustomersFragment {
                 mCompanyName.getText().toString(),
                 mTelephone.getText().toString(),
                 mMobile.getText().toString(),
+                mFax.getText().toString(),
                 mEmail.getText().toString(),
                 mStreet.getText().toString(),
                 mCity.getText().toString(),

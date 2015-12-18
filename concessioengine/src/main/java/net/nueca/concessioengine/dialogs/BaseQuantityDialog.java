@@ -15,7 +15,11 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
 import java.util.List;
@@ -45,10 +49,17 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected FragmentManager fragmentManager;
     protected String deliveryDate;
 
+    protected boolean hasSubtotal = false;
+
     protected ArrayAdapter<Unit> unitsAdapter;
     protected ArrayAdapter<String> brandsAdapter;
 
-    protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, hasBatchNo = false, isMultiValue = false, hasSubtotal = false;
+    private ImonggoDBHelper2 dbHelper2;
+    protected Customer salesCustomer;
+    protected CustomerGroup salesCustomerGroup;
+    protected Branch salesBranch;
+
+    protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, hasBatchNo = false, isMultiValue = false;
     protected int valuePosition = -1;
 
     public BaseQuantityDialog(Context context) {
@@ -171,4 +182,36 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
         deliveryDatePicker.show(fragmentManager, "delivery_date_picker");
     }
 
+
+    public ImonggoDBHelper2 getHelper() {
+        return dbHelper2;
+    }
+
+    public void setHelper(ImonggoDBHelper2 dbHelper2) {
+        this.dbHelper2 = dbHelper2;
+    }
+
+    public Customer getSalesCustomer() {
+        return salesCustomer;
+    }
+
+    public void setSalesCustomer(Customer salesCustomer) {
+        this.salesCustomer = salesCustomer;
+    }
+
+    public CustomerGroup getSalesCustomerGroup() {
+        return salesCustomerGroup;
+    }
+
+    public void setSalesCustomerGroup(CustomerGroup salesCustomerGroup) {
+        this.salesCustomerGroup = salesCustomerGroup;
+    }
+
+    public Branch getSalesBranch() {
+        return salesBranch;
+    }
+
+    public void setSalesBranch(Branch salesBranch) {
+        this.salesBranch = salesBranch;
+    }
 }

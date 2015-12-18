@@ -103,7 +103,8 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
                 selectedProductItem = new SelectedProductItem();
                 selectedProductItem.setProduct(product);
                 if(product.getExtras() != null)
-                    selectedProductItem.setIsMultiline(product.getExtras().isBatch_maintained());
+                    selectedProductItem.setIsMultiline(product.getExtras().isBatch_maintained() == null?
+                            false : product.getExtras().isBatch_maintained());
 
                 /*Log.e("Adding", product.getName() + " " + displayProductListItem.add(selectedProductItem));
                 Log.e("Size", displayProductListItem.size() + "");*/

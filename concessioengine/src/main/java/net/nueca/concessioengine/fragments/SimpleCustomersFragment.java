@@ -1,6 +1,5 @@
 package net.nueca.concessioengine.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +32,7 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
     private boolean isMultiSelect = false;
     private boolean hasSelected = false;
     private Integer color, highlightColor;
+
     private OnCustomerSelectedListener onCustomerSelectedListener;
 
     public void setMultiSelect(boolean isMultiSelect) {

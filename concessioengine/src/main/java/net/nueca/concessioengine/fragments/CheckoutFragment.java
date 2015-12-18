@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,8 +48,7 @@ public class CheckoutFragment extends BaseCheckoutFragment {
 
         etAmountDue.setText(NumberTools.separateInCommas(getAmountDue()));
 
-        if(splitPaymentAdapter == null)
-            splitPaymentAdapter = new SimpleSplitPaymentAdapter(getActivity(), getHelper());
+        splitPaymentAdapter = new SimpleSplitPaymentAdapter(getActivity(), getHelper());
         splitPaymentAdapter.initializeRecyclerView(getActivity(), rvPayments);
         splitPaymentAdapter.setPaymentUpdateListener(this);
 

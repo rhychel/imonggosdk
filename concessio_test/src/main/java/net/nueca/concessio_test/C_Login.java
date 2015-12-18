@@ -2,6 +2,8 @@ package net.nueca.concessio_test;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -62,7 +64,8 @@ public class C_Login extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, ( C_Customers.class));
+        Intent intent = new Intent(this, (/*SettingTools.defaultBranch(this).equals("") ?*/ C_Welcome.class
+                /*:C_Dashboard.class*/));
         startActivity(intent);
     }
 

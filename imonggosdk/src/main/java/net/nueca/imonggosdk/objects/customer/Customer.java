@@ -33,14 +33,14 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     @Expose
     @DatabaseField
-    private int point_to_amount_ratio;
+    private Integer point_to_amount_ratio;
     @Expose
     @DatabaseField
     private String code, alternate_code, first_name, last_name, name, company_name,
-            tin, street = "", city, state, zipcode, country, telephone = "", fax,
+            tin, street, city, state, zipcode, country, telephone, fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
-            membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+            membership_expired_at, membership_start_at, biometric_signature, gender;
     @Expose
     @DatabaseField
     private boolean tax_exempt;
@@ -114,10 +114,11 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.state = builder.state;
         this.tin = builder.tin;
         this.gender = builder.gender;
-    }
-
-    public Customer(String s, String s1, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String gender) {
-        super();
+        this.extras = builder.extras;
+        this.available_points = builder.available_points;
+        this.customer_type_id = builder.customer_type_id;
+        this.customer_type_name = builder.customer_type_name;
+        this.biometric_signature = builder.biometric_signature;
     }
 
     public int getPoint_to_amount_ratio() {
@@ -489,7 +490,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     @Override
     public String toString() {
-        return name;
+        return name + " = {" + toJSONString() + "}";
     }
 
     public String getFullAddress() {
@@ -534,50 +535,64 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
-            insertExtrasTo(dbHelper);
             dbHelper.insert(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            deleteExtrasTo(dbHelper);
             dbHelper.delete(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            updateExtrasTo(dbHelper);
             dbHelper.update(Customer.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        updateExtrasTo(dbHelper);
     }
 
     @Override
     public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.setCustomer(this);
-        extras.setId(Customer.class.getName().toUpperCase(), id);
-        extras.insertTo(dbHelper);
-
+        if(extras != null) {
+            extras.setCustomer(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
     }
 
     @Override
     public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.deleteTo(dbHelper);
+        if(extras != null)
+            extras.deleteTo(dbHelper);
     }
 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.updateTo(dbHelper);
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
+        }
     }
 
     // TODO: complete all fields
@@ -588,10 +603,35 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
                 tin, street, city, state, zipcode, country, telephone, fax,
                 mobile, email, remark, customer_type_id, customer_type_name,
                 discount_text, available_points, birthdate, status, birthday,
-                membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+                membership_expired_at, membership_start_at, biometric_signature, gender;
 
         public Customer build() {
             return new Customer(this);
+        }
+
+        public Builder biometric_signature(String biometric_signature) {
+            this.biometric_signature = biometric_signature;
+            return this;
+        }
+
+        public Builder available_points(String available_points) {
+            this.available_points = available_points;
+            return this;
+        }
+
+        public Builder customer_type_name(String customer_type_name) {
+            this.customer_type_name = customer_type_name;
+            return this;
+        }
+
+        public Builder customer_type_id(String customer_type_id) {
+            this.customer_type_id = customer_type_id;
+            return this;
+        }
+
+        public Builder extras(Extras extras) {
+            this.extras = extras;
+            return this;
         }
 
         public Builder first_name(String first_name) {

@@ -9,12 +9,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.fragments.AddCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.RoutePlan;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
@@ -49,6 +51,18 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                 .replace(R.id.flContent, mSimpleCustomersFragment)
                 .addToBackStack("customers")
                 .commit();
+
+        try {
+            List<BranchProduct> branchProducts = getHelper().fetchObjectsList(BranchProduct.class);
+
+            Log.e(TAG, "Branch Products size: " + branchProducts.size());
+
+            for(BranchProduct bp : branchProducts) {
+                Log.e(TAG, ">>" + bp.toString());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

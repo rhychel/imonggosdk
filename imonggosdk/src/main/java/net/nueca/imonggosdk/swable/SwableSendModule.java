@@ -12,7 +12,9 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -42,6 +44,8 @@ public class SwableSendModule {
     }
 
     public void sendTransaction(Table table, final OfflineData offlineData) {
+        Log.e("SwableSendModule", "sendTransaction " + table.getStringName() + " " + offlineData.getType());
+        Log.e("SwableSendModule", "sendTransaction " + offlineData.getObjectFromData().toString());
         try {
             Branch branch = dbHelper.fetchObjects(Branch.class).queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
@@ -63,6 +67,7 @@ public class SwableSendModule {
                 return;
             }
 
+            //JSONObject data;
             JSONObject jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
                     offlineData.getData());
             //Log.e("JSON", jsonObject.toString());
@@ -213,8 +218,10 @@ public class SwableSendModule {
                             offlineData.setSynced(false);
                             offlineData.updateTo(dbHelper);
                         }
-                    }, session.getServer(), table, jsonObject, "?branch_id=" + offlineData.getBranch_id() + offlineData
-                            .getParameters()).setTag(offlineData.getId())
+                    }, session.getServer(), table, jsonObject, (offlineData.getType() != OfflineData.CUSTOMER?
+                            "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() :
+                            offlineData.getParametersAsFirstParameter() )
+                    ).setTag(offlineData.getId())
             );
         } catch (JSONException e) {
             e.printStackTrace();
@@ -439,9 +446,8 @@ public class SwableSendModule {
                         parent.setSynced(false);
                         parent.updateTo(dbHelper);
                     }
-                }, session.getServer(), table, jsonObject, "?branch_id=" + parent.getBranch_id() + parent
-                        .getParameters())
-                        .setTag(parent.getId()+ "-" +page)
+                }, session.getServer(), table, jsonObject, "?branch_id="+ parent.getBranch_id() + parent.getParameters()
+                ).setTag(parent.getId()+ "-" +page)
         );
     }
 

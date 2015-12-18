@@ -3,6 +3,7 @@ package net.nueca.concessioengine.dialogs;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -17,8 +18,10 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import me.grantland.widget.AutofitTextView;
 
@@ -64,6 +67,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         btnSave = (Button) super.findViewById(R.id.btnSave);
         llSubtotal = (LinearLayout) super.findViewById(R.id.llSubtotal);
 
+        etQuantity.setSelectAllOnFocus(true);
+        
         unitsAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, unitList);
         unitsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
         spUnits.setAdapter(unitsAdapter);
@@ -79,6 +84,10 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         tvProductName.setText(product.getName());
         tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
 
+        if(getHelper() != null && (salesCustomer != null || salesCustomerGroup != null || salesBranch != null)) {
+            retailPrice = "P"+NumberTools.separateInCommas(PriceTools.identifyRetailPrice(getHelper(), product,
+                    salesBranch, salesCustomerGroup, salesCustomer));
+        }
         tvRetailPrice.setText(retailPrice);
         tvSubtotal.setText(subtotal);
         if (isMultiValue) {
@@ -121,6 +130,10 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         @Override
         public void onClick(View view) {
             String quantity = etQuantity.getText().toString().replace(",", "");
+
+            if(quantity.length() == 0)
+                quantity = "0";
+
             if (quantity.equals("0") && !isMultiValue)
                 selectedProductItem.removeAll(); // TODO handle this
             else if (quantity.equals("0") && isMultiValue) {
@@ -130,10 +143,20 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 return;
             } else {
                 Unit unit = hasUnits ? ((Unit) spUnits.getSelectedItem()) : null;
-                Values values = new Values(unit, quantity);
+                Values values = getHelper() == null?
+                        new Values(unit, quantity) :
+                        new Values(unit, quantity,
+                                PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
+                                        salesBranch, salesCustomerGroup, salesCustomer));
                 if (valuePosition > -1) {
                     values = selectedProductItem.getValues().get(valuePosition);
-                    values.setValue(quantity, unit);
+                    Log.e("Helper >>>>>", (getHelper() == null)+"");
+                    if(getHelper() == null)
+                        values.setValue(quantity, unit);
+                    else
+                        values.setValue(quantity, unit,
+                                PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
+                                        salesBranch, salesCustomerGroup, salesCustomer));
                 }
                 if (isMultiValue) {
                     if (multiQuantityDialogListener != null)

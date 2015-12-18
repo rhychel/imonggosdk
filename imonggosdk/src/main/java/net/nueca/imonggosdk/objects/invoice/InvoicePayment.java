@@ -10,6 +10,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +20,7 @@ import java.sql.SQLException;
 /**
  * Created by gama on 7/1/15.
  */
-public class InvoicePayment extends BaseTable2 {
+public class InvoicePayment extends BaseTable2 implements Extras.DoOperationsForExtras {
     @Expose
     @DatabaseField
     protected int payment_type_id;
@@ -109,11 +110,13 @@ public class InvoicePayment extends BaseTable2 {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
             dbHelper.insert(InvoicePayment.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
@@ -123,6 +126,8 @@ public class InvoicePayment extends BaseTable2 {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
@@ -132,6 +137,36 @@ public class InvoicePayment extends BaseTable2 {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        updateExtrasTo(dbHelper);
     }
 
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setInvoicePayment(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
+        }
+    }
 }

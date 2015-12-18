@@ -238,6 +238,7 @@ public class Order extends BaseTransactionTable2 {
             return;
         }*/
 
+        insertExtrasTo(dbHelper);
         try {
             dbHelper.insert(Order.class, this);
         } catch (SQLException e) {
@@ -251,6 +252,8 @@ public class Order extends BaseTransactionTable2 {
                 orderLine.insertTo(dbHelper);
             }
         }
+
+        updateExtrasTo(dbHelper);
     }
 
     @Override
@@ -279,6 +282,8 @@ public class Order extends BaseTransactionTable2 {
                 orderLine.deleteTo(dbHelper);
             }
         }
+
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
@@ -306,6 +311,36 @@ public class Order extends BaseTransactionTable2 {
                 orderLine.updateTo(dbHelper);
             }
         }
+
+        updateExtrasTo(dbHelper);
     }
 
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setOrder(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
+        }
+    }
 }

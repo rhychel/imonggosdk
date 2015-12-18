@@ -2,6 +2,8 @@ package net.nueca.imonggosdk.tools;
 
 import android.widget.EditText;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
@@ -9,6 +11,8 @@ import java.text.DecimalFormat;
  * Created by gama on 9/9/15.
  */
 public class NumberTools {
+    private static final int DECIMAL_PLACE = 2;
+    private static final char SEPARATOR = ',';
 
     // ADDED BY RHY
     public static boolean isNumberAnInteger(String number) {
@@ -66,6 +70,10 @@ public class NumberTools {
         }
     }
     // -----------------------------------------------
+    public static final DecimalFormat FORMAT_REQUIRE_DECIMAL =
+            new DecimalFormat(StringUtils.repeat("###" + SEPARATOR, 5) + "##0." + StringUtils.repeat("0", DECIMAL_PLACE));
+    public static final DecimalFormat FORMAT_OPTIONAL_DECIMAL =
+            new DecimalFormat(StringUtils.repeat("###" + SEPARATOR, 5) + "##0." + StringUtils.repeat("#", DECIMAL_PLACE));
 
     public static Double toDouble(String dblString) {
         if(dblString == null)
@@ -105,10 +113,10 @@ public class NumberTools {
         return separateInCommas(toBigDecimal(unparsedNum));
     }
     public static String separateInCommas(BigDecimal num) {
-        return String.format("%,1.2f", num);
+        return FORMAT_REQUIRE_DECIMAL.format(num);
     }
-    public static String separateInCommas(Double num) {
-        return String.format("%,1.2f", num);
+    public static String separateInCommas(double num) {
+        return FORMAT_REQUIRE_DECIMAL.format(num);
     }
     public static String separateInCommas(int num) {
         return String.format("%,1d", num);
@@ -120,22 +128,21 @@ public class NumberTools {
     public static String separateInSpaces(BigDecimal num) {
         return separateInCommas(num).replace(',', ' ');
     }
-    public static String separateInSpaces(Double num) {
+    public static String separateInSpaces(double num) {
         return separateInCommas(num).replace(',', ' ');
     }
     public static String separateInSpaces(int num) {
         return separateInCommas(num).replace(',', ' ');
     }
 
-    public static final DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###,##0.##");
     public static String separateInCommasHideZeroDecimals(BigDecimal num) {
-        return decimalFormat.format(num);
+        return FORMAT_OPTIONAL_DECIMAL.format(num);
     }
     public static String separateInCommasHideZeroDecimals(Double num) {
-        return decimalFormat.format(num);
+        return FORMAT_OPTIONAL_DECIMAL.format(num);
     }
     public static String separateInCommasHideZeroDecimals(String num) {
-        return decimalFormat.format(toBigDecimal(num));
+        return FORMAT_OPTIONAL_DECIMAL.format(toBigDecimal(num));
     }
 
     public static String separateInSpaceHideZeroDecimals(BigDecimal num) {

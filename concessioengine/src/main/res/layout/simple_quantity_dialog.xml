@@ -117,7 +117,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:minWidth="64dp" />
+        android:minWidth="64dp"
+        android:textColor="?attr/colorPrimary"/>
 
     <Button
         style="?android:attr/borderlessButtonStyle"
@@ -128,7 +129,8 @@
         android:layout_alignTop="@+id/btnSave"
         android:layout_toLeftOf="@+id/btnSave"
         android:layout_toStartOf="@+id/btnSave"
-        android:minWidth="64dp" />
+        android:minWidth="64dp"
+        android:textColor="?attr/colorPrimary"/>
 
     <net.nueca.imonggosdk.widgets.Numpad
         android:layout_width="fill_parent"

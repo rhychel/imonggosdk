@@ -17,7 +17,7 @@ import org.json.JSONObject;
 /**
  * Created by gama on 04/11/2015.
  */
-public abstract class BaseTransactionTable extends BaseTable {
+public abstract class BaseTransactionTable extends BaseTable implements Extras.DoOperationsForExtras {
     @Expose
     @DatabaseField
     protected String reference;
@@ -119,7 +119,7 @@ public abstract class BaseTransactionTable extends BaseTable {
 
     @Override
     public String toString() {
-        return toJSONString();
+        return "ID: " + id + " ExtrasID: " + (extras != null? extras.getId() : "null") + " " + toJSONString();
     }
 
     public JSONObject toJSONObject() throws JSONException {

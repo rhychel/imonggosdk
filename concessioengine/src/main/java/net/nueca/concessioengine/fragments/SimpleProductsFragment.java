@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
+import net.nueca.concessioengine.adapters.base.BaseSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
@@ -79,7 +81,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
-        View view = inflater.inflate(useRecyclerView ? R.layout.simple_products_fragment_rv : R.layout.simple_products_fragment_lv, container, false);
+        View view = inflater.inflate(useRecyclerView ? R.layout.simple_products_fragment_rv : R.layout.simple_products_fragment_lv, container,
+                false);
 
         suplProduct = (SlidingUpPanelLayout) view.findViewById(R.id.suplProduct);
         tvProductName = (TextView) view.findViewById(R.id.tvProductName);
@@ -254,7 +257,15 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         try {
             if(listingType == ListingType.SALES) {
                 SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
+                simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
+                if(isCustomAdapter && productRecyclerViewAdapter instanceof BaseSalesProductRecyclerAdapter) {
+                    BaseSalesProductRecyclerAdapter salesAdapter = (BaseSalesProductRecyclerAdapter) productRecyclerViewAdapter;
+                    simpleSalesQuantityDialog.setHelper(salesAdapter.getHelper());
+                    simpleSalesQuantityDialog.setSalesCustomer(salesAdapter.getCustomer());
+                    simpleSalesQuantityDialog.setSalesCustomerGroup(salesAdapter.getCustomerGroup());
+                    simpleSalesQuantityDialog.setSalesBranch(salesAdapter.getBranch());
+                }
                 simpleSalesQuantityDialog.setHasSubtotal(hasSubtotal);
                 simpleSalesQuantityDialog.setHasUnits(true);
                 List<BranchPrice> branchPrices = getHelper().fetchForeignCollection(product.getBranchPrices().closeableIterator());
@@ -290,6 +301,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             }
             else {
                 SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
+                quantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 quantityDialog.setSelectedProductItem(selectedProductItem);
                 if (hasUnits) {
                     quantityDialog.setHasUnits(true);
@@ -339,7 +351,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     protected void showProductDetails(Product product) {
         tvProductName.setText(product.getName());
         tvProductDescription.setText(product.getDescription());
-        String imageUrl = ImonggoTools.buildProductImageUrl(getActivity(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", true, false);
+        String imageUrl = ImonggoTools.buildProductImageUrl(getActivity(), ProductsAdapterHelper.getSession().getApiToken(),
+                ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", true, false);
         ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getActivity(), true));
 
         suplProduct.setPanelState((suplProduct.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)
@@ -421,7 +434,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         prevLast = 0;
 
         if(useRecyclerView)
-            toggleNoItems("No results for \""+searchKey+"\""+messageCategory()+".", productRecyclerViewAdapter.updateList(getProducts()));
+            toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", productRecyclerViewAdapter.updateList(getProducts()));
         else
             toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", productListAdapter.updateList(getProducts()));
     }

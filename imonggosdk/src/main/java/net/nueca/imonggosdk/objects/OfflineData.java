@@ -213,7 +213,7 @@ public class OfflineData extends BaseTable2 {
         this.dateCreated = Calendar.getInstance().getTime();
 
         this.offlineDataTransactionType = offlineDataType.getNumericValue();
-        this.type = INVOICE;
+        this.type = CUSTOMER;
         this.invoiceData = null;
         this.orderData = null;
         this.documentData = null;
@@ -263,7 +263,6 @@ public class OfflineData extends BaseTable2 {
                         documentData.addAllDocumentLine(document.getDocument_lines());
                 }
             }
-
         }
 
         return documentData;
@@ -371,6 +370,11 @@ public class OfflineData extends BaseTable2 {
         if(parameters.length() > 0 && parameters.charAt(0) != '&')
             return "&" + parameters;
         return parameters;
+    }
+
+    public String getParametersAsFirstParameter() {
+        String params = getParameters();
+        return params.replaceFirst("&","?");
     }
 
     public void setParameters(String parameters) {
@@ -592,7 +596,7 @@ public class OfflineData extends BaseTable2 {
                 customerData.insertTo(dbHelper);
                 break;
         }
-        Log.e("OfflineData", "insert " + typeStr + " " + this.getReference_no());
+        Log.e("OfflineData", "insert " + typeStr + " " + this.getReference_no() + " id:" + id);
 
         try {
             dbHelper.insert(OfflineData.class, this);
@@ -612,8 +616,10 @@ public class OfflineData extends BaseTable2 {
             case DOCUMENT:
                 if(isPagedRequest() && !isNewPagedSend) {
                     try {
-                        for(Document child : documentData.getChildDocuments()) {
+                        List<Document> children = documentData.getChildDocuments();
+                        for(Document child : children) {
                             Log.e("OfflineData", "insertTo : CHILD : " + child.getReference());
+                            child.setId(id * -1000 + children.indexOf(child));
                             child.setOfflineData(this);
                             child.insertTo(dbHelper);
                         }
@@ -624,6 +630,9 @@ public class OfflineData extends BaseTable2 {
                     documentData.setOfflineData(this);
                     documentData.updateTo(dbHelper);
                 }
+                documentData.deleteTo(dbHelper);
+                documentData.setId(id * -1);
+                documentData.insertTo(dbHelper);
                 break;
             case CUSTOMER:
                 customerData.setOfflineData(this);

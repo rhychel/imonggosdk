@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -143,6 +144,7 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
     private void showQuantityDialog(final SelectedProductItem selectedProductItem, final int valuePosition) {
         try {
             SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
+            quantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             quantityDialog.setSelectedProductItem(selectedProductItem);
             if(hasUnits) {
                 quantityDialog.setHasUnits(true);

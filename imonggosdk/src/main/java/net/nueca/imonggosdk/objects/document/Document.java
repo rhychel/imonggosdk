@@ -302,6 +302,7 @@ public class Document extends BaseTransactionTable {
             }
             return;
         }
+        insertExtrasTo(dbHelper);
 
         try {
             dbHelper.insert(Document.class, this);
@@ -324,6 +325,10 @@ public class Document extends BaseTransactionTable {
                 documentLine.insertTo(dbHelper);
             }
         }
+
+        updateExtrasTo(dbHelper);
+
+        Log.e("DOCUMENT", "insert " + id + " ~ " + (offlineData != null? offlineData.getId() : "null") );
     }
 
     @Override
@@ -352,6 +357,8 @@ public class Document extends BaseTransactionTable {
         for(DocumentLine documentLine : document_lines) {
             documentLine.deleteTo(dbHelper);
         }
+
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
@@ -372,6 +379,39 @@ public class Document extends BaseTransactionTable {
             dbHelper.update(Document.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        updateExtrasTo(dbHelper);
+
+        Log.e("DOCUMENT", "update " + id + " ~ " + offlineData.getId());
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setDocument(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() +"_"+ id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
         }
     }
 

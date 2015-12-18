@@ -14,9 +14,17 @@ import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
+import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
 
 import java.sql.SQLException;
 
@@ -73,6 +81,9 @@ public class Extras extends DBTable {
     @Expose
     @DatabaseField
     private String last_checkin_at;
+    @Expose
+    @DatabaseField
+    private String salesman_id;
 
     // Invoice
     @Expose
@@ -139,6 +150,7 @@ public class Extras extends DBTable {
     private String expiry_date;
 
     // DocumentPurpose
+    @Expose
     @DatabaseField
     private String requires_expiry_date; // true || false
 
@@ -164,22 +176,39 @@ public class Extras extends DBTable {
     /** FOREIGN TABLES **/
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private transient RoutePlan routePlan;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_line_id")
-    private transient DocumentLine documentLine;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
-    private transient Invoice invoice;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_fr_id")
     private transient Customer customer;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "category_id")
     private transient CustomerCategory customerCategory; // customer_type // (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private transient User user;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "unit_id")
     private transient Unit unit;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_id")
+    private transient Document document;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_line_id")
+    private transient DocumentLine documentLine;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_purpose_id")
+    private transient DocumentPurpose documentPurpose;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_type_id")
+    private transient DocumentType documentType;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "order_id")
+    private transient Order order;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "order_line_id")
+    private transient OrderLine orderLine;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
+    private transient Invoice invoice;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_line_id")
+    private transient InvoiceLine invoiceLine;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_id")
     private transient InvoicePayment invoicePayment;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_tax_rate_id")
+    private transient InvoiceTaxRate invoiceTaxRate;
 
     public Extras() { }
 
@@ -238,6 +267,8 @@ public class Extras extends DBTable {
         expiry_date = builder.expiry_date;
         default_selling_unit = builder.default_selling_unit;
         default_ordering_unit_id = builder.default_ordering_unit_id;
+
+        salesman_id = builder.salesman_id;
     }
 
     public int getIs_salesman() {
@@ -298,6 +329,14 @@ public class Extras extends DBTable {
 
     public void setRequires_expiry_date(String requires_expiry_date) {
         this.requires_expiry_date = requires_expiry_date;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
     public DocumentLine getDocumentLine() {
@@ -631,6 +670,62 @@ public class Extras extends DBTable {
         this.default_ordering_unit_id = default_ordering_unit_id;
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public OrderLine getOrderLine() {
+        return orderLine;
+    }
+
+    public void setOrderLine(OrderLine orderLine) {
+        this.orderLine = orderLine;
+    }
+
+    public InvoiceLine getInvoiceLine() {
+        return invoiceLine;
+    }
+
+    public void setInvoiceLine(InvoiceLine invoiceLine) {
+        this.invoiceLine = invoiceLine;
+    }
+
+    public DocumentType getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
+    }
+
+    public DocumentPurpose getDocumentPurpose() {
+        return documentPurpose;
+    }
+
+    public void setDocumentPurpose(DocumentPurpose documentPurpose) {
+        this.documentPurpose = documentPurpose;
+    }
+
+    public InvoiceTaxRate getInvoiceTaxRate() {
+        return invoiceTaxRate;
+    }
+
+    public void setInvoiceTaxRate(InvoiceTaxRate invoiceTaxRate) {
+        this.invoiceTaxRate = invoiceTaxRate;
+    }
+
+    public String getSalesman_id() {
+        return salesman_id;
+    }
+
+    public void setSalesman_id(String salesman_id) {
+        this.salesman_id = salesman_id;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
@@ -681,6 +776,7 @@ public class Extras extends DBTable {
         protected Invoice invoice;
         protected Customer customer;
         protected CustomerCategory customerCategory;
+        protected String salesman_id;
         protected User user;
         protected Unit unit;
         protected InvoicePayment invoicePayment;
@@ -716,6 +812,11 @@ public class Extras extends DBTable {
         protected String invoice_purpose_code;
         protected String invoice_purpose_name;
         protected String expiry_date;
+
+        public Builder salesman_id(String salesman_id) {
+            this.salesman_id = salesman_id;
+            return this;
+        }
 
         public Builder default_selling_unit(String default_selling_unit) {
             this.default_selling_unit = default_selling_unit;

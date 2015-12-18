@@ -32,6 +32,9 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
     private transient Product product;
 
     @ForeignCollectionField
+    private transient ForeignCollection<BranchPrice> branchPrices;
+
+    @ForeignCollectionField // need?
     private transient ForeignCollection<Price> prices;
 
     @DatabaseField
@@ -133,9 +136,17 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
         this.prices = prices;
     }
 
+    public ForeignCollection<BranchPrice> getBranchPrices() {
+        return branchPrices;
+    }
+
+    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
+        this.branchPrices = branchPrices;
+    }
+
     @Override
     public boolean equals(Object o) {
-        return id == ((Unit)o).getId();
+        return o instanceof  Unit && id == ((Unit)o).getId();
     }
 
     @Override
