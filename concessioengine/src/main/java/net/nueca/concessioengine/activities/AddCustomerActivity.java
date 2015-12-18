@@ -53,6 +53,11 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
     private ArrayList<CustomerField> customerFieldArrayList = new ArrayList<>();
     private CustomerFieldsAdapter customerFieldsAdapter;
 
+    /**
+     * Fix the UI
+     * @param savedInstanceState
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
