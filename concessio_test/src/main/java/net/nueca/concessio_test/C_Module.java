@@ -44,6 +44,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
@@ -185,9 +186,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             } break;
             case RELEASE_BRANCH: {
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
-                simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+             /*   simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+
+
                     @Override
-                    public void onSave(String reason, Branch source, Branch destination) {
+                    public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
                         TextView tvReason = (TextView)simplePulloutToolbarExt.getToolbarExtensionView()
                                 .findViewById(R.id.tvReason);
 
@@ -203,7 +206,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                 .getToolbarExtensionView().findViewById(R.id.tvReason) ).getText().length() == 0)
                             onBackPressed();
                     }
-                });
+                });*/
                 simplePulloutRequestDialog.show();
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setProductCategories(getProductCategories(true));

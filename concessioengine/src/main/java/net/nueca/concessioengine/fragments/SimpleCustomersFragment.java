@@ -13,9 +13,8 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleCustomerListAdapter;
 import net.nueca.concessioengine.adapters.SimpleCustomerRecyclerViewAdapter;
-import net.nueca.concessioengine.adapters.SimpleCustomerRecyclerViewAdapter2;
-import net.nueca.concessioengine.adapters.enums.ListingType;
-import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.util.List;
@@ -33,6 +32,8 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
     private boolean isMultiSelect = false;
     private boolean hasSelected = false;
     private Integer color, highlightColor;
+
+    private OnCustomerSelectedListener onCustomerSelectedListener;
 
     public void setMultiSelect(boolean isMultiSelect) {
         this.isMultiSelect = isMultiSelect;
@@ -79,7 +80,7 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(useRecyclerView ?
                         R.layout.simple_customers_fragment_rv : R.layout.simple_customers_fragment_lv,
-                        container, false);
+                container, false);
 
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         tvNoCustomers = (TextView) view.findViewById(R.id.tvNoCustomers);

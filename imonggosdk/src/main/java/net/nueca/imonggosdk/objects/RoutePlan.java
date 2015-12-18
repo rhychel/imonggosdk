@@ -28,20 +28,10 @@ public class RoutePlan extends BaseTable {
     private String frequency; // (values: M, TU, TH, W, F, SA, SU)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private User user;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")
-    private Branch branch;
     @ForeignCollectionField
     private ForeignCollection<Customer> foreignCustomers; // sequence (per customer_id)
 
     public RoutePlan() { }
-
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
 
     public ForeignCollection<Customer> getForeignCustomers() {
         return foreignCustomers;
@@ -91,7 +81,6 @@ public class RoutePlan extends BaseTable {
                 ", route_day='" + route_day + '\'' +
                 ", frequency='" + frequency + '\'' +
                 ", user=" + user +
-                ", branch=" + branch +
                 ", foreignCustomers=" + foreignCustomers +
                 '}';
     }

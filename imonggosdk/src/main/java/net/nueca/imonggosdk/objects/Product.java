@@ -408,14 +408,6 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
         this.prices = prices;
     }
 
-    public ForeignCollection<BranchProduct> getBranchProducts() {
-        return branchProducts;
-    }
-
-    public void setBranchProducts(ForeignCollection<BranchProduct> branchProducts) {
-        this.branchProducts = branchProducts;
-    }
-
     public boolean isBaseUnitSellable() {
         return isBaseUnitSellable;
     }

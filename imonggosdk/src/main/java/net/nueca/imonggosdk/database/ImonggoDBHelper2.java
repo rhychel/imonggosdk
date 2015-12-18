@@ -79,9 +79,10 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 25;
 
     private static final Class<?> tables[] = {
-            Branch.class, BranchPrice.class, BranchProduct.class, BranchUnit.class, BranchTag.class, Customer.class,
+            Branch.class, BranchPrice.class, BranchTag.class, Customer.class,
             Inventory.class, Product.class, ProductTag.class, Session.class,
             TaxRate.class, TaxSetting.class, Unit.class, User.class,
+            BranchProduct.class, BranchUnit.class,
             DocumentType.class, DocumentPurpose.class, BranchUserAssoc.class, ProductTaxRateAssoc.class,
             LastUpdatedAt.class, OfflineData.class, Document.class, DocumentLine.class,
             DailySales.class, Settings.class, Order.class, OrderLine.class,
