@@ -9,6 +9,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.Price;
@@ -31,7 +32,7 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     protected double cost = 0.0,
             retail_price = 0.0,
             wholesale_price = 0.0,
-            wholesale_quantity = 0.0;
+            wholesale_quantity = 0.0; // special when branch_products is requested
     @Expose
     @DatabaseField
     protected String quantity = "",
@@ -64,6 +65,8 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     protected transient boolean isSelected = false;
     @DatabaseField
     protected transient String unit = "";
+    @DatabaseField
+    private transient boolean isBaseUnitSellable = false;
 
     private transient String orig_quantity = "0";
     private transient String rcv_quantity = "";
@@ -91,6 +94,9 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @ForeignCollectionField
     private transient ForeignCollection<BranchPrice> branchPrices;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchProduct> branchProducts;
 
     @Expose
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
@@ -400,6 +406,22 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     public void setPrices(ForeignCollection<Price> prices) {
         this.prices = prices;
+    }
+
+    public ForeignCollection<BranchProduct> getBranchProducts() {
+        return branchProducts;
+    }
+
+    public void setBranchProducts(ForeignCollection<BranchProduct> branchProducts) {
+        this.branchProducts = branchProducts;
+    }
+
+    public boolean isBaseUnitSellable() {
+        return isBaseUnitSellable;
+    }
+
+    public void setIsBaseUnitSellable(boolean isBaseUnitSellable) {
+        this.isBaseUnitSellable = isBaseUnitSellable;
     }
 
     @Override

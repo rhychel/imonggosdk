@@ -13,7 +13,6 @@ import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -32,6 +31,8 @@ import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -922,22 +923,122 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             }
                             break;
                         case BRANCH_PRODUCTS:
+                            BatchList<BranchProduct> newBranchProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<BranchUnit> newBranchUnits = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+
+                            Branch thisBranch = getBranchWithID(getSession().getCurrent_branch_id());
+                            BranchProduct branchProducts = new BranchProduct();
+                            BranchUnit branchUnit = new BranchUnit();
+
+                            if(size == 0 || thisBranch == null) {
+                                syncNext();
+                                return;
+                            } else {
+
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                                    // For Products and Units
+                                    if(jsonObject.has("id")) {
+                                        // Products
+                                        if (!jsonObject.getString("id").isEmpty() && !jsonObject.isNull("id")) {
+                                            int product_id = jsonObject.getInt("id");
+                                            String name = jsonObject.getString("name");
+                                            String description = jsonObject.getString("description");
+                                            Double retail_price = jsonObject.getDouble("retail_price");
+
+                                            Log.e(TAG, "Creating Branch Products....");
+                                            Log.e(TAG, "Branch is " + thisBranch.getName());
+                                            // set the Name, Description, Retail_Price to Branch_Products
+                                            Log.e(TAG, "Branch Product Name: " + jsonObject.getString("name"));
+                                            Log.e(TAG, "Branch Product Description: " + description);
+                                            Log.e(TAG, "Branch Product Retail Price: " + retail_price);
+
+                                            // Tag the Product and Branch
+                                            branchProducts.setBranch(thisBranch);
+                                            branchProducts.setProduct(getProductWithID(product_id));
+                                            branchProducts.setName(name);
+                                            branchProducts.setDescription(description);
+                                            branchProducts.setRetail_price(retail_price);
+
+                                        } else {
+                                            Log.e(TAG, mCurrentTableSyncing + " API " + "don't have product_id");
+                                        }
+
+                                        // UNITS
+                                        if(jsonObject.has("unit_id")) {
+                                            // Units
+                                            if (!jsonObject.getString("unit_id").isEmpty() && !jsonObject.isNull("unit_id")) {
+                                                int unit_id = jsonObject.getInt("unit_id");
+                                                Double retail_price = jsonObject.getDouble("retail_price");
+
+                                                branchUnit.setRetail_price(retail_price);
+                                                //TAG the Unit and Branch
+                                                branchUnit.setBranch(thisBranch);
+                                                branchUnit.setUnit(getUnitWithID(unit_id));
+
+                                                Log.e(TAG, "Creating Branch Units....");
+                                                Log.e(TAG, "Branch is " + thisBranch.getName()
+                                                + "Units is " + getUnitWithID(unit_id));
+                                                Log.e(TAG, "Retail Price is " + requestType);
+
+                                                if(!isExisting(branchUnit, Table.BRANCH_UNITS)) {
+                                                    if(newBranchUnits.contains(branchUnit)) {
+                                                        branchUnit.insertTo(getHelper());
+                                                    } else {
+                                                        Log.e(TAG, "This Branch Unit Exists in the database... skipping.");
+                                                    }
+                                                } else {
+                                                    Log.e(TAG, "This Branch Unit Exists in the database.. skipping.");
+                                                }
+
+                                            } else {
+                                                Log.e(TAG, mCurrentTableSyncing + " units don't have value, Setting UP Branch Products");
+                                                Double unit_retail_price = jsonObject.getDouble("unit_retail_price");
+                                                branchProducts.setUnit_retail_price(unit_retail_price);
+                                                branchProducts.setIsBaseUnitSellable(true);
+                                                Log.e(TAG, "Updating Branch Products retail Price to " + jsonObject.getString("unit_retail_price"));
+                                                Log.e(TAG, "Setting isBaseUnitSellable to true");
+                                            }
+                                        } else {
+                                            Log.e(TAG, mCurrentTableSyncing + " API don't have 'unit id' field");
+                                        }
+
+                                        if(!isExisting(branchProducts, Table.BRANCH_PRODUCTS)) {
+                                            if (newBranchProducts.contains(branchProducts)) {
+                                                newBranchProducts.add(branchProducts);
+                                            } else {
+                                                Log.e(TAG, "This Branch Product Exists in the database... skipping.");
+                                            }
+                                        } else {
+                                            Log.e(TAG, "This Branch Product Exists in the database.. skipping.");
+                                        }
+
+
+
+                                    } else {
+                                        Log.e(TAG, "Skipping.. the return don't have product id");
+                                    }
+                                }
+                            }
+
+                            //newBranchProducts.doOperation(BranchProduct.class);
+                            //newBranchUnits.doOperation(BranchUnit.class);
+                            updateNext(requestType, size);
+                            break;
                         case PRODUCTS:
 
                             BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
                             BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
-                            Table productTable = Table.PRODUCTS;
-
-                            Log.e(TAG, productTable + " | size: " + size + " page: " + page + " max page: " + numberOfPages);
                             Log.e(TAG, "Syncing Page " + page);
                             if (size == 0) {
                                 syncNext();
                                 return;
                             } else {
                                 int current_branch_id = getSession().getCurrent_branch_id();
-                                Branch current_branch = getHelper().fetchIntId(Branch.class).queryForId(current_branch_id);
+                                Branch current_branch = getBranchWithID(current_branch_id);
 
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -1037,31 +1138,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         Log.e(TAG, "Product don't have tax rate");
                                     }
 
-                                    if (jsonObject.has("branch_prices")) {
-                                        JSONArray branchPricesArray = jsonObject.getJSONArray("branch_prices");
-                                        int branchPriceSize = branchPricesArray.length();
-                                        for (int y = 0; y < branchPriceSize; y++) {
-                                            JSONObject jsonBranchPriceObject = branchPricesArray.getJSONObject(y);
-                                            BranchPrice branchPrice = gson.fromJson(jsonBranchPriceObject.toString(), BranchPrice.class);
-
-                                            if (isExisting(current_branch, Table.BRANCHES)) {
-                                                branchPrice.setBranch(current_branch);
-                                                branchPrice.setProduct(product);
-                                                // check if current branch matches with this branch price
-                                                if (branchPrice.getBranch().getId() == current_branch_id) {
-                                                    Log.e(TAG, "Product " + branchPrice.getProduct().getName() +
-                                                            " Content: " + branchPrice.toString());
-                                                    getHelper().delete(BranchPrice.class, branchPrice);
-                                                    branchPrice.dbOperation(getHelper(), DatabaseOperation.INSERT);
-                                                }
-
-
-                                            } else {
-                                                Log.e(TAG, "Branch ID " + current_branch_id + "does not exist. Skipping Branch Prices");
-                                            }
-                                        }
-                                    }
-
                                     if (jsonObject.has("tag_list")) {
                                         // Save tags to the database
                                         JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
@@ -1147,10 +1223,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 Log.e(TAG, "'is_default_selling_unit' field is null");
                                             }
                                         } else {
-                                            Log.e(TAG, "Branch Units don't have extras 'is_default_selling_unit' field ");
+                                            Log.e(TAG, mCurrentTableSyncing + " don't have extras 'is_default_selling_unit' field ");
                                         }
                                     } else {
-                                        Log.e(TAG, "Units don't have 'extras' field");
+                                        Log.e(TAG, mCurrentTableSyncing + " don't have 'extras' field");
                                     }
 
                                     Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", jsonObject.getString("product_id")).queryForFirst();
@@ -1804,14 +1880,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     SalesPromotion salesPromotion = gson.fromJson(jsonObject.toString(), SalesPromotion.class);
 
                                     if (jsonObject.has("settings")) {
-                                        JSONObject object = jsonObject.getJSONObject("settings");
-                                        Log.e(TAG, ">>>> " + object.toString());
-                                        if(jsonObject.getJSONObject("settings") != null) {
+                                        JSONObject settings = jsonObject.getJSONObject("settings");
+
+
+                                        if(settings.length() != 0) {
                                             SalesPushSettings salesPushSettings = gson.fromJson(jsonObject.getString("settings"), SalesPushSettings.class);
                                             salesPromotion.setSettings(salesPushSettings);
 
                                         } else {
-                                            Log.e(TAG, "settings don't have value");
+                                            Log.e(TAG, mCurrentTableSyncing + " don't have settings");
                                         }
                                     } else {
                                         Log.e(TAG, mCurrentTableSyncing + "API don't have 'settings' field");
