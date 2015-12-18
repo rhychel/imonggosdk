@@ -82,11 +82,13 @@ public class Values {
             this.extendedAttributes = extendedAttributes;
         if(unit != null && unit.getId() != -1) {
             Log.e("Quantity-unit",unit.getQuantity()+" * "+quantity);
-            this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
+            if(quantity.length() > 0)
+                this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_quantity = quantity;
             this.unit_content_quantity = unit.getQuantity();
             this.unit_name = unit.getName();
-            this.unit_retail_price = unit.getRetail_price()*Double.valueOf(this.unit_quantity);
+            if(this.unit_quantity.length() > 0)
+                this.unit_retail_price = unit.getRetail_price()*Double.valueOf(this.unit_quantity);
             this.unit = unit;
         }
         else{

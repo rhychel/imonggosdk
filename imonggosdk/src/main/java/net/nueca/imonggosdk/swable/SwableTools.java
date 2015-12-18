@@ -20,6 +20,7 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
@@ -421,6 +422,8 @@ public class SwableTools {
                         offlineData.setOfflineDataTransactionType(OfflineDataType.CANCEL_INVOICE); break;
                     case OfflineData.DOCUMENT:
                         offlineData.setOfflineDataTransactionType(OfflineDataType.CANCEL_DOCUMENT); break;
+                    case OfflineData.CUSTOMER:
+                        offlineData.setOfflineDataTransactionType(OfflineDataType.DELETE_CUSTOMER); break;
                 }
 
                 offlineData.updateTo(helper);
@@ -442,6 +445,8 @@ public class SwableTools {
                         offlineData.setOfflineDataTransactionType(OfflineDataType.CANCEL_INVOICE); break;
                     case OfflineData.DOCUMENT:
                         offlineData.setOfflineDataTransactionType(OfflineDataType.CANCEL_DOCUMENT); break;
+                    case OfflineData.CUSTOMER:
+                        offlineData.setOfflineDataTransactionType(OfflineDataType.DELETE_CUSTOMER); break;
                 }
                 return new DirectTransaction(offlineData, helper, 0);
             }
@@ -481,14 +486,19 @@ public class SwableTools {
                 offlineData = new OfflineData(invoice, OfflineDataType.UNKNOWN);
                 return this;
             }
+            public SendTransaction object(Customer customer) {
+                offlineData = new OfflineData(customer, OfflineDataType.UNKNOWN);
+                return this;
+            }
             public OfflineData queue() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : SendTransaction : Transaction Object is null");
-                if(branchId == null)
+                if(branchId == null && offlineData.getType() != OfflineData.CUSTOMER)
                     throw new NullPointerException("SwableTools : SendTransaction : Branch ID is null");
 
                 offlineData.setParameters(parameter);
-                offlineData.setBranch_id(branchId);
+                if(branchId != null)
+                    offlineData.setBranch_id(branchId);
 
                 switch (offlineData.getType()) {
                     case OfflineData.ORDER:
@@ -497,6 +507,8 @@ public class SwableTools {
                         offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_INVOICE); break;
                     case OfflineData.DOCUMENT:
                         offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_DOCUMENT); break;
+                    case OfflineData.CUSTOMER:
+                        offlineData.setOfflineDataTransactionType(OfflineDataType.ADD_CUSTOMER); break;
                 }
 
                 offlineData.insertTo(helper);
@@ -505,11 +517,12 @@ public class SwableTools {
             public DirectTransaction directSend() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : SendTransaction : Transaction Object is null");
-                if(branchId == null)
+                if(branchId == null && offlineData.getType() != OfflineData.CUSTOMER)
                     throw new NullPointerException("SwableTools : SendTransaction : Branch ID is null");
 
                 offlineData.setParameters(parameter);
-                offlineData.setBranch_id(branchId);
+                if(branchId != null)
+                    offlineData.setBranch_id(branchId);
 
                 switch (offlineData.getType()) {
                     case OfflineData.ORDER:
@@ -518,6 +531,8 @@ public class SwableTools {
                         offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_INVOICE); break;
                     case OfflineData.DOCUMENT:
                         offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_DOCUMENT); break;
+                    case OfflineData.CUSTOMER:
+                        offlineData.setOfflineDataTransactionType(OfflineDataType.ADD_CUSTOMER); break;
                 }
                 return new DirectTransaction(offlineData, helper, 1);
             }
@@ -565,6 +580,7 @@ public class SwableTools {
                     case OfflineData.ORDER: table = Table.ORDERS; break;
                     case OfflineData.INVOICE: table = Table.INVOICES; break;
                     case OfflineData.DOCUMENT: table = Table.DOCUMENTS; break;
+                    case OfflineData.CUSTOMER: table = Table.CUSTOMERS; break;
                     default: table = Table.ORDERS; break;
                 }
 
@@ -656,7 +672,9 @@ public class SwableTools {
                                         offlineData.updateTo(helper);
                                     }
                                 }, server, table, SwableTools.prepareTransactionJSON(table, offlineData.getData()),
-                                "?branch=" + offlineData.getBranch_id() + offlineData.getParameters())
+                                    (offlineData.getType() != OfflineData.CUSTOMER?
+                                            "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() : offlineData
+                                            .getParametersAsFirstParameter()))
                         );
                 } else {
                     if(offlineData.isPagedRequest())
@@ -718,9 +736,10 @@ public class SwableTools {
                                             offlineData.updateTo(helper);
                                         }
                                     }, server, table, offlineData.getReturnId(),
-                                    "?branch=" + offlineData.getBranch_id() + "&reason="
-                                    + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8")
-                                    + offlineData.getParameters())
+                                        (offlineData.getType() != OfflineData.CUSTOMER?
+                                                "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() : offlineData
+                                                .getParametersAsFirstParameter())
+                                                + "&reason=" + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8") )
                             );
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
@@ -774,6 +793,16 @@ public class SwableTools {
                                 sendThisPage(table, i+1, max_page, childDocuments.get(i).toJSONObject(), offlineData);
                             }
                         }
+                    }
+                    else if(table == Table.INVOICES) {
+                        Invoice invoice = (Invoice)offlineData.getObjectFromData();
+
+                        sendThisPage(table, 1, 1, invoice.toJSONObject(), offlineData);
+                    }
+                    else if(table == Table.CUSTOMERS) {
+                        Customer customer = (Customer)offlineData.getObjectFromData();
+
+                        sendThisPage(table, 1, 1, customer.toJSONObject(), offlineData);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -887,8 +916,8 @@ public class SwableTools {
                                 parent.setQueued(false);
                                 parent.setSynced(false);
                             }
-                        }, server, table, jsonObject, "?branch_id="+ parent.getBranch_id() + parent
-                                .getParameters())
+                        }, server, table, jsonObject, (offlineData.getType() != OfflineData.CUSTOMER?
+                                "?branch_id="+ parent.getBranch_id() + parent.getParameters() : parent.getParametersAsFirstParameter()) )
                 );
 
                 getQueue().start();
@@ -959,8 +988,10 @@ public class SwableTools {
                                         offlineData.setCancelled(false);
                                         offlineData.updateTo(helper);
                                     }
-                                }, server, table, id, "branch_id=" + offlineData.getBranch_id() + "&reason="
-                                        + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8") + offlineData.getParameters())
+                                }, server, table, id, (offlineData.getType() != OfflineData.CUSTOMER?
+                                        "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() :
+                                        offlineData.getParametersAsFirstParameter()) +
+                                        "&reason=" + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8"))
                         );
                     }
                 } catch (UnsupportedEncodingException e) {

@@ -44,6 +44,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
@@ -141,14 +142,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
                 simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
                     @Override
-                    public void onSave(String reason, Branch source, Branch destination) {
+                    public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
                         TextView tvReason = (TextView)simplePulloutToolbarExt.getToolbarExtensionView()
                                 .findViewById(R.id.tvReason);
 
-                        if(reason.toLowerCase().equals("transfer to branch"))
+                        if(reason.getName().toLowerCase().equals("transfer to branch"))
                             tvReason.setText(reason + " " + destination.getName());
                         else
-                            tvReason.setText(reason);
+                            tvReason.setText(reason.getName());
                     }
 
                     @Override

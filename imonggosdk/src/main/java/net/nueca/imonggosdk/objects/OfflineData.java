@@ -213,7 +213,7 @@ public class OfflineData extends BaseTable2 {
         this.dateCreated = Calendar.getInstance().getTime();
 
         this.offlineDataTransactionType = offlineDataType.getNumericValue();
-        this.type = INVOICE;
+        this.type = CUSTOMER;
         this.invoiceData = null;
         this.orderData = null;
         this.documentData = null;
@@ -370,6 +370,11 @@ public class OfflineData extends BaseTable2 {
         if(parameters.length() > 0 && parameters.charAt(0) != '&')
             return "&" + parameters;
         return parameters;
+    }
+
+    public String getParametersAsFirstParameter() {
+        String params = getParameters();
+        return params.replaceFirst("&","?");
     }
 
     public void setParameters(String parameters) {

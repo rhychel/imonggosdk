@@ -12,7 +12,7 @@ import android.widget.Button;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleSalesProductRecyclerAdapter;
-import net.nueca.concessioengine.adapters.enums.ListingType;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.CheckoutFragment;
@@ -163,15 +163,13 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             mSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                    simpleProductsFragment.setSearchKey(query);
-                    simpleProductsFragment.refreshList();
+                    simpleProductsFragment.updateListWhenSearch(query);
                     return true;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    simpleProductsFragment.setSearchKey(newText);
-                    simpleProductsFragment.refreshList();
+                    simpleProductsFragment.updateListWhenSearch(newText);
                     return true;
                 }
             });

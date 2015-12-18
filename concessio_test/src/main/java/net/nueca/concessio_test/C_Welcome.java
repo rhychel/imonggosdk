@@ -20,8 +20,10 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.SettingTools;
@@ -111,14 +113,26 @@ public class C_Welcome extends ModuleActivity {
             e.printStackTrace();
         }*/
 
-        try {
+        /*try {
             Log.e("UNITS count", getHelper().fetchObjectsList(Unit.class).size() + "");
             for(Unit unit : getHelper().fetchObjectsList(Unit.class)) {
                 Log.e("UNIT " + unit.getId(), unit.toString());
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        Customer customer = new Customer.Builder()
+                .first_name("Johnny")
+                .last_name("Tester")
+                .extras(null)
+                .build();
+        OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                .toSend()
+                .forBranch(860)
+                .object(customer)
+                .queue();
+        //SwableTools.startSwable(this);
 
         tvAgentName = (TextView) findViewById(R.id.tvAgentName);
         tvLogout = (TextView) findViewById(R.id.tvLogout);

@@ -16,9 +16,11 @@ import net.nueca.concessioengine.adapters.base.BaseSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -55,23 +57,43 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
         holder.tvProductName.setText(Html.fromHtml(product.getName() + getSelectedProductItems().getUnitName(product).toLowerCase()));
 
         SelectedProductItem selectedProductItem = getSelectedProductItems().getSelectedProductItem(product);
-        Double retail_price = PriceTools.identifyRetailPrice(getHelper(),product,branch,customerGroup,customer);
+        Unit unit = null;
+        if(selectedProductItem == null && product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && product.getExtras()
+                .getDefault_selling_unit().length() > 0)
+            try {
+                unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", Integer.parseInt(product.getExtras()
+                        .getDefault_selling_unit())).queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer,unit);
 
         holder.tvSubtotal.setText("");
         if(selectedProductItem != null) {
+            for(Values values : selectedProductItem.getValues()) {
+                if(values.getUnit() != null)
+                    unit = values.getUnit();
+            }
+            retail_price = PriceTools.identifyRetailPrice(getHelper(),product,branch,customerGroup,customer,unit);
+
             selectedProductItem.setRetail_price(retail_price);
             //retail_price = selectedProductItem.getRetail_price() == null ? retail_price : selectedProductItem.getRetail_price();
             double subtotal = NumberTools.toDouble(selectedProductItem.getQuantity()) * retail_price;
             holder.tvSubtotal.setText(NumberTools.separateInCommas(subtotal));
         }
         holder.tvRetailPrice.setText(NumberTools.separateInCommas(retail_price));
-        holder.tvInventoryCount.setText("? pcs");
-        holder.tvInventoryCount.setVisibility(View.GONE);
+
+        if(unit != null) {
+            holder.tvInventoryCount.setText(0 + " " + unit.getName());
+            holder.tvInventoryCount.setVisibility(View.VISIBLE);
+        } else
+            holder.tvInventoryCount.setVisibility(View.GONE);
 
         if(selectedProductItem != null && selectedProductItem.getQuantity() != null &&
                 NumberTools.toDouble(selectedProductItem.getQuantity()) != 0d) {
             double qty = NumberTools.toDouble(selectedProductItem.getQuantity());
-            holder.tvQuantity.setText(NumberTools.separateInSpaceHideZeroDecimals(qty) + (qty == 1? " pc" : " pcs"));
+
+            holder.tvQuantity.setText(NumberTools.separateInSpaceHideZeroDecimals(qty) + (unit != null?  " " + unit.getName() : ""));
             holder.tvQuantity.setVisibility(View.VISIBLE);
             holder.tvSubtotal.setVisibility(View.VISIBLE);
         } else {

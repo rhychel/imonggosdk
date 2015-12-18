@@ -184,6 +184,9 @@ public class ImonggoSwable extends SwableService {
                             case SEND_DOCUMENT:
                                 swableSendModule.sendTransaction(Table.DOCUMENTS, offlineData);
                                 break;
+                            case ADD_CUSTOMER:
+                                swableSendModule.sendTransaction(Table.CUSTOMERS, offlineData);
+                                break;
 
                             case CANCEL_ORDER:
                                 swableVoidModule.voidTransaction(Table.ORDERS, offlineData);
@@ -193,6 +196,9 @@ public class ImonggoSwable extends SwableService {
                                 break;
                             case CANCEL_DOCUMENT:
                                 swableVoidModule.voidTransaction(Table.DOCUMENTS, offlineData);
+                                break;
+                            case DELETE_CUSTOMER:
+                                swableVoidModule.voidTransaction(Table.CUSTOMERS, offlineData);
                                 break;
                         }
 

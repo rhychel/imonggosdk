@@ -81,6 +81,9 @@ public class Extras extends DBTable {
     @Expose
     @DatabaseField
     private String last_checkin_at;
+    @Expose
+    @DatabaseField
+    private String salesman_id;
 
     // Invoice
     @Expose
@@ -177,7 +180,7 @@ public class Extras extends DBTable {
     private transient Product product;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_fr_id")
     private transient Customer customer;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "category_id")
     private transient CustomerCategory customerCategory; // customer_type // (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private transient User user;
@@ -264,6 +267,8 @@ public class Extras extends DBTable {
         expiry_date = builder.expiry_date;
         default_selling_unit = builder.default_selling_unit;
         default_ordering_unit_id = builder.default_ordering_unit_id;
+
+        salesman_id = builder.salesman_id;
     }
 
     public int getIs_salesman() {
@@ -713,6 +718,14 @@ public class Extras extends DBTable {
         this.invoiceTaxRate = invoiceTaxRate;
     }
 
+    public String getSalesman_id() {
+        return salesman_id;
+    }
+
+    public void setSalesman_id(String salesman_id) {
+        this.salesman_id = salesman_id;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
@@ -763,6 +776,7 @@ public class Extras extends DBTable {
         protected Invoice invoice;
         protected Customer customer;
         protected CustomerCategory customerCategory;
+        protected String salesman_id;
         protected User user;
         protected Unit unit;
         protected InvoicePayment invoicePayment;
@@ -798,6 +812,11 @@ public class Extras extends DBTable {
         protected String invoice_purpose_code;
         protected String invoice_purpose_name;
         protected String expiry_date;
+
+        public Builder salesman_id(String salesman_id) {
+            this.salesman_id = salesman_id;
+            return this;
+        }
 
         public Builder default_selling_unit(String default_selling_unit) {
             this.default_selling_unit = default_selling_unit;

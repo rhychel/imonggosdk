@@ -130,6 +130,10 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         @Override
         public void onClick(View view) {
             String quantity = etQuantity.getText().toString().replace(",", "");
+
+            if(quantity.length() == 0)
+                quantity = "0";
+
             if (quantity.equals("0") && !isMultiValue)
                 selectedProductItem.removeAll(); // TODO handle this
             else if (quantity.equals("0") && isMultiValue) {

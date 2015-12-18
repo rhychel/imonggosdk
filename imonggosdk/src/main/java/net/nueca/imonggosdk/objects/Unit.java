@@ -135,7 +135,7 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
 
     @Override
     public boolean equals(Object o) {
-        return id == ((Unit)o).getId();
+        return o instanceof  Unit && id == ((Unit)o).getId();
     }
 
     @Override
