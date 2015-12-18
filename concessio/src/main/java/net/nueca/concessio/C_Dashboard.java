@@ -56,7 +56,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
 
-        Log.e("ClassName", Customer.class.getCanonicalName());
+        Log.e("ClassName", Customer.class.getSimpleName());
 
         setNextActivityClass(C_Module.class);
 

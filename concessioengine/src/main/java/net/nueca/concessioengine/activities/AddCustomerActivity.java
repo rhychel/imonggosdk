@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -32,6 +33,7 @@ import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
+import net.nueca.imonggosdk.tools.TempIdGenerator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,7 +100,14 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mSaveCustomer) {
-            Log.e("JSON", customerFieldsAdapter.toJSONObject());
+            Customer customer = customerFieldsAdapter.generateCustomer();
+            customer.insertTo(getHelper());
+
+            Intent intent = new Intent();
+            intent.putExtra(CUSTOMER_ID, customer.getId());
+            setResult(SUCCESS, intent);
+            finish();
+            Log.e("JSON", customer.toJSONString());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -274,7 +283,7 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
             return getItem(position).getFieldType().ordinal();
         }
 
-        public String toJSONObject() {
+        public Customer generateCustomer() {
             Customer customer = null;
             Gson gson = new GsonBuilder().serializeNulls().create();
             JSONObject jsonObject = new JSONObject();
@@ -299,15 +308,16 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
 
                     jsonObject.put(customerField.getFieldName(), customerField.getEditTextValue());
                 }
-
                 customer = gson.fromJson(jsonObject.toString(), Customer.class);
+                customer.setId(TempIdGenerator.generateTempId(getContext(), Customer.class));
                 customer.setExtras(extras);
                 customer.setPaymentTerms(paymentTerm);
+                customer.generateFullName();
             } catch (SQLException | JSONException e) {
                 e.printStackTrace();
             }
 
-            return customer.toJSONString();
+            return customer;
         }
 
         private Extras getExtras(Extras extras) {

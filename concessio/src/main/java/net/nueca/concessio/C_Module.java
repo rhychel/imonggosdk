@@ -3,6 +3,8 @@ package net.nueca.concessio;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -42,7 +44,6 @@ import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
-import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.OfflineData;
@@ -148,6 +149,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             case CUSTOMER_DETAILS: {
                 Log.e("Customer Details", "Yeah");
                 simpleCustomerDetailsFragment = new SimpleCustomerDetailsFragment();
+                simpleCustomerDetailsFragment.setCustomer(customer);
                 simpleCustomerDetailsFragment.setHelper(getHelper());
                 simpleCustomerDetailsFragment.setSetupActionBar(this);
 
@@ -498,9 +500,33 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mAddCustomer) {
             Intent intent = new Intent(this, AddCustomerActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, ADD_CUSTOMER);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == ADD_CUSTOMER) {
+            if(resultCode == SUCCESS) {
+                final int customerId = data.getIntExtra(CUSTOMER_ID, -1);
+                Handler handler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        simpleCustomersFragment.reinitializeList();
+
+                        Intent intent = new Intent(C_Module.this, C_Module.class);
+                        intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customerId);
+                        intent.putExtra(ModuleActivity.FROM_CUSTOMERS_LIST, isFromCustomersList);
+                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
+                        startActivity(intent);
+                    }
+                };
+                handler.sendEmptyMessageDelayed(0, 300);
+            }
+        }
     }
 
     @Override
@@ -537,7 +563,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
         if(concessioModule == ConcessioModule.CUSTOMER_DETAILS) {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
-            getSupportActionBar().setTitle("Juan Dela Cruz");
+            getSupportActionBar().setTitle(customer.getName());
         }
         if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
             if(!simpleCustomersFragment.isHasSelected()) {

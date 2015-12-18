@@ -18,6 +18,7 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,6 +99,8 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     private transient ForeignCollection<Invoice> invoices;
     @ForeignCollectionField
     private transient ForeignCollection<Document> documents;
+    @ForeignCollectionField
+    private transient ForeignCollection<RoutePlanDetail> routePlanDetails;
 
     /**
      * THESE ARE FOR THE LETTER HEADER
@@ -111,9 +114,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
     protected transient OfflineData offlineData;
 
-    public Customer() {
-
-    }
+    public Customer() { }
 
     public Customer(String first_name, String last_name, String name, String company_name,
                     String telephone, String mobile, String fax, String email, String street,
@@ -510,6 +511,14 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.payment_terms_id = payment_terms_id;
     }
 
+    public ForeignCollection<RoutePlanDetail> getRoutePlanDetails() {
+        return routePlanDetails;
+    }
+
+    public void setRoutePlanDetails(ForeignCollection<RoutePlanDetail> routePlanDetails) {
+        this.routePlanDetails = routePlanDetails;
+    }
+
     @Override
     public boolean equals(Object o) {
         return (o instanceof Customer) && ((Customer)o).getId() == id;
@@ -543,6 +552,25 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     @Override
     public String toString() {
+        return name;
+    }
+
+    public String generateFullName() {
+        String name = "";
+        if(first_name != null && !first_name.isEmpty()) {
+            name += first_name;
+        }
+        if(middle_name != null && !middle_name.isEmpty()) {
+            if(!name.isEmpty())
+                name += " ";
+            name += middle_name;
+        }
+        if(last_name != null && !last_name.isEmpty()) {
+            if(!name.isEmpty())
+                name += " ";
+            name += last_name;
+        }
+        this.name = name;
         return name;
     }
 
