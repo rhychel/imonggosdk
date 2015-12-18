@@ -72,7 +72,7 @@ public class SimpleCustomerRecyclerViewAdapter2 extends BaseCustomersRecyclerAda
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.simple_customer_header_letter, viewGroup, false);
         else
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.simple_customer_listitem2, viewGroup, false);
-        Log.e("onCreateViewHolder", "called");
+        //Log.e("onCreateViewHolder", "called");
 
         ListViewHolder lvh = new ListViewHolder(v);
         return lvh;
@@ -100,7 +100,6 @@ public class SimpleCustomerRecyclerViewAdapter2 extends BaseCustomersRecyclerAda
             else
                 listViewHolder.tvAddress.setVisibility(View.GONE);
 
-            Log.e("SelectedCustomer", selectedCustomer.size() + "");
             if (selectedCustomer.contains(customer))
                 listViewHolder.llCustomerItem.setBackgroundColor(highlightColor);
             else

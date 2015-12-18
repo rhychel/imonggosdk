@@ -21,6 +21,7 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.order.Order;
@@ -40,17 +41,26 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     public static final String CONCESSIO_MODULE = "concessio_module";
     public static final String FROM_CUSTOMERS_LIST = "from_customers_list";
+    public static final String FOR_CUSTOMER_DETAIL = "for_customer_detail";
 
     protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
     protected boolean isMultiInput = false;
     private ModuleSetting moduleSetting;
+    protected Customer customer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         concessioModule = ConcessioModule.values()[getIntent().getIntExtra(CONCESSIO_MODULE, ConcessioModule.STOCK_REQUEST.ordinal())];
         isFromCustomersList = getIntent().getBooleanExtra(FROM_CUSTOMERS_LIST, false);
+        if(getIntent().hasExtra(FOR_CUSTOMER_DETAIL)) {
+            try {
+                customer = getHelper().fetchIntId(Customer.class).queryBuilder().where().eq("id", getIntent().getIntExtra(FOR_CUSTOMER_DETAIL, 0)).queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

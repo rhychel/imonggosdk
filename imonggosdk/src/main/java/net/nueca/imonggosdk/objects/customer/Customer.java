@@ -18,6 +18,7 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,12 +32,50 @@ import java.sql.SQLException;
 @DatabaseTable
 public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
 
+    public static final String CODE = "code";
+    public static final String ALTERNATE_CODE = "alternate_code";
+    public static final String FIRST_NAME = "first_name";
+    public static final String MIDDLE_NAME = "middle_name";
+    public static final String LAST_NAME = "last_name";
+    public static final String COMPANY_NAME = "company_name";
+    public static final String TIN = "tin";
+    public static final String STREET = "street";
+    public static final String CITY = "city";
+    public static final String STATE = "state";
+    public static final String ZIPCODE = "zipcode";
+    public static final String COUNTRY = "country";
+    public static final String TELEPHONE = "telephone";
+    public static final String FAX = "fax";
+    public static final String MOBILE = "mobile";
+    public static final String EMAIL = "email";
+    public static final String REMARK = "remark";
+    public static final String CUSTOMER_TYPE_ID = "customer_type_id";
+    public static final String CUSTOMER_TYPE_NAME = "customer_type_name";
+    public static final String DISCOUNT_TEXT = "discount_text";
+    public static final String AVAILABLE_POINTS = "available_points";
+    public static final String BIRTHDATE = "birthdate";
+    public static final String STATUS = "status";
+    public static final String BIRTHDAY = "birthday";
+    public static final String MEMBERSHIP_EXPIRED_AT = "membership_expired_at";
+    public static final String MEMBERSHIP_START_AT = "membership_start_at";
+    public static final String BIOMETRIC_SIGNATURE = "biometric_signature";
+    public static final String GENDER = "gender";
+    public static final String POINT_TO_AMOUNT_RATIO = "point_to_amount_ratio";
+    public static final String TAX_EXEMPT = "tax_exempt";
+    public static final String PAYMENT_TERMS_ID = "payment_terms_id";
+
+    public static final String EXTRAS_CATEGORY_ID = "category_id";
+    public static final String EXTRAS_SALESMAN_ID = "salesman_id";
+
     @Expose
     @DatabaseField
     private int point_to_amount_ratio;
     @Expose
     @DatabaseField
-    private String code, alternate_code, first_name, last_name, name, company_name,
+    private int payment_terms_id;
+    @Expose
+    @DatabaseField
+    private String code, alternate_code, first_name, middle_name, last_name, name, company_name,
             tin, street = "", city, state, zipcode, country, telephone = "", fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
@@ -50,7 +89,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     private transient PriceList priceList;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")
     private transient Branch branch;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_terms_id")
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_term_id")
     private transient PaymentTerms paymentTerms;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
     private transient CustomerCategory customerCategory; // customer_type_id (?)
@@ -60,6 +99,8 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     private transient ForeignCollection<Invoice> invoices;
     @ForeignCollectionField
     private transient ForeignCollection<Document> documents;
+    @ForeignCollectionField
+    private transient ForeignCollection<RoutePlanDetail> routePlanDetails;
 
     /**
      * THESE ARE FOR THE LETTER HEADER
@@ -73,9 +114,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
     protected transient OfflineData offlineData;
 
-    public Customer() {
-
-    }
+    public Customer() { }
 
     public Customer(String first_name, String last_name, String name, String company_name,
                     String telephone, String mobile, String fax, String email, String street,
@@ -456,6 +495,30 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.letterHeader = letterHeader;
     }
 
+    public String getMiddle_name() {
+        return middle_name;
+    }
+
+    public void setMiddle_name(String middle_name) {
+        this.middle_name = middle_name;
+    }
+
+    public int getPayment_terms_id() {
+        return payment_terms_id;
+    }
+
+    public void setPayment_terms_id(int payment_terms_id) {
+        this.payment_terms_id = payment_terms_id;
+    }
+
+    public ForeignCollection<RoutePlanDetail> getRoutePlanDetails() {
+        return routePlanDetails;
+    }
+
+    public void setRoutePlanDetails(ForeignCollection<RoutePlanDetail> routePlanDetails) {
+        this.routePlanDetails = routePlanDetails;
+    }
+
     @Override
     public boolean equals(Object o) {
         return (o instanceof Customer) && ((Customer)o).getId() == id;
@@ -489,6 +552,25 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     @Override
     public String toString() {
+        return name;
+    }
+
+    public String generateFullName() {
+        String name = "";
+        if(first_name != null && !first_name.isEmpty()) {
+            name += first_name;
+        }
+        if(middle_name != null && !middle_name.isEmpty()) {
+            if(!name.isEmpty())
+                name += " ";
+            name += middle_name;
+        }
+        if(last_name != null && !last_name.isEmpty()) {
+            if(!name.isEmpty())
+                name += " ";
+            name += last_name;
+        }
+        this.name = name;
         return name;
     }
 

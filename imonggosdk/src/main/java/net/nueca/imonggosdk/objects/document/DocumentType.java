@@ -10,6 +10,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import java.sql.SQLException;
 
@@ -25,7 +26,7 @@ import java.sql.SQLException;
  * }
  */
 @DatabaseTable
-public class DocumentType extends BaseTable {
+public class DocumentType extends BaseTable implements Extras.DoOperationsForExtras {
 
     @DatabaseField
     private String name;
@@ -71,11 +72,13 @@ public class DocumentType extends BaseTable {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
             dbHelper.insert(DocumentType.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
@@ -85,6 +88,8 @@ public class DocumentType extends BaseTable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
@@ -93,6 +98,37 @@ public class DocumentType extends BaseTable {
             dbHelper.update(DocumentType.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setDocumentType(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ import com.j256.ormlite.field.DatabaseField;
 /**
  * Created by gama on 11/11/2015.
  */
-public abstract class BaseTransactionLine extends BaseTable2 {
+public abstract class BaseTransactionLine extends BaseTable2 implements Extras.DoOperationsForExtras {
     @Expose
     @DatabaseField
     protected int product_id = 0;

@@ -50,9 +50,7 @@ public class CustomerCategory extends BaseTable {
 
     @Override
     public String toString() {
-        return "CustomerCategory{" +
-                "name='" + name + '\'' +
-                '}';
+        return name;
     }
 
     @Override

@@ -69,8 +69,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     private Toolbar toolbar;
     private boolean hasMenu = true;
 
-    private Customer selectedCustomer;
-
     private SimpleReceiveFragment simpleReceiveFragment;
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
 
@@ -83,50 +81,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SwableTools.startSwable(this);
-
-        try {
-            Branch branch = getHelper().getDao(Branch.class).queryBuilder().where().eq("id", getSession().getCurrent_branch_id()).queryForFirst();
-            List<Product> products = getHelper().getDao(Product.class).queryForAll();
-            List<PriceList> priceLists = getHelper().getDao(PriceList.class).queryForAll();
-            if(priceLists.size() == 1)
-                priceLists.get(0).deleteTo(getHelper());
-
-            priceLists = getHelper().getDao(PriceList.class).queryForAll();
-            if(priceLists.size() == 0) {
-                PriceList.Builder builder = new PriceList.Builder();
-                builder.branch(branch);
-
-                PriceList priceList = builder.build();
-                priceList.setId(priceLists.size() + 1);
-                priceList.insertTo(getHelper());
-                for(int i=0; i<(products.size() % 16);i++) {
-                    Price price = new Price();
-                    price.setId(i + 8);
-                    price.setPriceList(priceList);
-                    price.setProduct(products.get(((int) (Math.random() * 10000)) % products.size()));
-                    price.setRetail_price( (((int)(Math.random() * 1000000) ) % 1000)/100 );
-                    price.insertTo(getHelper());
-                }
-                priceList.updateTo(getHelper());
-            }
-            priceLists = getHelper().getDao(PriceList.class).queryForAll();
-            Log.e("PRICE_LIST", priceLists.size() + "");
-            for(PriceList priceList : priceLists) {
-                Log.e("###", priceList.toString());
-                for(Price price : priceList.getPrices())
-                    Log.e("######", price.toString());
-            }
-
-
-            selectedCustomer = getHelper().getDao(Customer.class).queryForAll().get(0);
-            Log.e("CUSTOMER", selectedCustomer.getName());
-            selectedCustomer.setPriceList(priceLists.get(0));
-            selectedCustomer.updateTo(getHelper());
-            priceLists.get(0).updateTo(getHelper());
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         setContentView(R.layout.c_module);
 
@@ -194,10 +148,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                         TextView tvReason = (TextView)simplePulloutToolbarExt.getToolbarExtensionView()
                                 .findViewById(R.id.tvReason);
 
-                        if(reason.toLowerCase().equals("transfer to branch"))
+                        if(reason.getName().toLowerCase().equals("transfer to branch"))
                             tvReason.setText(reason + " " + destination.getName());
                         else
-                            tvReason.setText(reason);
+                            tvReason.setText(reason.getName());
                     }
 
                     @Override
@@ -241,14 +195,19 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                         simpleReceiveReviewFragment.setFABListener(new SimpleReceiveReviewFragment.FloatingActionButtonListener() {
                             @Override
                             public void onClick(Document document) {
-                                try {
+                                new SwableTools.Transaction(getHelper())
+                                        .toSend()
+                                        .forBranch(document.getTarget_branch_id())
+                                        .object(document)
+                                        .queue();
+                                /*try {
                                     SwableTools.sendTransaction(getHelper(), document.getTarget_branch_id(),
                                             document, OfflineDataType.SEND_DOCUMENT);
                                 } catch (SQLException e) {
                                     e.printStackTrace();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                }
+                                }*/
                             }
                         });
 

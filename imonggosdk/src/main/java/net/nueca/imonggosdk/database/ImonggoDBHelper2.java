@@ -19,7 +19,6 @@ import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
-import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.SalesPushSettings;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.Settings;
@@ -59,6 +58,8 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
@@ -76,7 +77,7 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 25;
+    private static final int DATABASE_VERSION = 29;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchPrice.class, BranchTag.class, Customer.class,
@@ -89,7 +90,7 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
             Invoice.class, InvoiceLine.class, InvoicePayment.class, InvoiceTaxRate.class,
             Extras.class, CustomerCategory.class, CustomerGroup.class, InvoicePurpose.class,
             PaymentTerms.class, PaymentType.class, SalesPromotion.class, Price.class,
-            PriceList.class, RoutePlan.class, CustomerCustomerGroupAssoc.class, ProductSalesPromotionAssoc.class,
+            PriceList.class, RoutePlan.class, RoutePlanDetail.class, CustomerCustomerGroupAssoc.class, ProductSalesPromotionAssoc.class,
             ModuleSetting.class, DebugMode.class, ProductSorting.class, Cutoff.class,
             ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};
 

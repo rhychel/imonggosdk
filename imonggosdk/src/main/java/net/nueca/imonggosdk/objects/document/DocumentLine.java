@@ -163,27 +163,14 @@ public class DocumentLine extends BaseTransactionLine {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
-        if(extras != null)
-            extras.insertTo(dbHelper);
 
-        if(extras != null)
-            extras.insertTo(dbHelper);
-
+        insertExtrasTo(dbHelper);
         try {
             dbHelper.insert(DocumentLine.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        if(extras != null) {
-            extras.setDocumentLine(this);
-            extras.updateTo(dbHelper);
-        }
-
-        if(extras != null) {
-            extras.setDocumentLine(this);
-            extras.updateTo(dbHelper);
-        }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
@@ -194,13 +181,7 @@ public class DocumentLine extends BaseTransactionLine {
             e.printStackTrace();
         }
 
-        if(extras != null) {
-            extras.deleteTo(dbHelper);
-        }
-
-        if(extras != null) {
-            extras.deleteTo(dbHelper);
-        }
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
@@ -211,12 +192,35 @@ public class DocumentLine extends BaseTransactionLine {
             e.printStackTrace();
         }
 
-        if(extras != null) {
-            extras.updateTo(dbHelper);
-        }
+        updateExtrasTo(dbHelper);
+    }
 
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
         if(extras != null) {
-            extras.updateTo(dbHelper);
+            extras.setDocumentLine(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
         }
     }
 

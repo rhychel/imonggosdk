@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import net.nueca.concessioengine.activities.AddCustomerActivity;
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
@@ -59,7 +60,7 @@ public class C_Login extends LoginActivity {
     private int[] generateModules(boolean includeUsers) {
         Log.e("generateModules", "here");
         getSyncModules().setSyncAllModules(false);
-        int modulesToDownload = includeUsers ? 4 : 2;
+        int modulesToDownload = includeUsers ? 5 : 3;
         boolean hasReceive = false, hasPulloutRequest = false, hasSales = false;
 
         try {
@@ -80,7 +81,7 @@ public class C_Login extends LoginActivity {
                     } break;
                     case INVOICE: {
                         hasSales = true;
-                        modulesToDownload++;
+                        modulesToDownload += 4;
                     } break;
                     case RECEIVE_BRANCH: {
                         hasReceive = true;
@@ -95,11 +96,15 @@ public class C_Login extends LoginActivity {
         int index = modulesToDownload;
         int[] modules = new int[modulesToDownload];
         if(includeUsers) {
-            modules[modulesToDownload - (index--)] = Table.USERS.ordinal();
+            modules[modulesToDownload - (index--)] = Table.USERS_ME.ordinal();
             modules[modulesToDownload - (index--)] = Table.BRANCH_USERS.ordinal();
+
         }
+        modules[modulesToDownload-(index--)] = Table.SETTINGS.ordinal();
         modules[modulesToDownload-(index--)] = Table.PRODUCTS.ordinal();
         modules[modulesToDownload-(index--)] = Table.UNITS.ordinal();
+//        modules[modulesToDownload-(index--)] = Table.BRANCH_PRODUCTS.ordinal();
+//        modules[modulesToDownload-(index--)] = Table.BRANCH_UNITS.ordinal();
         Log.e("hasPulloutRequest", hasPulloutRequest+"");
         if(hasPulloutRequest) {
             modules[modulesToDownload-(index--)] = Table.DOCUMENT_TYPES.ordinal();
@@ -107,8 +112,12 @@ public class C_Login extends LoginActivity {
         }
         if(hasReceive)
             modules[modulesToDownload-(index--)] = Table.DOCUMENTS.ordinal();
-        if(hasSales)
-            modules[modulesToDownload-(index--)] = Table.CUSTOMERS.ordinal();
+        if(hasSales) {
+            modules[modulesToDownload - (index--)] = Table.CUSTOMER_CATEGORIES.ordinal();
+            modules[modulesToDownload - (index--)] = Table.BRANCH_CUSTOMERS.ordinal();
+            modules[modulesToDownload - (index--)] = Table.CUSTOMER_GROUPS.ordinal();
+            modules[modulesToDownload - (index--)] = Table.PAYMENT_TERMS.ordinal();
+        }
 
         return modules;
     }
@@ -124,7 +133,7 @@ public class C_Login extends LoginActivity {
                 (Button)findViewById(R.id.btnLogin));
 
         setEditTextAccountID("C5015");
-        setEditTextEmail("C5015@test.com");
-        setEditTextPassword("C5015");
+        setEditTextEmail("OSS1@test.com");
+        setEditTextPassword("OSS1");
     }
 }

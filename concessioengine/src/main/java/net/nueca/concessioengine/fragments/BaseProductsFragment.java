@@ -106,11 +106,11 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     }
 
     protected List<Product> getProducts() {
+        Log.e(getClass().getSimpleName(), "getProducts");
         List<Product> products = new ArrayList<>();
 
         boolean includeSearchKey = !searchKey.equals("");
         boolean includeCategory = (!category.toLowerCase().equals("all") && hasCategories);
-        Log.e("includeCategory", includeCategory + "");
         try {
             Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
             whereProducts.isNull("status");

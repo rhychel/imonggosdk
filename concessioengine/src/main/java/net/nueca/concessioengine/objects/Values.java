@@ -49,8 +49,8 @@ public class Values {
     private ExtendedAttributes extendedAttributes = null;
     // ---- FOR INVOICE
     private String discount_text = "0%";
-    private String subtotal = "0";
-    private double retail_price = 0d;
+    private Double subtotal;
+    private Double retail_price;
 
     public Values() { }
 
@@ -58,11 +58,22 @@ public class Values {
         setValue(quantity, unit);
     }
 
+    public Values(Unit unit, String quantity, Double retail_price) {
+        setValue(quantity, unit, retail_price);
+    }
+
     public Unit getUnit() {
         return unit;
     }
 
     public void setValue(String quantity, Unit unit) {
+        if(unit != null)
+            this.retail_price = unit.getRetail_price();
+        setValue(quantity, unit, null);
+    }
+
+    public void setValue(String quantity, Unit unit, double retail_price) {
+        this.retail_price = retail_price;
         setValue(quantity, unit, null);
     }
 
@@ -71,11 +82,13 @@ public class Values {
             this.extendedAttributes = extendedAttributes;
         if(unit != null && unit.getId() != -1) {
             Log.e("Quantity-unit",unit.getQuantity()+" * "+quantity);
-            this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
+            if(quantity.length() > 0)
+                this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_quantity = quantity;
             this.unit_content_quantity = unit.getQuantity();
             this.unit_name = unit.getName();
-            this.unit_retail_price = unit.getRetail_price()*Double.valueOf(this.unit_quantity);
+            if(this.unit_quantity.length() > 0)
+                this.unit_retail_price = unit.getRetail_price()*Double.valueOf(this.unit_quantity);
             this.unit = unit;
         }
         else{
@@ -84,6 +97,10 @@ public class Values {
             if(unit != null)
                 this.unit_name = unit.getName();
         }
+
+        if(this.quantity == null || this.quantity.length() == 0)
+            this.quantity = "0";
+        this.subtotal = (this.retail_price == null? 0d : this.retail_price) * Double.valueOf(this.quantity);
     }
 
     public String getQuantity() {
@@ -168,16 +185,16 @@ public class Values {
         this.discount_text = discount_text;
     }
 
-    public String getSubtotal() {
-        subtotal = "" + ( (unit != null? unit.getRetail_price() : retail_price ) * NumberTools.toDouble(quantity) );
+    public double getSubtotal() {
+        //subtotal = ( (unit != null? unit.getRetail_price() : retail_price ) * NumberTools.toDouble(quantity) );
         return subtotal;
     }
 
-    public void setSubtotal(String subtotal) {
+    public void setSubtotal(double subtotal) {
         this.subtotal = subtotal;
     }
 
-    public double getRetail_price() {
+    public Double getRetail_price() {
         return retail_price;
     }
 

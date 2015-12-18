@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,7 @@ import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 
@@ -53,6 +55,8 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
+
+        Log.e("ClassName", Customer.class.getSimpleName());
 
         setNextActivityClass(C_Module.class);
 
@@ -114,7 +118,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
     @Override
     protected Bundle addExtras(ConcessioModule concessioModule) {
-        return null;
+        Bundle bundle = new Bundle();
+        if(concessioModule == ConcessioModule.CUSTOMERS) {
+            bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, true);
+        }
+        return bundle;
     }
 
     @Override

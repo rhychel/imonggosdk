@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
