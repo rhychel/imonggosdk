@@ -576,7 +576,6 @@ public class SwableTools {
                 this.context = activity.getApplicationContext();
                 queue = Volley.newRequestQueue(context);
                 Table table;
-
                 switch (offlineData.getType()) {
                     case OfflineData.ORDER: table = Table.ORDERS; break;
                     case OfflineData.INVOICE: table = Table.INVOICES; break;
