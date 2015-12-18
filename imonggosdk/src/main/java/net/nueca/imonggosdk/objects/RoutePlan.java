@@ -17,15 +17,16 @@ import java.sql.SQLException;
 /**
  * Created by rhymart on 11/10/15.
  */
+@Deprecated
 @DatabaseTable
 public class RoutePlan extends BaseTable {
 
     @DatabaseField
     private String code;
     @DatabaseField
-    private String route_day; // (values: W = weekly, BM1 = bi-monthly odd week, BM2 = bi-monthly even week, no monthly)
+    private String route_day; // (values: M, TU, TH, W, F, SA, SU)
     @DatabaseField
-    private String frequency; // (values: M, TU, TH, W, F, SA, SU)
+    private String frequency; // (values: W = weekly, BM1 = bi-monthly odd week, BM2 = bi-monthly even week, no monthly)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private User user;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")

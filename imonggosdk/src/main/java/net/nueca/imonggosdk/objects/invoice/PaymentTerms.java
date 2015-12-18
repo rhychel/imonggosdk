@@ -40,6 +40,11 @@ public class PaymentTerms extends BaseTable {
     }
 
     @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(PaymentTerms.class, this);

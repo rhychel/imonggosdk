@@ -158,6 +158,12 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
             simpleCustomerListAdapter.addAll(customers);
     }
 
+    public void reinitializeList() {
+        simpleCustomerRecyclerViewAdapter.removeAll();
+        simpleCustomerRecyclerViewAdapter.notifyDataSetChanged();
+        simpleCustomerRecyclerViewAdapter.setList(processCustomersForLetterHeader(getCustomers()));
+    }
+
     public void refreshList() {
         if(useRecyclerView) {
             simpleCustomerRecyclerViewAdapter.notifyDataSetChanged();

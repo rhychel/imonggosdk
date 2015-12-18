@@ -20,6 +20,13 @@ import java.sql.SQLException;
 
 public class ImonggoAppCompatActivity extends AppCompatActivity {
 
+    protected static final String CUSTOMER_ID = "customer_id";
+
+    protected static final int SUCCESS = 10;
+    protected static final int ERROR = 20;
+
+    protected static final int ADD_CUSTOMER = 100;
+
     private ImonggoDBHelper2 dbHelper2;
 
     @Override

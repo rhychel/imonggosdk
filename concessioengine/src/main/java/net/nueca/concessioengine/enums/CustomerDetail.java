@@ -6,6 +6,7 @@ package net.nueca.concessioengine.enums;
 public enum CustomerDetail {
     NAME("Name"),
     FIRST_NAME("First name"),
+    MIDDLE_NAME("Middle name"),
     LAST_NAME("Last name"),
     CODE("Code"),
     MOBILE_NO("Mobile"),
@@ -22,7 +23,17 @@ public enum CustomerDetail {
     LAST_PURCHASE_DETAILS("Last purchase details");
 
     private String label;
+    private String value = "";
     CustomerDetail(String label) { this.label = label; }
+
+    public CustomerDetail setValue(String value) {
+        this.value = value;
+        return this;
+    }
+
+    public String getValue() {
+        return value;
+    }
 
     @Override
     public String toString() {

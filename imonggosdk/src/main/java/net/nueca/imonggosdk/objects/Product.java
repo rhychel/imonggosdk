@@ -65,8 +65,6 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     protected transient boolean isSelected = false;
     @DatabaseField
     protected transient String unit = "";
-    @DatabaseField
-    private transient boolean isBaseUnitSellable = false;
 
     private transient String orig_quantity = "0";
     private transient String rcv_quantity = "";
@@ -414,14 +412,6 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     public void setBranchProducts(ForeignCollection<BranchProduct> branchProducts) {
         this.branchProducts = branchProducts;
-    }
-
-    public boolean isBaseUnitSellable() {
-        return isBaseUnitSellable;
-    }
-
-    public void setIsBaseUnitSellable(boolean isBaseUnitSellable) {
-        this.isBaseUnitSellable = isBaseUnitSellable;
     }
 
     @Override
