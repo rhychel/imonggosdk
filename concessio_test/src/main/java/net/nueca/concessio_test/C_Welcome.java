@@ -122,17 +122,19 @@ public class C_Welcome extends ModuleActivity {
             e.printStackTrace();
         }*/
 
-        Customer customer = new Customer.Builder()
+        /*Customer customer = new Customer.Builder()
                 .first_name("Johnny")
                 .last_name("Tester")
-                .extras(null)
+                .extras(new Extras.Builder()
+                        .salesman_id("897")
+                        .build())
                 .build();
         OfflineData offlineData = new SwableTools.Transaction(getHelper())
                 .toSend()
                 .forBranch(860)
                 .object(customer)
                 .queue();
-        //SwableTools.startSwable(this);
+        SwableTools.startSwable(this);*/
 
         tvAgentName = (TextView) findViewById(R.id.tvAgentName);
         tvLogout = (TextView) findViewById(R.id.tvLogout);
