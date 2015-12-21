@@ -114,7 +114,7 @@ public class C_Login extends LoginActivity {
             modules[modulesToDownload-(index--)] = Table.DOCUMENTS.ordinal();
         if(hasSales) {
             modules[modulesToDownload - (index--)] = Table.CUSTOMER_CATEGORIES.ordinal();
-            modules[modulesToDownload - (index--)] = Table.BRANCH_CUSTOMERS.ordinal();
+            modules[modulesToDownload - (index--)] = Table.CUSTOMERS.ordinal();
             modules[modulesToDownload - (index--)] = Table.CUSTOMER_GROUPS.ordinal();
             modules[modulesToDownload - (index--)] = Table.PAYMENT_TERMS.ordinal();
         }

@@ -29,10 +29,12 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
+import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.TempIdGenerator;
 
 import org.json.JSONException;
@@ -67,6 +69,7 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
 
         setSupportActionBar(tbAddCustomer);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("New Customer");
         tbAddCustomer.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,7 +109,12 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mSaveCustomer) {
             Customer customer = customerFieldsAdapter.generateCustomer();
-            customer.insertTo(getHelper());
+//            customer.insertTo(getHelper());
+
+            OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                    .toSend()
+                    .object(customer)
+                    .queue();
 
             Intent intent = new Intent();
             intent.putExtra(CUSTOMER_ID, customer.getId());
@@ -255,6 +263,13 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
         @Override
         public void onBindViewHolder(ListItemView holder, final int position) {
             FieldType fieldType = FieldType.values()[getItemViewType(position)];
+            holder.ivIcon.setVisibility(View.INVISIBLE);
+
+            if(getItem(position).getIconField() != -1) {
+                holder.ivIcon.setVisibility(View.VISIBLE);
+                holder.ivIcon.setImageResource(getItem(position).getIconField());
+            }
+
             if(fieldType == FieldType.EDITTEXT) {
                 holder.tilEt.setHint(getItem(position).getLabel());
                 holder.editTextWatcher.setPosition(position);
@@ -316,7 +331,12 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
                 customer = gson.fromJson(jsonObject.toString(), Customer.class);
                 customer.setId(TempIdGenerator.generateTempId(getContext(), Customer.class));
                 customer.setExtras(extras);
+                if(paymentTerm == null)
+                    Log.e("paymentTerm", "null");
                 customer.setPaymentTerms(paymentTerm);
+                if(customerCategory == null)
+                    Log.e("customerCategory", "null");
+                customer.setCustomerCategory(customerCategory);
                 customer.generateFullName();
             } catch (SQLException | JSONException e) {
                 e.printStackTrace();

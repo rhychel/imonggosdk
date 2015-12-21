@@ -74,7 +74,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     private LinearLayout llReview, llBalance, llFooter;
 
     private Toolbar toolbar;
-    private boolean hasMenu = true;
+    private boolean hasMenu = true, showsCustomer = false;
 
     private SimpleReceiveFragment simpleReceiveFragment;
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
@@ -318,6 +318,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .commit();
             } break;
             case RELEASE_ADJUSTMENT: {
+                showsCustomer = true;
                 simpleCustomersFragment = new SimpleCustomersFragment();
                 simpleCustomersFragment.setHelper(getHelper());
                 simpleCustomersFragment.setSetupActionBar(this);
@@ -353,6 +354,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 prepareFooter();
 
                                 btn1.setOnClickListener(nextClickedListener);
+
+                                showsCustomer = false;
 
                                 getSupportFragmentManager().beginTransaction()
                                         .replace(R.id.flContent, simpleProductsFragment)
@@ -437,6 +440,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.e("onCreateOptionsMenu", hasMenu+" || "+concessioModule.toString());
         if (hasMenu) {
             if(concessioModule == ConcessioModule.CUSTOMERS) {
                 getMenuInflater().inflate(R.menu.simple_customers_menu, menu);
@@ -472,17 +476,30 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
                 mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
-                mSearch.setQueryHint("Search product");
+                if(showsCustomer)
+                    mSearch.setQueryHint("Search customer");
+                else
+                    mSearch.setQueryHint("Search product");
                 initializeSearchViewEx(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String newText) {
-                        simpleProductsFragment.updateListWhenSearch(newText);
+                        if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule ==  ConcessioModule.RELEASE_SUPPLIER)
+                            simpleInventoryFragment.updateListWhenSearch(newText);
+                        else if(concessioModule == ConcessioModule.CUSTOMERS || showsCustomer)
+                            simpleCustomersFragment.updateListWhenSearch(newText);
+                        else
+                            simpleProductsFragment.updateListWhenSearch(newText);
                         return true;
                     }
 
                     @Override
                     public boolean onQueryTextChange(String newText) {
-                        simpleProductsFragment.updateListWhenSearch(newText);
+                        if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule ==  ConcessioModule.RELEASE_SUPPLIER)
+                            simpleInventoryFragment.updateListWhenSearch(newText);
+                        else if(concessioModule == ConcessioModule.CUSTOMERS || showsCustomer)
+                            simpleCustomersFragment.updateListWhenSearch(newText);
+                        else
+                            simpleProductsFragment.updateListWhenSearch(newText);
                         return true;
                     }
 
@@ -566,9 +583,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             getSupportActionBar().setTitle(customer.getName());
         }
         if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+            Log.e("release adjustment", "YEAH");
             if(!simpleCustomersFragment.isHasSelected()) {
+                Log.e("release adjustment", "isSelected");
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
                 getSupportActionBar().setTitle("MSO");
+                getSupportActionBar().invalidateOptionsMenu();
             }
         }
     }
@@ -623,7 +644,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                             Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
                                             if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                                 document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
-                                                document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
+//                                                document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
 
                                                 Extras extras = new Extras();
                                                 extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getId());
@@ -658,6 +679,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             llFooter.setVisibility(View.GONE);
                                                             simpleCustomersFragment.setHasSelected(false);
                                                             simpleCustomersFragment.onViewCreated(null, null);
+                                                            hasMenu = true;
+                                                            showsCustomer = true;
+
+                                                            Log.e("simple", "called customer fragment");
                                                             getSupportFragmentManager()
                                                                     .beginTransaction()
                                                                     .replace(R.id.flContent, simpleCustomersFragment)
@@ -693,5 +718,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
         }
     };
+
 
 }
