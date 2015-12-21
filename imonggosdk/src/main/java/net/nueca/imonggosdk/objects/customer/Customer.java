@@ -69,17 +69,17 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     @Expose
     @DatabaseField
-    private int point_to_amount_ratio;
+    private Integer point_to_amount_ratio;
     @Expose
     @DatabaseField
     private int payment_terms_id;
     @Expose
     @DatabaseField
     private String code, alternate_code, first_name, middle_name, last_name, name, company_name,
-            tin, street = "", city, state, zipcode, country, telephone = "", fax,
+            tin, street = "", city, state, zipcode, country, telephone, fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
-            membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+            membership_expired_at, membership_start_at, biometric_signature, gender;
     @Expose
     @DatabaseField
     private boolean tax_exempt;

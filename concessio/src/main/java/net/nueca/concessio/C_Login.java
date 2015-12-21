@@ -81,7 +81,7 @@ public class C_Login extends LoginActivity {
                     } break;
                     case INVOICE: {
                         hasSales = true;
-                        modulesToDownload += 4;
+                        modulesToDownload += 5;
                     } break;
                     case RECEIVE_BRANCH: {
                         hasReceive = true;
@@ -113,6 +113,7 @@ public class C_Login extends LoginActivity {
         if(hasReceive)
             modules[modulesToDownload-(index--)] = Table.DOCUMENTS.ordinal();
         if(hasSales) {
+            modules[modulesToDownload - (index--)] = Table.ROUTE_PLANS.ordinal();
             modules[modulesToDownload - (index--)] = Table.CUSTOMER_CATEGORIES.ordinal();
             modules[modulesToDownload - (index--)] = Table.CUSTOMERS.ordinal();
             modules[modulesToDownload - (index--)] = Table.CUSTOMER_GROUPS.ordinal();
