@@ -57,10 +57,10 @@ public class C_Login extends LoginActivity {
                 Table.PAYMENT_TYPES.ordinal(),
                 Table.PAYMENT_TERMS.ordinal(),
                 Table.INVOICES.ordinal(),
-                Table.INVOICE_PURPOSES.ordinal(),*/
+                Table.INVOICE_PURPOSES.ordinal()
                 //Table.SALES_PUSH.ordinal(),
                 //Table.SALES_PROMOTIONS_DISCOUNT.ordinal()/*,
-                Table.BRANCH_ROUTE_PLANS.ordinal()*/);
+                );
     }
 
     @Override
