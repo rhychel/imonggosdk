@@ -243,12 +243,12 @@ public class BaseLogin {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
 
-                Log.e("Jn-BaseLogin", "onErrorResponse : " + volleyError.toString() + "Status Code: " + volleyError.networkResponse.statusCode);
-
                 if(volleyError != null) {
+                    Log.e("Jn-BaseLogin", "onErrorResponse : " + volleyError.toString());
 
                     // if account id is invalid
                     if (volleyError.networkResponse != null) {
+                        Log.e("Jn-BaseLogin", "Status Code: " + volleyError.networkResponse.statusCode);
 
                         if (volleyError.networkResponse.statusCode == 500 ||
                                 volleyError.networkResponse.statusCode == 501 ||

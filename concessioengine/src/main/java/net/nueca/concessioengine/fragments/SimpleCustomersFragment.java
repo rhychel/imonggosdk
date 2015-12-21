@@ -80,7 +80,7 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(useRecyclerView ?
                         R.layout.simple_customers_fragment_rv : R.layout.simple_customers_fragment_lv,
-                        container, false);
+                container, false);
 
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         tvNoCustomers = (TextView) view.findViewById(R.id.tvNoCustomers);
