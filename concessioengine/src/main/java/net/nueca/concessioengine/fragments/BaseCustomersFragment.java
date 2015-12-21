@@ -98,7 +98,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
             else
                 name = customer.getFirst_name() + " " + customer.getLast_name();
             name = name.trim();
-            String header = name.substring(0, 1);
+            String header = name.substring(0, 1).toUpperCase();
 
             if(customer.isHeader() || customer.getSectionFirstPosition() > -1) {
                 sectionItemCount++;

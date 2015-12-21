@@ -88,7 +88,6 @@ public abstract class BaseSyncService extends ImonggoService {
 
     protected Gson gson = new GsonBuilder().serializeNulls().create();
 
-
     /**
      * Empty Constructor
      */
@@ -199,10 +198,6 @@ public abstract class BaseSyncService extends ImonggoService {
                 Branch branch = (Branch) o;
                 return getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", branch.getId()).queryForFirst() != null;
             }
-//            case BRANCH_PRICES: { // Change algorithm
-//                BranchPrice branchPrice = (BranchPrice) o;
-//                return getHelper().fetchObjects(BranchPrice.class).queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
-//            }
             case BRANCH_TAGS: {
                 BranchTag branchTag = (BranchTag) o;
                 return getHelper().fetchObjects(BranchTag.class).queryBuilder().where().eq("id", branchTag.getId()).queryForFirst() != null;
@@ -404,6 +399,13 @@ public abstract class BaseSyncService extends ImonggoService {
         count = 0;
         branchIndex = 0;
         mModulesIndex = 0;
+
+        try {
+            getHelper().deleteAll(mCurrentTableSyncing.getTableClass());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public Table[] getModulesToSync() {

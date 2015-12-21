@@ -166,6 +166,22 @@ public class Branch extends BaseTable {
         this.branchPrices = branchPrices;
     }
 
+    public ForeignCollection<BranchProduct> getBranchProducts() {
+        return branchProducts;
+    }
+
+    public void setBranchProducts(ForeignCollection<BranchProduct> branchProducts) {
+        this.branchProducts = branchProducts;
+    }
+
+    public ForeignCollection<BranchUnit> getBranchUnits() {
+        return branchUnits;
+    }
+
+    public void setBranchUnits(ForeignCollection<BranchUnit> branchUnits) {
+        this.branchUnits = branchUnits;
+    }
+
     @Override
     public String toString() {
         return name;

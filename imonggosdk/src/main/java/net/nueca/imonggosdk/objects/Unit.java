@@ -11,6 +11,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.base.Extras;
@@ -33,6 +34,9 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
 
     @ForeignCollectionField
     private transient ForeignCollection<BranchPrice> branchPrices;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchUnit> branchUnits;
 
     @ForeignCollectionField // need?
     private transient ForeignCollection<Price> prices;
@@ -144,9 +148,17 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
         this.branchPrices = branchPrices;
     }
 
+    public ForeignCollection<BranchUnit> getBranchUnits() {
+        return branchUnits;
+    }
+
+    public void setBranchUnits(ForeignCollection<BranchUnit> branchUnits) {
+        this.branchUnits = branchUnits;
+    }
+
     @Override
     public boolean equals(Object o) {
-        return o instanceof  Unit && id == ((Unit)o).getId();
+        return id == ((Unit)o).getId();
     }
 
     @Override

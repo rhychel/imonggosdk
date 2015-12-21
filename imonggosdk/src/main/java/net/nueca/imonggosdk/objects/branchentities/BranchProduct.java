@@ -94,19 +94,6 @@ public class BranchProduct extends DBTable {
     }
 
     @Override
-    public String toString() {
-        return "BranchProduct{" +
-                "product=" + product +
-                ", branch=" + branch +
-                ", isBaseUnitSellable=" + isBaseUnitSellable +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", retail_price=" + retail_price +
-                ", unit_retail_price=" + unit_retail_price +
-                '}';
-    }
-
-    @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(BranchProduct.class, this);
