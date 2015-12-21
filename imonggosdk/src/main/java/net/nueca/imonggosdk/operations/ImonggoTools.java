@@ -90,6 +90,10 @@ public class ImonggoTools {
                 case UNITS:
                     parameterStr += "q=units&";
                     break;
+                case SALESMAN_ID:
+                    parameterStr += "salesman_id=%"+stringInputCount+"$s&";
+                    stringInputCount++;
+                    break;
             }
         }
         if(!parameterStr.equals("?"))

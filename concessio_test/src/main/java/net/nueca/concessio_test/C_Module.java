@@ -140,7 +140,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
             } break;
             case RELEASE_BRANCH: {
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
-                simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+             /*   simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+
+
                     @Override
                     public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
                         TextView tvReason = (TextView)simplePulloutToolbarExt.getToolbarExtensionView()
@@ -158,7 +160,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                 .getToolbarExtensionView().findViewById(R.id.tvReason) ).getText().length() == 0)
                             onBackPressed();
                     }
-                });
+                });*/
                 simplePulloutRequestDialog.show();
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setProductCategories(getProductCategories(true));

@@ -43,7 +43,7 @@ public class SimpleCustomerDetailsRecyclerViewAdapter extends BaseCustomerDetail
             holder.ivIcon.setImageResource(R.drawable.ic_branch_orange);
         }
         holder.tvLabel.setText(getItem(position).toString());
-
+        holder.tvDetail.setText(getItem(position).getValue());
     }
 
     @Override

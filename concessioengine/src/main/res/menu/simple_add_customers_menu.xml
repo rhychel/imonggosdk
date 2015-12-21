@@ -2,8 +2,8 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/mAddCustomerOkay"
-        android:title="Okay"
+    <item android:id="@+id/mSaveCustomer"
+        android:title="Save"
         android:icon="@drawable/ic_check_white"
         app:showAsAction="always"
         android:orderInCategory="100"/>
