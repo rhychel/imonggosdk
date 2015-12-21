@@ -14,12 +14,7 @@ import net.nueca.concessioengine.fragments.AddCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
-import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
-import net.nueca.imonggosdk.objects.customer.CustomerGroup;
-import net.nueca.imonggosdk.objects.price.Price;
-import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;

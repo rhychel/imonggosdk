@@ -84,6 +84,8 @@ public abstract class BasePulloutRequestDialog extends BaseAppCompatDialog {
 
     public Branch getSelectedBranch(Spinner spinner) throws SQLException {
         String branchName = (String)spinner.getSelectedItem();
+        if(branchName == null)
+            return null;
         return dbHelper.fetchObjects(Branch.class).queryBuilder().where().eq("name", branchName).queryForFirst();
     }
 
