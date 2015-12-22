@@ -301,7 +301,7 @@ public class AddCustomerActivity extends ImonggoAppCompatActivity {
                     if(customerField.getFieldName().equals(Customer.EXTRAS_CATEGORY_ID)) {
                         CustomerField<CustomerCategory> category = (CustomerField<CustomerCategory>)customerField;
                         customerCategory = category.getValues().get(category.getSelectedIndex());
-                        extras.setCategory_id(String.valueOf(customerCategory.getId()));
+                        extras.setCustomerCategory(customerCategory);
                         continue;
                     }
                     if(customerField.getFieldName().equals(Customer.PAYMENT_TERMS_ID)) {

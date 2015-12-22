@@ -101,7 +101,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                         .commit();
                 break;
 
-            case net.nueca.concessioengine.R.id.mAddCustomerOkay:
+            /*case net.nueca.concessioengine.R.id.mAddCustomerOkay:
                 Log.e(TAG, "Add Customer");
 
                 if (addCustomersFragment != null) {
@@ -116,7 +116,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                     Log.e(TAG, "Fragment is Null!");
                 }
 
-                break;
+                break;*/
             case net.nueca.concessioengine.R.id.mUnlink:
                 unlinkDevice();
                 break;

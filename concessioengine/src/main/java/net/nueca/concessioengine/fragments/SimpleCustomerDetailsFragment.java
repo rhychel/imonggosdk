@@ -38,7 +38,8 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
         customerDetails.add(CustomerDetail.COMPANY_NAME.setValue(customer.getCompany_name()));
         customerDetails.add(CustomerDetail.ADDRESS.setValue(customer.getFullAddress()));
         try {
-            CustomerCategory customerCategory = getHelper().fetchIntId(CustomerCategory.class).queryBuilder().where().eq("id", Integer.valueOf(customer.getExtras().getCategory_id())).queryForFirst();
+            CustomerCategory customerCategory = getHelper().fetchIntId(CustomerCategory.class).queryBuilder().where().eq("id",
+                    customer.getExtras().getCustomerCategory().getId()).queryForFirst();
             if(customerCategory != null)
                 customerDetails.add(CustomerDetail.CUSTOMER_TYPE.setValue(customerCategory.getName()));
             if(customer.getPaymentTerms() != null)

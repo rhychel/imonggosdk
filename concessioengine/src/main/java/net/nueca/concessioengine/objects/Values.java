@@ -81,7 +81,7 @@ public class Values {
         if(extendedAttributes != null)
             this.extendedAttributes = extendedAttributes;
         if(unit != null && unit.getId() != -1) {
-            Log.e("Quantity-unit",unit.getQuantity()+" * "+quantity);
+            Log.e("Quantity-unit", unit.getQuantity()+" * "+quantity);
             if(quantity.length() > 0)
                 this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_quantity = quantity;
@@ -100,7 +100,10 @@ public class Values {
 
         if(this.quantity == null || this.quantity.length() == 0)
             this.quantity = "0";
-        this.subtotal = (this.retail_price == null? 0d : this.retail_price) * Double.valueOf(this.quantity);
+        double retailprice = this.unit_retail_price != 0d ? this.unit_retail_price : (this.retail_price == null? 0d : this.retail_price);
+        this.subtotal = retailprice * Double.valueOf(this.quantity);
+
+        Log.e("Values", "setValue : " + retailprice + " * " + this.quantity + " = " + this.subtotal);
     }
 
     public String getQuantity() {

@@ -32,10 +32,12 @@ public class InvoiceTools {
                 double retail_price = itemValue.isValidUnit() ?
                         itemValue.getUnit().getRetail_price() : product.getRetail_price();
                 builder.retail_price(retail_price);
+                Log.e("InvoiceTools", retail_price + " " + NumberTools.toBigDecimal(itemValue.getQuantity()).intValue());
 
                 BigDecimal t_subtotal = new BigDecimal(itemValue.getQuantity())
                         .multiply(new BigDecimal(retail_price));
                 BigDecimal subtotal = new BigDecimal(itemValue.getSubtotal());
+                Log.e("InvoiceTools", t_subtotal + " " + subtotal);
 
                 if(subtotal.doubleValue() == 0d)
                     builder.subtotal(t_subtotal.toPlainString());
@@ -43,9 +45,9 @@ public class InvoiceTools {
                     builder.subtotal(""+itemValue.getSubtotal());
 
                 invoiceLines.add(builder.build());
+                Log.e("InvoiceTools", "invoiceLine  --  " + builder.build().toString());
             }
         }
-
         return invoiceLines;
     }
 

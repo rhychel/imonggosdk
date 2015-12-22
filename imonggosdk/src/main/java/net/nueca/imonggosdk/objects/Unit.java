@@ -158,7 +158,7 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
 
     @Override
     public boolean equals(Object o) {
-        return id == ((Unit)o).getId();
+        return o instanceof Unit && id == ((Unit)o).getId();
     }
 
     @Override
@@ -168,12 +168,13 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
-            insertExtrasTo(dbHelper);
             dbHelper.insert(Unit.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
@@ -198,18 +199,22 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
 
     @Override
     public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.setUnit(this);
-        extras.setId(Unit.class.getName().toUpperCase(), id);
-        extras.insertTo(dbHelper);
+        if(extras != null) {
+            extras.setUnit(this);
+            extras.setId(Unit.this.getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
     }
 
     @Override
     public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.deleteTo(dbHelper);
+        if(extras != null)
+            extras.deleteTo(dbHelper);
     }
 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.updateTo(dbHelper);
+        if(extras != null)
+            extras.updateTo(dbHelper);
     }
 }

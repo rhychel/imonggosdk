@@ -436,12 +436,13 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
-            insertExtrasTo(dbHelper);
             dbHelper.insert(Product.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
@@ -451,6 +452,7 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
@@ -460,22 +462,27 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
     public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.setProduct(this);
-        extras.setId(Product.class.getName().toUpperCase(), id);
-        extras.insertTo(dbHelper);
+        if(extras != null) {
+            extras.setProduct(this);
+            extras.setId(Product.class.getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
     }
 
     @Override
     public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.deleteTo(dbHelper);
+        if(extras != null)
+            extras.deleteTo(dbHelper);
     }
 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.updateTo(dbHelper);
+        if(extras != null)
+            extras.updateTo(dbHelper);
     }
 }

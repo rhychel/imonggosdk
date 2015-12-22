@@ -8,7 +8,6 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.Product;
@@ -25,6 +24,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 
 import java.sql.SQLException;
 
@@ -40,7 +40,7 @@ public class Extras extends DBTable {
     // Users
     @Expose
     @DatabaseField
-    private int is_salesman;
+    private Integer is_salesman;
 
     // Product
     @Expose
@@ -84,6 +84,9 @@ public class Extras extends DBTable {
     @Expose
     @DatabaseField
     private String salesman_id;
+    @Expose
+    @DatabaseField
+    private String category_id;
 
     // Invoice
     @Expose
@@ -180,7 +183,7 @@ public class Extras extends DBTable {
     private transient Product product;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_fr_id")
     private transient Customer customer;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "category_id")
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
     private transient CustomerCategory customerCategory; // customer_type // (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private transient User user;
@@ -269,6 +272,7 @@ public class Extras extends DBTable {
         default_ordering_unit_id = builder.default_ordering_unit_id;
 
         salesman_id = builder.salesman_id;
+        category_id = builder.category_id;
     }
 
     public int getIs_salesman() {
@@ -726,6 +730,18 @@ public class Extras extends DBTable {
         this.salesman_id = salesman_id;
     }
 
+    public void setIs_salesman(Integer is_salesman) {
+        this.is_salesman = is_salesman;
+    }
+
+    public String getCategory_id() {
+        return category_id;
+    }
+
+    public void setCategory_id(String category_id) {
+        this.category_id = category_id;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
@@ -776,7 +792,6 @@ public class Extras extends DBTable {
         protected Invoice invoice;
         protected Customer customer;
         protected CustomerCategory customerCategory;
-        protected String salesman_id;
         protected User user;
         protected Unit unit;
         protected InvoicePayment invoicePayment;
@@ -812,9 +827,16 @@ public class Extras extends DBTable {
         protected String invoice_purpose_code;
         protected String invoice_purpose_name;
         protected String expiry_date;
+        protected String salesman_id;
+        protected String category_id;
 
         public Builder salesman_id(String salesman_id) {
             this.salesman_id = salesman_id;
+            return this;
+        }
+
+        public Builder category_id(String category_id) {
+            this.category_id = category_id;
             return this;
         }
 
