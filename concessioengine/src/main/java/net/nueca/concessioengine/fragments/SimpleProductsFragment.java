@@ -268,12 +268,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 }
                 simpleSalesQuantityDialog.setHasSubtotal(hasSubtotal);
                 simpleSalesQuantityDialog.setHasUnits(true);
-//                List<BranchPrice> branchPrices = getHelper().fetchForeignCollection(product.getBranchPrices().closeableIterator());
-//                if(branchPrices.size() > 0) {
-//                    simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", branchPrices.get(0).getRetail_price()));
-//                    subtotal = branchPrices.get(0).getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
-//                }
-//                else
+
                 double subtotal = product.getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
                 simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
                 simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
