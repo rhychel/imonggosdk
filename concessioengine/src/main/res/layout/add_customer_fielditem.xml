@@ -30,7 +30,7 @@
             android:gravity="left"
             android:inputType="text"
             android:textAlignment="center"
-            android:textColor="@color/primary_text" />
+            android:textColor="@color/primary_textL" />
     </android.support.design.widget.TextInputLayout>
 
 </LinearLayout>

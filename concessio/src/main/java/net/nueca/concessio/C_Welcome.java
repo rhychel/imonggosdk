@@ -39,6 +39,7 @@ public class C_Welcome extends WelcomeActivity {
         btnBegin = (Button) findViewById(R.id.btnBegin);
 
         ArrayAdapter<Branch> branchArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, getBranches());
+        branchArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
         spBranch.setAdapter(branchArrayAdapter);
 
         btnNotYou.setOnClickListener(new View.OnClickListener() {

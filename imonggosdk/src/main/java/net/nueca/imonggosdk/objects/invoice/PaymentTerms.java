@@ -1,6 +1,8 @@
 package net.nueca.imonggosdk.objects.invoice;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -8,6 +10,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.sql.SQLException;
 
@@ -19,6 +22,8 @@ public class PaymentTerms extends BaseTable {
 
     @DatabaseField
     private String code, name;
+    @ForeignCollectionField
+    private ForeignCollection<Customer> customers;
 
     public PaymentTerms() {
     }
@@ -37,6 +42,14 @@ public class PaymentTerms extends BaseTable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ForeignCollection<Customer> getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(ForeignCollection<Customer> customers) {
+        this.customers = customers;
     }
 
     @Override
