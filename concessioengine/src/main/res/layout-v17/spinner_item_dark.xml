@@ -16,14 +16,12 @@
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
-          android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceListItemSmall"
+    android:textAppearance="?android:attr/textAppearanceListItem"
     android:gravity="center_vertical"
-    android:textSize="16sp"
     android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-    android:paddingRight="?android:attr/listPreferredItemPaddingRight"
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+    android:paddingRight="?android:attr/listPreferredItemPaddingRight"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:background="@android:color/white"
-    />
+    android:textColor="@android:color/white"/>

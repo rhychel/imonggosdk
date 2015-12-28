@@ -13,7 +13,8 @@
           android:title="Select Customer"
           android:icon="@drawable/ic_person"
           app:showAsAction="always"
-          android:orderInCategory="100"/>
+          android:orderInCategory="100"
+          android:visible="false"/>
 
     <item android:id="@+id/mHistory"
         android:title="History"

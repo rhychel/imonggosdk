@@ -268,14 +268,14 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 }
                 simpleSalesQuantityDialog.setHasSubtotal(hasSubtotal);
                 simpleSalesQuantityDialog.setHasUnits(true);
-                List<BranchPrice> branchPrices = getHelper().fetchForeignCollection(product.getBranchPrices().closeableIterator());
+//                List<BranchPrice> branchPrices = getHelper().fetchForeignCollection(product.getBranchPrices().closeableIterator());
+//                if(branchPrices.size() > 0) {
+//                    simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", branchPrices.get(0).getRetail_price()));
+//                    subtotal = branchPrices.get(0).getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
+//                }
+//                else
                 double subtotal = product.getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
-                if(branchPrices.size() > 0) {
-                    simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", branchPrices.get(0).getRetail_price()));
-                    subtotal = branchPrices.get(0).getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
-                }
-                else
-                    simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
+                simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
                 simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
                 simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
                 simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
@@ -433,6 +433,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         offset = 0l;
         prevLast = 0;
 
+        if(productRecyclerViewAdapter != null)
+            Log.e("productRecyclerViewAd", "is not null");
         if(useRecyclerView)
             toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", productRecyclerViewAdapter.updateList(getProducts()));
         else
