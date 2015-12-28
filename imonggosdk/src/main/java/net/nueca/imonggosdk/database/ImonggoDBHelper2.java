@@ -2,6 +2,7 @@ package net.nueca.imonggosdk.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.CloseableIterator;
@@ -11,7 +12,6 @@ import com.j256.ormlite.table.TableUtils;
 
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -77,10 +77,10 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 29;
+    private static final int DATABASE_VERSION = 32;
 
     private static final Class<?> tables[] = {
-            Branch.class, BranchPrice.class, BranchTag.class, Customer.class,
+            Branch.class, BranchTag.class, Customer.class,
             Inventory.class, Product.class, ProductTag.class, Session.class,
             TaxRate.class, TaxSetting.class, Unit.class, User.class,
             BranchProduct.class, BranchUnit.class,
@@ -100,6 +100,7 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             for(Class<?> table : tables) {
+                Log.e("Table", table.getSimpleName());
                 TableUtils.createTable(connectionSource, table);
             }
         } catch (SQLException e) {

@@ -125,7 +125,6 @@ public class C_Welcome extends ModuleActivity {
         Customer customer = new Customer.Builder()
                 .first_name("Johnny")
                 .last_name("Tester")
-                .extras(null)
                 .build();
         OfflineData offlineData = new SwableTools.Transaction(getHelper())
                 .toSend()

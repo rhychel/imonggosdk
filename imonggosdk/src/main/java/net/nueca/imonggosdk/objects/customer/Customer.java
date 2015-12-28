@@ -11,13 +11,13 @@ import com.j256.ormlite.table.DatabaseTable;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
-import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 
 import org.json.JSONException;
@@ -32,40 +32,40 @@ import java.sql.SQLException;
 @DatabaseTable
 public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
 
-    public static final String CODE = "code";
-    public static final String ALTERNATE_CODE = "alternate_code";
-    public static final String FIRST_NAME = "first_name";
-    public static final String MIDDLE_NAME = "middle_name";
-    public static final String LAST_NAME = "last_name";
-    public static final String COMPANY_NAME = "company_name";
-    public static final String TIN = "tin";
-    public static final String STREET = "street";
-    public static final String CITY = "city";
-    public static final String STATE = "state";
-    public static final String ZIPCODE = "zipcode";
-    public static final String COUNTRY = "country";
-    public static final String TELEPHONE = "telephone";
-    public static final String FAX = "fax";
-    public static final String MOBILE = "mobile";
-    public static final String EMAIL = "email";
-    public static final String REMARK = "remark";
-    public static final String CUSTOMER_TYPE_ID = "customer_type_id";
-    public static final String CUSTOMER_TYPE_NAME = "customer_type_name";
-    public static final String DISCOUNT_TEXT = "discount_text";
-    public static final String AVAILABLE_POINTS = "available_points";
-    public static final String BIRTHDATE = "birthdate";
-    public static final String STATUS = "status";
-    public static final String BIRTHDAY = "birthday";
-    public static final String MEMBERSHIP_EXPIRED_AT = "membership_expired_at";
-    public static final String MEMBERSHIP_START_AT = "membership_start_at";
-    public static final String BIOMETRIC_SIGNATURE = "biometric_signature";
-    public static final String GENDER = "gender";
-    public static final String POINT_TO_AMOUNT_RATIO = "point_to_amount_ratio";
-    public static final String TAX_EXEMPT = "tax_exempt";
-    public static final String PAYMENT_TERMS_ID = "payment_terms_id";
+    public static final transient String CODE = "code";
+    public static final transient String ALTERNATE_CODE = "alternate_code";
+    public static final transient String FIRST_NAME = "first_name";
+    public static final transient String MIDDLE_NAME = "middle_name";
+    public static final transient String LAST_NAME = "last_name";
+    public static final transient String COMPANY_NAME = "company_name";
+    public static final transient String TIN = "tin";
+    public static final transient String STREET = "street";
+    public static final transient String CITY = "city";
+    public static final transient String STATE = "state";
+    public static final transient String ZIPCODE = "zipcode";
+    public static final transient String COUNTRY = "country";
+    public static final transient String TELEPHONE = "telephone";
+    public static final transient String FAX = "fax";
+    public static final transient String MOBILE = "mobile";
+    public static final transient String EMAIL = "email";
+    public static final transient String REMARK = "remark";
+    public static final transient String CUSTOMER_TYPE_ID = "customer_type_id";
+    public static final transient String CUSTOMER_TYPE_NAME = "customer_type_name";
+    public static final transient String DISCOUNT_TEXT = "discount_text";
+    public static final transient String AVAILABLE_POINTS = "available_points";
+    public static final transient String BIRTHDATE = "birthdate";
+    public static final transient String STATUS = "status";
+    public static final transient String BIRTHDAY = "birthday";
+    public static final transient String MEMBERSHIP_EXPIRED_AT = "membership_expired_at";
+    public static final transient String MEMBERSHIP_START_AT = "membership_start_at";
+    public static final transient String BIOMETRIC_SIGNATURE = "biometric_signature";
+    public static final transient String GENDER = "gender";
+    public static final transient String POINT_TO_AMOUNT_RATIO = "point_to_amount_ratio";
+    public static final transient String TAX_EXEMPT = "tax_exempt";
+    public static final transient String PAYMENT_TERMS_ID = "payment_terms_id";
 
-    public static final String EXTRAS_CATEGORY_ID = "category_id";
-    public static final String EXTRAS_SALESMAN_ID = "salesman_id";
+    public static final transient String EXTRAS_CATEGORY_ID = "category_id";
+    public static final transient String EXTRAS_SALESMAN_ID = "salesman_id";
 
     @Expose
     @DatabaseField
