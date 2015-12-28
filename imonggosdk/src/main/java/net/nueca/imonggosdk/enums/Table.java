@@ -10,7 +10,7 @@ import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
-import net.nueca.imonggosdk.objects.RoutePlan;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.TaxRate;
@@ -65,8 +65,7 @@ public enum Table {
     // ----- API With Branch IDs
     BRANCH_CUSTOMERS(API_TYPE.API, "Customers", Customer.class),
     BRANCH_USERS(API_TYPE.API, "Branches", Branch.class),
-    BRANCH_UNITS(API_TYPE.API, "Units", Unit.class),
-    BRANCH_ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class),
+    //BRANCH_UNITS(API_TYPE.API, "Units", Unit.class),
 
     // ----- API with Products
     PRODUCT_TAGS(API_TYPE.NON_API, "Product Tags"),

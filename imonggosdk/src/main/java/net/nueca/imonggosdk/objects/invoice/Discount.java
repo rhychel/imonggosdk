@@ -1,9 +1,12 @@
 package net.nueca.imonggosdk.objects.invoice;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -17,12 +20,13 @@ import java.math.BigDecimal;
  * imonggosdk2 (c)2015
  */
 @DatabaseTable
-public class Discount {
+public class Discount extends BaseTable {
 
     private static final transient BigDecimal ONE_HUNDRED = new BigDecimal(100);
 
+    @Expose
     @DatabaseField(generatedId=true)
-    private int id = 0;
+    private transient int id = 0;
     @DatabaseField
     private String discount_text = "", discount_description = "";
 
@@ -155,5 +159,31 @@ public class Discount {
 
     public void setDiscount_description(String discount_description) {
         this.discount_description = discount_description;
+    }
+
+    @Override
+    public String toString() {
+        return "Discount{" +
+                "id=" + id +
+                ", discount_text='" + discount_text + '\'' +
+                ", discount_description='" + discount_description + '\'' +
+                ", product=" + product +
+                ", quantity='" + quantity + '\'' +
+                '}';
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+
     }
 }
