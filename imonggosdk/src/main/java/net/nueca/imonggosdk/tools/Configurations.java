@@ -107,6 +107,7 @@ public class Configurations {
             put(Table.SALES_PROMOTIONS_DISCOUNT, "sales_promotions");
             put(Table.SALES_PUSH, "sales_promotions.json");
             put(Table.ROUTE_PLANS, "route_plans.json");
+            put(Table.ROUTE_PLANS_DETAILS, "route_plans");
 
         }
     };
@@ -155,6 +156,7 @@ public class Configurations {
             put(Table.SALES_PROMOTIONS_DISCOUNT, "sales_promotions");
             put(Table.SALES_PUSH, "sales_promotions.json");
             put(Table.ROUTE_PLANS, "route_plans.json");
+            put(Table.ROUTE_PLANS_DETAILS, "route_plans");
         }
     };
 

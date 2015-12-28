@@ -44,6 +44,7 @@ import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
@@ -270,7 +271,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             Parameter.SALES_PUSH);
                 }
 
-                if (mCurrentTableSyncing == Table.SALES_PROMOTIONS_DISCOUNT) {
+
+                if (mCurrentTableSyncing == Table.SALES_PROMOTIONS_DISCOUNT ||
+                        mCurrentTableSyncing == Table.ROUTE_PLANS_DETAILS) {
                     return String.format(ImonggoTools.generateParameter(
                                     Parameter.ID,
                                     Parameter.DETAILS),
@@ -336,7 +339,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             String.valueOf(page), DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 }
 
-                if (mCurrentTableSyncing == Table.SALES_PROMOTIONS_DISCOUNT) {
+                if (mCurrentTableSyncing == Table.SALES_PROMOTIONS_DISCOUNT ||
+                        mCurrentTableSyncing == Table.ROUTE_PLANS_DETAILS) {
                     String.format(ImonggoTools.generateParameter(
                                     Parameter.ID,
                                     Parameter.DETAILS,
@@ -503,7 +507,25 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
         mCurrentTableSyncing = mModulesToSync[mModulesIndex];
 
-        if (mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS) {
+        if (mCurrentTableSyncing == Table.ROUTE_PLANS_DETAILS) {
+            listOfIds = new ArrayList<>();
+
+            Log.e(TAG, "Setting Up Route Plan Details...");
+
+            //check if price lists is existing
+            if (getHelper().fetchObjectsList(RoutePlan.class).size() != 0) {
+                listOfIds = getHelper().fetchObjectsList(RoutePlan.class);
+                count = listOfIds.size();
+                mCustomIndex = 0;
+
+                Log.e(TAG, "Size of Route Plan: " + listOfIds.size());
+
+                startSyncModuleContents(RequestType.API_CONTENT);
+            } else {
+                Log.e(TAG, "There's no Route Plan... Downloading Next Module");
+                syncNext();
+            }
+        } else if (mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS) {
             listOfIds = new ArrayList<>();
 
             Log.e(TAG, "Setting Up Price List Details...");
@@ -638,7 +660,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         } else {
                             mSyncModulesListener.onDownloadProgress(module, 1, 1);
                         }
-                        if (mCurrentTableSyncing == Table.PRICE_LISTS || mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS) {
+                        if (mCurrentTableSyncing == Table.PRICE_LISTS
+                                || mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS
+                                || mCurrentTableSyncing == Table.ROUTE_PLANS_DETAILS) {
                             mModulesIndex++;
                         }
                         syncNext();
@@ -1232,7 +1256,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-                                String name_customer_category = "category_id";
+                                String name_customer_category = "customer_category_id";
                                 String name_salesman_id = "salesman_id";
                                 String name_extras = "extras";
 
@@ -1798,8 +1822,55 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             }
                             updateNext(requestType, size);
                             break;
-                        case PRICE_LISTS_DETAILS:
+                        case ROUTE_PLANS_DETAILS:
+                            BatchList<RoutePlanDetail> newRoutePlanDetails = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<RoutePlanDetail> updateRoutePlanDetails = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
+                            RoutePlan xRoutePlan = (RoutePlan) listOfIds.get(mCustomIndex);
+
+                            for(int i=0; i<size; i++) {
+
+                                JSONObject routePlanDetailJsonObject = jsonArray.getJSONObject(i);
+
+                                RoutePlanDetail routePlanDetails = gson.fromJson(routePlanDetailJsonObject.toString(), RoutePlanDetail.class);
+
+                                //set Route Plan
+                                routePlanDetails.setRoutePlan(xRoutePlan);
+
+                                // set Customer
+                                if(routePlanDetailJsonObject.has("customer_id")) {
+                                    if (routePlanDetailJsonObject.getString("customer_id").equals("") || routePlanDetailJsonObject.isNull("customer_id")) {
+                                        Log.e(TAG, "'customer_id' field is null");
+                                    } else {
+                                        int customer_id = routePlanDetailJsonObject.getInt("customer_id");
+                                        Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", customer_id).queryForFirst();
+                                        if (customer != null ) {
+                                            Log.e(TAG, "Customer: " + customer.getName());
+                                            routePlanDetails.setCustomer(customer);
+                                        } else {
+                                            Log.e(TAG, "Can't find customer with id " + routePlanDetailJsonObject.getInt("customer_id"));
+                                        }
+                                    }
+
+                                } else {
+                                    Log.e(TAG, mCurrentTableSyncing + " API don't have 'customer_id' field.");
+                                }
+
+                                if (initialSync || lastUpdatedAt == null) {
+                                    newRoutePlanDetails.add(routePlanDetails);
+                                } else {
+                                   // how to update
+                                }
+
+                            }
+
+                            newRoutePlanDetails.doOperationBT2(RoutePlanDetail.class);
+                            updateRoutePlanDetails.doOperationBT2(RoutePlanDetail.class);
+
+                            Log.e(TAG, "Route Plan Details");
+                            updateNext(requestType, count);
+                            break;
+                        case PRICE_LISTS_DETAILS:
                             BatchList<Price> newPrice = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<Price> updatePrice = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
@@ -1879,30 +1950,28 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                             SalesPromotion salesPromotion = (SalesPromotion) listOfIds.get(mCustomIndex);
 
-
                             for (int i = 0; i < size; i++) {
                                 JSONObject discountJsonObject = jsonArray.getJSONObject(i);
 
                                 Discount discount = gson.fromJson(discountJsonObject.toString(), Discount.class);
                                 discount.setSalesPromotion(salesPromotion);
-                                int product_id = 0;
-                                Product product;
 
                                 if(discountJsonObject.has("product_id")) {
-                                    product_id = discountJsonObject.getInt("product_id");
+                                    if(!discountJsonObject.isNull("product_id")) {
+                                        int product_id = discountJsonObject.getInt("product_id");
+                                        Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product_id).queryForFirst();
+
+                                        if (product != null) {
+                                            discount.setProduct(product);
+                                            Log.e(TAG, "Product ID: " + product.getName());
+                                        } else {
+                                            Log.e(TAG, "can't find product with id:  " + product_id);
+                                        }
+                                    } else {
+                                        Log.e(TAG, "'product_id' is null");
+                                    }
                                 } else {
                                     Log.e(TAG, mCurrentTableSyncing + " API don't have product id");
-                                }
-
-                                if(product_id != 0) {
-                                    product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product_id ).queryForFirst();
-
-                                    if(product != null) {
-                                        discount.setProduct(product);
-                                        Log.e(TAG, "Product ID: " + product.getName());
-                                    } else {
-                                        Log.e(TAG, "can't find product with id:  " + product_id);
-                                    }
                                 }
 
                                 if (initialSync || lastUpdatedAt == null) {
@@ -1918,8 +1987,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 Log.e(TAG, "Discount is: " + discount.toString());
                             }
 
-                            newDiscount.doOperation(Discount.class);
-                            updateDiscount.doOperation(Discount.class);
+                            newDiscount.doOperationBT2(Discount.class);
+                            updateDiscount.doOperationBT2(Discount.class);
 
                             Log.e(TAG, "Sales Promotions Discount");
                             updateNext(requestType, count);
@@ -1933,10 +2002,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 BatchList<RoutePlan> newRoutePlans = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                                 BatchList<RoutePlan> updateRoutePlans = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
-
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     RoutePlan routePlan = gson.fromJson(jsonObject.toString(), RoutePlan.class);
+                                    routePlan.setUser(getUser());
 
                                     if (initialSync || lastUpdatedAt == null) {
                                         newRoutePlans.add(routePlan);
@@ -1971,7 +2040,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         Log.e(TAG, requestType + " next table");
 
         try {
-            if (mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS || mCurrentTableSyncing == Table.SALES_PROMOTIONS_DISCOUNT) {
+            if (mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS ||
+                    mCurrentTableSyncing == Table.SALES_PROMOTIONS_DISCOUNT ||
+                    mCurrentTableSyncing == Table.ROUTE_PLANS_DETAILS) {
                 mCustomIndex++;
                 if (mSyncModulesListener != null) {
                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIndex, size);

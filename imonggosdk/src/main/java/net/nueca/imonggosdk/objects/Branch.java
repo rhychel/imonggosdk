@@ -34,7 +34,7 @@ public class Branch extends BaseTable {
     private transient ForeignCollection<TaxRate> taxRates;
     @ForeignCollectionField
     private transient ForeignCollection<PriceList> priceLists;
-    @ForeignCollectionField
+ //   @ForeignCollectionField
 //    @ForeignCollectionField
 //    private transient ForeignCollection<RoutePlan> routePlans;
 //    @ForeignCollectionField

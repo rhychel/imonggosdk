@@ -107,7 +107,8 @@ public enum Table {
     SALES_PROMOTIONS(API_TYPE.API, "Sales Promotions", SalesPromotion.class),
     SALES_PROMOTIONS_DISCOUNT(API_TYPE.API, "Discount"),
     SALES_PUSH(API_TYPE.API, "Sales Push"),
-    ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class);
+    ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class),
+    ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlan.class);
 
     private final API_TYPE api_type;
     private final String name;

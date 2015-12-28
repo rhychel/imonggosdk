@@ -43,9 +43,10 @@ public class C_Login extends LoginActivity {
                 Table.USERS_ME.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
                 Table.SETTINGS.ordinal(),
-                Table.PRODUCTS.ordinal(),
-                Table.UNITS.ordinal(),
+                /*Table.PRODUCTS.ordinal(),
+                Table.UNITS.ordinal(),*/
                 Table.ROUTE_PLANS.ordinal(),
+                Table.ROUTE_PLANS_DETAILS.ordinal(),
                /* Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_BY_SALESMAN.ordinal(),
                 Table.CUSTOMER_GROUPS.ordinal(),
@@ -71,7 +72,7 @@ public class C_Login extends LoginActivity {
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
         setEditTextAccountID("A1001");
-        setEditTextEmail("A1001@imonggo.com");
-        setEditTextPassword("A1001");
+        setEditTextEmail("A1078A@imonggo.com");
+        setEditTextPassword("A1078A");
     }
 }

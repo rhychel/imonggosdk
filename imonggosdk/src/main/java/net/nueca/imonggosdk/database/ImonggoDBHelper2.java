@@ -51,6 +51,7 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
+import net.nueca.imonggosdk.objects.invoice.Discount;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -77,22 +78,22 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 32;
+    private static final int DATABASE_VERSION = 36;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchTag.class, Customer.class,
             Inventory.class, Product.class, ProductTag.class, Session.class,
-            TaxRate.class, TaxSetting.class, Unit.class, User.class,
-            BranchProduct.class, BranchUnit.class,
-            DocumentType.class, DocumentPurpose.class, BranchUserAssoc.class, ProductTaxRateAssoc.class,
+            Discount.class, TaxRate.class, TaxSetting.class, Unit.class, User.class,
+            BranchProduct.class, BranchUnit.class, DocumentType.class, DocumentPurpose.class,
+            BranchUserAssoc.class, ProductTaxRateAssoc.class,
             LastUpdatedAt.class, OfflineData.class, Document.class, DocumentLine.class,
             DailySales.class, Settings.class, Order.class, OrderLine.class,
             Invoice.class, InvoiceLine.class, InvoicePayment.class, InvoiceTaxRate.class,
             Extras.class, CustomerCategory.class, CustomerGroup.class, InvoicePurpose.class,
             PaymentTerms.class, PaymentType.class, SalesPromotion.class, Price.class,
-            PriceList.class, RoutePlan.class, RoutePlanDetail.class, CustomerCustomerGroupAssoc.class, ProductSalesPromotionAssoc.class,
-            ModuleSetting.class, DebugMode.class, ProductSorting.class, Cutoff.class,
-            ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};
+            PriceList.class, RoutePlan.class, RoutePlanDetail.class, CustomerCustomerGroupAssoc.class,
+            ProductSalesPromotionAssoc.class, ModuleSetting.class, DebugMode.class, ProductSorting.class,
+            Cutoff.class, ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};
 
     public ImonggoDBHelper2(Context context) { super(context, DATABASE_NAME, null, DATABASE_VERSION); }
 
