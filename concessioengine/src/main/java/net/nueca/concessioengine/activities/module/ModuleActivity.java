@@ -126,7 +126,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     }
 
     /**
-     *
+     * TODO REVISE According to the universal Concessio Settings
      * Get the transaction types the account can access.
      *
      * @param includeAll Include an 'All' filter.
@@ -136,6 +136,14 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         List<String> transactionTypes = new ArrayList<>();
         if(includeAll)
             transactionTypes.add("All");
+
+        try {
+            List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
+                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.RELEASE_BRANCH, ConcessioModule.RELEASE_ADJUSTMENT, ConcessioModule.INVOICE, ConcessioModule.RECEIVE_BRANCH)).query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         if(AccountSettings.hasOrder(this))
             transactionTypes.add("Order");
         if(AccountSettings.hasCount(this))

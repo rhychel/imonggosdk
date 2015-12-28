@@ -36,6 +36,7 @@ import net.nueca.concessioengine.fragments.SimplePulloutFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
 import net.nueca.concessioengine.fragments.SimpleRoutePlanFragment;
+import net.nueca.concessioengine.fragments.SimpleTransactionsFragment;
 import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
@@ -60,6 +61,7 @@ import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,6 +77,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
     private Toolbar toolbar;
     private boolean hasMenu = true, showsCustomer = false;
+
+    private SimpleTransactionsFragment simpleTransactionsFragment;
 
     private SimpleReceiveFragment simpleReceiveFragment;
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
@@ -103,38 +107,30 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         llBalance = (LinearLayout) findViewById(R.id.llBalance);
         llFooter = (LinearLayout) findViewById(R.id.llFooter);
 
-/*
-        btnReview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Gson gson = new GsonBuilder().serializeNulls().create();
-                Document document = generateDocument(C_Module.this, 341, DocumentTypeCode.RELEASE_SUPPLIER);
-                Extras extras = new Extras();
-                extras.setCustomer_id(182076);
-                document.setExtras(extras);
-                try {
-                    JSONObject jsonObject = new JSONObject(gson.toJson(document));
-                    Log.e("jsonObject", jsonObject.toString());
-
-                    updateInventoryFromSelectedItemList(false);
-                    List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
-                    for(Inventory inventory : inventoryList) {
-                        Log.e("Inventory", inventory.getProduct().getName()+" = "+inventory.getQuantity());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }); //onClickSummary
-*/
         simpleProductsFragment = SimpleProductsFragment.newInstance();
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
 
         llFooter.setVisibility(View.GONE);
         switch (concessioModule) {
+            case HISTORY: {
+                simpleTransactionsFragment = new SimpleTransactionsFragment();
+                simpleTransactionsFragment.setHelper(getHelper());
+                simpleTransactionsFragment.setSetupActionBar(this);
+                simpleTransactionsFragment.setHasFilterByTransactionType(true);
+                simpleTransactionsFragment.setTransactionTypes(new ArrayList<String>(){{
+                    add("All Transactions");
+                    add("Sales");
+                    add("MSO");
+                    add("Receive");
+                    add("Pullout");
+                }});
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.flContent, simpleTransactionsFragment)
+                        .commit();
+            } break;
             case ROUTE_PLAN: {
                 simpleRoutePlanFragment = new SimpleRoutePlanFragment();
                 simpleRoutePlanFragment.setHelper(getHelper());

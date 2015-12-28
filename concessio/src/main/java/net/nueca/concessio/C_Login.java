@@ -133,8 +133,8 @@ public class C_Login extends LoginActivity {
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
 
-        setEditTextAccountID("C5015");
-        setEditTextEmail("OSS1@test.com");
-        setEditTextPassword("OSS1");
+        setEditTextAccountID("A1001");
+        setEditTextEmail("A1078A@imonggo.com");
+        setEditTextPassword("A1078A");
     }
 }

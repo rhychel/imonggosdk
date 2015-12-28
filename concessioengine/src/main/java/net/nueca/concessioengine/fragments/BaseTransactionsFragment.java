@@ -52,6 +52,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
                 whereOfflineData.eq("type", transactionType); //.and()
             else {
                 List<Integer> transactionTypes = new ArrayList<>();
+
                 if(AccountSettings.hasCount(getActivity()) || AccountSettings.hasPullout(getActivity()) || AccountSettings.hasReceive(getActivity()))
                     transactionTypes.add(OfflineData.DOCUMENT);
                 Log.e("hasOrder", AccountSettings.hasOrder(getActivity()) + "");
@@ -59,6 +60,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
                     transactionTypes.add(OfflineData.ORDER);
                 if (AccountSettings.hasSales(getActivity()))
                     transactionTypes.add(OfflineData.INVOICE);
+
                 if(hasOne)
                     whereOfflineData.and().in("type", transactionTypes);
                 else {
