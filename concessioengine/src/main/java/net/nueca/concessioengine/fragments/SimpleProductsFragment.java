@@ -251,8 +251,6 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
     @Override
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
-        Log.e("SimpleProductFragment", selectedProductItem.toString());
-        Log.e("SimpleProductFragment", "RetailPrice: " + selectedProductItem.getRetailPriceWithTax());
 
         try {
             if(listingType == ListingType.SALES) {

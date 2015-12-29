@@ -29,23 +29,23 @@ public class InvoiceTools {
                 builder.product_id(product.getId());
                 builder.discount_text(itemValue.getDiscount_text());
                 builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).intValue());
+
                 double retail_price = itemValue.isValidUnit() ?
-                        itemValue.getUnit().getRetail_price() : product.getRetail_price();
+                        itemValue.getRetail_price() : product.getRetail_price();
                 builder.retail_price(retail_price);
-                Log.e("InvoiceTools", retail_price + " " + NumberTools.toBigDecimal(itemValue.getQuantity()).intValue());
 
                 BigDecimal t_subtotal = new BigDecimal(itemValue.getQuantity())
                         .multiply(new BigDecimal(retail_price));
                 BigDecimal subtotal = new BigDecimal(itemValue.getSubtotal());
-                Log.e("InvoiceTools", t_subtotal + " " + subtotal);
 
                 if(subtotal.doubleValue() == 0d)
-                    builder.subtotal(t_subtotal.toPlainString());
+                    builder.subtotal(""+t_subtotal.doubleValue());
                 else
                     builder.subtotal(""+itemValue.getSubtotal());
 
                 invoiceLines.add(builder.build());
-                Log.e("InvoiceTools", "invoiceLine  --  " + builder.build().toString());
+                Log.e("INVOICE", product.getName() + " " + t_subtotal.doubleValue() + " " + subtotal.doubleValue() + " ~ " + retail_price + " * " +
+                        itemValue.getQuantity());
             }
         }
         return invoiceLines;
@@ -132,6 +132,10 @@ public class InvoiceTools {
 
         public List<InvoicePayment> getPayments() {
             return payments;
+        }
+
+        public List<InvoiceLine> getInvoiceLines() {
+            return invoiceLines;
         }
     }
 

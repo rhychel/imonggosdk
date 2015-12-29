@@ -59,6 +59,7 @@ public class Values {
     }
 
     public Values(Unit unit, String quantity, Double retail_price) {
+        //Log.e("VALUES", "Values(unit="+(unit!=null?unit.getName():"null")+", quantity="+quantity+", retail_price="+retail_price+")");
         setValue(quantity, unit, retail_price);
     }
 
@@ -67,12 +68,14 @@ public class Values {
     }
 
     public void setValue(String quantity, Unit unit) {
+        //Log.e("VALUES", "setValue(quantity="+quantity +", unit="+(unit!=null?unit.getName():"null")+")");
         if(unit != null)
             this.retail_price = unit.getRetail_price();
         setValue(quantity, unit, null);
     }
 
     public void setValue(String quantity, Unit unit, double retail_price) {
+        //Log.e("VALUES", "setValue(quantity="+quantity +", unit="+(unit!=null?unit.getName():"null")+", retail_price="+retail_price+")");
         this.retail_price = retail_price;
         setValue(quantity, unit, null);
     }
@@ -87,23 +90,20 @@ public class Values {
             this.unit_quantity = quantity;
             this.unit_content_quantity = unit.getQuantity();
             this.unit_name = unit.getName();
-            if(this.unit_quantity.length() > 0)
-                this.unit_retail_price = unit.getRetail_price()*Double.valueOf(this.unit_quantity);
+            this.unit_retail_price = unit.getRetail_price();
             this.unit = unit;
         }
-        else{
+        else {
             this.quantity = quantity;
             this.unit = unit;
             if(unit != null)
                 this.unit_name = unit.getName();
         }
 
-        if(this.quantity == null || this.quantity.length() == 0)
-            this.quantity = "0";
-        double retailprice = this.unit_retail_price != 0d ? this.unit_retail_price : (this.retail_price == null? 0d : this.retail_price);
-        this.subtotal = retailprice * Double.valueOf(this.quantity);
+        this.subtotal = this.retail_price * Double.valueOf(quantity);
 
-        Log.e("Values", "setValue : " + retailprice + " * " + this.quantity + " = " + this.subtotal);
+        Log.e("Unit", unit != null? unit.getName() : "null");
+        Log.e("Values", "setValue : " + this.retail_price + " * " + quantity + " = " + this.subtotal);
     }
 
     public String getQuantity() {

@@ -21,6 +21,12 @@ import java.util.List;
  * Created by gama on 04/12/2015.
  */
 public class PriceTools {
+    public static final int
+            DEFAULT_PRICE = 0,
+            PRICELIST_CUSTOMER = 1,
+            PRICELIST_CUSTOMERGROUP = 2,
+            PRICELIST_BRANCH = 3;
+
     public static Double identifyRetailPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch,
                                              CustomerGroup customerGroup, Customer customer) {
         return identifyRetailPrice(dbHelper2, product, branch, customerGroup, customer, null);
@@ -36,8 +42,6 @@ public class PriceTools {
                         .getDefault_selling_unit())).queryForFirst();
             } catch (SQLException e) { e.printStackTrace(); }
         }
-        if(unit == null)
-            unit = defaultUnit;
         Log.e("PriceTools", product.getName() + " : " + (defaultUnit != null? defaultUnit.getName() : "null" ) + " " +
                 (unit != null? unit.getName() : "null"));
 
@@ -56,7 +60,7 @@ public class PriceTools {
 
             /** Using PriceList **/
             //Log.e("PriceList", "count : " + dbHelper2.fetchObjects(PriceList.class).countOf() + " for " + product.getName() + "~" + product.getId());
-            String type = "DEFAULT";
+            int type = DEFAULT_PRICE;
             Price customer_price = null, customergroup_price = null, branch_price = null;
 
             if (customer != null && customer.getPriceList() != null) {
@@ -112,16 +116,19 @@ public class PriceTools {
 
             if(branch_price != null) {
                 retail_price = branch_price.getRetail_price();
-                type = "BRANCH";
+                type = PRICELIST_BRANCH;
             }
             if(customergroup_price != null) {
                 retail_price = customergroup_price.getRetail_price();
-                type = "CUSTOMER_GROUP";
+                type = PRICELIST_CUSTOMERGROUP;
             }
             if(customer_price != null) {
                 retail_price = customer_price.getRetail_price();
-                type = "CUSTOMER";
+                type = PRICELIST_CUSTOMER;
             }
+
+            if(type == DEFAULT_PRICE && unit != null && !unit.equals(defaultUnit))
+                return identifyRetailPrice(dbHelper2, product, branch, customerGroup, customer, defaultUnit);
 
             //Log.e("Price-" + type, "retail_price:" + retail_price + " for " + product.getName());
         } catch (SQLException e) {

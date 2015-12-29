@@ -192,20 +192,21 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                 return;
             } else {
                 Unit unit = hasUnits ? ((Unit) spUnits.getSelectedItem()) : null;
-                Values values = getHelper() == null?
-                        new Values(unit, quantity) :
-                        new Values(unit, quantity,
-                                PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
-                                        salesBranch, salesCustomerGroup, salesCustomer));
-                if (valuePosition > -1) {
+                Values values;
+                if (valuePosition > -1)
                     values = selectedProductItem.getValues().get(valuePosition);
-                    if(getHelper() == null)
-                        values.setValue(quantity, unit);
-                    else
-                        values.setValue(quantity, unit,
-                                PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
-                                        salesBranch, salesCustomerGroup, salesCustomer));
-                }
+                else
+                    values = new Values();
+                //Log.e("SIMPLE_QUANTITY_DIALOG", unit != null? unit.getName() : "null");
+
+                if(getHelper() == null)
+                    values.setValue(quantity, unit);
+                else
+                    values.setValue(quantity, unit,
+                            PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
+                                    salesBranch, salesCustomerGroup, salesCustomer, unit));
+
+                    selectedProductItem.getValues().set(valuePosition, values);
                 if (hasBrand || hasDeliveryDate) {
                     ExtendedAttributes extendedAttributes = new ExtendedAttributes();
                     if (hasBrand)

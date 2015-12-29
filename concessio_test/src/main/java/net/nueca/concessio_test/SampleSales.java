@@ -293,7 +293,11 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
             btnReview.setText(REVIEW_LABEL);
         } else {
-            Log.e(">>>", new Invoice.Builder().payments(checkoutFragment.getPayments()).build().toString());
+            Log.e(">>>", new Invoice.Builder()
+                    .payments(checkoutFragment.getPayments())
+                    .invoice_lines(checkoutFragment.getInvoiceLines())
+                    .build()
+                    .toString());
         }
 
         //invalidateOptionsMenu();

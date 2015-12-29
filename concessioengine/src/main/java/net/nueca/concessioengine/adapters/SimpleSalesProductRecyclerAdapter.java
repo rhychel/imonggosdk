@@ -58,14 +58,20 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
 
         SelectedProductItem selectedProductItem = getSelectedProductItems().getSelectedProductItem(product);
         Unit unit = null;
+        try {
+            unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("name", product.getUnit()).and().eq("product_id", product)
+                    .queryForFirst();
+        } catch (SQLException e) { e.printStackTrace(); }
+
         if(selectedProductItem == null && product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && product.getExtras()
-                .getDefault_selling_unit().length() > 0)
+                .getDefault_selling_unit().length() > 0) {
             try {
-                unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", Integer.parseInt(product.getExtras()
+                Unit t_unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", Integer.parseInt(product.getExtras()
                         .getDefault_selling_unit())).queryForFirst();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                if(t_unit != null)
+                    unit = t_unit;
+            } catch (SQLException e) { e.printStackTrace(); }
+        }
         Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer,unit);
 
         holder.tvSubtotal.setText("");
@@ -83,17 +89,13 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
         }
         holder.tvRetailPrice.setText(NumberTools.separateInCommas(retail_price));
 
-        if(unit != null) {
-            holder.tvInventoryCount.setText(0 + " " + unit.getName());
-            holder.tvInventoryCount.setVisibility(View.VISIBLE);
-        } else
-            holder.tvInventoryCount.setVisibility(View.GONE);
+        holder.tvInventoryCount.setText(0 + " " + (unit != null ? unit.getName() : product.getUnit()));
 
         if(selectedProductItem != null && selectedProductItem.getQuantity() != null &&
                 NumberTools.toDouble(selectedProductItem.getQuantity()) != 0d) {
             double qty = NumberTools.toDouble(selectedProductItem.getQuantity());
 
-            holder.tvQuantity.setText(NumberTools.separateInSpaceHideZeroDecimals(qty) + (unit != null?  " " + unit.getName() : ""));
+            holder.tvQuantity.setText(NumberTools.separateInSpaceHideZeroDecimals(qty) + " " +(unit != null? unit.getName() : product.getUnit()));
             holder.tvQuantity.setVisibility(View.VISIBLE);
             holder.tvSubtotal.setVisibility(View.VISIBLE);
         } else {
@@ -101,11 +103,10 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             holder.tvSubtotal.setVisibility(View.GONE);
         }
 
+        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
+            ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
 
-        /*String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
-                ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
-
-        holder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));*/
+        holder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
     }
 
     @Override

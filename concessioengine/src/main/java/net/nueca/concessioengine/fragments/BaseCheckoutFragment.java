@@ -11,6 +11,7 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 
 import java.util.List;
@@ -46,6 +47,10 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         this.invoice = invoice;
         computation.clearAll();
         computation.addAllInvoiceLines(invoice.getInvoiceLines());
+    }
+
+    public List<InvoiceLine> getInvoiceLines() {
+        return computation.getInvoiceLines();
     }
 
     public List<InvoicePayment> getPayments() {
