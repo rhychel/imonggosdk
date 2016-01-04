@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.dialogs;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,6 +90,7 @@ public class CustomModuleAdapter extends BaseCustomDialogRecyclerAdapter<CustomM
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
+
         }
 
         @Override

@@ -104,8 +104,11 @@ public class Configurations {
             put(Table.BRANCH_PRICE_LISTS, "price_lists.json");
             put(Table.PRICE_LISTS_DETAILS, "price_lists");
             put(Table.SALES_PROMOTIONS, "sales_promotions.json");
-            put(Table.SALES_PROMOTIONS_DISCOUNT, "sales_promotions");
-            put(Table.SALES_PUSH, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_PUSH, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_POINTS, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
             put(Table.ROUTE_PLANS, "route_plans.json");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
 
@@ -153,8 +156,11 @@ public class Configurations {
             put(Table.BRANCH_PRICE_LISTS, "price_lists.json");
             put(Table.PRICE_LISTS_DETAILS, "price_lists");
             put(Table.SALES_PROMOTIONS, "sales_promotions.json");
-            put(Table.SALES_PROMOTIONS_DISCOUNT, "sales_promotions");
-            put(Table.SALES_PUSH, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_PUSH, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_POINTS, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
             put(Table.ROUTE_PLANS, "route_plans.json");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
         }

@@ -34,7 +34,7 @@
     <string name="LOGIN_INVALID_PASSWORD">Invalid password, the length of Password should be at least 5 characters.</string>
     <string name="LOGIN_INVALID_CREDENTIALS">Invalid Credential.</string>
     <string name="LOGIN_FAILED_ACCOUNT_ID">Incorrect account id.</string>
-    <string name="LOGIN_FAILED_SERVER_ERROR">The Server is having maintenance, Please retry again later...</string>
+    <string name="LOGIN_FAILED_SERVER_ERROR">Please retry again later</string>
     <string name="LOGIN_FAILED_OFFLINE">You are offline.</string>
     <string name="LOGIN_DIALOG_POSITIVE_BUTTON"> Ok </string>
     <string name="LOGIN_DIALOG_NEGATIVE_BUTTON"> Cancel </string>

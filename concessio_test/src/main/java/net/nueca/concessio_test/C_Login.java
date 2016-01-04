@@ -43,22 +43,24 @@ public class C_Login extends LoginActivity {
                 Table.USERS_ME.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
                 Table.SETTINGS.ordinal(),
-                /*Table.PRODUCTS.ordinal(),
-                Table.UNITS.ordinal(),*/
+                Table.PRODUCTS.ordinal(),
+                Table.UNITS.ordinal(),
                 Table.ROUTE_PLANS.ordinal(),
                 Table.ROUTE_PLANS_DETAILS.ordinal(),
-               /* Table.CUSTOMER_CATEGORIES.ordinal(),
+                Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_BY_SALESMAN.ordinal(),
                 Table.CUSTOMER_GROUPS.ordinal(),
                 Table.BRANCH_PRODUCTS.ordinal(),
                 Table.BRANCH_PRICE_LISTS.ordinal(),
                 Table.PRICE_LISTS_DETAILS.ordinal(),
-                Table.PAYMENT_TYPES.ordinal(),
                 Table.PAYMENT_TERMS.ordinal(),
+                Table.PAYMENT_TYPES.ordinal(),
                 Table.INVOICES.ordinal(),
-                Table.INVOICE_PURPOSES.ordinal(),*/
-                Table.SALES_PUSH.ordinal(),
-                Table.SALES_PROMOTIONS_DISCOUNT.ordinal());
+                Table.INVOICE_PURPOSES.ordinal(),
+                Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
+                Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS.ordinal(),
+                Table.SALES_PROMOTIONS_POINTS.ordinal(),
+                Table.SALES_PROMOTIONS_POINTS_DETAILS.ordinal());
     }
 
     @Override
@@ -72,7 +74,7 @@ public class C_Login extends LoginActivity {
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
         setEditTextAccountID("A1001");
-        setEditTextEmail("A1078A@imonggo.com");
-        setEditTextPassword("A1078A");
+        setEditTextEmail("A1001@imonggo.com");
+        setEditTextPassword("A1001zf3");
     }
 }

@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.dialogs;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -83,6 +84,12 @@ public class CustomDialogFrameLayout extends FrameLayout {
         mRecyclerView.setAdapter(customModuleAdapter);
         addView(mView);
     }
+
+    public void scrollToPositionWithOffset(int position, int offset) {
+        mLinearLayoutManager.scrollToPositionWithOffset(position, offset);
+    }
+
+
 
     public void setLoginListener(LoginListener loginListener) {
         this.mLoginListener = loginListener;
