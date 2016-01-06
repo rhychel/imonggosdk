@@ -8,11 +8,16 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by gama on 04/11/2015.

@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:background="?attr/colorPrimary"
         sothree:theme="@style/ActionBar"
-        android:elevation="3dp">
+        android:elevation="3dp"
+        android:theme="@style/ThemeOverlay.ActionBar.Concessio">
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

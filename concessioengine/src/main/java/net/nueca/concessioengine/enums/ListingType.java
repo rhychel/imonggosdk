@@ -12,6 +12,8 @@ public enum ListingType {
     LETTER_HEADER, // Customer
 
     BASIC_PAYMENTS,
-    COLORED_PAYMENTS // Payments List
+    COLORED_PAYMENTS, // Payments List
+
+    DETAILED_HISTORY
 
 }

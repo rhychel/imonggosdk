@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import net.nueca.concessioengine.activities.AddCustomerActivity;
+import com.crashlytics.android.Crashlytics;
+
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
@@ -18,6 +18,8 @@ import net.nueca.imonggosdk.tools.SettingTools;
 import java.sql.SQLException;
 import java.util.List;
 
+import io.fabric.sdk.android.Fabric;
+
 /**
  * Created by rhymart on 8/20/15.
  * imonggosdk2 (c)2015
@@ -26,6 +28,7 @@ public class C_Login extends LoginActivity {
 
     @Override
     protected void initLoginEquipments() {
+        Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
         setServer(Server.IRETAILCLOUD_NET);
 

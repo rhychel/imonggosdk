@@ -2,6 +2,7 @@ package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +77,7 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             double subtotal = product.getRetail_price()*Double.valueOf(getSelectedProductItems().getQuantity(product));
             viewHolder.tvRetailPrice.setText(String.format("P%.2f", product.getRetail_price()));
 
+            Log.e("selectedItems", getSelectedProductItems().size()+"Size"+ProductsAdapterHelper.getSelectedProductItems().size());
             if(getSelectedProductItems().hasSelectedProductItem(product)) {
                 viewHolder.llQuantity.setVisibility(View.VISIBLE);
                 viewHolder.tvQuantity.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(product), getSelectedProductItems().getUnitName(product, false)));

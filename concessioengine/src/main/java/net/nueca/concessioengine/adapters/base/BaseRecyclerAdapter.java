@@ -101,6 +101,10 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         this.objectList = objectList;
     }
 
+    public int getPosition(Obj object) {
+        return this.objectList.indexOf(object);
+    }
+
     protected Context getContext() {
         return context;
     }

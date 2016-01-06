@@ -2,6 +2,7 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
@@ -55,6 +56,6 @@ public abstract class BaseSalesProductRecyclerAdapter<T extends BaseProductsRecy
     }
 
     public ImonggoDBHelper2 getHelper() {
-        return getAdapterHelper().getDbHelper();
+        return ProductsAdapterHelper.getDbHelper();
     }
 }

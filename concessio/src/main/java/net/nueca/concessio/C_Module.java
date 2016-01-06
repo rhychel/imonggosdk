@@ -27,6 +27,7 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
 import net.nueca.concessioengine.dialogs.TransactionDialog;
 import net.nueca.concessioengine.fragments.BaseProductsFragment;
+import net.nueca.concessioengine.fragments.BaseTransactionsFragment;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomerDetailsFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
@@ -36,6 +37,7 @@ import net.nueca.concessioengine.fragments.SimplePulloutFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
 import net.nueca.concessioengine.fragments.SimpleRoutePlanFragment;
+import net.nueca.concessioengine.fragments.SimpleTransactionDetailsFragment;
 import net.nueca.concessioengine.fragments.SimpleTransactionsFragment;
 import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
@@ -53,6 +55,9 @@ import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
@@ -79,6 +84,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     private boolean hasMenu = true, showsCustomer = false;
 
     private SimpleTransactionsFragment simpleTransactionsFragment;
+    private SimpleTransactionDetailsFragment simpleTransactionDetailsFragment;
 
     private SimpleReceiveFragment simpleReceiveFragment;
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
@@ -114,17 +120,38 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         llFooter.setVisibility(View.GONE);
         switch (concessioModule) {
             case HISTORY: {
+                simpleTransactionDetailsFragment = new SimpleTransactionDetailsFragment();
+                simpleTransactionDetailsFragment.setHelper(getHelper());
+                simpleTransactionDetailsFragment.setHasCategories(false);
+
                 simpleTransactionsFragment = new SimpleTransactionsFragment();
                 simpleTransactionsFragment.setHelper(getHelper());
                 simpleTransactionsFragment.setSetupActionBar(this);
                 simpleTransactionsFragment.setHasFilterByTransactionType(true);
-                simpleTransactionsFragment.setTransactionTypes(new ArrayList<String>(){{
-                    add("All Transactions");
-                    add("Sales");
-                    add("MSO");
-                    add("Receive");
-                    add("Pullout");
-                }});
+                simpleTransactionsFragment.setTransactionTypes(getTransactionTypes());
+                simpleTransactionsFragment.setListingType(ListingType.DETAILED_HISTORY);
+                simpleTransactionsFragment.setTransactionsListener(new BaseTransactionsFragment.TransactionsListener() {
+
+                    @Override
+                    public void showTransactionDetails(OfflineData offlineData) {
+                        Log.e("showTransactionDetails", "called");
+
+                        try {
+                            simpleTransactionDetailsFragment.setFilterProductsBy(processOfflineData(offlineData));
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                                .add(R.id.flContent, simpleTransactionDetailsFragment, "transaction_details")
+                                .addToBackStack("transaction_details")
+                                .commit();
+
+                    }
+                });
+
+                SwableTools.bindSwable(this, new ImonggoSwableServiceConnection(simpleTransactionsFragment));
 
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -385,7 +412,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     }
                 });
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
-                getSupportActionBar().setTitle("Review");
+                if(concessioModule != ConcessioModule.HISTORY)
+                    getSupportActionBar().setTitle("Review");
+                else {
+                    getSupportActionBar().setDisplayShowTitleEnabled(false);
+                    ProductsAdapterHelper.clearSelectedProductItemList();
+                }
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setHomeButtonEnabled(true);
                 getSupportActionBar().invalidateOptionsMenu();
@@ -403,6 +435,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         finalizeFragment.setSetupActionBar(this);
         finalizeFragment.setIsFinalize(true);
         finalizeFragment.setProductsFragmentListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        SwableTools.unbindSwable(this, new ImonggoSwableServiceConnection(simpleTransactionsFragment));
+        super.onDestroy();
     }
 
     @Override
@@ -658,7 +696,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                                 OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                                         .toSend()
-                                                        .forBranch(branch.getId())
+                                                        .forBranch(branch)
                                                         .object(document)
                                                         .queue();
 

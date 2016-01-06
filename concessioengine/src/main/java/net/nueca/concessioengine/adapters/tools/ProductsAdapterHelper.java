@@ -91,7 +91,7 @@ public class ProductsAdapterHelper {
         ProductsAdapterHelper.dbHelper = dbHelper;
     }
 
-    public ImonggoDBHelper2 getDbHelper() {
+    public static ImonggoDBHelper2 getDbHelper() {
         return dbHelper;
     }
 

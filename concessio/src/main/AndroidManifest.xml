@@ -14,6 +14,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name">
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="50e2100f1a801357b9d65a4f7f38551db0df28ce" />
+
         <!-- Activities -->
         <activity
             android:name=".C_Login"

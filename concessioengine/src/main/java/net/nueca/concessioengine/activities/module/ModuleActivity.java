@@ -17,8 +17,10 @@ import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.Inventory;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.customer.Customer;
@@ -135,23 +137,32 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public List<String> getTransactionTypes(boolean includeAll) {
         List<String> transactionTypes = new ArrayList<>();
         if(includeAll)
-            transactionTypes.add("All");
+            transactionTypes.add("All Transactions");
 
         try {
             List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.RELEASE_BRANCH, ConcessioModule.RELEASE_ADJUSTMENT, ConcessioModule.INVOICE, ConcessioModule.RECEIVE_BRANCH)).query();
+                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST,
+                            ConcessioModule.RECEIVE_BRANCH, ConcessioModule.RECEIVE_BRANCH_PULLOUT, ConcessioModule.RELEASE_BRANCH,
+                            ConcessioModule.RECEIVE_ADJUSTMENT, ConcessioModule.RELEASE_ADJUSTMENT,
+                            ConcessioModule.RECEIVE_SUPPLIER, ConcessioModule.RELEASE_SUPPLIER,
+                            ConcessioModule.INVOICE)).query();
+
+            for(ModuleSetting moduleSetting : moduleSettings) {
+                if(moduleSetting.is_enabled())
+                    transactionTypes.add(moduleSetting.getLabel());
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        if(AccountSettings.hasOrder(this))
-            transactionTypes.add("Order");
-        if(AccountSettings.hasCount(this))
-            transactionTypes.add("Count");
-        if(AccountSettings.hasReceive(this))
-            transactionTypes.add("Receive");
-        if(AccountSettings.hasPullout(this))
-            transactionTypes.add("Pullout");
+//        if(AccountSettings.hasOrder(this))
+//            transactionTypes.add("Order");
+//        if(AccountSettings.hasCount(this))
+//            transactionTypes.add("Count");
+//        if(AccountSettings.hasReceive(this))
+//            transactionTypes.add("Receive");
+//        if(AccountSettings.hasPullout(this))
+//            transactionTypes.add("Pullout");
         return transactionTypes;
     }
 
@@ -361,6 +372,64 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             }
         }
         return updated;
+    }
+
+    protected List<Product> processOfflineData(OfflineData offlineData) throws SQLException {
+        List<Product> productList = new ArrayList<>();
+        if(offlineData.getType() == OfflineData.ORDER) {
+            Order order = offlineData.getObjectFromData(Order.class);
+            List<OrderLine> orderLines = order.getOrder_lines();
+            for(OrderLine orderLine : orderLines) {
+                Product product = getHelper().fetchIntId(Product.class).queryForId(orderLine.getProduct_id());
+                if(productList.indexOf(product) == -1)
+                    productList.add(product);
+
+                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+                String quantity = "0";
+                Unit unit = null;
+                if(orderLine.getUnit_id() != null)
+                    unit = getHelper().fetchIntId(Unit.class).queryForId(orderLine.getUnit_id());
+                if(unit != null)
+                    quantity = orderLine.getUnit_quantity().toString();
+                else
+                    quantity = String.valueOf(orderLine.getQuantity());
+                Values values = new Values(unit, quantity);
+                values.setLine_no(orderLine.getLine_no());
+                selectedProductItem.addValues(values);
+                ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+            }
+            return productList;
+        }
+        else if(offlineData.getType() == OfflineData.DOCUMENT) {
+            Document document = offlineData.getObjectFromData(Document.class);
+            List<DocumentLine> documentLines = document.getDocument_lines();
+            for(DocumentLine documentLine : documentLines) {
+                Product product = getHelper().fetchIntId(Product.class).queryForId(documentLine.getProduct_id());
+                if(productList.indexOf(product) == -1)
+                    productList.add(product);
+
+                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+                String quantity = "0";
+                Unit unit = null;
+                if(documentLine.getUnit_id() != null)
+                    unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
+                if(unit != null)
+                    quantity = documentLine.getUnit_quantity().toString();
+                else
+                    quantity = String.valueOf(documentLine.getQuantity());
+                Values values = new Values(unit, quantity);
+                values.setLine_no(documentLine.getLine_no());
+                selectedProductItem.addValues(values);
+                ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+            }
+            Log.e("SelectedProductItems", ProductsAdapterHelper.getSelectedProductItems().size()+"");
+            return productList;
+        }
+        else if(offlineData.getType() == OfflineData.INVOICE) {
+
+        }
+
+        return productList;
     }
 
 }

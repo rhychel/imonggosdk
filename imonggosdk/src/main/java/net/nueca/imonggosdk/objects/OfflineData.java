@@ -789,6 +789,10 @@ public class OfflineData extends BaseTable2 {
             return null;
     }
 
+    public <T> T getObjectFromData(Class<T> clazz) {
+        return (T) getObjectFromData();
+    }
+
     public List<String> getReturnIdList() {
         if(!returnId.contains(","))
             return Arrays.asList(returnId);
