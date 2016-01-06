@@ -136,6 +136,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     public void showTransactionDetails(OfflineData offlineData) {
                         Log.e("showTransactionDetails", "called");
 
+                        ProductsAdapterHelper.clearSelectedProductItemList();
                         try {
                             simpleTransactionDetailsFragment.setFilterProductsBy(processOfflineData(offlineData));
                         } catch (SQLException e) {
@@ -416,7 +417,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     getSupportActionBar().setTitle("Review");
                 else {
                     getSupportActionBar().setDisplayShowTitleEnabled(false);
-                    ProductsAdapterHelper.clearSelectedProductItemList();
                 }
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setHomeButtonEnabled(true);

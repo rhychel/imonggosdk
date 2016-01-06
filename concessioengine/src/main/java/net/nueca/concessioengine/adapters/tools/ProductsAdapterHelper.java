@@ -2,6 +2,7 @@ package net.nueca.concessioengine.adapters.tools;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.android.volley.AuthFailureError;
@@ -120,6 +121,7 @@ public class ProductsAdapterHelper {
             selectedProductItems.clear();
         selectedCustomer = null;
         ProductListTools.restartLineNo();
+        Log.e("ProductAdapterHelper", "clearSelectedProductItemList");
     }
 
     public static void destroySelectedProductItemList() {
@@ -127,6 +129,7 @@ public class ProductsAdapterHelper {
             selectedProductItems.clear();
         selectedProductItems = null;
         selectedCustomer = null;
+        Log.e("ProductAdapterHelper", "destroySelectedProductItemList");
     }
 
     public static void destroyProductAdapterHelper() {
@@ -136,6 +139,7 @@ public class ProductsAdapterHelper {
         imageRequestQueue = null;
         selectedProductItems = null;
         selectedCustomer = null;
+        Log.e("ProductAdapterHelper", "destroyProductAdapterHelper");
     }
 
     public static void setSelectedCustomer(Customer selectedCustomer) {
