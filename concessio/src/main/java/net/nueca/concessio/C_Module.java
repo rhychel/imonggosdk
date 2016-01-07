@@ -83,6 +83,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     private Toolbar toolbar;
     private boolean hasMenu = true, showsCustomer = false;
 
+    // for transaction details
+    private boolean showTransactionDetails = false;
+    private String referenceNumber = "";
+
     private SimpleTransactionsFragment simpleTransactionsFragment;
     private SimpleTransactionDetailsFragment simpleTransactionDetailsFragment;
 
@@ -123,6 +127,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionDetailsFragment = new SimpleTransactionDetailsFragment();
                 simpleTransactionDetailsFragment.setHelper(getHelper());
                 simpleTransactionDetailsFragment.setHasCategories(false);
+                simpleTransactionDetailsFragment.setSetupActionBar(this);
 
                 simpleTransactionsFragment = new SimpleTransactionsFragment();
                 simpleTransactionsFragment.setHelper(getHelper());
@@ -142,6 +147,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
+
+                        referenceNumber = offlineData.getReference_no();
+                        showTransactionDetails = true;
+                        llFooter.setVisibility(View.VISIBLE);
 
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
@@ -416,7 +425,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 if(concessioModule != ConcessioModule.HISTORY)
                     getSupportActionBar().setTitle("Review");
                 else {
-                    getSupportActionBar().setDisplayShowTitleEnabled(false);
+                    if(showTransactionDetails) {
+                        tvItems.setVisibility(View.VISIBLE);
+                        btn2.setVisibility(View.VISIBLE);
+                        int size = simpleTransactionDetailsFragment.numberOfItems();
+                        tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
+                        btn1.setText("VOID");
+                        btn2.setText("DUPLICATE");
+                        getSupportActionBar().setTitle(referenceNumber);
+                    }
+                    else {
+                        llFooter.setVisibility(View.GONE);
+                        hasMenu = true;
+                        getSupportActionBar().setDisplayShowTitleEnabled(false);
+                    }
                 }
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setHomeButtonEnabled(true);
@@ -456,6 +478,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        if(concessioModule == ConcessioModule.HISTORY)
+            llFooter.setVisibility(View.GONE);
         btn1.setText("REVIEW");
         if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER)
             simpleInventoryFragment.refreshList();
@@ -698,6 +722,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         .toSend()
                                                         .forBranch(branch)
                                                         .object(document)
+                                                        .fromModule(concessioModule)
                                                         .queue();
 
                                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");

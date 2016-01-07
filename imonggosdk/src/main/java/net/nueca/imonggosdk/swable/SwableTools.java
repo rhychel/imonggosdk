@@ -12,6 +12,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
@@ -467,6 +468,7 @@ public class SwableTools {
             private Integer branchId;
             private String branchName;
             private String parameter = "";
+            private ConcessioModule concessioModule = ConcessioModule.NONE;
 
             SendTransaction(ImonggoDBHelper2 helper) {
                 this.helper = helper;
@@ -487,6 +489,11 @@ public class SwableTools {
             public SendTransaction forBranch(Branch branch) {
                 this.branchName = branch.getName();
                 this.branchId = branch.getId();
+                return this;
+            }
+
+            public SendTransaction fromModule(ConcessioModule concessioModule) {
+                this.concessioModule = concessioModule;
                 return this;
             }
 
@@ -517,6 +524,8 @@ public class SwableTools {
                     offlineData.setBranch_id(branchId);
                 if(branchName != null)
                     offlineData.setBranchName(branchName);
+                if(concessioModule != ConcessioModule.NONE)
+                    offlineData.setConcessioModule(concessioModule);
 
                 switch (offlineData.getType()) {
                     case OfflineData.ORDER:

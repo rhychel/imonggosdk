@@ -391,8 +391,12 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     unit = getHelper().fetchIntId(Unit.class).queryForId(orderLine.getUnit_id());
                 if(unit != null)
                     quantity = orderLine.getUnit_quantity().toString();
-                else
+                else {
+                    unit = new Unit();
+                    unit.setId(-1);
+                    unit.setName(product.getBase_unit_name());
                     quantity = String.valueOf(orderLine.getQuantity());
+                }
                 Values values = new Values(unit, quantity);
                 values.setLine_no(orderLine.getLine_no());
                 selectedProductItem.addValues(values);
@@ -415,8 +419,12 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
                 if(unit != null)
                     quantity = documentLine.getUnit_quantity().toString();
-                else
+                else {
+                    unit = new Unit();
+                    unit.setId(-1);
+                    unit.setName(product.getBase_unit_name());
                     quantity = String.valueOf(documentLine.getQuantity());
+                }
                 Values values = new Values(unit, quantity);
                 values.setLine_no(documentLine.getLine_no());
                 selectedProductItem.addValues(values);

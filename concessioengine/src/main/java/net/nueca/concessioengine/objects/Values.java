@@ -88,7 +88,7 @@ public class Values {
             this.unit_content_quantity = unit.getQuantity();
             this.unit_name = unit.getName();
             if(this.unit_quantity.length() > 0)
-                this.unit_retail_price = unit.getRetail_price()*Double.valueOf(this.unit_quantity);
+                this.unit_retail_price = unit.getRetail_price() * Double.valueOf(this.unit_quantity);
             this.unit = unit;
         }
         else{

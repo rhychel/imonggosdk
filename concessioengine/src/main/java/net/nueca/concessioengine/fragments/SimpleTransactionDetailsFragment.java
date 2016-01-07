@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
@@ -33,8 +35,6 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
     private RecyclerView rvProducts;
     private SimpleProductRecyclerViewAdapter simpleProductRecyclerViewAdapter;
 
-    private ListView lvTransactions;
-    private SimpleProductListAdapter simpleProductListAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,15 +42,18 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
 
         rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
+        ((Spinner) view.findViewById(R.id.spCategories)).setVisibility(View.GONE);
 
         simpleProductRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
         simpleProductRecyclerViewAdapter.setListingType(ListingType.SALES);
         simpleProductRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
         rvProducts.setAdapter(simpleProductRecyclerViewAdapter);
 
-        Log.e("TransactionDetails", "called");
-
         return view;
+    }
+
+    public int numberOfItems() {
+        return simpleProductRecyclerViewAdapter.getItemCount();
     }
 
     @Override

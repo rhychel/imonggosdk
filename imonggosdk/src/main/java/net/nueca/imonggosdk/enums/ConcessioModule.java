@@ -25,7 +25,9 @@ public enum ConcessioModule {
 
     HISTORY("history"),
     LAYAWAY("layaway"),
-    ROUTE_PLAN("route_plan");
+    ROUTE_PLAN("route_plan"),
+
+    NONE("none");
 
 
     private String name;
