@@ -19,6 +19,7 @@ import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.widgets.Numpad;
 
@@ -201,10 +202,14 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
 
                 if(getHelper() == null)
                     values.setValue(quantity, unit);
-                else
-                    values.setValue(quantity, unit,
-                            PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
-                                    salesBranch, salesCustomerGroup, salesCustomer, unit));
+                else {
+                    Price price = PriceTools.identifyPrice(getHelper(), selectedProductItem.getProduct(),
+                            salesBranch, salesCustomerGroup, salesCustomer, unit);
+                    if(price != null)
+                        values.setValue(quantity, price);
+                    else
+                        values.setValue(quantity, unit, selectedProductItem.getRetail_price());
+                }
 
                     selectedProductItem.getValues().set(valuePosition, values);
                 if (hasBrand || hasDeliveryDate) {

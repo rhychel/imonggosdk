@@ -155,9 +155,7 @@ public class Order extends BaseTransactionTable2 {
     @Override
     public void refresh() {
         if(order_lines_fc != null && order_lines == null) {
-            for(OrderLine orderLine : order_lines_fc) {
-                addOrderLine(orderLine);
-            }
+            order_lines = new ArrayList<>(order_lines_fc);
         }
     }
 

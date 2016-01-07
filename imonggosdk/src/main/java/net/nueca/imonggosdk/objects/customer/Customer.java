@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects.customer;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -11,6 +13,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.Document;
@@ -24,6 +27,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 5/12/15.
@@ -69,17 +74,17 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     @Expose
     @DatabaseField
-    private int point_to_amount_ratio;
+    private Integer point_to_amount_ratio;
     @Expose
     @DatabaseField
     private int payment_terms_id;
     @Expose
     @DatabaseField
     private String code, alternate_code, first_name, middle_name, last_name, name, company_name,
-            tin, street = "", city, state, zipcode, country, telephone = "", fax,
+            tin, street, city, state, zipcode, country, telephone, fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
-            membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+            membership_expired_at, membership_start_at, biometric_signature, gender;
     @Expose
     @DatabaseField
     private boolean tax_exempt;
@@ -614,6 +619,19 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         return "";
     }
 
+    public List<CustomerGroup>  getCustomerGroups(ImonggoDBHelper2 dbHelper) throws SQLException {
+        List<CustomerCustomerGroupAssoc> assocs = dbHelper.fetchObjects(CustomerCustomerGroupAssoc.class).queryBuilder().where().eq
+                (CustomerCustomerGroupAssoc.CUSTOMER_ID_FIELD_NAME, this).query();
+
+        if(assocs == null || assocs.size() == 0)
+            return new ArrayList<>();
+
+        List<CustomerGroup> customerGroups = new ArrayList<>();
+        for(CustomerCustomerGroupAssoc assoc : assocs)
+            customerGroups.add(assoc.getCustomerGroup());
+        return customerGroups;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
@@ -670,12 +688,37 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
                 tin, street, city, state, zipcode, country, telephone, fax,
                 mobile, email, remark, customer_type_id, customer_type_name,
                 discount_text, available_points, birthdate, status, birthday,
-                membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
+                membership_expired_at, membership_start_at, biometric_signature, gender;
 
         public Customer build() {
             return new Customer(this);
         }
 
+
+        public Builder biometric_signature(String biometric_signature) {
+            this.biometric_signature = biometric_signature;
+            return this;
+        }
+        public Builder membership_start_at(String membership_start_at) {
+            this.membership_start_at = membership_start_at;
+            return this;
+        }
+        public Builder membership_expired_at(String membership_expired_at) {
+            this.membership_expired_at = membership_expired_at;
+            return this;
+        }
+        public Builder available_points(String available_points) {
+            this.available_points = available_points;
+            return this;
+        }
+        public Builder customer_type_name(String customer_type_name) {
+            this.customer_type_name = customer_type_name;
+            return this;
+        }
+        public Builder customer_type_id(String customer_type_id) {
+            this.customer_type_id = customer_type_id;
+            return this;
+        }
         public Builder first_name(String first_name) {
             this.first_name = first_name;
             return this;

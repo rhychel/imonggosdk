@@ -1709,11 +1709,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 customerGroup.setPriceList(priceList); // Connected
                                             } else {
                                                 Log.e(TAG, "Price Lists not found!");
+                                                customerGroup.setPriceList(null);
                                             }
                                         } else {
                                             Log.e(TAG, "Price List ID don't have value");
+                                            customerGroup.setPriceList(null);
                                         }
-                                        customerGroup.setPriceList(null);
                                     } else {
                                         Log.e(TAG, mCurrentTableSyncing + " API don't have field 'price_list_id'");
                                     }
@@ -1731,6 +1732,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
 
                                     } else {
+                                        newCustomerGroups.add(customerGroup);
                                         Log.e(TAG, "CustomerGroup not found");
                                     }
 
@@ -1979,6 +1981,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Log.e(TAG, "PRICE_LIST API don't have 'unit_id' field in price_list_items array");
                                 }
 
+                                price.setPriceList(priceList);
+
                                 if (initialSync || lastUpdatedAt == null) {
                                     newPrice.add(price);
                                 } else {
@@ -1988,8 +1992,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         updatePrice.add(price);
                                     }
                                 }
-
-                                price.setPriceList(priceList);
                             }
 
                             newPrice.doOperation(Price.class);

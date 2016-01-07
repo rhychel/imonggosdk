@@ -35,6 +35,10 @@ public class Price extends BaseTable {
     @DatabaseField
     private double retail_price = 0.0;
 
+    @Expose
+    @DatabaseField
+    private String discount_text; /** FORMAT: product_discount,company_discount **/
+
     public Price() { }
 
     public Product getProduct() {
@@ -67,6 +71,35 @@ public class Price extends BaseTable {
 
     public void setPriceList(PriceList priceList) {
         this.priceList = priceList;
+    }
+
+    public String getDiscount_text() {
+        return discount_text;
+    }
+
+    public void setDiscount_text(String discount_text) {
+        this.discount_text = discount_text;
+    }
+
+    public String getProductDiscount() {
+        if (!discount_text.contains(",")) {
+            if (discount_text.equals("0"))
+                return "";
+            return discount_text;
+        }
+
+        String[] discounts = discount_text.split(",");
+        return discounts[0].trim();
+    }
+    public String getCompanyDiscount() {
+        if (!discount_text.contains(",")) {
+            if (discount_text.equals("0"))
+                return "";
+            return discount_text;
+        }
+
+        String[] discounts = discount_text.split(",");
+        return discounts[1].trim();
     }
 
     public String toJSONString() {

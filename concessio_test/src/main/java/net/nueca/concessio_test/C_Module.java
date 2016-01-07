@@ -448,7 +448,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                     checkoutFragment.setSetupActionBar(C_Module.this);
                     checkoutFragment.setInvoice(new Invoice.Builder()
                             .invoice_lines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                                    .getSelectedProductItems()))
+                                    .getSelectedProductItems(), null))
                             .build());
                     getSupportFragmentManager().beginTransaction()
                             .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,

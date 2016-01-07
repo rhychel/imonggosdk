@@ -574,9 +574,7 @@ public class Document extends BaseTransactionTable {
     @Override
     public void refresh() {
         if(document_lines_fc != null && document_lines == null) {
-            for(DocumentLine documentLine : document_lines_fc) {
-                addDocumentLine(documentLine);
-            }
+            document_lines = new ArrayList<>(document_lines_fc);
         }
     }
 

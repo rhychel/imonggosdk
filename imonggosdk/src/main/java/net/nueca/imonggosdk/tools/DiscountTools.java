@@ -10,6 +10,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -98,7 +100,7 @@ public class DiscountTools {
         }
     }
 
-    private static BigDecimal applyDiscount(BigDecimal retail_price, BigDecimal qty, String discount_text) {
+    public static BigDecimal applyDiscount(BigDecimal retail_price, BigDecimal qty, String discount_text) {
         BigDecimal subtotal;
         if(discount_text.contains("%")) { // Percent Discount
             BigDecimal percentage = new BigDecimal(discount_text.replace("%", ""));
@@ -138,5 +140,18 @@ public class DiscountTools {
         return discount_text.matches("@?-?\\d+(\\.(\\d+))?") ||
                 discount_text.matches("-?\\d+(\\.(\\d+))?%?") ||
                 discount_text.matches("-?\\d+(\\.(\\d+))?");
+    }
+
+    public static BigDecimal applyDiscount(BigDecimal retail_price, BigDecimal qty, String discount_text, String separator) {
+        List<String> discountStrs = Arrays.asList(discount_text.split(separator));
+
+        BigDecimal discountedPrice = BigDecimal.ZERO;
+        for(String discountStr : discountStrs) {
+            if(discountStrs.indexOf(discountStr) == 0)
+                discountedPrice = applyDiscount(retail_price, BigDecimal.ONE, discountStr);
+            else
+                discountedPrice = applyDiscount(discountedPrice, BigDecimal.ONE, discountStr);
+        }
+        return discountedPrice.multiply(qty);
     }
 }

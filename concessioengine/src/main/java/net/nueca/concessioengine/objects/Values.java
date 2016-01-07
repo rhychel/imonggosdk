@@ -3,6 +3,7 @@ package net.nueca.concessioengine.objects;
 import android.util.Log;
 
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 /**
@@ -48,7 +49,7 @@ public class Values {
     private String quantity = "1";
     private ExtendedAttributes extendedAttributes = null;
     // ---- FOR INVOICE
-    private String discount_text = "0%";
+    private String discount_text;
     private Double subtotal;
     private Double retail_price;
 
@@ -56,6 +57,10 @@ public class Values {
 
     public Values(Unit unit, String quantity) {
         setValue(quantity, unit);
+    }
+
+    public Values(String quantity, Price price) {
+        setValue(quantity, price);
     }
 
     public Values(Unit unit, String quantity, Double retail_price) {
@@ -75,9 +80,21 @@ public class Values {
     }
 
     public void setValue(String quantity, Unit unit, double retail_price) {
-        //Log.e("VALUES", "setValue(quantity="+quantity +", unit="+(unit!=null?unit.getName():"null")+", retail_price="+retail_price+")");
+        Log.e("VALUES", "setValue(quantity="+quantity +", unit="+(unit!=null?unit.getName():"null")+", retail_price="+retail_price+")");
         this.retail_price = retail_price;
         setValue(quantity, unit, null);
+    }
+
+    public void setValue(String quantity, Price price) {
+        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
+        setValue(quantity, price, null);
+    }
+
+    public void setValue(String quantity, Price price, ExtendedAttributes extendedAttributes) {
+        Log.e("VALUES", "setValue price isNull? " + (price==null));
+        this.retail_price = price.getRetail_price();
+        this.discount_text = price.getDiscount_text();
+        setValue(quantity, price.getUnit(), extendedAttributes);
     }
 
     public void setValue(String quantity, Unit unit, ExtendedAttributes extendedAttributes) {

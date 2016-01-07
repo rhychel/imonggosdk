@@ -23,12 +23,16 @@ import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.tools.DialogTools;
+import net.nueca.imonggosdk.tools.DiscountTools;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +61,9 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("SAMPLESALES", "onCreate");
         super.onCreate(savedInstanceState);
 
-        Log.e("SAMPLESALES", "onCreate");
 
         /*try {
             Branch branch = getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", getSession().getCurrent_branch_id()).queryForFirst();
@@ -107,6 +111,25 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
         } catch (SQLException e) {
             e.printStackTrace();
         }*/
+
+        Log.e("SAMPLE SALES", "V V V V V V V V V V V V V V V V V V V V V V V V V");
+        Log.e("TEST Discount", "" + DiscountTools.applyDiscount(new BigDecimal("100"), new BigDecimal("1"), "5%,90,20%", ","));
+        try {
+            List<CustomerCustomerGroupAssoc> assocs = getHelper().fetchObjectsList(CustomerCustomerGroupAssoc.class);
+            for(CustomerCustomerGroupAssoc assoc : assocs)
+                Log.e("#######", assoc.toString());
+
+            //List<CustomerGroup> customerGroups = getHelper().fetchObjectsList(CustomerGroup.class);
+            //for(CustomerGroup customerGroup : customerGroups)
+            //    Log.e(">>>>>>>", customerGroup.toString());
+
+            //List<Price> prices = getHelper().fetchObjectsList(Price.class);
+            //for(Price price : prices)
+            //    Log.e("@@@@@@@", price.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        Log.e("SAMPLE SALES", "Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ");
 
         setContentView(R.layout.c_module);
 
@@ -263,7 +286,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             checkoutFragment.setSetupActionBar(this);
             checkoutFragment.setInvoice(new Invoice.Builder()
                     .invoice_lines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                            .getSelectedProductItems()))
+                            .getSelectedProductItems(), selectedCustomer))
                     .build());
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
@@ -280,6 +303,15 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             try {
                 salesAdapter.setBranch(getHelper().fetchObjects(Branch.class).queryBuilder().where()
                         .eq("id", getSession().getCurrent_branch_id()).queryForFirst());
+                if(selectedCustomer != null) {
+                    List<CustomerGroup> customerGroups = selectedCustomer.getCustomerGroups(getHelper());
+                    Log.e("CustomerGroup", "size " + customerGroups.size());
+                    if (customerGroups.size() > 0) {
+                        Log.e("CustomerGroup", customerGroups.get(0).toString());
+                        salesAdapter.setCustomerGroup(customerGroups.get(0));
+                    }
+                }
+
                 salesAdapter.setCustomer(selectedCustomer);
             } catch (SQLException e) {
                 e.printStackTrace();
