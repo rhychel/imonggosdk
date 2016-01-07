@@ -27,6 +27,13 @@ public class SelectedProductItem {
     private ValuesList valuesList = new ValuesList();
     private boolean isMultiline = false;
 
+    public SelectedProductItem() {
+    }
+
+    public SelectedProductItem(Product product) {
+        this.product = product;
+    }
+
     public Product getProduct() {
         return product;
     }

@@ -55,7 +55,7 @@ public class ModuleSettingTools {
         String[] modules = new String[concessioModules.length];
         int i = 0;
         for(ConcessioModule concessioModule : concessioModules)
-            modules[i++] = getModuleToString(concessioModule);
+            modules[i++] = concessioModule.toString();
         return modules;
     }
 

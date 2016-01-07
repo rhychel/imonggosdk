@@ -4,9 +4,13 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 
@@ -22,6 +26,23 @@ import java.util.List;
  */
 public class TransactionsAdapterHelper {
 
+    // Detailed offline data transaction type
+    public static String getTransactionType(ImonggoDBHelper2 dbHelper, OfflineData offlineData) {
+        if(offlineData.getType() == OfflineData.ORDER)
+            return "Order";
+        else if(offlineData.getType() == OfflineData.INVOICE)
+            return "Sales";
+        ConcessioModule concessioModule = offlineData.getObjectFromData(Document.class).getDocument_type_code().getConcessioModule();
+        try {
+            ModuleSetting moduleSetting = dbHelper.fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", concessioModule).queryForFirst();
+            if(moduleSetting != null)
+                return moduleSetting.getLabel();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Document";
+    }
+
     public static String getTransactionType(int type) {
         if(type == OfflineData.ORDER)
             return "Order";
@@ -30,16 +51,21 @@ public class TransactionsAdapterHelper {
         return "Document";
     }
 
-    public static int getStatus(OfflineData offlineData) {
+    public static int getStatus(OfflineData offlineData, boolean isDefault) {
         if(offlineData.isSynced()) {
+            if(isDefault) {
+                if (offlineData.isCancelled())
+                    return R.drawable.ic_cancel_black;
+                return R.drawable.ic_check_black;
+            }
             if(offlineData.isCancelled())
-                return R.drawable.ic_cancel_black;
-            return R.drawable.ic_check_black;
+                return R.drawable.ic_alert_red;
+            return R.drawable.ic_check_round_teal;
         }
-        if(offlineData.isSyncing())
+        if(offlineData.isSyncing() || offlineData.isQueued())
             return R.drawable.ic_sync_black;
-        if(offlineData.isQueued())
-            return R.drawable.ic_warning_black;
+//        if(offlineData.isQueued())
+//            return R.drawable.ic_sync_black;
         return R.drawable.ic_readytosync_black;
     }
 

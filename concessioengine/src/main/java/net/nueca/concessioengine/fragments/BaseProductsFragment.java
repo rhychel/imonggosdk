@@ -114,6 +114,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         try {
             Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
             whereProducts.isNull("status");
+            Log.e("includeSearchKey", includeSearchKey + "");
+            Log.e("includeCategory", includeCategory+"");
+            Log.e("filterProductsBy.size()", (filterProductsBy.size() > 0)+"");
+
             if(includeSearchKey)
                 whereProducts.and().like("searchKey", "%"+searchKey+"%");
             if(filterProductsBy.size() > 0)
@@ -132,6 +136,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        Log.e(getClass().getSimpleName(), "getProducts = "+products.size());
 
         return products;
     }
