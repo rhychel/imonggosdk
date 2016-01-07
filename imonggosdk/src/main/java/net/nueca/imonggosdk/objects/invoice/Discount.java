@@ -1,12 +1,11 @@
 package net.nueca.imonggosdk.objects.invoice;
 
-import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -14,19 +13,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 
 /**
  * Created by rhymart on 10/14/15.
  * imonggosdk2 (c)2015
  */
 @DatabaseTable
-public class Discount extends BaseTable {
+public class Discount extends BaseTable2 {
 
     private static final transient BigDecimal ONE_HUNDRED = new BigDecimal(100);
 
-    @Expose
-    @DatabaseField(generatedId=true)
-    private transient int id = 0;
     @DatabaseField
     private String discount_text = "", discount_description = "";
 
@@ -174,16 +171,28 @@ public class Discount extends BaseTable {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
-
+        try {
+            dbHelper.insert(Discount.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
-
+        try {
+            dbHelper.delete(Discount.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
-
+        try {
+            dbHelper.update(Discount.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

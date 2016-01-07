@@ -217,7 +217,7 @@ public class BaseLogin {
      *
      * @param server
      */
-    private void  requestForAccountUrl(final Server server) {
+    private void requestForAccountUrl(final Server server) {
         StringRequest stringRequestURL = new StringRequest(Request.Method.GET,
                 LoginTools.getAPIUrl(mContext, server, mAccountId), new Response.Listener<String>() {
             @Override
@@ -243,29 +243,33 @@ public class BaseLogin {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
 
-                if(volleyError != null) {
-                    Log.e("Jn-BaseLogin", "onErrorResponse : " + volleyError.toString() + "Status Code: " + volleyError.networkResponse.statusCode);
+                if (volleyError != null) {
                     // if account id is invalid
 
-                    if (volleyError.networkResponse.statusCode == 500 ||
-                            volleyError.networkResponse.statusCode == 501 ||
-                            volleyError.networkResponse.statusCode == 502 ||
-                            volleyError.networkResponse.statusCode == 503 ||
-                            volleyError.networkResponse.statusCode == 504 ||
-                            volleyError.networkResponse.statusCode == 505) {
-                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-                                mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID),
-                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mLoginListener.onPositiveButtonPressed();
-                                        // Execute Listener onStopLogin
-                                        if (mLoginListener != null) {
-                                            mLoginListener.onStopLogin();
+                    if (volleyError.networkResponse != null) {
+
+
+
+                        if (volleyError.networkResponse.statusCode == 500 ||
+                                volleyError.networkResponse.statusCode == 501 ||
+                                volleyError.networkResponse.statusCode == 502 ||
+                                volleyError.networkResponse.statusCode == 503 ||
+                                volleyError.networkResponse.statusCode == 504 ||
+                                volleyError.networkResponse.statusCode == 505) {
+                            DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                                    mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID),
+                                    mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mLoginListener.onPositiveButtonPressed();
+                                            // Execute Listener onStopLogin
+                                            if (mLoginListener != null) {
+                                                mLoginListener.onStopLogin();
+                                            }
                                         }
-                                    }
-                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                    }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                        }
                     } else {
 
                         DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
@@ -562,7 +566,7 @@ public class BaseLogin {
                                     public void onSuccess(Table table, RequestType requestType, Object response) {
                                         try {
                                             JSONObject concesio = null;
-                                            if(mUseObjectForConcessioSettings)
+                                            if (mUseObjectForConcessioSettings)
                                                 concesio = (JSONObject) response;
                                             else
                                                 concesio = ((JSONArray) response).getJSONObject(0);
@@ -571,18 +575,18 @@ public class BaseLogin {
                                                 ModuleSettingTools.deleteModuleSettings(mDBHelper);
 
                                                 Gson gson = new GsonBuilder().serializeNulls().create();
-                                                for(String key : Configurations.MODULE_KEYS) {
+                                                for (String key : Configurations.MODULE_KEYS) {
                                                     JSONObject module = concesio.getJSONObject(key);
                                                     ModuleSetting moduleSetting = gson.fromJson(module.toString(), ModuleSetting.class);
                                                     moduleSetting.setModule_type(key);
                                                     Log.e("Key", key);
-                                                    if(key.equals("app")) {
+                                                    if (key.equals("app")) {
                                                         moduleSetting.insertTo(mDBHelper);
 
                                                         // Product Sorting
                                                         JSONArray jsonArrSorting = module.getJSONArray("product_sorting");
                                                         BatchList<ProductSorting> productSortings = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
-                                                        for(int i = 0;i < jsonArrSorting.length();i++) {
+                                                        for (int i = 0; i < jsonArrSorting.length(); i++) {
                                                             ProductSorting productSorting = gson.fromJson(jsonArrSorting.getJSONObject(i).toString(), ProductSorting.class);
                                                             productSorting.setModuleSetting(moduleSetting);
                                                             productSortings.add(productSorting);
@@ -595,18 +599,16 @@ public class BaseLogin {
                                                         debugMode.insertTo(mDBHelper);
 
                                                         moduleSetting.setDebugMode(debugMode);
-                                                    }
-                                                    else if(key.equals("customers")) {
+                                                    } else if (key.equals("customers")) {
                                                         moduleSetting.insertTo(mDBHelper);
                                                         continue;
-                                                    }
-                                                    else {
+                                                    } else {
                                                         moduleSetting.insertTo(mDBHelper);
 
                                                         // Cutoff
                                                         BatchList<Cutoff> cutoffs = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
                                                         JSONArray jsonArrCutoff = module.getJSONArray("cutoff");
-                                                        for(int c = 0;c < jsonArrCutoff.length();c++) {
+                                                        for (int c = 0; c < jsonArrCutoff.length(); c++) {
                                                             Cutoff cutoff = gson.fromJson(jsonArrCutoff.getJSONObject(c).toString(), Cutoff.class);
                                                             cutoff.setModuleSetting(moduleSetting);
                                                             cutoffs.add(cutoff);

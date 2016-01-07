@@ -10,6 +10,7 @@ import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.invoice.Discount;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.Settings;
@@ -35,6 +36,7 @@ import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 
 /**
@@ -105,9 +107,13 @@ public enum Table {
     BRANCH_PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class),
     PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", PriceList.class),
     SALES_PROMOTIONS(API_TYPE.API, "Sales Promotions", SalesPromotion.class),
-    SALES_PROMOTIONS_DISCOUNT(API_TYPE.API, "Discount"),
-    SALES_PUSH(API_TYPE.API, "Sales Push"),
-    ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class);
+    SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS(API_TYPE.API, "Discount Details", Discount.class),
+    SALES_PROMOTIONS_POINTS_DETAILS(API_TYPE.API, "Points Details", Discount.class),
+    SALES_PROMOTIONS_SALES_PUSH(API_TYPE.API, "Sales Push", SalesPromotion.class),
+    SALES_PROMOTIONS_POINTS(API_TYPE.API, "Points", SalesPromotion.class),
+    SALES_PROMOTIONS_SALES_DISCOUNT(API_TYPE.API, "Sales Discount", SalesPromotion.class),
+    ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class),
+    ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlanDetail.class);
 
     private final API_TYPE api_type;
     private final String name;

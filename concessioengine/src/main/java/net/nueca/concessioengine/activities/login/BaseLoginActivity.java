@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -16,10 +16,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.dialogs.CustomDialog;
@@ -1032,6 +1028,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private void updateDownloadProgress(int position, int progress) {
         customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(position);
         customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(position, progress);
+        customDialogFrameLayout.scrollToPositionWithOffset(position, 2);
+        //customDialogFrameLayout.getChildAt(position).setBackgroundColor(Color.parseColor("#F3F3F3"));
     }
 
     @Override

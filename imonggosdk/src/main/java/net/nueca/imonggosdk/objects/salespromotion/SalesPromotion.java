@@ -157,6 +157,26 @@ public class SalesPromotion extends BaseTable {
         this.discounts = invoice_tax_rates;
     }
 
+    public String getSalesPromotionType() {
+        return salesPromotionType;
+    }
+
+    public void setDiscounts(List<Discount> discounts) {
+        this.discounts = discounts;
+    }
+
+    public ForeignCollection<Discount> getDiscounts_fc() {
+        return discounts_fc;
+    }
+
+    public void setDiscounts_fc(ForeignCollection<Discount> discounts_fc) {
+        this.discounts_fc = discounts_fc;
+    }
+
+    public void setSalesPromotionType(String salesPromotionType) {
+        this.salesPromotionType = salesPromotionType;
+    }
+
     public void insertDiscount(Discount discount) {
         discounts.add(discount);
     }
