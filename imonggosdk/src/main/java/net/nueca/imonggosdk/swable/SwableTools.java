@@ -12,11 +12,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.User;
@@ -60,6 +62,14 @@ public class SwableTools {
     public static boolean bindSwable(Activity activity, ImonggoSwableServiceConnection swableServiceConnection) {
         Intent service = new Intent(activity,ImonggoSwable.class);
         return activity.bindService(service, swableServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public static void unbindSwable(Activity activity, ImonggoSwableServiceConnection swableServiceConnection) {
+        try {
+            activity.unbindService(swableServiceConnection);
+        } catch (Exception e) {
+            Log.e("Oops!", e.getMessage());
+        }
     }
 
     public static boolean isImonggoSwableRunning(Context context) {
@@ -456,7 +466,9 @@ public class SwableTools {
             private OfflineData offlineData;
             private ImonggoDBHelper2 helper;
             private Integer branchId;
+            private String branchName;
             private String parameter = "";
+            private ConcessioModule concessioModule = ConcessioModule.NONE;
 
             SendTransaction(ImonggoDBHelper2 helper) {
                 this.helper = helper;
@@ -471,6 +483,17 @@ public class SwableTools {
 
             public SendTransaction forBranch(int branchId) {
                 this.branchId = branchId;
+                return this;
+            }
+
+            public SendTransaction forBranch(Branch branch) {
+                this.branchName = branch.getName();
+                this.branchId = branch.getId();
+                return this;
+            }
+
+            public SendTransaction fromModule(ConcessioModule concessioModule) {
+                this.concessioModule = concessioModule;
                 return this;
             }
 
@@ -499,6 +522,10 @@ public class SwableTools {
                 offlineData.setParameters(parameter);
                 if(branchId != null)
                     offlineData.setBranch_id(branchId);
+                if(branchName != null)
+                    offlineData.setBranchName(branchName);
+                if(concessioModule != ConcessioModule.NONE)
+                    offlineData.setConcessioModule(concessioModule);
 
                 switch (offlineData.getType()) {
                     case OfflineData.ORDER:
@@ -523,6 +550,8 @@ public class SwableTools {
                 offlineData.setParameters(parameter);
                 if(branchId != null)
                     offlineData.setBranch_id(branchId);
+                if(branchName != null)
+                    offlineData.setBranchName(branchName);
 
                 switch (offlineData.getType()) {
                     case OfflineData.ORDER:

@@ -1,36 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
     <android.support.v7.widget.Toolbar
         android:id="@+id/tbActionBar"
         android:layout_height="?attr/actionBarSize"
-        android:layout_width="match_parent"
         android:background="?attr/colorPrimary"
-        sothree:theme="@style/ActionBar"
-        android:elevation="3dp"
+        android:layout_width="match_parent"
+        android:elevation="8dp"
         android:theme="@style/ThemeOverlay.ActionBar.Concessio">
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/spBranches"
-            android:visibility="gone"/>
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/spTransactionType"
-            android:visibility="gone" />
+            android:id="@+id/spTypes"/>
     </android.support.v7.widget.Toolbar>
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:theme="@style/ThemeOverlay.ActionBar.Concessio">-->
+    <!--</android.support.design.widget.AppBarLayout>-->
 
     <android.support.v7.widget.RecyclerView
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/rvTransactions"
+        android:id="@+id/rvHistory"
         android:elevation="1dp"
         android:paddingBottom="100dp"
         android:clipToPadding="false"/>
@@ -39,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="No transactions"
+        android:text="No recent transactions"
         android:id="@+id/tvNoTransactions"
         android:gravity="center"
         android:layout_margin="50dp"

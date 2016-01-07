@@ -13,6 +13,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
 import net.nueca.imonggosdk.swable.SwableTools;
 
@@ -44,7 +45,7 @@ public class Order extends BaseTransactionTable2 {
     @Expose
     private List<OrderLine> order_lines;
 
-    @ForeignCollectionField
+    @ForeignCollectionField(orderColumnName = "line_no")
     private transient ForeignCollection<OrderLine> order_lines_fc;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")

@@ -61,6 +61,12 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         return getSelectedProductItem(product) != null;
     }
 
+    public SelectedProductItem initializeItem(Product product) {
+        if(hasSelectedProductItem(product))
+            return getSelectedProductItem(product);
+        return new SelectedProductItem(product);
+    }
+
     public SelectedProductItem getSelectedProductItem(Product product) {
         for(SelectedProductItem selectedProductItem : this)
             if (selectedProductItem.getProduct().getId() == product.getId())
