@@ -94,6 +94,7 @@ public class Configurations {
             // ----- FOR REBISCO
             //put(Table.BRANCH_UNITS, "branch_products");
             put(Table.BRANCH_PRODUCTS, "branch_products.json");
+            put(Table.BRANCH_PRODUCTS_PRICES, "branch_products.json");
             put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
             put(Table.PAYMENT_TERMS, "payment_terms.json");
             put(Table.CUSTOMER_CATEGORIES, "customer_categories.json");
@@ -146,6 +147,7 @@ public class Configurations {
             // ----- FOR REBISCO
             //put(Table.BRANCH_UNITS, "branch_products");
             put(Table.BRANCH_PRODUCTS, "branch_products.json");
+            put(Table.BRANCH_PRODUCTS_PRICES, "branch_products.json");
             put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
             put(Table.PAYMENT_TERMS, "payment_terms.json");
             put(Table.CUSTOMER_CATEGORIES, "customer_categories.json");

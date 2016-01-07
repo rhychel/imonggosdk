@@ -77,6 +77,22 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     private transient double unit_content_quantity = 0.0;
     private transient double unit_quantity = 0.0;
 
+
+    public Product() {
+
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "cost=" + cost +
+                ", retail_price=" + retail_price +
+                ", wholesale_price=" + wholesale_price +
+                ", wholesale_quantity=" + wholesale_quantity +
+                ", quantity='" + quantity + '\'' +
+                '}';
+    }
+
     @ForeignCollectionField
     private transient ForeignCollection<ProductTag> tags;
 
@@ -424,9 +440,12 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
         this.isBaseUnitSellable = isBaseUnitSellable;
     }
 
-    @Override
-    public String toString() {
-        return String.valueOf(id);
+    public Product(double cost, double retail_price, double wholesale_price, double wholesale_quantity, String quantity) {
+        this.cost = cost;
+        this.retail_price = retail_price;
+        this.wholesale_price = wholesale_price;
+        this.wholesale_quantity = wholesale_quantity;
+        this.quantity = quantity;
     }
 
     @Override

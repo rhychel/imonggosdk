@@ -13,7 +13,9 @@ import net.nueca.concessioengine.fragments.AddCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Discount;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
@@ -57,13 +59,28 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
         }
 
         try {
-            List<Discount> discounts = getHelper().fetchObjectsList(Discount.class);
+            List<CustomerGroup> discounts = getHelper().fetchObjectsList(CustomerGroup.class);
 
             if(discounts.size() == 0) {
-                Log.e(TAG, "Discount Size is 0 " );
+                Log.e(TAG, "CustomerGroup Size is 0 " );
             }
-            for (Discount rp : discounts) {
-                Log.e(TAG, "Discount: " + String.valueOf(rp.getId()));
+            for (CustomerGroup rp : discounts) {
+                Log.e(TAG, "CustomerGroup: " + String.valueOf(rp.getId()));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+
+        try {
+            List<CustomerCustomerGroupAssoc> discounts = getHelper().fetchObjectsList(CustomerCustomerGroupAssoc.class);
+
+            if(discounts.size() == 0) {
+                Log.e(TAG, "CustomerCustomerGroup Size is 0 " );
+            }
+            for (CustomerCustomerGroupAssoc rp : discounts) {
+                Log.e(TAG, "CustomerCustomerGroup: " + String.valueOf(rp.getId()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
