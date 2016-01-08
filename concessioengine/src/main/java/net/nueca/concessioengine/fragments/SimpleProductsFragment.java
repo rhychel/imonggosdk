@@ -146,25 +146,26 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             }
             productRecyclerViewAdapter.setHasSubtotal(hasSubtotal);
             productRecyclerViewAdapter.setListingType(listingType);
-            productRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClicked(View view, int position) {
-                    Product product = productRecyclerViewAdapter.getItem(position);
-                    if (multipleInput) {
-                        if (multiInputListener != null)
-                            multiInputListener.showInputScreen(product);
-                    } else {
-                        SelectedProductItem selectedProductItem = productRecyclerViewAdapter.getSelectedProductItems()
-                                .getSelectedProductItem(product);
-                        if (selectedProductItem == null) {
-                            selectedProductItem = new SelectedProductItem();
-                            selectedProductItem.setProduct(product);
-                            selectedProductItem.setInventory(product.getInventory()); // add the inventory object
+            if(!displayOnly)
+                productRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(View view, int position) {
+                        Product product = productRecyclerViewAdapter.getItem(position);
+                        if (multipleInput) {
+                            if (multiInputListener != null)
+                                multiInputListener.showInputScreen(product);
+                        } else {
+                            SelectedProductItem selectedProductItem = productRecyclerViewAdapter.getSelectedProductItems()
+                                    .getSelectedProductItem(product);
+                            if (selectedProductItem == null) {
+                                selectedProductItem = new SelectedProductItem();
+                                selectedProductItem.setProduct(product);
+                                selectedProductItem.setInventory(product.getInventory()); // add the inventory object
+                            }
+                            showQuantityDialog(position, product, selectedProductItem);
                         }
-                        showQuantityDialog(position, product, selectedProductItem);
                     }
-                }
-            });
+                });
             productRecyclerViewAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
                 @Override
                 public void onItemLongClicked(View view, int position) {
@@ -189,26 +190,27 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             lvProducts = (ListView) view.findViewById(R.id.lvProducts);
             productListAdapter = new SimpleProductListAdapter(getActivity(), getHelper(), getProducts());
             lvProducts.setAdapter(productListAdapter);
-            lvProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    Product product = productListAdapter.getItem(position);
-                    if (multipleInput) {
-                        if (multiInputListener != null)
-                            multiInputListener.showInputScreen(product);
-                    } else {
-                        SelectedProductItem selectedProductItem = productListAdapter.getSelectedProductItems().getSelectedProductItem(product);
+            if(!displayOnly)
+                lvProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                        Product product = productListAdapter.getItem(position);
+                        if (multipleInput) {
+                            if (multiInputListener != null)
+                                multiInputListener.showInputScreen(product);
+                        } else {
+                            SelectedProductItem selectedProductItem = productListAdapter.getSelectedProductItems().getSelectedProductItem(product);
 
-                        if (selectedProductItem == null) {
-                            selectedProductItem = new SelectedProductItem();
-                            selectedProductItem.setProduct(product);
-                            selectedProductItem.setInventory(product.getInventory()); // add the inventory object
+                            if (selectedProductItem == null) {
+                                selectedProductItem = new SelectedProductItem();
+                                selectedProductItem.setProduct(product);
+                                selectedProductItem.setInventory(product.getInventory()); // add the inventory object
+                            }
+
+                            showQuantityDialog(position, product, selectedProductItem);
                         }
-
-                        showQuantityDialog(position, product, selectedProductItem);
                     }
-                }
-            });
+                });
             lvProducts.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -225,6 +227,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
         if(!hasToolBar)
             tbActionBar.setVisibility(View.GONE);
+
+        if(productsFragmentListener != null)
+            productsFragmentListener.whenItemsSelectedUpdated();
 
         return view;
     }

@@ -46,7 +46,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             lockCategory = false,
             hasToolBar = true,
             hasSubtotal = false,
-            isFinalize = false;
+            isFinalize = false,
+            displayOnly = false;
     private int prevLast = -1;
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
@@ -271,5 +272,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setReason(DocumentPurpose reason) {
         this.reason = reason;
+    }
+
+    public void setDisplayOnly(boolean displayOnly) {
+        this.displayOnly = displayOnly;
     }
 }

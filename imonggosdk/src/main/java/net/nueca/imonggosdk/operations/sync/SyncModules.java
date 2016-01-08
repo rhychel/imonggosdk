@@ -1909,7 +1909,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             RoutePlan xRoutePlan = (RoutePlan) listOfIds.get(mCustomIndex);
 
                             for(int i=0; i<size; i++) {
-
                                 JSONObject routePlanDetailJsonObject = jsonArray.getJSONObject(i);
 
                                 RoutePlanDetail routePlanDetails = gson.fromJson(routePlanDetailJsonObject.toString(), RoutePlanDetail.class);

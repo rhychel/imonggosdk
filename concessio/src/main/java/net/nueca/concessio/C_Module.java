@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -142,6 +143,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         Log.e("showTransactionDetails", "called");
 
                         ProductsAdapterHelper.clearSelectedProductItemList();
+
                         try {
                             simpleTransactionDetailsFragment.setFilterProductsBy(processOfflineData(offlineData));
                         } catch (SQLException e) {
@@ -150,7 +152,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         referenceNumber = offlineData.getReference_no();
                         showTransactionDetails = true;
-                        llFooter.setVisibility(View.VISIBLE);
+                        simpleTransactionDetailsFragment.setOfflineData(offlineData);
 
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
@@ -237,14 +239,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
                 simpleProductsFragment.setShowCategoryOnStart(getModuleSetting().getProductListing().isShow_categories_on_start());
                 simpleProductsFragment.setProductsFragmentListener(this);
+                simpleProductsFragment.setHasSubtotal(true);
 
                 initializeFinalize();
+                finalizeFragment.setListingType(ListingType.SALES);
                 finalizeFragment.setHasCategories(false);
                 finalizeFragment.setHasBrand(false);
                 finalizeFragment.setHasDeliveryDate(false);
                 finalizeFragment.setHasUnits(true);
+                finalizeFragment.setHasSubtotal(true);
 
                 prepareFooter();
+                btn1.setOnClickListener(nextClickedListener);
 
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.flContent, simpleProductsFragment)
@@ -255,11 +261,22 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setProductCategories(getProductCategories(true));
                 simpleProductsFragment.setMultipleInput(true);
                 simpleProductsFragment.setMultiInputListener(multiInputListener);
+                simpleProductsFragment.setListingType(ListingType.SALES);
+                simpleProductsFragment.setDisplayOnly(true);
 
-                initializeFinalize();
-                finalizeFragment.setHasCategories(false);
-                finalizeFragment.setMultipleInput(true);
-                finalizeFragment.setMultiInputListener(multiInputListener);
+                llFooter.setVisibility(View.VISIBLE);
+                btn1.setText("PRINT INVENTORY");
+                btn1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DialogTools.showDialog(C_Module.this, "Print Inventory", "This should be printing...", "Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }, R.style.AppCompatDialogStyle_Light);
+                    }
+                });
+                tvItems.setVisibility(View.INVISIBLE);
 
                 getSupportFragmentManager().beginTransaction()
                     .add(R.id.flContent, simpleProductsFragment)
@@ -430,8 +447,52 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         btn2.setVisibility(View.VISIBLE);
                         int size = simpleTransactionDetailsFragment.numberOfItems();
                         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
-                        btn1.setText("VOID");
+                        if(simpleTransactionDetailsFragment.getOfflineData().isCancelled())
+                            btn1.setVisibility(View.GONE);
+                        else {
+                            btn1.setText("VOID");
+                            btn1.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    DialogTools.showConfirmationDialog(C_Module.this, "Void " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            new SwableTools.Transaction(getHelper())
+                                                    .toCancel()
+                                                    .withReason("VOID")
+                                                    .object(simpleTransactionDetailsFragment.getOfflineData())
+                                                    .queue();
+                                        }
+                                    }, "No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    }, R.style.AppCompatDialogStyle_Light);
+                                }
+                            });
+                        }
                         btn2.setText("DUPLICATE");
+                        btn2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DialogTools.showConfirmationDialog(C_Module.this, "Duplicate " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ProductsAdapterHelper.isDuplicating = true;
+                                        Intent intent = new Intent(C_Module.this, C_Module.class);
+                                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
+                                        startActivity(intent);
+                                    }
+                                }, "No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                }, R.style.AppCompatDialogStyle_Light);
+                            }
+                        });
+                        llFooter.setVisibility(View.VISIBLE);
                         getSupportActionBar().setTitle(referenceNumber);
                     }
                     else {
@@ -480,7 +541,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         super.onBackPressed();
         if(concessioModule == ConcessioModule.HISTORY)
             llFooter.setVisibility(View.GONE);
-        btn1.setText("REVIEW");
+//        btn1.setText("REVIEW");
         if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER)
             simpleInventoryFragment.refreshList();
         if(getModuleSetting() != null) {
@@ -665,13 +726,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     public void whenItemsSelectedUpdated() {
         int size = ProductsAdapterHelper.getSelectedProductItems().size();
         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
-        AnimationTools.toggleShowHide(llFooter, false, 300);
+        AnimationTools.toggleShowHide(llFooter, size == 0, 300);
     }
 
     @Override
     public void itemClicked(Customer customer) {
         Log.e("Customer Details", "Clicked!");
         Intent intent = new Intent(this, C_Module.class);
+        intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
         startActivity(intent);
     }
@@ -686,81 +748,149 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         @Override
         public void onClick(View v) {
             if(btn1.getText().toString().equals("SEND")) {
-                DialogTools.showSelectionDialog(C_Module.this,
-                        new ArrayAdapter<>(C_Module.this, R.layout.simple_listitem_single_choice, getBranches()),
-                        "Yes", new DialogTools.OnItemSelected<Branch>() {
-                            @Override
-                            public void itemChosen(final Branch branch) {
-                                final Branch warehouse = getWarehouse();
-                                if (warehouse == null && getModuleSetting().isRequire_warehouse())
-                                    DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.", R.style.AppCompatDialogStyle_Light);
-                                else {
-                                    DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            Gson gson = new GsonBuilder().serializeNulls().create();
-                                            Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
-                                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                                document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
+                if(getBranches().size() == 1) {
+                    final Branch branch = getBranches().get(0);
+                    DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Gson gson = new GsonBuilder().serializeNulls().create();
+                            Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
+                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
 //                                                document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
 
-                                                Extras extras = new Extras();
-                                                extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getId());
-                                                document.setExtras(extras);
-                                            }
-                                            try {
-                                                JSONObject jsonObject = new JSONObject(gson.toJson(document));
-                                                Log.e("jsonObject", jsonObject.toString());
-
-                                                updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
-                                                List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
-                                                for(Inventory inventory : inventoryList) {
-                                                    Log.e("Inventory", inventory.getProduct().getName()+" = "+inventory.getQuantity());
-                                                }
-
-                                                OfflineData offlineData = new SwableTools.Transaction(getHelper())
-                                                        .toSend()
-                                                        .forBranch(branch)
-                                                        .object(document)
-                                                        .fromModule(concessioModule)
-                                                        .queue();
-
-                                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
-                                                TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
-                                                transactionDialog.setTitle(concessioModule);
-                                                transactionDialog.setInStock(simpleDateFormat.format(offlineData.getDateCreated()));
-                                                transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
-                                                    @Override
-                                                    public void whenDismissed() {
-                                                        ProductsAdapterHelper.clearSelectedProductItemList();
-                                                        onBackPressed();
-                                                        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                                            llFooter.setVisibility(View.GONE);
-                                                            simpleCustomersFragment.setHasSelected(false);
-                                                            simpleCustomersFragment.onViewCreated(null, null);
-                                                            hasMenu = true;
-                                                            showsCustomer = true;
-
-                                                            Log.e("simple", "called customer fragment");
-                                                            getSupportFragmentManager()
-                                                                    .beginTransaction()
-                                                                    .replace(R.id.flContent, simpleCustomersFragment)
-                                                                    .commit();
-                                                        }
-                                                    }
-                                                });
-                                                transactionDialog.show();
-
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            } catch (SQLException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    }, "No", R.style.AppCompatDialogStyle_Light);
-                                }
+                                Extras extras = new Extras();
+                                extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getId());
+                                document.setExtras(extras);
                             }
-                        }, "No", R.style.AppCompatDialogStyle_Light);
+                            try {
+                                JSONObject jsonObject = new JSONObject(gson.toJson(document));
+                                Log.e("jsonObject", jsonObject.toString());
+
+                                updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
+                                List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
+                                for(Inventory inventory : inventoryList) {
+                                    Log.e("Inventory", inventory.getProduct().getName()+" = "+inventory.getQuantity());
+                                }
+
+                                OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                                        .toSend()
+                                        .forBranch(branch)
+                                        .object(document)
+                                        .fromModule(concessioModule)
+                                        .queue();
+
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
+                                TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                transactionDialog.setTitle(concessioModule);
+                                transactionDialog.setInStock(simpleDateFormat.format(offlineData.getDateCreated()));
+                                transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
+                                    @Override
+                                    public void whenDismissed() {
+                                        ProductsAdapterHelper.clearSelectedProductItemList();
+                                        onBackPressed();
+                                        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                            llFooter.setVisibility(View.GONE);
+                                            simpleCustomersFragment.setHasSelected(false);
+                                            simpleCustomersFragment.onViewCreated(null, null);
+                                            hasMenu = true;
+                                            showsCustomer = true;
+
+                                            Log.e("simple", "called customer fragment");
+                                            getSupportFragmentManager()
+                                                    .beginTransaction()
+                                                    .replace(R.id.flContent, simpleCustomersFragment)
+                                                    .commit();
+                                        }
+                                    }
+                                });
+                                transactionDialog.show();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, "No", R.style.AppCompatDialogStyle_Light);
+                }
+                else {
+                    DialogTools.showSelectionDialog(C_Module.this,
+                            new ArrayAdapter<>(C_Module.this, R.layout.simple_listitem_single_choice, getBranches()),
+                            "Yes", new DialogTools.OnItemSelected<Branch>() {
+                                @Override
+                                public void itemChosen(final Branch branch) {
+                                    final Branch warehouse = getWarehouse();
+                                    if (warehouse == null && getModuleSetting().isRequire_warehouse())
+                                        DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.", R.style.AppCompatDialogStyle_Light);
+                                    else {
+                                        DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                Gson gson = new GsonBuilder().serializeNulls().create();
+                                                Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
+                                                if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                                    document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
+//                                                document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
+
+                                                    Extras extras = new Extras();
+                                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getId());
+                                                    document.setExtras(extras);
+                                                }
+                                                try {
+                                                    JSONObject jsonObject = new JSONObject(gson.toJson(document));
+                                                    Log.e("jsonObject", jsonObject.toString());
+
+                                                    updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
+                                                    List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
+                                                    for (Inventory inventory : inventoryList) {
+                                                        Log.e("Inventory", inventory.getProduct().getName() + " = " + inventory.getQuantity());
+                                                    }
+
+                                                    OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                                                            .toSend()
+                                                            .forBranch(branch)
+                                                            .object(document)
+                                                            .fromModule(concessioModule)
+                                                            .queue();
+
+                                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
+                                                    TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                                    transactionDialog.setTitle(concessioModule);
+                                                    transactionDialog.setInStock(simpleDateFormat.format(offlineData.getDateCreated()));
+                                                    transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
+                                                        @Override
+                                                        public void whenDismissed() {
+                                                            ProductsAdapterHelper.clearSelectedProductItemList();
+                                                            onBackPressed();
+                                                            if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                                                llFooter.setVisibility(View.GONE);
+                                                                simpleCustomersFragment.setHasSelected(false);
+                                                                simpleCustomersFragment.onViewCreated(null, null);
+                                                                hasMenu = true;
+                                                                showsCustomer = true;
+
+                                                                Log.e("simple", "called customer fragment");
+                                                                getSupportFragmentManager()
+                                                                        .beginTransaction()
+                                                                        .replace(R.id.flContent, simpleCustomersFragment)
+                                                                        .commit();
+                                                            }
+                                                        }
+                                                    });
+                                                    transactionDialog.show();
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                } catch (SQLException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }, "No", R.style.AppCompatDialogStyle_Light);
+                                    }
+                                }
+                            }, "No", R.style.AppCompatDialogStyle_Light);
+                }
             }
             else {
                 if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())

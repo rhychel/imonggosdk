@@ -40,6 +40,7 @@ public class ProductsAdapterHelper {
     private static DocumentPurpose reason;
     private static SelectedProductItemList selectedProductItems = null;
     public static ImageLoaderListener imageLoaderListener = null;
+    public static boolean isDuplicating = false;
 
     public static ImageLoader getImageLoaderInstance(Context context) {
         return getImageLoaderInstance(context, false);
@@ -117,6 +118,8 @@ public class ProductsAdapterHelper {
     }
 
     public static void clearSelectedProductItemList() {
+        if(isDuplicating)
+            return;
         if(selectedProductItems != null)
             selectedProductItems.clear();
         selectedCustomer = null;

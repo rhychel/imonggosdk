@@ -68,6 +68,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     @Override
     protected void onDestroy() {
         ProductsAdapterHelper.clearSelectedProductItemList();
+        if(ProductsAdapterHelper.isDuplicating)
+            ProductsAdapterHelper.isDuplicating = false;
         super.onDestroy();
     }
 
