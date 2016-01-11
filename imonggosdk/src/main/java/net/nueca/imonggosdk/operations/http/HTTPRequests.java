@@ -319,6 +319,7 @@ public class HTTPRequests {
     public static JsonObjectRequest sendDELETERequest(Context context, final Session session,
                                                       final VolleyRequestListener volleyRequestListener, Server server,
                                                       final Table table, String id, String parameter) {
+        Log.e("URL >> VOIDING", ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, RequestType.DELETE);
 

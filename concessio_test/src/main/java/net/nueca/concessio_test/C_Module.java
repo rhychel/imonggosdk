@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -12,16 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
-import net.nueca.concessioengine.fragments.CheckoutFragment;
+import net.nueca.concessioengine.fragments.SimpleCheckoutFragment;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
@@ -31,31 +26,21 @@ import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.tools.InvoiceTools;
-import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.OfflineDataType;
-import net.nueca.imonggosdk.enums.RequestType;
-import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
-import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
-import net.nueca.imonggosdk.objects.price.Price;
-import net.nueca.imonggosdk.objects.price.PriceList;
-import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
 import org.json.JSONException;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Created by rhymart on 8/21/15.
@@ -75,7 +60,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     private SimplePulloutToolbarExt simplePulloutToolbarExt;
     private SimplePulloutRequestDialog simplePulloutRequestDialog;
 
-    private CheckoutFragment checkoutFragment;
+    private SimpleCheckoutFragment simpleCheckoutFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -444,16 +429,16 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                 } else {
                     btnReview.setText("Send");
 
-                    checkoutFragment = new CheckoutFragment();
-                    checkoutFragment.setSetupActionBar(C_Module.this);
-                    checkoutFragment.setInvoice(new Invoice.Builder()
+                    simpleCheckoutFragment = new SimpleCheckoutFragment();
+                    simpleCheckoutFragment.setSetupActionBar(C_Module.this);
+                    simpleCheckoutFragment.setInvoice(new Invoice.Builder()
                             .invoice_lines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                                    .getSelectedProductItems(), null))
+                                    .getSelectedProductItems()))
                             .build());
                     getSupportFragmentManager().beginTransaction()
                             .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
                                     R.anim.slide_in_left, R.anim.slide_out_right)
-                            .replace(R.id.flContent, checkoutFragment, "checkout")
+                            .replace(R.id.flContent, simpleCheckoutFragment, "checkout")
                             .addToBackStack("checkout")
                             .commit();
                 }

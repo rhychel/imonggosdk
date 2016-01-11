@@ -2,9 +2,12 @@ package net.nueca.concessioengine.objects;
 
 import android.util.Log;
 
+import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.NumberTools;
+
+import java.math.BigDecimal;
 
 /**
  * Created by rhymart on 7/13/15.
@@ -117,7 +120,9 @@ public class Values {
                 this.unit_name = unit.getName();
         }
 
-        this.subtotal = this.retail_price * Double.valueOf(quantity);
+        ///this.subtotal = this.retail_price * Double.valueOf(quantity);
+        this.subtotal = DiscountTools.applyMultipleDiscounts(new BigDecimal(this.retail_price),
+                new BigDecimal(Double.valueOf(quantity)),this.discount_text,",").doubleValue();
 
         Log.e("Unit", unit != null? unit.getName() : "null");
         Log.e("Values", "setValue : " + this.retail_price + " * " + quantity + " = " + this.subtotal);

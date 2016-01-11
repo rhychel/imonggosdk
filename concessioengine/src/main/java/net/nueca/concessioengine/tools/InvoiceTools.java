@@ -20,10 +20,16 @@ import java.util.List;
  */
 public class InvoiceTools {
     public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems) {
-        return generateInvoiceLines(selectedProductItems, null);
+        return generateInvoiceLines(selectedProductItems, (String) null);
     }
 
     public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems, Customer customer) {
+        if(customer != null)
+            return generateInvoiceLines(selectedProductItems, customer.getDiscount_text());
+        return generateInvoiceLines(selectedProductItems);
+    }
+
+    public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems, String customerDiscount) {
         List<InvoiceLine> invoiceLines = new ArrayList<>();
 
         for(SelectedProductItem selectedProductItem : selectedProductItems) {
@@ -34,9 +40,12 @@ public class InvoiceTools {
                 builder.product_id(product.getId());
 
                 String discount_text = itemValue.getDiscount_text();
-                if(discount_text != null && discount_text.length() != 0 && customer != null &&
-                        customer.getDiscount_text() != null && customer.getDiscount_text().length() != 0)
-                    discount_text += "," + customer.getDiscount_text();
+                if(customerDiscount != null && customerDiscount.length() != 0) {
+                    if (discount_text != null && discount_text.length() != 0)
+                        discount_text += "," + customerDiscount;
+                    else
+                        discount_text = customerDiscount;
+                }
                 builder.discount_text(discount_text);
 
                 builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).intValue());
@@ -56,7 +65,7 @@ public class InvoiceTools {
 
                 invoiceLines.add(builder.build());
                 Log.e("INVOICE", product.getName() + " " + t_subtotal.doubleValue() + " " + subtotal.doubleValue() + " ~ " + retail_price + " * " +
-                        itemValue.getQuantity() + " -- discount " + itemValue.getDiscount_text());
+                        itemValue.getQuantity() + " -- discount " + discount_text);
             }
         }
         return invoiceLines;

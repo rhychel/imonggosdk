@@ -81,27 +81,6 @@ public class Price extends BaseTable {
         this.discount_text = discount_text;
     }
 
-    public String getProductDiscount() {
-        if (!discount_text.contains(",")) {
-            if (discount_text.equals("0"))
-                return "";
-            return discount_text;
-        }
-
-        String[] discounts = discount_text.split(",");
-        return discounts[0].trim();
-    }
-    public String getCompanyDiscount() {
-        if (!discount_text.contains(",")) {
-            if (discount_text.equals("0"))
-                return "";
-            return discount_text;
-        }
-
-        String[] discounts = discount_text.split(",");
-        return discounts[1].trim();
-    }
-
     public String toJSONString() {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return gson.toJson(this);

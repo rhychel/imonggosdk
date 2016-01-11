@@ -1,6 +1,5 @@
 package net.nueca.concessio_test;
 
-import android.support.v4.widget.SearchViewCompat;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -13,28 +12,23 @@ import android.widget.Button;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.enums.ListingType;
-import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.fragments.CheckoutFragment;
+import net.nueca.concessioengine.fragments.SimpleCheckoutFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.tools.InvoiceTools;
-import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
-import net.nueca.imonggosdk.objects.price.Price;
-import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.tools.DialogTools;
-import net.nueca.imonggosdk.tools.DiscountTools;
+import net.nueca.concessioengine.tools.DiscountTools;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SampleSales extends ModuleActivity implements SetupActionBar, View.OnClickListener {
@@ -48,7 +42,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
     private static final String CUSTOMER_TITLE = "Select Customer";
 
     private SimpleProductsFragment simpleProductsFragment, finalizeFragment;
-    private CheckoutFragment checkoutFragment;
+    private SimpleCheckoutFragment simpleCheckoutFragment;
     private SimpleCustomersFragment customersFragment;
 
     private SimpleSalesProductRecyclerAdapter salesAdapter;
@@ -113,11 +107,11 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
         }*/
 
         Log.e("SAMPLE SALES", "V V V V V V V V V V V V V V V V V V V V V V V V V");
-        Log.e("TEST Discount", "" + DiscountTools.applyDiscount(new BigDecimal("100"), new BigDecimal("1"), "5%,90,20%", ","));
+        Log.e("TEST Discount", "" + DiscountTools.applyMultipleDiscounts(new BigDecimal("100"), new BigDecimal("1"), "5%,90,20%", ","));
         try {
-            List<CustomerCustomerGroupAssoc> assocs = getHelper().fetchObjectsList(CustomerCustomerGroupAssoc.class);
-            for(CustomerCustomerGroupAssoc assoc : assocs)
-                Log.e("#######", assoc.toString());
+            //List<CustomerCustomerGroupAssoc> assocs = getHelper().fetchObjectsList(CustomerCustomerGroupAssoc.class);
+            //for(CustomerCustomerGroupAssoc assoc : assocs)
+            //    Log.e("#######", assoc.toString());
 
             //List<CustomerGroup> customerGroups = getHelper().fetchObjectsList(CustomerGroup.class);
             //for(CustomerGroup customerGroup : customerGroups)
@@ -126,6 +120,13 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             //List<Price> prices = getHelper().fetchObjectsList(Price.class);
             //for(Price price : prices)
             //    Log.e("@@@@@@@", price.toString());
+
+            List<Product> t_products = getHelper().fetchObjectsList(Product.class).subList(0,2);
+            for(Product product : t_products)
+                Log.e("@@@@@@@ !!", product.toString());
+            List<Product> products = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", t_products.get(0).getId()).query();
+            for(Product product : products)
+                Log.e("@@@@@@@ **", product.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -266,6 +267,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
                 miSearch.setVisible(false);
 
                 btnReview.setText(CHECKOUT_LABEL);
+                Log.e("SELECTED ITEMS", ""+ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts().size());
                 finalizeFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
 
                 getSupportFragmentManager().beginTransaction()
@@ -282,16 +284,18 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             setTitle(CHECKOUT_TITLE);
             btnReview.setText(SEND_LABEL);
 
-            checkoutFragment = new CheckoutFragment();
-            checkoutFragment.setSetupActionBar(this);
-            checkoutFragment.setInvoice(new Invoice.Builder()
+            simpleCheckoutFragment = new SimpleCheckoutFragment();
+            simpleCheckoutFragment.setSetupActionBar(this);
+
+            Invoice.Builder invoiceBuilder = new Invoice.Builder()
                     .invoice_lines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                            .getSelectedProductItems(), selectedCustomer))
-                    .build());
+                            .getSelectedProductItems(), "10%"));
+
+            simpleCheckoutFragment.setInvoice(invoiceBuilder.build());
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
                             R.anim.slide_in_left, R.anim.slide_out_right)
-                    .replace(R.id.flContent, checkoutFragment, "checkout")
+                    .replace(R.id.flContent, simpleCheckoutFragment, "checkout")
                     .addToBackStack("checkout")
                     .commit();
         } else if(btnReview.getText().toString().equals(CUSTOMER_LABEL)) {
@@ -306,7 +310,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
                 if(selectedCustomer != null) {
                     List<CustomerGroup> customerGroups = selectedCustomer.getCustomerGroups(getHelper());
                     Log.e("CustomerGroup", "size " + customerGroups.size());
-                    if (customerGroups.size() > 0) {
+                    if (customerGroups.size() > 0 && customerGroups.get(0) != null) {
                         Log.e("CustomerGroup", customerGroups.get(0).toString());
                         salesAdapter.setCustomerGroup(customerGroups.get(0));
                     }
@@ -326,8 +330,8 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             btnReview.setText(REVIEW_LABEL);
         } else {
             Log.e(">>>", new Invoice.Builder()
-                    .payments(checkoutFragment.getPayments())
-                    .invoice_lines(checkoutFragment.getInvoiceLines())
+                    .payments(simpleCheckoutFragment.getPayments())
+                    .invoice_lines(simpleCheckoutFragment.getInvoiceLines())
                     .build()
                     .toString());
         }

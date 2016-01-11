@@ -143,15 +143,17 @@ public class DiscountTools {
                 discount_text.matches("-?\\d+(\\.(\\d+))?");
     }
 
-    public static BigDecimal applyDiscount(BigDecimal retail_price, BigDecimal qty, String discount_text, String separator) {
+    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, BigDecimal qty, String discount_text, String separator) {
+        if(discount_text == null || discount_text.length() == 0)
+            return retail_price.multiply(qty);
+
         List<String> discountStrs = Arrays.asList(discount_text.split(separator));
 
-        BigDecimal discountedPrice = BigDecimal.ZERO;
+        BigDecimal discountedPrice = retail_price;
         for(String discountStr : discountStrs) {
-            if(discountStrs.indexOf(discountStr) == 0)
-                discountedPrice = applyDiscount(retail_price, BigDecimal.ONE, discountStr);
-            else
-                discountedPrice = applyDiscount(discountedPrice, BigDecimal.ONE, discountStr);
+            if(!isValid(discountStr))
+                continue;
+            discountedPrice = applyDiscount(discountedPrice, BigDecimal.ONE, discountStr);
         }
         return discountedPrice.multiply(qty);
     }

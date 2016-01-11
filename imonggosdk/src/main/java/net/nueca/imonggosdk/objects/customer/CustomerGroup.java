@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects.customer;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -92,6 +94,11 @@ public class CustomerGroup extends BaseTable {
         for(CustomerCustomerGroupAssoc assoc : assocs)
             customers.add(assoc.getCustomer());
         return customers;
+    }
+
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
     }
 
     @Override

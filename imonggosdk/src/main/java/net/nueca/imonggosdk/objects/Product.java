@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -78,19 +80,16 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     private transient double unit_quantity = 0.0;
 
 
-    public Product() {
+    public Product() {}
 
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
     }
 
     @Override
     public String toString() {
-        return "Product{" +
-                "cost=" + cost +
-                ", retail_price=" + retail_price +
-                ", wholesale_price=" + wholesale_price +
-                ", wholesale_quantity=" + wholesale_quantity +
-                ", quantity='" + quantity + '\'' +
-                '}';
+        return toJSONString();
     }
 
     @ForeignCollectionField
