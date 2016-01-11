@@ -26,5 +26,7 @@ public enum Parameter {
     SALES_PROMOTION_ID,
     ID,
     UNITS,
-    SALESMAN_ID
+    SALESMAN_ID,
+    SALES_DISCOUNT,
+    SALES_POINTS,
 }

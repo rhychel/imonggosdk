@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.swable.ImonggoSwable;
+import net.nueca.imonggosdk.swable.SwableSendModule;
+import net.nueca.imonggosdk.swable.SwableTools;
 
 import java.util.List;
 
@@ -53,23 +56,26 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
 
         if(hasFilterByBranch) {
             spBranches.setVisibility(View.VISIBLE);
-            branchAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, branches);
+            branchAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_dark, branches);
+            branchAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
             spBranches.setAdapter(branchAdapter);
         }
         if(hasFilterByTransactionType) {
             spTransactionType.setVisibility(View.VISIBLE);
-            transactionTypeAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, transactionTypes);
+            transactionTypeAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_dark, transactionTypes);
+            transactionTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
             spTransactionType.setAdapter(transactionTypeAdapter);
         }
 
         if(useRecyclerView) {
             rvTransactions = (RecyclerView) view.findViewById(R.id.rvTransactions);
-            simpleTransactionRecyclerViewAdapter = new SimpleTransactionRecyclerViewAdapter(getActivity(), getTransactions());
+            simpleTransactionRecyclerViewAdapter = new SimpleTransactionRecyclerViewAdapter(getActivity(), getTransactions(), listingType);
+            simpleTransactionRecyclerViewAdapter.setDbHelper(getHelper());
             simpleTransactionRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClicked(View view, int position) {
                     if(transactionsListener != null)
-                        transactionsListener.showTransactionDetails(simpleTransactionListAdapter.getItem(position).getId());
+                        transactionsListener.showTransactionDetails(simpleTransactionRecyclerViewAdapter.getItem(position));
                 }
             });
 
@@ -86,7 +92,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                     if(transactionsListener != null)
-                        transactionsListener.showTransactionDetails(simpleTransactionListAdapter.getItem(position).getId());
+                        transactionsListener.showTransactionDetails(simpleTransactionListAdapter.getItem(position));
                 }
             });
 
@@ -123,13 +129,20 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     // *** THESE ARE FOR SWABLE ***
     @Override
     public void onSwableStarted() {
-
+        Log.e("onSwableStarted", "yeah");
     }
 
     @Override
     public void onQueued(OfflineData offlineData) {
+        Log.e("onQueued", "yeah");
         if(useRecyclerView) {
-
+            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            if(position > -1) {
+                simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
+                simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
+                simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
+                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+            }
         }
         else {
             int position = simpleTransactionListAdapter.getPosition(offlineData);
@@ -142,8 +155,15 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
 
     @Override
     public void onSyncing(OfflineData offlineData) {
+        Log.e("onSyncing", "yeah");
         if(useRecyclerView) {
-
+            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            if(position > -1) {
+                simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
+                simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
+                simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
+                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+            }
         }
         else {
             int position = simpleTransactionListAdapter.getPosition(offlineData);
@@ -156,8 +176,15 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
 
     @Override
     public void onSynced(OfflineData offlineData) {
+        Log.e("onSynced", "yeah");
         if(useRecyclerView) {
-
+            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            if (position > -1) {
+                simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
+                simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
+                simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
+                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+            }
         }
         else {
             int position = simpleTransactionListAdapter.getPosition(offlineData);
@@ -171,7 +198,17 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
 
     @Override
     public void onSyncProblem(OfflineData offlineData, boolean hasInternet, Object response, int responseCode) {
+        Log.e("onSyncProblem", "yeah");
+        if(useRecyclerView) {
+            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            if (position > -1) {
+                simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
+                simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
+                simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
 
+                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+            }
+        }
     }
 
     @Override
@@ -186,7 +223,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
 
     @Override
     public void onSwableStopping() {
-
+        Log.e("onSwableStopping", "yeah");
     }
 
 }

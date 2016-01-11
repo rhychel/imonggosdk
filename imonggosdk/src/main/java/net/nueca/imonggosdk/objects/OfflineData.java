@@ -10,6 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Table;
@@ -55,6 +56,9 @@ public class OfflineData extends BaseTable2 {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
     private Customer customerData;
+
+    @DatabaseField
+    private ConcessioModule concessioModule = ConcessioModule.NONE;
 	
 	@DatabaseField
 	private int type = 1;
@@ -569,6 +573,14 @@ public class OfflineData extends BaseTable2 {
         this.pagedRequestCount = pagedRequestCount;
     }
 
+    public ConcessioModule getConcessioModule() {
+        return concessioModule;
+    }
+
+    public void setConcessioModule(ConcessioModule concessioModule) {
+        this.concessioModule = concessioModule;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof OfflineData && id == ((OfflineData)o).getId();
@@ -787,6 +799,10 @@ public class OfflineData extends BaseTable2 {
             return customerData;
         else
             return null;
+    }
+
+    public <T> T getObjectFromData(Class<T> clazz) {
+        return (T) getObjectFromData();
     }
 
     public List<String> getReturnIdList() {

@@ -8,14 +8,12 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
 import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 
 import java.sql.SQLException;
 
@@ -38,6 +36,11 @@ public class Branch extends BaseTable {
     private transient ForeignCollection<TaxRate> taxRates;
     @ForeignCollectionField
     private transient ForeignCollection<PriceList> priceLists;
+//    @ForeignCollectionField
+//    @ForeignCollectionField
+//    private transient ForeignCollection<RoutePlan> routePlans;
+//    @ForeignCollectionField
+//    private transient ForeignCollection<BranchPrice> branchPrices;
     @ForeignCollectionField
     private transient ForeignCollection<BranchProduct> branchProducts;
     @ForeignCollectionField
@@ -147,6 +150,22 @@ public class Branch extends BaseTable {
     public void setPriceLists(ForeignCollection<PriceList> priceLists) {
         this.priceLists = priceLists;
     }
+//
+//    public ForeignCollection<RoutePlan> getRoutePlans() {
+//        return routePlans;
+//    }
+//
+//    public void setRoutePlans(ForeignCollection<RoutePlan> routePlans) {
+//        this.routePlans = routePlans;
+//    }
+//
+//    public ForeignCollection<BranchPrice> getBranchPrices() {
+//        return branchPrices;
+//    }
+//
+//    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
+//        this.branchPrices = branchPrices;
+//    }
 
     public ForeignCollection<BranchProduct> getBranchProducts() {
         return branchProducts;

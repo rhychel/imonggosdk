@@ -4,6 +4,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.customer.Customer;
 
@@ -13,7 +15,7 @@ import java.sql.SQLException;
  * Created by rhymart on 12/18/15.
  */
 @DatabaseTable
-public class RoutePlanDetail extends DBTable {
+public class RoutePlanDetail extends BaseTable2 {
     @DatabaseField
     private String frequency;
     @DatabaseField
@@ -70,6 +72,15 @@ public class RoutePlanDetail extends DBTable {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    @Override
+    public String toString() {
+        return "RoutePlanDetail{" +
+                "frequency='" + frequency + '\'' +
+                ", route_day='" + route_day + '\'' +
+                ", sequence=" + sequence +
+                '}';
     }
 
     @Override

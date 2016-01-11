@@ -83,10 +83,10 @@ public class Extras extends DBTable {
     private String last_checkin_at;
     @Expose
     @DatabaseField
-    private String salesman_id;
+    private String customer_category_id;
     @Expose
     @DatabaseField
-    private String category_id;
+    private String salesman_id;
 
     // Invoice
     @Expose
@@ -183,7 +183,7 @@ public class Extras extends DBTable {
     private transient Product product;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_fr_id")
     private transient Customer customer;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "category_id")
     private transient CustomerCategory customerCategory; // customer_type // (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private transient User user;
@@ -272,7 +272,7 @@ public class Extras extends DBTable {
         default_ordering_unit_id = builder.default_ordering_unit_id;
 
         salesman_id = builder.salesman_id;
-        category_id = builder.category_id;
+        customer_category_id = builder.category_id;
     }
 
     public int getIs_salesman() {
@@ -734,12 +734,12 @@ public class Extras extends DBTable {
         this.is_salesman = is_salesman;
     }
 
-    public String getCategory_id() {
-        return category_id;
+    public String getCustomer_category_id() {
+        return customer_category_id;
     }
 
-    public void setCategory_id(String category_id) {
-        this.category_id = category_id;
+    public void setCustomer_category_id(String customer_category_id) {
+        this.customer_category_id = customer_category_id;
     }
 
     @Override

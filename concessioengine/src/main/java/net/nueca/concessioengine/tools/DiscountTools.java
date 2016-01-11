@@ -1,10 +1,11 @@
-package net.nueca.imonggosdk.tools;
+package net.nueca.concessioengine.tools;
 
 import android.util.Log;
 
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;

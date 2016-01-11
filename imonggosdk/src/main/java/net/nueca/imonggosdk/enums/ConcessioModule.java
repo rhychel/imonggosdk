@@ -25,12 +25,18 @@ public enum ConcessioModule {
 
     HISTORY("history"),
     LAYAWAY("layaway"),
-    ROUTE_PLAN("route_plan");
+    ROUTE_PLAN("route_plan"),
+
+    NONE("none");
 
 
     private String name;
     ConcessioModule(String name) {
         this.name = name;
+    }
+
+    public ConcessioModule[] getValidTransaction() {
+        return new ConcessioModule[]{STOCK_REQUEST, PHYSICAL_COUNT, INVOICE, RECEIVE_BRANCH, RECEIVE_BRANCH_PULLOUT, RELEASE_BRANCH, RECEIVE_ADJUSTMENT, RELEASE_ADJUSTMENT, RECEIVE_SUPPLIER, RELEASE_SUPPLIER};
     }
 
     @Override

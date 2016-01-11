@@ -27,6 +27,7 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
 import net.nueca.concessioengine.dialogs.TransactionDialog;
 import net.nueca.concessioengine.fragments.BaseProductsFragment;
+import net.nueca.concessioengine.fragments.BaseTransactionsFragment;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomerDetailsFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
@@ -36,6 +37,8 @@ import net.nueca.concessioengine.fragments.SimplePulloutFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
 import net.nueca.concessioengine.fragments.SimpleRoutePlanFragment;
+import net.nueca.concessioengine.fragments.SimpleTransactionDetailsFragment;
+import net.nueca.concessioengine.fragments.SimpleTransactionsFragment;
 import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
@@ -52,6 +55,9 @@ import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
@@ -60,6 +66,7 @@ import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,6 +82,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
     private Toolbar toolbar;
     private boolean hasMenu = true, showsCustomer = false;
+
+    // for transaction details
+    private boolean showTransactionDetails = false;
+    private String referenceNumber = "";
+
+    private SimpleTransactionsFragment simpleTransactionsFragment;
+    private SimpleTransactionDetailsFragment simpleTransactionDetailsFragment;
 
     private SimpleReceiveFragment simpleReceiveFragment;
     private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
@@ -103,38 +117,57 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         llBalance = (LinearLayout) findViewById(R.id.llBalance);
         llFooter = (LinearLayout) findViewById(R.id.llFooter);
 
-/*
-        btnReview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Gson gson = new GsonBuilder().serializeNulls().create();
-                Document document = generateDocument(C_Module.this, 341, DocumentTypeCode.RELEASE_SUPPLIER);
-                Extras extras = new Extras();
-                extras.setCustomer_id(182076);
-                document.setExtras(extras);
-                try {
-                    JSONObject jsonObject = new JSONObject(gson.toJson(document));
-                    Log.e("jsonObject", jsonObject.toString());
-
-                    updateInventoryFromSelectedItemList(false);
-                    List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
-                    for(Inventory inventory : inventoryList) {
-                        Log.e("Inventory", inventory.getProduct().getName()+" = "+inventory.getQuantity());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }); //onClickSummary
-*/
         simpleProductsFragment = SimpleProductsFragment.newInstance();
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
 
         llFooter.setVisibility(View.GONE);
         switch (concessioModule) {
+            case HISTORY: {
+                simpleTransactionDetailsFragment = new SimpleTransactionDetailsFragment();
+                simpleTransactionDetailsFragment.setHelper(getHelper());
+                simpleTransactionDetailsFragment.setHasCategories(false);
+                simpleTransactionDetailsFragment.setSetupActionBar(this);
+
+                simpleTransactionsFragment = new SimpleTransactionsFragment();
+                simpleTransactionsFragment.setHelper(getHelper());
+                simpleTransactionsFragment.setSetupActionBar(this);
+                simpleTransactionsFragment.setHasFilterByTransactionType(true);
+                simpleTransactionsFragment.setTransactionTypes(getTransactionTypes());
+                simpleTransactionsFragment.setListingType(ListingType.DETAILED_HISTORY);
+                simpleTransactionsFragment.setTransactionsListener(new BaseTransactionsFragment.TransactionsListener() {
+
+                    @Override
+                    public void showTransactionDetails(OfflineData offlineData) {
+                        Log.e("showTransactionDetails", "called");
+
+                        ProductsAdapterHelper.clearSelectedProductItemList();
+                        try {
+                            simpleTransactionDetailsFragment.setFilterProductsBy(processOfflineData(offlineData));
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+
+                        referenceNumber = offlineData.getReference_no();
+                        showTransactionDetails = true;
+                        llFooter.setVisibility(View.VISIBLE);
+
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                                .add(R.id.flContent, simpleTransactionDetailsFragment, "transaction_details")
+                                .addToBackStack("transaction_details")
+                                .commit();
+
+                    }
+                });
+
+                SwableTools.bindSwable(this, new ImonggoSwableServiceConnection(simpleTransactionsFragment));
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.flContent, simpleTransactionsFragment)
+                        .commit();
+            } break;
             case ROUTE_PLAN: {
                 simpleRoutePlanFragment = new SimpleRoutePlanFragment();
                 simpleRoutePlanFragment.setHelper(getHelper());
@@ -389,7 +422,24 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     }
                 });
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
-                getSupportActionBar().setTitle("Review");
+                if(concessioModule != ConcessioModule.HISTORY)
+                    getSupportActionBar().setTitle("Review");
+                else {
+                    if(showTransactionDetails) {
+                        tvItems.setVisibility(View.VISIBLE);
+                        btn2.setVisibility(View.VISIBLE);
+                        int size = simpleTransactionDetailsFragment.numberOfItems();
+                        tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
+                        btn1.setText("VOID");
+                        btn2.setText("DUPLICATE");
+                        getSupportActionBar().setTitle(referenceNumber);
+                    }
+                    else {
+                        llFooter.setVisibility(View.GONE);
+                        hasMenu = true;
+                        getSupportActionBar().setDisplayShowTitleEnabled(false);
+                    }
+                }
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setHomeButtonEnabled(true);
                 getSupportActionBar().invalidateOptionsMenu();
@@ -410,6 +460,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     }
 
     @Override
+    protected void onDestroy() {
+        SwableTools.unbindSwable(this, new ImonggoSwableServiceConnection(simpleTransactionsFragment));
+        super.onDestroy();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (concessioModule == ConcessioModule.PHYSICAL_COUNT) {
@@ -422,6 +478,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        if(concessioModule == ConcessioModule.HISTORY)
+            llFooter.setVisibility(View.GONE);
         btn1.setText("REVIEW");
         if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER)
             simpleInventoryFragment.refreshList();
@@ -662,8 +720,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                                 OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                                         .toSend()
-                                                        .forBranch(branch.getId())
+                                                        .forBranch(branch)
                                                         .object(document)
+                                                        .fromModule(concessioModule)
                                                         .queue();
 
                                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");

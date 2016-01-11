@@ -13,7 +13,12 @@ import net.nueca.concessioengine.fragments.AddCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
+import net.nueca.imonggosdk.objects.invoice.Discount;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -31,6 +36,56 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
         super.onCreate(savedInstanceState);
         initComponents();
         Log.e(TAG, "Customers Activity");
+
+        try {
+            List<RoutePlan> routePlan = getHelper().fetchObjectsList(RoutePlan.class);
+
+            for (RoutePlan rp : routePlan) {
+                Log.e(TAG, "Route Plan: " + String.valueOf(rp.getId()));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            List<RoutePlanDetail> routePlan = getHelper().fetchObjectsList(RoutePlanDetail.class);
+
+            for (RoutePlanDetail rp : routePlan) {
+                Log.e(TAG, "RoutePlanDetail: " + String.valueOf(rp.getId()));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            List<CustomerGroup> discounts = getHelper().fetchObjectsList(CustomerGroup.class);
+
+            if(discounts.size() == 0) {
+                Log.e(TAG, "CustomerGroup Size is 0 " );
+            }
+            for (CustomerGroup rp : discounts) {
+                Log.e(TAG, "CustomerGroup: " + String.valueOf(rp.getId()));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+
+        try {
+            List<CustomerCustomerGroupAssoc> discounts = getHelper().fetchObjectsList(CustomerCustomerGroupAssoc.class);
+
+            if(discounts.size() == 0) {
+                Log.e(TAG, "CustomerCustomerGroup Size is 0 " );
+            }
+            for (CustomerCustomerGroupAssoc rp : discounts) {
+                Log.e(TAG, "CustomerCustomerGroup: " + String.valueOf(rp.getId()));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void initComponents() {
@@ -101,7 +156,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                         .commit();
                 break;
 
-            /*case net.nueca.concessioengine.R.id.mAddCustomerOkay:
+            case net.nueca.concessioengine.R.id.mSaveCustomer:
                 Log.e(TAG, "Add Customer");
 
                 if (addCustomersFragment != null) {
@@ -116,7 +171,6 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                     Log.e(TAG, "Fragment is Null!");
                 }
 
-                break;*/
             case net.nueca.concessioengine.R.id.mUnlink:
                 unlinkDevice();
                 break;

@@ -213,7 +213,9 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     }
 
     public String getCompany_name() {
-        return company_name;
+        if(company_name != null)
+            return company_name;
+        return "";
     }
 
     public void setCompany_name(String company_name) {
@@ -269,7 +271,9 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     }
 
     public String getTelephone() {
-        return telephone;
+        if(telephone != null)
+            return telephone;
+        return "";
     }
 
     public void setTelephone(String telephone) {
@@ -285,7 +289,9 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     }
 
     public String getMobile() {
-        return mobile;
+        if(mobile != null)
+            return mobile;
+        return "";
     }
 
     public void setMobile(String mobile) {

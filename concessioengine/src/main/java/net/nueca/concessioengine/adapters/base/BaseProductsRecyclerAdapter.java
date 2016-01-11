@@ -24,7 +24,7 @@ import java.util.List;
  */
 public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHolder> extends BaseRecyclerAdapter<T, Product> {
 
-    private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
+//    private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
     protected boolean hasSubtotal = false;
 
     public BaseProductsRecyclerAdapter(Context context) {
@@ -43,17 +43,17 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
     }
 
     public void clearSelectedItems() {
-        productsAdapterHelper.getSelectedProductItems().clear();
+        ProductsAdapterHelper.getSelectedProductItems().clear();
         ProductListTools.restartLineNo();
     }
 
     public SelectedProductItemList getSelectedProductItems() {
-        return productsAdapterHelper.getSelectedProductItems();
+        return ProductsAdapterHelper.getSelectedProductItems();
     }
 
-    protected ProductsAdapterHelper getAdapterHelper() {
-        return productsAdapterHelper;
-    }
+//    protected ProductsAdapterHelper getAdapterHelper() {
+//        return productsAdapterHelper;
+//    }
 
     public void setHasSubtotal(boolean hasSubtotal) {
         this.hasSubtotal = hasSubtotal;
