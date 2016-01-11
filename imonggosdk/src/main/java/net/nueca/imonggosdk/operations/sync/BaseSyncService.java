@@ -16,6 +16,7 @@ import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.invoice.Discount;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.TaxRate;
@@ -49,6 +50,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -76,6 +78,8 @@ public abstract class BaseSyncService extends ImonggoService {
     protected Table mCurrentTableSyncing;
     protected Server mServer;
     protected List<BranchUserAssoc> branchUserAssoc;
+    protected List<Integer> listOfPricelistIds;
+    protected List<Object> listPriceListStorage;
     protected List<? extends BaseTable> listOfIds;
     protected String from = "", to = "";
     protected String document_type;
@@ -277,6 +281,10 @@ public abstract class BaseSyncService extends ImonggoService {
                 BranchProduct branchProduct = (BranchProduct) o;
                 return getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("product_id", branchProduct.getProduct()).and().eq("branch_id", branchProduct.getBranch()).queryForFirst() != null;
             }
+/*            case BRANCH_UNITS: {
+                BranchUnit branchUnit = (BranchUnit) o;
+                return getHelper().fetchObjects(BranchUnit.class).queryBuilder().where().eq("unit_id", branchUnit.getUnit()).and().eq("branch_id", branchUnit.getBranch()).queryForFirst() != null;
+            }*/
             case SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS: {
                 Discount discount = (Discount) o;
                 return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("id", discount.getId()) != null;
