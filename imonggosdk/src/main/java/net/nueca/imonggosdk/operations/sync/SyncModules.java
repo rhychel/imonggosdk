@@ -589,15 +589,18 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
             //check if price lists is existing
             if (listOfPricelistIds != null) {
-                count = listOfPricelistIds.size();
+                if(listOfPricelistIds.size() != 0) {
+                    count = listOfPricelistIds.size();
+                    if (mCustomIndex != 0) {
+                        mCustomIndex++;
+                    }
+                    Log.e(TAG, "Added mCustomIndex: " + mCustomIndex);
 
-                if (mCustomIndex != 0) {
-                    mCustomIndex++;
+                    startSyncModuleContents(RequestType.API_CONTENT);
+                } else {
+                    Log.e(TAG, "There's no Price Lists... Downloading Next Module");
+                    syncNext();
                 }
-
-                Log.e(TAG, "Added mCustomIndex: " + mCustomIndex);
-
-                startSyncModuleContents(RequestType.API_CONTENT);
             } else {
                 Log.e(TAG, "There's no Price Lists... Downloading Next Module");
                 syncNext();
@@ -1568,6 +1571,20 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                         CustomerGroup xcustomerGroup = getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroupJSONObject.getInt("id")).queryForFirst();
                                                         CustomerGroup customerGroupNet = gson.fromJson(customerGroupJSONObject.toString(), CustomerGroup.class);
 
+                                                        if (customerGroupJSONObject.has("price_list_id")) {
+
+                                                            if (!jsonObject.isNull("price_list_id")) {
+                                                                int price_list_id = jsonObject.getInt("price_list_id");
+
+                                                                Log.e(TAG, "Price List ID: " + price_list_id);
+                                                                listOfPricelistIds.add(price_list_id);
+                                                            } else {
+                                                                Log.e(TAG, "Price List ID don't have value");
+                                                            }
+
+                                                        } else {
+                                                            Log.e(TAG, mCurrentTableSyncing + " API's CustomerGroup JSONObject field don't have field 'price_list_id'");
+                                                        }
 
                                                         if (initialSync || lastUpdatedAt == null) {
                                                             Log.e(TAG, "customerGroup is null, saving the data from net to db");

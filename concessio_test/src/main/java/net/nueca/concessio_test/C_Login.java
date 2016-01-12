@@ -43,15 +43,15 @@ public class C_Login extends LoginActivity {
                 Table.USERS_ME.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
                 Table.SETTINGS.ordinal(),
-                /*Table.PRODUCTS.ordinal(),
+                Table.PRODUCTS.ordinal(),
                 Table.UNITS.ordinal(),
                 Table.ROUTE_PLANS.ordinal(),
-                Table.ROUTE_PLANS_DETAILS.ordinal(),*/
+                Table.ROUTE_PLANS_DETAILS.ordinal(),
                 Table.CUSTOMER_CATEGORIES.ordinal(),
-                Table.CUSTOMER_BY_SALESMAN.ordinal()/*,
+                Table.CUSTOMER_BY_SALESMAN.ordinal(),
                 Table.BRANCH_PRODUCTS.ordinal(),
                 Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
-                Table.PRICE_LISTS_DETAILS.ordinal(),
+                Table.PRICE_LISTS_DETAILS.ordinal()/*,
                 Table.PAYMENT_TERMS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
                 Table.INVOICES.ordinal(),
@@ -73,7 +73,7 @@ public class C_Login extends LoginActivity {
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
         setEditTextAccountID("C5015");
-        setEditTextEmail("C5015@test.com");
-        setEditTextPassword("C5015");
+        setEditTextEmail("OSS1@test.com");
+        setEditTextPassword("OSS1");
     }
 }
