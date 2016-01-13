@@ -25,7 +25,7 @@ import java.util.List;
 public class SimpleCustomersFragment extends BaseCustomersFragment {
 
     public interface OnCustomerSelectedListener {
-        void onCustomerSelected(Customer customer);
+        void onCustomerSelected(Customer customer, int position);
     }
 
     private TextView tvNoCustomers;
@@ -102,7 +102,7 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
                     }
                     else {
                         if(onCustomerSelectedListener != null)
-                            onCustomerSelectedListener.onCustomerSelected(simpleCustomerRecyclerViewAdapter.getSelectedCustomers().get(0));
+                            onCustomerSelectedListener.onCustomerSelected(simpleCustomerRecyclerViewAdapter.getSelectedCustomers().get(0), position);
                         hasSelected = true;
                     }
                 }
@@ -132,6 +132,20 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
         }
 
         return view;
+    }
+
+    public void deselectCustomer(Customer customer) {
+        deselectCustomer(customer, -1);
+    }
+
+    public void deselectCustomer(Customer customer, int index) {
+        if(useRecyclerView) {
+            simpleCustomerRecyclerViewAdapter.removeCustomer(customer);
+            if(index > -1)
+                simpleCustomerRecyclerViewAdapter.notifyItemChanged(index);
+            else
+                simpleCustomerRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

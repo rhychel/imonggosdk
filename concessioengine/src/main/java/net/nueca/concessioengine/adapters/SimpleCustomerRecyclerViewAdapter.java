@@ -31,13 +31,6 @@ import java.util.List;
  */
 public class SimpleCustomerRecyclerViewAdapter extends
         BaseCustomersRecyclerAdapter<SimpleCustomerRecyclerViewAdapter.ListViewHolder> {
-    /**
-     * These are for the sticky header letter.
-     */
-    private int headerDisplay;
-    private boolean marginsFixed;
-    private static final int VIEW_TYPE_HEADER = 0x01;
-    private static final int VIEW_TYPE_CONTENT = 0x00;
 
     private int highlightColor;
     private int circleColor = Color.WHITE;
@@ -62,7 +55,7 @@ public class SimpleCustomerRecyclerViewAdapter extends
 
     @Override
     public void setListingType(ListingType listingType) {
-        super.  setListingType(listingType);
+        super.setListingType(listingType);
         if(listingType == ListingType.LETTER_HEADER) {
             headerDisplay = getContext().getResources().getInteger(R.integer.default_header_display);
             marginsFixed = getContext().getResources().getBoolean(R.bool.default_margins_fixed);
@@ -82,7 +75,6 @@ public class SimpleCustomerRecyclerViewAdapter extends
                 v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.simple_customer_listitem2, viewGroup, false);
         }
         //Log.e("onCreateViewHolder", "called");
-
         ListViewHolder lvh = new ListViewHolder(v);
         return lvh;
     }

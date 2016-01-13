@@ -1,4 +1,4 @@
-package net.nueca.imonggosdk.objects.document;
+package net.nueca.imonggosdk.objects.deprecated;
 
 import android.util.Log;
 
@@ -10,6 +10,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 
 import java.sql.SQLException;
 

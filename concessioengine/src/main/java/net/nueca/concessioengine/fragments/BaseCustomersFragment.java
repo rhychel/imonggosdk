@@ -80,7 +80,6 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
     }
 
     protected List<Customer> processCustomersForLetterHeader(List<Customer> newCustomers, Customer lastCustomer, int lastIndex) {
-
         ArrayList<Customer> finalCustomers = new ArrayList<>();
         String lastHeader = "";
         int sectionFirstPosition = 0;
@@ -98,7 +97,9 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
             else
                 name = customer.getFirst_name() + " " + customer.getLast_name();
             name = name.trim();
-            String header = name.substring(0, 1).toUpperCase();
+            String header = "";
+            if(!name.isEmpty())
+                header = name.substring(0, 1).toUpperCase();
 
             if(customer.isHeader() || customer.getSectionFirstPosition() > -1) {
                 sectionItemCount++;

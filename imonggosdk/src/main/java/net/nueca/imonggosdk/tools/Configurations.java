@@ -8,10 +8,11 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 
 public class Configurations {
-    public static final String CONCESSIO_JSON = "concesio";
+    public static final String CONCESSIO_JSON = "concessio";
     public static final String[] MODULE_KEYS = {"stock_request", "physical_count",
                                         "receive_branch", "receive_branch_pullout",
                                         "release_branch","invoice",
@@ -153,11 +154,17 @@ public class Configurations {
             put(Table.CUSTOMER_BY_SALESMAN, "customers");
             put(Table.PAYMENT_TYPES, "payment_types");
             put(Table.CUSTOMER_GROUPS, "customer_groups");
-            put(Table.PRICE_LISTS_FROM_CUSTOMERS, "price_lists");
             put(Table.PRICE_LISTS, "price_lists");
             put(Table.BRANCH_PRICE_LISTS, "price_lists");
             put(Table.PRICE_LISTS_DETAILS, "price_lists");
             put(Table.SALES_PROMOTIONS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_PUSH, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_POINTS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
+            put(Table.ROUTE_PLANS, "route_plans");
+            put(Table.ROUTE_PLANS_DETAILS, "route_plans");
             put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions");
             put(Table.SALES_PROMOTIONS_SALES_PUSH, "sales_promotions");
             put(Table.SALES_PROMOTIONS_SALES_DISCOUNT, "sales_promotions");

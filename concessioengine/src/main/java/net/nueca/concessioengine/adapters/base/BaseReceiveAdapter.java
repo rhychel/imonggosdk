@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
@@ -133,6 +134,7 @@ public abstract class BaseReceiveAdapter extends BaseAdapter<DocumentLine> {
                 extendedAttributes.setDelivery_date(documentLine.getExtras().getDelivery_date());
                 extendedAttributes.setBrand(documentLine.getExtras().getBrand());
             }
+            Log.e("BASE_RECEIVE_ADAPTER", "values.setValue(\"0\", unit, extendedAttributes)");
             values.setValue("0", unit, extendedAttributes);
 
             values.setLine_no(documentLine.getLine_no());

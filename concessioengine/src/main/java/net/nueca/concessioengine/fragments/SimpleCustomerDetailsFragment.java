@@ -33,6 +33,27 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        renderCustomerDetails(false);
+
+        simpleCustomerDetailsRecyclerViewAdapter = new SimpleCustomerDetailsRecyclerViewAdapter(getActivity(), customerDetails);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.simple_customer_details, container, false);
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        rvCustomers = (RecyclerView) view.findViewById(R.id.rvCustomerDetails);
+        tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
+
+        simpleCustomerDetailsRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvCustomers);
+        rvCustomers.setAdapter(simpleCustomerDetailsRecyclerViewAdapter);
+
+        return view;
+    }
+
+    public void renderCustomerDetails(boolean refreshList) {
+        customerDetails.clear();
         customerDetails.add(CustomerDetail.MOBILE_NO.setValue(customer.getMobile()));
         customerDetails.add(CustomerDetail.TEL_NO.setValue(customer.getTelephone()));
         customerDetails.add(CustomerDetail.COMPANY_NAME.setValue(customer.getCompany_name()));
@@ -50,23 +71,8 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
         customerDetails.add(CustomerDetail.SALES_ROUTE);
         customerDetails.add(CustomerDetail.DISCOUNT);
         customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS);
-
-        simpleCustomerDetailsRecyclerViewAdapter = new SimpleCustomerDetailsRecyclerViewAdapter(getActivity(), customerDetails);
-
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.simple_customer_details, container, false);
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
-        rvCustomers = (RecyclerView) view.findViewById(R.id.rvCustomerDetails);
-        tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
-
-        simpleCustomerDetailsRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvCustomers);
-        rvCustomers.setAdapter(simpleCustomerDetailsRecyclerViewAdapter);
-
-        return view;
+        if(refreshList)
+            simpleCustomerDetailsRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override

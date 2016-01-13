@@ -44,7 +44,7 @@
             android:name="net.nueca.concessio.C_Module"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Concessio.Light.NoActionBar"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize|adjustPan"/>
 
         <activity
             android:name="net.nueca.concessio.C_MultiInput"
@@ -62,9 +62,14 @@
             android:theme="@style/AppTheme.Concessio.Light.NoActionBar"/>
 
         <activity
-            android:name="net.nueca.concessioengine.activities.AddCustomerActivity"
+            android:name="net.nueca.concessioengine.activities.AddEditCustomerActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Concessio.Light.NoActionBar.Form"/>
+
+        <activity
+            android:name="net.nueca.concessioengine.activities.SettingsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Concessio.Light.NoActionBar"/>
 
         <!-- Services -->
         <service android:name="net.nueca.imonggosdk.swable.ImonggoSwable"

@@ -53,7 +53,8 @@ public class SelectedProductItem {
      */
     public int addValues(Values value) {
         int index = valuesList.indexOf(value);
-        value.setRetail_price(getRetail_price());
+        if(value.getRetail_price() == null)
+            value.setRetail_price(getRetail_price());
         //Log.e(TAG, "index: " + index + " valuesList: " + value.toString());
         if(index > -1) {
             setValues(index, value);
@@ -114,6 +115,7 @@ public class SelectedProductItem {
     }
 
     public void setValues(int position, Values values) {
+        //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, Values values)");
         if(values.getRetail_price() != null) {
             this.valuesList.get(position).setValue(values.getQuantity(), values.getUnit(), values.getRetail_price());
             this.valuesList.get(position).setExtendedAttributes(values.getExtendedAttributes());
@@ -124,19 +126,25 @@ public class SelectedProductItem {
     }
 
     public void setValues(int position, String quantity, Unit unit) {
+        //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, String quantity, Unit unit)");
         this.valuesList.get(position).setValue(quantity, unit);
         setValues();
     }
     public void setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes) {
+        //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes)");
         this.valuesList.get(position).setValue(quantity, unit, extendedAttributes);
         setValues();
     }
     public void setValues(int position, String quantity, Unit unit, double retail_price) {
+        //Log.e("SELECTED_PRODUCT_ITEM", "setValues(position="+position+", quantity="+quantity+", unit="+(unit!=null?unit.getName():"null")+", " +
+        //        "retail_price="+retail_price+")");
         this.valuesList.get(position).setValue(quantity, unit, retail_price);
         setValues();
     }
 
     public void setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes, double retail_price) {
+        //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes, double " +
+        //        "retail_price)");
         this.valuesList.get(position).setValue(quantity, unit, retail_price);
         this.valuesList.get(position).setExtendedAttributes(extendedAttributes);
         setValues();
