@@ -1146,16 +1146,121 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             }
                             break;
                         case BRANCH_PRODUCTS:
+                            BatchList<BranchProduct> newBranchProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<BranchProduct> updateBranchProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                            BatchList<BranchProduct> deleteBranchProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
-                            updateNext(requestType, size);
-                            break;
+
+                            if(size == 0) {
+                                syncNext();
+                                return;
+                            } else {
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                                    int current_branch_id = getSession().getCurrent_branch_id();
+
+                                    BranchProduct branchProduct;
+                                    Branch branch = null;
+                                    Product product = null;
+
+                                    Log.e(TAG, "---");
+                                    // Branch
+                                    if(current_branch_id != -1) {
+                                        branch = getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", current_branch_id).queryForFirst();
+                                    } else {
+                                        Log.e(TAG, "Session don't have the current branch id");
+                                    }
+
+                                    // Product
+                                    if(jsonObject.has("id")) {
+                                        if (!jsonObject.getString("id").isEmpty()) {
+                                            int product_id = jsonObject.getInt("id");
+                                            product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product_id).queryForFirst();
+                                        } else {
+                                            Log.e(TAG, "'id' field from " + mCurrentTableSyncing + " API is empty");
+                                        }
+                                    } else {
+                                        Log.e(TAG, mCurrentTableSyncing + "API don't have 'id' field");
+                                    }
+
+                                    if(branch != null || product != null) {
+                                        branchProduct = new BranchProduct(product, branch);
+
+                                        // Name
+                                        if (jsonObject.has("name")) {
+                                            if (!jsonObject.getString("name").isEmpty()) {
+                                                Log.e(TAG, jsonObject.getString("name"));
+                                                branchProduct.setName(jsonObject.getString("name"));
+                                            } else {
+                                                Log.e(TAG, "Branch Product API 'name' field is empty");
+                                            }
+                                        } else {
+                                            Log.e(TAG, mCurrentTableSyncing + " API don't have 'name' 'field");
+                                        }
+
+                                        // Description
+                                        if (jsonObject.has("description")) {
+                                            if (!jsonObject.getString("description").isEmpty()) {
+                                                Log.e(TAG, jsonObject.getString("description"));
+                                                branchProduct.setDescription(jsonObject.getString("description"));
+                                            } else {
+                                                Log.e(TAG, "Branch Product API 'description' field is empty");
+                                            }
+                                        } else {
+                                            Log.e(TAG, mCurrentTableSyncing + " API don't have description 'field");
+                                        }
+
+                                        // Retail Price
+                                        if (jsonObject.has("retail_price")) {
+                                            if (!jsonObject.getString("retail_price").isEmpty()) {
+                                                Log.e(TAG, jsonObject.getString("retail_price"));
+                                                branchProduct.setRetail_price(jsonObject.getDouble("retail_price"));
+                                            } else {
+                                                Log.e(TAG, "Branch Product API 'retail_price' field is empty");
+                                            }
+                                        } else {
+                                            Log.e(TAG, mCurrentTableSyncing + " API don't have retail_price 'field");
+                                        }
+
+                                        // is Base unit
+                                        if (jsonObject.has("unit_id")) {
+                                            if (jsonObject.getString("unit_id").isEmpty() || !jsonObject.get("unit_id").equals(null)) {
+                                                Log.e(TAG, "Branch Product API 'unit_id' field is empty or null");
+                                                branchProduct.setIsBaseUnitSellable(true);
+                                            }
+                                        } else {
+                                            branchProduct.setIsBaseUnitSellable(true);
+                                            Log.e(TAG, mCurrentTableSyncing + " API don't have 'unit_id' field");
+                                        }
+
+                                        Log.e(TAG, "---");
+
+                                        if (initialSync || lastUpdatedAt == null) {
+                                            newBranchProducts.add(branchProduct);
+                                        } else {
+                                            if (isExisting(product, Table.PRODUCTS)) {
+                                              updateBranchProducts.add(branchProduct);
+                                            } else {
+                                              newBranchProducts.add(branchProduct);
+                                            }
+                                        }
+                                    } else {
+                                        Log.e(TAG, "Can't create Branch Product Object! missing data");
+                                    }
+                                }
+
+                                newBranchProducts.doOperation(BranchProduct.class);
+                                updateBranchProducts.doOperation(BranchProduct.class);
+                                deleteBranchProducts.doOperation(BranchProduct.class);
+
+                                updateNext(requestType, size);
+                                break;
+                            }
                         case PRODUCTS:
                             BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
                             BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-
-                            BatchList<BranchProduct> newBranchProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                            BatchList<BranchProduct> updateBranchProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
                             Log.e(TAG, "Syncing Page " + page);
                             if (size == 0) {
@@ -1306,13 +1411,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 updateProducts.doOperationBT(Product.class);
                                 deleteProducts.doOperationBT(Product.class);
 
-                                newBranchProducts.doOperationBT(Product.class);
-                                updateBranchProducts.doOperationBT(Product.class);
-
                                 updateNext(requestType, size);
                             }
                             break;
-                        //case BRANCH_UNITS:
                         case UNITS:
                             if (size == 0) {
                                 syncNext();
