@@ -251,7 +251,7 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case PRICE_LISTS: {
                 PriceList priceList = (PriceList) o;
-                return getHelper().fetchObjects(InvoicePurpose.class).queryBuilder().where().eq("id", priceList.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(PriceList.class).queryBuilder().where().eq("id", priceList.getId()).queryForFirst() != null;
             }
             case CUSTOMER_GROUPS: {
                 CustomerGroup customerGroup = (CustomerGroup) o;

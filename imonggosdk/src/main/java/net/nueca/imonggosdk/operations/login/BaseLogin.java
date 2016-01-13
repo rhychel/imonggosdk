@@ -729,17 +729,6 @@ public class BaseLogin {
                                         mLoginListener.onPositiveButtonPressed();
                                     }
                                 }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-
-//                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.error_dialog_title_requires_premium_subscription),
-//                            mContext.getString(R.string.error_dialog_message_requires_premium_subscription),
-//                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-//                            new MaterialDialog.SingleButtonCallback() {
-//                                @Override
-//                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-//                                    materialDialog.dismiss();
-//                                    mLoginListener.onPositiveButtonPressed();
-//                                }
-//                            }, null, null);
                     } else {
                         DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                                 mContext.getString(R.string.LOGIN_NETWORK_ERROR),

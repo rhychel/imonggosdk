@@ -71,8 +71,6 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
             e.printStackTrace();
         }
 
-
-
         try {
             List<CustomerCustomerGroupAssoc> discounts = getHelper().fetchObjectsList(CustomerCustomerGroupAssoc.class);
 
