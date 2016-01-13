@@ -68,4 +68,11 @@ public class SimpleTransactionListAdapter extends BaseTransactionsAdapter {
         return convertView;
     }
 
+    @Override
+    public boolean updateList(List<OfflineData> offlineDatas) {
+        clear();
+        addAll(offlineDatas);
+        notifyDataSetChanged();
+        return getCount() > 0;
+    }
 }

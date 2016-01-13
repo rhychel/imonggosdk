@@ -17,7 +17,9 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleTransactionListAdapter;
 import net.nueca.concessioengine.adapters.SimpleTransactionRecyclerViewAdapter;
+import net.nueca.concessioengine.adapters.TransactionTypesAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.swable.ImonggoSwable;
@@ -46,7 +48,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     private SimpleTransactionRecyclerViewAdapter simpleTransactionRecyclerViewAdapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(useRecyclerView ? R.layout.simple_transactions_fragment_rv : R.layout.simple_transactions_fragment_lv, container, false);
 
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
@@ -62,9 +64,23 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
         }
         if(hasFilterByTransactionType) {
             spTransactionType.setVisibility(View.VISIBLE);
-            transactionTypeAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_dark, transactionTypes);
-            transactionTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
+            transactionTypeAdapter = new TransactionTypesAdapter(getActivity(), R.layout.spinner_item_dark, transactionTypes);
+            transactionTypeAdapter.setDropdownLayout(R.layout.spinner_dropdown_item_list_light);
+//            transactionTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
             spTransactionType.setAdapter(transactionTypeAdapter);
+            spTransactionType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    concessioModule = transactionTypeAdapter.getItem(position);
+                    simpleTransactionRecyclerViewAdapter.updateList(getTransactions());
+
+                    toggleNoItems("No transactions"+(concessioModule == ConcessioModule.ALL ? "" : " for "+concessioModule.getLabel()),
+                            (simpleTransactionRecyclerViewAdapter.getItemCount() > 0));
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) { }
+            });
         }
 
         if(useRecyclerView) {
@@ -224,6 +240,17 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     @Override
     public void onSwableStopping() {
         Log.e("onSwableStopping", "yeah");
+    }
+
+    public void updateListWhenSearch(String searchKey) {
+        setSearchKey(searchKey);
+
+        if(simpleTransactionRecyclerViewAdapter != null)
+            Log.e("productRecyclerViewAd", "is not null");
+        if(useRecyclerView)
+            toggleNoItems("No results for \"" + searchKey + "\".", simpleTransactionRecyclerViewAdapter.updateList(getTransactions()));
+        else
+            toggleNoItems("No results for \"" + searchKey + "\".", simpleTransactionListAdapter.updateList(getTransactions()));
     }
 
 }

@@ -51,18 +51,24 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     private ModuleSetting moduleSetting;
     protected Customer customer;
 
+    protected int previousFragmentCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         concessioModule = ConcessioModule.values()[getIntent().getIntExtra(CONCESSIO_MODULE, ConcessioModule.STOCK_REQUEST.ordinal())];
         isFromCustomersList = getIntent().getBooleanExtra(FROM_CUSTOMERS_LIST, false);
-        if(getIntent().hasExtra(FOR_CUSTOMER_DETAIL)) {
-            try {
-                customer = getHelper().fetchIntId(Customer.class).queryBuilder().where().eq("id", getIntent().getIntExtra(FOR_CUSTOMER_DETAIL, 0)).queryForFirst();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        if(getIntent().hasExtra(FOR_CUSTOMER_DETAIL))
+            customer = retrieveCustomer(getIntent().getIntExtra(FOR_CUSTOMER_DETAIL, 0));
+    }
+
+    protected Customer retrieveCustomer(int customerId) {
+        try {
+            return getHelper().fetchIntId(Customer.class).queryBuilder().where().eq("id", customerId).queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     @Override
@@ -91,7 +97,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return null;
     }
 
-    public List<String> getTransactionTypes() {
+    public List<ConcessioModule> getTransactionTypes() {
         return getTransactionTypes(true);
     }
     protected SearchViewEx mSearch;
@@ -136,10 +142,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * @param includeAll Include an 'All' filter.
      * @return List of transaction types
      */
-    public List<String> getTransactionTypes(boolean includeAll) {
-        List<String> transactionTypes = new ArrayList<>();
+    public List<ConcessioModule> getTransactionTypes(boolean includeAll) {
+        List<ConcessioModule> transactionTypes = new ArrayList<>();
         if(includeAll)
-            transactionTypes.add("All Transactions");
+            transactionTypes.add(ConcessioModule.ALL);
 
         try {
             List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
@@ -151,7 +157,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
             for(ModuleSetting moduleSetting : moduleSettings) {
                 if(moduleSetting.is_enabled())
-                    transactionTypes.add(moduleSetting.getLabel());
+                    transactionTypes.add(moduleSetting.getModuleType().setLabel(moduleSetting.getLabel()));
             }
 
         } catch (SQLException e) {
@@ -440,6 +446,16 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         }
 
         return productList;
+    }
+
+    /**
+     * Used for the back stack feature of fragments
+     * @return
+     */
+    protected boolean isBackPressed() {
+        boolean isBackPressed = getSupportFragmentManager().getBackStackEntryCount() < previousFragmentCount;
+        previousFragmentCount = getSupportFragmentManager().getBackStackEntryCount();
+        return isBackPressed;
     }
 
 }

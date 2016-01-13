@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 
 public class Configurations {
-    public static final String CONCESSIO_JSON = "concesio";
+    public static final String CONCESSIO_JSON = "concessio";
     public static final String[] MODULE_KEYS = {"stock_request", "physical_count",
                                         "receive_branch", "receive_branch_pullout",
                                         "release_branch","invoice",

@@ -26,6 +26,7 @@ public class ImonggoAppCompatActivity extends AppCompatActivity {
     protected static final int ERROR = 20;
 
     protected static final int ADD_CUSTOMER = 100;
+    protected static final int EDIT_CUSTOMER = 101;
 
     private ImonggoDBHelper2 dbHelper2;
 

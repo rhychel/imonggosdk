@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleRoutePlanRecyclerViewAdapter;
@@ -42,6 +43,7 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
     private RecyclerView rvRoutePlan;
     private Toolbar tbActionBar;
     private Spinner spDays;
+    private TextView tvNoRoutes;
 
     private SimpleRoutePlanRecyclerViewAdapter simpleRoutePlanRecyclerViewAdapter;
     private ArrayAdapter<Day> daysAdapter;
@@ -58,6 +60,10 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
     }};
     private ArrayList<Customer> routes = new ArrayList<>();
 
+    private int currentDayOfWeek = 0;
+    private int todayPosition = 0;
+    private String searchKey = "";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,12 +75,13 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.simple_route_plan_fragment_rv, container, false);
 
         rvRoutePlan = (RecyclerView) view.findViewById(R.id.rvRoutePlan);
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         spDays = (Spinner) view.findViewById(R.id.spDays);
+        tvNoRoutes = (TextView) view.findViewById(R.id.tvNoRoutes);
 
         simpleRoutePlanRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvRoutePlan);
         simpleRoutePlanRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
@@ -89,30 +96,52 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
         spDays.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-                renderRoutePlan(days.get(position).getDayOfWeek());
-                simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
+                currentDayOfWeek = days.get(position).getDayOfWeek();
+//                renderRoutePlan(currentDayOfWeek);
+//                simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
+                boolean shouldShow = simpleRoutePlanRecyclerViewAdapter.updateList(renderRoutePlan(currentDayOfWeek));
+                Log.e("shouldShow", shouldShow+"");
+                toggleNoItems(todayPosition == position ? "No customers today." : "No customers this "+days.get(position).getFullname()+".", shouldShow);
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
-        int position = days.indexOf(new Day(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)));
-        spDays.setSelection(position);
+        todayPosition = days.indexOf(new Day(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)));
+        spDays.setSelection(todayPosition);
 
         return view;
     }
 
-    private void renderRoutePlan(int dayOfWeek) {
-        routes.clear();
+    public void updateListWhenSearch(String searchKey) {
+        setSearchKey(searchKey);
+        toggleNoItems("No results for \"" + searchKey + "\".",
+                simpleRoutePlanRecyclerViewAdapter.updateList(renderRoutePlan(currentDayOfWeek)));
+    }
+
+
+    protected void toggleNoItems(String msg, boolean show) {
+        rvRoutePlan.setVisibility(show ? View.VISIBLE : View.GONE);
+        tvNoRoutes.setVisibility(show ? View.GONE : View.VISIBLE);
+        tvNoRoutes.setText(msg);
+    }
+
+    private List<Customer> renderRoutePlan(int dayOfWeek) {
+        List<Customer> routes = new ArrayList<>();
         Day day = days.get(days.indexOf(new Day(dayOfWeek)));
         try {
             RoutePlan routePlan = getHelper().fetchIntId(RoutePlan.class).queryBuilder().where().isNull("status").and().eq("user_id", getSession().getUser()).queryForFirst();
+            if(routePlan == null)
+                return routes;
             List<RoutePlanDetail> routePlanDetails = getHelper().fetchForeignCollection(routePlan.getRoutePlanDetails().closeableIterator());
             for(RoutePlanDetail routePlanDetail : routePlanDetails) {
                 if(!day.getShortname().equals(routePlanDetail.getRoute_day()))
                     continue;
-
+                if(!searchKey.trim().isEmpty() && !routePlanDetail.getCustomer().generateFullName().contains(searchKey)) {
+                    Log.e("searchKey", searchKey+"----");
+                    continue;
+                }
                 routes.add(routePlanDetail.getCustomer());
                 Log.e("frequency", routePlanDetail.getFrequency());
                 Log.e("route day", routePlanDetail.getRoute_day());
@@ -122,6 +151,7 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return routes;
     }
 
     @Override
@@ -137,5 +167,9 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
 
     public void setRoutePlanListener(RoutePlanListener routePlanListener) {
         this.routePlanListener = routePlanListener;
+    }
+
+    public void setSearchKey(String searchKey) {
+        this.searchKey = searchKey;
     }
 }

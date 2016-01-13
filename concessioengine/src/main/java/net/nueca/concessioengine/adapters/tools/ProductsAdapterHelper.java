@@ -123,6 +123,7 @@ public class ProductsAdapterHelper {
         if(selectedProductItems != null)
             selectedProductItems.clear();
         selectedCustomer = null;
+        reason = null;
         ProductListTools.restartLineNo();
         Log.e("ProductAdapterHelper", "clearSelectedProductItemList");
     }
@@ -132,6 +133,7 @@ public class ProductsAdapterHelper {
             selectedProductItems.clear();
         selectedProductItems = null;
         selectedCustomer = null;
+        reason = null;
         Log.e("ProductAdapterHelper", "destroySelectedProductItemList");
     }
 
@@ -142,6 +144,7 @@ public class ProductsAdapterHelper {
         imageRequestQueue = null;
         selectedProductItems = null;
         selectedCustomer = null;
+        reason = null;
         Log.e("ProductAdapterHelper", "destroyProductAdapterHelper");
     }
 
