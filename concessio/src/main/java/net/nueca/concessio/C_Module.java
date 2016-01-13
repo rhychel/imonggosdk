@@ -196,6 +196,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(C_Module.this, C_Module.class);
+                            intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
                             intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.INVOICE.ordinal());
                             startActivity(intent);
                         }
@@ -241,6 +242,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setProductsFragmentListener(this);
                 simpleProductsFragment.setHasSubtotal(true);
                 simpleProductsFragment.setUseSalesProductAdapter(true);
+                simpleProductsFragment.setCustomer(customer);
+                try {
+                    simpleProductsFragment.setCustomerGroup(customer.getCustomerGroups(getHelper()).get(0));
+                    simpleProductsFragment.setBranch(getBranches().get(0));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
                 initializeFinalize();
                 finalizeFragment.setListingType(ListingType.ADVANCED_SALES);
@@ -250,6 +258,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setHasUnits(true);
                 finalizeFragment.setHasSubtotal(true);
                 finalizeFragment.setUseSalesProductAdapter(true);
+                finalizeFragment.setCustomer(customer);
+                try {
+                    finalizeFragment.setCustomerGroup(customer.getCustomerGroups(getHelper()).get(0));
+                    finalizeFragment.setBranch(getBranches().get(0));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
                 prepareFooter();
                 btn1.setOnClickListener(nextClickedListener);

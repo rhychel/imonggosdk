@@ -104,6 +104,8 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             // determine retail_price
             Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer, unit);
 
+            Log.e("retail_price", retail_price.toString());
+
             // Set subtotal
             holder.tvSubtotal2.setText("");
             if(selectedProductItem != null) {
