@@ -117,7 +117,7 @@ public class C_Login extends LoginActivity {
             modules[modulesToDownload-(index--)] = Table.DOCUMENTS.ordinal();
         if(hasSales) {
             modules[modulesToDownload - (index--)] = Table.CUSTOMER_CATEGORIES.ordinal();
-            modules[modulesToDownload - (index--)] = Table.CUSTOMERS.ordinal();
+            modules[modulesToDownload - (index--)] = Table.CUSTOMER_BY_SALESMAN.ordinal();
             modules[modulesToDownload - (index--)] = Table.CUSTOMER_GROUPS.ordinal();
             modules[modulesToDownload - (index--)] = Table.ROUTE_PLANS.ordinal();
             modules[modulesToDownload - (index--)] = Table.ROUTE_PLANS_DETAILS.ordinal();
@@ -138,7 +138,7 @@ public class C_Login extends LoginActivity {
                 (Button)findViewById(R.id.btnLogin));
 
         setEditTextAccountID("C5111");
-        setEditTextEmail("C5111@imonggo.com");
-        setEditTextPassword("C5111");
+        setEditTextEmail("C5111E_COMMA@imonggo.com");
+        setEditTextPassword("123rebisco456");
     }
 }
