@@ -7,7 +7,8 @@ public enum ListingType {
 
     BASIC,
 
-    SALES, // Product
+    SALES, // simple Product
+    ADVANCED_SALES, // Sales product recycler adapter
 
     LETTER_HEADER, // Customer
 

@@ -20,6 +20,16 @@ import java.util.List;
  * imonggosdk2 (c)2015
  */
 public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHolder, Obj> extends RecyclerView.Adapter<T>{
+    /**
+     * These are for the sticky header letter.
+     */
+    protected int headerDisplay;
+    protected boolean marginsFixed;
+    protected static final int VIEW_TYPE_HEADER = 0x01;
+    protected static final int VIEW_TYPE_CONTENT = 0x00;
+    /**
+     * ---------- STICKY HEADER ----------
+     */
 
     private Context context;
     private List<Obj> objectList;

@@ -31,6 +31,14 @@ public abstract class BaseSalesProductRecyclerAdapter<T extends BaseProductsRecy
         super(context, dbHelper, productsList);
     }
 
+    public BaseSalesProductRecyclerAdapter(Context context, ImonggoDBHelper2 dbHelper, List<Product> productsList,
+                                           Customer customer, CustomerGroup customerGroup, Branch branch) {
+        super(context, dbHelper, productsList);
+        this.customer = customer;
+        this.customerGroup = customerGroup;
+        this.branch = branch;
+    }
+
     public Customer getCustomer() {
         return customer;
     }

@@ -24,7 +24,7 @@ public class RoutePlan extends BaseTable {
     private String status;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private transient User user;
-    @ForeignCollectionField
+    @ForeignCollectionField(orderColumnName = "sequence")
     private transient ForeignCollection<RoutePlanDetail> routePlanDetails;
 
     public RoutePlan() {

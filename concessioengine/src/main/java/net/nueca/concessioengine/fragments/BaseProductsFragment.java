@@ -21,8 +21,11 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 
 import java.sql.SQLException;
@@ -35,6 +38,12 @@ import java.util.List;
  */
 public abstract class BaseProductsFragment extends ImonggoFragment {
 
+    // For special sales pricing and discounting
+    protected Customer customer;
+    protected CustomerGroup customerGroup;
+    protected Branch branch;
+    // For special sales pricing and discounting
+
     protected static final long LIMIT = 100l;
     protected long offset = 0l;
     protected boolean hasUnits = true,
@@ -46,7 +55,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             lockCategory = false,
             hasToolBar = true,
             hasSubtotal = false,
-            isFinalize = false;
+            isFinalize = false,
+            displayOnly = false,
+            useSalesProductAdapter = false;
     private int prevLast = -1;
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
@@ -109,7 +120,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         Log.e(getClass().getSimpleName(), "getProducts");
         List<Product> products = new ArrayList<>();
 
-        boolean includeSearchKey = !searchKey.equals("");
+        boolean includeSearchKey = !searchKey.trim().isEmpty();
         boolean includeCategory = (!category.toLowerCase().equals("all") && hasCategories);
         boolean hasProductFilter = filterProductsBy.size() > 0;
         try {
@@ -281,5 +292,25 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setReason(DocumentPurpose reason) {
         this.reason = reason;
+    }
+
+    public void setDisplayOnly(boolean displayOnly) {
+        this.displayOnly = displayOnly;
+    }
+
+    public void setUseSalesProductAdapter(boolean useSalesProductAdapter) {
+        this.useSalesProductAdapter = useSalesProductAdapter;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
+    public void setCustomerGroup(CustomerGroup customerGroup) {
+        this.customerGroup = customerGroup;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

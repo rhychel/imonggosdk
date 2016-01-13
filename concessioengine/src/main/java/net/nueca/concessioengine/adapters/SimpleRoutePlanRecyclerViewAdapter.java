@@ -4,10 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRoutePlanRecyclerAdapter;
+import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.util.List;
 
@@ -16,7 +19,7 @@ import java.util.List;
  */
 public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAdapter<SimpleRoutePlanRecyclerViewAdapter.ListViewHolder> {
 
-    public SimpleRoutePlanRecyclerViewAdapter(Context context, List<String> list) {
+    public SimpleRoutePlanRecyclerViewAdapter(Context context, List<Customer> list) {
         super(context, list);
     }
 
@@ -30,7 +33,11 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
 
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
+        Customer customer = getItem(position);
 
+        holder.tvCustomerName.setText(customer.getName());
+        holder.tvCompany.setText(customer.getCompany_name());
+        holder.tvLastTransaction.setText(customer.getLastPurchase());
     }
 
     @Override
@@ -40,8 +47,19 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
 
     public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {
 
+        public ImageView ivStatus;
+        public TextView tvCustomerName, tvCompany, tvLastTransaction, tvTransactionBranch, tvSubtotal;
+
         public ListViewHolder(View itemView) {
             super(itemView);
+
+            ivStatus = (ImageView) itemView.findViewById(R.id.ivStatus);
+            tvCustomerName = (TextView) itemView.findViewById(R.id.tvCustomerName);
+            tvCompany = (TextView) itemView.findViewById(R.id.tvCompany);
+            tvLastTransaction = (TextView) itemView.findViewById(R.id.tvLastTransaction);
+            tvTransactionBranch = (TextView) itemView.findViewById(R.id.tvTransactionBranch);
+            tvSubtotal = (TextView) itemView.findViewById(R.id.tvSubtotal);
+
             itemView.setOnClickListener(this);
         }
 

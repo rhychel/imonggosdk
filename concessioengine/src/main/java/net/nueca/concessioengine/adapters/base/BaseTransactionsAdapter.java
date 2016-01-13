@@ -24,4 +24,5 @@ public abstract class BaseTransactionsAdapter extends BaseAdapter<OfflineData> {
         super(context, resource, objects);
     }
 
+    public abstract boolean updateList(List<OfflineData> offlineDatas);
 }

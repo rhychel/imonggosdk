@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects.customer;
 
+import android.text.InputType;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -22,6 +23,7 @@ import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
+import net.nueca.imonggosdk.tools.FieldValidatorMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,40 +39,67 @@ import java.util.List;
 @DatabaseTable
 public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
 
-    public static final transient String CODE = "code";
-    public static final transient String ALTERNATE_CODE = "alternate_code";
-    public static final transient String FIRST_NAME = "first_name";
-    public static final transient String MIDDLE_NAME = "middle_name";
-    public static final transient String LAST_NAME = "last_name";
-    public static final transient String COMPANY_NAME = "company_name";
-    public static final transient String TIN = "tin";
-    public static final transient String STREET = "street";
-    public static final transient String CITY = "city";
-    public static final transient String STATE = "state";
-    public static final transient String ZIPCODE = "zipcode";
-    public static final transient String COUNTRY = "country";
-    public static final transient String TELEPHONE = "telephone";
-    public static final transient String FAX = "fax";
-    public static final transient String MOBILE = "mobile";
-    public static final transient String EMAIL = "email";
-    public static final transient String REMARK = "remark";
-    public static final transient String CUSTOMER_TYPE_ID = "customer_type_id";
-    public static final transient String CUSTOMER_TYPE_NAME = "customer_type_name";
-    public static final transient String DISCOUNT_TEXT = "discount_text";
-    public static final transient String AVAILABLE_POINTS = "available_points";
-    public static final transient String BIRTHDATE = "birthdate";
-    public static final transient String STATUS = "status";
-    public static final transient String BIRTHDAY = "birthday";
-    public static final transient String MEMBERSHIP_EXPIRED_AT = "membership_expired_at";
-    public static final transient String MEMBERSHIP_START_AT = "membership_start_at";
-    public static final transient String BIOMETRIC_SIGNATURE = "biometric_signature";
-    public static final transient String GENDER = "gender";
-    public static final transient String POINT_TO_AMOUNT_RATIO = "point_to_amount_ratio";
-    public static final transient String TAX_EXEMPT = "tax_exempt";
-    public static final transient String PAYMENT_TERMS_ID = "payment_terms_id";
+    public enum CustomerFields {
+        CODE("code"),
+        ALTERNATE_CODE("alternate_code"),
+        FIRST_NAME("first_name"),
+        MIDDLE_NAME("middle_name"),
+        LAST_NAME("last_name"),
+        COMPANY_NAME("company_name"),
+        TIN("tin", InputType.TYPE_CLASS_PHONE),
+        STREET("street"),
+        CITY("city"),
+        STATE("state"),
+        ZIPCODE("zipcode", InputType.TYPE_CLASS_PHONE),
+        COUNTRY("country"),
+        TELEPHONE("telephone", InputType.TYPE_CLASS_PHONE),
+        FAX("fax"),
+        MOBILE("mobile", InputType.TYPE_CLASS_PHONE),
+        EMAIL("email", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS),
+        REMARK("remark"),
+        CUSTOMER_TYPE_ID("customer_type_id"),
+        CUSTOMER_TYPE_NAME("customer_type_name"),
+        DISCOUNT_TEXT("discount_text"),
+        AVAILABLE_POINTS("available_points"),
+        BIRTHDATE("birthdate"),
+        STATUS("status"),
+        BIRTHDAY("birthday"),
+        MEMBERSHIP_EXPIRED_AT("membership_expired_at"),
+        MEMBERSHIP_START_AT("membership_start_at"),
+        BIOMETRIC_SIGNATURE("biometric_signature"),
+        GENDER("gender"),
+        POINT_TO_AMOUNT_RATIO("point_to_amount_ratio"),
+        TAX_EXEMPT("tax_exempt"),
+        PAYMENT_TERMS_ID("payment_terms_id"),
+        EXTRAS_CATEGORY_ID("category_id"),
+        EXTRAS_SALESMAN_ID("salesman_id");
 
-    public static final transient String EXTRAS_CATEGORY_ID = "category_id";
-    public static final transient String EXTRAS_SALESMAN_ID = "salesman_id";
+
+        private String label;
+        private int inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME;
+
+        CustomerFields(String label) {
+            this.label = label;
+        }
+
+        CustomerFields(String label, int inputType) {
+            this.label = label;
+            this.inputType = inputType;
+        }
+
+        public int getInputType() {
+            return inputType;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
 
     @Expose
     @DatabaseField
@@ -81,7 +110,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Expose
     @DatabaseField
     private String code, alternate_code, first_name, middle_name, last_name, name, company_name,
-            tin, street, city, state, zipcode, country, telephone, fax,
+            tin, street = "", city, state, zipcode, country, telephone, fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
             available_points, birthdate, status, birthday,
             membership_expired_at, membership_start_at, biometric_signature, gender;
@@ -582,6 +611,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
             name += last_name;
         }
         this.name = name;
+        Log.e("name", name);
         return name;
     }
 
@@ -696,7 +726,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
                 tin, street, city, state, zipcode, country, telephone, fax,
                 mobile, email, remark, customer_type_id, customer_type_name,
                 discount_text, available_points, birthdate, status, birthday,
-                membership_expired_at, membership_start_at, biometric_signature, gender;
+                membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
 
         public Customer build() {
             return new Customer(this);
@@ -807,6 +837,38 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
             this.status = status;
             return this;
         }
+    }
 
+    public FieldValidatorMessage doesRequiredSatisfied(CustomerFields ...fields) {
+        FieldValidatorMessage fieldValidatorMessage = new FieldValidatorMessage();
+        fieldValidatorMessage.setMessage("Please enter a valid ");
+        String lastField = "";
+        for(CustomerFields field : fields) {
+            switch (field) {
+                case CODE:
+                    if(code != null && !code.isEmpty())
+                        break;
+                    fieldValidatorMessage.appendMessage(lastField, false);
+                    fieldValidatorMessage.setPassed(false);
+                    lastField = "customer code";
+                    break;
+                case FIRST_NAME:
+                    if(first_name != null && !first_name.isEmpty())
+                        break;
+                    fieldValidatorMessage.appendMessage(lastField, false);
+                    fieldValidatorMessage.setPassed(false);
+                    lastField = "first name";
+                    break;
+                case LAST_NAME:
+                    if(last_name != null && !last_name.isEmpty())
+                        break;
+                    fieldValidatorMessage.appendMessage(lastField, false);
+                    fieldValidatorMessage.setPassed(false);
+                    lastField = "last name";
+                    break;
+            }
+        }
+        fieldValidatorMessage.appendMessage(lastField, true);
+        return fieldValidatorMessage;
     }
 }

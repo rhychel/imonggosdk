@@ -84,7 +84,7 @@ public class C_Login extends LoginActivity {
                     } break;
                     case INVOICE: {
                         hasSales = true;
-                        modulesToDownload += 5;
+                        modulesToDownload += 6;
                     } break;
                     case RECEIVE_BRANCH: {
                         hasReceive = true;
@@ -116,10 +116,11 @@ public class C_Login extends LoginActivity {
         if(hasReceive)
             modules[modulesToDownload-(index--)] = Table.DOCUMENTS.ordinal();
         if(hasSales) {
-            modules[modulesToDownload - (index--)] = Table.ROUTE_PLANS.ordinal();
             modules[modulesToDownload - (index--)] = Table.CUSTOMER_CATEGORIES.ordinal();
             modules[modulesToDownload - (index--)] = Table.CUSTOMERS.ordinal();
             modules[modulesToDownload - (index--)] = Table.CUSTOMER_GROUPS.ordinal();
+            modules[modulesToDownload - (index--)] = Table.ROUTE_PLANS.ordinal();
+            modules[modulesToDownload - (index--)] = Table.ROUTE_PLANS_DETAILS.ordinal();
             modules[modulesToDownload - (index--)] = Table.PAYMENT_TERMS.ordinal();
         }
 
@@ -136,8 +137,8 @@ public class C_Login extends LoginActivity {
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
 
-        setEditTextAccountID("A1001");
-        setEditTextEmail("A1078A@imonggo.com");
-        setEditTextPassword("A1078A");
+        setEditTextAccountID("C5111");
+        setEditTextEmail("C5111@imonggo.com");
+        setEditTextPassword("C5111");
     }
 }

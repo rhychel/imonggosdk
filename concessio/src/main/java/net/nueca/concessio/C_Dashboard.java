@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import net.nueca.concessioengine.activities.DashboardActivity;
+import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.adapters.DashboardRecyclerAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.objects.DashboardTile;
@@ -111,7 +112,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            }
+            } break;
+            case R.id.mSettings: {
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+            } break;
         }
         return super.onOptionsItemSelected(item);
     }

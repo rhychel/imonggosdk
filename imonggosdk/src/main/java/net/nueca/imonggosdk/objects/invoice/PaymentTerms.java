@@ -53,6 +53,11 @@ public class PaymentTerms extends BaseTable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        return id == ((PaymentTerms)o).getId();
+    }
+
+    @Override
     public String toString() {
         return name;
     }
