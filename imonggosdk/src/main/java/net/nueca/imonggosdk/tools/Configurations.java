@@ -95,13 +95,13 @@ public class Configurations {
             // ----- FOR REBISCO
             //put(Table.BRANCH_UNITS, "branch_products");
             put(Table.BRANCH_PRODUCTS, "branch_products.json");
-            put(Table.BRANCH_PRODUCTS_PRICES, "branch_products.json");
             put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
             put(Table.PAYMENT_TERMS, "payment_terms.json");
             put(Table.CUSTOMER_CATEGORIES, "customer_categories.json");
             put(Table.PAYMENT_TYPES, "payment_types.json");
             put(Table.CUSTOMER_GROUPS, "customer_groups.json");
             put(Table.CUSTOMER_BY_SALESMAN, "customers.json");
+            put(Table.PRICE_LISTS_FROM_CUSTOMERS, "price_lists");
             put(Table.PRICE_LISTS, "price_lists.json");
             put(Table.BRANCH_PRICE_LISTS, "price_lists.json");
             put(Table.PRICE_LISTS_DETAILS, "price_lists");

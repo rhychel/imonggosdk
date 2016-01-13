@@ -98,12 +98,12 @@ public enum Table {
     // ----- FOR REBISCO
     CUSTOMER_BY_SALESMAN(API_TYPE.API, "Customers", Customer.class),
     BRANCH_PRODUCTS(API_TYPE.API, "Prices", BranchProduct.class),
-    BRANCH_PRODUCTS_PRICES(API_TYPE.API, "Prices", BranchProduct.class),
     INVOICE_PURPOSES(API_TYPE.API, "Invoice Purposes", InvoicePurpose.class),
     PAYMENT_TERMS(API_TYPE.API, "Payment Terms", PaymentTerms.class),
     CUSTOMER_CATEGORIES(API_TYPE.API, "Customer Categories", CustomerCategory.class),
     PAYMENT_TYPES(API_TYPE.API, "Payment Types", PaymentType.class),
     CUSTOMER_GROUPS(API_TYPE.API, "Customer Groups", CustomerGroup.class),
+    PRICE_LISTS_FROM_CUSTOMERS(API_TYPE.API, "Price Lists", PriceList.class),
     PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class),
     BRANCH_PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class),
     PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", PriceList.class),
