@@ -42,29 +42,16 @@ public class PriceList extends BaseTable {
     @DatabaseField
     private String status;
 
-    @Expose
-    @DatabaseField
-    private String discount_text; // product_discount,company_discount
-
     public PriceList() { }
 
     public PriceList(Builder builder) {
         this.code = builder.code;
         this.branch = builder.branch;
         this.status = builder.status;
-        this.discount_text = builder.discount_text;
         this.utc_created_at = builder.utc_created_at;
         this.utc_updated_at = builder.utc_updated_at;
         this.searchKey = builder.searchKey;
         this.extras = builder.extras;
-    }
-
-    public String getDiscount_text() {
-        return discount_text;
-    }
-
-    public void setDiscount_text(String discount_text) {
-        this.discount_text = discount_text;
     }
 
     public String getCode() {
@@ -161,7 +148,6 @@ public class PriceList extends BaseTable {
     public static class Builder {
         protected String code;
         protected String status;
-        protected String discount_text;
         protected Branch branch;
         protected String searchKey = "";
         protected Extras extras;
@@ -176,10 +162,6 @@ public class PriceList extends BaseTable {
         }
         public Builder status(String status) {
             this.status = status;
-            return this;
-        }
-        public Builder discount_text(String discount_text) {
-            this.discount_text = discount_text;
             return this;
         }
         public Builder branch(Branch branch) {

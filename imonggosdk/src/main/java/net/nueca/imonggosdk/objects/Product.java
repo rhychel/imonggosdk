@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -76,6 +78,19 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     private transient int line_no = 0;
     private transient double unit_content_quantity = 0.0;
     private transient double unit_quantity = 0.0;
+
+
+    public Product() {}
+
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
+    }
+
+    @Override
+    public String toString() {
+        return toJSONString();
+    }
 
     @ForeignCollectionField
     private transient ForeignCollection<ProductTag> tags;
@@ -424,9 +439,12 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
         this.isBaseUnitSellable = isBaseUnitSellable;
     }
 
-    @Override
-    public String toString() {
-        return String.valueOf(id);
+    public Product(double cost, double retail_price, double wholesale_price, double wholesale_quantity, String quantity) {
+        this.cost = cost;
+        this.retail_price = retail_price;
+        this.wholesale_price = wholesale_price;
+        this.wholesale_quantity = wholesale_quantity;
+        this.quantity = quantity;
     }
 
     @Override
@@ -436,12 +454,13 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
-            insertExtrasTo(dbHelper);
             dbHelper.insert(Product.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
@@ -451,6 +470,7 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
@@ -460,22 +480,27 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        updateExtrasTo(dbHelper);
     }
 
     @Override
     public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.setProduct(this);
-        extras.setId(Product.class.getName().toUpperCase(), id);
-        extras.insertTo(dbHelper);
+        if(extras != null) {
+            extras.setProduct(this);
+            extras.setId(Product.class.getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
     }
 
     @Override
     public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.deleteTo(dbHelper);
+        if(extras != null)
+            extras.deleteTo(dbHelper);
     }
 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.updateTo(dbHelper);
+        if(extras != null)
+            extras.updateTo(dbHelper);
     }
 }

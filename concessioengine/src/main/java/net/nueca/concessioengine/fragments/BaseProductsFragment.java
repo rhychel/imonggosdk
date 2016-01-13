@@ -122,17 +122,24 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
         boolean includeSearchKey = !searchKey.trim().isEmpty();
         boolean includeCategory = (!category.toLowerCase().equals("all") && hasCategories);
+        boolean hasProductFilter = filterProductsBy.size() > 0;
         try {
             Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
             whereProducts.isNull("status");
             Log.e("includeSearchKey", includeSearchKey + "");
             Log.e("includeCategory", includeCategory+"");
-            Log.e("filterProductsBy.size()", (filterProductsBy.size() > 0)+"");
+            Log.e("hasProductFilter", hasProductFilter+"");
 
             if(includeSearchKey)
                 whereProducts.and().like("searchKey", "%"+searchKey+"%");
-            if(filterProductsBy.size() > 0)
-                whereProducts.and().in("id", filterProductsBy);
+            if(hasProductFilter) {
+                List<Integer> ids = new ArrayList<>();
+                for(Product product : filterProductsBy) {
+                    ids.add(product.getId());
+                    //Log.e("FILTER", product.getId() + "");
+                }
+                whereProducts.and().in("id", ids);
+            }
             if(includeCategory) {
                 QueryBuilder<ProductTag, Integer> productWithTag = getHelper().fetchIntId(ProductTag.class).queryBuilder();
                 productWithTag.selectColumns("product_id").where().like("searchKey", "#"+category.toLowerCase()+"%");
@@ -140,8 +147,11 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
                 whereProducts.and().in("id", productWithTag);
             }
 
-            QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder().orderByRaw("name COLLATE NOCASE ASC").limit(LIMIT).offset(offset);
+            QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder().orderByRaw("name COLLATE NOCASE ASC")
+                    .limit(LIMIT).offset(offset);
             resultProducts.setWhere(whereProducts);
+
+            Log.e(">>", resultProducts.prepareStatementString());
 
             products = resultProducts.query();
         } catch (SQLException e) {

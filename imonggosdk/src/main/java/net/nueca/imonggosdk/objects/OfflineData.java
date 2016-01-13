@@ -80,6 +80,9 @@ public class OfflineData extends BaseTable2 {
     private boolean isQueued = false;
 
     @DatabaseField
+    private boolean isBeingModified = false;
+
+    @DatabaseField
     private boolean isForConfirmation = false; // TODO This is new for the data sent with existing reference number
 
     @DatabaseField
@@ -572,6 +575,14 @@ public class OfflineData extends BaseTable2 {
 
     public void setPagedRequestCount(int pagedRequestCount) {
         this.pagedRequestCount = pagedRequestCount;
+    }
+
+    public boolean isBeingModified() {
+        return isBeingModified;
+    }
+
+    public void setBeingModified(boolean beingModified) {
+        isBeingModified = beingModified;
     }
 
     public ConcessioModule getConcessioModule() {

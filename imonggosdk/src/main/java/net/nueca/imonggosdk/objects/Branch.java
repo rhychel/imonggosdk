@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -184,6 +186,11 @@ public class Branch extends BaseTable {
     @Override
     public String toString() {
         return name;
+    }
+
+    public String toJSONString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
     @Override

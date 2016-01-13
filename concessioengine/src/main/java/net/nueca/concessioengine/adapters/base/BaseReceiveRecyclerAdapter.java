@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.objects.ExtendedAttributes;

@@ -69,7 +69,7 @@ public abstract class BaseTransactionTable2 extends BaseTable2 implements Extras
     }
 
     protected static class Builder <T extends Builder> {
-        private String reference = "";
+        private String reference;
         private String searchKey = "";
         private String utc_created_at, utc_updated_at, utc_document_date;
 

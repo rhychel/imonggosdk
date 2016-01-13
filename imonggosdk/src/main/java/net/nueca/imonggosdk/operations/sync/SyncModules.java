@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
 import net.nueca.imonggosdk.objects.invoice.Discount;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.SalesPushSettings;
@@ -220,6 +221,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
             // with branch_id
             if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
+                mCurrentTableSyncing == Table.BRANCH_PRODUCTS_PRICES ||
                     mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
                     mCurrentTableSyncing == Table.BRANCH_CUSTOMERS) {
                 return String.format(ImonggoTools.generateParameter(
@@ -268,6 +270,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 // request with branch id
                 if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
+                    mCurrentTableSyncing == Table.BRANCH_PRODUCTS_PRICES ||
                         mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
                         mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS) {
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.BRANCH_ID),
@@ -343,6 +346,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 // request with branch id
                 if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
+                    mCurrentTableSyncing == Table.BRANCH_PRODUCTS_PRICES ||
                         mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
                         mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS) {
                     String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.BRANCH_ID, Parameter.AFTER),
@@ -432,6 +436,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 // request with branch id
                 if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
+                    mCurrentTableSyncing == Table.BRANCH_PRODUCTS_PRICES ||
                         mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
                         mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS) {
                     return String.format(ImonggoTools.generateParameter(
@@ -468,6 +473,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 // request with branch id
                 if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
+                    mCurrentTableSyncing == Table.BRANCH_PRODUCTS_PRICES ||
                         mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
                         mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS) {
                     return String.format(ImonggoTools.generateParameter(Parameter.ACTIVE_ONLY,
@@ -1014,15 +1020,58 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 updateNext(requestType, size);
                             }
                             break;
+                        case BRANCH_PRODUCTS_PRICES:
+                            if (size == 0) {
+                                syncNext();
+                                return;
+                            } else {
+                                int current_branch_id = getSession().getCurrent_branch_id();
+                                Branch current_branch = getHelper().fetchIntId(Branch.class).queryForId(current_branch_id);
+
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Product product = gson.fromJson(jsonObject.toString(), Product.class);
+
+                                    Product product1 = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product.getId()).queryForFirst();
+
+                                    if(isExisting(product, Table.PRODUCTS)) {
+                                        Log.e(TAG, "Product Exists.....");
+                                        Log.e(TAG, "Comparing...");
+                                        Log.e(TAG, "Product from net: " + "Product{" +
+                                                "cost=" + product.getCost() +
+                                                ", retail_price=" + product.getRetail_price() +
+                                                ", wholesale_price=" + product.getWholesale_price() +
+                                                ", wholesale_quantity=" + product.getWholesale_price() +
+                                                ", quantity='" + product.getQuantity() + '\'' +
+                                                '}');
+                                        Log.e(TAG, "Product from db: " + "Product{" +
+                                                "cost=" + product1.getCost() +
+                                                ", retail_price=" + product1.getRetail_price() +
+                                                ", wholesale_price=" + product1.getWholesale_price() +
+                                                ", wholesale_quantity=" + product1.getWholesale_price() +
+                                                ", quantity='" + product1.getQuantity() + '\'' +
+                                                '}');
+                                    } else {
+                                        Log.e(TAG, "Product does not exists");
+                                    }
+
+
+
+
+                                }
+
+                            }
+                            updateNext(requestType, size);
+                            break;
                         case BRANCH_PRODUCTS:
                         case PRODUCTS:
                             BatchList<Product> newProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
                             BatchList<Product> deleteProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
-                            Table productTable = Table.PRODUCTS;
+                            BatchList<BranchProduct> newBranchProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<BranchProduct> updateBranchProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
-                            Log.e(TAG, productTable + " | size: " + size + " page: " + page + " max page: " + numberOfPages);
                             Log.e(TAG, "Syncing Page " + page);
                             if (size == 0) {
                                 syncNext();
@@ -1148,6 +1197,20 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
                                     }
 
+                                    if(mCurrentTableSyncing == Table.BRANCH_PRODUCTS) {
+                                        BranchProduct branchProduct = new BranchProduct(product, current_branch);
+
+                                        if (initialSync || lastUpdatedAt == null) {
+                                            newBranchProducts.add(branchProduct);
+                                        } else {
+                                            if (isExisting(branchProduct, Table.BRANCH_PRODUCTS)) {
+                                                updateBranchProducts.add(branchProduct);
+                                            } else {
+                                                newBranchProducts.add(branchProduct);
+                                            }
+                                        }
+                                    }
+
                                     if (initialSync || lastUpdatedAt == null) {
                                         product.setSearchKey(product.getName() + product.getStock_no());
                                         newProducts.add(product);
@@ -1172,6 +1235,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 newProducts.doOperationBT(Product.class);
                                 updateProducts.doOperationBT(Product.class);
                                 deleteProducts.doOperationBT(Product.class);
+
+                                newBranchProducts.doOperationBT(Product.class);
+                                updateBranchProducts.doOperationBT(Product.class);
 
                                 updateNext(requestType, size);
                             }
@@ -1406,6 +1472,36 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
                                     } else {
                                         Log.e(TAG, mCurrentTableSyncing + " API don't have 'price_list_id' field");
+                                    }
+
+                                    // Customer Group
+                                    if(jsonObject.has("customer_groups")) {
+                                        if (!jsonObject.isNull("customer_groups")) {
+
+                                            JSONArray customerGroupJSONArray = jsonObject.getJSONArray("customer_groups");
+
+                                            for (int l = 0; l < customerGroupJSONArray.length(); l++) {
+                                                JSONObject customerGroupJSONObject = jsonArray.getJSONObject(l);
+
+                                                if(customerGroupJSONObject.has("id")) {
+                                                    if(!customerGroupJSONObject.isNull("id")) {
+                                                        CustomerGroup xcustomerGroup = getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroupJSONObject.getInt("id")).queryForFirst();
+                                                        CustomerCustomerGroupAssoc customerCustomerGroupAssoc = new CustomerCustomerGroupAssoc(customer, xcustomerGroup);
+                                                        customerCustomerGroupAssoc.insertTo(getHelper());
+                                                    } else {
+                                                        Log.e(TAG, "'customer_groups' field don't have value.");
+                                                    }
+
+                                                } else {
+                                                    Log.e(TAG, mCurrentTableSyncing + "API don't have 'customer_groups' field.");
+                                                }
+                                            }
+
+                                        } else {
+                                            Log.e(TAG, "'customer_groups' field is empty");
+                                        }
+                                    } else {
+                                        Log.e(TAG, mCurrentTableSyncing + " API don't have 'customer_groups' field");
                                     }
 
                                     if (initialSync || lastUpdatedAt == null) {
@@ -1677,29 +1773,29 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 customerGroup.setPriceList(priceList); // Connected
                                             } else {
                                                 Log.e(TAG, "Price Lists not found!");
+                                                customerGroup.setPriceList(null);
                                             }
                                         } else {
                                             Log.e(TAG, "Price List ID don't have value");
+                                            customerGroup.setPriceList(null);
                                         }
-                                        customerGroup.setPriceList(null);
                                     } else {
                                         Log.e(TAG, mCurrentTableSyncing + " API don't have field 'price_list_id'");
                                     }
 
+
                                     CustomerCustomerGroupAssoc customerCustomerGroupAssoc =
                                             getHelper().fetchObjects(CustomerCustomerGroupAssoc.class).queryBuilder().where().eq("customer_group_id", customerGroup).queryForFirst();
 
-                                    if (customerCustomerGroupAssoc != null) {
-                                        Log.e(TAG, "CustomerGroup is Assoc: " + customerCustomerGroupAssoc.getCustomerGroup().getName());
 
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        newCustomerGroups.add(customerGroup);
+                                    } else {
                                         if (isExisting(customerGroup, Table.CUSTOMER_GROUPS)) {
                                             updateCustomerGroups.add(customerGroup);
                                         } else {
                                             newCustomerGroups.add(customerGroup);
                                         }
-
-                                    } else {
-                                        Log.e(TAG, "CustomerCustomerGroupAssoc not found");
                                     }
 
                                 }
@@ -1895,6 +1991,22 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             newPriceList.add(priceList);
                                         }
                                     }
+
+                                    Log.e(TAG, ">> ");
+
+
+                                    List<CustomerGroup> pCustomerGroups = getHelper().fetchObjects(CustomerGroup.class).
+                                            queryBuilder().where().eq("price_list_id", priceList).query();
+
+                                    Log.e(TAG, "Size: " + pCustomerGroups.size());
+                                    if(pCustomerGroups != null) {
+                                        for (CustomerGroup cg : pCustomerGroups) {
+                                            Log.e(TAG, ">>this " + cg.getName());
+                                        }
+                                    } else {
+                                        Log.e(TAG, ">> customer group don't have value");
+                                    }
+
                                 }
 
                                 newPriceList.doOperationBT(PriceList.class);
