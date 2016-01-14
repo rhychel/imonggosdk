@@ -51,6 +51,7 @@ import java.util.List;
  * imonggosdk (c)2015
  */
 public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
+    public static boolean TEST_ACCOUNT = false;
     private BaseLogin mBaseLogin = null;
     private Boolean isUnlinked = true;
     private Boolean isLoggedIn = false;
@@ -432,6 +433,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.etAccountID = editTextAccountId;
         this.etEmail = editTextEmail;
         this.etPassword = editTextPassword;
+
+        if(TEST_ACCOUNT) {
+            setEditTextAccountID(getResources().getString(R.string.test_account_id));
+            setEditTextEmail(getResources().getString(R.string.test_email));
+            setEditTextPassword(getResources().getString(R.string.test_password));
+        }
 
         this.btnSignIn = btnSignIn;
 
