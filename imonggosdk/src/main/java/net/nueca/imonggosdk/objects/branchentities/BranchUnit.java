@@ -22,7 +22,7 @@ public class BranchUnit extends DBTable {
     private transient Branch branch;
     @DatabaseField
     private double retail_price = 0.0;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_product_id")
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "bp_id", foreignColumnName = "branch_product_id")
     private BranchProduct branchProduct;
 
     public BranchUnit() { }
