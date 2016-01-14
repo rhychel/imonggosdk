@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects.accountsettings;
 
+import android.util.Log;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -12,6 +14,7 @@ import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by rhymart on 11/16/15.
@@ -45,6 +48,8 @@ public class ModuleSetting extends DBTable {
     private boolean with_customer = false;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
+    @ForeignCollectionField(orderAscending = true, orderColumnName = "id")
+    private transient ForeignCollection<DownloadSequence> downloadSequences;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_listing_id")
     private transient ProductListing productListing;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "quantity_input_id")
@@ -223,6 +228,31 @@ public class ModuleSetting extends DBTable {
 
     public void setWith_customer(boolean with_customer) {
         this.with_customer = with_customer;
+    }
+
+    public ForeignCollection<DownloadSequence> getDownloadSequences() {
+        return downloadSequences;
+    }
+
+    public void setDownloadSequences(ForeignCollection<DownloadSequence> downloadSequences) {
+        this.downloadSequences = downloadSequences;
+    }
+
+    public int[] modulesToDownload(ImonggoDBHelper2 dbHelper) {
+        try {
+            List<DownloadSequence> downloadSequence = dbHelper.fetchForeignCollection(downloadSequences.closeableIterator());
+            Log.e("downloadSequence", downloadSequence.size()+"");
+            int []modules = new int[downloadSequence.size()];
+            int i = 0;
+            for(DownloadSequence ds : downloadSequence) {
+                Log.e("tableValue", ds.getTable_key());
+                modules[i++] = ds.getTableValue().ordinal();
+            }
+            return modules;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new int[0];
     }
 
     public ConcessioModule getModuleType() {

@@ -146,6 +146,11 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
                 Log.e("frequency", routePlanDetail.getFrequency());
                 Log.e("route day", routePlanDetail.getRoute_day());
                 Log.e("sequence", routePlanDetail.getSequence()+"");
+                if(routePlanDetail.getCustomer() == null)
+                    Log.e("Customer", "is null");
+                else
+                    Log.e("Customer", "is not null");
+
                 Log.e("Customer", routePlanDetail.getCustomer().getName()+" -- "+routes.size());
             }
         } catch (SQLException e) {

@@ -5,13 +5,17 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.crashlytics.android.Crashlytics;
+import com.j256.ormlite.stmt.Where;
 
+import net.nueca.concessioengine.activities.login.BaseLoginActivity;
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
@@ -39,16 +43,16 @@ public class C_Login extends LoginActivity {
     @Override
     protected void successLogin() {
         super.successLogin();
-        int []modulesToDownload = generateModules(true);
-        setModulesToSync(generateModules(true));
+        int []modulesToDownload = generateModules();
+        setModulesToSync(modulesToDownload);
         getSyncModules().initializeTablesToSync(modulesToDownload);
     }
 
     @Override
     protected void updateAppData() {
         super.updateAppData();
-        int []modulesToDownload = generateModules(true);
-        setModulesToSync(generateModules(false));
+        int []modulesToDownload = generateModules();
+        setModulesToSync(modulesToDownload);
 
         getSyncModules().initializeTablesToSync(modulesToDownload);
     }
@@ -60,71 +64,18 @@ public class C_Login extends LoginActivity {
         startActivity(intent);
     }
 
-    private int[] generateModules(boolean includeUsers) {
+    private int[] generateModules() {
         Log.e("generateModules", "here");
         getSyncModules().setSyncAllModules(false);
-        int modulesToDownload = includeUsers ? 5 : 3;
-        boolean hasReceive = false, hasPulloutRequest = false, hasSales = false;
 
-        try {
-            List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.RELEASE_BRANCH, ConcessioModule.RELEASE_ADJUSTMENT, ConcessioModule.INVOICE, ConcessioModule.RECEIVE_BRANCH)).query();
+        ModuleSetting app = ModuleSetting.fetchById(getHelper(), ModuleSetting.class, "app");
+        if(app != null && app.getDownloadSequences() == null)
+            Log.e("App", "nothing is defined");
+        else
+            Log.e("App", app.getDownloadSequences().size()+"---");
 
-            for(ModuleSetting moduleSetting : moduleSettings) {
-                Log.e("FOR---"+moduleSetting.getModule_type(), moduleSetting.is_enabled()+"");
-                if(!moduleSetting.is_enabled())
-                    continue;
-                switch (moduleSetting.getModuleType()) {
-                    case RELEASE_ADJUSTMENT:
-                    case RELEASE_BRANCH: {
-                        if(!hasPulloutRequest) {
-                            hasPulloutRequest = true;
-                            modulesToDownload += 2;
-                        }
-                    } break;
-                    case INVOICE: {
-                        hasSales = true;
-                        modulesToDownload += 6;
-                    } break;
-                    case RECEIVE_BRANCH: {
-                        hasReceive = true;
-                        modulesToDownload++;
-                    } break;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        return app.modulesToDownload(getHelper());
 
-        int index = modulesToDownload;
-        int[] modules = new int[modulesToDownload];
-        if(includeUsers) {
-            modules[modulesToDownload - (index--)] = Table.USERS_ME.ordinal();
-            modules[modulesToDownload - (index--)] = Table.BRANCH_USERS.ordinal();
-
-        }
-        modules[modulesToDownload-(index--)] = Table.SETTINGS.ordinal();
-        modules[modulesToDownload-(index--)] = Table.PRODUCTS.ordinal();
-        modules[modulesToDownload-(index--)] = Table.UNITS.ordinal();
-//        modules[modulesToDownload-(index--)] = Table.BRANCH_PRODUCTS.ordinal();
-//        modules[modulesToDownload-(index--)] = Table.BRANCH_UNITS.ordinal();
-        Log.e("hasPulloutRequest", hasPulloutRequest+"");
-        if(hasPulloutRequest) {
-            modules[modulesToDownload-(index--)] = Table.DOCUMENT_TYPES.ordinal();
-            modules[modulesToDownload-(index--)] = Table.DOCUMENT_PURPOSES.ordinal();
-        }
-        if(hasReceive)
-            modules[modulesToDownload-(index--)] = Table.DOCUMENTS.ordinal();
-        if(hasSales) {
-            modules[modulesToDownload - (index--)] = Table.CUSTOMER_CATEGORIES.ordinal();
-            modules[modulesToDownload - (index--)] = Table.CUSTOMER_BY_SALESMAN.ordinal();
-            modules[modulesToDownload - (index--)] = Table.CUSTOMER_GROUPS.ordinal();
-            modules[modulesToDownload - (index--)] = Table.ROUTE_PLANS.ordinal();
-            modules[modulesToDownload - (index--)] = Table.ROUTE_PLANS_DETAILS.ordinal();
-            modules[modulesToDownload - (index--)] = Table.PAYMENT_TERMS.ordinal();
-        }
-
-        return modules;
     }
 
     @Override
@@ -132,13 +83,12 @@ public class C_Login extends LoginActivity {
         super.onCreateLoginLayout();
         setContentView(R.layout.c_login);
 
+        BaseLoginActivity.TEST_ACCOUNT = true;
+
         setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
                 (EditText)findViewById(R.id.etEmail),
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
 
-        setEditTextAccountID("C5111");
-        setEditTextEmail("C5111E_COMMA@imonggo.com");
-        setEditTextPassword("123rebisco456");
     }
 }
