@@ -32,6 +32,7 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.accountsettings.Cutoff;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
+import net.nueca.imonggosdk.objects.accountsettings.DownloadSequence;
 import net.nueca.imonggosdk.objects.accountsettings.Manual;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.accountsettings.ProductListing;
@@ -597,8 +598,17 @@ public class BaseLogin {
                                                         DebugMode debugMode = gson.fromJson(module.getJSONObject("debug_mode").toString(), DebugMode.class);
                                                         debugMode.setModuleSetting(moduleSetting);
                                                         debugMode.insertTo(mDBHelper);
-
                                                         moduleSetting.setDebugMode(debugMode);
+
+                                                        // Download Sequence
+                                                        JSONArray jsonArrDownloadSeq = module.getJSONArray("download_sequence");
+                                                        BatchList<DownloadSequence> downloadSequences = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
+                                                        for(int j = 0;j < jsonArrDownloadSeq.length();j++) {
+                                                            DownloadSequence downloadSequence = new DownloadSequence(jsonArrDownloadSeq.getString(j), moduleSetting);
+                                                            downloadSequence.setId((j+1));
+                                                            downloadSequences.add(downloadSequence);
+                                                        }
+                                                        downloadSequences.doOperation(DownloadSequence.class);
                                                     } else if (key.equals("customers")) {
                                                         moduleSetting.insertTo(mDBHelper);
                                                         continue;

@@ -138,6 +138,8 @@ public class PriceTools {
             if(type == DEFAULT_PRICE && unit != null && !unit.equals(defaultUnit))
                 return identifyRetailPrice(dbHelper2, product, branch, customerGroup, customer, defaultUnit);
 
+            Log.e("identifyRetailPrice", "type="+type);
+
             //Log.e("Price-" + type, "retail_price:" + retail_price + " for " + product.getName());
         } catch (SQLException e) {
             e.printStackTrace();
