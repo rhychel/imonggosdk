@@ -19,11 +19,6 @@ import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
-import net.nueca.imonggosdk.objects.base.BaseTable;
-import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
-import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
-import net.nueca.imonggosdk.objects.invoice.Discount;
-import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.SalesPushSettings;
 import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.TaxRate;
@@ -33,20 +28,25 @@ import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
+import net.nueca.imonggosdk.objects.invoice.Discount;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.ImonggoTools;
@@ -64,7 +64,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -791,6 +790,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             mModulesIndex++;
                         }
                         syncNext();
+
+
                     } else {
                         numberOfPages = ((int) Math.ceil(count / 50.0));
                         Log.e(TAG, "number of pages: " + numberOfPages);
@@ -1000,16 +1001,16 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                             BaseTable tempObject = null;
 
-                            if(listPriceListStorage.get(mCustomIndex) instanceof Customer) {
+                            if (listPriceListStorage.get(mCustomIndex) instanceof Customer) {
                                 Log.e(TAG, "PriceList came from customer ");
                                 tempObject = (Customer) listPriceListStorage.get(mCustomIndex);
 
-                            } else if(listPriceListStorage.get(mCustomIndex) instanceof  CustomerGroup) {
+                            } else if (listPriceListStorage.get(mCustomIndex) instanceof CustomerGroup) {
                                 Log.e(TAG, "PriceList came from customer group ");
                                 tempObject = (CustomerGroup) listPriceListStorage.get(mCustomIndex);
                             }
 
-                            if(tempObject != null) {
+                            if (tempObject != null) {
                                 CustomerGroup customerGroup = getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", tempObject.getId()).queryForFirst();
                                 Log.e(TAG, "Querying for customer group with id: " + tempObject.getId());
 
@@ -1027,8 +1028,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             if (isExisting(priceList, Table.PRICE_LISTS)) {
                                 //TODO: Support last updated at
                                 try {
-                                    if(DateTimeTools.stringToDate(lastUpdatedAt.getLast_updated_at()).before(DateTimeTools.stringToDate(newLastUpdatedAt.getLast_updated_at())))
-                                    priceList.updateTo(getHelper());
+                                    if (DateTimeTools.stringToDate(lastUpdatedAt.getLast_updated_at()).before(DateTimeTools.stringToDate(newLastUpdatedAt.getLast_updated_at())))
+                                        priceList.updateTo(getHelper());
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                 }
@@ -1146,12 +1147,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             }
                             break;
                         case BRANCH_PRODUCTS:
-                            BatchList<BranchProduct> newBranchProducts = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                            BatchList<BranchProduct> updateBranchProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-                            BatchList<BranchProduct> deleteBranchProducts = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
-
-                            if(size == 0) {
+                            if (size == 0) {
                                 syncNext();
                                 return;
                             } else {
@@ -1166,17 +1163,19 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     Log.e(TAG, "---");
                                     // Branch
-                                    if(current_branch_id != -1) {
+                                    if (current_branch_id != -1) {
                                         branch = getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", current_branch_id).queryForFirst();
+                                        Log.e(TAG, "Branch found: " + branch.getName());
                                     } else {
                                         Log.e(TAG, "Session don't have the current branch id");
                                     }
 
                                     // Product
-                                    if(jsonObject.has("id")) {
+                                    if (jsonObject.has("id")) {
                                         if (!jsonObject.getString("id").isEmpty()) {
                                             int product_id = jsonObject.getInt("id");
                                             product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product_id).queryForFirst();
+                                            Log.e(TAG, "Product found: " + product.getName());
                                         } else {
                                             Log.e(TAG, "'id' field from " + mCurrentTableSyncing + " API is empty");
                                         }
@@ -1184,9 +1183,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         Log.e(TAG, mCurrentTableSyncing + "API don't have 'id' field");
                                     }
 
-                                    if(branch != null || product != null) {
+                                    if (branch != null || product != null) {
                                         branchProduct = new BranchProduct(product, branch);
-
+                                        Log.e(TAG, "branchProduct created ");
                                         // Name
                                         if (jsonObject.has("name")) {
                                             if (!jsonObject.getString("name").isEmpty()) {
@@ -1236,23 +1235,17 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         Log.e(TAG, "---");
 
-                                        if (initialSync || lastUpdatedAt == null) {
-                                            newBranchProducts.add(branchProduct);
+                                        // TODO: HOW TO UPDATE
+                                        if (!isExisting(branchProduct, Table.BRANCH_PRODUCTS)) {
+                                            branchProduct.insertTo(getHelper());
                                         } else {
-                                            if (isExisting(product, Table.PRODUCTS)) {
-                                              updateBranchProducts.add(branchProduct);
-                                            } else {
-                                              newBranchProducts.add(branchProduct);
-                                            }
+
                                         }
+
                                     } else {
                                         Log.e(TAG, "Can't create Branch Product Object! missing data");
                                     }
                                 }
-
-                                newBranchProducts.doOperation(BranchProduct.class);
-                                updateBranchProducts.doOperation(BranchProduct.class);
-                                deleteBranchProducts.doOperation(BranchProduct.class);
 
                                 updateNext(requestType, size);
                                 break;

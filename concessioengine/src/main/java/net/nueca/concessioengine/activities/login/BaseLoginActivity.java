@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
@@ -249,18 +248,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                 btnSignIn.setEnabled(true);
                             }
                         }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-//                DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Sync Failed",
-//                        "Sync failed. Login Again ",
-//                        "Ok", "", false,
-//                        new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(MaterialDialog dialog, DialogAction dialogAction) {
-//                                bindSyncService();
-//                                dialog.dismiss();
-//                                dialogPositiveButtonAction();
-//                                btnSignIn.setEnabled(true);
-//                            }
-//                        }, null, null);
             }
         } else {
 
@@ -576,17 +563,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                     public void onClick(DialogInterface dialog, int which) {
                                     }
                                 }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-//                        DialogTools.showBasicWithTitle(
-//                                BaseLoginActivity.this,
-//                                "Failed to Re-Sync Data",
-//                                getString(R.string.LOGIN_NETWORK_ERROR),
-//                                "Okay", null, false,
-//                                new MaterialDialog.SingleButtonCallback() {
-//                                    @Override
-//                                    public void onClick(@NonNull MaterialDialog materialDialog, DialogAction dialogAction) {
-//                                        materialDialog.dismiss();
-//                                    }
-//                                }, null, null);
                     } else {
                         if (table == mSyncModules.getCurrentTableSyncing()) {
                             Log.e(TAG, "retrying sync table " + table);

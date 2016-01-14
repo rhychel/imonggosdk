@@ -184,7 +184,6 @@ public abstract class BaseSyncService extends ImonggoService {
      */
     public boolean isExisting(Object o, int id, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
 
-
         switch (table) {
             case USERS: {
                 User user = (User) o;
@@ -386,14 +385,12 @@ public abstract class BaseSyncService extends ImonggoService {
     public void prepareModulesToReSync() {
 
         int length = mModulesToSync.length;
-        int newlength = 0;
+        int newlength;
 
-        //Log.e(TAG, "Tables To Sync:");
 
         newlength = length - mModulesIndex;
         Table[] temp = new Table[newlength];
 
-        // Log.e(TAG, "Current Index: " + mModulesIndex + " Length: " + length + " new length: " + newlength);
 
         if (newlength != 0) {
             int x = 0;
@@ -402,7 +399,6 @@ public abstract class BaseSyncService extends ImonggoService {
                 x++;
             }
             mModulesToSync = temp;
-            //  Log.e(TAG, "Temp length is " + temp.length);
         }
 
         // reset variable
