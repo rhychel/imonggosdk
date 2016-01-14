@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import net.nueca.concessioengine.adapters.TransactionTypesAdapter;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -37,14 +38,16 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
 
     protected boolean hasFilterByBranch = false, hasFilterByTransactionType = false;
     protected boolean isTypesInitialized = false, hasDocument = false, hasOrder = false, hasInvoice = false;
+    protected String searchKey = "";
 
-    protected ArrayAdapter<String> transactionTypeAdapter;
-    protected List<String> transactionTypes;
+    protected TransactionTypesAdapter transactionTypeAdapter;
+    protected List<ConcessioModule> transactionTypes;
 
     protected ArrayAdapter<Branch> branchAdapter;
     protected List<Branch> branches;
 
     protected SetupActionBar setupActionBar;
+    protected ConcessioModule concessioModule = ConcessioModule.ALL;
 
     protected abstract void toggleNoItems(String msg, boolean show);
 
@@ -87,6 +90,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
     protected List<OfflineData> getTransactions() { // TODO BUGGED!
         List<OfflineData> transactions = new ArrayList<>();
         try {
+            boolean includeSearchKey = !searchKey.trim().isEmpty();
             Where<OfflineData, Integer> whereOfflineData = getHelper().fetchIntId(OfflineData.class).queryBuilder().where();
             boolean hasOne = false;
 //            whereOfflineData.eq("user_id", getSession().getUser().getId());
@@ -110,6 +114,10 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
                     whereOfflineData.in("type", transactionTypes);//.and()
                     hasOne = true;
                 }
+                if(includeSearchKey)
+                    whereOfflineData.and().like("reference_no", "%"+searchKey+"%");
+                if(concessioModule != ConcessioModule.ALL)
+                    whereOfflineData.and().eq("concessioModule", concessioModule);
             }
             if(branchId > 0) {
                 if(hasOne)
@@ -153,7 +161,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
         this.hasFilterByTransactionType = hasFilterByTransactionType;
     }
 
-    public void setTransactionTypes(List<String> transactionTypes) {
+    public void setTransactionTypes(List<ConcessioModule> transactionTypes) {
         this.transactionTypes = transactionTypes;
     }
 
@@ -163,5 +171,9 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
 
     public void setListingType(ListingType listingType) {
         this.listingType = listingType;
+    }
+
+    public void setSearchKey(String searchKey) {
+        this.searchKey = searchKey;
     }
 }

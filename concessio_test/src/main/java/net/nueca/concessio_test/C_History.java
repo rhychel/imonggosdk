@@ -60,10 +60,9 @@ public class C_History extends ModuleActivity implements SetupActionBar, BaseTra
         unbindService(swableConnection);
     }
 
+
     @Override
     public void showTransactionDetails(OfflineData offlineData) {
-        Intent intent = new Intent(this, C_HistoryDetails.class);
-        intent.putExtra(SimpleTransactionDetailsFragment.TRANSACTION_ID, offlineData.getReturnId());
-        startActivity(intent);
+
     }
 }

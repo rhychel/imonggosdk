@@ -2,8 +2,6 @@ package net.nueca.concessio_test;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -43,33 +41,31 @@ public class C_Login extends LoginActivity {
 
         setModulesToSync(
                 Table.USERS_ME.ordinal(),
+                Table.BRANCH_USERS.ordinal(),
                 Table.SETTINGS.ordinal(),
                 Table.PRODUCTS.ordinal(),
                 Table.UNITS.ordinal(),
-                Table.BRANCH_USERS.ordinal(),
-                Table.BRANCH_PRODUCTS.ordinal(),
-                Table.BRANCH_PRICE_LISTS.ordinal(),
-                Table.PRICE_LISTS_DETAILS.ordinal(),
-                //Table.ROUTE_PLANS.ordinal(),
-                Table.CUSTOMER_CATEGORIES.ordinal(),
-                Table.CUSTOMER_GROUPS.ordinal(),
+/*                Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_BY_SALESMAN.ordinal(),
-                Table.PAYMENT_TYPES.ordinal(),
+                Table.ROUTE_PLANS.ordinal(),
+                Table.ROUTE_PLANS_DETAILS.ordinal(),*/
+                Table.BRANCH_PRODUCTS.ordinal()/*,
+                Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
+                Table.PRICE_LISTS_DETAILS.ordinal(),
                 Table.PAYMENT_TERMS.ordinal(),
+                Table.PAYMENT_TYPES.ordinal(),
                 Table.INVOICES.ordinal(),
-                Table.INVOICE_PURPOSES.ordinal()
-                /*,Table.DOCUMENTS.ordinal()
-                Table.SALES_PUSH.ordinal(),
-                Table.SALES_PROMOTIONS_DISCOUNT.ordinal()/*,
-                Table.BRANCH_ROUTE_PLANS.ordinal()*/
-        );
+                Table.INVOICE_PURPOSES.ordinal(),
+                Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
+                Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS.ordinal(),
+                Table.SALES_PROMOTIONS_POINTS.ordinal(),
+                Table.SALES_PROMOTIONS_POINTS_DETAILS.ordinal()*/);
     }
 
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, (/*SettingTools.defaultBranch(this).equals("") ?*/ C_Welcome.class
-                /*:C_Dashboard.class*/));
+        Intent intent = new Intent(this, ( C_Customers.class));
         startActivity(intent);
     }
 

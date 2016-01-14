@@ -105,7 +105,8 @@ public class CustomerGroup extends BaseTable {
     public String toString() {
         return "CustomerGroup{" +
                 "name='" + name + '\'' +
-                ", priceList=" + priceList +
+                "id='" + id + '\'' +
+                ", priceList=" + (priceList == null ? "nulls" : priceList.getId())+
                 ", discount_text='" + discount_text + '\'' +
                 ", status='" + status + '\'' +
                 ", code='" + code + '\'' +

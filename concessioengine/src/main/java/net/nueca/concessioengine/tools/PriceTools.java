@@ -34,6 +34,14 @@ public class PriceTools {
 
     public static Double identifyRetailPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch,
                                              CustomerGroup customerGroup, Customer customer, Unit unit) {
+
+        if(branch == null)
+            Log.e("identifyRetailPrice", "branch is null");
+        if(customerGroup == null)
+            Log.e("identifyRetailPrice", "customerGroup is null");
+        if(customer == null)
+            Log.e("identifyRetailPrice", "customer is null");
+
         Unit defaultUnit = null;
         if(product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && product.getExtras()
                 .getDefault_selling_unit().length() > 0) {
@@ -129,6 +137,8 @@ public class PriceTools {
 
             if(type == DEFAULT_PRICE && unit != null && !unit.equals(defaultUnit))
                 return identifyRetailPrice(dbHelper2, product, branch, customerGroup, customer, defaultUnit);
+
+            Log.e("identifyRetailPrice", "type="+type);
 
             //Log.e("Price-" + type, "retail_price:" + retail_price + " for " + product.getName());
         } catch (SQLException e) {

@@ -27,16 +27,32 @@ public enum ConcessioModule {
     LAYAWAY("layaway"),
     ROUTE_PLAN("route_plan"),
 
-    NONE("none");
+    NONE("none"),
+    ALL("all", "All Transactions");
 
 
     private String name;
+    private String label;
     ConcessioModule(String name) {
         this.name = name;
     }
 
+    ConcessioModule(String name, String label) {
+        this.name = name;
+        this.label = label;
+    }
+
     public ConcessioModule[] getValidTransaction() {
         return new ConcessioModule[]{STOCK_REQUEST, PHYSICAL_COUNT, INVOICE, RECEIVE_BRANCH, RECEIVE_BRANCH_PULLOUT, RELEASE_BRANCH, RECEIVE_ADJUSTMENT, RELEASE_ADJUSTMENT, RECEIVE_SUPPLIER, RELEASE_SUPPLIER};
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public ConcessioModule setLabel(String label) {
+        this.label = label;
+        return this;
     }
 
     @Override

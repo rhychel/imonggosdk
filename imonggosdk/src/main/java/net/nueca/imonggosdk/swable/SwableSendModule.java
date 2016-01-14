@@ -70,6 +70,7 @@ public class SwableSendModule {
             //JSONObject data;
             JSONObject jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
                     offlineData.getData());
+            Log.e("SwableSendModule", "sendTransaction "+jsonObject.toString());
             //Log.e("JSON", jsonObject.toString());
 
             requestQueue.cancelAll(offlineData.getId());

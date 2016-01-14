@@ -32,6 +32,7 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.accountsettings.Cutoff;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
+import net.nueca.imonggosdk.objects.accountsettings.DownloadSequence;
 import net.nueca.imonggosdk.objects.accountsettings.Manual;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.accountsettings.ProductListing;
@@ -597,8 +598,17 @@ public class BaseLogin {
                                                         DebugMode debugMode = gson.fromJson(module.getJSONObject("debug_mode").toString(), DebugMode.class);
                                                         debugMode.setModuleSetting(moduleSetting);
                                                         debugMode.insertTo(mDBHelper);
-
                                                         moduleSetting.setDebugMode(debugMode);
+
+                                                        // Download Sequence
+                                                        JSONArray jsonArrDownloadSeq = module.getJSONArray("download_sequence");
+                                                        BatchList<DownloadSequence> downloadSequences = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
+                                                        for(int j = 0;j < jsonArrDownloadSeq.length();j++) {
+                                                            DownloadSequence downloadSequence = new DownloadSequence(jsonArrDownloadSeq.getString(j), moduleSetting);
+                                                            downloadSequence.setId((j+1));
+                                                            downloadSequences.add(downloadSequence);
+                                                        }
+                                                        downloadSequences.doOperation(DownloadSequence.class);
                                                     } else if (key.equals("customers")) {
                                                         moduleSetting.insertTo(mDBHelper);
                                                         continue;
@@ -717,27 +727,30 @@ public class BaseLogin {
 
                 String requires_premium_subscription = mContext.getString(R.string.error_response_requires_premium_subscription);
 
-                if (requires_premium_subscription.equals(response.toString())) {
-                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.error_dialog_title_requires_premium_subscription),
-                            mContext.getString(R.string.error_dialog_message_requires_premium_subscription),
-                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mLoginListener.onPositiveButtonPressed();
-                                }
-                            }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                if(hasInternet && response != null) {
 
-//                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.error_dialog_title_requires_premium_subscription),
-//                            mContext.getString(R.string.error_dialog_message_requires_premium_subscription),
-//                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-//                            new MaterialDialog.SingleButtonCallback() {
-//                                @Override
-//                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-//                                    materialDialog.dismiss();
-//                                    mLoginListener.onPositiveButtonPressed();
-//                                }
-//                            }, null, null);
+                    if (requires_premium_subscription.equals(response.toString())) {
+                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.error_dialog_title_requires_premium_subscription),
+                                mContext.getString(R.string.error_dialog_message_requires_premium_subscription),
+                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        mLoginListener.onPositiveButtonPressed();
+                                    }
+                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                    } else {
+                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                                mContext.getString(R.string.LOGIN_NETWORK_ERROR),
+                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        mLoginListener.onPositiveButtonPressed();
+                                    }
+                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+
+                    }
                 } else {
                     DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                             mContext.getString(R.string.LOGIN_NETWORK_ERROR),
@@ -749,19 +762,7 @@ public class BaseLogin {
                                 }
                             }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
 
-//                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-//                            mContext.getString(R.string.LOGIN_NETWORK_ERROR),
-//                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-//                            new MaterialDialog.SingleButtonCallback() {
-//                                @Override
-//                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-//                                    materialDialog.dismiss();
-//                                    mLoginListener.onPositiveButtonPressed();
-//                                }
-//                            }, null, null);
-
                 }
-
 
                 if (mLoginListener != null) {
                     mLoginListener.onStopLogin();

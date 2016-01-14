@@ -18,6 +18,7 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
 
     private RecyclerView rvProducts;
     private SimpleProductRecyclerViewAdapter simpleProductRecyclerViewAdapter;
-
+    private OfflineData offlineData;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,6 +64,14 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
             setupActionBar.setupActionBar(tbActionBar);
     }
 
+    public OfflineData getOfflineData() {
+        return offlineData;
+    }
+
+    public void setOfflineData(OfflineData offlineData) {
+        this.offlineData = offlineData;
+    }
+
     @Override
     protected void showQuantityDialog(int position, Product product, SelectedProductItem selectedProductItem) {
 
@@ -79,8 +88,6 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
     }
 
     @Override
-    protected void toggleNoItems(String msg, boolean show) {
-        // NO USE
-    }
+    protected void toggleNoItems(String msg, boolean show) { }
 
 }

@@ -61,6 +61,11 @@ public class CustomerCategory extends BaseTable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        return id == ((CustomerCategory)o).getId();
+    }
+
+    @Override
     public String toString() {
         return name;
     }

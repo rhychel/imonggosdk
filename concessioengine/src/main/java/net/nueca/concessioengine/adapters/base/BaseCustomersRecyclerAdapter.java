@@ -20,6 +20,25 @@ public abstract class BaseCustomersRecyclerAdapter<T extends BaseRecyclerAdapter
         return selectedCustomer;
     }
 
+    public boolean removeCustomer(Customer customer) {
+        if(selectedCustomer.contains(customer)) {
+            selectedCustomer.remove(customer);
+            return true;
+        }
+        return false;
+    }
+
+    public int removeCustomers(List<Customer> customersToRemove) {
+        int removed = 0;
+        for(Customer customer : customersToRemove) {
+            if(selectedCustomer.contains(customer)) {
+                selectedCustomer.remove(customer);
+                removed++;
+            }
+        }
+        return removed;
+    }
+
     public BaseCustomersRecyclerAdapter(Context context, List<Customer> customers, boolean isMultiSelect) {
         super(context);
         setList(customers);

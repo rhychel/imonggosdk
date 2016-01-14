@@ -4,6 +4,7 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -57,7 +58,7 @@ public class OfflineData extends BaseTable2 {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
     private Customer customerData;
 
-    @DatabaseField
+    @DatabaseField(dataType = DataType.ENUM_INTEGER)
     private ConcessioModule concessioModule = ConcessioModule.NONE;
 	
 	@DatabaseField

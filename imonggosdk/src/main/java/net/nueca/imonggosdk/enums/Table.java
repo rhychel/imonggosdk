@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.enums;
 
+import android.util.Log;
+
 import net.nueca.imonggosdk.objects.ApplicationSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
@@ -46,27 +48,27 @@ import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 public enum Table {
     // ----- Main APIs
     TOKENS(API_TYPE.API, "Tokens", null),
-    CUSTOMERS(API_TYPE.API, "Customers", Customer.class),
-    INVENTORIES(API_TYPE.API, "Inventories", Inventory.class),
-    PRODUCTS(API_TYPE.API, "Products", Product.class),
-    TAX_SETTINGS(API_TYPE.API, "Tax Settings", TaxSetting.class),
-    UNITS(API_TYPE.API, "Units", Unit.class),
-    USERS(API_TYPE.API, "Users", User.class),
-    USERS_ME(API_TYPE.API, "Users", User.class),
-    BRANCHES(API_TYPE.API, "Branches", Branch.class),
-    INVOICES(API_TYPE.API, "Invoices", Invoice.class),
-    SETTINGS(API_TYPE.API, "Settings", Settings.class),
-    APPLICATION_SETTINGS(API_TYPE.API, "Application Settings", ApplicationSettings.class),
-    ORDERS(API_TYPE.API, "Orders", Order.class),
+    CUSTOMERS(API_TYPE.API, "Customers", Customer.class, "customers"),
+    INVENTORIES(API_TYPE.API, "Inventories", Inventory.class, "inventories"),
+    PRODUCTS(API_TYPE.API, "Products", Product.class, "products"),
+    TAX_SETTINGS(API_TYPE.API, "Tax Settings", TaxSetting.class, "tax_settings"),
+    UNITS(API_TYPE.API, "Units", Unit.class, "units"),
+    USERS(API_TYPE.API, "Users", User.class, "users"),
+    USERS_ME(API_TYPE.API, "Users", User.class, "users_me"),
+    BRANCHES(API_TYPE.API, "Branches", Branch.class, "branches"),
+    INVOICES(API_TYPE.API, "Invoices", Invoice.class, "invoices"),
+    SETTINGS(API_TYPE.API, "Settings", Settings.class, "settings"),
+    APPLICATION_SETTINGS(API_TYPE.API, "Application Settings", ApplicationSettings.class, "application_settings"),
+    ORDERS(API_TYPE.API, "Orders", Order.class, "orders"),
     POS_DEVICES(API_TYPE.API, "Pos Devices", null),
-    DAILY_SALES(API_TYPE.API, "Daily Sales", DailySales.class),
-    DOCUMENTS(API_TYPE.API, "Documents", Document.class),
-    DOCUMENT_TYPES(API_TYPE.API, "Document Types", DocumentType.class),
-    DOCUMENT_PURPOSES(API_TYPE.API, "Document Purposes", DocumentPurpose.class),
+    DAILY_SALES(API_TYPE.API, "Daily Sales", DailySales.class, "daily_sales"),
+    DOCUMENTS(API_TYPE.API, "Documents", Document.class, "documents"),
+    DOCUMENT_TYPES(API_TYPE.API, "Document Types", DocumentType.class, "document_types"),
+    DOCUMENT_PURPOSES(API_TYPE.API, "Document Purposes", DocumentPurpose.class, "document_purposes"),
 
     // ----- API With Branch IDs
-    BRANCH_CUSTOMERS(API_TYPE.API, "Customers", Customer.class),
-    BRANCH_USERS(API_TYPE.API, "Branches", Branch.class),
+    BRANCH_CUSTOMERS(API_TYPE.API, "Customers", Customer.class, "branch_customers"),
+    BRANCH_USERS(API_TYPE.API, "Branches", Branch.class, "branch_users"),
     //BRANCH_UNITS(API_TYPE.API, "Units", Unit.class),
 
     // ----- API with Products
@@ -96,35 +98,42 @@ public enum Table {
     EXTRAS(API_TYPE.NON_API, "Extras", Extras.class),
 
     // ----- FOR REBISCO
-    CUSTOMER_BY_SALESMAN(API_TYPE.API, "Customers", Customer.class),
-    BRANCH_PRODUCTS(API_TYPE.API, "Prices", BranchProduct.class),
-    BRANCH_PRODUCTS_PRICES(API_TYPE.API, "Prices", BranchProduct.class),
-    INVOICE_PURPOSES(API_TYPE.API, "Invoice Purposes", InvoicePurpose.class),
-    PAYMENT_TERMS(API_TYPE.API, "Payment Terms", PaymentTerms.class),
-    CUSTOMER_CATEGORIES(API_TYPE.API, "Customer Categories", CustomerCategory.class),
-    PAYMENT_TYPES(API_TYPE.API, "Payment Types", PaymentType.class),
-    CUSTOMER_GROUPS(API_TYPE.API, "Customer Groups", CustomerGroup.class),
-    PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class),
-    BRANCH_PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class),
-    PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", PriceList.class),
-    SALES_PROMOTIONS(API_TYPE.API, "Sales Promotions", SalesPromotion.class),
-    SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS(API_TYPE.API, "Discount Details", Discount.class),
-    SALES_PROMOTIONS_POINTS_DETAILS(API_TYPE.API, "Points Details", Discount.class),
-    SALES_PROMOTIONS_SALES_PUSH(API_TYPE.API, "Sales Push", SalesPromotion.class),
-    SALES_PROMOTIONS_POINTS(API_TYPE.API, "Points", SalesPromotion.class),
-    SALES_PROMOTIONS_SALES_DISCOUNT(API_TYPE.API, "Sales Discount", SalesPromotion.class),
-    ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class),
-    ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlanDetail.class);
+    CUSTOMER_BY_SALESMAN(API_TYPE.API, "Customers", Customer.class, "customer_by_salesman"),
+    BRANCH_PRODUCTS(API_TYPE.API, "Prices", BranchProduct.class, "branch_products"),
+    INVOICE_PURPOSES(API_TYPE.API, "Invoice Purposes", InvoicePurpose.class, "invoice_purposes"),
+    PAYMENT_TERMS(API_TYPE.API, "Payment Terms", PaymentTerms.class, "payment_terms"),
+    CUSTOMER_CATEGORIES(API_TYPE.API, "Customer Categories", CustomerCategory.class, "customer_categories"),
+    PAYMENT_TYPES(API_TYPE.API, "Payment Types", PaymentType.class, "payment_types"),
+    CUSTOMER_GROUPS(API_TYPE.API, "Customer Groups", CustomerGroup.class, "customer_groups"),
+    PRICE_LISTS_FROM_CUSTOMERS(API_TYPE.API, "Price Lists", PriceList.class, "price_lists_from_customers"),
+    PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class, "price_lists"),
+    BRANCH_PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class, "branch_price_lists"),
+    PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", PriceList.class, "price_lists_details"),
+    SALES_PROMOTIONS(API_TYPE.API, "Sales Promotions", SalesPromotion.class, "sales_promotions"),
+    SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS(API_TYPE.API, "Discount Details", Discount.class, "sales_promotions_sales_discount_details"),
+    SALES_PROMOTIONS_POINTS_DETAILS(API_TYPE.API, "Points Details", Discount.class, "sales_promotions_points_details"),
+    SALES_PROMOTIONS_SALES_PUSH(API_TYPE.API, "Sales Push", SalesPromotion.class, "sales_promotions_sales_push"),
+    SALES_PROMOTIONS_POINTS(API_TYPE.API, "Points", SalesPromotion.class, "sales_promotions_points"),
+    SALES_PROMOTIONS_SALES_DISCOUNT(API_TYPE.API, "Sales Discount", SalesPromotion.class, "sales_promotions_sales_discount"),
+    ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class, "route_plans"),
+    ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlanDetail.class, "route_plans_details"),
+
+    NONE(API_TYPE.NON_API, "none");
 
     private final API_TYPE api_type;
     private final String name;
     private final Class aClass;
+    private final String tableKey;
 
     Table(API_TYPE api, String name) {
         this(api, name, null);
     }
 
     Table(API_TYPE api, String name, Class a) {
+        this(api, name, a, null);
+    }
+
+    Table(API_TYPE api, String name, Class a, String tableKey) {
         this.api_type = api;
         this.name = name;
         if(a !=null) {
@@ -132,6 +141,7 @@ public enum Table {
         } else {
             this.aClass = null;
         }
+        this.tableKey = tableKey;
     }
 
     public boolean isAPI() {return this.api_type.equals(API_TYPE.API);}
@@ -139,5 +149,17 @@ public enum Table {
     public Class getTableClass() {return aClass;}
     public String getStringName() {
         return this.name;
+    }
+    public String getTableKey() {return tableKey;}
+
+    public static Table convertFromKey(String tableKey) {
+        for(Table table : Table.values()) {
+            if(table.getTableKey() != null) {
+                Log.e("convertFromKey", table.getTableKey());
+                if (table.getTableKey().equals(tableKey))
+                    return table;
+            }
+        }
+        return NONE;
     }
 }

@@ -84,7 +84,6 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
                 if(hasSubtotal)
                     viewHolder.tvSubtotal.setText(String.format("P%.2f", subtotal));
             }
-
         }
     }
 
