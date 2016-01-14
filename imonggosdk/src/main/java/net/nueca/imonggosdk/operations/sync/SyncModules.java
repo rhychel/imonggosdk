@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import net.nueca.imonggosdk.enums.DailySalesEnums;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
@@ -30,6 +31,7 @@ import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BatchList;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
 import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
@@ -1152,12 +1154,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
+                                BatchList<BranchUnit> newBranchUnit = new BatchList<>(DatabaseOperation.INSERT, getHelper()); // container for the new users
+
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
                                     int current_branch_id = getSession().getCurrent_branch_id();
 
                                     BranchProduct branchProduct;
+                                    BranchUnit branchUnit = null;
                                     Branch branch = null;
                                     Product product = null;
 
@@ -1186,6 +1191,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     if (branch != null || product != null) {
                                         branchProduct = new BranchProduct(product, branch);
                                         Log.e(TAG, "branchProduct created ");
+
                                         // Name
                                         if (jsonObject.has("name")) {
                                             if (!jsonObject.getString("name").isEmpty()) {
@@ -1227,20 +1233,48 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             if (jsonObject.getString("unit_id").isEmpty() || !jsonObject.get("unit_id").equals(null)) {
                                                 Log.e(TAG, "Branch Product API 'unit_id' field is empty or null");
                                                 branchProduct.setIsBaseUnitSellable(true);
+
+                                                int unit_id = jsonObject.getInt("unit_id");
+                                                Unit unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit_id).queryForFirst();
+
+                                                if (unit != null) {
+                                                    Log.e(TAG, "Unit found! fetching branch unit. Creating Branch Unit");
+                                                    branchUnit = new BranchUnit(unit, branch);
+                                                    branchUnit.setBranchProduct(branchProduct);
+
+                                                } else {
+                                                    Log.e(TAG, "Err Can't find 'unit' field from database");
+                                                }
+
+
                                             }
                                         } else {
                                             branchProduct.setIsBaseUnitSellable(true);
                                             Log.e(TAG, mCurrentTableSyncing + " API don't have 'unit_id' field");
                                         }
-
                                         Log.e(TAG, "---");
+
+                                        // Branch Product Id
+                                        if(jsonObject.has("branch_product_id")) {
+                                            if (jsonObject.getString("branch_product_id").isEmpty() || !jsonObject.get("branch_product_id").equals(null)) {
+                                                branchProduct.setBranch_product_id(jsonObject.getInt("branch_product_id"));
+                                            } else {
+                                                Log.e(TAG, mCurrentTableSyncing +" API 'branch_product_id' field don't have value");
+                                            }
+                                        } else {
+                                            Log.e(TAG, mCurrentTableSyncing + " API don't have 'branch_product_id field");
+                                        }
 
                                         // TODO: HOW TO UPDATE
                                         if (!isExisting(branchProduct, Table.BRANCH_PRODUCTS)) {
                                             branchProduct.insertTo(getHelper());
+                                            if (branchUnit != null) {
+                                                branchUnit.insertTo(getHelper());
+                                            }
                                         } else {
 
                                         }
+
 
                                     } else {
                                         Log.e(TAG, "Can't create Branch Product Object! missing data");
@@ -1416,10 +1450,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 BatchList<Unit> deleteUnits = new BatchList<>(DatabaseOperation.DELETE, getHelper());
                                 BatchList<Unit> updateUnits = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
-                                BatchList<BranchUnit> newBranchUnits = new BatchList<>(DatabaseOperation.INSERT, getHelper());
-                                BatchList<BranchUnit> deleteBranchUnits = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-                                BatchList<BranchUnit> updateBranchUnits = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-
                                 Extras unit_extras = new Extras();
 
                                 for (int i = 0; i < size; i++) {
@@ -1457,28 +1487,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     } else {
                                         Log.e(TAG, "Can't find product with id: " + jsonObject.getString("product_id"));
                                     }
-/*
-                                    if (mCurrentTableSyncing == Table.BRANCH_UNITS) {
-                                        int current_branch_id = getSession().getCurrent_branch_id();
-
-                                        Branch branch = getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", current_branch_id).queryForFirst();
-                                        BranchUnit branchUnit = new BranchUnit(unit, branch);
-
-                                        if (initialSync || lastUpdatedAt == null) {
-                                            newBranchUnits.add(branchUnit);
-                                        } else {
-                                            if (isExisting(branchUnit, Table.BRANCH_UNITS)) {
-                                                if (unit.getStatus() == null) {
-                                                    updateBranchUnits.add(branchUnit);
-                                                } else {
-                                                    deleteBranchUnits.add(branchUnit);
-                                                }
-                                            } else {
-                                                newBranchUnits.add(branchUnit);
-                                            }
-                                        }
-                                    }*/
-
 
                                     if (initialSync || lastUpdatedAt == null) {
                                         newUnits.add(unit);
