@@ -22,6 +22,8 @@ public class BranchUnit extends DBTable {
     private transient Branch branch;
     @DatabaseField
     private double retail_price = 0.0;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_product_id")
+    private BranchProduct branchProduct;
 
     public BranchUnit() { }
 
@@ -52,6 +54,14 @@ public class BranchUnit extends DBTable {
 
     public void setRetail_price(double retail_price) {
         this.retail_price = retail_price;
+    }
+
+    public BranchProduct getBranchProduct() {
+        return branchProduct;
+    }
+
+    public void setBranchProduct(BranchProduct branchProduct) {
+        this.branchProduct = branchProduct;
     }
 
     @Override
