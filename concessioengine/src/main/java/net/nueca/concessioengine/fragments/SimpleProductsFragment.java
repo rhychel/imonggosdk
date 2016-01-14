@@ -267,7 +267,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
 
         try {
-            if(listingType == ListingType.SALES) {
+            if(listingType == ListingType.SALES || listingType == ListingType.ADVANCED_SALES) {
                 SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
                 simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
