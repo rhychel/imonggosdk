@@ -1,10 +1,12 @@
 package net.nueca.imonggosdk.tools;
 
+import android.util.Log;
 import android.widget.EditText;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 /**
@@ -70,6 +72,7 @@ public class NumberTools {
         }
     }
     // -----------------------------------------------
+
     public static final DecimalFormat FORMAT_REQUIRE_DECIMAL =
             new DecimalFormat(StringUtils.repeat("###" + SEPARATOR, 5) + "##0." + StringUtils.repeat("0", DECIMAL_PLACE));
     public static final DecimalFormat FORMAT_OPTIONAL_DECIMAL =

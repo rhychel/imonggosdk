@@ -76,8 +76,8 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
-        setEditTextAccountID("C5015");
-        setEditTextEmail("OSS1@test.com");
-        setEditTextPassword("OSS1");
+        setEditTextAccountID("C5111");
+        setEditTextEmail("C5111@imonggo.com");
+        setEditTextPassword("C5111");
     }
 }

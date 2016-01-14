@@ -44,6 +44,7 @@ public abstract class BaseTransactionTable2 extends BaseTable2 implements Extras
         this.utc_created_at = builder.utc_created_at;
         this.utc_updated_at = builder.utc_updated_at;
         this.searchKey = builder.searchKey;
+        this.extras = builder.extras;
     }
 
     public String getReference() {
@@ -72,8 +73,14 @@ public abstract class BaseTransactionTable2 extends BaseTable2 implements Extras
         private String reference;
         private String searchKey = "";
         private String utc_created_at, utc_updated_at, utc_document_date;
+        private Extras extras;
 
         public Builder() {}
+
+        public T extras(Extras extras) {
+            this.extras = extras;
+            return (T)this;
+        }
 
         public T reference(String reference) {
             this.reference = reference;

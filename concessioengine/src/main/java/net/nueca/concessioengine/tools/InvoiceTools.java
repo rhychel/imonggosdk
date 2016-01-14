@@ -1,5 +1,13 @@
 package net.nueca.concessioengine.tools;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import net.nueca.concessioengine.lists.SelectedProductItemList;
@@ -24,7 +32,7 @@ public class InvoiceTools {
     }
 
     public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems, Customer customer) {
-        if(customer != null)
+        if (customer != null)
             return generateInvoiceLines(selectedProductItems, customer.getDiscount_text());
         return generateInvoiceLines(selectedProductItems);
     }
@@ -32,15 +40,15 @@ public class InvoiceTools {
     public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems, String customerDiscount) {
         List<InvoiceLine> invoiceLines = new ArrayList<>();
 
-        for(SelectedProductItem selectedProductItem : selectedProductItems) {
+        for (SelectedProductItem selectedProductItem : selectedProductItems) {
             Product product = selectedProductItem.getProduct();
 
-            for(Values itemValue : selectedProductItem.getValues()) {
+            for (Values itemValue : selectedProductItem.getValues()) {
                 InvoiceLine.Builder builder = new InvoiceLine.Builder();
                 builder.product_id(product.getId());
 
                 String discount_text = itemValue.getDiscount_text();
-                if(customerDiscount != null && customerDiscount.length() != 0) {
+                if (customerDiscount != null && customerDiscount.length() != 0) {
                     if (discount_text != null && discount_text.length() != 0)
                         discount_text += "," + customerDiscount;
                     else
@@ -48,7 +56,7 @@ public class InvoiceTools {
                 }
                 builder.discount_text(discount_text);
 
-                builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).intValue());
+                builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).doubleValue());
 
                 double retail_price = itemValue.isValidUnit() ?
                         itemValue.getRetail_price() : product.getRetail_price();
@@ -58,18 +66,39 @@ public class InvoiceTools {
                         .multiply(new BigDecimal(retail_price));
                 BigDecimal subtotal = new BigDecimal(itemValue.getSubtotal());
 
-                if(subtotal.doubleValue() == 0d)
-                    builder.subtotal(""+t_subtotal.doubleValue());
+                if (subtotal.doubleValue() == 0d)
+                    builder.subtotal("" + t_subtotal.doubleValue());
                 else
-                    builder.subtotal(""+itemValue.getSubtotal());
+                    builder.subtotal("" + itemValue.getSubtotal());
 
                 invoiceLines.add(builder.build());
                 Log.e("INVOICE", product.getName() + " " + t_subtotal.doubleValue() + " " + subtotal.doubleValue() + " ~ " + retail_price + " * " +
-                        itemValue.getQuantity() + " -- discount " + discount_text);
+                        itemValue.getQuantity() + " -- discount: " + discount_text + " | discounted price: " +
+                        DiscountTools.applyMultipleDiscounts(new BigDecimal(retail_price), NumberTools.toBigDecimal(itemValue.getQuantity()),
+                                discount_text, ",").doubleValue());
             }
         }
         return invoiceLines;
     }
+
+    /*@Nullable
+    public static Location getLocation(Activity activity) {
+        String networkProvider = LocationManager.NETWORK_PROVIDER;
+        String gpsProvider = LocationManager.GPS_PROVIDER;
+
+        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+
+        Location location = locationManager.getLastKnownLocation(gpsProvider);
+        if(location == null)
+            location = locationManager.getLastKnownLocation(networkProvider);
+
+        return location;
+    }*/
 
     public static class PaymentsComputation {
         private List<InvoiceLine> invoiceLines = new ArrayList<>();

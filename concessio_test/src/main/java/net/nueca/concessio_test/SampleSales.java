@@ -1,5 +1,7 @@
 package net.nueca.concessio_test;
 
+import android.location.Criteria;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -18,14 +20,17 @@ import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.tools.InvoiceTools;
+import net.nueca.concessioengine.tools.LocationTools;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.concessioengine.tools.DiscountTools;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -329,9 +334,15 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
             btnReview.setText(REVIEW_LABEL);
         } else {
+            Location location = LocationTools.getLocation(this);
+            Log.e("ACCURACY", location.getAccuracy() + " " + Criteria.ACCURACY_HIGH);
             Log.e(">>>", new Invoice.Builder()
                     .payments(simpleCheckoutFragment.getPayments())
                     .invoice_lines(simpleCheckoutFragment.getInvoiceLines())
+                    .extras(new Extras.Builder()
+                            .latitude("" + LocationTools.limitDecimal(location.getLatitude(), 5))
+                            .longitude("" + LocationTools.limitDecimal(location.getLongitude(), 5))
+                            .build())
                     .build()
                     .toString());
         }

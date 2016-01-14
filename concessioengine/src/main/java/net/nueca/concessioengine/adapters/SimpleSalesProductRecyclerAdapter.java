@@ -72,7 +72,7 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                     unit = t_unit;
             } catch (SQLException e) { e.printStackTrace(); }
         }
-        Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer,unit);
+        Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer, unit);
 
         holder.tvSubtotal.setText("");
         if(selectedProductItem != null) {

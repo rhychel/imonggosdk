@@ -239,6 +239,8 @@ public class PriceTools {
                 type = PRICELIST_CUSTOMER;
             }
 
+            Log.e("PRICE_TOOLS", "type = " + type);
+
             if(type == DEFAULT_PRICE && unit != null && !unit.equals(defaultUnit))
                 return identifyPrice(dbHelper2, product, branch, customerGroup, customer, defaultUnit);
 
