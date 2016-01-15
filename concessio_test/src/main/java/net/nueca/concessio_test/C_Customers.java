@@ -16,9 +16,10 @@ import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
-import net.nueca.imonggosdk.objects.invoice.Discount;
+import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -89,6 +90,45 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
             e.printStackTrace();
         }
 
+
+
+        try {
+            List<BranchProduct> branchProducts = getHelper().fetchObjectsList(BranchProduct.class);
+
+            Log.e(TAG, "Branch Products size: " + branchProducts.size());
+
+            for(BranchProduct bp : branchProducts) {
+                Log.e(TAG, "Branch Product product: " + (bp.getProduct() != null ? bp.getProduct().getName() : "null"));
+                Log.e(TAG, "Branch Product branch: " + (bp.getBranch() != null ? bp.getBranch().getName() : "null"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        try {
+            List<SalesPromotion> salesPromotions = getHelper().fetchObjectsList(SalesPromotion.class);
+
+            Log.e(TAG, "Sales Promotions size: " + salesPromotions.size());
+
+            for(SalesPromotion bp : salesPromotions) {
+                Log.e(TAG, "Sales Promotions name: " + bp.getName());
+
+                if(bp.getDiscounts_fc() != null) {
+                    Log.e(TAG, "Discount size: " + bp.getDiscounts_fc().size());
+                    for(Discount discount : bp.getDiscounts_fc()) {
+                        Log.e(TAG, "Discount: " + discount.toString());
+                    }
+                }
+
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void initComponents() {
@@ -103,19 +143,6 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                 .replace(R.id.flContent, mSimpleCustomersFragment)
                 .addToBackStack("customers")
                 .commit();
-
-        try {
-            List<BranchProduct> branchProducts = getHelper().fetchObjectsList(BranchProduct.class);
-
-            Log.e(TAG, "Branch Products size: " + branchProducts.size());
-
-            for(BranchProduct bp : branchProducts) {
-                Log.e(TAG, "Branch Product product: " + (bp.getProduct() != null ? bp.getProduct().getName() : "null"));
-                Log.e(TAG, "Branch Product branch: " + (bp.getBranch() != null ? bp.getBranch().getName() : "null"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

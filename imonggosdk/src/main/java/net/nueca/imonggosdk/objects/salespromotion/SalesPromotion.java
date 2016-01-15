@@ -208,6 +208,7 @@ public class SalesPromotion extends BaseTable {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
+        convertToDate();
         try {
             dbHelper.insert(SalesPromotion.class, this);
         } catch (SQLException e) {

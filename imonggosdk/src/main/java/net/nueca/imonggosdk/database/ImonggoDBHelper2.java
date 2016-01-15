@@ -79,12 +79,12 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 42;
+    private static final int DATABASE_VERSION = 48;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchTag.class, Customer.class,
             Inventory.class, Product.class, ProductTag.class, Session.class,
-            Discount.class, TaxRate.class, TaxSetting.class, Unit.class, User.class,
+            Discount.class, net.nueca.imonggosdk.objects.salespromotion.Discount.class, TaxRate.class, TaxSetting.class, Unit.class, User.class,
             BranchProduct.class, BranchUnit.class, DocumentType.class, DocumentPurpose.class,
             BranchUserAssoc.class, ProductTaxRateAssoc.class,
             LastUpdatedAt.class, OfflineData.class, Document.class, DocumentLine.class,
