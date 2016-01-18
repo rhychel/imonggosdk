@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.objects;
 
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 
 /**
  * Created by rhymart on 11/24/15.
@@ -10,6 +11,12 @@ public class DashboardTile {
     private ConcessioModule concessioModule;
     private String label;
     private int imageResource;
+
+    public DashboardTile(ModuleSetting moduleSetting, int imageResource) {
+        this.concessioModule = moduleSetting.getModuleType();
+        this.label = moduleSetting.getLabel();
+        this.imageResource = imageResource;
+    }
 
     public DashboardTile(ConcessioModule concessioModule, String label) {
         this.concessioModule = concessioModule;

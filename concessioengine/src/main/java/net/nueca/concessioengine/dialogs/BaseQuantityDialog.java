@@ -31,7 +31,7 @@ import java.util.List;
 public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public interface QuantityDialogListener {
-        void onSave(SelectedProductItem selectedProductItem);
+        void onSave(SelectedProductItem selectedProductItem, int position);
         void onDismiss();
     }
 
@@ -61,6 +61,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, hasBatchNo = false, isMultiValue = false;
     protected int valuePosition = -1;
+    protected int listPosition = -1;
 
     public BaseQuantityDialog(Context context) {
         super(context);
@@ -213,5 +214,9 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setSalesBranch(Branch salesBranch) {
         this.salesBranch = salesBranch;
+    }
+
+    public void setListPosition(int listPosition) {
+        this.listPosition = listPosition;
     }
 }

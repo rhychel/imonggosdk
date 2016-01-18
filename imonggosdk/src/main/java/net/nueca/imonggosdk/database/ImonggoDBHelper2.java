@@ -7,6 +7,8 @@ import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -79,7 +81,7 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 40;
+    private static final int DATABASE_VERSION = 44;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchTag.class, Customer.class,
@@ -91,7 +93,7 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
             DailySales.class, Settings.class, Order.class, OrderLine.class,
             Invoice.class, InvoiceLine.class, InvoicePayment.class, InvoiceTaxRate.class,
             Extras.class, CustomerCategory.class, CustomerGroup.class, InvoicePurpose.class,
-            PaymentTerms.class, PaymentType.class, SalesPromotion.class, Price.class,
+            PaymentTerms.class, PaymentType.class, SalesPromotion.class, net.nueca.imonggosdk.objects.salespromotion.Discount.class, Price.class,
             PriceList.class, RoutePlan.class, RoutePlanDetail.class, CustomerCustomerGroupAssoc.class,
             ProductSalesPromotionAssoc.class, ModuleSetting.class, DownloadSequence.class, DebugMode.class, ProductSorting.class,
             Cutoff.class, ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};

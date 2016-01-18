@@ -86,6 +86,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         View view = inflater.inflate(useRecyclerView ? R.layout.simple_products_fragment_rv : R.layout.simple_products_fragment_lv, container,
                 false);
 
+        if(hasPromotionalProducts)
+            getPromotionalProducts();
+
         suplProduct = (SlidingUpPanelLayout) view.findViewById(R.id.suplProduct);
         tvProductName = (TextView) view.findViewById(R.id.tvProductName);
         tvProductDescription = (TextView) view.findViewById(R.id.tvProductDescription);
@@ -265,10 +268,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
     @Override
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
-
         try {
             if(listingType == ListingType.SALES || listingType == ListingType.ADVANCED_SALES) {
                 SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
+                simpleSalesQuantityDialog.setListPosition(position);
                 simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
 
@@ -288,28 +291,12 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
                 simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
                 simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
-                simpleSalesQuantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
-                    @Override
-                    public void onSave(SelectedProductItem selectedProductItem) {
-                        if (useRecyclerView) {
-                            productRecyclerViewAdapter.getSelectedProductItems().add(selectedProductItem);
-                            productRecyclerViewAdapter.notifyItemChanged(position);
-                        } else {
-                            productListAdapter.getSelectedProductItems().add(selectedProductItem);
-                            productListAdapter.notifyItemChanged(lvProducts, position);
-                        }
-                        if (productsFragmentListener != null)
-                            productsFragmentListener.whenItemsSelectedUpdated();
-                    }
-
-                    @Override
-                    public void onDismiss() {
-                    }
-                });
+                simpleSalesQuantityDialog.setQuantityDialogListener(quantityDialogListener);
                 simpleSalesQuantityDialog.show();
             }
             else {
                 SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
+                quantityDialog.setListPosition(position);
                 quantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 quantityDialog.setSelectedProductItem(selectedProductItem);
                 if (hasUnits) {
@@ -331,30 +318,36 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 }
                 quantityDialog.setHasDeliveryDate(hasDeliveryDate);
                 quantityDialog.setFragmentManager(getActivity().getFragmentManager());
-                quantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
-                    @Override
-                    public void onSave(SelectedProductItem selectedProductItem) {
-                        if (useRecyclerView) {
-                            productRecyclerViewAdapter.getSelectedProductItems().add(selectedProductItem);
-                            productRecyclerViewAdapter.notifyItemChanged(position);
-                        } else {
-                            productListAdapter.getSelectedProductItems().add(selectedProductItem);
-                            productListAdapter.notifyItemChanged(lvProducts, position);
-                        }
-                        if (productsFragmentListener != null)
-                            productsFragmentListener.whenItemsSelectedUpdated();
-                    }
-
-                    @Override
-                    public void onDismiss() {
-                    }
-                });
+                quantityDialog.setQuantityDialogListener(quantityDialogListener);
                 quantityDialog.show();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    private BaseQuantityDialog.QuantityDialogListener quantityDialogListener = new BaseQuantityDialog.QuantityDialogListener() {
+        @Override
+        public void onSave(SelectedProductItem selectedProductItem, int position) {
+            if (useRecyclerView) {
+                boolean isRemoved = productRecyclerViewAdapter.getSelectedProductItems().add(selectedProductItem);
+                if(isRemoved && isFinalize)
+                    productRecyclerViewAdapter.notifyDataSetChanged();
+                else
+                    productRecyclerViewAdapter.notifyItemChanged(position);
+            } else {
+                productListAdapter.getSelectedProductItems().add(selectedProductItem);
+                productListAdapter.notifyItemChanged(lvProducts, position);
+            }
+            if (productsFragmentListener != null)
+                productsFragmentListener.whenItemsSelectedUpdated();
+        }
+
+        @Override
+        public void onDismiss() {
+
+        }
+    };
 
     @Override
     protected void showProductDetails(Product product) {
@@ -400,7 +393,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, final int position, long id) {
             final String category = productCategoriesAdapter.getItem(position).toLowerCase();
-            if(AccountSettings.allowLimitOrdersToOneCategory(getActivity())) {
+            if(lockCategory) {
                 if(ProductsAdapterHelper.hasSelectedProductItems() && prevSelectedCategory != position)
                     DialogTools.showConfirmationDialog(getActivity(), "Ooopps!", "Selected items will be deleted. Would you like to switch to " + category + "?",
                             "Yes", new DialogInterface.OnClickListener() {
@@ -408,6 +401,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     ProductsAdapterHelper.clearSelectedProductItemList();
                                     changeCategory(category, position);
+                                    productsFragmentListener.whenItemsSelectedUpdated();
                                 }
                             },
                             "No", new DialogInterface.OnClickListener() {
@@ -415,7 +409,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     spCategories.setSelection(prevSelectedCategory);
                                 }
-                            });
+                            }, R.style.AppCompatDialogStyle_Light);
                 else
                     changeCategory(category, position);
             }

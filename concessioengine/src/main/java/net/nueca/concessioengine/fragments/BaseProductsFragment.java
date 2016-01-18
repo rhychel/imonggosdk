@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.base.BaseProductsAdapter;
@@ -27,9 +28,13 @@ import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.salespromotion.Discount;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,11 +62,13 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             hasSubtotal = false,
             isFinalize = false,
             displayOnly = false,
-            useSalesProductAdapter = false;
+            useSalesProductAdapter = false,
+            hasPromotionalProducts = false;
     private int prevLast = -1;
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
     private List<Product> filterProductsBy = new ArrayList<>();
+    private List<Product> promotionalProducts = new ArrayList<>();
     protected ListingType listingType = ListingType.BASIC;
 
     protected ArrayAdapter<String> productCategoriesAdapter;
@@ -116,6 +123,44 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         return super.getHelper();
     }
 
+    protected List<Product> getPromotionalProducts() {
+        promotionalProducts = new ArrayList<>();
+        try {
+            Log.e("Sales Promotion", "getPromotaionalProducts");
+
+            Date now = DateTimeTools.getCurrentDateTimeUTC0();
+
+            Where<SalesPromotion, Integer> whereCondition = getHelper().fetchIntId(SalesPromotion.class).queryBuilder().where();
+            whereCondition.lt("toDate", now);
+
+            UpdateBuilder<SalesPromotion, Integer> updatePromotion = getHelper().fetchIntId(SalesPromotion.class).updateBuilder();
+            updatePromotion.updateColumnValue("status", "D");
+            updatePromotion.setWhere(whereCondition);
+
+            Log.e(">>", updatePromotion.prepareStatementString());
+
+            updatePromotion.update();
+
+            SalesPromotion salesPromotion = getHelper().fetchObjects(SalesPromotion.class).queryBuilder().orderBy("id", true)//.query();
+                    .where().le("fromDate", now)
+                            .and().ge("toDate", now).and().eq("status", "A")
+                            .and().eq("promotion_type_name", SalesPromotion.DISCOUNT)
+                    .queryForFirst();
+            if(salesPromotion != null) {
+                Log.e("Sales Promotion", salesPromotion.getName()+" || "+salesPromotion.getStatus()
+                        + " || fromDate "+salesPromotion.getFromDate()+" -- toDate "+salesPromotion.getToDate() + " || "+now);
+                List<Discount> discounts = getHelper().fetchForeignCollection(salesPromotion.getDiscounts_fc().closeableIterator());
+                for(Discount discount : discounts) {
+                    promotionalProducts.add(discount.getProduct());
+                    Log.e("Sales Promotion", discount.getProduct().getName());
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return promotionalProducts;
+    }
+
     protected List<Product> getProducts() {
         Log.e(getClass().getSimpleName(), "getProducts");
         List<Product> products = new ArrayList<>();
@@ -147,7 +192,19 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
                 whereProducts.and().in("id", productWithTag);
             }
 
-            QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder().orderByRaw("name COLLATE NOCASE ASC")
+            String orderBy = "";
+            if(promotionalProducts.size() > 0) {
+                orderBy = "CASE id";
+                int order = 0;
+                for(Product product : promotionalProducts) {
+                    orderBy += " WHEN "+product.getId()+" THEN "+order;
+                    order++;
+                }
+                orderBy += " ELSE 1000000 END, ";
+            }
+            orderBy += "name COLLATE NOCASE ASC";
+
+            QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder().orderByRaw(orderBy)
                     .limit(LIMIT).offset(offset);
             resultProducts.setWhere(whereProducts);
 
@@ -312,5 +369,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public void setHasPromotionalProducts(boolean hasPromotionalProducts) {
+        this.hasPromotionalProducts = hasPromotionalProducts;
     }
 }

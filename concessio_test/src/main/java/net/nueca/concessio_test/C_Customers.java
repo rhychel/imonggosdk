@@ -175,9 +175,9 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                     Log.e(TAG, "Fragment is Null!");
                 }
 
-            case net.nueca.concessioengine.R.id.mUnlink:
-                unlinkDevice();
-                break;
+//            case net.nueca.concessioengine.R.id.mUnlink:
+//                unlinkDevice();
+//                break;
             default:
                 break;
         }

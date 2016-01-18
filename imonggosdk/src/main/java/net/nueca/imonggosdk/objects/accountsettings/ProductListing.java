@@ -26,6 +26,8 @@ public class ProductListing extends DBTable {
     private boolean show_on_hand = false;
     @DatabaseField
     private boolean show_categories_on_start = false;
+    @DatabaseField
+    private boolean show_zero_inventory = true;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "module_setting_id")
     private transient ModuleSetting moduleSetting;
 
@@ -85,6 +87,14 @@ public class ProductListing extends DBTable {
 
     public void setShow_categories_on_start(boolean show_categories_on_start) {
         this.show_categories_on_start = show_categories_on_start;
+    }
+
+    public boolean isShow_zero_inventory() {
+        return show_zero_inventory;
+    }
+
+    public void setShow_zero_inventory(boolean show_zero_inventory) {
+        this.show_zero_inventory = show_zero_inventory;
     }
 
     @Override

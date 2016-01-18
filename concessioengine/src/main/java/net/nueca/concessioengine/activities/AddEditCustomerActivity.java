@@ -173,6 +173,10 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                                     .queue();
                         }
                         else {
+//                            OfflineData offlineData = new SwableTools.Transaction(getHelper())
+//                                    .toUpdate()
+//                                    .object(customer)
+//                                    .queue();
                             try {
                                 getHelper().update(Customer.class, customer);
                             } catch (SQLException e) {

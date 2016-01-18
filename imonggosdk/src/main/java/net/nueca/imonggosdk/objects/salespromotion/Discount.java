@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
@@ -20,6 +21,7 @@ import java.sql.SQLException;
 /**
  * Created by gama on 13/11/2015.
  */
+@DatabaseTable(tableName = "SPDiscount")
 public class Discount extends BaseTable2 {
 
     @Expose

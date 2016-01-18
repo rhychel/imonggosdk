@@ -16,11 +16,4 @@
         app:actionViewClass="net.nueca.concessioengine.views.SearchViewEx"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/mUnlink"
-        android:icon="@drawable/ic_exit"
-        android:title="Unlink Account"
-        app:showAsAction="ifRoom"
-        android:visible="true"/>
-
 </menu>

@@ -26,6 +26,8 @@ public class BranchProduct extends DBTable {
     private transient Branch branch;
     @ForeignCollectionField
     private ForeignCollection<BranchUnit> branchUnits;
+    @DatabaseField
+    private int branch_product_id;
 
     @DatabaseField
     private transient boolean isBaseUnitSellable = false;
@@ -105,6 +107,14 @@ public class BranchProduct extends DBTable {
 
     public void setBranchUnits(ForeignCollection<BranchUnit> branchUnits) {
         this.branchUnits = branchUnits;
+    }
+
+    public int getBranch_product_id() {
+        return branch_product_id;
+    }
+
+    public void setBranch_product_id(int branch_product_id) {
+        this.branch_product_id = branch_product_id;
     }
 
     @Override
