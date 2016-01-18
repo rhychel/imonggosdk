@@ -13,6 +13,11 @@ public class Day {
         this.dayOfWeek = dayOfWeek;
     }
 
+    public Day(String fullname, int dayOfWeek) {
+        this.fullname = fullname;
+        this.dayOfWeek = dayOfWeek;
+    }
+
     public Day(String fullname, String shortname, int dayOfWeek) {
         this.fullname = fullname;
         this.shortname = shortname;

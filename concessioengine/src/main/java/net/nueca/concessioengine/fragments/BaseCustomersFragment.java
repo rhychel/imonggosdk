@@ -38,7 +38,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
     protected SimpleCustomerListAdapter simpleCustomerListAdapter;
     protected SimpleCustomerRecyclerViewAdapter simpleCustomerRecyclerViewAdapter;
 
-    private String searchKey;
+    protected String searchKey;
 
     protected ListView lvCustomers;
     protected RecyclerView rvCustomers;

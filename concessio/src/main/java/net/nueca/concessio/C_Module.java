@@ -163,6 +163,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleRoutePlanFragment = new SimpleRoutePlanFragment();
                 simpleRoutePlanFragment.setHelper(getHelper());
                 simpleRoutePlanFragment.setSetupActionBar(this);
+                simpleRoutePlanFragment.setCanShowAllCustomers(true);
                 simpleRoutePlanFragment.setRoutePlanListener(new SimpleRoutePlanFragment.RoutePlanListener() {
                     @Override
                     public void itemClicked(Customer customer) {
@@ -243,6 +244,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setHasSubtotal(true);
                 simpleProductsFragment.setUseSalesProductAdapter(true);
                 simpleProductsFragment.setCustomer(customer);
+                simpleProductsFragment.setHasPromotionalProducts(true);
                 try {
                     simpleProductsFragment.setCustomerGroup(customer.getCustomerGroups(getHelper()).get(0));
                     simpleProductsFragment.setBranch(getBranches().get(0));
@@ -259,6 +261,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setHasSubtotal(true);
                 finalizeFragment.setUseSalesProductAdapter(true);
                 finalizeFragment.setCustomer(customer);
+                finalizeFragment.setHasPromotionalProducts(true);
                 try {
                     finalizeFragment.setCustomerGroup(customer.getCustomerGroups(getHelper()).get(0));
                     finalizeFragment.setBranch(getBranches().get(0));
@@ -275,7 +278,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
             break;
             case PHYSICAL_COUNT: {
-                changeToReview = true;
                 initializeProducts();
                 simpleProductsFragment.setProductCategories(getProductCategories(true));
                 simpleProductsFragment.setMultipleInput(true);
@@ -408,10 +410,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 ProductsAdapterHelper.setReason(reason);
 
                                 initializeProducts();
+                                simpleProductsFragment.setLockCategory(true);
                                 simpleProductsFragment.setHasSubtotal(false);
                                 simpleProductsFragment.setListingType(ListingType.SALES);
                                 simpleProductsFragment.setHasUnits(true);
-                                simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
+                                // !getModuleSetting().getProductListing().isLock_category()
+                                simpleProductsFragment.setProductCategories(getProductCategories(false));
                                 simpleProductsFragment.setShowCategoryOnStart(getModuleSetting().getProductListing().isShow_categories_on_start());
                                 simpleProductsFragment.setProductsFragmentListener(C_Module.this);
 
@@ -460,6 +464,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     Log.e("onBackStackChanged", "called--hasMenu");
                     if(concessioModule == ConcessioModule.HISTORY) {
                         llFooter.setVisibility(View.GONE);
+                        btn1.setVisibility(View.GONE);
+                        btn2.setVisibility(View.GONE);
+                        tvItems.setVisibility(View.INVISIBLE);
                         hasMenu = true;
                         getSupportActionBar().setDisplayShowTitleEnabled(false);
                     }
@@ -495,56 +502,22 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     }
                     if(concessioModule == ConcessioModule.HISTORY) {
                         tvItems.setVisibility(View.VISIBLE);
-                        btn2.setVisibility(View.VISIBLE);
                         int size = simpleTransactionDetailsFragment.numberOfItems();
                         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
+                        Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().getReference_no());
+                        Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isCancelled()+"");
                         if(simpleTransactionDetailsFragment.getOfflineData().isCancelled())
                             btn1.setVisibility(View.GONE);
-                        else {
-                            btn1.setText("VOID");
-                            btn1.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    DialogTools.showConfirmationDialog(C_Module.this, "Void " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            new SwableTools.Transaction(getHelper())
-                                                    .toCancel()
-                                                    .withReason("VOID")
-                                                    .object(simpleTransactionDetailsFragment.getOfflineData())
-                                                    .queue();
-                                        }
-                                    }, "No", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    }, R.style.AppCompatDialogStyle_Light);
-                                }
-                            });
+                        else
+                            initializeVoidButton(btn1);
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
+                                simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) {
+                            if(simpleTransactionDetailsFragment.getOfflineData().isCancelled())
+                                initializeDuplicateButton(btn1);
                         }
-                        btn2.setText("DUPLICATE");
-                        btn2.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                DialogTools.showConfirmationDialog(C_Module.this, "Duplicate " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        ProductsAdapterHelper.isDuplicating = true;
-                                        Intent intent = new Intent(C_Module.this, C_Module.class);
-                                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
-                                        startActivity(intent);
-                                    }
-                                }, "No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                }, R.style.AppCompatDialogStyle_Light);
-                            }
-                        });
+                        else
+                            initializeDuplicateButton(simpleTransactionDetailsFragment.getOfflineData().isCancelled() ? btn1 : btn2);
                         whenItemsSelectedUpdated();
-//                        llFooter.setVisibility(View.VISIBLE);
                         getSupportActionBar().setTitle(referenceNumber);
                     }
                 }
@@ -552,6 +525,56 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setHomeButtonEnabled(true);
                 getSupportActionBar().invalidateOptionsMenu();
+            }
+        });
+    }
+
+    private void initializeDuplicateButton(Button btn) {
+        btn.setVisibility(View.VISIBLE);
+        btn.setText("DUPLICATE");
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogTools.showConfirmationDialog(C_Module.this, "Duplicate " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ProductsAdapterHelper.isDuplicating = true;
+                        Intent intent = new Intent(C_Module.this, C_Module.class);
+                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
+                        startActivity(intent);
+                    }
+                }, "No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }, R.style.AppCompatDialogStyle_Light);
+            }
+        });
+    }
+
+    private void initializeVoidButton(Button btn) {
+        btn.setText("VOID");
+        btn.setVisibility(View.VISIBLE);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogTools.showConfirmationDialog(C_Module.this, "Void " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new SwableTools.Transaction(getHelper())
+                                .toCancel()
+                                .withReason("VOID")
+                                .object(simpleTransactionDetailsFragment.getOfflineData())
+                                .queue();
+                        onBackPressed();
+                    }
+                }, "No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }, R.style.AppCompatDialogStyle_Light);
             }
         });
     }
@@ -584,6 +607,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             if (getSupportFragmentManager().findFragmentByTag("finalize") != null)
                 finalizeFragment.refreshList();
         }
+        if(concessioModule == ConcessioModule.CUSTOMERS)
+            simpleCustomersFragment.deselectCustomers();
     }
 
     @Override
@@ -619,6 +644,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
                 mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
+                mSearch.setQueryHint("Search customer");
                 initializeSearchViewEx(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String newText) {

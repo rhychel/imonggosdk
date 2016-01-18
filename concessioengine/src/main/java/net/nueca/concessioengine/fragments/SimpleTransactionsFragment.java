@@ -154,6 +154,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
         if(useRecyclerView) {
             int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if(position > -1) {
+                simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
@@ -175,6 +176,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
         if(useRecyclerView) {
             int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if(position > -1) {
+                simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
@@ -196,6 +198,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
         if(useRecyclerView) {
             int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if (position > -1) {
+                simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
@@ -218,6 +221,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
         if(useRecyclerView) {
             int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if (position > -1) {
+                simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
