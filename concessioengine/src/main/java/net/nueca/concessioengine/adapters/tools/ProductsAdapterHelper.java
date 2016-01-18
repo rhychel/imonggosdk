@@ -114,7 +114,7 @@ public class ProductsAdapterHelper {
     public static boolean hasSelectedProductItems() {
         if(selectedProductItems == null)
             return false;
-        return selectedProductItems.isEmpty();
+        return !selectedProductItems.isEmpty();
     }
 
     public static void clearSelectedProductItemList() {

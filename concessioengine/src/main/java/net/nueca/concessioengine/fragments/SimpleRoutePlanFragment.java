@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Created by rhymart on 12/1/15.
  */
-public class SimpleRoutePlanFragment extends ImonggoFragment {
+public class SimpleRoutePlanFragment extends BaseCustomersFragment {
 
     public interface RoutePlanListener {
         void itemClicked(Customer customer);
@@ -62,13 +62,15 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
 
     private int currentDayOfWeek = 0;
     private int todayPosition = 0;
-    private String searchKey = "";
+    private boolean canShowAllCustomers = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         simpleRoutePlanRecyclerViewAdapter = new SimpleRoutePlanRecyclerViewAdapter(getActivity(), routes);
+        if(canShowAllCustomers)
+            days.add(0, new Day("All", 0));
         daysAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_dark, days);
         daysAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
     }
@@ -96,10 +98,12 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
         spDays.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                boolean shouldShow = false;
                 currentDayOfWeek = days.get(position).getDayOfWeek();
-//                renderRoutePlan(currentDayOfWeek);
-//                simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
-                boolean shouldShow = simpleRoutePlanRecyclerViewAdapter.updateList(renderRoutePlan(currentDayOfWeek));
+                if(currentDayOfWeek == 0)
+                    shouldShow = simpleRoutePlanRecyclerViewAdapter.updateList(getCustomers());
+                else
+                    shouldShow = simpleRoutePlanRecyclerViewAdapter.updateList(renderRoutePlan(currentDayOfWeek));
                 Log.e("shouldShow", shouldShow+"");
                 toggleNoItems(todayPosition == position ? "No customers today." : "No customers this "+days.get(position).getFullname()+".", shouldShow);
 
@@ -116,8 +120,10 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
 
     public void updateListWhenSearch(String searchKey) {
         setSearchKey(searchKey);
-        toggleNoItems("No results for \"" + searchKey + "\".",
-                simpleRoutePlanRecyclerViewAdapter.updateList(renderRoutePlan(currentDayOfWeek)));
+        if(currentDayOfWeek == 0)
+            toggleNoItems("No results for \"" + searchKey + "\".", simpleRoutePlanRecyclerViewAdapter.updateList(getCustomers()));
+        else
+            toggleNoItems("No results for \"" + searchKey + "\".", simpleRoutePlanRecyclerViewAdapter.updateList(renderRoutePlan(currentDayOfWeek)));
     }
 
 
@@ -125,6 +131,11 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
         rvRoutePlan.setVisibility(show ? View.VISIBLE : View.GONE);
         tvNoRoutes.setVisibility(show ? View.GONE : View.VISIBLE);
         tvNoRoutes.setText(msg);
+    }
+
+    @Override
+    protected void whenListEndReached(List<Customer> customers) {
+
     }
 
     private List<Customer> renderRoutePlan(int dayOfWeek) {
@@ -138,7 +149,7 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
             for(RoutePlanDetail routePlanDetail : routePlanDetails) {
                 if(!day.getShortname().equals(routePlanDetail.getRoute_day()))
                     continue;
-                if(!searchKey.trim().isEmpty() && !routePlanDetail.getCustomer().generateFullName().contains(searchKey)) {
+                if(searchKey != null && (!searchKey.trim().isEmpty() && !routePlanDetail.getCustomer().generateFullName().contains(searchKey))) {
                     Log.e("searchKey", searchKey+"----");
                     continue;
                 }
@@ -174,7 +185,7 @@ public class SimpleRoutePlanFragment extends ImonggoFragment {
         this.routePlanListener = routePlanListener;
     }
 
-    public void setSearchKey(String searchKey) {
-        this.searchKey = searchKey;
+    public void setCanShowAllCustomers(boolean canShowAllCustomers) {
+        this.canShowAllCustomers = canShowAllCustomers;
     }
 }

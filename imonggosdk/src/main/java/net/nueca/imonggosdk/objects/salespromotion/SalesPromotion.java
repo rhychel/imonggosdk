@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects.salespromotion;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -29,6 +31,10 @@ import java.util.List;
  */
 @DatabaseTable
 public class SalesPromotion extends BaseTable {
+
+    public static final String DISCOUNT = "discount";
+    public static final String POINTS = "point";
+
     public transient static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss Z";
 
     @Expose
@@ -142,7 +148,9 @@ public class SalesPromotion extends BaseTable {
         SimpleDateFormat convertStringToDate = new SimpleDateFormat(DATE_FORMAT);
         try {
             this.toDate = convertStringToDate.parse(to_date);
+            Log.e("toDate", "converted!"+toDate.toString());
             this.fromDate = convertStringToDate.parse(from_date);
+            Log.e("fromDate", "converted!"+fromDate.toString());
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -250,6 +258,7 @@ public class SalesPromotion extends BaseTable {
 
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
+        convertToDate();
         try {
             dbHelper.update(SalesPromotion.class, this);
         } catch (SQLException e) {
