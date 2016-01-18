@@ -8,6 +8,8 @@ import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 7/13/15.
@@ -55,6 +57,8 @@ public class Values {
     private String discount_text;
     private Double subtotal;
     private Double retail_price;
+    private String product_discount_text = "", company_discount_text = "";
+    private List<Double> product_discounts = new ArrayList<>(), company_discounts = new ArrayList<>();
 
     public Values() { }
 
@@ -95,7 +99,10 @@ public class Values {
 
     public void setValue(String quantity, Price price, ExtendedAttributes extendedAttributes) {
         Log.e("VALUES", "setValue price isNull? " + (price==null));
-        this.retail_price = price.getRetail_price();
+        if(price.getRetail_price() != null)
+            this.retail_price = price.getRetail_price();
+        else
+            this.retail_price = price.getProduct().getRetail_price();
         this.discount_text = price.getDiscount_text();
         setValue(quantity, price.getUnit(), extendedAttributes);
     }
@@ -120,9 +127,33 @@ public class Values {
                 this.unit_name = unit.getName();
         }
 
+        if(this.discount_text != null && this.discount_text.length() > 0) {
+            if (this.discount_text.contains(";")) {
+                String[] discounts = this.discount_text.split(";");
+                this.product_discount_text = discounts[0];
+                if(discounts.length > 1)
+                    this.company_discount_text = discounts[1];
+            } else {
+                this.product_discount_text = this.discount_text;
+            }
+        }
+
         ///this.subtotal = this.retail_price * Double.valueOf(quantity);
-        this.subtotal = DiscountTools.applyMultipleDiscounts(new BigDecimal(this.retail_price),
-                new BigDecimal(Double.valueOf(quantity)),this.discount_text,",").doubleValue();
+        //this.subtotal = DiscountTools.applyMultipleDiscounts(new BigDecimal(this.retail_price),
+        //        new BigDecimal(Double.valueOf(quantity)),this.discount_text,",").doubleValue();
+
+        if(company_discount_text != null && company_discount_text.length() > 0) {
+            this.subtotal = DiscountTools.applyMultipleDiscounts(
+                    new BigDecimal(this.retail_price), new BigDecimal(quantity),
+                    product_discounts,company_discounts,discount_text,";",","
+            ).doubleValue();
+        } else {
+            this.subtotal = DiscountTools.applyMultipleDiscounts(
+                    new BigDecimal(this.retail_price), new BigDecimal(quantity),
+                    product_discounts,discount_text,","
+            ).doubleValue();
+        }
+
 
         Log.e("Unit", unit != null? unit.getName() : "null");
         Log.e("Values", "setValue : " + this.retail_price + " * " + quantity + " = " + this.subtotal);

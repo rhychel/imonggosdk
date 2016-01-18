@@ -60,6 +60,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textSize="13sp"
                     android:text="P100,00.00"
+                    style="@style/TextView.ProductItem.Quantity"
                     android:id="@+id/tvRetailPrice" />
 
                 <me.grantland.widget.AutofitTextView
@@ -92,7 +93,8 @@
                     android:id="@+id/tvSubtotal"
                     android:layout_gravity="right"
                     android:textColor="@color/primary"
-                    android:gravity="right" />
+                    android:gravity="right"
+                    style="@style/TextView.ProductItem.Subtotal"/>
 
                 <me.grantland.widget.AutofitTextView
                     android:gravity="center|right"

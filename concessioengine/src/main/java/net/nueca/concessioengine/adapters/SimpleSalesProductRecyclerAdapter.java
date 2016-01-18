@@ -68,8 +68,9 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
         Product product = getItem(position);
+        Log.e("PRODUCT_NAME", product.getName() + " ~ " + listingType.name());
 
-        if(listingType == ListingType.BASIC) {
+        if(listingType == ListingType.BASIC || listingType == ListingType.SALES) {
             holder.tvInventoryCount.setText(String.format("%1$s %2$s", product.getInStock(), product.getBase_unit_name()));
             if(!hasSubtotal)
                 holder.tvSubtotal.setVisibility(View.GONE);
@@ -108,19 +109,8 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             } catch (SQLException e) { e.printStackTrace(); }
         }
         Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer, unit);
-            SelectedProductItem selectedProductItem = getSelectedProductItems().getSelectedProductItem(product);
-            Unit unit = null;
-            if(selectedProductItem == null && product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && product.getExtras()
-                    .getDefault_selling_unit().length() > 0)
-                try {
-                    unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", Integer.parseInt(product.getExtras()
-                            .getDefault_selling_unit())).queryForFirst();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            // determine retail_price
-            Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer, unit);
-
+            if(retail_price == null)
+                retail_price = product.getRetail_price();
             Log.e("retail_price", retail_price.toString());
 
             // Set subtotal

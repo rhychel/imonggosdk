@@ -28,6 +28,8 @@ import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -122,19 +124,20 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             //for(CustomerGroup customerGroup : customerGroups)
             //    Log.e(">>>>>>>", customerGroup.toString());
 
-            //List<Price> prices = getHelper().fetchObjectsList(Price.class);
-            //for(Price price : prices)
-            //    Log.e("@@@@@@@", price.toString());
+            List<Price> prices = getHelper().fetchObjectsList(Price.class);
+            for(Price price : prices)
+                Log.e("@@@@@@@", price.toString());
 
-            List<Product> t_products = getHelper().fetchObjectsList(Product.class).subList(0,2);
+            /*List<Product> t_products = getHelper().fetchObjectsList(Product.class).subList(0,2);
             for(Product product : t_products)
                 Log.e("@@@@@@@ !!", product.toString());
             List<Product> products = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", t_products.get(0).getId()).query();
             for(Product product : products)
-                Log.e("@@@@@@@ **", product.toString());
+                Log.e("@@@@@@@ **", product.toString());*/
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        new SwableTools.Transaction(getHelper()).toUpdate().queue();
         Log.e("SAMPLE SALES", "Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ");
 
         setContentView(R.layout.c_module);
@@ -159,13 +162,15 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
         salesAdapter = new SimpleSalesProductRecyclerAdapter(this, getHelper());
 
         simpleProductsFragment.setProductsRecyclerAdapter(salesAdapter);
-        simpleProductsFragment.setListingType(ListingType.SALES);
+        simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES);
         finalizeFragment.setProductsRecyclerAdapter(salesAdapter);
-        finalizeFragment.setListingType(ListingType.SALES);
+        finalizeFragment.setListingType(ListingType.ADVANCED_SALES);
 
         simpleProductsFragment.setHasUnits(true);
         simpleProductsFragment.setProductCategories(getProductCategories(true));
+        simpleProductsFragment.setHasSubtotal(true);
 
+        finalizeFragment.setHasSubtotal(true);
         finalizeFragment.setHasCategories(false);
         finalizeFragment.setHasBrand(false);
         finalizeFragment.setHasDeliveryDate(false);

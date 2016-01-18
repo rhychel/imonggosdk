@@ -369,6 +369,11 @@ public class SwableTools {
                 throw new NullPointerException("SwableTools : Transaction : Helper is NULL");
             return new CancelTransaction(helper);
         }
+        public UpdateTransaction toUpdate() {
+            if(helper == null)
+                throw new NullPointerException("SwableTools : Transaction : Helper is NULL");
+            return new UpdateTransaction(helper);
+        }
 
         public static class CancelTransaction {
             private OfflineData offlineData;

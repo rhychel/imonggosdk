@@ -33,7 +33,7 @@ public class Price extends BaseTable {
     private Unit unit;
     @Expose
     @DatabaseField
-    private double retail_price = 0.0;
+    private Double retail_price;
 
     @Expose
     @DatabaseField
@@ -57,7 +57,7 @@ public class Price extends BaseTable {
         this.unit = unit;
     }
 
-    public double getRetail_price() {
+    public Double getRetail_price() {
         return retail_price;
     }
 

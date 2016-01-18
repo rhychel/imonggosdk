@@ -122,16 +122,23 @@ public class PriceTools {
                 }
             }
 
+            Price selectedPrice = null;
             if(branch_price != null) {
-                retail_price = branch_price.getRetail_price();
+                selectedPrice = branch_price;
+                if(branch_price.getRetail_price() != null)
+                    retail_price = branch_price.getRetail_price();
                 type = PRICELIST_BRANCH;
             }
             if(customergroup_price != null) {
-                retail_price = customergroup_price.getRetail_price();
+                selectedPrice = customergroup_price;
+                if(customergroup_price.getRetail_price() != null)
+                    retail_price = customergroup_price.getRetail_price();
                 type = PRICELIST_CUSTOMERGROUP;
             }
             if(customer_price != null) {
-                retail_price = customer_price.getRetail_price();
+                selectedPrice = customer_price;
+                if(customer_price.getRetail_price() != null)
+                    retail_price = customer_price.getRetail_price();
                 type = PRICELIST_CUSTOMER;
             }
 
@@ -140,7 +147,9 @@ public class PriceTools {
 
             Log.e("identifyRetailPrice", "type="+type);
 
-            //Log.e("Price-" + type, "retail_price:" + retail_price + " for " + product.getName());
+            Log.e("Price-" + type, "retail_price:" + retail_price + " for " + product.getName());
+            if(selectedPrice != null)
+                Log.e("Price ("+selectedPrice.getId()+") ~ " + selectedPrice.getPriceList().getId(), selectedPrice.toJSONString());
         } catch (SQLException e) {
             e.printStackTrace();
             return product.getRetail_price();
