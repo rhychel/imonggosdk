@@ -43,7 +43,7 @@ public class C_Login extends LoginActivity {
                 Table.USERS_ME.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
                 Table.SETTINGS.ordinal(),
-                /*Table.PRODUCTS.ordinal(),
+                Table.PRODUCTS.ordinal(),
                 Table.UNITS.ordinal(),
                 Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_BY_SALESMAN.ordinal(),
@@ -55,7 +55,7 @@ public class C_Login extends LoginActivity {
                 Table.PAYMENT_TERMS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
                 Table.INVOICES.ordinal(),
-                Table.INVOICE_PURPOSES.ordinal(),*/
+                Table.INVOICE_PURPOSES.ordinal(),
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS.ordinal(),
                 Table.SALES_PROMOTIONS_POINTS.ordinal(),

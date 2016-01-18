@@ -85,6 +85,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     private static final String TAG = "SyncModules";
 
     private void startSyncModuleContents(RequestType requestType) throws SQLException {
+
+        mCurrentRequestType = requestType;
+
         if (getHelper() == null) {
             Log.e(TAG, "helper is null");
         }
@@ -1262,9 +1265,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                                 if (unit != null) {
                                                     Log.e(TAG, "Unit found! fetching branch unit. Creating Branch Unit");
-                                                        branchUnit = new BranchUnit(unit, branch);
-                                                        branchUnit.setBranchProduct(branchProduct);
-
+                                                    branchUnit = new BranchUnit(unit, branch);
+                                                    branchUnit.setBranchProduct(branchProduct);
                                                 } else {
                                                     Log.e(TAG, "Err Can't find 'unit' field from database");
                                                 }
@@ -1277,25 +1279,34 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
                                         Log.e(TAG, "---");
 
-
-
                                         if (branchUnit != null) {
                                             if(isExisting(branchUnit, Table.BRANCH_UNIT)) {
-
                                                 branchUnit.insertTo(getHelper());
                                             }
                                         }
 
-
-
                                         // TODO: HOW TO UPDATE flush branch units
-                                        // if branch_products don't exist in database
-                                        if (!isExisting(branchProduct, Table.BRANCH_UNIT)) {
-                                            branchProduct.insertTo(getHelper());
-                                        } else {
+                                        // if branch_products exist in database
+                                        if (isExisting(branchProduct, Table.BRANCH_UNIT)) {
                                             // Check Last Updated At
                                             try {
                                                 if (DateTimeTools.stringToDate(lastUpdatedAt.getLast_updated_at()).before(DateTimeTools.stringToDate(newLastUpdatedAt.getLast_updated_at()))) {
+                                                    // get the branch product in the database to delete branch unit
+                                                    BranchProduct bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().
+                                                            where().eq("product_id", product).and().eq("branch_id", branch).queryForFirst();
+
+                                                    if(bp != null) {
+                                                        List<BranchUnit> branchUnitList = getHelper().fetchObjects(BranchUnit.class).queryBuilder().where().eq("bp_id", bp).query();
+
+                                                        Log.e(TAG, "Branch Unit Size: " + branchUnitList.size());
+
+                                                        for(BranchUnit bU : branchUnitList) {
+                                                            Log.e(TAG, "Delete this Branch Unit: " + bU.toString());
+                                                            bU.deleteTo(getHelper());
+                                                        }
+                                                    } else {
+                                                        Log.e(TAG, "Can't find branch product");
+                                                    }
                                                     branchProduct.updateTo(getHelper());
                                                 } else {
                                                     branchProduct.insertTo(getHelper());
@@ -1303,6 +1314,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             } catch (ParseException e) {
                                                 Log.e(TAG, "Date parsing error. " + e.toString());
                                             }
+                                        } else {
+                                            branchProduct.insertTo(getHelper());
                                         }
 
                                     } else {
@@ -2602,6 +2615,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             Log.e(TAG, "onError ");
         }
 
+        Log.e(TAG, "page: " + page);
+        Log.e(TAG, "numberOfPages: " + numberOfPages);
+        Log.e(TAG,"count: " + count);
+        Log.e(TAG, "branchIndex: " + branchIndex);
+        Log.e(TAG, "moduleIndex: " + mModulesIndex);
+
         if (mSyncModulesListener != null) {
             mSyncModulesListener.onErrorDownload(table, "error");
         }
@@ -2618,7 +2637,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             Log.e(TAG, t.toString());
         }
 
-        if (mCurrentTableSyncing == Table.USERS_ME) {
+        if (mCurrentTableSyncing == Table.USERS_ME ||
+                mCurrentTableSyncing == Table.TAX_SETTINGS ||
+                mCurrentTableSyncing == Table.DOCUMENT_TYPES ||
+                mCurrentTableSyncing == Table.DOCUMENT_PURPOSES ||
+                mCurrentTableSyncing == Table.SETTINGS) {
             startSyncModuleContents(RequestType.API_CONTENT);
         } else if (mCurrentTableSyncing == Table.DAILY_SALES) {
             startSyncModuleContents(RequestType.DAILY_SALES_TODAY);
@@ -2626,4 +2649,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             startSyncModuleContents(RequestType.LAST_UPDATED_AT);
         }
     }
+
+    public void retrySync() throws SQLException {
+        prepareModulesToReSync();
+        startSyncModuleContents(mCurrentRequestType);
+    }
+
+
 }

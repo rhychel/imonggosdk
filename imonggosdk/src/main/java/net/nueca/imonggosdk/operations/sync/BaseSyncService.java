@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import net.nueca.imonggosdk.enums.DailySalesEnums;
+import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
@@ -89,6 +90,7 @@ public abstract class BaseSyncService extends ImonggoService {
     protected IBinder mLocalBinder = new LocalBinder();
     protected VolleyRequestListener mVolleyRequestListener = null;
     protected SyncModulesListener mSyncModulesListener = null;
+    protected RequestType mCurrentRequestType;
 
     protected Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -401,19 +403,7 @@ public abstract class BaseSyncService extends ImonggoService {
             mModulesToSync = temp;
         }
 
-        // reset variable
-        page = 0;
-        numberOfPages = 0;
-        count = 0;
-        branchIndex = 0;
         mModulesIndex = 0;
-
-        try {
-            getHelper().deleteAll(mCurrentTableSyncing.getTableClass());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public Table[] getModulesToSync() {
