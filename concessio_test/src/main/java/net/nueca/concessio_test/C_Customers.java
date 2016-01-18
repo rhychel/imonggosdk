@@ -37,7 +37,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
         super.onCreate(savedInstanceState);
         initComponents();
         Log.e(TAG, "Customers Activity");
-
+/*
         try {
             List<RoutePlan> routePlan = getHelper().fetchObjectsList(RoutePlan.class);
 
@@ -106,8 +106,6 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
         }
 
 
-
-
         try {
             List<SalesPromotion> salesPromotions = getHelper().fetchObjectsList(SalesPromotion.class);
 
@@ -127,8 +125,30 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
 
+        try {
+            List<SalesPromotion> salesPromotions = getHelper().fetchObjectsList(SalesPromotion.class);
+
+            Log.e(TAG, "Sales Promotions size: " + salesPromotions.size());
+
+            for(SalesPromotion bp : salesPromotions) {
+                Log.e(TAG, "Sales Promotions name: " + bp.getName());
+
+                List<Discount> discount = getHelper().fetchForeignCollection(bp.getDiscounts_fc().closeableIterator());
+
+
+                Log.e(TAG, "Discount Size: " + discount.size());
+
+                for(Discount dd : discount) {
+                    Log.e(TAG, "Discount: " + dd.toString());
+
+                }
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initComponents() {
