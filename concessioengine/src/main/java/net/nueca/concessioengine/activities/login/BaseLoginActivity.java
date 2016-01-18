@@ -573,13 +573,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     } else {
                         if (table == mSyncModules.getCurrentTableSyncing()) {
                             Log.e(TAG, "retrying sync table " + table);
-                            mSyncModules.prepareModulesToReSync();
                             Log.e(TAG, "Number of Modules to re-Sync: " + mSyncModules.getModulesToSync().length);
 
                             getCustomDialogFrameLayout().getCustomModuleAdapter().hideRetryButton(mTablesToDownload.indexOf(table));
 
                             mLoginState = LoginState.LOGIN_DOWNLOADING_DATA;
-                            mSyncModules.startFetchingModules();
+                            mSyncModules.retrySync();
                         } else {
                             Log.e(TAG, "oops");
                         }
@@ -1039,7 +1038,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
         getCustomDialogFrameLayout().getCustomModuleAdapter().showRetryButton(mTablesToDownload.indexOf(table));
 
-        LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed, Tap " + table + " module to retry");
+        LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed, Tap " + table.getStringName() + " module to retry");
         stopLogin();
     }
 
