@@ -17,5 +17,5 @@
     tools:text="Header Item"
     android:textColor="@color/primary"
     android:background="@color/white"
-    android:elevation="3dp"
+    android:elevation="2dp"
     android:textStyle="bold"/>

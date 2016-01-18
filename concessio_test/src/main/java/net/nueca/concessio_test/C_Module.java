@@ -425,8 +425,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                         }, "No");
             } else if(btnReview.getText().toString().equals("Checkout")) {
                 if(ProductsAdapterHelper.hasSelectedProductItems()) {
-                    DialogTools.showDialog(C_Module.this, "Ooops!", "You haven't selected anything.");
-                } else {
                     btnReview.setText("Send");
 
                     simpleCheckoutFragment = new SimpleCheckoutFragment();
@@ -441,6 +439,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                             .replace(R.id.flContent, simpleCheckoutFragment, "checkout")
                             .addToBackStack("checkout")
                             .commit();
+                } else {
+                    DialogTools.showDialog(C_Module.this, "Ooops!", "You haven't selected anything.");
                 }
             } else {
                 if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())

@@ -26,7 +26,7 @@ public class BranchProduct extends DBTable {
     private transient Branch branch;
     @ForeignCollectionField
     private ForeignCollection<BranchUnit> branchUnits;
-    @DatabaseField(columnName = "branch_product_id")
+    @DatabaseField
     private int branch_product_id;
 
     @DatabaseField

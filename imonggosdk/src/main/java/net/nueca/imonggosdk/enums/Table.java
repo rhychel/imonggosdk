@@ -112,11 +112,11 @@ public enum Table {
     BRANCH_PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class, "branch_price_lists"),
     PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", PriceList.class, "price_lists_details"),
     SALES_PROMOTIONS(API_TYPE.API, "Sales Promotions", SalesPromotion.class, "sales_promotions"),
-    SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS(API_TYPE.API, "Discount Details", Discount.class, "sales_promotions_sales_discount_details"),
-    SALES_PROMOTIONS_POINTS_DETAILS(API_TYPE.API, "Points Details", Discount.class, "sales_promotions_points_details"),
     SALES_PROMOTIONS_SALES_PUSH(API_TYPE.API, "Sales Push", SalesPromotion.class, "sales_promotions_sales_push"),
     SALES_PROMOTIONS_POINTS(API_TYPE.API, "Points", SalesPromotion.class, "sales_promotions_points"),
+    SALES_PROMOTIONS_POINTS_DETAILS(API_TYPE.API, "Points Details", Discount.class, "sales_promotions_points_details"),
     SALES_PROMOTIONS_SALES_DISCOUNT(API_TYPE.API, "Sales Discount", SalesPromotion.class, "sales_promotions_sales_discount"),
+    SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS(API_TYPE.API, "Discount Details", Discount.class, "sales_promotions_sales_discount_details"),
     ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class, "route_plans"),
     ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlanDetail.class, "route_plans_details"),
 
