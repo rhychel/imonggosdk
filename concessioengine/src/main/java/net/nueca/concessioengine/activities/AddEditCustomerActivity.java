@@ -173,15 +173,15 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                                     .queue();
                         }
                         else {
-//                            OfflineData offlineData = new SwableTools.Transaction(getHelper())
-//                                    .toUpdate()
-//                                    .object(customer)
-//                                    .queue();
-                            try {
-                                getHelper().update(Customer.class, customer);
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
+                            OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                                    .toUpdate()
+                                    .object(customer)
+                                    .queue();
+//                            try {
+//                                getHelper().update(Customer.class, customer);
+//                            } catch (SQLException e) {
+//                                e.printStackTrace();
+//                            }
                         }
 
                         Intent intent = new Intent();
@@ -419,6 +419,8 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                 for(CustomerField customerField : getList()) {
                     if(customerField.getFieldName() == Customer.CustomerFields.EXTRAS_CATEGORY_ID) {
                         CustomerField<CustomerCategory> category = (CustomerField<CustomerCategory>)customerField;
+                        if(category.getSelectedIndex() == -1)
+                            continue;
                         customerCategory = category.getValues().get(category.getSelectedIndex());
                         if(customerCategory.getId() == -1)
                             continue;
@@ -427,6 +429,8 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                     }
                     if(customerField.getFieldName().equals(Customer.CustomerFields.PAYMENT_TERMS_ID)) {
                         CustomerField<PaymentTerms> paymentTerms = (CustomerField<PaymentTerms>)customerField;
+                        if(paymentTerms.getSelectedIndex() == -1)
+                            continue;
                         paymentTerm = paymentTerms.getValues().get(paymentTerms.getSelectedIndex());
                         if(paymentTerm.getId() == -1)
                             continue;

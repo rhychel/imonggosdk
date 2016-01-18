@@ -12,6 +12,8 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
@@ -157,7 +159,7 @@ public class SwableUpdateModule {
                                                 String documentId = errorMsg.substring(
                                                         errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
                                                 );
-                                                Log.e("STR : UPDATE_DOCUMENT ID", documentId);
+                                                Log.e("STR: UPDATE_DOCUMENT ID", documentId);
                                                 offlineData.setReturnId(documentId);
                                             }
                                         }
@@ -180,7 +182,7 @@ public class SwableUpdateModule {
                                                     String documentId = errorMsg.substring(
                                                             errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
                                                     );
-                                                    Log.e("STR : UPDATE_DOCUMENT ID", documentId);
+                                                    Log.e("STR: UPDATE_DOCUMENT ID", documentId);
                                                     offlineData.setReturnId(documentId);
                                                 }
                                             }
@@ -216,7 +218,10 @@ public class SwableUpdateModule {
                             offlineData.setSynced(false);
                             offlineData.updateTo(dbHelper);
                         }
-                    }, session.getServer(), table, jsonObject, offlineData.getReturnId(),
+                    }, session.getServer(), table, jsonObject, "" + (
+                            offlineData.getObjectFromData() instanceof BaseTable  ? ((BaseTable) offlineData.getObjectFromData()).getId() :
+                            offlineData.getObjectFromData() instanceof BaseTable2 ? ((BaseTable2) offlineData.getObjectFromData()).getId() :
+                            offlineData.getReturnId()),
                             (offlineData.getType() != OfflineData.CUSTOMER?
                             "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() :
                             offlineData.getParametersAsFirstParameter() )
