@@ -43,6 +43,70 @@ public class SalesPushSettings extends DBTable {
                 '}';
     }
 
+    public int getEnable_threshold() {
+        return enable_threshold;
+    }
+
+    public void setEnable_threshold(int enable_threshold) {
+        this.enable_threshold = enable_threshold;
+    }
+
+    public int getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
+    }
+
+    public int getReturn_trigger() {
+        return return_trigger;
+    }
+
+    public void setReturn_trigger(int return_trigger) {
+        this.return_trigger = return_trigger;
+    }
+
+    public String getOffline_message() {
+        return offline_message;
+    }
+
+    public void setOffline_message(String offline_message) {
+        this.offline_message = offline_message;
+    }
+
+    public String getEncouragement_message() {
+        return encouragement_message;
+    }
+
+    public void setEncouragement_message(String encouragement_message) {
+        this.encouragement_message = encouragement_message;
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    public void setTrigger(String trigger) {
+        this.trigger = trigger;
+    }
+
+    public String getCongratulation_message() {
+        return congratulation_message;
+    }
+
+    public void setCongratulation_message(String congratulation_message) {
+        this.congratulation_message = congratulation_message;
+    }
+
+    public SalesPromotion getSalesPromotion() {
+        return salesPromotion;
+    }
+
+    public void setSalesPromotion(SalesPromotion salesPromotion) {
+        this.salesPromotion = salesPromotion;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {

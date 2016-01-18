@@ -12,6 +12,7 @@ import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.invoice.Discount;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.Session;
@@ -96,6 +97,7 @@ public enum Table {
     DOCUMENT_LINES(API_TYPE.NON_API, "Document Lines", DocumentLine.class),
     EXTENDED_ATTRIBUTES(API_TYPE.NON_API, "Extended Attributes"),
     EXTRAS(API_TYPE.NON_API, "Extras", Extras.class),
+    BRANCH_UNIT(API_TYPE.NON_API, "Branch Unit", BranchUnit.class),
 
     // ----- FOR REBISCO
     CUSTOMER_BY_SALESMAN(API_TYPE.API, "Customers", Customer.class, "customer_by_salesman"),
