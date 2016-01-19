@@ -86,14 +86,14 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     private static final Class<?> tables[] = {
             Branch.class, BranchTag.class, Customer.class,
             Inventory.class, Product.class, ProductTag.class, Session.class,
-            Discount.class, net.nueca.imonggosdk.objects.salespromotion.Discount.class, TaxRate.class, TaxSetting.class, Unit.class, User.class,
+            Discount.class, TaxRate.class, TaxSetting.class, Unit.class, User.class,
             BranchProduct.class, BranchUnit.class, DocumentType.class, DocumentPurpose.class,
             BranchUserAssoc.class, ProductTaxRateAssoc.class,
             LastUpdatedAt.class, OfflineData.class, Document.class, DocumentLine.class,
             DailySales.class, Settings.class, Order.class, OrderLine.class,
             Invoice.class, InvoiceLine.class, InvoicePayment.class, InvoiceTaxRate.class,
             Extras.class, CustomerCategory.class, CustomerGroup.class, InvoicePurpose.class,
-            PaymentTerms.class, PaymentType.class, SalesPromotion.class, Price.class,
+            PaymentTerms.class, PaymentType.class, SalesPromotion.class, net.nueca.imonggosdk.objects.salespromotion.Discount.class, Price.class,
             PriceList.class, RoutePlan.class, RoutePlanDetail.class, CustomerCustomerGroupAssoc.class,
             ProductSalesPromotionAssoc.class, ModuleSetting.class, DownloadSequence.class, DebugMode.class, ProductSorting.class,
             Cutoff.class, ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};
