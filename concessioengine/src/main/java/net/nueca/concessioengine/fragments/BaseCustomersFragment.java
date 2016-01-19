@@ -61,6 +61,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
                 whereCustomers.and();
                 whereCustomers.like("name", "%" + searchKey + "%");
                 whereCustomers.or().like("alternate_code", "%" + searchKey + "%");
+                whereCustomers.or().like("code", "%" + searchKey + "%");
             }
 
             QueryBuilder<Customer, Integer> resultCustomers = getHelper().fetchIntId(Customer.class).queryBuilder()

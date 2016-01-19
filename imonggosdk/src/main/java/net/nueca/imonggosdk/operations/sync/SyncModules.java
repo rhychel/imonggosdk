@@ -1665,6 +1665,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
+                                    customer.setSearchKey(customer.getName() + customer.getCode() + customer.getAlternate_code()); // # searchkey
                                     Extras customer_extras = new Extras();
                                     PriceList priceList;
 

@@ -148,6 +148,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setBranch(branch);
                     ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomer(customer);
                     ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomerGroup(customerGroup);
+                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setPromotionalProducts(promotionalProducts);
                 }
                 else
                     productRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());

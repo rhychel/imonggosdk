@@ -9,6 +9,7 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public abstract class BaseSalesProductRecyclerAdapter<T extends BaseProductsRecy
     protected Customer customer;
     protected CustomerGroup customerGroup;
     protected Branch branch;
+    protected List<Product> promotionalProducts = new ArrayList<>();
 
     public BaseSalesProductRecyclerAdapter(Context context) {
         super(context);
@@ -65,5 +67,9 @@ public abstract class BaseSalesProductRecyclerAdapter<T extends BaseProductsRecy
 
     public ImonggoDBHelper2 getHelper() {
         return ProductsAdapterHelper.getDbHelper();
+    }
+
+    public void setPromotionalProducts(List<Product> promotionalProducts) {
+        this.promotionalProducts = promotionalProducts;
     }
 }

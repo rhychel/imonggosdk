@@ -71,6 +71,8 @@ public class SettingsActivity extends ImonggoAppCompatActivity {
         settingsAdapter.initializeRecyclerView(this, rvCustomers);
         rvCustomers.setAdapter(settingsAdapter);
 
+        rvCustomers.setBackgroundResource(android.R.color.white);
+
         setSupportActionBar(tbActionBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
