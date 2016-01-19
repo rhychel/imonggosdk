@@ -57,8 +57,13 @@ public class Values {
     private String discount_text;
     private Double subtotal;
     private Double retail_price;
-    private String product_discount_text = "", company_discount_text = "";
-    private List<Double> product_discounts = new ArrayList<>(), company_discounts = new ArrayList<>();
+    private String product_discount_text = "",
+            company_discount_text = "",
+            customer_discount_text = "";
+    private List<Double> product_discounts = new ArrayList<>(),
+            company_discounts = new ArrayList<>(),
+            customer_discounts = new ArrayList<>();
+    private Price price = null;
 
     public Values() { }
 
@@ -81,24 +86,44 @@ public class Values {
 
     public void setValue(String quantity, Unit unit) {
         //Log.e("VALUES", "setValue(quantity="+quantity +", unit="+(unit!=null?unit.getName():"null")+")");
+        this.price = null;
         if(unit != null)
             this.retail_price = unit.getRetail_price();
         setValue(quantity, unit, null);
     }
 
+    public void setValue(String quantity, Unit unit, double retail_price, String customer_discount_text) {
+        if(customer_discount_text != null)
+            this.customer_discount_text = customer_discount_text;
+        setValue(quantity, unit, retail_price);
+    }
+
     public void setValue(String quantity, Unit unit, double retail_price) {
         Log.e("VALUES", "setValue(quantity="+quantity +", unit="+(unit!=null?unit.getName():"null")+", retail_price="+retail_price+")");
+        this.price = null;
         this.retail_price = retail_price;
         setValue(quantity, unit, null);
     }
 
+    public void setValue(String quantity, Price price, String customer_discount_text) {
+        setValue(quantity, price, customer_discount_text, null);
+    }
+
+    public void setValue(String quantity, Price price, String customer_discount_text, ExtendedAttributes extendedAttributes) {
+        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
+        if(customer_discount_text != null)
+            this.customer_discount_text = customer_discount_text;
+        setValue(quantity, price, extendedAttributes);
+    }
+
     public void setValue(String quantity, Price price) {
         Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
-        setValue(quantity, price, null);
+        setValue(quantity, price, (ExtendedAttributes) null);
     }
 
     public void setValue(String quantity, Price price, ExtendedAttributes extendedAttributes) {
         Log.e("VALUES", "setValue price isNull? " + (price==null));
+        this.price = price;
         if(price.getRetail_price() != null)
             this.retail_price = price.getRetail_price();
         else
@@ -117,7 +142,7 @@ public class Values {
             this.unit_quantity = quantity;
             this.unit_content_quantity = unit.getQuantity();
             this.unit_name = unit.getName();
-            this.unit_retail_price = unit.getRetail_price();
+            this.unit_retail_price = unit.getRetail_price() * unit.getQuantity();
             this.unit = unit;
         }
         else {
@@ -127,6 +152,7 @@ public class Values {
                 this.unit_name = unit.getName();
         }
 
+        Log.e("DISCOUNT TEXT", (this.discount_text == null? "null" : this.discount_text) );
         if(this.discount_text != null && this.discount_text.length() > 0) {
             if (this.discount_text.contains(";")) {
                 String[] discounts = this.discount_text.split(";");
@@ -141,17 +167,21 @@ public class Values {
         ///this.subtotal = this.retail_price * Double.valueOf(quantity);
         //this.subtotal = DiscountTools.applyMultipleDiscounts(new BigDecimal(this.retail_price),
         //        new BigDecimal(Double.valueOf(quantity)),this.discount_text,",").doubleValue();
-
-        if(company_discount_text != null && company_discount_text.length() > 0) {
-            this.subtotal = DiscountTools.applyMultipleDiscounts(
-                    new BigDecimal(this.retail_price), new BigDecimal(quantity),
-                    product_discounts,company_discounts,discount_text,";",","
-            ).doubleValue();
+        if(this.price == null) {
+            this.subtotal = this.retail_price * Double.valueOf(this.quantity);
         } else {
-            this.subtotal = DiscountTools.applyMultipleDiscounts(
-                    new BigDecimal(this.retail_price), new BigDecimal(quantity),
-                    product_discounts,discount_text,","
-            ).doubleValue();
+            if (company_discount_text != null && company_discount_text.length() > 0) {
+                this.subtotal = DiscountTools.applyMultipleDiscounts(
+                        new BigDecimal(this.retail_price), new BigDecimal(quantity),
+                        product_discounts, company_discounts, discount_text, ";", ",",
+                        customer_discounts, customer_discount_text
+                ).doubleValue();
+            } else {
+                this.subtotal = DiscountTools.applyMultipleDiscounts(
+                        new BigDecimal(this.retail_price), new BigDecimal(quantity),
+                        product_discounts, discount_text, ","
+                ).doubleValue();
+            }
         }
 
 
@@ -256,6 +286,34 @@ public class Values {
 
     public void setRetail_price(double retail_price) {
         this.retail_price = retail_price;
+    }
+
+    public String getProduct_discount_text() {
+        return product_discount_text;
+    }
+
+    public String getCompany_discount_text() {
+        return company_discount_text;
+    }
+
+    public String getCustomer_discount_text() {
+        return customer_discount_text;
+    }
+
+    public List<Double> getProduct_discounts() {
+        return product_discounts;
+    }
+
+    public List<Double> getCompany_discounts() {
+        return company_discounts;
+    }
+
+    public List<Double> getCustomer_discounts() {
+        return customer_discounts;
+    }
+
+    public Price getPrice() {
+        return price;
     }
 
     @Override

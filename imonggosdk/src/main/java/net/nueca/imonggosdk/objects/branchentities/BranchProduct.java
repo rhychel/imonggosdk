@@ -2,6 +2,7 @@ package net.nueca.imonggosdk.objects.branchentities;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -115,6 +116,11 @@ public class BranchProduct extends DBTable {
 
     public void setBranch_product_id(int branch_product_id) {
         this.branch_product_id = branch_product_id;
+    }
+
+    public String toJSONString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
     @Override

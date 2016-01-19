@@ -137,7 +137,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        new SwableTools.Transaction(getHelper()).toUpdate().queue();
+        //new SwableTools.Transaction(getHelper()).toUpdate().queue();
         Log.e("SAMPLE SALES", "Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ");
 
         setContentView(R.layout.c_module);
@@ -299,7 +299,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
             Invoice.Builder invoiceBuilder = new Invoice.Builder()
                     .invoice_lines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                            .getSelectedProductItems(), "10%"));
+                            .getSelectedProductItems()));
 
             simpleCheckoutFragment.setInvoice(invoiceBuilder.build());
             getSupportFragmentManager().beginTransaction()
@@ -340,14 +340,15 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             btnReview.setText(REVIEW_LABEL);
         } else {
             Location location = LocationTools.getLocation(this);
-            Log.e("ACCURACY", location.getAccuracy() + " " + Criteria.ACCURACY_HIGH);
+            if(location != null)
+                Log.e("ACCURACY", location.getAccuracy() + " " + Criteria.ACCURACY_HIGH);
             Log.e(">>>", new Invoice.Builder()
                     .payments(simpleCheckoutFragment.getPayments())
                     .invoice_lines(simpleCheckoutFragment.getInvoiceLines())
-                    .extras(new Extras.Builder()
+                    /*.extras(new Extras.Builder()
                             .latitude("" + LocationTools.limitDecimal(location.getLatitude(), 5))
                             .longitude("" + LocationTools.limitDecimal(location.getLongitude(), 5))
-                            .build())
+                            .build())*/
                     .build()
                     .toString());
         }

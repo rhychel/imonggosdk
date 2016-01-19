@@ -14,6 +14,7 @@ import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -27,7 +28,7 @@ import java.util.List;
  * Created by gama on 16/10/2015.
  */
 public class InvoiceTools {
-    public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems) {
+    /*public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems) {
         return generateInvoiceLines(selectedProductItems, (String) null);
     }
 
@@ -35,9 +36,9 @@ public class InvoiceTools {
         if (customer != null)
             return generateInvoiceLines(selectedProductItems, customer.getDiscount_text());
         return generateInvoiceLines(selectedProductItems);
-    }
+    }*/
 
-    public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems, String customerDiscount) {
+    public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems) {
         List<InvoiceLine> invoiceLines = new ArrayList<>();
 
         for (SelectedProductItem selectedProductItem : selectedProductItems) {
@@ -48,13 +49,23 @@ public class InvoiceTools {
                 builder.product_id(product.getId());
 
                 String discount_text = itemValue.getDiscount_text();
-                if (customerDiscount != null && customerDiscount.length() != 0) {
+                if (itemValue.getCustomer_discount_text() != null && itemValue.getCustomer_discount_text().length() != 0) {
                     if (discount_text != null && discount_text.length() != 0)
-                        discount_text += "," + customerDiscount;
+                        discount_text += ";" + itemValue.getCustomer_discount_text();
                     else
-                        discount_text = customerDiscount;
+                        discount_text = itemValue.getCustomer_discount_text();
                 }
                 builder.discount_text(discount_text);
+
+                Extras extras = new Extras.Builder()
+                        .product_discount_text(itemValue.getProduct_discount_text())
+                        .product_discount_amount(generateDiscountAmount(itemValue.getProduct_discounts(),','))
+                        .company_discount_text(itemValue.getCompany_discount_text())
+                        .company_discount_amount(generateDiscountAmount(itemValue.getCompany_discounts(),','))
+                        .customer_discount_text(itemValue.getCustomer_discount_text())
+                        .customer_discount_amounts(generateDiscountAmount(itemValue.getCustomer_discounts(),','))
+                        .build();
+                builder.extras(extras);
 
                 builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).doubleValue());
 
@@ -79,6 +90,16 @@ public class InvoiceTools {
             }
         }
         return invoiceLines;
+    }
+
+    private static String generateDiscountAmount(List<Double> discountAmounts, char delimiter) {
+        String str = "";
+        for (Double discount : discountAmounts) {
+            str += String.valueOf(discount);
+            if(discountAmounts.indexOf(discount) < discountAmounts.size())
+              str += delimiter;
+        }
+        return str;
     }
 
     /*@Nullable

@@ -158,9 +158,10 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     Price price = PriceTools.identifyPrice(getHelper(), selectedProductItem.getProduct(),
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
                     if(price != null)
-                        values.setValue(quantity, price);
+                        values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
                     else
-                        values.setValue(quantity, unit, selectedProductItem.getRetail_price());
+                        values.setValue(quantity, unit, selectedProductItem.getRetail_price(),
+                                salesCustomer != null? salesCustomer.getDiscount_text() : null);
                 }
 
                 if (isMultiValue) {

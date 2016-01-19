@@ -1154,7 +1154,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-                                BatchList<BranchUnit> newBranchUnit = new BatchList<>(DatabaseOperation.INSERT, getHelper()); // container for the new users
 
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
