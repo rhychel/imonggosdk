@@ -68,7 +68,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
     private List<Product> filterProductsBy = new ArrayList<>();
-    private List<Product> promotionalProducts = new ArrayList<>();
+    protected List<Product> promotionalProducts = new ArrayList<>();
     protected ListingType listingType = ListingType.BASIC;
 
     protected ArrayAdapter<String> productCategoriesAdapter;
@@ -147,9 +147,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
                             .and().eq("promotion_type_name", SalesPromotion.DISCOUNT)
                     .queryForFirst();
             if(salesPromotion != null) {
-                Log.e("Sales Promotion", salesPromotion.getName()+" || "+salesPromotion.getStatus()
+                Log.e("Sales Promotion["+salesPromotion.getId()+"]", salesPromotion.getName()+" || "+salesPromotion.getStatus()
                         + " || fromDate "+salesPromotion.getFromDate()+" -- toDate "+salesPromotion.getToDate() + " || "+now);
                 List<Discount> discounts = getHelper().fetchForeignCollection(salesPromotion.getDiscounts_fc().closeableIterator());
+                Log.e("Discounts", discounts.size()+"");
                 for(Discount discount : discounts) {
                     promotionalProducts.add(discount.getProduct());
                     Log.e("Sales Promotion", discount.getProduct().getName());
