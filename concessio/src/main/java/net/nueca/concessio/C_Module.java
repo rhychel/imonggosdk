@@ -506,17 +506,25 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
                         Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().getReference_no());
                         Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isCancelled()+"");
-                        if(simpleTransactionDetailsFragment.getOfflineData().isCancelled())
+                        boolean useBtn2 = true;
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.INVOICE
+                                && simpleTransactionDetailsFragment.getOfflineData().isSynced()) {
+                            useBtn2 = false;
+                        }
+                        else if(simpleTransactionDetailsFragment.getOfflineData().isCancelled()) {
                             btn1.setVisibility(View.GONE);
+                            useBtn2 = false;
+                        }
                         else
                             initializeVoidButton(btn1);
+
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
                                 simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) {
                             if(simpleTransactionDetailsFragment.getOfflineData().isCancelled())
                                 initializeDuplicateButton(btn1);
                         }
                         else
-                            initializeDuplicateButton(simpleTransactionDetailsFragment.getOfflineData().isCancelled() ? btn1 : btn2);
+                            initializeDuplicateButton(useBtn2 ? btn1 : btn2);
                         whenItemsSelectedUpdated();
                         getSupportActionBar().setTitle(referenceNumber);
                     }

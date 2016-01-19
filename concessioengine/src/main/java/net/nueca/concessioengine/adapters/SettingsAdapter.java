@@ -40,7 +40,7 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
         if(viewType == VIEW_TYPE_HEADER)
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_settings_header_letter, parent, false);
         else
-            v = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_settings_listitem, parent, false);
         ListViewHolder lvh = new ListViewHolder(v);
         return lvh;
     }

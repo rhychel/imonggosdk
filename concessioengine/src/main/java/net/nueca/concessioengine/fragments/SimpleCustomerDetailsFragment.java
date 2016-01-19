@@ -70,6 +70,7 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
 //        }
         customerDetails.add(CustomerDetail.SALES_ROUTE);
         customerDetails.add(CustomerDetail.DISCOUNT);
+        customerDetails.add(CustomerDetail.AVAILABLE_POINTS.setValue(customer.getAvailable_points()));
         customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS);
         if(refreshList)
             simpleCustomerDetailsRecyclerViewAdapter.notifyDataSetChanged();

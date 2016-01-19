@@ -24,21 +24,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <me.grantland.widget.AutofitTextView
-            android:padding="3dp"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="Avocado Hass Imported"
-            android:textSize="16sp"
-            android:singleLine="false"
-            android:maxLines="2"
-            android:ellipsize="end"
-            autofit:minTextSize="12sp"
-            android:id="@+id/tvProductName"
-            style="@style/TextView.ProductItem.Name"
-            android:layout_weight="1" />
+            android:layout_height="match_parent">
+
+            <me.grantland.widget.AutofitTextView
+                android:padding="3dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Avocado Hass Imported"
+                android:textSize="16sp"
+                android:singleLine="false"
+                android:maxLines="2"
+                android:ellipsize="end"
+                autofit:minTextSize="12sp"
+                android:id="@+id/tvProductName"
+                style="@style/TextView.ProductItem.Name"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:id="@+id/ivStar"
+                android:src="@drawable/ic_orange_star"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="12dp"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"

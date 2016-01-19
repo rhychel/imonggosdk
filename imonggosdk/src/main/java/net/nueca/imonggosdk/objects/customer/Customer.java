@@ -145,8 +145,8 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     /** -- END --
      * THESE ARE FOR THE LETTER HEADER
      */
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
-    protected transient OfflineData offlineData;
+    @ForeignCollectionField(columnName = "offlinedata_id")
+    protected transient ForeignCollection<OfflineData> offlineData;
 
     public Customer() { }
 
@@ -503,13 +503,13 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.documents = documents;
     }
 
-    public OfflineData getOfflineData() {
+    /*public OfflineData getOfflineData() {
         return offlineData;
     }
 
     public void setOfflineData(OfflineData offlineData) {
         this.offlineData = offlineData;
-    }
+    }*/
 
     public int getSectionFirstPosition() {
         return sectionFirstPosition;

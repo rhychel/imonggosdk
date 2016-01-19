@@ -617,7 +617,12 @@ public class OfflineData extends BaseTable2 {
                 break;
             case CUSTOMER:
                 typeStr = "CUSTOMER";
-                customerData.insertTo(dbHelper);
+                if(OfflineDataType.identify(offlineDataTransactionType) == OfflineDataType.UPDATE_CUSTOMER)
+                    customerData.updateTo(dbHelper);
+                else
+                    customerData.insertTo(dbHelper);
+                    customerData.insertTo(dbHelper);
+                    customerData.insertTo(dbHelper);
                 break;
         }
         Log.e("OfflineData", "insert " + typeStr + " " + this.getReference_no() + " id:" + id);
@@ -658,10 +663,9 @@ public class OfflineData extends BaseTable2 {
                 documentData.setId(id * -1);
                 documentData.insertTo(dbHelper);
                 break;
-            case CUSTOMER:
-                customerData.setOfflineData(this);
-                customerData.updateTo(dbHelper);
-                break;
+            //case CUSTOMER:
+            //    customerData.updateTo(dbHelper);
+            //    break;
             default:
                 break;
         }
@@ -776,7 +780,6 @@ public class OfflineData extends BaseTable2 {
                 }
                 break;
             case CUSTOMER:
-                customerData.setOfflineData(this);
                 typeStr = "CUSTOMER";
                 if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
                         && (customerData.getId() != Integer.parseInt(getReturnIdList().get(0))) ) {

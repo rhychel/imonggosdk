@@ -20,6 +20,7 @@ public enum CustomerDetail {
     TERMS("Terms"),
     SALES_ROUTE("Sales route"),
     DISCOUNT("Discount"),
+    AVAILABLE_POINTS("Customer points"),
     LAST_PURCHASE_DETAILS("Last purchase details");
 
     private String label;
