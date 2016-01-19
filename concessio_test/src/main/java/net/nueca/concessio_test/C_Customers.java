@@ -133,10 +133,9 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
             Log.e(TAG, "Sales Promotions size: " + salesPromotions.size());
 
             for(SalesPromotion bp : salesPromotions) {
-                Log.e(TAG, "Sales Promotions name: " + bp.getName());
+                Log.e(TAG, "Sales Promotions name: " + bp.getName() + " ID: " + bp.getId() + " Status: " + bp.getStatus());
 
                 List<Discount> discount = getHelper().fetchForeignCollection(bp.getDiscounts_fc().closeableIterator());
-
 
                 Log.e(TAG, "Discount Size: " + discount.size());
 

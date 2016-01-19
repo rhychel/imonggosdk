@@ -67,6 +67,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
@@ -2125,9 +2126,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     } else {
                                         if (isExisting(paymentTerms, Table.PAYMENT_TERMS)) {
                                             if (jsonObject.has("status") && !jsonObject.isNull("status")) {
-                                                if (jsonObject.getString("status").equals("A")) {
+                                                if (jsonObject.get("status").equals("A")) {
                                                     paymentTerms.updateTo(getHelper());
-                                                } else if (jsonObject.getString("status").equals("I")) {
+                                                } else if (jsonObject.get("status").equals("I")) {
                                                     paymentTerms.deleteTo(getHelper());
                                                 }
                                             }
@@ -2154,9 +2155,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     } else {
                                         if (isExisting(paymentType, Table.PAYMENT_TERMS)) {
                                             if (jsonObject.has("status") && !jsonObject.isNull("status")) {
-                                                if (jsonObject.getString("status").equals("A")) {
+                                                if (jsonObject.get("status").equals("A")) {
                                                     paymentType.updateTo(getHelper());
-                                                } else if (jsonObject.getString("status").equals("I")) {
+                                                } else if (jsonObject.get("status").equals("I")) {
                                                     paymentType.updateTo(getHelper());
                                                 }
                                             }
@@ -2207,17 +2208,31 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         Log.e(TAG, mCurrentTableSyncing + "API don't have 'settings' field");
                                     }
 
+                                    Log.e(TAG, ">> status: " + jsonObject.getString("status"));
                                     if (initialSync || lastUpdatedAt == null) {
-                                        if (!jsonObject.getString("status").equals("D") || !jsonObject.getString("status").equals("I")) {
+                                        boolean status = true;
+
+                                        if(jsonObject.get("status").equals("D")) {
+                                           status = false;
+                                        }
+
+                                        if(jsonObject.get("status").equals("I")) {
+                                            status = false;
+                                        }
+
+                                        if (status) {
+                                            Log.e(TAG, ">> Saving sales promotion with status: " + jsonObject.getString("status"));
                                             salesPromotion.insertTo(getHelper());
                                             if (salesPushSettings != null) {
                                                 salesPushSettings.setSalesPromotion(salesPromotion); // connection
                                                 salesPushSettings.updateTo(getHelper());
                                             }
+                                        } else {
+                                            Log.e(TAG, ">> skipping sales promotion with status: " + jsonObject.getString("status"));
                                         }
                                     } else {
                                         if (isExisting(salesPromotion, Table.SALES_PROMOTIONS)) {
-                                            if (jsonObject.getString("status").equals("A")) {
+                                            if (jsonObject.get("status").equals("A")) {
                                                 salesPromotion.updateTo(getHelper());
                                                 if (salesPushSettings != null) {
                                                     salesPushSettings.setSalesPromotion(salesPromotion); // connection
@@ -2238,7 +2253,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 }
                                             }
                                         } else {
-                                            if (!jsonObject.getString("status").equals("D") || !jsonObject.getString("status").equals("I")) {
+                                            if (!jsonObject.get("status").equals("D") || !jsonObject.get("status").equals("I")) {
                                                 salesPromotion.insertTo(getHelper());
                                                 if (salesPushSettings != null) {
                                                     salesPushSettings.setSalesPromotion(salesPromotion); // connection
@@ -2468,7 +2483,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 Log.e(TAG, "Product ID: " + product.getName());
                                             } else {
                                                 discount.setProduct(null);
-                                                //Log.e(TAG, "can't find product with id:  " + product_id);
+                                                Log.e(TAG, "can't find product with id:  " + product_id);
                                             }
                                         } else {
                                             Log.e(TAG, "'product_id' is null");
@@ -2490,14 +2505,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 } else {
                                     Log.e(TAG, "Can't add discount Sales Promotion Does not exist in database");
                                 }
-
-                                // Log.e(TAG, "Discount is: " + discount.toString());
                             }
 
                             newDiscount.doOperationBT2(Discount.class);
                             updateDiscount.doOperationBT2(Discount.class);
 
-                            Log.e(TAG, "Sales Promotions Discount");
+                            //Log.e(TAG, "Sales Promotions Discount");
                             updateNext(requestType, count);
                             break;
                         case ROUTE_PLANS:
