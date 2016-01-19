@@ -15,7 +15,9 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
+import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
@@ -127,7 +129,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
             e.printStackTrace();
         }*/
 
-        try {
+       /* try {
             List<SalesPromotion> salesPromotions = getHelper().fetchObjectsList(SalesPromotion.class);
 
             Log.e(TAG, "Sales Promotions size: " + salesPromotions.size());
@@ -141,6 +143,37 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
                 for(Discount dd : discount) {
                     Log.e(TAG, "Discount: " + dd.toString());
+
+                }
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+        try {
+            List<PriceList> priceLists = getHelper().fetchObjectsList(PriceList.class);
+
+            Log.e(TAG, "Price List size: " + priceLists.size());
+
+            for(PriceList bp : priceLists) {
+
+
+                List<CustomerGroup> customerGroups = getHelper().fetchForeignCollection(bp.getCustomerGroups().closeableIterator());
+
+                Log.e(TAG, "Customer Group Size: " + customerGroups.size());
+
+                for(CustomerGroup dd : customerGroups) {
+                    Log.e(TAG, "Customer Group: " + dd.getName());
+
+                }
+
+                List<Customer> customers = getHelper().fetchForeignCollection(bp.getCustomers().closeableIterator());
+
+                Log.e(TAG, "Customer Size: " + customers.size());
+
+                for(Customer dd : customers) {
+                    Log.e(TAG, "Customer: " + dd.getName());
 
                 }
 
@@ -221,9 +254,9 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                     Log.e(TAG, "Fragment is Null!");
                 }
 
-//            case net.nueca.concessioengine.R.id.mUnlink:
-//                unlinkDevice();
-//                break;
+            case net.nueca.concessioengine.R.id.mUnlink:
+                unlinkDevice();
+                break;
             default:
                 break;
         }

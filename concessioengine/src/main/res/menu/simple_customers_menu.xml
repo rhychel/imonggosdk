@@ -16,4 +16,11 @@
         app:actionViewClass="net.nueca.concessioengine.views.SearchViewEx"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/mUnlink"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="100"
+        android:title="Unlink"
+        app:showAsAction="always" />
+
 </menu>

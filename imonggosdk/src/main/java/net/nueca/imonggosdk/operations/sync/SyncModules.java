@@ -1021,25 +1021,42 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 Log.e(TAG, "PriceList came from customer ");
                                 tempObject = (Customer) listPriceListStorage.get(mCustomIndex);
 
+                                if (tempObject != null) {
+                                    Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", tempObject.getId()).queryForFirst();
+                                    Log.e(TAG, "Querying for customer with id: " + tempObject.getId());
+
+                                    if (customer != null) {
+                                        Log.e(TAG, "Customer found: " + customer.getName());
+                                        customer.setPriceList(priceList);
+                                        customer.updateTo(getHelper());
+                                    } else {
+                                        Log.e(TAG, "Customer not found");
+                                    }
+                                } else {
+                                    Log.e(TAG, "Sum ting wong");
+                                }
+
                             } else if (listPriceListStorage.get(mCustomIndex) instanceof CustomerGroup) {
                                 Log.e(TAG, "PriceList came from customer group ");
                                 tempObject = (CustomerGroup) listPriceListStorage.get(mCustomIndex);
-                            }
 
-                            if (tempObject != null) {
-                                CustomerGroup customerGroup = getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", tempObject.getId()).queryForFirst();
-                                Log.e(TAG, "Querying for customer group with id: " + tempObject.getId());
+                                if (tempObject != null) {
+                                    CustomerGroup customerGroup = getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", tempObject.getId()).queryForFirst();
+                                    Log.e(TAG, "Querying for customer group with id: " + tempObject.getId());
 
-                                if (customerGroup != null) {
-                                    Log.e(TAG, "Customer Group found: " + customerGroup.getName());
-                                    customerGroup.setPriceList(priceList);
-                                    customerGroup.updateTo(getHelper());
+                                    if (customerGroup != null) {
+                                        Log.e(TAG, "Customer Group found: " + customerGroup.getName());
+                                        customerGroup.setPriceList(priceList);
+                                        customerGroup.updateTo(getHelper());
+                                    } else {
+                                        Log.e(TAG, "Customer Group not found");
+                                    }
                                 } else {
-                                    Log.e(TAG, "Customer Group not found");
+                                    Log.e(TAG, "Sum ting wong");
                                 }
-                            } else {
-                                Log.e(TAG, "Sum ting wong");
                             }
+
+
 
                             if (isExisting(priceList, Table.PRICE_LISTS)) {
                                 //TODO: Support last updated at
@@ -1168,7 +1185,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-                                BatchList<BranchUnit> newBranchUnit = new BatchList<>(DatabaseOperation.INSERT, getHelper()); // container for the new users
+
 
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
