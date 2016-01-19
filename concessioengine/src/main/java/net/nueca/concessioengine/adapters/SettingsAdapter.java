@@ -30,7 +30,8 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
     public SettingsAdapter(Context context, List<AppSettings> list) {
         super(context, list);
         headerDisplay = getContext().getResources().getInteger(R.integer.default_header_display);
-        marginsFixed = getContext().getResources().getBoolean(R.bool.default_margins_fixed);
+//        marginsFixed = getContext().getResources().getBoolean(R.bool.default_margins_fixed);
+        marginsFixed = false;
     }
 
     @Override
@@ -39,7 +40,7 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
         if(viewType == VIEW_TYPE_HEADER)
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_settings_header_letter, parent, false);
         else
-            v = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_settings_listitem, parent, false);
         ListViewHolder lvh = new ListViewHolder(v);
         return lvh;
     }
@@ -56,7 +57,7 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
         }
         final GridSLM.LayoutParams lp = GridSLM.LayoutParams.from(itemView.getLayoutParams());
         if(appSettings.isHeader()) {
-            lp.headerDisplay = headerDisplay;
+//            lp.headerDisplay = headerDisplay;
             if (lp.isHeaderInline() || (marginsFixed && !lp.isHeaderOverlay())) {
                 lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
             } else {
@@ -87,7 +88,7 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
     public void initializeRecyclerView(Context context, RecyclerView rvProducts) {
         layoutManager = new LayoutManager(context);
         rvProducts.setLayoutManager(layoutManager);
-        rvProducts.setHasFixedSize(true);
+//        rvProducts.setHasFixedSize(true);
     }
 
     public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {

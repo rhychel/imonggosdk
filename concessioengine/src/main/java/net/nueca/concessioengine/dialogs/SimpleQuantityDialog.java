@@ -233,7 +233,7 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
             }
 
             if (quantityDialogListener != null)
-                quantityDialogListener.onSave(selectedProductItem);
+                quantityDialogListener.onSave(selectedProductItem, listPosition);
             dismiss();
         }
     };

@@ -38,7 +38,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
     protected SimpleCustomerListAdapter simpleCustomerListAdapter;
     protected SimpleCustomerRecyclerViewAdapter simpleCustomerRecyclerViewAdapter;
 
-    private String searchKey;
+    protected String searchKey;
 
     protected ListView lvCustomers;
     protected RecyclerView rvCustomers;
@@ -61,6 +61,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
                 whereCustomers.and();
                 whereCustomers.like("name", "%" + searchKey + "%");
                 whereCustomers.or().like("alternate_code", "%" + searchKey + "%");
+                whereCustomers.or().like("code", "%" + searchKey + "%");
             }
 
             QueryBuilder<Customer, Integer> resultCustomers = getHelper().fetchIntId(Customer.class).queryBuilder()

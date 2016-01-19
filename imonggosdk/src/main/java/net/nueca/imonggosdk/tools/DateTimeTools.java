@@ -241,6 +241,12 @@ public class DateTimeTools {
         return currentDate;
     }
 
+    public static Date getCurrentDateTimeUTC0() {
+        Calendar now = Calendar.getInstance();
+        now.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return now.getTime();
+    }
+
     public static String convertFromTo(String datetime, TimeZone from, TimeZone to) {
         return convertFromTo(datetime, null, from, to);
     }

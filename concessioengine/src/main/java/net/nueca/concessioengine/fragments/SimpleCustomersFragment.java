@@ -134,6 +134,11 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
         return view;
     }
 
+    public void deselectCustomers() {
+        simpleCustomerRecyclerViewAdapter.getSelectedCustomers().clear();
+        simpleCustomerRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
     public void deselectCustomer(Customer customer) {
         deselectCustomer(customer, -1);
     }

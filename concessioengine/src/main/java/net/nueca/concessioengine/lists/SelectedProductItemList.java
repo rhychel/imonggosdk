@@ -28,14 +28,21 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         super(collection);
     }
 
+    /**
+     *
+     * @param selectedProductItem
+     * @return false when the item has been removed.
+     */
     @Override
     public boolean add(SelectedProductItem selectedProductItem) {
         int index = indexOf(selectedProductItem);
         if(index > -1) {
             if(selectedProductItem.getValues().size() > 0)
                 set(index, selectedProductItem);
-            else
+            else {
                 remove(index);
+                return false;
+            }
             return true;
         }
 

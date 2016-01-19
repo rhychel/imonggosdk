@@ -88,6 +88,10 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
         else if(listingType == ListingType.ADVANCED_SALES) {
             if(!hasSubtotal)
                 holder.tvSubtotal2.setVisibility(View.GONE);
+
+            holder.ivStar.setVisibility(View.GONE);
+            if(promotionalProducts.indexOf(product) > -1)
+                holder.ivStar.setVisibility(View.VISIBLE);
             holder.llQuantity.setVisibility(View.GONE);
             holder.tvProductName.setText(product.getName());
             holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
@@ -158,6 +162,8 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
         public TextView tvSubtotal2;
         public LinearLayout llQuantity;
 
+        public ImageView ivStar;
+
         public View root;
         public ListViewHolder(View itemView) {
             super(itemView);
@@ -174,8 +180,10 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                 tvInventoryCount = (TextView) itemView.findViewById(R.id.tvInventoryCount);
 
                 ivProductImage.setDefaultImageResId(R.drawable.no_image);
-                ivProductImage.setErrorImageResId(R.drawable.no_image);            }
+                ivProductImage.setErrorImageResId(R.drawable.no_image);
+            }
             else {
+                ivStar = (ImageView) itemView.findViewById(R.id.ivStar);
                 tvInStock = (AutofitTextView) itemView.findViewById(R.id.tvInStock);
                 tvQuantity2 = (AutofitTextView) itemView.findViewById(R.id.tvQuantity);
                 tvSubtotal2 = (TextView) itemView.findViewById(R.id.tvSubtotal);

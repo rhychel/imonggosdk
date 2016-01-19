@@ -15,10 +15,13 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
-import net.nueca.imonggosdk.objects.invoice.Discount;
+import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -36,7 +39,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
         super.onCreate(savedInstanceState);
         initComponents();
         Log.e(TAG, "Customers Activity");
-
+/*
         try {
             List<RoutePlan> routePlan = getHelper().fetchObjectsList(RoutePlan.class);
 
@@ -89,6 +92,95 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
             e.printStackTrace();
         }
 
+
+
+        try {
+            List<BranchProduct> branchProducts = getHelper().fetchObjectsList(BranchProduct.class);
+
+            Log.e(TAG, "Branch Products size: " + branchProducts.size());
+
+            for(BranchProduct bp : branchProducts) {
+                Log.e(TAG, "Branch Product product: " + (bp.getProduct() != null ? bp.getProduct().getName() : "null"));
+                Log.e(TAG, "Branch Product branch: " + (bp.getBranch() != null ? bp.getBranch().getName() : "null"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            List<SalesPromotion> salesPromotions = getHelper().fetchObjectsList(SalesPromotion.class);
+
+            Log.e(TAG, "Sales Promotions size: " + salesPromotions.size());
+
+            for(SalesPromotion bp : salesPromotions) {
+                Log.e(TAG, "Sales Promotions name: " + bp.getName());
+
+                if(bp.getDiscounts_fc() != null) {
+                    Log.e(TAG, "Discount size: " + bp.getDiscounts_fc().size());
+                    for(Discount discount : bp.getDiscounts_fc()) {
+                        Log.e(TAG, "Discount: " + discount.toString());
+                    }
+                }
+
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+       /* try {
+            List<SalesPromotion> salesPromotions = getHelper().fetchObjectsList(SalesPromotion.class);
+
+            Log.e(TAG, "Sales Promotions size: " + salesPromotions.size());
+
+            for(SalesPromotion bp : salesPromotions) {
+                Log.e(TAG, "Sales Promotions name: " + bp.getName() + " ID: " + bp.getId() + " Status: " + bp.getStatus());
+
+                List<Discount> discount = getHelper().fetchForeignCollection(bp.getDiscounts_fc().closeableIterator());
+
+                Log.e(TAG, "Discount Size: " + discount.size());
+
+                for(Discount dd : discount) {
+                    Log.e(TAG, "Discount: " + dd.toString());
+
+                }
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+        try {
+            List<PriceList> priceLists = getHelper().fetchObjectsList(PriceList.class);
+
+            Log.e(TAG, "Price List size: " + priceLists.size());
+
+            for(PriceList bp : priceLists) {
+
+
+                List<CustomerGroup> customerGroups = getHelper().fetchForeignCollection(bp.getCustomerGroups().closeableIterator());
+
+                Log.e(TAG, "Customer Group Size: " + customerGroups.size());
+
+                for(CustomerGroup dd : customerGroups) {
+                    Log.e(TAG, "Customer Group: " + dd.getName());
+
+                }
+
+                List<Customer> customers = getHelper().fetchForeignCollection(bp.getCustomers().closeableIterator());
+
+                Log.e(TAG, "Customer Size: " + customers.size());
+
+                for(Customer dd : customers) {
+                    Log.e(TAG, "Customer: " + dd.getName());
+
+                }
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initComponents() {
@@ -103,19 +195,6 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                 .replace(R.id.flContent, mSimpleCustomersFragment)
                 .addToBackStack("customers")
                 .commit();
-
-        try {
-            List<BranchProduct> branchProducts = getHelper().fetchObjectsList(BranchProduct.class);
-
-            Log.e(TAG, "Branch Products size: " + branchProducts.size());
-
-            for(BranchProduct bp : branchProducts) {
-                Log.e(TAG, "Branch Product product: " + (bp.getProduct() != null ? bp.getProduct().getName() : "null"));
-                Log.e(TAG, "Branch Product branch: " + (bp.getBranch() != null ? bp.getBranch().getName() : "null"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -175,9 +254,9 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                     Log.e(TAG, "Fragment is Null!");
                 }
 
-            case net.nueca.concessioengine.R.id.mUnlink:
-                unlinkDevice();
-                break;
+//            case net.nueca.concessioengine.R.id.mUnlink:
+//                unlinkDevice();
+//                break;
             default:
                 break;
         }

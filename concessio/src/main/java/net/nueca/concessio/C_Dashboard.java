@@ -20,6 +20,7 @@ import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -41,7 +42,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     private DashboardRecyclerAdapter dashboardRecyclerAdapter;
 
     private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>(){{
-//        add(new DashboardTile(ConcessioModule.SALES, "Sales", R.drawable.ic_booking));
         add(new DashboardTile(ConcessioModule.ROUTE_PLAN, "Sales", R.drawable.ic_booking));
         add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers", R.drawable.ic_customers));
         add(new DashboardTile(ConcessioModule.RECEIVE_SUPPLIER, "Receiving", R.drawable.ic_receiving));

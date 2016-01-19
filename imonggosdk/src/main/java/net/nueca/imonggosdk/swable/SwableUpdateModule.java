@@ -159,7 +159,7 @@ public class SwableUpdateModule {
                                                 String documentId = errorMsg.substring(
                                                         errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
                                                 );
-                                                Log.e("STR : UPDATE_DOCUMENT ID", documentId);
+                                                Log.e("STR: UPDATE_DOCUMENT ID", documentId);
                                                 offlineData.setReturnId(documentId);
                                             }
                                         }
@@ -182,7 +182,7 @@ public class SwableUpdateModule {
                                                     String documentId = errorMsg.substring(
                                                             errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
                                                     );
-                                                    Log.e("STR : UPDATE_DOCUMENT ID", documentId);
+                                                    Log.e("STR: UPDATE_DOCUMENT ID", documentId);
                                                     offlineData.setReturnId(documentId);
                                                 }
                                             }

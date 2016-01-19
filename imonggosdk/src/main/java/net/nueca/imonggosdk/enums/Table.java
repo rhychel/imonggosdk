@@ -12,6 +12,7 @@ import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.invoice.Discount;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.Session;
@@ -96,10 +97,11 @@ public enum Table {
     DOCUMENT_LINES(API_TYPE.NON_API, "Document Lines", DocumentLine.class),
     EXTENDED_ATTRIBUTES(API_TYPE.NON_API, "Extended Attributes"),
     EXTRAS(API_TYPE.NON_API, "Extras", Extras.class),
+    BRANCH_UNIT(API_TYPE.NON_API, "Branch Unit", BranchUnit.class),
 
     // ----- FOR REBISCO
     CUSTOMER_BY_SALESMAN(API_TYPE.API, "Customers", Customer.class, "customer_by_salesman"),
-    BRANCH_PRODUCTS(API_TYPE.API, "Prices", BranchProduct.class, "branch_products"),
+    BRANCH_PRODUCTS(API_TYPE.API, "Branch Prices", BranchProduct.class, "branch_products"),
     INVOICE_PURPOSES(API_TYPE.API, "Invoice Purposes", InvoicePurpose.class, "invoice_purposes"),
     PAYMENT_TERMS(API_TYPE.API, "Payment Terms", PaymentTerms.class, "payment_terms"),
     CUSTOMER_CATEGORIES(API_TYPE.API, "Customer Categories", CustomerCategory.class, "customer_categories"),
@@ -110,11 +112,11 @@ public enum Table {
     BRANCH_PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class, "branch_price_lists"),
     PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", PriceList.class, "price_lists_details"),
     SALES_PROMOTIONS(API_TYPE.API, "Sales Promotions", SalesPromotion.class, "sales_promotions"),
-    SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS(API_TYPE.API, "Discount Details", Discount.class, "sales_promotions_sales_discount_details"),
-    SALES_PROMOTIONS_POINTS_DETAILS(API_TYPE.API, "Points Details", Discount.class, "sales_promotions_points_details"),
     SALES_PROMOTIONS_SALES_PUSH(API_TYPE.API, "Sales Push", SalesPromotion.class, "sales_promotions_sales_push"),
     SALES_PROMOTIONS_POINTS(API_TYPE.API, "Points", SalesPromotion.class, "sales_promotions_points"),
+    SALES_PROMOTIONS_POINTS_DETAILS(API_TYPE.API, "Points Details", Discount.class, "sales_promotions_points_details"),
     SALES_PROMOTIONS_SALES_DISCOUNT(API_TYPE.API, "Sales Discount", SalesPromotion.class, "sales_promotions_sales_discount"),
+    SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS(API_TYPE.API, "Discount Details", Discount.class, "sales_promotions_sales_discount_details"),
     ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class, "route_plans"),
     ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlanDetail.class, "route_plans_details"),
 

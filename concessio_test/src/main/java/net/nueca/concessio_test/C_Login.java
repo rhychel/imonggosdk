@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import com.crashlytics.android.Crashlytics;
 
+import net.nueca.concessio_test.epsonprinter.*;
+import net.nueca.concessio_test.epsonprinter.MainActivity;
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
