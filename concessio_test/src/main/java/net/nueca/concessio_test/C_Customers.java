@@ -13,15 +13,10 @@ import net.nueca.concessioengine.fragments.AddCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
-import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
-import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.price.PriceList;
-import net.nueca.imonggosdk.objects.salespromotion.Discount;
-import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
-import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
-import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
+import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
@@ -254,9 +249,16 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                     Log.e(TAG, "Fragment is Null!");
                 }
 
-//            case net.nueca.concessioengine.R.id.mUnlink:
-//                unlinkDevice();
-//                break;
+            case net.nueca.concessioengine.R.id.mUnlink:
+                unlinkDevice();
+                break;
+
+            case net.nueca.concessioengine.R.id.mUpdateApp:
+                APIDownloader apiDownloader = new APIDownloader(this, false);
+                apiDownloader.execute();
+
+                break;
+
             default:
                 break;
         }

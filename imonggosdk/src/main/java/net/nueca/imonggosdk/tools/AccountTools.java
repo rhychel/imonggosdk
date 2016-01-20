@@ -13,6 +13,8 @@ import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Session;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 5/13/15.
@@ -23,6 +25,8 @@ public class AccountTools {
 
     private static final String IS_UNLINKED = "_is_unlinked";
     private static final String IS_ACTIVE_USER = "_is_active_user";
+    private static final String MODULES_TO_SYNC = "_modules_to_sync";
+    private static final String MODULES_TO_SYNC_SIZE = "_modules_to_sync_size";
 
     /**
      * Check if the user is logged in on their Imonggo/Iretailcloud account.
@@ -101,13 +105,14 @@ public class AccountTools {
     }
 
     public static void unlinkAccount(Context context, ImonggoDBHelper2 dbHelper) throws SQLException {
-        unlinkAccount(context,dbHelper, null);
+        unlinkAccount(context, dbHelper, null);
     }
 
     /**
      * Deletes Account Details from the database
-     *
+     * <p>
      * TODO: Offline Data
+     *
      * @param context
      * @param dbHelper
      * @param accountListener
@@ -162,6 +167,57 @@ public class AccountTools {
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("Key[updateUserActiveSt]", "Not Found");
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sets Modules Syncing
+     *
+     * @param context
+     * @param modulesToSync
+     */
+    public static void setModulesToSync(Context context, int[] modulesToSync) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            SharedPreferences.Editor editor = preferences.edit();
+
+            editor.putInt(pinfo.packageName + MODULES_TO_SYNC_SIZE, modulesToSync.length);
+            int x=0;
+            for(int i : modulesToSync) {
+                editor.putInt(pinfo.packageName + MODULES_TO_SYNC + x, i);
+                x++;
+            }
+
+            editor.apply();
+
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Key[setModulesToSync]", "Not Found");
+            e.printStackTrace();
+        }
+    }
+
+    public static int[] getModulesSyncing(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+
+            int size = preferences.getInt(pinfo.packageName + MODULES_TO_SYNC_SIZE, 0);
+
+            List<Integer> modules = new ArrayList<>();
+
+            if(size == 0) {
+                return new int[] {0};
+            } else {
+                for (int i =0; i<size; i++) {
+                    modules.add(preferences.getInt(pinfo.packageName + MODULES_TO_SYNC +i, 0));
+                }
+
+                return new int[] {modules.iterator().next()};
+            }
+
+        } catch (PackageManager.NameNotFoundException e) {
+            return new int[] {0};
         }
     }
 }

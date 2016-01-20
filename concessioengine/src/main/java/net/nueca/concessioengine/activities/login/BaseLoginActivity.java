@@ -186,6 +186,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             onCreateLoginLayout();
         }
         autoUpdateChecker();
+
+
+        //updater.execute();
     }
 
     /**
@@ -211,6 +214,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 Log.e(TAG, "Cannot bind Service and Activity");
             }
         }
+
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -452,17 +456,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             btnSignIn.setEnabled(true);
                         }
                     }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-//            DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE),
-//                    "No network connection",
-//                    getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-//                    new MaterialDialog.SingleButtonCallback() {
-//                        @Override
-//                        public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-//                            dialogPositiveButtonAction();
-//                            btnSignIn.setEnabled(true);
-//                            materialDialog.dismiss();
-//                        }
-//                    }, null, new Theme);
         } else {
             Boolean cancelLogin = false;
             // Set error to null
@@ -935,7 +928,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     protected void startSyncService() {
-        Log.e("startSyncService", "called");
+        Log.e("execute", "called");
         if (!isSyncServiceRunning(SyncModules.class) || mSyncModules == null) {
             mBounded = false;
             startService(mServiceIntent);

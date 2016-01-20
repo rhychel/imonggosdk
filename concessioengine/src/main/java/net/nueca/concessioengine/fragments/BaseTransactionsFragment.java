@@ -55,7 +55,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
         if(isTypesInitialized)
             return;
         List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST,
+                .where().in("module_type", ModuleSettingTools.getModulesToString  (ConcessioModule.STOCK_REQUEST,
                         ConcessioModule.RECEIVE_BRANCH, ConcessioModule.RECEIVE_BRANCH_PULLOUT, ConcessioModule.RELEASE_BRANCH,
                         ConcessioModule.RECEIVE_ADJUSTMENT, ConcessioModule.RELEASE_ADJUSTMENT,
                         ConcessioModule.RECEIVE_SUPPLIER, ConcessioModule.RELEASE_SUPPLIER,

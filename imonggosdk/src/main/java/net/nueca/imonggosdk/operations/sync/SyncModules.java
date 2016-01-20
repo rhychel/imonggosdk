@@ -1015,7 +1015,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                             Log.e(TAG, "PriceList Custom Index: " + mCustomIndex);
 
-                            BaseTable tempObject = null;
+                            BaseTable tempObject;
 
                             if (listPriceListStorage.get(mCustomIndex) instanceof Customer) {
                                 Log.e(TAG, "PriceList came from customer ");
@@ -1274,10 +1274,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         // is Base unit
                                         if (jsonObject.has("unit_id")) {
+
                                             if (jsonObject.getString("unit_id").isEmpty() || !jsonObject.get("unit_id").equals(null)) {
                                                 Log.e(TAG, "Branch Product API 'unit_id' field is empty or null");
                                                 branchProduct.setIsBaseUnitSellable(true);
-
 
                                                 int unit_id = jsonObject.getInt("unit_id");
                                                 Unit unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit_id).queryForFirst();
@@ -1290,12 +1290,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     Log.e(TAG, "Err Can't find 'unit' field from database");
                                                 }
 
-
                                             }
                                         } else {
                                             branchProduct.setIsBaseUnitSellable(true);
                                             Log.e(TAG, mCurrentTableSyncing + " API don't have 'unit_id' field");
                                         }
+
                                         Log.e(TAG, "---");
 
                                         if (branchUnit != null) {
@@ -1569,7 +1569,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 deleteUnits.doOperationBT(Unit.class);
 
                                 updateNext(requestType, size);
-
                             }
                             break;
                         case BRANCHES:
