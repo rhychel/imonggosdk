@@ -26,7 +26,7 @@ public class PaymentType extends DBTable {
     @DatabaseField
     private String code;
 
-    @DatabaseField
+    @DatabaseField(id = true)
     private int id;
 
     public PaymentType() {}

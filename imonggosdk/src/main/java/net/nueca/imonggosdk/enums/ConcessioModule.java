@@ -9,6 +9,7 @@ public enum ConcessioModule {
     PURCHASE_ORDERS("purchase_orders"),
     PHYSICAL_COUNT("physical_count"),
     INVOICE("invoice"), // SALES, // BOOKING
+    INVOICE_PARTIAL("invoice_partial"),
     RECEIVE_BRANCH("receive_branch"), // RECEIVE
     RECEIVE_BRANCH_PULLOUT("receive_branch_pullout"), // PULLOUT CONFIRMATION
     RELEASE_BRANCH("release_branch"), // PULLOUT_REQUEST || Pullout Document

@@ -30,7 +30,7 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
     }
 
     public SimpleSplitPaymentAdapter(Context context, List<InvoicePayment> payments, ImonggoDBHelper2 dbHelper) {
-        this(context, payments, dbHelper, ListingType.BASIC_PAYMENTS);
+        this(context, dbHelper, payments, ListingType.BASIC_PAYMENTS);
     }
 
     public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper2 dbHelper, ListingType listingType) {
@@ -39,8 +39,14 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         this.listingType = listingType;
     }
 
-    public SimpleSplitPaymentAdapter(Context context, List<InvoicePayment> payments, ImonggoDBHelper2 dbHelper, ListingType listingType) {
+    public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper2 dbHelper, List<InvoicePayment> payments, ListingType listingType) {
         super(context, chooseLayout(listingType), payments);
+        this.dbHelper = dbHelper;
+        this.listingType = listingType;
+    }
+
+    public SimpleSplitPaymentAdapter(Context context,  ImonggoDBHelper2 dbHelper, List<InvoicePayment> payments, List<PaymentType> paymentTypes, ListingType listingType) {
+        super(context, chooseLayout(listingType), payments, paymentTypes);
         this.dbHelper = dbHelper;
         this.listingType = listingType;
     }
@@ -64,7 +70,13 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
 
     @Override
     public void onBindViewHolder(ListViewHolder lvh, final int position) {
-        if (position < getCount()) {
+        if(listingType == ListingType.BASIC_PAYMENTS && position == getCount()) {
+            lvh.tvPaymentType.setText("Tap to add payment...");
+            lvh.tvPaymentValue.setText(NumberTools.separateInCommas(""));
+            lvh.tvPaymentValue.setVisibility(View.GONE);
+            lvh.isAdd = true;
+        }
+        else {
             InvoicePayment invoicePayment = getItem(position);
 
             lvh.tvPaymentType.setText(getPaymentTypeWithId(invoicePayment.getPayment_type_id()).getName());
@@ -74,19 +86,12 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                 lvh.tvPaymentValue.setTextColor(getContext().getResources().getColor(R.color.payment_color));
             lvh.isAdd = false;
             lvh.isLastItem = false;
-        } else {
-            if(listingType == ListingType.COLORED_PAYMENTS) {
-                lvh.tvPaymentType.setText("Total Amount");
-                lvh.tvPaymentValue.setText("P"+NumberTools.separateInCommas("2500"));
-                lvh.tvPaymentValue.setTextColor(getContext().getResources().getColor(R.color.primary));
-                lvh.isLastItem = true;
-            }
-            else if(listingType == ListingType.BASIC_PAYMENTS) {
-                lvh.tvPaymentType.setText("Tap to add payment...");
-                lvh.tvPaymentValue.setText(NumberTools.separateInCommas(""));
-                lvh.tvPaymentValue.setVisibility(View.GONE);
-                lvh.isAdd = true;
-            }
+//            if(listingType == ListingType.BASIC_PAYMENTS) {
+//                lvh.tvPaymentType.setText("Tap to add payment...");
+//                lvh.tvPaymentValue.setText(NumberTools.separateInCommas(""));
+//                lvh.tvPaymentValue.setVisibility(View.GONE);
+//                lvh.isAdd = true;
+//            }
         }
         lvh.position = position;
 
@@ -95,7 +100,9 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
 
     @Override
     public int getItemCount() {
-        return isFullyPaid? getCount() : getCount()+1;
+        if(listingType == ListingType.COLORED_PAYMENTS)
+            return getCount();
+        return isFullyPaid ? getCount() : getCount()+1;
     }
 
     public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {

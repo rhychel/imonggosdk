@@ -77,7 +77,7 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             double subtotal = product.getRetail_price()*Double.valueOf(getSelectedProductItems().getQuantity(product));
             viewHolder.tvRetailPrice.setText(String.format("P%.2f", product.getRetail_price()));
 
-            Log.e("selectedItems", getSelectedProductItems().size()+"Size"+ProductsAdapterHelper.getSelectedProductItems().size());
+//            Log.e("selectedItems", getSelectedProductItems().size()+"Size"+ProductsAdapterHelper.getSelectedProductItems().size());
             if(getSelectedProductItems().hasSelectedProductItem(product)) {
                 viewHolder.llQuantity.setVisibility(View.VISIBLE);
                 viewHolder.tvQuantity.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(product), getSelectedProductItems().getUnitName(product, false)));

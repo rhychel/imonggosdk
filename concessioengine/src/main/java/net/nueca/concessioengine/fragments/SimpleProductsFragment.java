@@ -157,6 +157,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 productRecyclerViewAdapter.setDbHelper(getHelper());
                 productRecyclerViewAdapter.setList(getProducts());
             }
+            productRecyclerViewAdapter.setReturnItems(isReturnItems);
             productRecyclerViewAdapter.setHasSubtotal(hasSubtotal);
             productRecyclerViewAdapter.setListingType(listingType);
             if(!displayOnly)
@@ -168,8 +169,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                             if (multiInputListener != null)
                                 multiInputListener.showInputScreen(product);
                         } else {
-                            SelectedProductItem selectedProductItem = productRecyclerViewAdapter.getSelectedProductItems()
-                                    .getSelectedProductItem(product);
+                            SelectedProductItem selectedProductItem = productRecyclerViewAdapter.getSelectedProductItems().getSelectedProductItem(product);
                             if (selectedProductItem == null) {
                                 selectedProductItem = new SelectedProductItem();
                                 selectedProductItem.setProduct(product);
@@ -447,11 +447,16 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", productListAdapter.updateList(getProducts()));
     }
 
+    public void forceUpdateProductList() {
+        forceUpdateProductList(getProducts());
+    }
+
     public void forceUpdateProductList(List<Product> productList) {
         if(useRecyclerView)
             productRecyclerViewAdapter.updateList(productList);
         else
             productListAdapter.updateList(productList);
+        toggleNoItems("No products available.", (productRecyclerViewAdapter.getItemCount() > 0));
     }
 
     @Override

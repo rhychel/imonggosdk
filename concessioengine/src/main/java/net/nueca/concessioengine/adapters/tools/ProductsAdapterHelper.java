@@ -38,6 +38,7 @@ public class ProductsAdapterHelper {
     private static Session session;
     private static Customer selectedCustomer;
     private static DocumentPurpose reason;
+    private static SelectedProductItemList selectedReturnProductItems = null;
     private static SelectedProductItemList selectedProductItems = null;
     public static ImageLoaderListener imageLoaderListener = null;
     public static boolean isDuplicating = false;
@@ -89,6 +90,12 @@ public class ProductsAdapterHelper {
         return selectedProductItems;
     }
 
+    public static SelectedProductItemList getSelectedReturnProductItems() {
+        if(selectedReturnProductItems == null)
+            selectedReturnProductItems = new SelectedProductItemList();
+        return selectedReturnProductItems;
+    }
+
     public static void setDbHelper(ImonggoDBHelper2 dbHelper) {
         ProductsAdapterHelper.dbHelper = dbHelper;
     }
@@ -117,6 +124,12 @@ public class ProductsAdapterHelper {
         return !selectedProductItems.isEmpty();
     }
 
+    public static boolean hasSelectedReturnProductItems() {
+        if(selectedReturnProductItems == null)
+            return false;
+        return !selectedReturnProductItems.isEmpty();
+    }
+
     public static void clearSelectedProductItemList() {
         if(isDuplicating)
             return;
@@ -128,6 +141,13 @@ public class ProductsAdapterHelper {
         Log.e("ProductAdapterHelper", "clearSelectedProductItemList");
     }
 
+    public static void clearSelectedReturnProductItemList() {
+        if(isDuplicating)
+            return;
+        if(selectedReturnProductItems != null)
+            selectedReturnProductItems.clear();
+    }
+
     public static void destroySelectedProductItemList() {
         if(selectedProductItems != null)
             selectedProductItems.clear();
@@ -137,12 +157,19 @@ public class ProductsAdapterHelper {
         Log.e("ProductAdapterHelper", "destroySelectedProductItemList");
     }
 
+    public static void destroySelectedReturnProductItemList() {
+        if(selectedReturnProductItems != null)
+            selectedReturnProductItems.clear();
+        selectedReturnProductItems = null;
+    }
+
     public static void destroyProductAdapterHelper() {
         dbHelper = null;
         session = null;
         imageLoader = null;
         imageRequestQueue = null;
         selectedProductItems = null;
+        selectedReturnProductItems = null;
         selectedCustomer = null;
         reason = null;
         Log.e("ProductAdapterHelper", "destroyProductAdapterHelper");

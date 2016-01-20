@@ -7,12 +7,16 @@
         <attr name="expandedMarginEnd" format="reference|dimension" />
         <attr name="expandedTextSize" format="reference|dimension" />
         <attr name="collapsedTextSize" format="reference|dimension" />
-        <attr name="android:textAppearance" />
+        <attr name="textAppearance" format="reference" />
         <attr name="textSizeInterpolator" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="CollapsingTextAppearance">
-        <attr name="android:textSize" />
-        <attr name="android:textColor" />
+        <attr name="textSize" format="reference|dimension" />
+        <attr name="textColor" format="reference|dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ViewPagerEx">
+        <attr name="swipePagingEnabled" format="boolean"/>
     </declare-styleable>
 </resources>
