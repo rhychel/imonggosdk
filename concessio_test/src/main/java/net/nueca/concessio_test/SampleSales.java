@@ -25,6 +25,8 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
@@ -124,9 +126,9 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             //for(CustomerGroup customerGroup : customerGroups)
             //    Log.e(">>>>>>>", customerGroup.toString());
 
-            List<Price> prices = getHelper().fetchObjectsList(Price.class);
-            for(Price price : prices)
-                Log.e("@@@@@@@", price.toString());
+            //List<Price> prices = getHelper().fetchObjectsList(Price.class);
+            //for(Price price : prices)
+            //    Log.e("@@@@@@@", price.toString());
 
             /*List<Product> t_products = getHelper().fetchObjectsList(Product.class).subList(0,2);
             for(Product product : t_products)
@@ -134,6 +136,13 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             List<Product> products = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", t_products.get(0).getId()).query();
             for(Product product : products)
                 Log.e("@@@@@@@ **", product.toString());*/
+
+            List<BranchProduct> branchProducts = getHelper().fetchObjectsList(BranchProduct.class);
+            for(BranchProduct branchProduct : branchProducts)
+                Log.e("*******", branchProduct.toString());
+            List<BranchUnit> branchUnits = getHelper().fetchObjectsList(BranchUnit.class);
+            for(BranchUnit branchUnit : branchUnits)
+                Log.e("$$$$$$$", branchUnit.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -190,6 +199,25 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if(btnReview != null && btnReview.getText().toString().equals(CUSTOMER_LABEL)) {
+            getMenuInflater().inflate(R.menu.menu_sample_sales, menu);
+            SearchView mSearch = (SearchView) menu.findItem(R.id.mSearch).getActionView();
+
+            mSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    customersFragment.updateListWhenSearch(query);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    customersFragment.updateListWhenSearch(newText);
+                    return true;
+                }
+            });
+            miSearch = menu.findItem(R.id.mSearch);
+        }
         if(btnReview != null && btnReview.getText().toString().equals(REVIEW_LABEL)) {
             getMenuInflater().inflate(R.menu.menu_sample_sales, menu);
             SearchView mSearch = (SearchView) menu.findItem(R.id.mSearch).getActionView();
@@ -219,7 +247,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             miSearch = menu.findItem(R.id.mSearch);
         }
         if(miSearch != null)
-            miSearch.setVisible(btnReview.getText().toString().equals(REVIEW_LABEL));
+            miSearch.setVisible(btnReview.getText().toString().equals(REVIEW_LABEL) || btnReview.getText().toString().equals(CUSTOMER_LABEL));
         getSupportActionBar().setDisplayShowTitleEnabled(!btnReview.getText().toString().equals(REVIEW_LABEL));
         getSupportActionBar().setDisplayHomeAsUpEnabled(!btnReview.getText().toString().equals(CUSTOMER_LABEL));
         getSupportActionBar().setHomeButtonEnabled(!btnReview.getText().toString().equals(CUSTOMER_LABEL));

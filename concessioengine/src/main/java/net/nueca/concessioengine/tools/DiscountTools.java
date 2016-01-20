@@ -143,7 +143,7 @@ public class DiscountTools {
                 discount_text.matches("-?\\d+(\\.(\\d+))?");
     }
 
-    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, BigDecimal qty, String discount_text, String separator) {
+    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, final BigDecimal qty, String discount_text, String separator) {
         if(discount_text == null || discount_text.length() == 0)
             return retail_price.multiply(qty);
 
@@ -158,7 +158,7 @@ public class DiscountTools {
         return discountedPrice.multiply(qty);
     }
 
-    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, BigDecimal qty, List<Double> discounts,String discount_text, String
+    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, final BigDecimal qty, List<Double> discounts,String discount_text, String
             separator) {
         if(discount_text == null || discount_text.length() == 0)
             return retail_price.multiply(qty);
@@ -177,7 +177,7 @@ public class DiscountTools {
         return discountedPrice.multiply(qty);
     }
 
-    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, BigDecimal qty, List<Double> product_discounts, List<Double>
+    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, final BigDecimal qty, List<Double> product_discounts, List<Double>
             company_discounts, String discount_text, String discount_group_separator, String discount_separator, List<Double>
             customer_discounts, String customer_discount_text) {
         if(discount_text == null || discount_text.length() == 0)

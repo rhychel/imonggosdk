@@ -70,9 +70,9 @@ public class SelectedProductItem {
             if(valuesList.size() == 1) {
                 //Log.e(TAG, "Index is 1 setting the value");
                 if(value.getExtendedAttributes() == null) {
-                    if(value.getRetail_price() != null)
+                    if(value.getRetail_price() != null) {
                         setValues(0, value.getQuantity(), value.getUnit(), value.getRetail_price());
-                    else
+                    } else
                         setValues(0, value.getQuantity(), value.getUnit());
                 }
                 else {
@@ -117,8 +117,12 @@ public class SelectedProductItem {
     public void setValues(int position, Values values) {
         //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, Values values)");
         if(values.getRetail_price() != null) {
-            this.valuesList.get(position).setValue(values.getQuantity(), values.getUnit(), values.getRetail_price());
-            this.valuesList.get(position).setExtendedAttributes(values.getExtendedAttributes());
+            if(values.getPrice() != null)
+                this.valuesList.get(position).setValue(values.getQuantity(),values.getPrice(),values.getExtendedAttributes());
+            else {
+                this.valuesList.get(position).setValue(values.getQuantity(), values.getUnit(), values.getRetail_price());
+                this.valuesList.get(position).setExtendedAttributes(values.getExtendedAttributes());
+            }
         } else {
             this.valuesList.get(position).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
         }
@@ -136,8 +140,8 @@ public class SelectedProductItem {
         setValues();
     }
     public void setValues(int position, String quantity, Unit unit, double retail_price) {
-        //Log.e("SELECTED_PRODUCT_ITEM", "setValues(position="+position+", quantity="+quantity+", unit="+(unit!=null?unit.getName():"null")+", " +
-        //        "retail_price="+retail_price+")");
+        Log.e("SELECTED_PRODUCT_ITEM", "setValues(position="+position+", quantity="+quantity+", unit="+(unit!=null?unit.getName():"null")+", " +
+                "retail_price="+retail_price+")");
         this.valuesList.get(position).setValue(quantity, unit, retail_price);
         setValues();
     }
@@ -279,6 +283,25 @@ public class SelectedProductItem {
         this.retail_price = retail_price;
     }
 
+    public String getValuesRetailPrices(char delimiter) {
+        if(valuesList == null || valuesList.size() == 0)
+            return "";
+        String retailPrices = "";
+        for(Values values : valuesList) {
+            retailPrices += values.getRetail_price();
+            if(valuesList.indexOf(values) < valuesList.size()-1)
+                retailPrices += delimiter;
+        }
+        return retailPrices;
+    }
+
+    public Double getValuesSubtotal() {
+        Double subtotal = 0d;
+        for (Values values : valuesList) {
+            subtotal += values.getSubtotal();
+        }
+        return subtotal;
+    }
 
     @Deprecated
     public int addReceiveValues(Values value) {
