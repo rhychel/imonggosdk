@@ -63,7 +63,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             isFinalize = false,
             displayOnly = false,
             useSalesProductAdapter = false,
-            hasPromotionalProducts = false;
+            hasPromotionalProducts = false,
+            isReturnItems = false;
     private int prevLast = -1;
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
@@ -130,6 +131,16 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
             Date now = DateTimeTools.getCurrentDateTimeUTC0();
 
+            List<SalesPromotion> salesPromotions = getHelper().fetchObjectsList(SalesPromotion.class);
+            for(SalesPromotion salesPromotion : salesPromotions) {
+                Log.e("Sales Promotion", salesPromotion.getName());
+                Log.e("Sales Promotion", "from="+salesPromotion.getFromDate()
+                        +" - to="+salesPromotion.getToDate()
+                        +" - now="+now
+                        +" - status="+salesPromotion.getStatus()
+                        +" - promotion_type_name="+salesPromotion.getPromotion_type_name());
+            }
+
             Where<SalesPromotion, Integer> whereCondition = getHelper().fetchIntId(SalesPromotion.class).queryBuilder().where();
             whereCondition.lt("toDate", now);
 
@@ -169,6 +180,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         boolean includeSearchKey = !searchKey.trim().isEmpty();
         boolean includeCategory = (!category.toLowerCase().equals("all") && hasCategories);
         boolean hasProductFilter = filterProductsBy.size() > 0;
+        if(isFinalize && !hasProductFilter)
+            return products;
         try {
             Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
             whereProducts.isNull("status");
@@ -374,5 +387,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setHasPromotionalProducts(boolean hasPromotionalProducts) {
         this.hasPromotionalProducts = hasPromotionalProducts;
+    }
+
+    public void setReturnItems(boolean returnItems) {
+        isReturnItems = returnItems;
     }
 }

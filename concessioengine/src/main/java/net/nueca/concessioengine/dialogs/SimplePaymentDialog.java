@@ -66,7 +66,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
         btnCancel = (Button) super.findViewById(R.id.btnCancel);
 
         ArrayAdapter<PaymentType> paymentTypesAdapter = new ArrayAdapter<PaymentType>(super.getContext(),
-                R.layout.simple_spinner_item, paymentTypes);
+                R.layout.spinner_item_light, paymentTypes);
         paymentTypesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
         spnPaymentType.setAdapter(paymentTypesAdapter);
 

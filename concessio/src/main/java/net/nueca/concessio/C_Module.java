@@ -107,6 +107,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_module);
 
+        if(clearTransactions) {
+            ProductsAdapterHelper.clearSelectedProductItemList();
+            ProductsAdapterHelper.clearSelectedReturnProductItemList();
+        }
+
         btn1 = (Button) findViewById(R.id.btn1);
         btn2 = (Button) findViewById(R.id.btn2);
         tvItems = (TextView) findViewById(R.id.tvItems);
@@ -196,6 +201,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     btn1.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            ProductsAdapterHelper.setSelectedCustomer(customer);
                             Intent intent = new Intent(C_Module.this, C_Module.class);
                             intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
                             intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.INVOICE.ordinal());
@@ -593,12 +599,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         finalizeFragment.setSetupActionBar(this);
         finalizeFragment.setIsFinalize(true);
         finalizeFragment.setProductsFragmentListener(this);
+        finalizeFragment.setReturnItems(isReturnItems);
     }
 
     private void initializeProducts() {
         simpleProductsFragment = SimpleProductsFragment.newInstance();
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
+        simpleProductsFragment.setReturnItems(isReturnItems);
     }
 
     @Override
@@ -788,6 +796,16 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 handler.sendEmptyMessageDelayed(0, 300);
             }
         }
+        else if(requestCode == REVIEW_SALES) {
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    simpleProductsFragment.refreshList();
+                }
+            };
+            handler.sendEmptyMessageDelayed(0, 100);
+        }
     }
 
     @Override
@@ -857,9 +875,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
      */
     @Override
     public void whenItemsSelectedUpdated() {
-        int size = ProductsAdapterHelper.getSelectedProductItems().size();
-        tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
-        AnimationTools.toggleShowHide(llFooter, size == 0, 300);
+        toggleNext(llFooter, tvItems);
     }
 
     private void prepareFooter() {
@@ -912,6 +928,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     @Override
                                     public void whenDismissed() {
                                         ProductsAdapterHelper.clearSelectedProductItemList();
+                                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
                                         onBackPressed();
                                         if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                             llFooter.setVisibility(View.GONE);
@@ -986,6 +1003,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         @Override
                                                         public void whenDismissed() {
                                                             ProductsAdapterHelper.clearSelectedProductItemList();
+                                                            ProductsAdapterHelper.clearSelectedReturnProductItemList();
                                                             onBackPressed();
                                                             if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                                                 llFooter.setVisibility(View.GONE);
@@ -1019,6 +1037,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             else {
                 if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
                     DialogTools.showDialog(C_Module.this, "Ooops!", "You have no selected items. Kindly select first products.");
+                else if(isReturnItems)
+                    onBackPressed();
+                else if(concessioModule == ConcessioModule.INVOICE) {
+                    Intent intent = new Intent(C_Module.this, C_Finalize.class);
+                    startActivityForResult(intent, REVIEW_SALES);
+                }
                 else {
                     btn1.setText("SEND");
                     finalizeFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());

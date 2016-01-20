@@ -25,7 +25,11 @@ public class TransactionDialog extends BaseAppCompatDialog {
     private ImageView ivStatus;
     private LinearLayout llDetails;
 
+    private TextView tvCustomerName, tvAmount, tvAmountLabel, tvDatetime;
+
     private String title, inStock;
+    private String customerName, amount, amountLabel, datetime;
+    private ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     private int statusResource = R.drawable.ic_check_round_teal;
 
     private TransactionDialogListener transactionDialogListener;
@@ -49,6 +53,16 @@ public class TransactionDialog extends BaseAppCompatDialog {
         ivStatus = (ImageView) super.findViewById(R.id.ivStatus);
         llDetails = (LinearLayout) super.findViewById(R.id.llDetails);
 
+        tvCustomerName = (TextView) super.findViewById(R.id.tvCustomerName);
+        tvAmount = (TextView) super.findViewById(R.id.tvAmount);
+        tvAmountLabel = (TextView) super.findViewById(R.id.tvAmountLabel);
+
+        setHasDetails(concessioModule == ConcessioModule.INVOICE || concessioModule == ConcessioModule.INVOICE_PARTIAL);
+        tvCustomerName.setText(customerName);
+        tvAmount.setText(amount);
+        if(amountLabel != null)
+            tvAmountLabel.setText(amountLabel);
+
         tvTitle.setText(title);
         tvInStock.setText(inStock);
         ivStatus.setImageResource(statusResource);
@@ -64,11 +78,28 @@ public class TransactionDialog extends BaseAppCompatDialog {
 
     }
 
+    public void setAmountLabel(String amountLabel) {
+        this.amountLabel = amountLabel;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public void setDatetime(String datetime) {
+        this.datetime = datetime;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
 
     public void setTitle(ConcessioModule concessioModule) {
+        this.concessioModule = concessioModule;
         this.title = getTitle(concessioModule);
     }
 
@@ -95,6 +126,8 @@ public class TransactionDialog extends BaseAppCompatDialog {
                 return "Pullout Successful";
             case RELEASE_ADJUSTMENT:
                 return "MSO Successful";
+            case INVOICE_PARTIAL:
+                return "Partial Payment Successful";
             default:
                 return "Sales Items Saved";
         }

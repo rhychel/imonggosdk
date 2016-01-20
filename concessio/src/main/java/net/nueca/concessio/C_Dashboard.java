@@ -14,6 +14,7 @@ import android.widget.Spinner;
 
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.DashboardRecyclerAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.objects.DashboardTile;
@@ -127,6 +128,8 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         if(concessioModule == ConcessioModule.CUSTOMERS) {
             bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, true);
         }
+
+        bundle.putBoolean(ModuleActivity.INIT_PRODUCT_ADAPTER_HELPER, true);
         return bundle;
     }
 
