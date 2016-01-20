@@ -1,7 +1,9 @@
 package net.nueca.imonggosdk.activities;
 
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
@@ -18,7 +20,7 @@ import java.sql.SQLException;
  */
 
 
-public class ImonggoAppCompatActivity extends AppCompatActivity {
+public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
 
     protected static final String CUSTOMER_ID = "customer_id";
 
@@ -27,6 +29,8 @@ public class ImonggoAppCompatActivity extends AppCompatActivity {
 
     protected static final int ADD_CUSTOMER = 100;
     protected static final int EDIT_CUSTOMER = 101;
+    protected static final int REVIEW_SALES = 102;
+    protected static final int RETURN_ITEMS_SALES = 103;
 
     private ImonggoDBHelper2 dbHelper2;
 
@@ -58,6 +62,15 @@ public class ImonggoAppCompatActivity extends AppCompatActivity {
         if(getSession() == null)
             return null;
         return getSession().getUser();
+    }
+
+    protected void setupNavigationListener(Toolbar toolbar) {
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
 }

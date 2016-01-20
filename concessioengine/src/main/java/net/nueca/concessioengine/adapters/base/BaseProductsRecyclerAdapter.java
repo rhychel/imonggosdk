@@ -26,6 +26,7 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
 
 //    private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
     protected boolean hasSubtotal = false;
+    protected boolean isReturnItems = false;
 
     public BaseProductsRecyclerAdapter(Context context) {
         super(context);
@@ -43,11 +44,17 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
     }
 
     public void clearSelectedItems() {
-        ProductsAdapterHelper.getSelectedProductItems().clear();
-        ProductListTools.restartLineNo();
+        if(isReturnItems)
+            ProductsAdapterHelper.getSelectedReturnProductItems().clear();
+        else {
+            ProductsAdapterHelper.getSelectedProductItems().clear();
+            ProductListTools.restartLineNo();
+        }
     }
 
     public SelectedProductItemList getSelectedProductItems() {
+        if(isReturnItems)
+            return ProductsAdapterHelper.getSelectedReturnProductItems();
         return ProductsAdapterHelper.getSelectedProductItems();
     }
 
@@ -61,6 +68,10 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
 
     public void setDbHelper(ImonggoDBHelper2 dbHelper) {
         ProductsAdapterHelper.setDbHelper(dbHelper);
+    }
+
+    public void setReturnItems(boolean returnItems) {
+        isReturnItems = returnItems;
     }
 
     @Override
