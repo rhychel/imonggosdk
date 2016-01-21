@@ -85,29 +85,6 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
 
         boolean hasValues = selectedProductItem.getValues().size() > 0;
 
-        unitsAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, unitList);
-        unitsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
-        spUnits.setAdapter(unitsAdapter);
-        if (hasValues) {
-            if (isMultiValue) {
-                if (valuePosition > -1) {
-                    Values value = selectedProductItem.getValues().get(valuePosition);
-                    spUnits.setSelection(unitList.indexOf(value.getUnit()));
-                    if(hasInvoicePurpose) {
-                        deliveryDate = value.getExpiry_date();
-                        spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
-                    }
-                }
-            } else {
-                Values value = selectedProductItem.getValues().get(0);
-                spUnits.setSelection(unitList.indexOf(value.getUnit()));
-                if(hasInvoicePurpose) {
-                    deliveryDate = value.getExpiry_date();
-                    spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
-                }
-            }
-        }
-
         if(hasInvoicePurpose) {
             llInvoicePurpose.setVisibility(View.VISIBLE);
             invoicePurposesAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, invoicePurposeList);
@@ -130,12 +107,6 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     }
                 });
 
-                if(deliveryDate == null) {
-                    Calendar now = Calendar.getInstance();
-                    deliveryDate = now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH);
-                }
-                deliveryDate = DateTimeTools.convertToDate(deliveryDate, "yyyy-M-d", "yyyy-MM-dd");
-                btnExpiryDate.setText(deliveryDate);
                 btnExpiryDate.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -144,6 +115,37 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 });
             }
 
+        }
+
+        unitsAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, unitList);
+        unitsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
+        spUnits.setAdapter(unitsAdapter);
+        if (hasValues) {
+            if (isMultiValue) {
+                if (valuePosition > -1) {
+                    Values value = selectedProductItem.getValues().get(valuePosition);
+                    spUnits.setSelection(unitList.indexOf(value.getUnit()));
+                    if(hasInvoicePurpose) {
+                        deliveryDate = value.getExpiry_date();
+                        spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
+                    }
+                }
+            } else {
+                Values value = selectedProductItem.getValues().get(0);
+                spUnits.setSelection(unitList.indexOf(value.getUnit()));
+                if(hasInvoicePurpose) {
+                    deliveryDate = value.getExpiry_date();
+                    spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
+                }
+            }
+            if(hasExpiryDate) {
+                if(deliveryDate == null) {
+                    Calendar now = Calendar.getInstance();
+                    deliveryDate = now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH);
+                }
+                deliveryDate = DateTimeTools.convertToDate(deliveryDate, "yyyy-M-d", "yyyy-MM-dd");
+                btnExpiryDate.setText(deliveryDate);
+            }
         }
 
         Product product = selectedProductItem.getProduct();

@@ -51,12 +51,14 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public static final String FOR_CUSTOMER_DETAIL = "for_customer_detail";
     public static final String RETURN_ITEMS = "return_items";
     public static final String INIT_PRODUCT_ADAPTER_HELPER = "initialize_pahelper";
+    public static final String INIT_SELECTED_CUSTOMER = "initialize_selected_customer";
 
     protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
     protected boolean isMultiInput = false;
     protected boolean clearTransactions = true;
     protected boolean isReturnItems = false;
+    protected boolean initSelectedCustomer = true;
     private ModuleSetting moduleSetting;
     protected Customer customer;
 
@@ -72,6 +74,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         if(getIntent().hasExtra(RETURN_ITEMS))
             isReturnItems = getIntent().getBooleanExtra(RETURN_ITEMS, false);
         clearTransactions = getIntent().getBooleanExtra(INIT_PRODUCT_ADAPTER_HELPER, false);
+        initSelectedCustomer = getIntent().getBooleanExtra(INIT_SELECTED_CUSTOMER, true);
     }
 
     protected Customer retrieveCustomer(int customerId) {

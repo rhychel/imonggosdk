@@ -61,7 +61,8 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:weightSum="3"
-            android:id="@+id/llInvoicePurpose">
+            android:id="@+id/llInvoicePurpose"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="0dp"
@@ -92,7 +93,8 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:weightSum="3"
-            android:id="@+id/llExpiryDate">
+            android:id="@+id/llExpiryDate"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="0dp"
