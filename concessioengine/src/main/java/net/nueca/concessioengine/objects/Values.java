@@ -4,6 +4,7 @@ import android.util.Log;
 
 import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -49,12 +50,13 @@ public class Values {
     private Unit unit;
     private String unit_quantity = null, unit_name = null;
     private double unit_retail_price = 0.0, unit_content_quantity = 0.0;
-    private String quantity = "1";
+    private String quantity = "1", expiry_date;
     private ExtendedAttributes extendedAttributes = null;
     // ---- FOR INVOICE
     private String discount_text;
     private Double subtotal;
     private Double retail_price;
+    private InvoicePurpose invoicePurpose;
 
     public Values() { }
 
@@ -225,6 +227,30 @@ public class Values {
 
     public void setRetail_price(double retail_price) {
         this.retail_price = retail_price;
+    }
+
+    public void setSubtotal(Double subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public void setRetail_price(Double retail_price) {
+        this.retail_price = retail_price;
+    }
+
+    public InvoicePurpose getInvoicePurpose() {
+        return invoicePurpose;
+    }
+
+    public void setInvoicePurpose(InvoicePurpose invoicePurpose) {
+        this.invoicePurpose = invoicePurpose;
+    }
+
+    public String getExpiry_date() {
+        return expiry_date;
+    }
+
+    public void setExpiry_date(String expiry_date) {
+        this.expiry_date = expiry_date;
     }
 
     @Override

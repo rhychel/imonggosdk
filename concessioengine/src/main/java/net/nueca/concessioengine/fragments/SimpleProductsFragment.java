@@ -45,6 +45,7 @@ import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
@@ -286,6 +287,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
                 simpleSalesQuantityDialog.setHasSubtotal(hasSubtotal);
                 simpleSalesQuantityDialog.setHasUnits(true);
+                simpleSalesQuantityDialog.setHasInvoicePurpose(true);
+                simpleSalesQuantityDialog.setHasExpiryDate(true);
+                simpleSalesQuantityDialog.setInvoicePurposeList(InvoicePurpose.fetchAll(getHelper(), InvoicePurpose.class));
 
                 double subtotal = product.getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
                 simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));

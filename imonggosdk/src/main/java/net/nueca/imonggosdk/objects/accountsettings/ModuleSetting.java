@@ -46,6 +46,8 @@ public class ModuleSetting extends DBTable {
     private boolean with_purpose = false;
     @DatabaseField
     private boolean with_customer = false;
+    @DatabaseField
+    private boolean is_view = false;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
     @ForeignCollectionField(orderAscending = true, orderColumnName = "id")
@@ -253,6 +255,14 @@ public class ModuleSetting extends DBTable {
             e.printStackTrace();
         }
         return new int[0];
+    }
+
+    public boolean is_view() {
+        return is_view;
+    }
+
+    public void setIs_view(boolean is_view) {
+        this.is_view = is_view;
     }
 
     public ConcessioModule getModuleType() {
