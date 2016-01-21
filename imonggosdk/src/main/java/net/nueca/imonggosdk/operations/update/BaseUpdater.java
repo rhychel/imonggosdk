@@ -82,7 +82,4 @@ public abstract class BaseUpdater implements SyncModulesListener {
 
     }
 
-    // Table id
-
-
 }

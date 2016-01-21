@@ -26,10 +26,6 @@ public class APIDownloader extends BaseUpdater implements SyncServiceConnectionL
     public APIDownloader() {
     }
 
-    public APIDownloader(Context ctx) {
-        this.context = ctx;
-    }
-
     public APIDownloader(Context context, Boolean initialSync) {
         this.isInitialSync = initialSync;
     }
@@ -58,24 +54,26 @@ public class APIDownloader extends BaseUpdater implements SyncServiceConnectionL
         this.mSyncModulesListener = syncModulesListener;
     }
 
-    public void execute() {
+    public void execute(Context context) {
         execute(context, null);
     }
 
     public void execute(Context tContext, Class<?> tClass) {
+
         if(tClass != null) {
             cls = tClass;
-            mServiceIntent = new Intent(tContext, tClass);
+            Log.e(TAG, "Using the custom class");
         } else {
-            mServiceIntent = new Intent(tContext, SyncModules.class);
+            Log.e(TAG, "Using the default class");
         }
 
         context = tContext;
+
+        mServiceIntent = new Intent(context, cls);
         mSyncServiceOperation = this;
 
         mConnection  = SyncServiceHelper.SyncServiceConnection(this);
         new SyncServiceAsyncTask(this).execute();
-
     }
 
     @Override
@@ -106,11 +104,13 @@ public class APIDownloader extends BaseUpdater implements SyncServiceConnectionL
     @Override
     public String doInBackground(String... params) {
 
-        startSyncService();
         mSyncModules = null;
+        startSyncService();
+
 
         while(!mServiceBounded || mSyncModules == null) {
-            Log.e(TAG, "Sync Service is not yet binded");
+            //Log.e(TAG, "Sync Service is not yet binded");
+            int i = 0;
         }
 
         return "Sync Service now binded";
@@ -133,8 +133,11 @@ public class APIDownloader extends BaseUpdater implements SyncServiceConnectionL
         }
 
         if (!SyncServiceHelper.isSyncServiceRunning(cls, context) || mSyncModules == null) {
+            Log.e(TAG, "Starting Service");
             mServiceBounded = false;
             context.startService(mServiceIntent);
+        } else {
+            Log.e(TAG, "Can't Start Service");
         }
     }
 

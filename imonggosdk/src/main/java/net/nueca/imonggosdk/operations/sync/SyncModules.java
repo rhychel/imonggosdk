@@ -1275,10 +1275,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         // is Base unit
                                         if (jsonObject.has("unit_id")) {
 
-                                            if (jsonObject.getString("unit_id").isEmpty() || !jsonObject.get("unit_id").equals(null)) {
-                                                Log.e(TAG, "Branch Product API 'unit_id' field is empty or null");
+                                            if (!jsonObject.getString("unit_id").isEmpty() || !jsonObject.get("unit_id").equals(null)) {
+                                               /* Log.e(TAG, "Branch Product API 'unit_id' field is empty or null");
                                                 branchProduct.setIsBaseUnitSellable(true);
-
+*/
                                                 int unit_id = jsonObject.getInt("unit_id");
                                                 Unit unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit_id).queryForFirst();
 
@@ -1290,6 +1290,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     Log.e(TAG, "Err Can't find 'unit' field from database");
                                                 }
 
+                                            }
+                                            else {
+                                                branchProduct.setIsBaseUnitSellable(true);
+                                                branchProduct.setRetail_price(jsonObject.getDouble("unit_retail_price"));
+                                                branchProduct.updateTo(getHelper());
                                             }
                                         } else {
                                             branchProduct.setIsBaseUnitSellable(true);
@@ -1306,7 +1311,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         // TODO: HOW TO UPDATE flush branch units
                                         // if branch_products exist in database
-                                        if (isExisting(branchProduct, Table.BRANCH_UNIT)) {
+                                        if (isExisting(branchProduct, Table.BRANCH_PRODUCTS)) {
                                             // Check Last Updated At
                                             try {
                                                 if (DateTimeTools.stringToDate(lastUpdatedAt.getLast_updated_at()).before(DateTimeTools.stringToDate(newLastUpdatedAt.getLast_updated_at()))) {

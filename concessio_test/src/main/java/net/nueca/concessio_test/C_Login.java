@@ -3,20 +3,11 @@ package net.nueca.concessio_test;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.crashlytics.android.Crashlytics;
-
-import net.nueca.concessio_test.epsonprinter.*;
-import net.nueca.concessio_test.epsonprinter.MainActivity;
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.interfaces.SyncModulesListener;
-import net.nueca.imonggosdk.operations.sync.SyncModules;
-import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.tools.SettingTools;
-
-import io.fabric.sdk.android.Fabric;
 
 
 /**
@@ -28,7 +19,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        //Fabric.with(this, new Crashlytics());
     }
 
     @Override
@@ -36,7 +27,7 @@ public class C_Login extends LoginActivity {
         super.initLoginEquipments();
         //setIsUsingDefaultDialog(true);
         //setIsUsingDefaultLoginLayout(true);
-        Fabric.with(this, new Crashlytics());
+       // Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
         setRequireObjectConcessioSettings(false);
         setServer(Server.IRETAILCLOUD_NET);
@@ -72,7 +63,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, ( C_Customers.class));
+        Intent intent = new Intent(this, (C_Customers.class));
         startActivity(intent);
     }
 

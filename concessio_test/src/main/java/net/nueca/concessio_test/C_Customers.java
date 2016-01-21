@@ -254,9 +254,9 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                 break;
 
             case net.nueca.concessioengine.R.id.mUpdateApp:
-                APIDownloader apiDownloader = new APIDownloader(this, false);
-                apiDownloader.execute();
-
+                Log.e(TAG, "Update App");
+                APIDownloader apiDownloader = new APIDownloader();
+                apiDownloader.execute(this);
                 break;
 
             default:
