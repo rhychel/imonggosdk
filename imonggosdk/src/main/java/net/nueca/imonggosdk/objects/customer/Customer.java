@@ -702,20 +702,31 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     @Override
     public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.setCustomer(this);
-        extras.setId(Customer.class.getName().toUpperCase(), id);
-        extras.insertTo(dbHelper);
-
+        if(extras != null) {
+            extras.setCustomer(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
     }
 
     @Override
     public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.deleteTo(dbHelper);
+        if(extras != null)
+            extras.deleteTo(dbHelper);
     }
 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
-        extras.updateTo(dbHelper);
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() +"_"+ id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
+        }
     }
 
     // TODO: complete all fields

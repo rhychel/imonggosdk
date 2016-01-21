@@ -404,7 +404,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                             "Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    ProductsAdapterHelper.clearSelectedProductItemList();
+                                    ProductsAdapterHelper.clearSelectedProductItemList(true);
                                     changeCategory(category, position);
                                     productsFragmentListener.whenItemsSelectedUpdated();
                                 }
