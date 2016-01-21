@@ -181,10 +181,14 @@ public class SelectedProductItem {
     }
 
     public String updatedInventory(boolean shouldAdd) {
-        if(inventory == null)
-            return valuesList.getActualQuantity();
-        BigDecimal currentInventory = new BigDecimal(inventory.getQuantity());
+        Log.e("updatedInventory", "shouldAdd="+shouldAdd);
+        double inventoryQty = 0;
+        if(inventory != null)
+            inventoryQty = inventory.getQuantity();
+        BigDecimal currentInventory = new BigDecimal(inventoryQty);
         BigDecimal totalQuantity = new BigDecimal(valuesList.getActualQuantity());
+        Log.e("currentInventory", currentInventory.toString());
+        Log.e("totalQuantity", totalQuantity.toString());
         if(shouldAdd)
             return currentInventory.add(totalQuantity).toPlainString();
         return currentInventory.subtract(totalQuantity).toPlainString();
