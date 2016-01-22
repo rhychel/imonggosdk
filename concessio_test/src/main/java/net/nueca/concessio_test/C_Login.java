@@ -40,8 +40,8 @@ public class C_Login extends LoginActivity {
         setModulesToSync(
                 Table.USERS_ME.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
-                Table.SETTINGS.ordinal()
-                /*Table.PRODUCTS.ordinal(),
+                Table.SETTINGS.ordinal(),/*
+                Table.PRODUCTS.ordinal(),
                 Table.UNITS.ordinal(),
                 Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_BY_SALESMAN.ordinal(),
@@ -52,8 +52,8 @@ public class C_Login extends LoginActivity {
                 Table.PRICE_LISTS_DETAILS.ordinal(),
                 Table.PAYMENT_TERMS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
-                Table.INVOICES.ordinal(),
-                Table.INVOICE_PURPOSES.ordinal(),
+                */Table.INVOICES.ordinal(),
+                Table.INVOICE_PURPOSES.ordinal()/*,
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS.ordinal(),
                 Table.SALES_PROMOTIONS_POINTS.ordinal(),
@@ -73,5 +73,10 @@ public class C_Login extends LoginActivity {
         setEditTextAccountID("C5111");
         setEditTextEmail("C5111A_OSS-1@imonggo.com");
         setEditTextPassword("123rebisco456");
+    }
+
+    @Override
+    public void onPrepareDialog() {
+
     }
 }

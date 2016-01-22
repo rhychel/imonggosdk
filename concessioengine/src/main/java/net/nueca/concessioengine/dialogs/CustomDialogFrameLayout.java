@@ -37,7 +37,7 @@ public class CustomDialogFrameLayout extends FrameLayout {
     @Deprecated
     public CustomDialogFrameLayout(Context context, List<String> moduleName) {
         super(context);
-        //customDialogFrameLayout(context, moduleName);
+        //customDialogFrameLayout(mContext, moduleName);
     }
 
     public CustomDialogFrameLayout(final List<Table> moduleName, final Context context) {
@@ -67,7 +67,7 @@ public class CustomDialogFrameLayout extends FrameLayout {
             @Override
             public void onItemClicked(View view, int position) throws SQLException {
                 Log.e(TAG, "OnItemClicked " + getCustomModuleAdapter().getModuleAt(position));
-               /* LoggingTools.showToast(context, "OnItemClicked" + getCustomModuleAdapter().getModuleAt(position));
+               /* LoggingTools.showToast(mContext, "OnItemClicked" + getCustomModuleAdapter().getModuleAt(position));
                 view.setBackgroundColor(mContext.getResources().getColor(android.R.color.darker_gray));*/
                 //mLoginListener.onRetryButtonPressed(TableTools.convertStringToTableName(getCustomModuleAdapter().getModuleAt(position)));
                 mLoginListener.onRetryButtonPressed(getCustomModuleAdapter().getTableAt(position));
@@ -77,7 +77,7 @@ public class CustomDialogFrameLayout extends FrameLayout {
         customModuleAdapter.setOnItemLongClickListener(new BaseCustomDialogRecyclerAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClicked(View view, int position) {
-                /*LoggingTools.showToast(context, "OnItemLongClicked" + getCustomModuleAdapter().getModuleAt(position));*/
+                /*LoggingTools.showToast(mContext, "OnItemLongClicked" + getCustomModuleAdapter().getModuleAt(position));*/
             }
         });
 

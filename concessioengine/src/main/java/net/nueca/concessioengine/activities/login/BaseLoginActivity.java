@@ -26,7 +26,7 @@ import net.nueca.imonggosdk.enums.LoginState;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.exception.LoginException;
+import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.LoginListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
@@ -231,7 +231,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     public void startSyncingImonggoModules() throws SQLException {
         if (isSyncServiceBinded()) {
             setUpTableNamesForCustomDialog();
-            //setUpModuleNamesForCustomDialog();
             showCustomDownloadDialog();
 
             Log.e(TAG, "Starting Module Download");
@@ -287,15 +286,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 }
             }
         } else {
-            mTablesToDownload.add(Table.USERS);
-            mTablesToDownload.add(Table.BRANCHES);
-            mTablesToDownload.add(Table.TAX_SETTINGS);
-            mTablesToDownload.add(Table.PRODUCTS);
-            mTablesToDownload.add(Table.CUSTOMERS);
-            mTablesToDownload.add(Table.UNITS);
-            mTablesToDownload.add(Table.DOCUMENTS);
-            mTablesToDownload.add(Table.DOCUMENT_TYPES);
-            mTablesToDownload.add(Table.DOCUMENT_PURPOSES);
+            mTablesToDownload.add(Table.USERS_ME);
+            mTablesToDownload.add(Table.BRANCH_USERS);
+            mTablesToDownload.add(Table.SETTINGS);
         }
     }
 
@@ -329,13 +322,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         } else { // if you don't set custom modules to download. Sync All
             mModulesToDownload.add("Users");
             mModulesToDownload.add("Branches");
-            mModulesToDownload.add("Tax Settings");
-            mModulesToDownload.add("Products");
-            mModulesToDownload.add("Customers");
-            mModulesToDownload.add("Units");
-            mModulesToDownload.add("Documents");
-            mModulesToDownload.add("Document Types");
-            mModulesToDownload.add("Document Purposes");
+            mModulesToDownload.add("Settings");
         }
     }
 
@@ -425,7 +412,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.etEmail = editTextEmail;
         this.etPassword = editTextPassword;
 
-        if(TEST_ACCOUNT) {
+        if (TEST_ACCOUNT) {
             setEditTextAccountID(getResources().getString(R.string.test_account_id));
             setEditTextEmail(getResources().getString(R.string.test_email));
             setEditTextPassword(getResources().getString(R.string.test_password));
@@ -553,7 +540,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             public void onRetryButtonPressed(Table table) throws SQLException {
                 Log.e(TAG, table.getStringName());
                 if (mLoginState == LoginState.LOGIN_FAILED) {
-                    if(!NetworkTools.isInternetAvailable(BaseLoginActivity.this)) {
+                    if (!NetworkTools.isInternetAvailable(BaseLoginActivity.this)) {
 
                         DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Failed to Re-Sync Data",
                                 getString(R.string.LOGIN_NETWORK_ERROR),
@@ -639,7 +626,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     /**
      * Sets the BaseLogin Credentials of the user and starts login
      *
-     * @param context   a context
+     * @param context   a mContext
      * @param accountId must not be empty
      * @param email     must not be empty and matches the correct form 'email@me.com'
      * @param password  must not be empty and length must be greater or equal to five (5)
@@ -655,7 +642,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             } else {
                 LogInUser(server);
             }
-        } catch (LoginException e) {
+        } catch (SyncException e) {
             e.printStackTrace();
         }
     }
@@ -687,13 +674,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     protected void setLoginCredentials(Context context, String accountId, String email, String
-            password) throws LoginException {
+            password) throws SyncException {
         if (TextUtils.isEmpty(accountId) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            throw new LoginException(context.getString(R.string.LOGIN_FIELD_REQUIRED));
+            throw new SyncException(context.getString(R.string.LOGIN_FIELD_REQUIRED));
         } else if (!LoginTools.isValidEmail(email)) {
-            throw new LoginException(context.getString(R.string.LOGIN_INVALID_EMAIL));
+            throw new SyncException(context.getString(R.string.LOGIN_INVALID_EMAIL));
         } else if (!LoginTools.isValidPassword(password)) {
-            throw new LoginException(context.getString(R.string.LOGIN_INVALID_PASSWORD));
+            throw new SyncException(context.getString(R.string.LOGIN_INVALID_PASSWORD));
         } else {
             mBaseLogin = new BaseLogin(BaseLoginActivity.this, getHelper(), accountId, email, password);
             mBaseLogin.setConcessioSettings(requireConcessioSettings);
@@ -701,14 +688,14 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
-    protected void LogInAccount(Server server) throws LoginException {
+    protected void LogInAccount(Server server) throws SyncException {
         if (mBaseLogin != null) {
             mBaseLogin.startLoginAccount(server);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
 
-    private void LogInUser(Server server) throws LoginException {
+    private void LogInUser(Server server) throws SyncException {
         if (mBaseLogin != null) {
             mBaseLogin.startLoginUser(server);
         }
@@ -853,6 +840,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     protected void setModulesToSync(int... mModules) {
         setModule(mModules);
+        AccountTools.setModulesToSync(getApplicationContext(), mModules);
     }
 
     protected void setModule(int[] mModules) {
@@ -994,7 +982,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             if (mModulesToDownload != null && mTablesToDownload == null)
                 updateDownloadProgress(mModulesToDownload.indexOf(currentTable), progress);
 
-            if(mTablesToDownload != null &&
+            if (mTablesToDownload != null &&
                     mModulesToDownload == null)
                 updateDownloadProgress(mTablesToDownload.indexOf(table), progress);
         }
@@ -1071,5 +1059,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         super.onDestroy(); // This should be the last to call after onStop();
         DialogTools.hideIndeterminateProgressDialog();
         doUnbindService();
+    }
+
+
+    @Override
+    public void onPrepareDialog() {
+
+    }
+
+    @Override
+    public void onDismissDialog() {
+
     }
 }

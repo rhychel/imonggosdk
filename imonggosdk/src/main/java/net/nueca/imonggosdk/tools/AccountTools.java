@@ -9,6 +9,7 @@ import android.util.Log;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.SettingsName;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Session;
 
@@ -22,7 +23,7 @@ import java.util.List;
  * imonggosdk (c)2015
  */
 public class AccountTools {
-
+    private static final String TAG = "AccountTools";
     private static final String IS_UNLINKED = "_is_unlinked";
     private static final String IS_ACTIVE_USER = "_is_active_user";
     private static final String MODULES_TO_SYNC = "_modules_to_sync";
@@ -43,7 +44,7 @@ public class AccountTools {
     /**
      * Checks if an Account is linked in the device
      *
-     * @param context Current context
+     * @param context Current mContext
      * @return
      */
     public static boolean isUnlinked(Context context) {
@@ -136,7 +137,7 @@ public class AccountTools {
     /**
      * Checks if User is still active
      *
-     * @param context Current context
+     * @param context Current mContext
      */
     public static boolean isUserActive(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -178,46 +179,48 @@ public class AccountTools {
      */
     public static void setModulesToSync(Context context, int[] modulesToSync) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        try {
-            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            SharedPreferences.Editor editor = preferences.edit();
+        SharedPreferences.Editor editor = preferences.edit();
 
-            editor.putInt(pinfo.packageName + MODULES_TO_SYNC_SIZE, modulesToSync.length);
-            int x=0;
-            for(int i : modulesToSync) {
-                editor.putInt(pinfo.packageName + MODULES_TO_SYNC + x, i);
+        editor.putInt(MODULES_TO_SYNC_SIZE, modulesToSync == null ? 0 :modulesToSync.length);
+        int x=0;
+
+        if(modulesToSync != null) {
+            for (int i : modulesToSync) {
+                Log.e(TAG, "" + Table.values()[x]);
+                editor.putInt(MODULES_TO_SYNC + x, i);
                 x++;
             }
-
-            editor.apply();
-
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.e("Key[setModulesToSync]", "Not Found");
-            e.printStackTrace();
+        } else {
+            Log.e(TAG, "Account Tools: modulesToSync is null");
         }
+
+        editor.apply();
+
     }
 
     public static int[] getModulesSyncing(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        try {
-            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
 
-            int size = preferences.getInt(pinfo.packageName + MODULES_TO_SYNC_SIZE, 0);
+        int size = preferences.getInt(MODULES_TO_SYNC_SIZE, 0);
 
-            List<Integer> modules = new ArrayList<>();
+        List<Integer> modules = new ArrayList<>();
 
-            if(size == 0) {
-                return new int[] {0};
-            } else {
-                for (int i =0; i<size; i++) {
-                    modules.add(preferences.getInt(pinfo.packageName + MODULES_TO_SYNC +i, 0));
-                }
-
-                return new int[] {modules.iterator().next()};
+        if(size == 0) {
+            return new int[] {0};
+        } else {
+            for (int i =0; i<size; i++) {
+                modules.add(preferences.getInt(MODULES_TO_SYNC +i, 0));
             }
 
-        } catch (PackageManager.NameNotFoundException e) {
-            return new int[] {0};
+
+            int[] modulesToReturn = new int[modules.size()];
+
+            for (int i = 0; i < modules.size(); i++) {
+                modulesToReturn[i] = modules.get(i);
+            }
+
+            return modulesToReturn;
         }
+
     }
 }

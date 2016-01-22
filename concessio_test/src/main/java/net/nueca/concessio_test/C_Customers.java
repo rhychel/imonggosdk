@@ -13,6 +13,9 @@ import net.nueca.concessioengine.fragments.AddCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.exception.SyncException;
+import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.price.PriceList;
@@ -151,14 +154,14 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
             Log.e(TAG, "Price List size: " + priceLists.size());
 
-            for(PriceList bp : priceLists) {
+            for (PriceList bp : priceLists) {
 
 
                 List<CustomerGroup> customerGroups = getHelper().fetchForeignCollection(bp.getCustomerGroups().closeableIterator());
 
                 Log.e(TAG, "Customer Group Size: " + customerGroups.size());
 
-                for(CustomerGroup dd : customerGroups) {
+                for (CustomerGroup dd : customerGroups) {
                     Log.e(TAG, "Customer Group: " + dd.getName());
 
                 }
@@ -167,7 +170,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
                 Log.e(TAG, "Customer Size: " + customers.size());
 
-                for(Customer dd : customers) {
+                for (Customer dd : customers) {
                     Log.e(TAG, "Customer: " + dd.getName());
 
                 }
@@ -216,9 +219,10 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
         return super.onCreateOptionsMenu(menu);
     }
-
+    APIDownloader apiDownloader = new APIDownloader();
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
+
 
         switch (menuItem.getItemId()) {
             case net.nueca.concessioengine.R.id.mAddCustomer:
@@ -255,8 +259,62 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
 
             case net.nueca.concessioengine.R.id.mUpdateApp:
                 Log.e(TAG, "Update App");
-                APIDownloader apiDownloader = new APIDownloader();
+
+
+                apiDownloader.forUpdating();
+                apiDownloader.setSyncModulesListener(new SyncModulesListener() {
+                    @Override
+                    public void onStartDownload(Table table) {
+                        Log.e(TAG, ">>onStartDownload");
+                    }
+
+                    @Override
+                    public void onDownloadProgress(Table table, int page, int max) {
+                        Log.e(TAG, ">>onDownloadProgress");
+                    }
+
+                    @Override
+                    public void onEndDownload(Table table) {
+                        Log.e(TAG, ">>onEndDownload");
+                    }
+
+                    @Override
+                    public void onFinishDownload() {
+                        Log.e(TAG, ">>onFinishDownload");
+                    }
+
+                    @Override
+                    public void onErrorDownload(Table table, String message) {
+                        Log.e(TAG, ">>onErrorDownload");
+                    }
+
+                    @Override
+                    public void onPrepareDialog() {
+                        Log.e(TAG, ">>onPrepareDialog");
+                    }
+
+                    @Override
+                    public void onDismissDialog() {
+                        Log.e(TAG, ">>onDismissDialog");
+                    }
+                });
+
+                try {
+                    apiDownloader.addModulesToUpdate(Table.USERS.ordinal());
+                } catch (SyncException e) {
+                    e.printStackTrace();
+                }
+
                 apiDownloader.execute(this);
+                break;
+
+            case R.id.mRetrySync:
+                Log.e(TAG, "Retry Sync");
+                try {
+                    apiDownloader.retrySync();
+                } catch (SyncException | SQLException e) {
+                    Log.e(TAG, e.toString());
+                }
                 break;
 
             default:

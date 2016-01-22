@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 
 import net.nueca.imonggosdk.interfaces.SyncServiceConnectionListener;
 
@@ -40,9 +41,11 @@ public class SyncServiceHelper {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.e(TAG, "Service is Running");
                 return true;
             }
         }
+        Log.e(TAG, "Service is not Running");
         return false;
     }
 

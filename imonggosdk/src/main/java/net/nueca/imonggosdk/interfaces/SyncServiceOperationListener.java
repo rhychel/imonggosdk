@@ -6,6 +6,5 @@ package net.nueca.imonggosdk.interfaces;
 public interface SyncServiceOperationListener {
     void onStartSyncService();
     void onStopSyncService();
-    void onBindSyncService();
     void onUnbindSyncService();
 }

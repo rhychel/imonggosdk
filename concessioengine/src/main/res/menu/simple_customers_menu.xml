@@ -28,4 +28,10 @@
         android:title="Update"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/mRetrySync"
+        android:icon="@drawable/ic_refresh"
+        android:title="Retry Sync"
+        app:showAsAction="always"/>
+
 </menu>

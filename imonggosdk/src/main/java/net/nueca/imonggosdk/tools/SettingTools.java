@@ -44,7 +44,7 @@ public class SettingTools {
     /**
      * Add setting name to shared preferences
      *
-     * @param context      current context
+     * @param context      current mContext
      * @param settingsName name of the Settings that will be updated
      * @param bool         for boolean input
      * @param value        for string input
@@ -85,7 +85,7 @@ public class SettingTools {
     /**
      * Returns SyncFinished Setting
      *
-     * @param context current context
+     * @param context current mContext
      * @return true if syncing modules is finished, false otherwise
      */
     public static boolean isSyncFinished(Context context) {
@@ -104,7 +104,7 @@ public class SettingTools {
     /**
      * Returns AutoUpdate Settings
      *
-     * @param context current context
+     * @param context current mContext
      * @return true if AutoUpdate is on, false otherwise.
      */
     public static boolean isAutoUpdate(Context context) {
@@ -122,7 +122,7 @@ public class SettingTools {
     /**
      * Returns Default Branch
      *
-     * @param context current context
+     * @param context current mContext
      * @return Branch name, "" if none
      */
     public static String defaultBranch(Context context) {
@@ -152,7 +152,7 @@ public class SettingTools {
     /**
      * Returns Current Selected Server
      *
-     * @param context current context
+     * @param context current mContext
      * @return current mServer, "" if none
      */
     public static String currentServer(Context context) {

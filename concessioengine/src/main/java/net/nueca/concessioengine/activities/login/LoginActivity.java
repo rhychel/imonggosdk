@@ -258,6 +258,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
     }
 
+
     private class StartSyncServiceAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
