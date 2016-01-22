@@ -45,6 +45,7 @@ import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 
@@ -157,6 +158,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 productRecyclerViewAdapter.setDbHelper(getHelper());
                 productRecyclerViewAdapter.setList(getProducts());
             }
+            productRecyclerViewAdapter.setReturnItems(isReturnItems);
             productRecyclerViewAdapter.setHasSubtotal(hasSubtotal);
             productRecyclerViewAdapter.setListingType(listingType);
             if(!displayOnly)
@@ -168,8 +170,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                             if (multiInputListener != null)
                                 multiInputListener.showInputScreen(product);
                         } else {
-                            SelectedProductItem selectedProductItem = productRecyclerViewAdapter.getSelectedProductItems()
-                                    .getSelectedProductItem(product);
+                            SelectedProductItem selectedProductItem = productRecyclerViewAdapter.getSelectedProductItems().getSelectedProductItem(product);
                             if (selectedProductItem == null) {
                                 selectedProductItem = new SelectedProductItem();
                                 selectedProductItem.setProduct(product);
@@ -286,6 +287,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
                 simpleSalesQuantityDialog.setHasSubtotal(hasSubtotal);
                 simpleSalesQuantityDialog.setHasUnits(true);
+                simpleSalesQuantityDialog.setHasInvoicePurpose(isReturnItems);
+                simpleSalesQuantityDialog.setHasExpiryDate(isReturnItems);
+                simpleSalesQuantityDialog.setInvoicePurposeList(InvoicePurpose.fetchAll(getHelper(), InvoicePurpose.class));
 
                 double subtotal = product.getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
                 simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
@@ -400,7 +404,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                             "Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    ProductsAdapterHelper.clearSelectedProductItemList();
+                                    ProductsAdapterHelper.clearSelectedProductItemList(true);
                                     changeCategory(category, position);
                                     productsFragmentListener.whenItemsSelectedUpdated();
                                 }
@@ -447,11 +451,16 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", productListAdapter.updateList(getProducts()));
     }
 
+    public void forceUpdateProductList() {
+        forceUpdateProductList(getProducts());
+    }
+
     public void forceUpdateProductList(List<Product> productList) {
         if(useRecyclerView)
             productRecyclerViewAdapter.updateList(productList);
         else
             productListAdapter.updateList(productList);
+        toggleNoItems("No products available.", (productRecyclerViewAdapter.getItemCount() > 0));
     }
 
     @Override

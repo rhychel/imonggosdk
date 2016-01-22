@@ -150,12 +150,12 @@ public class Extras extends DBTable {
     private String invoice_purpose_name;
     @Expose
     @DatabaseField
-    private String expiry_date;
+    private Boolean expiry_date;
 
     // DocumentPurpose
     @Expose
     @DatabaseField
-    private String require_date; // true || false
+    private Boolean require_date; // true || false
 
     // Unit
     @Expose
@@ -327,11 +327,11 @@ public class Extras extends DBTable {
         this.last_checkin_at = last_checkin_at;
     }
 
-    public String getRequire_date() {
+    public Boolean require_date() {
         return require_date;
     }
 
-    public void setRequire_date(String require_date) {
+    public void setRequire_date(Boolean require_date) {
         this.require_date = require_date;
     }
 
@@ -650,11 +650,11 @@ public class Extras extends DBTable {
         this.invoice_purpose_name = invoice_purpose_name;
     }
 
-    public String getExpiry_date() {
+    public Boolean hasExpiry_date() {
         return expiry_date;
     }
 
-    public void setExpiry_date(String expiry_date) {
+    public void setExpiry_date(Boolean expiry_date) {
         this.expiry_date = expiry_date;
     }
 
@@ -784,7 +784,7 @@ public class Extras extends DBTable {
         protected String latitude;
         protected String checkin_count;
         protected String last_checkin_at;
-        protected String require_date; // true || false
+        protected Boolean require_date; // true || false
         protected String id;
         protected DocumentLine documentLine;
         protected RoutePlan routePlan;
@@ -826,7 +826,7 @@ public class Extras extends DBTable {
         protected Integer invoice_purpose_id;
         protected String invoice_purpose_code;
         protected String invoice_purpose_name;
-        protected String expiry_date;
+        protected Boolean expiry_date;
         protected String salesman_id;
         protected String category_id;
 
@@ -941,7 +941,7 @@ public class Extras extends DBTable {
             return this;
         }
 
-        public Builder expiry_date(String expiry_date) {
+        public Builder expiry_date(Boolean expiry_date) {
             this.expiry_date = expiry_date;
             return this;
         }
@@ -1072,7 +1072,7 @@ public class Extras extends DBTable {
             return this;
         }
 
-        public Builder require_date(String requires_expiry_date) {
+        public Builder require_date(Boolean requires_expiry_date) {
             this.require_date = requires_expiry_date;
             return this;
         }

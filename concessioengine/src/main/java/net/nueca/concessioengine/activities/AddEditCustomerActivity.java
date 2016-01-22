@@ -177,11 +177,6 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                                     .toUpdate()
                                     .object(customer)
                                     .queue();
-//                            try {
-//                                getHelper().update(Customer.class, customer);
-//                            } catch (SQLException e) {
-//                                e.printStackTrace();
-//                            }
                         }
 
                         Intent intent = new Intent();

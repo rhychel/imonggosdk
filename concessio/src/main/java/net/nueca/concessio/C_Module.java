@@ -102,10 +102,17 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     private SimplePulloutToolbarExt simplePulloutToolbarExt;
     private SimplePulloutRequestDialog simplePulloutRequestDialog;
 
+    private ImonggoSwableServiceConnection imonggoSwableServiceConnection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_module);
+
+        if(clearTransactions) {
+            ProductsAdapterHelper.clearSelectedProductItemList(initSelectedCustomer);
+            ProductsAdapterHelper.clearSelectedReturnProductItemList();
+        }
 
         btn1 = (Button) findViewById(R.id.btn1);
         btn2 = (Button) findViewById(R.id.btn2);
@@ -116,6 +123,25 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
         llFooter.setVisibility(View.GONE);
         switch (concessioModule) {
+            case LAYAWAY: {
+                simpleTransactionsFragment = new SimpleTransactionsFragment();
+                simpleTransactionsFragment.setHelper(getHelper());
+                simpleTransactionsFragment.setSetupActionBar(this);
+                simpleTransactionsFragment.setHasFilterByTransactionType(true);
+                simpleTransactionsFragment.setTransactionTypes(getTransactionTypes());
+                simpleTransactionsFragment.setListingType(ListingType.DETAILED_HISTORY);
+                simpleTransactionsFragment.setTransactionsListener(new BaseTransactionsFragment.TransactionsListener() {
+                    @Override
+                    public void showTransactionDetails(OfflineData offlineData) {
+                        // Show the C_Finalize, re-render items
+                    }
+                });
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.flContent, simpleTransactionsFragment)
+                        .commit();
+            } break;
             case HISTORY: {
                 simpleTransactionDetailsFragment = new SimpleTransactionDetailsFragment();
                 simpleTransactionDetailsFragment.setHelper(getHelper());
@@ -133,7 +159,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     @Override
                     public void showTransactionDetails(OfflineData offlineData) {
                         prepareFooter();
-                        ProductsAdapterHelper.clearSelectedProductItemList();
+                        ProductsAdapterHelper.clearSelectedProductItemList(true);
 
                         try {
                             simpleTransactionDetailsFragment.setFilterProductsBy(processOfflineData(offlineData));
@@ -152,7 +178,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                     }
                 });
-                SwableTools.bindSwable(this, new ImonggoSwableServiceConnection(simpleTransactionsFragment));
+                imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
+                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
 
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -169,6 +196,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     public void itemClicked(Customer customer) {
                         Log.e("Customer Details", "Clicked!");
                         Intent intent = new Intent(C_Module.this, C_Module.class);
+                        intent.putExtra(ModuleActivity.INIT_PRODUCT_ADAPTER_HELPER, true);
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
                         startActivity(intent);
@@ -196,7 +224,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     btn1.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            ProductsAdapterHelper.setSelectedCustomer(customer);
                             Intent intent = new Intent(C_Module.this, C_Module.class);
+                            intent.putExtra(ModuleActivity.INIT_PRODUCT_ADAPTER_HELPER, true);
+                            intent.putExtra(ModuleActivity.INIT_SELECTED_CUSTOMER, false);
                             intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
                             intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.INVOICE.ordinal());
                             startActivity(intent);
@@ -520,11 +551,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
                                 simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) {
+                            Log.e("duplicate", "yeah");
                             if(simpleTransactionDetailsFragment.getOfflineData().isCancelled())
                                 initializeDuplicateButton(btn1);
                         }
                         else
-                            initializeDuplicateButton(useBtn2 ? btn1 : btn2);
+                            initializeDuplicateButton(useBtn2 ? btn2 : btn1);
+
+                        Log.e("useBtn2", useBtn2+"");
                         whenItemsSelectedUpdated();
                         getSupportActionBar().setTitle(referenceNumber);
                     }
@@ -593,17 +627,19 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         finalizeFragment.setSetupActionBar(this);
         finalizeFragment.setIsFinalize(true);
         finalizeFragment.setProductsFragmentListener(this);
+        finalizeFragment.setReturnItems(isReturnItems);
     }
 
     private void initializeProducts() {
         simpleProductsFragment = SimpleProductsFragment.newInstance();
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
+        simpleProductsFragment.setReturnItems(isReturnItems);
     }
 
     @Override
     protected void onDestroy() {
-        SwableTools.unbindSwable(this, new ImonggoSwableServiceConnection(simpleTransactionsFragment));
+        SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
         super.onDestroy();
     }
 
@@ -788,6 +824,16 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 handler.sendEmptyMessageDelayed(0, 300);
             }
         }
+        else if(requestCode == REVIEW_SALES) {
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    simpleProductsFragment.refreshList();
+                }
+            };
+            handler.sendEmptyMessageDelayed(0, 100);
+        }
     }
 
     @Override
@@ -857,9 +903,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
      */
     @Override
     public void whenItemsSelectedUpdated() {
-        int size = ProductsAdapterHelper.getSelectedProductItems().size();
-        tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
-        AnimationTools.toggleShowHide(llFooter, size == 0, 300);
+        toggleNext(llFooter, tvItems);
     }
 
     private void prepareFooter() {
@@ -911,7 +955,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
                                     @Override
                                     public void whenDismissed() {
-                                        ProductsAdapterHelper.clearSelectedProductItemList();
+                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
                                         onBackPressed();
                                         if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                             llFooter.setVisibility(View.GONE);
@@ -966,10 +1011,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                     Log.e("jsonObject", jsonObject.toString());
 
                                                     updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
-                                                    List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
-                                                    for (Inventory inventory : inventoryList) {
-                                                        Log.e("Inventory", inventory.getProduct().getName() + " = " + inventory.getQuantity());
-                                                    }
 
                                                     OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                                             .toSend()
@@ -985,7 +1026,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                     transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
                                                         @Override
                                                         public void whenDismissed() {
-                                                            ProductsAdapterHelper.clearSelectedProductItemList();
+                                                            ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                                            ProductsAdapterHelper.clearSelectedReturnProductItemList();
                                                             onBackPressed();
                                                             if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                                                 llFooter.setVisibility(View.GONE);
@@ -1006,8 +1048,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
-                                                } catch (SQLException e) {
-                                                    e.printStackTrace();
                                                 }
                                             }
                                         }, "No", R.style.AppCompatDialogStyle_Light);
@@ -1019,6 +1059,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             else {
                 if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
                     DialogTools.showDialog(C_Module.this, "Ooops!", "You have no selected items. Kindly select first products.");
+                else if(isReturnItems)
+                    onBackPressed();
+                else if(concessioModule == ConcessioModule.INVOICE) {
+                    Intent intent = new Intent(C_Module.this, C_Finalize.class);
+                    startActivityForResult(intent, REVIEW_SALES);
+                }
                 else {
                     btn1.setText("SEND");
                     finalizeFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());

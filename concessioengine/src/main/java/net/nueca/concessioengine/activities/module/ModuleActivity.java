@@ -4,11 +4,16 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.concessioengine.tools.AnimationTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -44,10 +49,16 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public static final String CONCESSIO_MODULE = "concessio_module";
     public static final String FROM_CUSTOMERS_LIST = "from_customers_list";
     public static final String FOR_CUSTOMER_DETAIL = "for_customer_detail";
+    public static final String RETURN_ITEMS = "return_items";
+    public static final String INIT_PRODUCT_ADAPTER_HELPER = "initialize_pahelper";
+    public static final String INIT_SELECTED_CUSTOMER = "initialize_selected_customer";
 
     protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
     protected boolean isMultiInput = false;
+    protected boolean clearTransactions = true;
+    protected boolean isReturnItems = false;
+    protected boolean initSelectedCustomer = true;
     private ModuleSetting moduleSetting;
     protected Customer customer;
 
@@ -60,6 +71,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         isFromCustomersList = getIntent().getBooleanExtra(FROM_CUSTOMERS_LIST, false);
         if(getIntent().hasExtra(FOR_CUSTOMER_DETAIL))
             customer = retrieveCustomer(getIntent().getIntExtra(FOR_CUSTOMER_DETAIL, 0));
+        if(getIntent().hasExtra(RETURN_ITEMS))
+            isReturnItems = getIntent().getBooleanExtra(RETURN_ITEMS, false);
+        clearTransactions = getIntent().getBooleanExtra(INIT_PRODUCT_ADAPTER_HELPER, false);
+        initSelectedCustomer = getIntent().getBooleanExtra(INIT_SELECTED_CUSTOMER, true);
     }
 
     protected Customer retrieveCustomer(int customerId) {
@@ -73,7 +88,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        ProductsAdapterHelper.clearSelectedProductItemList();
+//        if(clearTransactions)
+//            ProductsAdapterHelper.clearSelectedProductItemList();
         if(ProductsAdapterHelper.isDuplicating)
             ProductsAdapterHelper.isDuplicating = false;
         super.onDestroy();
@@ -456,6 +472,16 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         boolean isBackPressed = getSupportFragmentManager().getBackStackEntryCount() < previousFragmentCount;
         previousFragmentCount = getSupportFragmentManager().getBackStackEntryCount();
         return isBackPressed;
+    }
+
+    protected void toggleNext(ViewGroup linearLayout, TextView tvItems) {
+        int size = 0;
+        if(isReturnItems)
+            size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+        else
+            size = ProductsAdapterHelper.getSelectedProductItems().size();
+        tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
+        AnimationTools.toggleShowHide(linearLayout, size == 0, 300);
     }
 
 }
