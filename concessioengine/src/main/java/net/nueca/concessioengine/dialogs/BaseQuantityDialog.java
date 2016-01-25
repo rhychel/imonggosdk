@@ -51,7 +51,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected FragmentManager fragmentManager;
     protected String deliveryDate;
 
-    protected boolean hasSubtotal = false, hasInvoicePurpose = false, hasExpiryDate = false;
+    protected boolean hasSubtotal = false, hasInvoicePurpose = false, hasExpiryDate = false, hasBadStock = false;
 
     protected ArrayAdapter<InvoicePurpose> invoicePurposesAdapter;
     protected ArrayAdapter<Unit> unitsAdapter;
@@ -233,5 +233,9 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setHasExpiryDate(boolean hasExpiryDate) {
         this.hasExpiryDate = hasExpiryDate;
+    }
+
+    public void setHasBadStock(boolean hasBadStock) {
+        this.hasBadStock = hasBadStock;
     }
 }

@@ -289,6 +289,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setHasUnits(true);
                 simpleSalesQuantityDialog.setHasInvoicePurpose(isReturnItems);
                 simpleSalesQuantityDialog.setHasExpiryDate(isReturnItems);
+                simpleSalesQuantityDialog.setHasBadStock(isReturnItems);
                 simpleSalesQuantityDialog.setInvoicePurposeList(InvoicePurpose.fetchAll(getHelper(), InvoicePurpose.class));
 
                 double subtotal = product.getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));

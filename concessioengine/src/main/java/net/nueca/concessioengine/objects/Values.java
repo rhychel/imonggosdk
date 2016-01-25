@@ -52,6 +52,7 @@ public class Values {
     private double unit_retail_price = 0.0, unit_content_quantity = 0.0;
     private String quantity = "1", expiry_date;
     private ExtendedAttributes extendedAttributes = null;
+    private boolean isBadStock = true;
     // ---- FOR INVOICE
     private String discount_text;
     private Double subtotal;
@@ -251,6 +252,14 @@ public class Values {
 
     public void setExpiry_date(String expiry_date) {
         this.expiry_date = expiry_date;
+    }
+
+    public boolean isBadStock() {
+        return isBadStock;
+    }
+
+    public void setBadStock(boolean badStock) {
+        isBadStock = badStock;
     }
 
     @Override
