@@ -12,4 +12,6 @@ public interface SyncModulesListener {
     void onEndDownload(Table table);
     void onFinishDownload();
     void onErrorDownload(Table table, String message);
+    void onPrepareDialog();
+    void onDismissDialog();
 }

@@ -137,13 +137,15 @@ public class ProductsAdapterHelper {
         return !selectedReturnProductItems.isEmpty();
     }
 
-    public static void clearSelectedProductItemList() {
+    public static void clearSelectedProductItemList(boolean includeCustomer) {
         if(isDuplicating)
             return;
         if(selectedProductItems != null)
             selectedProductItems.clear();
-        selectedCustomer = null;
-        selectedCustomerGroup = null;
+        if(includeCustomer) {
+            selectedCustomer = null;
+            selectedCustomerGroup = null;
+        }
         selectedBranch = null;
         reason = null;
         ProductListTools.restartLineNo();

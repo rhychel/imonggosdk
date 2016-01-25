@@ -106,7 +106,6 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             intent.putExtra(SyncModules.PARAMS_SYNC_ALL_MODULES, true);
             intent.putExtra(SyncModules.PARAMS_SERVER, Server.IMONGGO.ordinal());
             intent.putExtra(SyncModules.PARAMS_INITIAL_SYNC, true);
-            intent.putExtra(SyncModules.PARAMS_SYNC_ALL_MODULES, true);
             setSyncServiceIntent(intent);
             setModulesToSync(null);
             setSyncAllModules(true);
@@ -258,6 +257,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     public void onStopLogin() {
 
     }
+
 
     private class StartSyncServiceAsyncTask extends AsyncTask<String, Void, String> {
 

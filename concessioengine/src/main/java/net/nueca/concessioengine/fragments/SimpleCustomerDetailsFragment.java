@@ -72,8 +72,11 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
         customerDetails.add(CustomerDetail.DISCOUNT);
         customerDetails.add(CustomerDetail.AVAILABLE_POINTS.setValue(customer.getAvailable_points()));
         customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS);
-        if(refreshList)
+        if(refreshList) {
+            if(setupActionBar != null)
+                setupActionBar.setupActionBar(tbActionBar);
             simpleCustomerDetailsRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

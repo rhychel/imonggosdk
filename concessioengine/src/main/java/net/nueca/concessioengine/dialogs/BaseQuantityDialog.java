@@ -20,6 +20,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     protected SelectedProductItem selectedProductItem;
     protected Button btnSave, btnCancel;
+    protected List<InvoicePurpose> invoicePurposeList;
     protected List<Unit> unitList;
     protected List<String> brandList;
     protected QuantityDialogListener quantityDialogListener;
@@ -51,6 +53,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     protected boolean hasSubtotal = false, hasInvoicePurpose = false, hasExpiryDate = false, hasBadStock = false;
 
+    protected ArrayAdapter<InvoicePurpose> invoicePurposesAdapter;
     protected ArrayAdapter<Unit> unitsAdapter;
     protected ArrayAdapter<String> brandsAdapter;
 
@@ -151,7 +154,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
         super.dismiss();
         if (multiQuantityDialogListener != null)
             multiQuantityDialogListener.onDismiss();
-        if (quantityDialogListener != null)
+        if(quantityDialogListener != null)
             quantityDialogListener.onDismiss();
     }
 
@@ -161,7 +164,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected void offsetSpinnerBelowv21(Spinner spinner) {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        if (Build.VERSION.SDK_INT < 21 && Build.VERSION.SDK_INT >= 16)
+        if (Build.VERSION.SDK_INT < 21)
             spinner.setDropDownVerticalOffset((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, -(spinner.getHeight() + 14), metrics));
     }
 
@@ -218,6 +221,14 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setListPosition(int listPosition) {
         this.listPosition = listPosition;
+    }
+
+    public void setInvoicePurposeList(List<InvoicePurpose> invoicePurposeList) {
+        this.invoicePurposeList = invoicePurposeList;
+    }
+
+    public void setHasInvoicePurpose(boolean hasInvoicePurpose) {
+        this.hasInvoicePurpose = hasInvoicePurpose;
     }
 
     public void setHasExpiryDate(boolean hasExpiryDate) {

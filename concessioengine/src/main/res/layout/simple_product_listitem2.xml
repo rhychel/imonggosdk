@@ -49,7 +49,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:id="@+id/ivStar"
-                android:src="@drawable/ic_orange_star"
+
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="12dp"
                 android:visibility="gone" />

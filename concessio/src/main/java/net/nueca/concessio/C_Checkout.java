@@ -200,7 +200,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                     transactionDialog.setTitle(ConcessioModule.INVOICE);
                     transactionDialog.setAmount("P2,500.00");
-                    transactionDialog.setAmountLabel("Remaining Balance");
+                    transactionDialog.setAmountLabel("Amount");
                     transactionDialog.setCustomerName("Rhymart Manchus");
                     transactionDialog.setInStock("Transaction ID No. 123456");
                     transactionDialog.show();

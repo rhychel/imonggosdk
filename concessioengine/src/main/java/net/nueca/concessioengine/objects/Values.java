@@ -4,6 +4,7 @@ import android.util.Log;
 
 import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -51,15 +52,14 @@ public class Values {
     private Unit unit;
     private String unit_quantity = null, unit_name = null;
     private double unit_retail_price = 0.0, unit_content_quantity = 0.0;
-    private String quantity = "1";
+    private String quantity = "1", expiry_date;
     private ExtendedAttributes extendedAttributes = null;
     private boolean isBadStock = true;
-
-    private String expiry_date;
     // ---- FOR INVOICE
     private String discount_text;
     private Double subtotal, no_discount_subtotal;
     private Double retail_price;
+    private InvoicePurpose invoicePurpose;
     private String product_discount_text = "",
             company_discount_text = "",
             customer_discount_text = "";
@@ -361,6 +361,30 @@ public class Values {
 
     public Double getNoDiscountSubtotal() {
         return no_discount_subtotal;
+    }
+
+    public InvoicePurpose getInvoicePurpose() {
+        return invoicePurpose;
+    }
+
+    public void setInvoicePurpose(InvoicePurpose invoicePurpose) {
+        this.invoicePurpose = invoicePurpose;
+    }
+
+    public String getExpiry_date() {
+        return expiry_date;
+    }
+
+    public void setExpiry_date(String expiry_date) {
+        this.expiry_date = expiry_date;
+    }
+
+    public boolean isBadStock() {
+        return isBadStock;
+    }
+
+    public void setBadStock(boolean badStock) {
+        isBadStock = badStock;
     }
 
     @Override

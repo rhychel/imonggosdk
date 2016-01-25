@@ -3,21 +3,21 @@ package net.nueca.imonggosdk.exception;
 /**
  * Created by Jn on 6/8/2015.
  */
-public class LoginException extends Exception {
+public class SyncException extends Exception {
 
     private static final long serialVersionUID = 6666L;
 
-    public LoginException(){}
+    public SyncException(){}
 
-    public LoginException(String message){
+    public SyncException(String message){
         super(message);
     }
 
-    public LoginException(Throwable cause){
+    public SyncException(Throwable cause){
         super(cause);
     }
 
-    public LoginException(String message, Throwable cause){
+    public SyncException(String message, Throwable cause){
         super(message, cause);
     }
 }

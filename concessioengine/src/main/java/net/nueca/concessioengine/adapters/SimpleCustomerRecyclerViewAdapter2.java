@@ -144,7 +144,7 @@ public class SimpleCustomerRecyclerViewAdapter2 extends BaseCustomersRecyclerAda
         layoutManager = new LayoutManager(context);
         rvProducts.setLayoutManager(layoutManager);
         rvProducts.setHasFixedSize(true);
-//        rvProducts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL_LIST));
+//        rvProducts.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST));
     }
 
     public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {

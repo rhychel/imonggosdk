@@ -5,8 +5,6 @@ import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -24,11 +22,9 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.exception.LoginException;
+import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.LoginListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
-import net.nueca.imonggosdk.objects.AccountSettings;
-import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.accountsettings.Cutoff;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
@@ -39,7 +35,6 @@ import net.nueca.imonggosdk.objects.accountsettings.ProductListing;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.accountsettings.QuantityInput;
 import net.nueca.imonggosdk.objects.base.BatchList;
-import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -90,15 +85,15 @@ public class BaseLogin {
      * Creates login credentials with the given accountId, email, password
      * and setup Volley Request Queue
      *
-     * @param context   A context
+     * @param context   A mContext
      * @param dbHelper  Database Helper for OrmLite
      * @param accountId Account Id for every user
      * @param email     Unique email address of the user
      * @param password  Password of the user
-     * @throws net.nueca.imonggosdk.exception.LoginException if accountId, email and password is null or invalid
+     * @throws SyncException if accountId, email and password is null or invalid
      */
     public BaseLogin(Context context, ImonggoDBHelper2 dbHelper, String accountId, String email,
-                     String password) throws LoginException {
+                     String password) throws SyncException {
         this.mRequestQueue = Volley.newRequestQueue(context);
         this.mContext = context;
         this.mDBHelper = dbHelper;
@@ -129,11 +124,11 @@ public class BaseLogin {
      * Sets the Account Id
      *
      * @param accountId of the User.
-     * @throws net.nueca.imonggosdk.exception.LoginException If the mAccountId is null
+     * @throws SyncException If the mAccountId is null
      */
-    public void setAccountId(String accountId) throws LoginException {
+    public void setAccountId(String accountId) throws SyncException {
         if (TextUtils.isEmpty(accountId)) {
-            throw new LoginException(mContext.getString(R.string.LOGIN_FIELD_REQUIRED));
+            throw new SyncException(mContext.getString(R.string.LOGIN_FIELD_REQUIRED));
         } else {
             this.mAccountId = accountId;
         }
@@ -152,14 +147,14 @@ public class BaseLogin {
      * Sets the Email Address
      *
      * @param email email of the user
-     * @throws net.nueca.imonggosdk.exception.LoginException if the Email is null and invalid
+     * @throws SyncException if the Email is null and invalid
      */
-    public void setEmail(String email) throws LoginException {
+    public void setEmail(String email) throws SyncException {
 
         if (TextUtils.isEmpty(email)) {
-            throw new LoginException(mContext.getString(R.string.LOGIN_FIELD_REQUIRED));
+            throw new SyncException(mContext.getString(R.string.LOGIN_FIELD_REQUIRED));
         } else if (!LoginTools.isValidEmail(email)) {
-            throw new LoginException(mContext.getString(R.string.LOGIN_INVALID_EMAIL));
+            throw new SyncException(mContext.getString(R.string.LOGIN_INVALID_EMAIL));
         } else {
             this.mEmail = email;
         }
@@ -178,20 +173,20 @@ public class BaseLogin {
      * Sets the Password
      *
      * @param mPassword password of the user
-     * @throws net.nueca.imonggosdk.exception.LoginException if the password is null and invalid it
+     * @throws SyncException if the password is null and invalid it
      */
-    public void setPassword(String mPassword) throws LoginException {
+    public void setPassword(String mPassword) throws SyncException {
         if (TextUtils.isEmpty(mPassword)) {
-            throw new LoginException(mContext.getString(R.string.LOGIN_FIELD_REQUIRED));
+            throw new SyncException(mContext.getString(R.string.LOGIN_FIELD_REQUIRED));
         } else if (!LoginTools.isValidPassword(mPassword)) {
-            throw new LoginException(mContext.getString(R.string.LOGIN_INVALID_PASSWORD));
+            throw new SyncException(mContext.getString(R.string.LOGIN_INVALID_PASSWORD));
         } else {
             this.mPassword = mPassword;
         }
     }
 
     /**
-     * Sets the context
+     * Sets the mContext
      *
      * @param context
      */
@@ -349,19 +344,6 @@ public class BaseLogin {
                                     mLoginListener.onPositiveButtonPressed();
                                 }
                             }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-
-//                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-//                            mContext.getString(R.string.LOGIN_INVALID_CREDENTIALS) + ", " + mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD),
-//                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-//                            new MaterialDialog.SingleButtonCallback() {
-//                                @Override
-//                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-//                                    materialDialog.dismiss();
-//                                    mLoginListener.onPositiveButtonPressed();
-//                                }
-//                            }, null, null);
-                    // Show Toast
-                    //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_INVALID_CREDENTIALS) + ", " + mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD));
                     // if Account Unlinked delete the session
                     if (AccountTools.isUnlinked(mContext)) {
                         mSession.deleteTo(mDBHelper);
@@ -457,20 +439,6 @@ public class BaseLogin {
                                     mLoginListener.onPositiveButtonPressed();
                                 }
                             }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-
-//                    DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-//                            mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD),
-//                            mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-//                            new MaterialDialog.SingleButtonCallback() {
-//                                @Override
-//                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-//                                    materialDialog.dismiss();
-//                                    mLoginListener.onPositiveButtonPressed();
-//                                }
-//                            }, null, null);
-
-                    // Show Toast Message
-                    //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_INVALID_EMAIL_PASSWORD));
                 } else { // invalid url or not connected to a network
                     if (!NetworkTools.isInternetAvailable(mContext)) {
                         DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
@@ -482,19 +450,6 @@ public class BaseLogin {
                                         mLoginListener.onPositiveButtonPressed();
                                     }
                                 }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-
-//                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-//                                mContext.getString(R.string.LOGIN_NETWORK_ERROR),
-//                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-//                                new MaterialDialog.SingleButtonCallback() {
-//                                    @Override
-//                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-//                                        materialDialog.dismiss();
-//                                        mLoginListener.onPositiveButtonPressed();
-//                                    }
-//                                }, null, null);
-
-                        //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_NETWORK_ERROR));
                     } else {
                         DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
                                 mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR),
@@ -504,20 +459,7 @@ public class BaseLogin {
                                     public void onClick(DialogInterface dialog, int which) {
                                         mLoginListener.onPositiveButtonPressed();
                                     }
-                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-
-//                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-//                                mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR),
-//                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-//                                new MaterialDialog.SingleButtonCallback() {
-//                                    @Override
-//                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-//                                        materialDialog.dismiss();
-//                                        mLoginListener.onPositiveButtonPressed();
-//                                    }
-//                                }, null, null);
-                        //LoggingTools.showToast(mContext, mContext.getString(R.string.LOGIN_AUTHENTICATION_ERROR));
-                    }
+                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);}
                 }
             }
         });
@@ -681,20 +623,6 @@ public class BaseLogin {
                                                         mLoginListener.onPositiveButtonPressed();
                                                     }
                                                 }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
-
-//                                        DialogTools.showBasicWithTitle(mContext,
-//                                                mContext.getString(R.string.LOGIN_FAILED_TITLE),
-//                                                mContext.getString(R.string.LOGIN_CONCESSIO_SETTINGS_ERROR),
-//                                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), "", false,
-//                                                new MaterialDialog.SingleButtonCallback() {
-//                                                    @Override
-//                                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-//                                                        materialDialog.dismiss();
-//                                                        mLoginListener.onPositiveButtonPressed();
-//                                                    }
-//                                                }, null, null);
-
-
                                         if (mLoginListener != null) {
                                             mLoginListener.onStopLogin();
                                         }

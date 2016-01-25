@@ -12,6 +12,7 @@ import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.interfaces.OnItemLongClickListener;
 import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 
 import java.util.List;
 
@@ -123,11 +124,16 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         return objectList.size();
     }
 
-    public void initializeRecyclerView(Context context, RecyclerView rvProducts) {
+    public void initializeRecyclerView(Context context, RecyclerView rvProducts, boolean hasDivider) {
         linearLayoutManager = new LinearLayoutManager(context);
         rvProducts.setLayoutManager(linearLayoutManager);
         rvProducts.setHasFixedSize(true);
-        rvProducts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL_LIST));
+        if(hasDivider)
+            rvProducts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL_LIST));
+    }
+
+    public void initializeRecyclerView(Context context, RecyclerView rvProducts) {
+        initializeRecyclerView(context, rvProducts, true);
     }
 
     public void initializeGridRecyclerView(Context context, RecyclerView rvProducts, int span) {

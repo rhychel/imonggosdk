@@ -36,9 +36,9 @@ public class ListSelectionDialog extends BaseAppCompatDialog {
         this.objects = objects;
     }
 
-    /*public ListSelectionDialog(Context context, @LayoutRes int layoutRes, @LayoutRes int listitemRes,
+    /*public ListSelectionDialog(Context mContext, @LayoutRes int layoutRes, @LayoutRes int listitemRes,
                                @IdRes int recyclerviewId) {
-        super(context);
+        super(mContext);
         this.layoutRes = layoutRes;
         this.listitemRes = listitemRes;
         this.recyclerviewId = recyclerviewId;

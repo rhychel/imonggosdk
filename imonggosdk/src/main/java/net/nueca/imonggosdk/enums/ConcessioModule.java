@@ -23,6 +23,16 @@ public enum ConcessioModule {
     CUSTOMER_DETAILS("customer_details"),
 
     APP("app"),
+    /*
+    Error:Could not find com.android.tools.build:gradle:2.0.0-alpha6.
+Searched in the following locations:
+    https://repo1.maven.org/maven2/com/android/tools/build/gradle/2.0.0-alpha6/gradle-2.0.0-alpha6.pom
+    https://repo1.maven.org/maven2/com/android/tools/build/gradle/2.0.0-alpha6/gradle-2.0.0-alpha6.jar
+    https://maven.fabric.io/public/com/android/tools/build/gradle/2.0.0-alpha6/gradle-2.0.0-alpha6.pom
+    https://maven.fabric.io/public/com/android/tools/build/gradle/2.0.0-alpha6/gradle-2.0.0-alpha6.jar
+Required by:
+    imonggosdk:concessio:unspecified
+     */
 
     HISTORY("history"),
     LAYAWAY("layaway"),

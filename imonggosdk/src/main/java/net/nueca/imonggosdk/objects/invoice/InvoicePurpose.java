@@ -49,6 +49,16 @@ public class InvoicePurpose extends BaseTable implements Extras.DoOperationsForE
     }
 
     @Override
+    public boolean equals(Object o) {
+        return this.id == ((InvoicePurpose)o).getId();
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             insertExtrasTo(dbHelper);

@@ -937,6 +937,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 if (json_extras.has("is_salesman")) {
                                     if (!json_extras.getString("is_salesman").isEmpty()) {
                                         extras.setIs_salesman(json_extras.getInt("is_salesman"));
+                                        extras.insertTo(getHelper());
+                                        user.setExtras(extras);
                                     } else {
                                         Log.e(TAG, "User's Extras' 'is_salesman' field don't have value");
                                     }
@@ -1015,7 +1017,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                             Log.e(TAG, "PriceList Custom Index: " + mCustomIndex);
 
-                            BaseTable tempObject = null;
+                            BaseTable tempObject;
 
                             if (listPriceListStorage.get(mCustomIndex) instanceof Customer) {
                                 Log.e(TAG, "PriceList came from customer ");
@@ -1131,6 +1133,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             if (!json_extras.getString("is_salesman").isEmpty()) {
                                                 // get the extras in json
                                                 users_extras.setIs_salesman(json_extras.getInt("is_salesman"));
+                                                users_extras.insertTo(getHelper());
 
                                                 // set the extras to users
                                                 user.setExtras(users_extras);
@@ -1274,11 +1277,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         // is Base unit
                                         if (jsonObject.has("unit_id")) {
-                                            if (jsonObject.getString("unit_id").isEmpty() || !jsonObject.get("unit_id").equals(null)) {
-                                                Log.e(TAG, "Branch Product API 'unit_id' field is empty or null");
-                                                branchProduct.setIsBaseUnitSellable(true);
 
-
+                                            if (!jsonObject.getString("unit_id").isEmpty() && !jsonObject.isNull("unit_id")) {
                                                 int unit_id = jsonObject.getInt("unit_id");
                                                 Unit unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit_id).queryForFirst();
 
@@ -1290,12 +1290,17 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     Log.e(TAG, "Err Can't find 'unit' field from database");
                                                 }
 
-
+                                            }
+                                            else {
+                                                branchProduct.setIsBaseUnitSellable(true);
+                                                branchProduct.setRetail_price(jsonObject.getDouble("unit_retail_price"));
+                                                branchProduct.updateTo(getHelper());
                                             }
                                         } else {
                                             branchProduct.setIsBaseUnitSellable(true);
                                             Log.e(TAG, mCurrentTableSyncing + " API don't have 'unit_id' field");
                                         }
+
                                         Log.e(TAG, "---");
 
                                         if (branchUnit != null) {
@@ -1306,7 +1311,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         // TODO: HOW TO UPDATE flush branch units
                                         // if branch_products exist in database
-                                        if (isExisting(branchProduct, Table.BRANCH_UNIT)) {
+                                        if (isExisting(branchProduct, Table.BRANCH_PRODUCTS)) {
                                             // Check Last Updated At
                                             try {
                                                 if (DateTimeTools.stringToDate(lastUpdatedAt.getLast_updated_at()).before(DateTimeTools.stringToDate(newLastUpdatedAt.getLast_updated_at()))) {
@@ -1383,6 +1388,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
                                         product_extras.setDefault_selling_unit(default_selling_unit);
+                                        product_extras.insertTo(getHelper());
 
                                         product.setExtras(product_extras);
 
@@ -1474,8 +1480,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
                                     }
 
+                                    product.setSearchKey(product.getName() + product.getStock_no());
                                     if (initialSync || lastUpdatedAt == null) {
-                                        product.setSearchKey(product.getName() + product.getStock_no());
                                         newProducts.add(product);
                                     } else {
                                         if (isExisting(product, Table.PRODUCTS)) {
@@ -1528,6 +1534,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 // get the boolean from extras
                                                 Boolean is_default_selling_unit = json_extras.getBoolean("is_default_selling_unit");
                                                 unit_extras.setIs_default_selling_unit(is_default_selling_unit);
+                                                unit_extras.insertTo(getHelper());
 
                                                 // set the extras
                                                 unit.setExtras(unit_extras);
@@ -1569,7 +1576,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 deleteUnits.doOperationBT(Unit.class);
 
                                 updateNext(requestType, size);
-
                             }
                             break;
                         case BRANCHES:
@@ -1930,8 +1936,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Document document = gson.fromJson(jsonObject.toString(), Document.class);
 
                                     if (initialSync || lastUpdatedAt == null) {
-                                        if (!document.getIntransit_status().equalsIgnoreCase("received")) {
-                                            newDocument.add(document);
+                                        if(jsonObject.has("received")) {
+                                            if (!jsonObject.isNull("received") & !jsonObject.getString("received").isEmpty()) {
+                                                if (!document.getIntransit_status().equalsIgnoreCase("received")) {
+                                                    newDocument.add(document);
+                                                }
+                                            }
                                         }
                                     } else {
                                         if (isExisting(document, Table.DOCUMENTS)) {
@@ -2016,14 +2026,26 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-
-                                for (int i = 0; i < size; i++) {
+                                    for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     InvoicePurpose invoicePurpose = gson.fromJson(jsonObject.toString(), InvoicePurpose.class);
                                     Extras extras = new Extras();
                                     if (jsonObject.has("extras")) {
-                                        // TODO: nothing yet
-                                        // Do Something With extras, no no no.. not that. I mean someting. ugghh.. nvm.
+                                        JSONObject json_extras = jsonObject.getJSONObject("extras");
+                                        if (json_extras.has("require_date")) {
+                                            if (!json_extras.getString("require_date").isEmpty()) {
+                                                extras.setRequire_date(json_extras.getBoolean("require_date"));
+                                                extras.insertTo(getHelper());
+
+                                                invoicePurpose.setExtras(extras);
+                                                Log.e(TAG, "Invoice Purposes Extras: " + json_extras.getString("require_date"));
+                                            } else {
+                                                Log.e(TAG, "Invoice Purposes' Extras' 'require_date' field don't have value");
+                                            }
+                                        } else {
+                                            Log.e(TAG, "Invoice Purposes' Extras don't have 'require_date' field");
+                                        }
+
                                     } else {
                                         Log.e(TAG, mCurrentTableSyncing + "API don't have 'extras' field");
                                     }
@@ -2092,7 +2114,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             newCustomerGroups.add(customerGroup);
                                         }
                                     }
-
                                 }
 
                                 newCustomerGroups.doOperationBT(CustomerGroup.class);
