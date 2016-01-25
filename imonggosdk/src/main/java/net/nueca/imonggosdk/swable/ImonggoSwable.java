@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.NetworkTools;
 import net.nueca.imonggosdk.tools.NotificationTools;
 
 import org.json.JSONException;
@@ -125,8 +126,18 @@ public class ImonggoSwable extends SwableService {
             try {
                 if(AccountTools.isLoggedIn(getHelper()) && AccountTools.isUserActive(this)) {
                     Log.e("ImonggoSwable", "syncModule : trying to sync");
-                    if(!getSession().isHas_logged_in()) {
+                    if(getSession() == null /*|| !getSession().isHas_logged_in()*/) {
+                        if(getSession() == null)
+                            Log.e("ImonggoSwable", "syncModule : session is null");
+                        /*if(!getSession().isHas_logged_in())
+                            Log.e("ImonggoSwable", "syncModule : session not logged in");*/
                         setSyncing(false);
+                        return;
+                    }
+                    if(!NetworkTools.isInternetAvailable(this)) {
+                        setSyncing(false);
+                        Log.e("ImonggoSwable", "syncModule : not connected to network");
+                        return;
                     }
 
                     //REQUEST_SUCCESS = 0;

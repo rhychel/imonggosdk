@@ -22,19 +22,13 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.tools.LocationTools;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
-import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
 import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
-import net.nueca.imonggosdk.objects.price.Price;
-import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.concessioengine.tools.DiscountTools;
-import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -367,7 +361,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
             btnReview.setText(REVIEW_LABEL);
         } else {
-            Location location = LocationTools.getLocation(this);
+            Location location = LocationTools.getLastKnownLocation(this);
             if(location != null)
                 Log.e("ACCURACY", location.getAccuracy() + " " + Criteria.ACCURACY_HIGH);
             Log.e(">>>", new Invoice.Builder()

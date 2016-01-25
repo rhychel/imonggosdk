@@ -53,9 +53,12 @@ public class Values {
     private double unit_retail_price = 0.0, unit_content_quantity = 0.0;
     private String quantity = "1";
     private ExtendedAttributes extendedAttributes = null;
+    private boolean isBadStock = true;
+
+    private String expiry_date;
     // ---- FOR INVOICE
     private String discount_text;
-    private Double subtotal;
+    private Double subtotal, no_discount_subtotal;
     private Double retail_price;
     private String product_discount_text = "",
             company_discount_text = "",
@@ -153,7 +156,6 @@ public class Values {
             this.quantity = quantity;
             this.unit_quantity = null;
             this.unit_content_quantity = 0d;
-            this.unit_name = null;
             this.unit_retail_price = 0d;
             if(unit != null)
                 this.unit_name = unit.getName();
@@ -175,9 +177,21 @@ public class Values {
 
         Log.e("PRICE OBJ", "isNull? " + (price == null));
         if(this.price == null) {
-            this.subtotal = this.retail_price * Double.valueOf(this.quantity);
-        } else {
-            if (company_discount_text != null && company_discount_text.length() > 0) {
+            this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
+
+            if (customer_discount_text != null && customer_discount_text.length() > 0) {
+                this.subtotal = DiscountTools.applyMultipleDiscounts(
+                        new BigDecimal(this.retail_price), new BigDecimal(this.quantity),
+                        customer_discounts, customer_discount_text, ","
+                ).doubleValue();
+            } else {
+                this.subtotal = this.retail_price * Double.valueOf(this.quantity);
+            }
+        }
+        else {
+            this.no_discount_subtotal = this.retail_price * Double.valueOf(quantity);
+
+            if (customer_discount_text != null && customer_discount_text.length() > 0) {
                 this.subtotal = DiscountTools.applyMultipleDiscounts(
                         new BigDecimal(this.retail_price), new BigDecimal(quantity),
                         product_discounts, company_discounts, discount_text, ";", ",",
@@ -195,12 +209,6 @@ public class Values {
         Log.e("QTY", this.quantity + " ~ " + quantity);
         Log.e("Unit", unit != null? unit.getName() : "null");
         Log.e("Values", "setValue : " + this.retail_price + " * " + quantity + " = " + this.subtotal);
-    }
-
-    public String getSalesQuantity() {
-        if(isValidUnit() && unit_quantity != null)
-            return unit_quantity;
-        return quantity;
     }
 
     public String getQuantity() {
@@ -249,6 +257,21 @@ public class Values {
         this.unit_retail_price = unit_retail_price;
     }
 
+    public String getExpiry_date() {
+        return expiry_date;
+    }
+
+    public void setExpiry_date(String expiry_date) {
+        this.expiry_date = expiry_date;
+    }
+
+    public boolean isBadStock() {
+        return isBadStock;
+    }
+
+    public void setBadStock(boolean badStock) {
+        isBadStock = badStock;
+    }
     public double getUnit_content_quantity() {
         return unit_content_quantity;
     }
@@ -303,14 +326,20 @@ public class Values {
     }
 
     public String getProduct_discount_text() {
+        if(product_discount_text.length() == 0)
+            return null;
         return product_discount_text;
     }
 
     public String getCompany_discount_text() {
+        if(company_discount_text.length() == 0)
+            return null;
         return company_discount_text;
     }
 
     public String getCustomer_discount_text() {
+        if(customer_discount_text.length() == 0)
+            return null;
         return customer_discount_text;
     }
 
@@ -328,6 +357,10 @@ public class Values {
 
     public Price getPrice() {
         return price;
+    }
+
+    public Double getNoDiscountSubtotal() {
+        return no_discount_subtotal;
     }
 
     @Override

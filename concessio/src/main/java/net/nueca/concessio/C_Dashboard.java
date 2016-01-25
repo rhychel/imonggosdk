@@ -62,9 +62,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
         setNextActivityClass(C_Module.class);
 
-        if(!SwableTools.isImonggoSwableRunning(this))
-            SwableTools.startSwable(this);
-
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
         rvModules = (RecyclerView) findViewById(R.id.rvModules);
         spBranches = (Spinner) findViewById(R.id.spBranches);
@@ -84,6 +81,18 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            Log.e("SESSION", "isNULL? " + (getSession() == null));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.startSwable(this);
     }
 
     @Override

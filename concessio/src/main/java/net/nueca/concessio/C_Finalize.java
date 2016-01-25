@@ -155,10 +155,11 @@ public class C_Finalize extends ModuleActivity {
         @Override
         public Fragment getItem(int position) {
             SimpleProductsFragment simpleProductsFragment = SimpleProductsFragment.newInstance();
+            simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES);
+            simpleProductsFragment.setUseSalesProductAdapter(true);
             if(position == 1)
                 returnsProductFragment = simpleProductsFragment;
             simpleProductsFragment.setHelper(getHelper());
-            simpleProductsFragment.setListingType(ListingType.SALES);
             simpleProductsFragment.setHasUnits(true);
             simpleProductsFragment.setHasToolBar(false);
             simpleProductsFragment.setHasCategories(false);

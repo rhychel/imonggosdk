@@ -3,6 +3,7 @@ package net.nueca.concessioengine.dialogs;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -88,7 +89,13 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             } else
                 spUnits.setSelection(unitList.indexOf(selectedProductItem.getValues().get(0).getUnit()));
         }
+        boolean hasValues = selectedProductItem.getValues().size() > 0;
 
+        //if(hasBadStock) {
+            //swcBadStock = (SwitchCompat) super.findViewById(R.id.swcBadStock);
+            //swcBadStock.setVisibility(View.VISIBLE);
+            //swcBadStock.setChecked(true);
+        //}
         Product product = selectedProductItem.getProduct();
         tvProductName.setText(product.getName());
         tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
@@ -102,6 +109,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                //if(hasBadStock)
+                    //swcBadStock.setChecked(value.isBadStock());
             }
 
             Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
@@ -169,7 +178,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 else
                     values = new Values();
 
-                //Log.e("SIMPLE_SALES_QUANTITY_DIALOG", unit != null? unit.getName() : "null");
+                Log.e("SIMPLE_SALES_QUANTITY_DIALOG", unit != null? unit.getName() : "null");
+                Log.e("SIMPLE_SALES_QUANTITY_DIALOG", "is Helper NULL? " + (getHelper() == null));
 
                 if(getHelper() == null)
                     values.setValue(quantity, unit);

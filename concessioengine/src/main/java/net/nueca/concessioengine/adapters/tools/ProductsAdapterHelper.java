@@ -16,8 +16,10 @@ import com.android.volley.toolbox.ImageRequest;
 import net.nueca.concessioengine.adapters.interfaces.ImageLoaderListener;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.ProductListTools;
@@ -36,12 +38,15 @@ public class ProductsAdapterHelper {
     private static ImageLoader imageLoader;
     private static ImonggoDBHelper2 dbHelper;
     private static Session session;
-    private static Customer selectedCustomer;
     private static DocumentPurpose reason;
     private static SelectedProductItemList selectedReturnProductItems = null;
     private static SelectedProductItemList selectedProductItems = null;
     public static ImageLoaderListener imageLoaderListener = null;
     public static boolean isDuplicating = false;
+
+    private static Customer selectedCustomer;
+    private static CustomerGroup selectedCustomerGroup;
+    private static Branch selectedBranch;
 
     public static ImageLoader getImageLoaderInstance(Context context) {
         return getImageLoaderInstance(context, false);
@@ -93,6 +98,8 @@ public class ProductsAdapterHelper {
     public static SelectedProductItemList getSelectedReturnProductItems() {
         if(selectedReturnProductItems == null)
             selectedReturnProductItems = new SelectedProductItemList();
+        if(!selectedReturnProductItems.isReturns())
+            selectedReturnProductItems.setReturns(true);
         return selectedReturnProductItems;
     }
 
@@ -136,6 +143,8 @@ public class ProductsAdapterHelper {
         if(selectedProductItems != null)
             selectedProductItems.clear();
         selectedCustomer = null;
+        selectedCustomerGroup = null;
+        selectedBranch = null;
         reason = null;
         ProductListTools.restartLineNo();
         Log.e("ProductAdapterHelper", "clearSelectedProductItemList");
@@ -153,6 +162,8 @@ public class ProductsAdapterHelper {
             selectedProductItems.clear();
         selectedProductItems = null;
         selectedCustomer = null;
+        selectedCustomerGroup = null;
+        selectedBranch = null;
         reason = null;
         Log.e("ProductAdapterHelper", "destroySelectedProductItemList");
     }
@@ -171,6 +182,8 @@ public class ProductsAdapterHelper {
         selectedProductItems = null;
         selectedReturnProductItems = null;
         selectedCustomer = null;
+        selectedCustomerGroup = null;
+        selectedBranch = null;
         reason = null;
         Log.e("ProductAdapterHelper", "destroyProductAdapterHelper");
     }
@@ -181,6 +194,22 @@ public class ProductsAdapterHelper {
 
     public static Customer getSelectedCustomer() {
         return selectedCustomer;
+    }
+
+    public static CustomerGroup getSelectedCustomerGroup() {
+        return selectedCustomerGroup;
+    }
+
+    public static void setSelectedCustomerGroup(CustomerGroup selectedCustomerGroup) {
+        ProductsAdapterHelper.selectedCustomerGroup = selectedCustomerGroup;
+    }
+
+    public static Branch getSelectedBranch() {
+        return selectedBranch;
+    }
+
+    public static void setSelectedBranch(Branch selectedBranch) {
+        ProductsAdapterHelper.selectedBranch = selectedBranch;
     }
 
     public static DocumentPurpose getReason() {

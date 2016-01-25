@@ -145,9 +145,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             if(!isCustomAdapter) {
                 if (useSalesProductAdapter) {
                     productRecyclerViewAdapter = new SimpleSalesProductRecyclerAdapter(getActivity(), getHelper(), getProducts());//, customer, customerGroup, branch
-                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setBranch(branch);
-                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomer(customer);
-                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomerGroup(customerGroup);
+
+                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setBranch(ProductsAdapterHelper.getSelectedBranch());
+                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomer(ProductsAdapterHelper.getSelectedCustomer());
+                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomerGroup(ProductsAdapterHelper.getSelectedCustomerGroup());
                     ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setPromotionalProducts(promotionalProducts);
                 }
                 else
@@ -252,6 +253,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         isCustomAdapter = productRecyclerViewAdapter != null;
     }
 
+    public BaseProductsRecyclerAdapter getProductsRecyclerAdapter() {
+        return productRecyclerViewAdapter;
+    }
+
 
     public void refreshList() {
         if(useRecyclerView)
@@ -276,8 +281,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
 
-                if(isCustomAdapter && productRecyclerViewAdapter instanceof BaseSalesProductRecyclerAdapter) {
+                if(productRecyclerViewAdapter instanceof BaseSalesProductRecyclerAdapter) {
                     BaseSalesProductRecyclerAdapter salesAdapter = (BaseSalesProductRecyclerAdapter) productRecyclerViewAdapter;
+                    Log.e("SimpleProductsFragment", "helper NULL?? "+(salesAdapter.getHelper() == null));
                     simpleSalesQuantityDialog.setHelper(salesAdapter.getHelper());
                     simpleSalesQuantityDialog.setSalesCustomer(salesAdapter.getCustomer());
                     simpleSalesQuantityDialog.setSalesCustomerGroup(salesAdapter.getCustomerGroup());
@@ -287,7 +293,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setHasSubtotal(hasSubtotal);
                 simpleSalesQuantityDialog.setHasUnits(true);
 
-                double subtotal = product.getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
+                double subtotal = product.getRetail_price() * Double.valueOf(productRecyclerViewAdapter.getSelectedProductItems().getQuantity
+                        (product));
                 simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
                 simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
                 simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);

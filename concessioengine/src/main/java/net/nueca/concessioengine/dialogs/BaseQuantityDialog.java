@@ -49,7 +49,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected FragmentManager fragmentManager;
     protected String deliveryDate;
 
-    protected boolean hasSubtotal = false;
+    protected boolean hasSubtotal = false, hasInvoicePurpose = false, hasExpiryDate = false, hasBadStock = false;
 
     protected ArrayAdapter<Unit> unitsAdapter;
     protected ArrayAdapter<String> brandsAdapter;
@@ -149,9 +149,9 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     @Override
     public void dismiss() {
         super.dismiss();
-        if(multiQuantityDialogListener != null)
+        if (multiQuantityDialogListener != null)
             multiQuantityDialogListener.onDismiss();
-        if(quantityDialogListener != null)
+        if (quantityDialogListener != null)
             quantityDialogListener.onDismiss();
     }
 
@@ -161,7 +161,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected void offsetSpinnerBelowv21(Spinner spinner) {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        if (Build.VERSION.SDK_INT < 21)
+        if (Build.VERSION.SDK_INT < 21 && Build.VERSION.SDK_INT >= 16)
             spinner.setDropDownVerticalOffset((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, -(spinner.getHeight() + 14), metrics));
     }
 
@@ -218,5 +218,13 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setListPosition(int listPosition) {
         this.listPosition = listPosition;
+    }
+
+    public void setHasExpiryDate(boolean hasExpiryDate) {
+        this.hasExpiryDate = hasExpiryDate;
+    }
+
+    public void setHasBadStock(boolean hasBadStock) {
+        this.hasBadStock = hasBadStock;
     }
 }

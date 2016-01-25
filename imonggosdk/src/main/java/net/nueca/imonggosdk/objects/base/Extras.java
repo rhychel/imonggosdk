@@ -116,6 +116,9 @@ public class Extras extends DBTable {
     @Expose
     @DatabaseField
     private String total_customer_discount;
+    @Expose
+    @DatabaseField
+    private String total_selling_price;
 
     // InvoiceLine
     @Expose
@@ -257,6 +260,7 @@ public class Extras extends DBTable {
         total_unit_retail_price = builder.total_unit_retail_price;
         total_company_discount = builder.total_company_discount;
         total_customer_discount = builder.total_customer_discount;
+        total_selling_price = builder.total_selling_price;
         product_discount_text = builder.product_discount_text;
         product_discount_amount = builder.product_discount_amount;
         company_discount_text = builder.company_discount_text;
@@ -546,6 +550,14 @@ public class Extras extends DBTable {
         this.customer_discount_amounts_summary = customer_discount_amounts_summary;
     }
 
+    public String getTotal_selling_price() {
+        return total_selling_price;
+    }
+
+    public void setTotal_selling_price(String total_selling_price) {
+        this.total_selling_price = total_selling_price;
+    }
+
     public String getTotal_unit_retail_price() {
         return total_unit_retail_price;
     }
@@ -777,7 +789,7 @@ public class Extras extends DBTable {
 
 
     public static class Builder {
-        protected int is_salesman;
+        protected Integer is_salesman;
         protected Boolean batch_maintained; // true || false
         protected Integer customer_id;
         protected String longitude;
@@ -816,6 +828,7 @@ public class Extras extends DBTable {
         protected String total_unit_retail_price;
         protected String total_company_discount;
         protected String total_customer_discount;
+        protected String total_selling_price;
         protected String product_discount_text;
         protected String product_discount_amount;
         protected String company_discount_text;
@@ -845,7 +858,7 @@ public class Extras extends DBTable {
             return this;
         }
 
-        public Builder is_salesman(int is_saleman) {
+        public Builder is_salesman(Integer is_saleman) {
             this.is_salesman = is_saleman;
             return this;
         }
@@ -878,6 +891,11 @@ public class Extras extends DBTable {
 
         public Builder total_unit_retail_price(String total_unit_retail_price) {
             this.total_unit_retail_price = total_unit_retail_price;
+            return this;
+        }
+
+        public Builder total_selling_price(String total_selling_price) {
+            this.total_selling_price = total_selling_price;
             return this;
         }
 

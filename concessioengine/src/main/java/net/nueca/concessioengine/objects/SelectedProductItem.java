@@ -6,6 +6,7 @@ import net.nueca.concessioengine.lists.ValuesList;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.tools.ProductListTools;
 
@@ -26,6 +27,8 @@ public class SelectedProductItem {
     private String TAG = "SelectedProductItem";
     private ValuesList valuesList = new ValuesList();
     private boolean isMultiline = false;
+
+    private boolean isReturns = false;
 
     public SelectedProductItem() {
     }
@@ -70,16 +73,24 @@ public class SelectedProductItem {
             if(valuesList.size() == 1) {
                 //Log.e(TAG, "Index is 1 setting the value");
                 if(value.getExtendedAttributes() == null) {
-                    if(value.getRetail_price() != null) {
-                        setValues(0, value.getQuantity(), value.getUnit(), value.getRetail_price());
-                    } else
-                        setValues(0, value.getQuantity(), value.getUnit());
+                    if(value.getPrice() != null) {
+                        setValues(0, value.getQuantity(), value.getPrice());
+                    } else {
+                        if (value.getRetail_price() != null) {
+                            setValues(0, value.getQuantity(), value.getUnit(), value.getRetail_price());
+                        } else
+                            setValues(0, value.getQuantity(), value.getUnit());
+                    }
                 }
                 else {
-                    if(value.getRetail_price() != null)
-                        setValues(0, value.getQuantity(), value.getUnit(), value.getExtendedAttributes(), value.getRetail_price());
-                    else
-                        setValues(0, value.getQuantity(), value.getUnit(), value.getExtendedAttributes());
+                    if(value.getPrice() != null) {
+                        setValues(0, value.getQuantity(), value.getPrice(), value.getExtendedAttributes());
+                    } else {
+                        if (value.getRetail_price() != null)
+                            setValues(0, value.getQuantity(), value.getUnit(), value.getExtendedAttributes(), value.getRetail_price());
+                        else
+                            setValues(0, value.getQuantity(), value.getUnit(), value.getExtendedAttributes());
+                    }
                 }
                 return -1;
             }
@@ -116,39 +127,53 @@ public class SelectedProductItem {
 
     public void setValues(int position, Values values) {
         //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, Values values)");
+
+        String qty = fixQuantity(values.getQuantity());
         if(values.getRetail_price() != null) {
             if(values.getPrice() != null)
-                this.valuesList.get(position).setValue(values.getQuantity(),values.getPrice(),values.getExtendedAttributes());
+                this.valuesList.get(position).setValue(qty,values.getPrice(),values.getExtendedAttributes());
             else {
-                this.valuesList.get(position).setValue(values.getQuantity(), values.getUnit(), values.getRetail_price());
+                this.valuesList.get(position).setValue(qty, values.getUnit(), values.getRetail_price());
                 this.valuesList.get(position).setExtendedAttributes(values.getExtendedAttributes());
             }
         } else {
-            this.valuesList.get(position).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
+            this.valuesList.get(position).setValue(qty, values.getUnit(), values.getExtendedAttributes());
         }
         setValues();
     }
 
     public void setValues(int position, String quantity, Unit unit) {
         //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, String quantity, Unit unit)");
+        quantity = fixQuantity(quantity);
         this.valuesList.get(position).setValue(quantity, unit);
         setValues();
     }
     public void setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes) {
         //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes)");
+        quantity = fixQuantity(quantity);
         this.valuesList.get(position).setValue(quantity, unit, extendedAttributes);
         setValues();
     }
     public void setValues(int position, String quantity, Unit unit, double retail_price) {
+        quantity = fixQuantity(quantity);
         Log.e("SELECTED_PRODUCT_ITEM", "setValues(position="+position+", quantity="+quantity+", unit="+(unit!=null?unit.getName():"null")+", " +
                 "retail_price="+retail_price+")");
         this.valuesList.get(position).setValue(quantity, unit, retail_price);
+        setValues();
+    }
+    public void setValues(int position, String quantity, Price price) {
+        setValues(position, quantity, price, null);
+    }
+    public void setValues(int position, String quantity, Price price, ExtendedAttributes extendedAttributes) {
+        quantity = fixQuantity(quantity);
+        this.valuesList.get(position).setValue(quantity, price, extendedAttributes);
         setValues();
     }
 
     public void setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes, double retail_price) {
         //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes, double " +
         //        "retail_price)");
+        quantity = fixQuantity(quantity);
         this.valuesList.get(position).setValue(quantity, unit, retail_price);
         this.valuesList.get(position).setExtendedAttributes(extendedAttributes);
         setValues();
@@ -170,6 +195,19 @@ public class SelectedProductItem {
 
     public void setIsMultiline(boolean isMultiline) {
         this.isMultiline = isMultiline;
+    }
+
+    public boolean isReturns() {
+        return isReturns;
+    }
+
+    public void setReturns(boolean returns) {
+        if(isReturns != returns) {
+            isReturns = returns;
+            for (Values values : valuesList) {
+                setValues(valuesList.indexOf(values), values);
+            }
+        }
     }
 
     public String getQuantity() {
@@ -326,5 +364,12 @@ public class SelectedProductItem {
 
         //Log.e(TAG, "Index is -1 setting the value");
         return -1;
+    }
+
+    private String fixQuantity(String quantity) {
+        Double qty = Math.abs(Double.parseDouble(quantity));
+        if(isReturns)
+            qty *= -1;
+        return String.valueOf(qty);
     }
 }

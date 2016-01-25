@@ -18,6 +18,8 @@ import java.util.List;
  */
 public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
 
+    private boolean isReturns = false;
+
     public SelectedProductItemList(int capacity) {
         super(capacity);
     }
@@ -35,6 +37,7 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
      */
     @Override
     public boolean add(SelectedProductItem selectedProductItem) {
+        selectedProductItem.setReturns(isReturns);
         int index = indexOf(selectedProductItem);
         if(index > -1) {
             if(selectedProductItem.getValues().size() > 0)
@@ -71,7 +74,10 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     public SelectedProductItem initializeItem(Product product) {
         if(hasSelectedProductItem(product))
             return getSelectedProductItem(product);
-        return new SelectedProductItem(product);
+
+        SelectedProductItem selectedProductItem = new SelectedProductItem(product);
+        selectedProductItem.setReturns(isReturns);
+        return selectedProductItem;
     }
 
     public SelectedProductItem getSelectedProductItem(Product product) {
@@ -102,6 +108,14 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
             return selectedProductItem.getValues().get(0).getUnit().getName();
         }
         return "";
+    }
+
+    public boolean isReturns() {
+        return isReturns;
+    }
+
+    public void setReturns(boolean returns) {
+        isReturns = returns;
     }
 
     public void renderToJson() {

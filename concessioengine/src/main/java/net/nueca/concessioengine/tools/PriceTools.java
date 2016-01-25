@@ -38,19 +38,19 @@ public class PriceTools {
 
     public static Double identifyRetailPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch,
                                               CustomerGroup customerGroup, Customer customer, final Unit unit) {
-        Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        Log.e("UNIT", unit == null? "null" : unit.getName());
+        //Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        //Log.e("UNIT", unit == null? "null" : unit.getName());
         Double retail_price;
 
         try {
             retail_price = getBranchPrice(dbHelper2, product, branch, unit);
-            Log.e("BRANCH PRICE", retail_price + "");
+            //Log.e("BRANCH PRICE", retail_price + "");
 
             Price selectedPrice = identifyPrice(dbHelper2, product, branch, customerGroup, customer, unit);
             if(selectedPrice != null)
                 retail_price = selectedPrice.getRetail_price();
 
-            Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>> retail_price: " + retail_price);
+            //Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>> retail_price: " + retail_price);
         } catch (SQLException e) {
             e.printStackTrace();
             return product.getRetail_price();
@@ -60,7 +60,7 @@ public class PriceTools {
 
     public static Price identifyPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch,
                                              CustomerGroup customerGroup, Customer customer, final Unit unit) {
-        Log.e("PriceTools", "identifyPrice <<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        //Log.e("PriceTools", "identifyPrice <<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         if(branch == null)
             Log.e("identifyRetailPrice", "branch is null");
         if(customerGroup == null)
@@ -141,11 +141,11 @@ public class PriceTools {
             //if(type == DEFAULT_PRICE && unit == null && defaultUnit != null)
             //    return identifyPrice(dbHelper2, product, branch, customerGroup, customer, defaultUnit);
 
-            Log.e("identifyRetailPrice", "type="+type);
+            //Log.e("identifyRetailPrice", "type="+type);
 
             Log.e("Price-" + type, selectedPrice == null? "null" : "retail_price:" + selectedPrice.getRetail_price() + " for " + product.getName());
-            if(selectedPrice != null)
-                Log.e("Price ("+selectedPrice.getId()+") ~ " + selectedPrice.getPriceList().getId(), selectedPrice.toJSONString());
+            //if(selectedPrice != null)
+            //    Log.e("Price ("+selectedPrice.getId()+") ~ " + selectedPrice.getPriceList().getId(), selectedPrice.toJSONString());
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
