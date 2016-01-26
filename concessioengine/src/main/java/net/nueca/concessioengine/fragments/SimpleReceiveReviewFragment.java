@@ -27,9 +27,10 @@ import net.nueca.concessioengine.views.SimpleReceiveToolbarExt;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
 import net.nueca.imonggosdk.objects.document.RemarkBuilder;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -137,8 +138,14 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
                                 .product_id(product.getId())
                                 .useProductDetails(product)
                                 .quantity(receive_qty)
+//                                .extras(
+//                                        new DocumentLineExtras.Builder()
+//                                                .outright_return(outright_return != 0d ? "" + outright_return : null)
+//                                                .discrepancy(discrepancy != 0d ? "" + discrepancy : null)
+//                                                .buildIfNotEmpty()
+//                                )
                                 .extras(
-                                        new DocumentLineExtras.Builder()
+                                        new Extras.Builder()
                                                 .outright_return(outright_return != 0d ? "" + outright_return : null)
                                                 .discrepancy(discrepancy != 0d ? "" + discrepancy : null)
                                                 .buildIfNotEmpty()

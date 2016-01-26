@@ -6,9 +6,11 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import java.sql.SQLException;
 
@@ -24,7 +26,7 @@ import java.sql.SQLException;
  * }
  */
 @DatabaseTable
-public class DocumentType extends BaseTable {
+public class DocumentType extends BaseTable implements Extras.DoOperationsForExtras {
 
     @DatabaseField
     private String name;
@@ -60,39 +62,73 @@ public class DocumentType extends BaseTable {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.DOCUMENT_TYPES, DatabaseOperation.INSERT);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-
-        try {
-            dbHelper.dbOperations(this, Table.DOCUMENT_TYPES, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.DOCUMENT_TYPES, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public String toString() {
         return "DocumentType{" +
                 "name='" + name + '\'' +
                 ", code='" + code + '\'' +
                 ", id='" + id + '\'' +
                 '}';
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
+        try {
+            dbHelper.insert(DocumentType.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.delete(DocumentType.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        deleteExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.update(DocumentType.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setDocumentType(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
+        }
     }
 }

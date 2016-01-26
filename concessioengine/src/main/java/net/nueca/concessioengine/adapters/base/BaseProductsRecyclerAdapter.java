@@ -1,13 +1,21 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.tools.ProductListTools;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -16,7 +24,9 @@ import java.util.List;
  */
 public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHolder> extends BaseRecyclerAdapter<T, Product> {
 
-    private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
+//    private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
+    protected boolean hasSubtotal = false;
+    protected boolean isReturnItems = false;
 
     public BaseProductsRecyclerAdapter(Context context) {
         super(context);
@@ -27,27 +37,41 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
         setList(productsList);
     }
 
-    public BaseProductsRecyclerAdapter(Context context, ImonggoDBHelper dbHelper, List<Product> productsList) {
+    public BaseProductsRecyclerAdapter(Context context, ImonggoDBHelper2 dbHelper, List<Product> productsList) {
         super(context);
         setList(productsList);
         setDbHelper(dbHelper);
     }
 
     public void clearSelectedItems() {
-        productsAdapterHelper.getSelectedProductItems().clear();
-        ProductListTools.restartLineNo();
+        if(isReturnItems)
+            ProductsAdapterHelper.getSelectedReturnProductItems().clear();
+        else {
+            ProductsAdapterHelper.getSelectedProductItems().clear();
+            ProductListTools.restartLineNo();
+        }
     }
 
     public SelectedProductItemList getSelectedProductItems() {
-        return productsAdapterHelper.getSelectedProductItems();
+        if(isReturnItems)
+            return ProductsAdapterHelper.getSelectedReturnProductItems();
+        return ProductsAdapterHelper.getSelectedProductItems();
     }
 
-    protected ProductsAdapterHelper getAdapterHelper() {
-        return productsAdapterHelper;
+//    protected ProductsAdapterHelper getAdapterHelper() {
+//        return productsAdapterHelper;
+//    }
+
+    public void setHasSubtotal(boolean hasSubtotal) {
+        this.hasSubtotal = hasSubtotal;
     }
 
-    public void setDbHelper(ImonggoDBHelper dbHelper) {
+    public void setDbHelper(ImonggoDBHelper2 dbHelper) {
         ProductsAdapterHelper.setDbHelper(dbHelper);
+    }
+
+    public void setReturnItems(boolean returnItems) {
+        isReturnItems = returnItems;
     }
 
     @Override

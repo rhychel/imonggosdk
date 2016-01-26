@@ -2,13 +2,13 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
-import net.nueca.imonggosdk.objects.PaymentType;
+import net.nueca.concessioengine.enums.ListingType;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by gama on 20/10/2015.
@@ -18,35 +18,44 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
     private int listItemRes;
     protected OnPaymentUpdateListener paymentUpdateListener;
     private HashMap<Integer, PaymentType> paymentTypes;
+    private List<PaymentType> paymentTypeList;
 
     protected boolean isFullyPaid = false;
+    protected boolean isDefaultCash = false;
+
+    protected ListingType listingType = ListingType.BASIC_PAYMENTS;
 
     public BaseSplitPaymentAdapter(Context context, int listItemRes) {
         super(context, new ArrayList<InvoicePayment>());
         this.listItemRes = listItemRes;
         this.paymentTypes = new HashMap<>();
-        PaymentType cash = new PaymentType();
-        cash.setName("CASH");
-        cash.setCode("CASH");
-        cash.setId(1);
-        this.paymentTypes.put(1, cash);
+        if(isDefaultCash) {
+            PaymentType cash = new PaymentType();
+            cash.setName("CASH");
+            cash.setCode("CASH");
+            cash.setId(1);
+            this.paymentTypes.put(1, cash);
+        }
     }
 
     public BaseSplitPaymentAdapter(Context context, int listItemRes, List<InvoicePayment> payments) {
         super(context, payments);
         this.listItemRes = listItemRes;
         this.paymentTypes = new HashMap<>();
-        PaymentType cash = new PaymentType();
-        cash.setName("CASH");
-        cash.setCode("CASH");
-        cash.setId(1);
-        this.paymentTypes.put(1, cash);
+        if(isDefaultCash) {
+            PaymentType cash = new PaymentType();
+            cash.setName("CASH");
+            cash.setCode("CASH");
+            cash.setId(1);
+            this.paymentTypes.put(1, cash);
+        }
     }
 
     public BaseSplitPaymentAdapter(Context context, int listItemRes, List<InvoicePayment> payments,
                                    List<PaymentType> paymentTypes) {
         super(context, payments);
         this.listItemRes = listItemRes;
+        this.paymentTypeList = paymentTypes;
         this.paymentTypes = new HashMap<>();
         for(PaymentType paymentType : paymentTypes)
             this.paymentTypes.put(paymentType.getId(), paymentType);
@@ -86,6 +95,14 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
     public void setIsFullyPaid(boolean isFullyPaid) {
         this.isFullyPaid = isFullyPaid;
+    }
+
+    public List<PaymentType> getPaymentTypeList() {
+        return paymentTypeList;
+    }
+
+    public void setPaymentTypeList(List<PaymentType> paymentTypeList) {
+        this.paymentTypeList = paymentTypeList;
     }
 
     public void deletePayment(int position) {

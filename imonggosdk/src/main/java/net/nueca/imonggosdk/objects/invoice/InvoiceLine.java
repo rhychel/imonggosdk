@@ -5,10 +5,13 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.base.BaseTransactionLine;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,16 +21,7 @@ import java.sql.SQLException;
 /**
  * Created by gama on 7/1/15.
  */
-public class InvoiceLine extends BaseTable2 {
-    @Expose
-    @DatabaseField
-    protected int product_id;
-    @Expose
-    @DatabaseField
-    protected int quantity;
-    @Expose
-    @DatabaseField
-    protected double retail_price;
+public class InvoiceLine extends BaseTransactionLine implements Extras.DoOperationsForExtras {
     @Expose
     @DatabaseField
     protected String discount_text;
@@ -41,49 +35,9 @@ public class InvoiceLine extends BaseTable2 {
     public InvoiceLine() {}
 
     public InvoiceLine (Builder builder) {
-        product_id = builder.product_id;
-        quantity = builder.quantity;
-        retail_price = builder.retail_price;
+        super(builder);
         discount_text = builder.discount_text;
         subtotal = builder.subtotal;
-    }
-
-    /*public InvoiceLine(int product_id, int quantity, int retail_price, String discount_text) {
-        this.product_id = product_id;
-        this.quantity = quantity;
-        this.retail_price = retail_price;
-        this.discount_text = discount_text;
-    }
-
-    public InvoiceLine(Product product, int quantity, String discount_text) {
-        this.product_id = product.getId();
-        this.quantity = quantity;
-        this.retail_price = product.getRetail_price();
-        this.discount_text = discount_text;
-    }*/
-
-    public int getProduct_id() {
-        return product_id;
-    }
-
-    public void setProduct_id(int product_id) {
-        this.product_id = product_id;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getRetail_price() {
-        return retail_price;
-    }
-
-    public void setRetail_price(double retail_price) {
-        this.retail_price = retail_price;
     }
 
     public String getDiscount_text() {
@@ -115,25 +69,10 @@ public class InvoiceLine extends BaseTable2 {
         return new JSONObject(gson.toJson(this));
     }
 
-    public static class Builder {
-        protected int product_id;
-        protected int quantity;
-        protected double retail_price;
+    public static class Builder extends BaseTransactionLine.Builder<Builder> {
         protected String discount_text;
         protected String subtotal;
 
-        public Builder product_id(int product_id) {
-            this.product_id = product_id;
-            return this;
-        }
-        public Builder quantity(int quantity) {
-            this.quantity = quantity;
-            return this;
-        }
-        public Builder retail_price(double retail_price) {
-            this.retail_price = retail_price;
-            return this;
-        }
         public Builder discount_text(String discount_text) {
             this.discount_text = discount_text;
             return this;
@@ -149,29 +88,64 @@ public class InvoiceLine extends BaseTable2 {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
-            dbHelper.dbOperations(this, Table.INVOICE_LINES, DatabaseOperation.INSERT);
+            dbHelper.insert(InvoiceLine.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.delete(InvoiceLine.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        deleteExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.update(InvoiceLine.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setInvoiceLine(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.INVOICE_LINES, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.INVOICE_LINES, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
         }
     }
 }

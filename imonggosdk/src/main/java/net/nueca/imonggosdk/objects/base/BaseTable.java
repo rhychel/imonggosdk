@@ -6,13 +6,20 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+
+import java.sql.SQLException;
 
 /**
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
  */
-public abstract class BaseTable {
+public abstract class BaseTable extends DBTable {
+
+    public static final String TAG = "BASETABLE";
+
+    private Object obj;
 
     @DatabaseField(id=true)
     protected int id = -1;
@@ -21,14 +28,16 @@ public abstract class BaseTable {
     protected String searchKey = "";
 
     @Expose
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras_id")
+    protected Extras extras;
+
+    @Expose
     @DatabaseField
     protected String utc_created_at, utc_updated_at;
 
     public String getSearchKey() {
         return searchKey;
     }
-
-    public static String TAG = "BASETABLE";
 
     public void setSearchKey(String searchKey) {
         this.searchKey = searchKey;
@@ -58,21 +67,12 @@ public abstract class BaseTable {
         this.utc_updated_at = utc_updated_at;
     }
 
-    public abstract void insertTo(ImonggoDBHelper dbHelper);
-    public abstract void deleteTo(ImonggoDBHelper dbHelper);
-    public abstract void updateTo(ImonggoDBHelper dbHelper);
+    public Extras getExtras() {
+        return extras;
+    }
 
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT) {
-            Log.e(TAG, "Inserting to database");
-            insertTo(dbHelper);
-        } else if(databaseOperation == DatabaseOperation.UPDATE) {
-            Log.e(TAG, "Updating to database");
-            updateTo(dbHelper);
-        } else if(databaseOperation == DatabaseOperation.DELETE) {
-            Log.e(TAG, "Deleting to database");
-            deleteTo(dbHelper);
-        }
+    public void setExtras(Extras extras) {
+        this.extras = extras;
     }
 
 }

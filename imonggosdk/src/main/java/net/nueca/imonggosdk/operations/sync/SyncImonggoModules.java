@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
@@ -50,13 +51,13 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
             lastUpdatedAt = null;
 
             // Get the last updated at
-            QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().getLastUpdatedAts().queryBuilder();
+            QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().fetchIntId(LastUpdatedAt.class).queryBuilder();
             if(tableSyncing == Table.DOCUMENTS)
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(tableSyncing, String.valueOf(branches[branchIndex])));
             else
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(tableSyncing));
 
-            lastUpdatedAt = getHelper().getLastUpdatedAts().queryForFirst(queryBuilder.prepare());
+            lastUpdatedAt = getHelper().fetchIntId(LastUpdatedAt.class).queryForFirst(queryBuilder.prepare());
 
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
                     tableSyncing, server, requestType, getParameters(requestType));
@@ -212,9 +213,6 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                  * Customers -- LAST_UPDATED_AT, COUNT
                  * Inventory -- LAST_UPDATED_AT, COUNT
                  * Tax Settings -- LAST_UPDATED_AT <--- NON SENSE
-                 *
-                 *
-                 *
 
                  * Documents -- LAST_UPDATED_AT, COUNT
                  * Document Types -- #CONSTANT
@@ -248,12 +246,12 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                         /**
                          * Delete all data related to taxes
                          */
-                        getHelper().dbOperations(null, Table.PRODUCT_TAX_RATES, DatabaseOperation.DELETE_ALL);
-                        getHelper().dbOperations(null, Table.TAX_SETTINGS, DatabaseOperation.DELETE_ALL);
-                        getHelper().dbOperations(null, Table.TAX_RATES, DatabaseOperation.DELETE_ALL);
+                        getHelper().deleteAll(ProductTaxRateAssoc.class);
+                        getHelper().deleteAll(TaxSetting.class);
+                        getHelper().deleteAll(TaxRate.class);
 
                         TaxSetting taxSetting = gson.fromJson(jsonObject.toString(), TaxSetting.class);
-                        getHelper().dbOperations(taxSetting, Table.TAX_SETTINGS, DatabaseOperation.INSERT); // insert the tax settings
+                        taxSetting.insertTo(getHelper());
                         if(!jsonObject.has("tax_rates")) { //check if there is even a tax_rates field
                             syncNext();
                             return;
@@ -273,7 +271,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             TaxRate taxRate = gson.fromJson(taxRatejson.toString(), TaxRate.class);
                             String branchId = taxRatejson.getString("branch_id");
                             if(!branchId.equals("null")) {
-                                Branch branch = getHelper().getBranches().queryBuilder()
+                                Branch branch = getHelper().fetchObjects(Branch.class).queryBuilder()
                                         .where().eq("id", Integer.valueOf(branchId)).queryForFirst(); // Check if the branch is assigned to the USER
                                 if(branch != null)
                                     taxRate.setBranch(branch);
@@ -282,7 +280,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             }
                             newTaxRates.add(taxRate);
                         }
-                        newTaxRates.doOperation();
+                        newTaxRates.doOperation(TaxRate.class);
 
                         syncNext();
                     }
@@ -322,9 +320,9 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                                     newUsers.add(user);
                             }
                         }
-                        newUsers.doOperation();
-                        updateUsers.doOperation();
-                        deleteUsers.doOperation();
+                        newUsers.doOperationBT(User.class);
+                        updateUsers.doOperationBT(User.class);
+                        deleteUsers.doOperationBT(User.class);
                     } break;
 
                     /**
@@ -332,9 +330,9 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                      */
                     case BRANCH_USERS: {
                         if(page == 1) {
-                            getHelper().dbOperations(null, Table.BRANCH_USERS, DatabaseOperation.DELETE_ALL);
-                            getHelper().dbOperations(null, Table.BRANCH_TAGS, DatabaseOperation.DELETE_ALL);
-                            getHelper().dbOperations(null, Table.BRANCHES, DatabaseOperation.DELETE_ALL);
+                            getHelper().deleteAll(BranchUserAssoc.class);
+                            getHelper().deleteAll(BranchTag.class);
+                            getHelper().deleteAll(Branch.class);
                         }
 
                         if(size == 0) {
@@ -363,9 +361,9 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             newBranchUserAssocs.add(branchUserAssoc);
                         }
 
-                        newBranches.doOperation();
-                        newBranchUserAssocs.doOperation();
-                        newBranchTags.doOperation();
+                        newBranches.doOperationBT(Branch.class);
+                        newBranchUserAssocs.doOperation(BranchUserAssoc.class);
+                        newBranchTags.doOperation(BranchTag.class);
                     } break;
                     /**
                      * Process the products
@@ -388,7 +386,7 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             }
                             else {
                                 if (isExisting(product, Table.PRODUCTS)) {
-                                    DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().getProductTags().deleteBuilder();
+                                    DeleteBuilder<ProductTag, Integer> deleteProductsHelper = getHelper().fetchIntId(ProductTag.class).deleteBuilder();
                                     deleteProductsHelper.where().eq("product_id", product);
                                     deleteProductsHelper.delete();
                                     if (product.getStatus().equals("D")) {
@@ -413,10 +411,10 @@ public class SyncImonggoModules extends BaseSyncModulesService implements Volley
                             // Save the taxes to the database
                         }
 
-                        newProducts.doOperation();
-                        updateProducts.doOperation();
-                        deleteProducts.doOperation();
-                        productTags.doOperation(); // Other product tags should be deleted!
+                        newProducts.doOperationBT(Product.class);
+                        updateProducts.doOperationBT(Product.class);
+                        deleteProducts.doOperationBT(Product.class);
+                        productTags.doOperation(ProductTag.class); // Other product tags should be deleted!
                     } break;
                     case INVENTORIES: {
 

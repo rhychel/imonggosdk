@@ -2,12 +2,18 @@ package net.nueca.concessioengine.activities.module;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.widget.SearchViewCompat;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.concessioengine.tools.AnimationTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -15,12 +21,19 @@ import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchTag;
+import net.nueca.imonggosdk.objects.Inventory;
+import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
+import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.StringUtilsEx;
 
 import java.sql.SQLException;
@@ -34,38 +47,87 @@ import java.util.List;
 public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     public static final String CONCESSIO_MODULE = "concessio_module";
-    protected ConcessioModule concessioModule = ConcessioModule.ORDERS;
+    public static final String FROM_CUSTOMERS_LIST = "from_customers_list";
+    public static final String FOR_CUSTOMER_DETAIL = "for_customer_detail";
+    public static final String RETURN_ITEMS = "return_items";
+    public static final String INIT_PRODUCT_ADAPTER_HELPER = "initialize_pahelper";
+    public static final String INIT_SELECTED_CUSTOMER = "initialize_selected_customer";
+
+    protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
+    protected boolean isFromCustomersList = false;
     protected boolean isMultiInput = false;
+    protected boolean clearTransactions = true;
+    protected boolean isReturnItems = false;
+    protected boolean initSelectedCustomer = true;
+    private ModuleSetting moduleSetting;
+    protected Customer customer;
+
+    protected int previousFragmentCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        concessioModule = ConcessioModule.values()[getIntent().getIntExtra(CONCESSIO_MODULE, ConcessioModule.ORDERS.ordinal())];
+        concessioModule = ConcessioModule.values()[getIntent().getIntExtra(CONCESSIO_MODULE, ConcessioModule.STOCK_REQUEST.ordinal())];
+        isFromCustomersList = getIntent().getBooleanExtra(FROM_CUSTOMERS_LIST, false);
+        if(getIntent().hasExtra(FOR_CUSTOMER_DETAIL))
+            customer = retrieveCustomer(getIntent().getIntExtra(FOR_CUSTOMER_DETAIL, 0));
+        if(getIntent().hasExtra(RETURN_ITEMS))
+            isReturnItems = getIntent().getBooleanExtra(RETURN_ITEMS, false);
+        clearTransactions = getIntent().getBooleanExtra(INIT_PRODUCT_ADAPTER_HELPER, false);
+        initSelectedCustomer = getIntent().getBooleanExtra(INIT_SELECTED_CUSTOMER, true);
     }
 
-    public List<String> getTransactionTypes() {
+    protected Customer retrieveCustomer(int customerId) {
+        try {
+            return getHelper().fetchIntId(Customer.class).queryBuilder().where().eq("id", customerId).queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    protected void onDestroy() {
+//        if(clearTransactions)
+//            ProductsAdapterHelper.clearSelectedProductItemList();
+        if(ProductsAdapterHelper.isDuplicating)
+            ProductsAdapterHelper.isDuplicating = false;
+        super.onDestroy();
+    }
+
+    protected ModuleSetting getModuleSetting() {
+        try {
+            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(concessioModule)).queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<ConcessioModule> getTransactionTypes() {
         return getTransactionTypes(true);
     }
     protected SearchViewEx mSearch;
 
-    protected void initializeSearchViewEx(SearchViewCompat.OnQueryTextListenerCompat queryTextListenerCompat) {
+    protected void initializeSearchViewEx(SearchView.OnQueryTextListener queryTextListenerCompat) {
         if(mSearch != null) {
             mSearch.setSearchViewExListener(new SearchViewEx.SearchViewExListener() {
                 @Override
                 public void whenBackPressed() {
-                    if(!mSearch.isIconified())
+                    if (!mSearch.isIconified())
                         mSearch.setIconified(true);
                 }
             });
             mSearch.setIconifiedByDefault(true);
-            SearchViewCompat.setOnQueryTextListener(mSearch, queryTextListenerCompat);
+            mSearch.setOnQueryTextListener(queryTextListenerCompat);
+//            SearchViewCompat.setOnQueryTextListener(mSearch, queryTextListenerCompat);
         }
     }
 
     @Override
     public void onBackPressed() {
         if(mSearch != null) {
-            if(!SearchViewCompat.isIconified(mSearch))
+            if(!mSearch.isIconified())
                 closeSearchField(mSearch);
             else
                 super.onBackPressed();
@@ -81,24 +143,41 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     }
 
     /**
-     *
+     * TODO REVISE According to the universal Concessio Settings
      * Get the transaction types the account can access.
      *
      * @param includeAll Include an 'All' filter.
      * @return List of transaction types
      */
-    public List<String> getTransactionTypes(boolean includeAll) {
-        List<String> transactionTypes = new ArrayList<>();
+    public List<ConcessioModule> getTransactionTypes(boolean includeAll) {
+        List<ConcessioModule> transactionTypes = new ArrayList<>();
         if(includeAll)
-            transactionTypes.add("All");
-        if(AccountSettings.hasOrder(this))
-            transactionTypes.add("Order");
-        if(AccountSettings.hasCount(this))
-            transactionTypes.add("Count");
-        if(AccountSettings.hasReceive(this))
-            transactionTypes.add("Receive");
-        if(AccountSettings.hasPullout(this))
-            transactionTypes.add("Pullout");
+            transactionTypes.add(ConcessioModule.ALL);
+
+        try {
+            List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
+                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST,
+                            ConcessioModule.RECEIVE_BRANCH, ConcessioModule.RECEIVE_BRANCH_PULLOUT, ConcessioModule.RELEASE_BRANCH,
+                            ConcessioModule.RECEIVE_ADJUSTMENT, ConcessioModule.RELEASE_ADJUSTMENT,
+                            ConcessioModule.RECEIVE_SUPPLIER, ConcessioModule.RELEASE_SUPPLIER,
+                            ConcessioModule.INVOICE)).query();
+
+            for(ModuleSetting moduleSetting : moduleSettings) {
+                if(moduleSetting.is_enabled())
+                    transactionTypes.add(moduleSetting.getModuleType().setLabel(moduleSetting.getLabel()));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+//        if(AccountSettings.hasOrder(this))
+//            transactionTypes.add("Order");
+//        if(AccountSettings.hasCount(this))
+//            transactionTypes.add("Count");
+//        if(AccountSettings.hasReceive(this))
+//            transactionTypes.add("Receive");
+//        if(AccountSettings.hasPullout(this))
+//            transactionTypes.add("Pullout");
         return transactionTypes;
     }
 
@@ -109,7 +188,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public List<Branch> getBranches() {
         List<Branch> assignedBranches = new ArrayList<>();
         try {
-            List<BranchUserAssoc> branchUserAssocs = getHelper().getBranchUserAssocs().queryBuilder().where().eq("user_id", getUser()).query();
+            List<BranchUserAssoc> branchUserAssocs = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
             for(BranchUserAssoc branchUser : branchUserAssocs) {
                 if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
                     assignedBranches.add(0, branchUser.getBranch());
@@ -130,7 +209,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public List<Branch> getBranchesByTag(String tag) {
         List<Branch> branches = new ArrayList<>();
         try {
-            List<BranchTag> branchTags = getHelper().getBranchTags().queryBuilder().where().in("branch_id", getBranches()).and().like("tag", "#"+tag).query();
+            List<BranchTag> branchTags = getHelper().fetchObjects(BranchTag.class).queryBuilder().where().in("branch_id", getBranches()).and().like("tag", "#" + tag).query();
             for(BranchTag branchTag : branchTags) {
                 branches.add(branchTag.getBranch());
             }
@@ -146,7 +225,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     public Branch getWarehouse() {
         try {
-            return getHelper().getBranches().queryBuilder().where().eq("site_type", "warehouse").queryForFirst();
+            return getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("site_type", "warehouse").queryForFirst();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -162,8 +241,9 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         List<String> categories = new ArrayList<>();
 
         try {
-            List<ProductTag> productTags = getHelper().getProductTags().queryBuilder().distinct().selectColumns("tag").orderByRaw("tag COLLATE NOCASE ASC").where().like("tag", "#%").query();
+            List<ProductTag> productTags = getHelper().fetchObjects(ProductTag.class).queryBuilder().distinct().selectColumns("tag").orderByRaw("tag COLLATE NOCASE ASC").where().like("tag", "#%").query();
             for(ProductTag productTag : productTags) {
+                Log.e("ProductTag", productTag.getTag());
                 if(productTag.getTag().matches("^#[\\w\\-\\'\\+ ]*")) {
                     String category = StringUtilsEx.ucwords(productTag.getTag().replace("#", ""));
                     categories.add(category);
@@ -175,6 +255,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         if(includeAll)
             categories.add(0, "All");
 
+        Log.e("categories", categories.size() + " size");
+
         return categories;
     }
 
@@ -183,8 +265,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * @param searchView
      */
     protected void closeSearchField(SearchViewEx searchView) {
-        SearchViewCompat.setQuery(searchView, "", false);
-        SearchViewCompat.setIconified(searchView, true);
+        searchView.setQuery("", false);
+        searchView.setIconified(true);
+//        SearchViewCompat.setQuery(searchView, "", false);
+//        SearchViewCompat.setIconified(searchView, true);
     }
 
     /**
@@ -202,7 +286,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             OrderLine orderLine = new OrderLine.Builder()
                     .line_no(value.getLine_no())
                     .product_id(selectedProductItem.getProduct().getId())
-                    .quantity(Double.valueOf(value.getQuantity()))
+                    .quantity(Double.valueOf(value.getActualQuantity()))
                     .build();
             if(value.isValidUnit()) {
                 orderLine.setUnit_id(value.getUnit().getId());
@@ -247,7 +331,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 DocumentLine.Builder builder = new DocumentLine.Builder()
                         .line_no(value.getLine_no())
                         .product_id(selectedProductItem.getProduct().getId())
-                        .quantity(Double.valueOf(value.getQuantity()));
+                        .quantity(Double.valueOf(value.getActualQuantity()));
                 if(value.getExtendedAttributes() != null) {
                     ExtendedAttributes extendedAttributes = value.getExtendedAttributes();
                     // if pcount
@@ -277,4 +361,118 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         }
         return pcount.build();
     }
+
+    /**
+     *
+     * @return the number of inventory objects updated
+     */
+    public int updateInventoryFromSelectedItemList(boolean shouldAdd) {
+        int updated = 0;
+        for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
+            if(selectedProductItem.getInventory() != null) {
+                Inventory updateInventory = selectedProductItem.getInventory();
+                updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
+                updateInventory.updateTo(getHelper());
+                updated++;
+            }
+            else {
+                Inventory updateInventory = new Inventory();
+                updateInventory.setProduct(selectedProductItem.getProduct());
+                updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
+                updateInventory.insertTo(getHelper());
+                Product product = selectedProductItem.getProduct();
+                product.setInventory(updateInventory);
+                product.updateTo(getHelper());
+                updated++;
+            }
+        }
+        return updated;
+    }
+
+    protected List<Product> processOfflineData(OfflineData offlineData) throws SQLException {
+        List<Product> productList = new ArrayList<>();
+        if(offlineData.getType() == OfflineData.ORDER) {
+            Order order = offlineData.getObjectFromData(Order.class);
+            List<OrderLine> orderLines = order.getOrder_lines();
+            for(OrderLine orderLine : orderLines) {
+                Product product = getHelper().fetchIntId(Product.class).queryForId(orderLine.getProduct_id());
+                if(productList.indexOf(product) == -1)
+                    productList.add(product);
+
+                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+                String quantity = "0";
+                Unit unit = null;
+                if(orderLine.getUnit_id() != null)
+                    unit = getHelper().fetchIntId(Unit.class).queryForId(orderLine.getUnit_id());
+                if(unit != null)
+                    quantity = orderLine.getUnit_quantity().toString();
+                else {
+                    unit = new Unit();
+                    unit.setId(-1);
+                    unit.setName(product.getBase_unit_name());
+                    quantity = String.valueOf(orderLine.getQuantity());
+                }
+                Values values = new Values(unit, quantity);
+                values.setLine_no(orderLine.getLine_no());
+                selectedProductItem.addValues(values);
+                ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+            }
+            return productList;
+        }
+        else if(offlineData.getType() == OfflineData.DOCUMENT) {
+            Document document = offlineData.getObjectFromData(Document.class);
+            List<DocumentLine> documentLines = document.getDocument_lines();
+            for(DocumentLine documentLine : documentLines) {
+                Product product = getHelper().fetchIntId(Product.class).queryForId(documentLine.getProduct_id());
+                if(productList.indexOf(product) == -1)
+                    productList.add(product);
+
+                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+                String quantity = "0";
+                Unit unit = null;
+                if(documentLine.getUnit_id() != null)
+                    unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
+                if(unit != null)
+                    quantity = documentLine.getUnit_quantity().toString();
+                else {
+                    unit = new Unit();
+                    unit.setId(-1);
+                    unit.setName(product.getBase_unit_name());
+                    quantity = String.valueOf(documentLine.getQuantity());
+                }
+                Values values = new Values(unit, quantity);
+                values.setLine_no(documentLine.getLine_no());
+                selectedProductItem.addValues(values);
+                ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+            }
+            Log.e("SelectedProductItems", ProductsAdapterHelper.getSelectedProductItems().size()+"");
+            return productList;
+        }
+        else if(offlineData.getType() == OfflineData.INVOICE) {
+
+        }
+
+        return productList;
+    }
+
+    /**
+     * Used for the back stack feature of fragments
+     * @return
+     */
+    protected boolean isBackPressed() {
+        boolean isBackPressed = getSupportFragmentManager().getBackStackEntryCount() < previousFragmentCount;
+        previousFragmentCount = getSupportFragmentManager().getBackStackEntryCount();
+        return isBackPressed;
+    }
+
+    protected void toggleNext(ViewGroup linearLayout, TextView tvItems) {
+        int size = 0;
+        if(isReturnItems)
+            size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+        else
+            size = ProductsAdapterHelper.getSelectedProductItems().size();
+        tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
+        AnimationTools.toggleShowHide(linearLayout, size == 0, 300);
+    }
+
 }

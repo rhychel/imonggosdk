@@ -4,9 +4,11 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
@@ -15,10 +17,10 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Session {
+public class Session extends DBTable {
 
-    @DatabaseField(generatedId=true)
-    private int id;
+    @DatabaseField(generatedId = true)
+    private int id = -1;
     @DatabaseField
     private String email = "";
     @DatabaseField
@@ -43,10 +45,13 @@ public class Session {
     private Server server;
     @DatabaseField
     private int current_branch_id;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "user")
     private User user;
+    @DatabaseField
+    private String user_id;
 
-    public Session() { }
+    public Session() {
+    }
 
     public int getId() {
         return id;
@@ -164,36 +169,70 @@ public class Session {
         this.current_branch_id = current_branch_id;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public String getApi_token() {
+        return api_token;
+    }
+
+    public void setApi_token(String api_token) {
+        this.api_token = api_token;
+    }
+
+    public String getAccount_id() {
+        return account_id;
+    }
+
+    public void setAccount_id(String account_id) {
+        this.account_id = account_id;
+    }
+
+    public String getAccount_url() {
+        return account_url;
+    }
+
+    public void setAccount_url(String account_url) {
+        this.account_url = account_url;
+    }
+
+    public String getApi_authentication() {
+        return api_authentication;
+    }
+
+    public void setApi_authentication(String api_authentication) {
+        this.api_authentication = api_authentication;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SESSIONS, DatabaseOperation.INSERT);
+            dbHelper.insert(Session.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SESSIONS, DatabaseOperation.DELETE);
+            dbHelper.delete(Session.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.SESSIONS, DatabaseOperation.UPDATE);
+            dbHelper.update(Session.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
     }
 }

@@ -6,9 +6,11 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +20,7 @@ import java.sql.SQLException;
 /**
  * Created by gama on 7/1/15.
  */
-public class InvoiceTaxRate extends BaseTable2 {
+public class InvoiceTaxRate extends BaseTable2 implements Extras.DoOperationsForExtras {
     @Expose
     @DatabaseField
     protected String tax_rate_id;
@@ -107,29 +109,64 @@ public class InvoiceTaxRate extends BaseTable2 {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
-            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.INSERT);
+            dbHelper.insert(InvoiceTaxRate.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.delete(InvoiceTaxRate.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        deleteExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.update(InvoiceTaxRate.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setInvoiceTaxRate(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.INVOICE_TAX_RATES, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
         }
     }
 }

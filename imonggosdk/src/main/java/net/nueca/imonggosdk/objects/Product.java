@@ -1,27 +1,41 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.salespromotion.Discount;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 5/12/15.
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Product extends BaseTable {
+public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
+    @Expose
     @DatabaseField
-    protected double cost = 0.0, retail_price = 0.0, wholesale_price = 0.0, wholesale_quantity = 0.0;
+    protected double cost = 0.0,
+            retail_price = 0.0,
+            wholesale_price = 0.0,
+            wholesale_quantity = 0.0; // special when branch_products is requested
+    @Expose
     @DatabaseField
     protected String quantity = "",
             remaining = "",
@@ -30,8 +44,10 @@ public class Product extends BaseTable {
             description = "",
             thumbnail_url = "",
             barcode_list = "";
+    @Expose
     @DatabaseField
     protected String status = "";
+    @Expose
     @DatabaseField
     protected boolean allow_decimal_quantities = false,
             enable_decimal_quantities = false,
@@ -39,6 +55,7 @@ public class Product extends BaseTable {
             disable_inventory = false,
             enable_open_price = false,
             tax_exempt = false;
+    @Expose
     @DatabaseField
     protected String base_unit_name = "";
 
@@ -50,6 +67,8 @@ public class Product extends BaseTable {
     protected transient boolean isSelected = false;
     @DatabaseField
     protected transient String unit = "";
+    @DatabaseField
+    private transient boolean isBaseUnitSellable = false;
 
     private transient String orig_quantity = "0";
     private transient String rcv_quantity = "";
@@ -60,6 +79,19 @@ public class Product extends BaseTable {
     private transient double unit_content_quantity = 0.0;
     private transient double unit_quantity = 0.0;
 
+
+    public Product() {}
+
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
+    }
+
+    @Override
+    public String toString() {
+        return toJSONString();
+    }
+
     @ForeignCollectionField
     private transient ForeignCollection<ProductTag> tags;
 
@@ -69,8 +101,21 @@ public class Product extends BaseTable {
     @ForeignCollectionField
     private transient ForeignCollection<DocumentLine> documentLines;
 
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "extras_id")
-    private Extras extras;
+    @ForeignCollectionField
+    private transient ForeignCollection<Discount> discounts;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<Price> prices;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchPrice> branchPrices;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchProduct> branchProducts;
+
+    @Expose
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
+    private Inventory inventory;
 
     public double getCost() {
         return cost;
@@ -332,42 +377,74 @@ public class Product extends BaseTable {
         this.documentLines = documentLines;
     }
 
+    public ForeignCollection<Discount> getDiscounts() {
+        return discounts;
+    }
+
+    public List<Discount> getDiscountsList() {
+        return new ArrayList<>(discounts);
+    }
+
+    public void setDiscounts(ForeignCollection<Discount> discounts) {
+        this.discounts = discounts;
+    }
+
     public void setUnits(ForeignCollection<Unit> units) {
         this.units = units;
     }
 
-    public Extras getExtras() {
-        return extras;
+    public Inventory getInventory() {
+        return inventory;
     }
 
-    public void setExtras(Extras extras) {
-        this.extras = extras;
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 
-    public void doOperationsForExtras(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        switch (databaseOperation) {
-            case INSERT: {
-                extras.setProduct(this);
-                extras.dbOperation(dbHelper, databaseOperation);
-            } break;
-            case UPDATE: {
-                extras.setProduct(this);
-                extras.dbOperation(dbHelper, databaseOperation);
-            } break;
-            case DELETE: {
-                try {
-                    Extras extraForeign = dbHelper.getProductExtras().queryBuilder().where().eq("product_id", this).queryForFirst();
-                    extraForeign.dbOperation(dbHelper, databaseOperation);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } break;
-        }
+    public String getInStock() {
+        if(inventory == null)
+            return "0";
+        return inventory.getInventory();
     }
 
-    @Override
-    public String toString() {
-        return String.valueOf(id);
+    public ForeignCollection<BranchPrice> getBranchPrices() {
+        return branchPrices;
+    }
+
+    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
+        this.branchPrices = branchPrices;
+    }
+
+    public ForeignCollection<Price> getPrices() {
+        return prices;
+    }
+
+    public void setPrices(ForeignCollection<Price> prices) {
+        this.prices = prices;
+    }
+
+    public ForeignCollection<BranchProduct> getBranchProducts() {
+        return branchProducts;
+    }
+
+    public void setBranchProducts(ForeignCollection<BranchProduct> branchProducts) {
+        this.branchProducts = branchProducts;
+    }
+
+    public boolean isBaseUnitSellable() {
+        return isBaseUnitSellable;
+    }
+
+    public void setIsBaseUnitSellable(boolean isBaseUnitSellable) {
+        this.isBaseUnitSellable = isBaseUnitSellable;
+    }
+
+    public Product(double cost, double retail_price, double wholesale_price, double wholesale_quantity, String quantity) {
+        this.cost = cost;
+        this.retail_price = retail_price;
+        this.wholesale_price = wholesale_price;
+        this.wholesale_quantity = wholesale_quantity;
+        this.quantity = quantity;
     }
 
     @Override
@@ -376,29 +453,54 @@ public class Product extends BaseTable {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
-            dbHelper.dbOperations(this, Table.PRODUCTS, DatabaseOperation.INSERT);
+            dbHelper.insert(Product.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.delete(Product.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        deleteExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            dbHelper.update(Product.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setProduct(this);
+            extras.setId(Product.class.getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.PRODUCTS, DatabaseOperation.DELETE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.PRODUCTS, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.updateTo(dbHelper);
     }
 }

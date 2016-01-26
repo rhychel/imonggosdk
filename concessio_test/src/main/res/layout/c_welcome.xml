@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:background="@color/primary">
+                android:background="?attr/colorPrimary">
 
     <TextView
         android:layout_width="wrap_content"
@@ -17,7 +17,6 @@
         android:text="Hello Nujian Denmark Meralpis!"
         android:id="@+id/tvAgentName"
         android:textSize="26sp"
-        android:textColor="@android:color/white"
         android:textIsSelectable="false"
         android:layout_above="@+id/tvChooseBranch"
         android:layout_alignRight="@+id/spBranch"
@@ -32,7 +31,6 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Choose your branch:"
-        android:textColor="@android:color/white"
         android:id="@+id/tvChooseBranch"
         android:layout_marginLeft="4dp"
         android:layout_above="@+id/spBranch"
@@ -67,7 +65,6 @@
             android:singleLine="false"
             android:textStyle="italic"
             android:layout_weight="1"
-            android:textColor="@drawable/textview_white"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="4dp"/>
 
@@ -79,14 +76,27 @@
             android:id="@+id/tvBegin"
             android:layout_gravity="center_vertical"
             android:textSize="30sp"
-            android:textColor="@android:color/white"
-            android:singleLine="false" />
+            android:singleLine="false"
+            android:layout_margin="5dp"/>
 
         <Button
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:id="@+id/btnBegin"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:drawableRight="@android:drawable/ic_media_play"
+            android:background="@android:color/transparent"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/ibtnBegin"
+            android:src="@drawable/ic_store"
+            android:scaleType="fitCenter"
+            android:tint="?attr/colorAccent"
+            android:background="#0000"
+            />
     </LinearLayout>
 
     <LinearLayout
@@ -103,10 +113,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Concessio"
+            android:text="@string/app_name"
             android:id="@+id/textView3"
             android:textSize="34sp"
-            android:textColor="@android:color/white"
             android:textIsSelectable="false"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"

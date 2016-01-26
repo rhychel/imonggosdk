@@ -9,15 +9,16 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
-import net.nueca.imonggosdk.objects.base.BaseTransaction;
-import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
-import net.nueca.imonggosdk.objects.base.BaseTransactionDB2;
+import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
 import net.nueca.imonggosdk.objects.base.BatchList;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * Created by gama on 7/1/15.
  */
-public class Invoice extends BaseTransactionDB2 {
+public class Invoice extends BaseTransactionTable2 {
     @Expose
     @DatabaseField
     protected String invoice_date;
@@ -64,6 +65,9 @@ public class Invoice extends BaseTransactionDB2 {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
     protected transient OfflineData offlineData;
 
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
+    protected transient Customer customer;
+
     public Invoice() {}
 
     public Invoice(Builder builder) {
@@ -77,6 +81,7 @@ public class Invoice extends BaseTransactionDB2 {
         invoice_lines = builder.invoice_lines;
         invoice_tax_rates = builder.invoice_tax_rates;
         payments = builder.payments;
+        customer = builder.customer;
     }
 
     public void setInvoice_date(String date) { invoice_date = date; }
@@ -161,6 +166,14 @@ public class Invoice extends BaseTransactionDB2 {
         this.offlineData = offlineData;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     public static Invoice fromJSONString(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         return fromJSONObject(jsonObject);
@@ -198,16 +211,22 @@ public class Invoice extends BaseTransactionDB2 {
         return super.toJSONObject();
     }
 
-    public static class Builder extends BaseTransaction.Builder<Builder> {
-        protected String invoice_date = "";
-        protected String status = "";
-        protected String email = "";
-        protected int user_id = 0;
+    public static class Builder extends BaseTransactionTable2.Builder<Builder> {
+        protected String invoice_date;
+        protected String status;
+        protected String email;
+        protected int user_id;
         protected boolean tax_inclusive = false;
-        protected String remark = "";
+        protected String remark;
         protected List<InvoiceLine> invoice_lines = new ArrayList<>();
         protected List<InvoicePayment> payments = new ArrayList<>();
         protected List<InvoiceTaxRate> invoice_tax_rates = new ArrayList<>();
+        protected Customer customer;
+
+        public Builder customer(Customer customer) {
+            this.customer = customer;
+            return this;
+        }
 
         public Builder invoice_date(String invoice_date) {
             this.invoice_date = invoice_date;
@@ -273,26 +292,21 @@ public class Invoice extends BaseTransactionDB2 {
     @Override
     public void refresh() {
         if(invoice_lines_fc != null && invoice_lines == null) {
-            for(InvoiceLine invoiceLine : invoice_lines_fc) {
-                addInvoiceLine(invoiceLine);
-            }
+            invoice_lines = new ArrayList<>(invoice_lines_fc);
         }
         if(payments_fc != null && payments == null) {
-            for(InvoicePayment invoicePayment : payments_fc) {
-                addPayment(invoicePayment);
-            }
+            payments = new ArrayList<>(payments_fc);
         }
         if(invoice_tax_rates_fc != null && invoice_tax_rates == null) {
-            for(InvoiceTaxRate invoiceTaxRate : invoice_tax_rates_fc) {
-                addInvoiceTaxRate(invoiceTaxRate);
-            }
+            invoice_tax_rates = new ArrayList<>(invoice_tax_rates_fc);
         }
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
-            dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.INSERT);
+            dbHelper.insert(Invoice.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -316,12 +330,14 @@ public class Invoice extends BaseTransactionDB2 {
                 payment.insertTo(dbHelper);
             }
         }
+
+        updateExtrasTo(dbHelper);
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.DELETE);
+            dbHelper.delete(Invoice.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -342,12 +358,14 @@ public class Invoice extends BaseTransactionDB2 {
                 payment.deleteTo(dbHelper);
             }
         }
+
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVOICES, DatabaseOperation.UPDATE);
+            dbHelper.update(Invoice.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -371,5 +389,37 @@ public class Invoice extends BaseTransactionDB2 {
                 payment.updateTo(dbHelper);
             }
         }
+
+        updateExtrasTo(dbHelper);
     }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setInvoice(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
+        }
+    }
+
 }

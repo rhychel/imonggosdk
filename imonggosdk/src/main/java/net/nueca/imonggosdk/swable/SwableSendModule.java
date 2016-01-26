@@ -5,14 +5,16 @@ import android.util.Log;
 import com.android.volley.RequestQueue;
 
 import net.nueca.imonggosdk.R;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -28,12 +30,12 @@ import java.util.List;
  * Created by gama on 10/1/15.
  */
 public class SwableSendModule {
-    private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper;
     private ImonggoSwable imonggoSwable;
     private RequestQueue requestQueue;
     private Session session;
 
-    public SwableSendModule(ImonggoSwable imonggoSwable, ImonggoDBHelper helper, Session session, RequestQueue
+    public SwableSendModule(ImonggoSwable imonggoSwable, ImonggoDBHelper2 helper, Session session, RequestQueue
             requestQueue) {
         this.imonggoSwable = imonggoSwable;
         this.dbHelper = helper;
@@ -42,8 +44,10 @@ public class SwableSendModule {
     }
 
     public void sendTransaction(Table table, final OfflineData offlineData) {
+        Log.e("SwableSendModule", "sendTransaction " + table.getStringName() + " " + offlineData.getType());
+        Log.e("SwableSendModule", "sendTransaction " + offlineData.getObjectFromData().toString());
         try {
-            Branch branch = dbHelper.getBranches().queryBuilder().where().eq("id", offlineData.getBranch_id())
+            Branch branch = dbHelper.fetchObjects(Branch.class).queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
             if(branch == null || branch.getStatus().equalsIgnoreCase("D")) {
                 Log.e("ImonggoSwable", "sending error : Branch '" + (branch == null ? "NULL" : branch.getName()) + "'," +
@@ -63,8 +67,10 @@ public class SwableSendModule {
                 return;
             }
 
+            //JSONObject data;
             JSONObject jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
                     offlineData.getData());
+            Log.e("SwableSendModule", "sendTransaction "+jsonObject.toString());
             //Log.e("JSON", jsonObject.toString());
 
             requestQueue.cancelAll(offlineData.getId());
@@ -213,8 +219,10 @@ public class SwableSendModule {
                             offlineData.setSynced(false);
                             offlineData.updateTo(dbHelper);
                         }
-                    }, session.getServer(), table, jsonObject, "?branch_id=" + offlineData.getBranch_id() + offlineData
-                            .getParameters()).setTag(offlineData.getId())
+                    }, session.getServer(), table, jsonObject, (offlineData.getType() != OfflineData.CUSTOMER?
+                            "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() :
+                            offlineData.getParametersAsFirstParameter() )
+                    ).setTag(offlineData.getId())
             );
         } catch (JSONException e) {
             e.printStackTrace();
@@ -439,9 +447,8 @@ public class SwableSendModule {
                         parent.setSynced(false);
                         parent.updateTo(dbHelper);
                     }
-                }, session.getServer(), table, jsonObject, "?branch_id=" + parent.getBranch_id() + parent
-                        .getParameters())
-                        .setTag(parent.getId()+ "-" +page)
+                }, session.getServer(), table, jsonObject, "?branch_id="+ parent.getBranch_id() + parent.getParameters()
+                ).setTag(parent.getId()+ "-" +page)
         );
     }
 

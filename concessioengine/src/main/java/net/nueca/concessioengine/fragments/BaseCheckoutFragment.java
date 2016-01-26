@@ -3,6 +3,7 @@ package net.nueca.concessioengine.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
@@ -10,6 +11,7 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 
 import java.util.List;
@@ -29,6 +31,7 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
     public BaseCheckoutFragment() {
         if(getArguments() != null && getArguments().containsKey(INVOICE_ARGUMENT_KEY)) {
             invoice = (Invoice) getArguments().get(INVOICE_ARGUMENT_KEY);
+            computation.clearAll();
             computation.addAllInvoiceLines(invoice.getInvoiceLines());
         }
     }
@@ -42,7 +45,12 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
 
     public void setInvoice(Invoice invoice) {
         this.invoice = invoice;
+        computation.clearAll();
         computation.addAllInvoiceLines(invoice.getInvoiceLines());
+    }
+
+    public List<InvoiceLine> getInvoiceLines() {
+        return computation.getInvoiceLines();
     }
 
     public List<InvoicePayment> getPayments() {

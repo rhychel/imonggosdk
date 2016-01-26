@@ -1,12 +1,23 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.base.Extras;
 
 import java.sql.SQLException;
 
@@ -15,16 +26,33 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Unit extends BaseTable {
+public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
 
+    @Expose
     @DatabaseField
     private String product_stock_no, status, name, barcode;
+    @Expose
     @DatabaseField
     private double cost, quantity, retail_price;
+
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchPrice> branchPrices;
+
+    @ForeignCollectionField
+    private transient ForeignCollection<BranchUnit> branchUnits;
+
+    @ForeignCollectionField // need?
+    private transient ForeignCollection<Price> prices;
+
+    @Expose
     @DatabaseField
     private boolean is_default_ordering_unit = false;
+    @Expose
+    @DatabaseField
+    private String discount_text;
 
     public Unit() { }
 
@@ -104,9 +132,46 @@ public class Unit extends BaseTable {
         this.is_default_ordering_unit = is_default_ordering_unit;
     }
 
+    public String getDiscount_text() {
+        return discount_text;
+    }
+
+    public void setDiscount_text(String discount_text) {
+        this.discount_text = discount_text;
+    }
+
+    public ForeignCollection<Price> getPrices() {
+        return prices;
+    }
+
+    public void setPrices(ForeignCollection<Price> prices) {
+        this.prices = prices;
+    }
+
+    public ForeignCollection<BranchPrice> getBranchPrices() {
+        return branchPrices;
+    }
+
+    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
+        this.branchPrices = branchPrices;
+    }
+
+    public ForeignCollection<BranchUnit> getBranchUnits() {
+        return branchUnits;
+    }
+
+    public void setBranchUnits(ForeignCollection<BranchUnit> branchUnits) {
+        this.branchUnits = branchUnits;
+    }
+
     @Override
     public boolean equals(Object o) {
-        return id == ((Unit)o).getId();
+        return o instanceof Unit && id == ((Unit)o).getId();
+    }
+
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
     }
 
     @Override
@@ -115,29 +180,54 @@ public class Unit extends BaseTable {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
+        insertExtrasTo(dbHelper);
         try {
-            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.INSERT);
+            dbHelper.insert(Unit.class, this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
+        try {
+            deleteExtrasTo(dbHelper);
+            dbHelper.delete(Unit.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.DELETE);
+            updateExtrasTo(dbHelper);
+            dbHelper.update(Unit.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
-        try {
-            dbHelper.dbOperations(this, Table.UNITS, DatabaseOperation.UPDATE);
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setUnit(this);
+            extras.setId(Unit.this.getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
         }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.updateTo(dbHelper);
     }
 }

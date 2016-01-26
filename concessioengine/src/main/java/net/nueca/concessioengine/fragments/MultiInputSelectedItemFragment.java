@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -31,6 +32,7 @@ import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 
 import java.sql.SQLException;
@@ -80,7 +82,7 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
         ctlActionBar = (CollapsingToolbarLayout) view.findViewById(R.id.ctlActionBar);
 
         try {
-            product = getHelper().getProducts().queryBuilder().where().eq("id", productId).queryForFirst();
+            product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", productId).queryForFirst();
             hasBatchNo = product.getExtras()!= null && product.getExtras().isBatch_maintained();
 
             ctlActionBar.setTitle(product.getName());
@@ -142,13 +144,14 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
     private void showQuantityDialog(final SelectedProductItem selectedProductItem, final int valuePosition) {
         try {
             SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
+            quantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             quantityDialog.setSelectedProductItem(selectedProductItem);
             if(hasUnits) {
                 quantityDialog.setHasUnits(true);
-                quantityDialog.setUnitList(getHelper().getUnits().queryBuilder().where().eq("product_id", product).query(), true);
+                quantityDialog.setUnitList(getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query(), true);
             }
             if(hasBrand) {
-                List<ProductTag> tags = getHelper().getProductTags().queryBuilder().where().eq("product_id", product).query();
+                List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();
                 List<String> brands = new ArrayList<>();
 
                 for(ProductTag productTag : tags)

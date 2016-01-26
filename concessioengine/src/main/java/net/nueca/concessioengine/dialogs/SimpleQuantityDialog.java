@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,7 +17,9 @@ import android.widget.Spinner;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.widgets.Numpad;
 
@@ -33,8 +38,6 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
     private Numpad npInput;
     private LinearLayout llBrand, llDeliveryDate;
 
-    private ArrayAdapter<Unit> unitsAdapter;
-    private ArrayAdapter<String> brandsAdapter;
 
     protected SimpleQuantityDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
@@ -63,6 +66,8 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
         npInput = (Numpad) super.findViewById(R.id.npInput);
         btnSave = (Button) super.findViewById(R.id.btnSave);
         btnCancel = (Button) super.findViewById(R.id.btnCancel);
+
+        etQuantity.setSelectAllOnFocus(true);
 
         unitsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, unitList);
 
@@ -151,14 +156,34 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                     offsetSpinnerBelowv21(spBrands);
                 if (spUnits.getVisibility() == View.VISIBLE)
                     offsetSpinnerBelowv21(spUnits);
+
+
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
             }
         });
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        View focused = getCurrentFocus();
+        if(focused == null) {
+            focused = etQuantity;
+            focused.requestFocus();
+        }
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(focused.getWindowToken(), 0);
     }
 
     private View.OnClickListener onSaveClicked = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             String quantity = etQuantity.getText().toString().replace(",", "");
+
+            if(quantity.length() == 0)
+                quantity = "0";
+
             if (quantity.equals("0") && !isMultiValue)
                 selectedProductItem.removeAll(); // TODO handle this
             else if (quantity.equals("0") && isMultiValue) {
@@ -168,11 +193,25 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                 return;
             } else {
                 Unit unit = hasUnits ? ((Unit) spUnits.getSelectedItem()) : null;
-                Values values = new Values(unit, quantity);
-                if (valuePosition > -1) {
+                Values values;
+                if (valuePosition > -1)
                     values = selectedProductItem.getValues().get(valuePosition);
+                else
+                    values = new Values();
+                //Log.e("SIMPLE_QUANTITY_DIALOG", unit != null? unit.getName() : "null");
+
+                if(getHelper() == null)
                     values.setValue(quantity, unit);
+                else {
+                    Price price = PriceTools.identifyPrice(getHelper(), selectedProductItem.getProduct(),
+                            salesBranch, salesCustomerGroup, salesCustomer, unit);
+                    if(price != null)
+                        values.setValue(quantity, price);
+                    else
+                        values.setValue(quantity, unit, selectedProductItem.getRetail_price());
                 }
+
+                    selectedProductItem.getValues().set(valuePosition, values);
                 if (hasBrand || hasDeliveryDate) {
                     ExtendedAttributes extendedAttributes = new ExtendedAttributes();
                     if (hasBrand)
@@ -193,7 +232,7 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
             }
 
             if (quantityDialogListener != null)
-                quantityDialogListener.onSave(selectedProductItem);
+                quantityDialogListener.onSave(selectedProductItem, listPosition);
             dismiss();
         }
     };

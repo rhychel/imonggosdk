@@ -5,11 +5,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import net.nueca.concessioengine.activities.ModuleActivity;
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.fragments.BaseTransactionsFragment;
 import net.nueca.concessioengine.fragments.SimpleTransactionDetailsFragment;
 import net.nueca.concessioengine.fragments.SimpleTransactionsFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
 
@@ -59,10 +60,9 @@ public class C_History extends ModuleActivity implements SetupActionBar, BaseTra
         unbindService(swableConnection);
     }
 
+
     @Override
-    public void showTransactionDetails(int transactionId) {
-        Intent intent = new Intent(this, C_HistoryDetails.class);
-        intent.putExtra(SimpleTransactionDetailsFragment.TRANSACTION_ID, transactionId);
-        startActivity(intent);
+    public void showTransactionDetails(OfflineData offlineData) {
+
     }
 }

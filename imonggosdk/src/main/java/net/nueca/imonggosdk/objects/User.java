@@ -1,12 +1,14 @@
 package net.nueca.imonggosdk.objects;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 
 import java.sql.SQLException;
 
@@ -15,7 +17,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class User extends BaseTable {
+public class User extends BaseTable implements Extras.DoOperationsForExtras {
     @DatabaseField
     private int home_branch_id = 0;
     @DatabaseField
@@ -24,6 +26,10 @@ public class User extends BaseTable {
     private transient int sequenceNumber = 1;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "session_id")
     private transient Session session = null;
+    @ForeignCollectionField
+    private ForeignCollection<Extras> foreignCustomersExtras;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "route_plan_id")
+    private RoutePlan routePlan;
 
     private transient boolean isSelected = false;// For what?
 
@@ -93,17 +99,26 @@ public class User extends BaseTable {
         this.session = session;
     }
 
+    public ForeignCollection<Extras> getForeignCustomersExtras() {
+        return foreignCustomersExtras;
+    }
+
+    public void setForeignCustomersExtras(ForeignCollection<Extras> foreignCustomersExtras) {
+        this.foreignCustomersExtras = foreignCustomersExtras;
+    }
+
+    public RoutePlan getRoutePlan() {
+        return routePlan;
+    }
+
+    public void setRoutePlan(RoutePlan routePlan) {
+        this.routePlan = routePlan;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "home_branch_id=" + home_branch_id +
                 ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", role_code='" + role_code + '\'' +
-                ", status='" + status + '\'' +
-                ", sequenceNumber=" + sequenceNumber +
-                ", session=" + session +
-                ", isSelected=" + isSelected +
                 '}';
     }
 
@@ -113,30 +128,49 @@ public class User extends BaseTable {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.USERS, DatabaseOperation.INSERT);
+            insertExtrasTo(dbHelper);
+            dbHelper.insert(User.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.USERS, DatabaseOperation.DELETE);
+            updateExtrasTo(dbHelper);
+            dbHelper.delete(User.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.USERS, DatabaseOperation.UPDATE);
+            updateExtrasTo(dbHelper);
+            dbHelper.update(User.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.setUser(this);
+        extras.setId(User.class.getName().toUpperCase(), id);
+        extras.insertTo(dbHelper);
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.updateTo(dbHelper);
+    }
 }

@@ -7,7 +7,11 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.SettingsName;
+import net.nueca.imonggosdk.objects.Settings;
+
+import java.sql.SQLException;
 
 /**
  * Created by Jn on 6/19/2015.
@@ -40,7 +44,7 @@ public class SettingTools {
     /**
      * Add setting name to shared preferences
      *
-     * @param context      current context
+     * @param context      current mContext
      * @param settingsName name of the Settings that will be updated
      * @param bool         for boolean input
      * @param value        for string input
@@ -81,7 +85,7 @@ public class SettingTools {
     /**
      * Returns SyncFinished Setting
      *
-     * @param context current context
+     * @param context current mContext
      * @return true if syncing modules is finished, false otherwise
      */
     public static boolean isSyncFinished(Context context) {
@@ -100,7 +104,7 @@ public class SettingTools {
     /**
      * Returns AutoUpdate Settings
      *
-     * @param context current context
+     * @param context current mContext
      * @return true if AutoUpdate is on, false otherwise.
      */
     public static boolean isAutoUpdate(Context context) {
@@ -118,7 +122,7 @@ public class SettingTools {
     /**
      * Returns Default Branch
      *
-     * @param context current context
+     * @param context current mContext
      * @return Branch name, "" if none
      */
     public static String defaultBranch(Context context) {
@@ -148,7 +152,7 @@ public class SettingTools {
     /**
      * Returns Current Selected Server
      *
-     * @param context current context
+     * @param context current mContext
      * @return current mServer, "" if none
      */
     public static String currentServer(Context context) {
@@ -161,5 +165,10 @@ public class SettingTools {
            // Log.e("Key[currentServer]", "Not Found");
             return "";
         }
+    }
+
+    public static String getSettingsValue(ImonggoDBHelper2 helper, SettingsName settingsName) throws SQLException {
+        return helper.fetchObjects(Settings.class).queryBuilder().where().eq(Settings.SETTINGS_NAME_FIELD_NAME, settingsName.getValue())
+                .queryForFirst().getValue();
     }
 }

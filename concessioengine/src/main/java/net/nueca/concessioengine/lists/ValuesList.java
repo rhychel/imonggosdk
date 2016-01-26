@@ -26,7 +26,24 @@ public class ValuesList extends ArrayList<Values> {
         String quantity = "0";
         BigDecimal totalQuantity = new BigDecimal(0);
         for(Values values : this) {
-            totalQuantity = totalQuantity.add(new BigDecimal(values.getQuantity().replaceAll(",", "")));
+            String qty = values.getQuantity().replaceAll(",", "");
+            if(qty.length() > 0)
+                totalQuantity = totalQuantity.add(new BigDecimal(qty));
+        }
+
+        quantity = totalQuantity.toString();
+        return quantity;
+    }
+
+    /**
+     * Used to get the actual quantity from either computed from the unit or from base unit(1).
+     * @return
+     */
+    public String getActualQuantity() {
+        String quantity = "0";
+        BigDecimal totalQuantity = new BigDecimal(0);
+        for(Values values : this) {
+            totalQuantity = totalQuantity.add(new BigDecimal(values.getActualQuantity().replaceAll(",", "")));
         }
 
         quantity = totalQuantity.toString();

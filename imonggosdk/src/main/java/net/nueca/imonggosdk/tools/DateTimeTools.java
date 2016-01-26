@@ -133,7 +133,7 @@ public class DateTimeTools {
      */
     public static String getCurrentDateTimeWithFormat(String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-        Date currentDateTime= new Date();
+        Date currentDateTime = new Date();
         String currentDate = dateFormat.format(currentDateTime);
         //Log.e(TAG, currentDate);
         return currentDate;
@@ -241,8 +241,19 @@ public class DateTimeTools {
         return currentDate;
     }
 
+    public static Date getCurrentDateTimeUTC0() {
+        Calendar now = Calendar.getInstance();
+        now.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return now.getTime();
+    }
+
     public static String convertFromTo(String datetime, TimeZone from, TimeZone to) {
+        return convertFromTo(datetime, null, from, to);
+    }
+
+    public static String convertFromTo(String datetime, String format, TimeZone from, TimeZone to) {
         String convertedTime = datetime;
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         simpleDateFormat.setTimeZone(from);
         try {
@@ -250,6 +261,12 @@ public class DateTimeTools {
             simpleDateFormat.setTimeZone(to);
 
             convertedTime = simpleDateFormat.format(dateCreated);
+            if(format != null) {
+                SimpleDateFormat forDisplaying = new SimpleDateFormat(format);
+                forDisplaying.setTimeZone(to);
+
+                convertedTime = forDisplaying.format(dateCreated);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -268,5 +285,10 @@ public class DateTimeTools {
         }
 
         return "";
+    }
+
+    public static Date stringToDate(String dateTime) throws ParseException {
+        SimpleDateFormat convertStringToDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
+        return convertStringToDate.parse(dateTime);
     }
 }

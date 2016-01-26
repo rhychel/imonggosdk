@@ -9,13 +9,15 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.base.BaseTransaction;
-import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
+import net.nueca.imonggosdk.objects.base.BaseTransactionTable;
+import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.swable.SwableTools;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +31,7 @@ import java.util.List;
 /**
  * Created by gama on 7/20/15.
  */
-public class Document extends BaseTransactionDB {
+public class Document extends BaseTransactionTable {
     public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 5;
 
     @Expose
@@ -79,9 +81,14 @@ public class Document extends BaseTransactionDB {
     @DatabaseField
     protected transient boolean isOldPaging = false;
 
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
+    protected transient Customer customer;
+
+    // Added by Rhy
+
     public Document() {
-        super(null);
-        remark = "page=1/1";
+        //super(null);
+        //remark = "page=1/1";
     }
 
     public Document(Builder builder) {
@@ -107,6 +114,7 @@ public class Document extends BaseTransactionDB {
         utc_created_at = builder.utc_created_at;
         utc_updated_at = builder.utc_updated_at;
         utc_document_date = builder.utc_document_date;
+        customer = builder.customer;
 
         parent_document_id = builder.parent_document_id;
 
@@ -217,6 +225,14 @@ public class Document extends BaseTransactionDB {
         return parent_document_id;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     public void setParent_document_id(Integer parent_document_id) {
         this.parent_document_id = parent_document_id;
     }
@@ -274,7 +290,7 @@ public class Document extends BaseTransactionDB {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -286,9 +302,10 @@ public class Document extends BaseTransactionDB {
             }
             return;
         }
+        insertExtrasTo(dbHelper);
 
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.INSERT);
+            dbHelper.insert(Document.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -298,7 +315,7 @@ public class Document extends BaseTransactionDB {
             for (DocumentLine documentLine : document_lines) {
                 documentLine.setDocument(this);
                 try {
-                    Product product = dbHelper.getProducts().queryBuilder().where().eq("id", documentLine.getProduct_id())
+                    Product product = dbHelper.fetchObjects(Product.class).queryBuilder().where().eq("id", documentLine.getProduct_id())
                             .queryForFirst();
                     if (product != null)
                         documentLine.setProduct(product);
@@ -308,10 +325,14 @@ public class Document extends BaseTransactionDB {
                 documentLine.insertTo(dbHelper);
             }
         }
+
+        updateExtrasTo(dbHelper);
+
+        Log.e("DOCUMENT", "insert " + id + " ~ " + (offlineData != null? offlineData.getId() : "null") );
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -325,7 +346,7 @@ public class Document extends BaseTransactionDB {
         }
 
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.DELETE);
+            dbHelper.delete(Document.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -336,10 +357,12 @@ public class Document extends BaseTransactionDB {
         for(DocumentLine documentLine : document_lines) {
             documentLine.deleteTo(dbHelper);
         }
+
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         /** support for old paging **/
         if(shouldPageRequest() && isOldPaging) {
             try {
@@ -353,13 +376,46 @@ public class Document extends BaseTransactionDB {
         }
 
         try {
-            dbHelper.dbOperations(this, Table.DOCUMENTS, DatabaseOperation.UPDATE);
+            dbHelper.update(Document.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        updateExtrasTo(dbHelper);
+
+        Log.e("DOCUMENT", "update " + id + " ~ " + offlineData.getId());
     }
 
-    public static class Builder extends BaseTransaction.Builder<Builder> {
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setDocument(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() +"_"+ id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
+            }
+        }
+    }
+
+    public static class Builder extends BaseTransactionTable.Builder<Builder> {
         protected String remark;
         protected String document_type_code;
         protected List<DocumentLine> document_lines;
@@ -374,6 +430,12 @@ public class Document extends BaseTransactionDB {
         protected String utc_updated_at;
         protected String utc_document_date;
         protected Integer parent_document_id;
+        protected Customer customer;
+
+        public Builder customer(Customer customer) {
+            this.customer = customer;
+            return this;
+        }
 
         public Builder parent_document_id(Integer parent_document_id) {
             this.parent_document_id = parent_document_id;
@@ -512,9 +574,7 @@ public class Document extends BaseTransactionDB {
     @Override
     public void refresh() {
         if(document_lines_fc != null && document_lines == null) {
-            for(DocumentLine documentLine : document_lines_fc) {
-                addDocumentLine(documentLine);
-            }
+            document_lines = new ArrayList<>(document_lines_fc);
         }
     }
 

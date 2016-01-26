@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="PopupMenu.Concessio" parent="@android:style/Widget.PopupMenu">
+        <!--<item name="android:background">@android:color/white</item>-->
+        <item name="android:textColor">@color/primary_textL</item>
+    </style>
+
+    <style name="LoginTheme.Button" parent="Widget.AppCompat.Button">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@color/primary</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:height">36dp</item>
+        <item name="android:textSize">18dp</item>
+    </style>
+
+    <!-- PRODUCTS LIST STYLES -->
+    <style name="TextView.ProductItem.Name" parent="TextAppearance.AppCompat"></style>
+    <style name="TextView.ProductItem.Quantity" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:displayOptions">homeAsUp</item>
+    </style>
+
+    <!-- Floating Action Button -->
+    <style name="FloatingActionButton.Margin" parent="Widget.Design.FloatingActionButton">
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+    </style>
+    <style name="ProgressHUD" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+
+</resources>

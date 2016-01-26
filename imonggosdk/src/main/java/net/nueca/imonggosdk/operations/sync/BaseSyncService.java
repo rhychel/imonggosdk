@@ -10,14 +10,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import net.nueca.imonggosdk.enums.DailySalesEnums;
+import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
-import net.nueca.imonggosdk.objects.Customer;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
+import net.nueca.imonggosdk.objects.invoice.Discount;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
+import net.nueca.imonggosdk.objects.TaxRate;
+import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
@@ -28,14 +34,24 @@ import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.customer.CustomerCategory;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
+import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -48,29 +64,35 @@ public abstract class BaseSyncService extends ImonggoService {
     public static final String PARAMS_INITIAL_SYNC = "initial_sync";
     public static final String PARAMS_SERVER = "mServer";
     public static final String TAG = "BaseSyncService";
-    protected IBinder mLocalBinder = new LocalBinder();
-    protected SyncModulesListener mSyncModulesListener = null;
-    protected VolleyRequestListener mVolleyRequestListener = null;
-    protected Server mServer;
+    protected static int max_size_per_page = 50;
+    protected boolean syncAllModules;
+    protected boolean initialSync;
     protected int page = 1;
     protected int count = 0;
     protected int numberOfPages = 1;
-    protected LastUpdatedAt lastUpdatedAt;
-    protected LastUpdatedAt newLastUpdatedAt;
-    protected String from = "", to = "";
-    protected Gson gson = new GsonBuilder().serializeNulls().create();
-    protected Table mCurrentTableSyncing;
-    protected List<BranchUserAssoc> branchUserAssoc;
-    protected Table[] mModulesToSync;
-    protected int[] branches;
     protected int branchIndex = 0;
+    protected int mCustomIndex = 0;
     protected int mModulesIndex = 0;
-    protected boolean syncAllModules;
-    protected boolean initialSync;
+    protected int responseCode = 200;
+    protected int[] branches;
+    protected Table[] mModulesToSync;
+    protected Table mCurrentTableSyncing;
+    protected Server mServer;
+    protected List<BranchUserAssoc> branchUserAssoc;
+    protected List<Integer> listOfPricelistIds;
+    protected List<Object> listPriceListStorage;
+    protected List<? extends BaseTable> listOfIds;
+    protected String from = "", to = "";
     protected String document_type;
     protected String intransit_status;
-    protected int responseCode = 200;
-    private int NOTIFICATION_ID = 200;
+    protected LastUpdatedAt lastUpdatedAt;
+    protected LastUpdatedAt newLastUpdatedAt;
+    protected IBinder mLocalBinder = new LocalBinder();
+    protected VolleyRequestListener mVolleyRequestListener = null;
+    protected SyncModulesListener mSyncModulesListener = null;
+    protected RequestType mCurrentRequestType;
+
+    protected Gson gson = new GsonBuilder().serializeNulls().create();
 
     /**
      * Empty Constructor
@@ -163,75 +185,121 @@ public abstract class BaseSyncService extends ImonggoService {
      * @throws SQLException
      */
     public boolean isExisting(Object o, int id, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
+
         switch (table) {
             case USERS: {
                 User user = (User) o;
-                return getHelper().getUsers().queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
             }
             case PRODUCTS: {
                 Product product = (Product) o;
-                return getHelper().getProducts().queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product.getId()).queryForFirst() != null;
             }
             case UNITS: {
                 Unit unit = (Unit) o;
-                return getHelper().getUnits().queryBuilder().where().eq("id", unit.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit.getId()).queryForFirst() != null;
             }
             case BRANCHES: {
                 Branch branch = (Branch) o;
-                return getHelper().getBranches().queryBuilder().where().eq("id", branch.getId()).queryForFirst() != null;
-            }
-            case BRANCH_PRICES: {
-                BranchPrice branchPrice = (BranchPrice) o;
-                return getHelper().getBranchPrices().queryBuilder().where().eq("id", branchPrice.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", branch.getId()).queryForFirst() != null;
             }
             case BRANCH_TAGS: {
                 BranchTag branchTag = (BranchTag) o;
-                return getHelper().getBranchTags().queryBuilder().where().eq("id", branchTag.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(BranchTag.class).queryBuilder().where().eq("id", branchTag.getId()).queryForFirst() != null;
             }
             case CUSTOMERS: {
                 Customer customer = (Customer) o;
-                return getHelper().getCustomers().queryBuilder().where().eq("id", customer.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", customer.getId()).queryForFirst() != null;
             }
             case INVENTORIES: {
                 Inventory inventory = (Inventory) o;
-                return getHelper().getInventories().queryBuilder().where().eq("id", inventory.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Inventory.class).queryBuilder().where().eq("id", inventory.getId()).queryForFirst() != null;
             }
             case TAX_SETTINGS: {
                 TaxSetting taxSetting = (TaxSetting) o;
-                return getHelper().getTaxSettings().queryBuilder().where().eq("id", taxSetting.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(TaxSetting.class).queryBuilder().where().eq("id", taxSetting.getId()).queryForFirst() != null;
             }
             case TAX_RATES: {
-                return getHelper().getTaxRates().queryBuilder().where().eq("tax_rate_id", id).queryForFirst() != null;
+                return getHelper().fetchObjects(TaxRate.class).queryBuilder().where().eq("tax_rate_id", id).queryForFirst() != null;
             }
             case PRODUCT_TAX_RATES: {
                 ProductTaxRateAssoc productTaxRateAssoc = (ProductTaxRateAssoc) o;
-                return getHelper().getProductTaxRateAssocs().queryBuilder().where().eq("id", productTaxRateAssoc.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(ProductTaxRateAssoc.class).queryBuilder().where().eq("id", productTaxRateAssoc.getId()).queryForFirst() != null;
             }
             case DOCUMENT_PURPOSES: {
                 DocumentPurpose documentPurpose = (DocumentPurpose) o;
-                return getHelper().getDocumentPurposes().queryBuilder().where().eq("id", documentPurpose.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(DocumentPurpose.class).queryBuilder().where().eq("id", documentPurpose.getId()).queryForFirst() != null;
             }
             case DOCUMENT_TYPES: {
                 DocumentType documentType = (DocumentType) o;
-                return getHelper().getDocumentTypes().queryBuilder().where().eq("id", documentType.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(DocumentType.class).queryBuilder().where().eq("id", documentType.getId()).queryForFirst() != null;
             }
             case PRODUCT_TAGS: {
                 ProductTag productTag = (ProductTag) o;
-                return getHelper().getProductTags().queryBuilder().where().eq("id", productTag.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("id", productTag.getId()).queryForFirst() != null;
             }
             case DOCUMENTS: {
                 Document document = (Document) o;
-                return getHelper().getDocuments().queryBuilder().where().eq("id", document.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Document.class).queryBuilder().where().eq("id", document.getId()).queryForFirst() != null;
             }
+            case INVOICES: {
+                Invoice invoice = (Invoice) o;
+                return getHelper().fetchObjects(Invoice.class).queryBuilder().where().eq("id", invoice.getId()).queryForFirst() != null;
+            }
+            case INVOICE_PURPOSES: {
+                InvoicePurpose invoicePurpose = (InvoicePurpose) o;
+                return getHelper().fetchObjects(InvoicePurpose.class).queryBuilder().where().eq("id", invoicePurpose.getId()).queryForFirst() != null;
+            }
+            case PRICE_LISTS: {
+                PriceList priceList = (PriceList) o;
+                return getHelper().fetchObjects(PriceList.class).queryBuilder().where().eq("id", priceList.getId()).queryForFirst() != null;
+            }
+            case CUSTOMER_GROUPS: {
+                CustomerGroup customerGroup = (CustomerGroup) o;
+                return getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroup.getId()).queryForFirst() != null;
+            }
+            case CUSTOMER_CATEGORIES: {
+                CustomerCategory customerCategory = (CustomerCategory) o;
+                return getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customerCategory.getId()).queryForFirst() != null;
+            }
+            case PAYMENT_TERMS: {
+                PaymentTerms paymentTerms = (PaymentTerms) o;
+                return getHelper().fetchObjects(PaymentTerms.class).queryBuilder().where().eq("id", paymentTerms.getId()).queryForFirst() != null;
+            }
+            case PAYMENT_TYPES: {
+                PaymentType paymentType = (PaymentType) o;
+                return getHelper().fetchObjects(PaymentType.class).queryBuilder().where().eq("id", paymentType.getId()).queryForFirst() != null;
+            }
+            case ROUTE_PLANS: {
+                RoutePlan routePlan = (RoutePlan) o;
+                return getHelper().fetchObjects(RoutePlan.class).queryBuilder().where().eq("id", routePlan.getId()).queryForFirst() != null;
+            }
+            case ROUTE_PLANS_DETAILS: {
+                RoutePlanDetail routePlanDetail = (RoutePlanDetail) o;
+                return getHelper().fetchObjects(RoutePlanDetail.class).queryBuilder().where().eq("id", routePlanDetail.getId()).queryForFirst() != null;
+            }
+            case BRANCH_PRODUCTS: {
+                BranchProduct branchProduct = (BranchProduct) o;
+                return getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("product_id", branchProduct.getProduct()).and().eq("branch_id", branchProduct.getBranch()).queryForFirst() != null;
+            }
+/*            case BRANCH_UNITS: {
+                BranchUnit branchUnit = (BranchUnit) o;
+                return getHelper().fetchObjects(BranchUnit.class).queryBuilder().where().eq("unit_id", branchUnit.getUnit()).and().eq("branch_id", branchUnit.getBranch()).queryForFirst() != null;
+            }*/
+            case SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS: {
+                Discount discount = (Discount) o;
+                return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("id", discount.getId()) != null;
+            }
+            case PRICE_LISTS_DETAILS:
+                Price price = (Price) o;
+                return getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst() != null;
             case DAILY_SALES: {
-
                 DailySales dailySales = (DailySales) o;
-
                 if (dailySalesEnums == DailySalesEnums.DATE_OF_DAILY_SALES) {
-                    return getHelper().getDailySales().queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst() != null;
+                    return getHelper().fetchObjects(DailySales.class).queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst() != null;
                 } else if (dailySalesEnums == DailySalesEnums.DATE_REQUESTED) {
 
-                    DailySales dailySalesDB = getHelper().getDailySales().queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst();
+                    DailySales dailySalesDB = getHelper().fetchObjects(DailySales.class).queryBuilder().where().eq("date_of_sales", dailySales.getDate_of_sales()).queryForFirst();
 
                     if (dailySalesDB != null) {
                         Log.e(TAG, "daily sales db: " + dailySalesDB.toString());
@@ -308,9 +376,57 @@ public abstract class BaseSyncService extends ImonggoService {
         }
     }
 
+    public Table getCurrentTableSyncing() {
+        return mCurrentTableSyncing;
+    }
+
+
+    /**
+     * removes modules from array for Re-Sync
+     */
+    public void prepareModulesToReSync() {
+
+        int length = mModulesToSync.length;
+        int newlength;
+
+
+        newlength = length - mModulesIndex;
+        Table[] temp = new Table[newlength];
+
+
+        if (newlength != 0) {
+            int x = 0;
+            for (int i = mModulesIndex; i < length; i++) {
+                temp[x] = Table.values()[mModulesToSync[i].ordinal()];
+                x++;
+            }
+            mModulesToSync = temp;
+        }
+
+        mModulesIndex = 0;
+    }
+
+    public Table[] getModulesToSync() {
+        return mModulesToSync;
+    }
 
     public void setSyncModulesListener(SyncModulesListener syncModulesListener) {
         this.mSyncModulesListener = syncModulesListener;
+    }
+
+    public Branch getBranchWithID(int id) throws SQLException {
+        return getHelper().fetchIntId(Branch.class).queryForId(id);
+
+    }
+
+    public Product getProductWithID(int id) throws SQLException {
+        return getHelper().fetchIntId(Product.class).queryForId(id);
+
+    }
+
+    public Unit getUnitWithID(int id) throws SQLException {
+        return getHelper().fetchIntId(Unit.class).queryForId(id);
+
     }
 
     public VolleyRequestListener getVolleyRequestListener() {

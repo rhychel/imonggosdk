@@ -5,11 +5,9 @@ import android.os.Bundle;
 
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.tools.SettingTools;
-import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
 
 
 /**
@@ -21,79 +19,64 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        //Fabric.with(this, new Crashlytics());
     }
 
     @Override
     protected void initLoginEquipments() {
         super.initLoginEquipments();
+        //setIsUsingDefaultDialog(true);
+        //setIsUsingDefaultLoginLayout(true);
+       // Fabric.with(this, new Crashlytics());
+        setRequireConcessioSettings(false);
+        setRequireObjectConcessioSettings(false);
         setServer(Server.IRETAILCLOUD_NET);
 
-        setRequireConcessioSettings(true);
-    }
+        SettingTools.updateSettings(C_Login.this,
+                SettingsName.AUTO_UPDATE, false, "");
 
-    @Override
-    protected void successLogin() {
-        super.successLogin();
-        int []modulesToDownload = generateModules(true);
-        setModulesToSync(generateModules(true));
-        getSyncModules().initializeTablesToSync(modulesToDownload);
-    }
 
-    @Override
-    protected void updateAppData() {
-        super.updateAppData();
-        int []modulesToDownload = generateModules(true);
-        setModulesToSync(generateModules(false));
 
-        getSyncModules().initializeTablesToSync(modulesToDownload);
+        setModulesToSync(
+                Table.USERS_ME.ordinal(),
+                Table.BRANCH_USERS.ordinal(),
+                Table.SETTINGS.ordinal(),/*
+                Table.PRODUCTS.ordinal(),
+                Table.UNITS.ordinal(),
+                Table.CUSTOMER_CATEGORIES.ordinal(),
+                Table.CUSTOMER_BY_SALESMAN.ordinal(),
+                Table.ROUTE_PLANS.ordinal(),
+                Table.ROUTE_PLANS_DETAILS.ordinal(),
+                Table.BRANCH_PRODUCTS.ordinal(),
+                Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
+                Table.PRICE_LISTS_DETAILS.ordinal(),
+                Table.PAYMENT_TERMS.ordinal(),
+                Table.PAYMENT_TYPES.ordinal(),
+                */Table.INVOICES.ordinal(),
+                Table.INVOICE_PURPOSES.ordinal()/*,
+                Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
+                Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS.ordinal(),
+                Table.SALES_PROMOTIONS_POINTS.ordinal(),
+                Table.SALES_PROMOTIONS_POINTS_DETAILS.ordinal()*/);
     }
 
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, (/*SettingTools.defaultBranch(this).equals("") ?*/ C_Welcome.class
-                /*:C_Dashboard.class*/));
+        Intent intent = new Intent(this, (C_Customers.class));
         startActivity(intent);
-    }
-
-    private int[] generateModules(boolean includeUsers) {
-        getSyncModules().setSyncAllModules(false);
-        int modulesToDownload = includeUsers ? 4 : 2;
-        if(AccountSettings.hasPullout(this)) {
-            modulesToDownload+=2;
-        }
-        if(AccountSettings.hasReceive(this))
-            modulesToDownload++;
-        if(AccountSettings.hasSales(this))
-            modulesToDownload++;
-
-        int index = modulesToDownload;
-        int[] modules = new int[modulesToDownload];
-        if(includeUsers) {
-            modules[modulesToDownload - (index--)] = Table.USERS.ordinal();
-            modules[modulesToDownload - (index--)] = Table.BRANCH_USERS.ordinal();
-        }
-        modules[modulesToDownload-(index--)] = Table.PRODUCTS.ordinal();
-        modules[modulesToDownload-(index--)] = Table.UNITS.ordinal();
-        if(AccountSettings.hasPullout(this)) {
-            modules[modulesToDownload-(index--)] = Table.DOCUMENT_TYPES.ordinal();
-            modules[modulesToDownload-(index--)] = Table.DOCUMENT_PURPOSES.ordinal();
-        }
-        if(AccountSettings.hasReceive(this))
-            modules[modulesToDownload-(index--)] = Table.DOCUMENTS.ordinal();
-        if(AccountSettings.hasSales(this))
-            modules[modulesToDownload-(index--)] = Table.CUSTOMERS.ordinal();
-
-        return modules;
     }
 
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
+        setEditTextAccountID("C5111");
+        setEditTextEmail("C5111A_OSS-1@imonggo.com");
+        setEditTextPassword("123rebisco456");
+    }
 
-        setEditTextAccountID("nuecaonly");
-        setEditTextEmail("nuecaonly@test.com");
-        setEditTextPassword("nuecaonly");
+    @Override
+    public void onPrepareDialog() {
+
     }
 }

@@ -9,17 +9,14 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.base.BaseTransaction;
-import net.nueca.imonggosdk.objects.base.BaseTransactionDB;
-import net.nueca.imonggosdk.objects.base.BaseTransactionDB2;
-import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
 import net.nueca.imonggosdk.swable.SwableTools;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +27,7 @@ import java.util.List;
 /**
  * Created by gama on 7/1/15.
  */
-public class Order extends BaseTransactionDB2 {
+public class Order extends BaseTransactionTable2 {
     public static transient final int MAX_ORDERLINES_PER_PAGE = 50;
 
     @Expose
@@ -48,7 +45,7 @@ public class Order extends BaseTransactionDB2 {
     @Expose
     private List<OrderLine> order_lines;
 
-    @ForeignCollectionField
+    @ForeignCollectionField(orderColumnName = "line_no")
     private transient ForeignCollection<OrderLine> order_lines_fc;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
@@ -159,16 +156,14 @@ public class Order extends BaseTransactionDB2 {
     @Override
     public void refresh() {
         if(order_lines_fc != null && order_lines == null) {
-            for(OrderLine orderLine : order_lines_fc) {
-                addOrderLine(orderLine);
-            }
+            order_lines = new ArrayList<>(order_lines_fc);
         }
     }
 
-    public static class Builder extends BaseTransaction.Builder<Builder> {
+    public static class Builder extends BaseTransactionTable2.Builder<Builder> {
         private String target_delivery_date = ""; // current_date+2days
         private String remark = "";
-        private String order_type_code = "stock_request";
+        private String order_type_code = "stock_request"; // purchase order
         private int serving_branch_id = 0;
         private List<OrderLine> order_lines = new ArrayList<>();
 
@@ -209,7 +204,7 @@ public class Order extends BaseTransactionDB2 {
         refresh();
 
         List<OrderLine> list = new ArrayList<>();
-        list.addAll(SwableTools.partition(position,order_lines,MAX_ORDERLINES_PER_PAGE));
+        list.addAll(SwableTools.partition(position, order_lines, MAX_ORDERLINES_PER_PAGE));
         return list;
     }
 
@@ -217,7 +212,7 @@ public class Order extends BaseTransactionDB2 {
         Order order = Order.fromJSONString(toJSONString());
         order.setOrder_lines(getOrderLineAt(position));
         order.setReference(reference + "-" + (position + 1));
-        order.setRemark("page=" + (position+1) + "/" + getChildCount());
+        order.setRemark("page=" + (position + 1) + "/" + getChildCount());
         return order;
     }
 
@@ -230,7 +225,7 @@ public class Order extends BaseTransactionDB2 {
     }
 
     @Override
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         /*if(shouldPageRequest()) {
             try {
                 List<Order> orders = getChildOrders();
@@ -242,8 +237,9 @@ public class Order extends BaseTransactionDB2 {
             return;
         }*/
 
+        insertExtrasTo(dbHelper);
         try {
-            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.INSERT);
+            dbHelper.insert(Order.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -255,10 +251,12 @@ public class Order extends BaseTransactionDB2 {
                 orderLine.insertTo(dbHelper);
             }
         }
+
+        updateExtrasTo(dbHelper);
     }
 
     @Override
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         /*refresh();
         if(shouldPageRequest()) {
             try {
@@ -272,7 +270,7 @@ public class Order extends BaseTransactionDB2 {
         }*/
 
         try {
-            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.DELETE);
+            dbHelper.delete(Order.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -283,10 +281,12 @@ public class Order extends BaseTransactionDB2 {
                 orderLine.deleteTo(dbHelper);
             }
         }
+
+        deleteExtrasTo(dbHelper);
     }
 
     @Override
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         /*refresh();
         if(shouldPageRequest()) {
             try {
@@ -300,7 +300,7 @@ public class Order extends BaseTransactionDB2 {
         }*/
 
         try {
-            dbHelper.dbOperations(this, Table.ORDERS, DatabaseOperation.UPDATE);
+            dbHelper.update(Order.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -308,6 +308,37 @@ public class Order extends BaseTransactionDB2 {
             for (OrderLine orderLine : order_lines) {
                 orderLine.setOrder(this);
                 orderLine.updateTo(dbHelper);
+            }
+        }
+
+        updateExtrasTo(dbHelper);
+    }
+
+    @Override
+    public void insertExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            extras.setOrder(this);
+            extras.setId(getClass().getName().toUpperCase(), id);
+            extras.insertTo(dbHelper);
+        }
+    }
+
+    @Override
+    public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null)
+            extras.deleteTo(dbHelper);
+    }
+
+    @Override
+    public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        if(extras != null) {
+            String idstr = getClass().getName().toUpperCase() + "_" + id;
+            if (idstr.equals(extras.getId()))
+                extras.updateTo(dbHelper);
+            else {
+                extras.deleteTo(dbHelper);
+                extras.setId(getClass().getName().toUpperCase(), id);
+                extras.insertTo(dbHelper);
             }
         }
     }

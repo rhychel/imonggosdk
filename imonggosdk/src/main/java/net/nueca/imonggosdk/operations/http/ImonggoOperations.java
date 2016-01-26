@@ -13,6 +13,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.operations.ImonggoTools;
+import net.nueca.imonggosdk.tools.Configurations;
 
 import org.json.JSONObject;
 
@@ -85,6 +86,37 @@ public class ImonggoOperations {
         }
     }
 
+    /**
+     * Returns URL for requesting a single row by reference in the API.
+     *
+     * @param context
+     * @param session
+     * @param table
+     * @param reference
+     * @param server
+     * @return String URL for the reference
+     */
+    public static String getAPIModuleReferenceURL(Context context, Session session, Table table, Server server, String reference) {
+        String URL = "";
+        switch (server) {
+            case IMONGGO:
+                URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, true);
+                break;
+            case IRETAILCLOUD_COM:
+                URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, false);
+                break;
+            case IRETAILCLOUD_NET:
+                URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, false);
+                break;
+            case PLDTRETAILCLOUD:
+                URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, false);
+                break;
+            default:
+                return "";
+        }
+        return URL;
+    }
+
     public static void getAPIModule(Context context, RequestQueue queue, Session session,
                                     VolleyRequestListener volleyRequestListener, Table table,
                                     Server server, RequestType requestType) {
@@ -104,7 +136,12 @@ public class ImonggoOperations {
                                     Server server, RequestType requestType, String parameter, String TAG) {
 
         Log.e(TAG, "RequestType: " + requestType);
-        if (requestType == RequestType.LAST_UPDATED_AT || requestType == RequestType.COUNT || table == Table.TAX_SETTINGS || table == Table.DAILY_SALES) {
+        if (requestType == RequestType.LAST_UPDATED_AT
+                || requestType == RequestType.COUNT
+                || table == Table.TAX_SETTINGS
+                || table == Table.DAILY_SALES
+                || table == Table.USERS_ME
+                || table == Table.PRICE_LISTS_FROM_CUSTOMERS) {
             JsonObjectRequest request = HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, server, table, requestType, parameter);
             request.setTag(TAG);
             request.setShouldCache(false);
@@ -173,9 +210,9 @@ public class ImonggoOperations {
                                                            VolleyRequestListener volleyRequestListener, Server server, boolean autoStart, boolean useJSONObject) {
         if(useJSONObject)
             queue.add(HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS,
-                    RequestType.APPLICATION_SETTINGS, "concesio", ""));
+                    RequestType.APPLICATION_SETTINGS, Configurations.CONCESSIO_JSON, ""));
         else
-            queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, "concesio", ""));
+            queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, server, Table.APPLICATION_SETTINGS, Configurations.CONCESSIO_JSON, ""));
         if(autoStart)
             queue.start();
     }

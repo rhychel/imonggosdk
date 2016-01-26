@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <FrameLayout
@@ -8,11 +8,13 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:layout_weight="1"
-        android:id="@+id/flContent"></FrameLayout>
+        android:elevation="1dp"
+        android:id="@+id/flContent"/>
 
-    <Button
+    <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Summary"
-        android:id="@+id/btnSummary" />
-</LinearLayout>
+        layout="@layout/footer"
+        android:layout_gravity="center_horizontal|bottom" />
+
+</FrameLayout>

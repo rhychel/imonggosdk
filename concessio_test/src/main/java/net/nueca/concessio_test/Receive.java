@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import net.nueca.concessioengine.activities.ModuleActivity;
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.fragments.SimpleReceiveFragment;
 import net.nueca.concessioengine.fragments.SimpleReceiveReviewFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
@@ -20,7 +20,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.document.DocumentLineExtras;
+import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -35,58 +35,58 @@ public class Receive extends ModuleActivity implements SetupActionBar {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive);
 
-        try {
-            Log.e("Device ID", "" + getSession().getDevice_id());
-            List<Document> documents = getHelper().getDocuments().queryForAll();
-            for(Document doc : documents)
-                if(doc.getDocument_lines().size() >= 30) {
-                    Log.e("Doc", doc.getReference());
-                    break;
-                }
-            if(getHelper().getDocuments().queryForAll().size() <= 30) {
-                Document document = new Document.Builder()
-                        .id(getHelper().getDocuments().queryForAll().size() + 1)
-                        .generateReference(this, getSession().getDevice_id())
-                        .document_type_code(DocumentTypeCode.RECEIVE_BRANCH)
-                        .target_branch_id(357)
-                        .build();
-
-                for (Product product : getHelper().getProducts().queryForAll()) {
-                    document.addDocumentLine(
-                            new DocumentLine.Builder()
-                                    .autoLine_no()
-                                    .useProductDetails(product)
-                                    .quantity((int) (Math.random() * 100) % 1000)
-                                    .discount_text("0.0%")
-                                    .price(1)
-                                    .unit_content_quantity(1)
-                                    .unit_name("PC")
-                                    .unit_quantity((int) (Math.random() * 10) % 100)
-                                    .build());
-                    if(document.getDocument_lines().size() == 1)
-                        document.addDocumentLine(new DocumentLine.Builder()
-                                .autoLine_no()
-                                .useProductDetails(product)
-                                .quantity(10000)
-                                .discount_text("0.0%")
-                                .price(1)
-                                .unit_content_quantity(1)
-                                .unit_name("PC")
-                                .extras(new DocumentLineExtras.Builder().batch_no("123").build())
-                                .unit_quantity((int) (Math.random() * 10) % 100)
-                                .build());
-
-                    if (document.getDocument_lines() != null &&
-                            document.getDocument_lines().size() > 20)
-                        break;
-                }
-
-                document.insertTo(getHelper());
-                Log.e("ref no", document.getReference());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Log.e("Device ID", "" + getSession().getDevice_id());
+//            List<Document> documents = getHelper().getDocuments().queryForAll();
+//            for(Document doc : documents)
+//                if(doc.getDocument_lines().size() >= 30) {
+//                    Log.e("Doc", doc.getReference());
+//                    break;
+//                }
+//            if(getHelper().getDocuments().queryForAll().size() <= 30) {
+//                Document document = new Document.Builder()
+//                        .id(getHelper().getDocuments().queryForAll().size() + 1)
+//                        .generateReference(this, getSession().getDevice_id())
+//                        .document_type_code(DocumentTypeCode.RECEIVE_BRANCH)
+//                        .target_branch_id(357)
+//                        .build();
+//
+//                for (Product product : getHelper().getProducts().queryForAll()) {
+//                    document.addDocumentLine(
+//                            new DocumentLine.Builder()
+//                                    .autoLine_no()
+//                                    .useProductDetails(product)
+//                                    .quantity((int) (Math.random() * 100) % 1000)
+//                                    .discount_text("0.0%")
+//                                    .price(1)
+//                                    .unit_content_quantity(1)
+//                                    .unit_name("PC")
+//                                    .unit_quantity((int) (Math.random() * 10) % 100)
+//                                    .build());
+//                    if(document.getDocument_lines().size() == 1)
+//                        document.addDocumentLine(new DocumentLine.Builder()
+//                                .autoLine_no()
+//                                .useProductDetails(product)
+//                                .quantity(10000)
+//                                .discount_text("0.0%")
+//                                .price(1)
+//                                .unit_content_quantity(1)
+//                                .unit_name("PC")
+//                                .extras(new DocumentLineExtras.Builder().batch_no("123").build())
+//                                .unit_quantity((int) (Math.random() * 10) % 100)
+//                                .build());
+//
+//                    if (document.getDocument_lines() != null &&
+//                            document.getDocument_lines().size() > 20)
+//                        break;
+//                }
+//
+//                document.insertTo(getHelper());
+//                Log.e("ref no", document.getReference());
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
 

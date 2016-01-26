@@ -28,14 +28,21 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         super(collection);
     }
 
+    /**
+     *
+     * @param selectedProductItem
+     * @return false when the item has been removed.
+     */
     @Override
     public boolean add(SelectedProductItem selectedProductItem) {
         int index = indexOf(selectedProductItem);
         if(index > -1) {
             if(selectedProductItem.getValues().size() > 0)
                 set(index, selectedProductItem);
-            else
+            else {
                 remove(index);
+                return false;
+            }
             return true;
         }
 
@@ -57,6 +64,16 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         return selectedProducts;
     }
 
+    public boolean hasSelectedProductItem(Product product) {
+        return getSelectedProductItem(product) != null;
+    }
+
+    public SelectedProductItem initializeItem(Product product) {
+        if(hasSelectedProductItem(product))
+            return getSelectedProductItem(product);
+        return new SelectedProductItem(product);
+    }
+
     public SelectedProductItem getSelectedProductItem(Product product) {
         for(SelectedProductItem selectedProductItem : this)
             if (selectedProductItem.getProduct().getId() == product.getId())
@@ -72,11 +89,18 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     }
 
     public String getUnitName(Product product) {
+        return getUnitName(product, true);
+    }
+
+    public String getUnitName(Product product, boolean withFormat) {
         SelectedProductItem selectedProductItem = getSelectedProductItem(product);
         if(selectedProductItem == null)
             return "";
-        if(selectedProductItem.getValues().get(0).getUnit() != null)
-            return "<i>["+selectedProductItem.getValues().get(0).getUnit().getName()+"]</i>";
+        if(selectedProductItem.getValues().get(0).getUnit() != null) {
+            if (withFormat)
+                return "<i>[" + selectedProductItem.getValues().get(0).getUnit().getName() + "]</i>";
+            return selectedProductItem.getValues().get(0).getUnit().getName();
+        }
         return "";
     }
 

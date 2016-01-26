@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:id="@+id/llMainContainer"
-        android:background="@color/keypad_default_bg"
         android:padding="5dp"
         android:baselineAligned="false">
 
@@ -44,7 +43,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_weight="1"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
@@ -57,7 +55,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_weight="1"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
@@ -70,7 +67,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_weight="1"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
@@ -91,7 +87,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
 
@@ -104,7 +99,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
 
@@ -117,7 +111,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
 
@@ -137,7 +130,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
 
@@ -150,7 +142,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
 
@@ -163,7 +154,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
 
@@ -185,7 +175,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
 
@@ -198,7 +187,6 @@
                 android:textSize="20sp"
                 android:layout_weight="1"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
 
@@ -211,7 +199,6 @@
                 android:textSize="20sp"
                 android:layout_weight="1"
                 android:background="@drawable/keypad_button"
-                android:textColor="@color/keypad_button_text"
                 android:layout_gravity="center"
                 android:layout_margin="2dp"/>
 
@@ -234,7 +221,6 @@
             android:src="@drawable/ic_menu"
             android:background="@drawable/keypad_button"
             android:tintMode="src_atop"
-            android:tint="@color/keypad_default_text"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:layout_marginLeft="2dp"
@@ -249,7 +235,6 @@
             android:src="@drawable/ic_backspace"
             android:background="@drawable/keypad_button"
             android:tintMode="src_atop"
-            android:tint="@color/keypad_default_text"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:layout_margin="2dp"
@@ -262,7 +247,6 @@
             android:src="@drawable/ic_positive_scale"
             android:background="@drawable/keypad_button"
             android:tintMode="src_atop"
-            android:tint="@color/keypad_default_text"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:layout_margin="2dp"
@@ -273,9 +257,8 @@
             android:layout_height="45dp"
             android:id="@+id/ibtnGo"
             android:src="@drawable/ic_check"
-            android:background="@drawable/keypad_button_circle"
+            android:background="?attr/colorAccent"
             android:tintMode="src_atop"
-            android:tint="@color/keypad_default_text"
             android:adjustViewBounds="true"
             android:layout_gravity="center"
             android:layout_margin="2dp"

@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 public class StringUtilsEx extends StringUtils {
 
     public static String ucwords(String str) {
-        String[] words = str.split(" ");
+        String[] words = str.toLowerCase().split(" ");
         StringBuilder finalWords = new StringBuilder();
         int space = 0;
         for(String word : words) {

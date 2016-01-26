@@ -4,8 +4,10 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
 
@@ -14,7 +16,7 @@ import java.sql.SQLException;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Inventory {
+public class Inventory extends DBTable {
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -58,6 +60,20 @@ public class Inventory {
         this.product = product;
     }
 
+    public String getInventory() {
+        String inventoryQty = String.valueOf(quantity);
+        if(inventoryQty.contains(".")) {
+            String[] values = inventoryQty.split(".");
+            if(values.length > 0) {
+                if (Integer.valueOf(values[1]) > 0)
+                    return inventoryQty;
+                return values[0];
+            }
+            return inventoryQty;
+        }
+        return inventoryQty;
+    }
+
     public double getQuantity() {
         return quantity;
     }
@@ -82,36 +98,38 @@ public class Inventory {
         this.utc_created_at = utc_created_at;
     }
 
-    public void insertTo(ImonggoDBHelper dbHelper) {
+    public void addQuantity(double addQuantity) {
+        this.quantity += addQuantity;
+    }
+
+    public void subtractQuantity(double subtractQuantity) {
+        this.quantity -= subtractQuantity;
+    }
+
+    @Override
+    public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVENTORIES, DatabaseOperation.INSERT);
+            dbHelper.insert(Inventory.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVENTORIES, DatabaseOperation.DELETE);
+            dbHelper.delete(Inventory.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateTo(ImonggoDBHelper dbHelper) {
+    @Override
+    public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.dbOperations(this, Table.INVENTORIES, DatabaseOperation.UPDATE);
+            dbHelper.update(Inventory.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void dbOperation(ImonggoDBHelper dbHelper, DatabaseOperation databaseOperation) {
-        if(databaseOperation == DatabaseOperation.INSERT)
-            insertTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.UPDATE)
-            updateTo(dbHelper);
-        else if(databaseOperation == DatabaseOperation.DELETE)
-            deleteTo(dbHelper);
     }
 }

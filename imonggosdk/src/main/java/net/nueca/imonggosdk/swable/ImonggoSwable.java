@@ -56,13 +56,14 @@ public class ImonggoSwable extends SwableService {
 
     private SwableSendModule swableSendModule;
     private SwableVoidModule swableVoidModule;
+    private SwableUpdateModule swableUpdateModule;
 
     private User user;
     @Override
     protected User getUser() {
         if(user == null) {
             try {
-                user = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
+                user = getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
             }
             catch (SQLException e) {
                 e.printStackTrace();
@@ -113,6 +114,7 @@ public class ImonggoSwable extends SwableService {
         }
         swableSendModule = new SwableSendModule(this,getHelper(),getSession(),getQueue());
         swableVoidModule = new SwableVoidModule(this,getHelper(),getSession(),getQueue());
+        swableUpdateModule = new SwableUpdateModule(this,getHelper(),getSession(),getQueue());
     }
 
     @Override
@@ -131,11 +133,12 @@ public class ImonggoSwable extends SwableService {
                     //NOTIFICATION_ID++;
 
                     List<OfflineData> offlineDataList =
-                        getHelper().getOfflineData().queryBuilder().where()
+                        getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
                                 .eq("isSynced", false).and()
                                 .eq("isSyncing", false).and()
                                 .eq("isQueued", false).and()
                                 .eq("isCancelled", false).and()
+                                .eq("isBeingModified", false).and()
                                 .eq("isPastCutoff", false).query();
 
                     if(offlineDataList.size() <= 0) {
@@ -184,6 +187,13 @@ public class ImonggoSwable extends SwableService {
                             case SEND_DOCUMENT:
                                 swableSendModule.sendTransaction(Table.DOCUMENTS, offlineData);
                                 break;
+                            case ADD_CUSTOMER:
+                                swableSendModule.sendTransaction(Table.CUSTOMERS, offlineData);
+                                break;
+
+                            case UPDATE_CUSTOMER:
+                                swableUpdateModule.updateTransaction(Table.CUSTOMERS, offlineData);
+                                break;
 
                             case CANCEL_ORDER:
                                 swableVoidModule.voidTransaction(Table.ORDERS, offlineData);
@@ -193,6 +203,9 @@ public class ImonggoSwable extends SwableService {
                                 break;
                             case CANCEL_DOCUMENT:
                                 swableVoidModule.voidTransaction(Table.DOCUMENTS, offlineData);
+                                break;
+                            case DELETE_CUSTOMER:
+                                swableVoidModule.voidTransaction(Table.CUSTOMERS, offlineData);
                                 break;
                         }
 

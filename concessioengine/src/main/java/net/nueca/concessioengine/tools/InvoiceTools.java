@@ -1,17 +1,18 @@
 package net.nueca.concessioengine.tools;
 
+import android.util.Log;
+
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -19,32 +20,54 @@ import java.util.List;
  */
 public class InvoiceTools {
     public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems) {
+        return generateInvoiceLines(selectedProductItems, (String) null);
+    }
+
+    public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems, Customer customer) {
+        if(customer != null)
+            return generateInvoiceLines(selectedProductItems, customer.getDiscount_text());
+        return generateInvoiceLines(selectedProductItems);
+    }
+
+    public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems, String customerDiscount) {
         List<InvoiceLine> invoiceLines = new ArrayList<>();
 
         for(SelectedProductItem selectedProductItem : selectedProductItems) {
             Product product = selectedProductItem.getProduct();
+
             for(Values itemValue : selectedProductItem.getValues()) {
                 InvoiceLine.Builder builder = new InvoiceLine.Builder();
                 builder.product_id(product.getId());
-                builder.discount_text(itemValue.getDiscount_text());
+
+                String discount_text = itemValue.getDiscount_text();
+                if(customerDiscount != null && customerDiscount.length() != 0) {
+                    if (discount_text != null && discount_text.length() != 0)
+                        discount_text += "," + customerDiscount;
+                    else
+                        discount_text = customerDiscount;
+                }
+                builder.discount_text(discount_text);
+
                 builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).intValue());
+
                 double retail_price = itemValue.isValidUnit() ?
-                        itemValue.getUnit().getRetail_price() : product.getRetail_price();
+                        itemValue.getRetail_price() : product.getRetail_price();
                 builder.retail_price(retail_price);
 
                 BigDecimal t_subtotal = new BigDecimal(itemValue.getQuantity())
                         .multiply(new BigDecimal(retail_price));
                 BigDecimal subtotal = new BigDecimal(itemValue.getSubtotal());
 
-                if(subtotal.compareTo(BigDecimal.ZERO) == 0)
-                    builder.subtotal(t_subtotal.toPlainString());
+                if(subtotal.doubleValue() == 0d)
+                    builder.subtotal(""+t_subtotal.doubleValue());
                 else
-                    builder.subtotal(itemValue.getSubtotal());
+                    builder.subtotal(""+itemValue.getSubtotal());
 
                 invoiceLines.add(builder.build());
+                Log.e("INVOICE", product.getName() + " " + t_subtotal.doubleValue() + " " + subtotal.doubleValue() + " ~ " + retail_price + " * " +
+                        itemValue.getQuantity() + " -- discount " + discount_text);
             }
         }
-
         return invoiceLines;
     }
 
@@ -84,7 +107,7 @@ public class InvoiceTools {
 
             if(tender <= balance)
                 payment.setAmount(tender);
-            else
+            else    // tender > balance
                 payment.setAmount(balance);
 
             total_payment_made = total_payment_made.add(new BigDecimal(payment.getTender()));
@@ -98,6 +121,8 @@ public class InvoiceTools {
 
             InvoicePayment forDelete = payments.remove(location);
             total_payment_made = total_payment_made.subtract(new BigDecimal(forDelete.getTender()));
+
+            refresh();
         }
 
         public void removeIfNotIn(List<InvoiceLine> list) {
@@ -106,6 +131,24 @@ public class InvoiceTools {
                 if (!list.contains(invoiceLine))
                     removeInvoiceLine(i);
             }
+        }
+
+        public void clearPayments() {
+            payments = new ArrayList<>();
+            total_payment_made = BigDecimal.ZERO;
+        }
+
+        public void clearAll() {
+            invoiceLines = new ArrayList<>();
+            payments = new ArrayList<>();
+            total_payable = BigDecimal.ZERO;
+            total_payment_made = BigDecimal.ZERO;
+        }
+
+        private void refresh() {
+            List<InvoicePayment> t_payments = payments;
+            clearPayments();
+            addAllPayments(t_payments);
         }
 
         public BigDecimal getTotalPaymentMade() {
@@ -123,5 +166,11 @@ public class InvoiceTools {
         public List<InvoicePayment> getPayments() {
             return payments;
         }
+
+        public List<InvoiceLine> getInvoiceLines() {
+            return invoiceLines;
+        }
     }
+
+
 }

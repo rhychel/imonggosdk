@@ -6,7 +6,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.User;
 
@@ -20,7 +20,7 @@ import java.util.List;
 public abstract class ImonggoService extends Service {
     private Session session;
     private User mUser;
-    private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper;
     private RequestQueue queue;
 
     /**
@@ -28,9 +28,9 @@ public abstract class ImonggoService extends Service {
      *
      * @return dbHelper
      */
-    protected ImonggoDBHelper getHelper() {
+    protected ImonggoDBHelper2 getHelper() {
         if(dbHelper == null)
-            dbHelper = OpenHelperManager.getHelper(this, ImonggoDBHelper.class);
+            dbHelper = OpenHelperManager.getHelper(this, ImonggoDBHelper2.class);
         return dbHelper;
     }
 
@@ -52,7 +52,7 @@ public abstract class ImonggoService extends Service {
     protected Session getSession() {
         if(session == null) {
             try {
-                List<Session> sessionList = getHelper().getSessions().queryForAll();
+                List<Session> sessionList = getHelper().fetchObjectsList(Session.class);
                 session = sessionList.get(0);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -62,12 +62,6 @@ public abstract class ImonggoService extends Service {
     }
 
     protected User getUser() {
-        if (mUser == null)
-            try {
-                mUser = getHelper().getUsers().queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        return mUser;
+        return getSession().getUser();
     }
 }

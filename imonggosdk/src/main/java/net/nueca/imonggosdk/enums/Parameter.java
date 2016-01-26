@@ -14,12 +14,19 @@ public enum Parameter {
     USER_ID, // user_id= | JSONArray
     CHECKIN_COUNT,
     BRANCH_ID, // branch_id
-    SALES_PROMOTION_DETAIL,
     FROM,
     TO,
     TARGET_BRANCH_ID,
     DOCUMENT_TYPE, // document_type=transfer_out
     INTRANSIT,
     NONE,
-    CURRENT_DATE
+    CURRENT_DATE,
+    SALES_PUSH,
+    DETAILS,
+    SALES_PROMOTION_ID,
+    ID,
+    UNITS,
+    SALESMAN_ID,
+    SALES_DISCOUNT,
+    SALES_POINTS,
 }

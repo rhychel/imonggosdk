@@ -2,6 +2,7 @@ package net.nueca.concessioengine.adapters.tools;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.android.volley.AuthFailureError;
@@ -14,8 +15,10 @@ import com.android.volley.toolbox.ImageRequest;
 
 import net.nueca.concessioengine.adapters.interfaces.ImageLoaderListener;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.ProductListTools;
 
@@ -31,10 +34,14 @@ public class ProductsAdapterHelper {
 
     private static RequestQueue imageRequestQueue;
     private static ImageLoader imageLoader;
-    private static ImonggoDBHelper dbHelper;
+    private static ImonggoDBHelper2 dbHelper;
     private static Session session;
+    private static Customer selectedCustomer;
+    private static DocumentPurpose reason;
+    private static SelectedProductItemList selectedReturnProductItems = null;
     private static SelectedProductItemList selectedProductItems = null;
     public static ImageLoaderListener imageLoaderListener = null;
+    public static boolean isDuplicating = false;
 
     public static ImageLoader getImageLoaderInstance(Context context) {
         return getImageLoaderInstance(context, false);
@@ -83,11 +90,17 @@ public class ProductsAdapterHelper {
         return selectedProductItems;
     }
 
-    public static void setDbHelper(ImonggoDBHelper dbHelper) {
+    public static SelectedProductItemList getSelectedReturnProductItems() {
+        if(selectedReturnProductItems == null)
+            selectedReturnProductItems = new SelectedProductItemList();
+        return selectedReturnProductItems;
+    }
+
+    public static void setDbHelper(ImonggoDBHelper2 dbHelper) {
         ProductsAdapterHelper.dbHelper = dbHelper;
     }
 
-    public ImonggoDBHelper getDbHelper() {
+    public static ImonggoDBHelper2 getDbHelper() {
         return dbHelper;
     }
 
@@ -98,7 +111,7 @@ public class ProductsAdapterHelper {
     public static Session getSession() {
         try {
             if(AccountTools.isLoggedIn(dbHelper))
-                session = dbHelper.getSessions().queryForAll().get(0);
+                session = dbHelper.fetchObjectsList(Session.class).get(0);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -108,19 +121,47 @@ public class ProductsAdapterHelper {
     public static boolean hasSelectedProductItems() {
         if(selectedProductItems == null)
             return false;
-        return selectedProductItems.isEmpty();
+        return !selectedProductItems.isEmpty();
     }
 
-    public static void clearSelectedProductItemList() {
+    public static boolean hasSelectedReturnProductItems() {
+        if(selectedReturnProductItems == null)
+            return false;
+        return !selectedReturnProductItems.isEmpty();
+    }
+
+    public static void clearSelectedProductItemList(boolean includeCustomer) {
+        if(isDuplicating)
+            return;
         if(selectedProductItems != null)
             selectedProductItems.clear();
+        if(includeCustomer)
+            selectedCustomer = null;
+        reason = null;
         ProductListTools.restartLineNo();
+        Log.e("ProductAdapterHelper", "clearSelectedProductItemList");
+    }
+
+    public static void clearSelectedReturnProductItemList() {
+        if(isDuplicating)
+            return;
+        if(selectedReturnProductItems != null)
+            selectedReturnProductItems.clear();
     }
 
     public static void destroySelectedProductItemList() {
         if(selectedProductItems != null)
             selectedProductItems.clear();
         selectedProductItems = null;
+        selectedCustomer = null;
+        reason = null;
+        Log.e("ProductAdapterHelper", "destroySelectedProductItemList");
+    }
+
+    public static void destroySelectedReturnProductItemList() {
+        if(selectedReturnProductItems != null)
+            selectedReturnProductItems.clear();
+        selectedReturnProductItems = null;
     }
 
     public static void destroyProductAdapterHelper() {
@@ -129,5 +170,25 @@ public class ProductsAdapterHelper {
         imageLoader = null;
         imageRequestQueue = null;
         selectedProductItems = null;
+        selectedReturnProductItems = null;
+        selectedCustomer = null;
+        reason = null;
+        Log.e("ProductAdapterHelper", "destroyProductAdapterHelper");
+    }
+
+    public static void setSelectedCustomer(Customer selectedCustomer) {
+        ProductsAdapterHelper.selectedCustomer = selectedCustomer;
+    }
+
+    public static Customer getSelectedCustomer() {
+        return selectedCustomer;
+    }
+
+    public static DocumentPurpose getReason() {
+        return reason;
+    }
+
+    public static void setReason(DocumentPurpose reason) {
+        ProductsAdapterHelper.reason = reason;
     }
 }

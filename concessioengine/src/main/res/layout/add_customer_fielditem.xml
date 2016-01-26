@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="18dp"
+    android:paddingTop="16dp"
+    android:paddingRight="18dp"
+    android:paddingBottom="16dp">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:id="@+id/ivIcon"
+        android:src="@drawable/ic_phone_orange"
+        android:layout_gravity="center_vertical"
+        android:adjustViewBounds="true"
+        android:visibility="invisible" />
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@color/secondary_textL"
+        android:layout_marginLeft="16dp"
+        android:hint="Yeah"
+        android:id="@+id/tilEt">
+        <EditText
+            android:id="@+id/etField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:inputType="text"
+            android:textAlignment="center"
+            android:textColor="@color/primary_textL" />
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>

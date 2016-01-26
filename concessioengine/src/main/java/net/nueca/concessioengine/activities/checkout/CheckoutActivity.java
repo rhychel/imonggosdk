@@ -1,5 +1,7 @@
 package net.nueca.concessioengine.activities.checkout;
 
+import android.os.Bundle;
+
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 
 /**
@@ -7,4 +9,5 @@ import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
  * imonggosdk (c)2015
  */
 public class CheckoutActivity extends ImonggoAppCompatActivity {
+
 }

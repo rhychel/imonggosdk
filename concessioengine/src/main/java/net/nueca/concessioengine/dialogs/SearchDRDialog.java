@@ -15,7 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.User;
@@ -42,28 +42,28 @@ public class SearchDRDialog extends BaseAppCompatDialog {
 
     private SearchDRDialogListener dialogListener;
     private List<Branch> branchList;
-    private ImonggoDBHelper dbHelper;
+    private ImonggoDBHelper2 dbHelper;
     private User user;
     private boolean isNotFound = false;
 
     private Animation animation;
 
-    public SearchDRDialog(Context context, ImonggoDBHelper dbHelper, User user) {
+    public SearchDRDialog(Context context, ImonggoDBHelper2 dbHelper, User user) {
         super(context);
         this.dbHelper = dbHelper;
         this.user = user;
 
         branchList = new ArrayList<>();
         try {
-            List<BranchUserAssoc> branchUserAssocs = dbHelper.getBranchUserAssocs().queryBuilder().where()
-                    .eq("user_id", user).query();
+            List<BranchUserAssoc> branchUserAssocs = dbHelper.fetchObjects(BranchUserAssoc.class).queryBuilder().where()
+                    .eq("user_id", this.user).query();
 
             for(BranchUserAssoc branchUser : branchUserAssocs) {
                 if(branchUser.getBranch().getSite_type() != null &&
-                    branchUser.getBranch().getSite_type().toLowerCase().equals("warehouse"))
+                        branchUser.getBranch().getSite_type().toLowerCase().equals("warehouse"))
                     continue;
 
-                if(branchUser.getBranch().getId() == user.getHome_branch_id())
+                if(branchUser.getBranch().getId() == this.user.getHome_branch_id())
                     branchList.add(0, branchUser.getBranch());
                 else
                     branchList.add(branchUser.getBranch());
@@ -171,10 +171,10 @@ public class SearchDRDialog extends BaseAppCompatDialog {
     }
 
     public Document search(String drNo, Branch branch) throws SQLException {
-        Log.e("search", drNo + " from " + dbHelper.getDocuments().queryForAll().size() + " document(s) for branch '"
+        Log.e("search", drNo + " from " + dbHelper.fetchObjectsList(Document.class).size() + " document(s) for branch '"
                 + branch.getName() + "'");
 
-        Document document = dbHelper.getDocuments().queryBuilder()
+        Document document = dbHelper.fetchObjects(Document.class).queryBuilder()
                 .where()
                 .eq("target_branch_id", branch.getId()).and()
                 .eq("reference", drNo).and()
@@ -193,6 +193,12 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         etDeliveryReceipt.setText(txt);
     }
 
+    @Override
+    public void show() {
+        super.show();
+        npInput.setIsFirstErase(true);
+    }
+
     public SearchDRDialogListener getDialogListener() {
         return dialogListener;
     }
@@ -206,17 +212,5 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         boolean onCancel();
         void onSearch(String deliveryReceiptNo, Branch target_branch, Document document);
         void onManualReceive(String deliveryReceiptNo, Branch target_branch);
-    }
-
-    @Override
-    public void cancel() {
-        super.cancel();
-        npInput.setIsFirstErase(true);
-    }
-
-    @Override
-    public void dismiss() {
-        super.dismiss();
-        npInput.setIsFirstErase(true);
     }
 }
