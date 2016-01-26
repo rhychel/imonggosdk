@@ -123,13 +123,14 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         switch (item.getItemId()) {
             case R.id.mUpdateApp: {
                 UpdaterChooserDialog updaterChooserDialog = new UpdaterChooserDialog(this, R.style.AppCompatDialogStyle_Light_NoTitle);
-                updaterChooserDialog.setTableToUpdate(Table.BRANCH_USERS, Table.PRODUCTS,
-                        Table.UNITS, Table.BRANCH_PRODUCTS,
-                        Table.CUSTOMER_BY_SALESMAN,
-                        Table.ROUTE_PLANS, // -- details
-                        Table.PRICE_LISTS_FROM_CUSTOMERS, // -- details
-                        Table.SALES_PROMOTIONS_POINTS, // -- details
-                        Table.SALES_PROMOTIONS_SALES_DISCOUNT); // -- details
+                updaterChooserDialog.setTableToUpdate(getAppSetting().modulesToUpdate(getHelper()));
+//                        Table.BRANCH_USERS, Table.PRODUCTS,
+//                        Table.UNITS, Table.BRANCH_PRODUCTS,
+//                        Table.CUSTOMER_BY_SALESMAN,
+//                        Table.ROUTE_PLANS, // -- details
+//                        Table.PRICE_LISTS_FROM_CUSTOMERS, // -- details
+//                        Table.SALES_PROMOTIONS_POINTS, // -- details
+//                        Table.SALES_PROMOTIONS_SALES_DISCOUNT); // -- details
                 updaterChooserDialog.setOnTablesSelected(new UpdaterChooserDialog.OnTablesSelected() {
                     @Override
                     public void startUpdate(int[] tables, List<Table> tableList) {
