@@ -7,11 +7,14 @@ public enum ListingType {
 
     BASIC,
 
-    SALES, // Product
+    SALES, // simple Product
+    ADVANCED_SALES, // Sales product recycler adapter
 
     LETTER_HEADER, // Customer
 
     BASIC_PAYMENTS,
-    COLORED_PAYMENTS // Payments List
+    COLORED_PAYMENTS, // Payments List
+
+    DETAILED_HISTORY
 
 }

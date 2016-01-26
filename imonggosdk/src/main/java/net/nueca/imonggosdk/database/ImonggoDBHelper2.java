@@ -2,6 +2,7 @@ package net.nueca.imonggosdk.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.CloseableIterator;
@@ -11,7 +12,6 @@ import com.j256.ormlite.table.TableUtils;
 
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -28,6 +28,7 @@ import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.accountsettings.Cutoff;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
+import net.nueca.imonggosdk.objects.accountsettings.Sequence;
 import net.nueca.imonggosdk.objects.accountsettings.Manual;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.accountsettings.ProductListing;
@@ -51,6 +52,7 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
+import net.nueca.imonggosdk.objects.invoice.Discount;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -77,22 +79,22 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 29;
+    private static final int DATABASE_VERSION = 56;
 
     private static final Class<?> tables[] = {
-            Branch.class, BranchPrice.class, BranchTag.class, Customer.class,
+            Branch.class, BranchTag.class, Customer.class,
             Inventory.class, Product.class, ProductTag.class, Session.class,
-            TaxRate.class, TaxSetting.class, Unit.class, User.class,
-            BranchProduct.class, BranchUnit.class,
-            DocumentType.class, DocumentPurpose.class, BranchUserAssoc.class, ProductTaxRateAssoc.class,
+            Discount.class, TaxRate.class, TaxSetting.class, Unit.class, User.class,
+            BranchProduct.class, BranchUnit.class, DocumentType.class, DocumentPurpose.class,
+            BranchUserAssoc.class, ProductTaxRateAssoc.class,
             LastUpdatedAt.class, OfflineData.class, Document.class, DocumentLine.class,
             DailySales.class, Settings.class, Order.class, OrderLine.class,
             Invoice.class, InvoiceLine.class, InvoicePayment.class, InvoiceTaxRate.class,
             Extras.class, CustomerCategory.class, CustomerGroup.class, InvoicePurpose.class,
-            PaymentTerms.class, PaymentType.class, SalesPromotion.class, Price.class,
-            PriceList.class, RoutePlan.class, RoutePlanDetail.class, CustomerCustomerGroupAssoc.class, ProductSalesPromotionAssoc.class,
-            ModuleSetting.class, DebugMode.class, ProductSorting.class, Cutoff.class,
-            ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};
+            PaymentTerms.class, PaymentType.class, SalesPromotion.class, net.nueca.imonggosdk.objects.salespromotion.Discount.class, Price.class,
+            PriceList.class, RoutePlan.class, RoutePlanDetail.class, CustomerCustomerGroupAssoc.class,
+            ProductSalesPromotionAssoc.class, ModuleSetting.class, Sequence.class, DebugMode.class, ProductSorting.class,
+            Cutoff.class, ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};
 
     public ImonggoDBHelper2(Context context) { super(context, DATABASE_NAME, null, DATABASE_VERSION); }
 
@@ -100,6 +102,7 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             for(Class<?> table : tables) {
+                Log.e("Table", table.getSimpleName());
                 TableUtils.createTable(connectionSource, table);
             }
         } catch (SQLException e) {
@@ -129,6 +132,14 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     }
 
     public <D> Dao<D, ?> fetchObjects(Class<D> objClass) throws SQLException {
+        return getDao(objClass);
+    }
+
+    public <D> Dao<D, Integer> fetchObjectsInt(Class<D> objClass) throws SQLException {
+        return getDao(objClass);
+    }
+
+    public <D> Dao<D, String> fetchObjectsStr(Class<D> objClass) throws SQLException {
         return getDao(objClass);
     }
 
@@ -223,10 +234,18 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
      * @throws SQLException
      */
     public <D> List<D> fetchForeignCollection(CloseableIterator<D> iterator) throws SQLException {
+        return fetchForeignCollection(iterator, null);
+    }
+
+    public <D> List<D> fetchForeignCollection(CloseableIterator<D> iterator, Conditional<D> conditional) throws SQLException {
         List<D> theList = new ArrayList<>();
         try {
             while (iterator.hasNext()) {
-                theList.add(iterator.next());
+                D obj = iterator.next();
+                if(conditional != null)
+                    if(!conditional.validate(obj))
+                        continue;
+                theList.add(obj);
             }
         } finally {
             iterator.close();
@@ -235,6 +254,8 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
         return theList;
     }
 
-
+    public interface Conditional<D> {
+        boolean validate(D obj);
+    }
 
 }

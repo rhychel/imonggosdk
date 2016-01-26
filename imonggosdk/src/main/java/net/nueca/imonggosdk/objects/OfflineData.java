@@ -4,12 +4,14 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Table;
@@ -55,6 +57,9 @@ public class OfflineData extends BaseTable2 {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
     private Customer customerData;
+
+    @DatabaseField(dataType = DataType.ENUM_INTEGER)
+    private ConcessioModule concessioModule = ConcessioModule.NONE;
 	
 	@DatabaseField
 	private int type = 1;
@@ -73,6 +78,9 @@ public class OfflineData extends BaseTable2 {
 
     @DatabaseField
     private boolean isQueued = false;
+
+    @DatabaseField
+    private boolean isBeingModified = false;
 
     @DatabaseField
     private boolean isForConfirmation = false; // TODO This is new for the data sent with existing reference number
@@ -569,6 +577,22 @@ public class OfflineData extends BaseTable2 {
         this.pagedRequestCount = pagedRequestCount;
     }
 
+    public boolean isBeingModified() {
+        return isBeingModified;
+    }
+
+    public void setBeingModified(boolean beingModified) {
+        isBeingModified = beingModified;
+    }
+
+    public ConcessioModule getConcessioModule() {
+        return concessioModule;
+    }
+
+    public void setConcessioModule(ConcessioModule concessioModule) {
+        this.concessioModule = concessioModule;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof OfflineData && id == ((OfflineData)o).getId();
@@ -593,7 +617,12 @@ public class OfflineData extends BaseTable2 {
                 break;
             case CUSTOMER:
                 typeStr = "CUSTOMER";
-                customerData.insertTo(dbHelper);
+                if(OfflineDataType.identify(offlineDataTransactionType) == OfflineDataType.UPDATE_CUSTOMER)
+                    customerData.updateTo(dbHelper);
+                else
+                    customerData.insertTo(dbHelper);
+                    customerData.insertTo(dbHelper);
+                    customerData.insertTo(dbHelper);
                 break;
         }
         Log.e("OfflineData", "insert " + typeStr + " " + this.getReference_no() + " id:" + id);
@@ -634,10 +663,9 @@ public class OfflineData extends BaseTable2 {
                 documentData.setId(id * -1);
                 documentData.insertTo(dbHelper);
                 break;
-            case CUSTOMER:
-                customerData.setOfflineData(this);
-                customerData.updateTo(dbHelper);
-                break;
+            //case CUSTOMER:
+            //    customerData.updateTo(dbHelper);
+            //    break;
             default:
                 break;
         }
@@ -752,7 +780,6 @@ public class OfflineData extends BaseTable2 {
                 }
                 break;
             case CUSTOMER:
-                customerData.setOfflineData(this);
                 typeStr = "CUSTOMER";
                 if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
                         && (customerData.getId() != Integer.parseInt(getReturnIdList().get(0))) ) {
@@ -787,6 +814,10 @@ public class OfflineData extends BaseTable2 {
             return customerData;
         else
             return null;
+    }
+
+    public <T> T getObjectFromData(Class<T> clazz) {
+        return (T) getObjectFromData();
     }
 
     public List<String> getReturnIdList() {

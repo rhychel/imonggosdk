@@ -20,7 +20,7 @@ import java.sql.SQLException;
 public class Session extends DBTable {
 
     @DatabaseField(generatedId = true)
-    private int id;
+    private int id = -1;
     @DatabaseField
     private String email = "";
     @DatabaseField

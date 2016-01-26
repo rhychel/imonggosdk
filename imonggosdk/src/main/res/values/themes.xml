@@ -47,9 +47,11 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorAccent">@color/primary</item>
+
         <item name="android:textColorPrimary">@color/primary_textL</item>
         <item name="android:textColorSecondary">@color/primary</item>
-        <item name="colorControlNormal">@color/accent</item>
+        <item name="android:textColorHint">@color/primary</item>
+        <item name="colorControlNormal">@color/primary_textL</item>
         <item name="colorControlActivated">@color/primary</item>
     </style>
 
@@ -102,6 +104,7 @@
 
         <item name="colorControlNormal">@color/accent</item>
         <item name="colorControlActivated">@color/primary_textL</item>
+        <item name="popupTheme">@style/PopupMenu.Concessio</item>
     </style>
     <!-- Login Theme - END -->
 
@@ -111,7 +114,7 @@
         <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
         <item name="colorAccent">@color/primary</item>
         <item name="android:textColorPrimary">@color/primary_textL</item>
-        <item name="android:background">#FFFFFF</item>
+        <!--<item name="android:background">#FFFFFF</item>-->
         <item name="windowNoTitle">true</item>
 
         <item name="colorControlNormal">@color/accent</item>

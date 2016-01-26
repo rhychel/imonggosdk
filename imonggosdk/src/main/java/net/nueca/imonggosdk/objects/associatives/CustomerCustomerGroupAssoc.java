@@ -86,4 +86,12 @@ public class CustomerCustomerGroupAssoc extends DBTable {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String toString() {
+        return "CustomerCustomerGroupAssoc(id="+id+") = {" +
+                "\"customer\" : " + (customer == null? "null" : customer.toJSONString()) + ", " +
+                "\"customer_group\" : " + (customerGroup == null? "null" : customerGroup.toJSONString()) +
+                "}";
+    }
 }

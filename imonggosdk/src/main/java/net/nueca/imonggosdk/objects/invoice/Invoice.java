@@ -13,9 +13,11 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -210,12 +212,12 @@ public class Invoice extends BaseTransactionTable2 {
     }
 
     public static class Builder extends BaseTransactionTable2.Builder<Builder> {
-        protected String invoice_date = "";
-        protected String status = "";
-        protected String email = "";
-        protected int user_id = 0;
+        protected String invoice_date;
+        protected String status;
+        protected String email;
+        protected int user_id;
         protected boolean tax_inclusive = false;
-        protected String remark = "";
+        protected String remark;
         protected List<InvoiceLine> invoice_lines = new ArrayList<>();
         protected List<InvoicePayment> payments = new ArrayList<>();
         protected List<InvoiceTaxRate> invoice_tax_rates = new ArrayList<>();
@@ -290,19 +292,13 @@ public class Invoice extends BaseTransactionTable2 {
     @Override
     public void refresh() {
         if(invoice_lines_fc != null && invoice_lines == null) {
-            for(InvoiceLine invoiceLine : invoice_lines_fc) {
-                addInvoiceLine(invoiceLine);
-            }
+            invoice_lines = new ArrayList<>(invoice_lines_fc);
         }
         if(payments_fc != null && payments == null) {
-            for(InvoicePayment invoicePayment : payments_fc) {
-                addPayment(invoicePayment);
-            }
+            payments = new ArrayList<>(payments_fc);
         }
         if(invoice_tax_rates_fc != null && invoice_tax_rates == null) {
-            for(InvoiceTaxRate invoiceTaxRate : invoice_tax_rates_fc) {
-                addInvoiceTaxRate(invoiceTaxRate);
-            }
+            invoice_tax_rates = new ArrayList<>(invoice_tax_rates_fc);
         }
     }
 

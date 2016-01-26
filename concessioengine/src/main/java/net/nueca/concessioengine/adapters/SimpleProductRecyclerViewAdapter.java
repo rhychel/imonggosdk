@@ -2,6 +2,7 @@ package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,24 +74,15 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             viewHolder.llQuantity.setVisibility(View.GONE);
             viewHolder.tvProductName.setText(product.getName());
             viewHolder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
-            try {
-                List<BranchPrice> branchPrices = getAdapterHelper().getDbHelper().fetchForeignCollection(product.getBranchPrices().closeableIterator());
-                double subtotal = product.getRetail_price()*Double.valueOf(getSelectedProductItems().getQuantity(product));
-                if(branchPrices.size() > 0) {
-                    viewHolder.tvRetailPrice.setText(String.format("P%.2f", branchPrices.get(0).getRetail_price()));
-                    subtotal = branchPrices.get(0).getRetail_price()*Double.valueOf(getSelectedProductItems().getQuantity(product));
-                }
-                else
-                    viewHolder.tvRetailPrice.setText(String.format("P%.2f", product.getRetail_price()));
+            double subtotal = product.getRetail_price()*Double.valueOf(getSelectedProductItems().getQuantity(product));
+            viewHolder.tvRetailPrice.setText(String.format("P%.2f", product.getRetail_price()));
 
-                if(getSelectedProductItems().hasSelectedProductItem(product)) {
-                    viewHolder.llQuantity.setVisibility(View.VISIBLE);
-                    viewHolder.tvQuantity.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(product), getSelectedProductItems().getUnitName(product, false)));
-                    if(hasSubtotal)
-                        viewHolder.tvSubtotal.setText(String.format("P%.2f", subtotal));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+//            Log.e("selectedItems", getSelectedProductItems().size()+"Size"+ProductsAdapterHelper.getSelectedProductItems().size());
+            if(getSelectedProductItems().hasSelectedProductItem(product)) {
+                viewHolder.llQuantity.setVisibility(View.VISIBLE);
+                viewHolder.tvQuantity.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(product), getSelectedProductItems().getUnitName(product, false)));
+                if(hasSubtotal)
+                    viewHolder.tvSubtotal.setText(String.format("P%.2f", subtotal));
             }
         }
     }

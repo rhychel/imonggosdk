@@ -87,4 +87,9 @@ public class SimpleLoginActivity extends BaseLoginActivity {
     public void onStartDownload(Table table) {
 
     }
+
+    @Override
+    public void onPrepareDialog() {
+
+    }
 }

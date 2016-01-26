@@ -30,6 +30,10 @@ public class QuantityInput extends DBTable {
     private boolean has_delivery_date = false;
     @DatabaseField
     private boolean has_remark = false;
+    @DatabaseField
+    private boolean input_custom_price = false;
+    @DatabaseField
+    private boolean input_custom_discount = false;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "module_setting_id")
     private transient ModuleSetting moduleSetting;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "manual_id")
@@ -116,6 +120,22 @@ public class QuantityInput extends DBTable {
 
     public void setManual(Manual manual) {
         this.manual = manual;
+    }
+
+    public boolean isInput_custom_price() {
+        return input_custom_price;
+    }
+
+    public void setInput_custom_price(boolean input_custom_price) {
+        this.input_custom_price = input_custom_price;
+    }
+
+    public boolean isInput_custom_discount() {
+        return input_custom_discount;
+    }
+
+    public void setInput_custom_discount(boolean input_custom_discount) {
+        this.input_custom_discount = input_custom_discount;
     }
 
     @Override

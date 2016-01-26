@@ -12,6 +12,7 @@ import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.interfaces.OnItemLongClickListener;
 import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 
 import java.util.List;
 
@@ -20,6 +21,16 @@ import java.util.List;
  * imonggosdk2 (c)2015
  */
 public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHolder, Obj> extends RecyclerView.Adapter<T>{
+    /**
+     * These are for the sticky header letter.
+     */
+    protected int headerDisplay;
+    protected boolean marginsFixed;
+    protected static final int VIEW_TYPE_HEADER = 0x01;
+    protected static final int VIEW_TYPE_CONTENT = 0x00;
+    /**
+     * ---------- STICKY HEADER ----------
+     */
 
     private Context context;
     private List<Obj> objectList;
@@ -101,6 +112,10 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         this.objectList = objectList;
     }
 
+    public int getPosition(Obj object) {
+        return this.objectList.indexOf(object);
+    }
+
     protected Context getContext() {
         return context;
     }
@@ -109,11 +124,16 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         return objectList.size();
     }
 
-    public void initializeRecyclerView(Context context, RecyclerView rvProducts) {
+    public void initializeRecyclerView(Context context, RecyclerView rvProducts, boolean hasDivider) {
         linearLayoutManager = new LinearLayoutManager(context);
         rvProducts.setLayoutManager(linearLayoutManager);
         rvProducts.setHasFixedSize(true);
-        rvProducts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL_LIST));
+        if(hasDivider)
+            rvProducts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL_LIST));
+    }
+
+    public void initializeRecyclerView(Context context, RecyclerView rvProducts) {
+        initializeRecyclerView(context, rvProducts, true);
     }
 
     public void initializeGridRecyclerView(Context context, RecyclerView rvProducts, int span) {

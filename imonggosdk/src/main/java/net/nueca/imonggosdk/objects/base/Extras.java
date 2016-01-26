@@ -8,15 +8,23 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.objects.RoutePlan;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
+import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 
 import java.sql.SQLException;
 
@@ -75,7 +83,7 @@ public class Extras extends DBTable {
     private String last_checkin_at;
     @Expose
     @DatabaseField
-    private String category_id;
+    private String customer_category_id;
     @Expose
     @DatabaseField
     private String salesman_id;
@@ -142,11 +150,12 @@ public class Extras extends DBTable {
     private String invoice_purpose_name;
     @Expose
     @DatabaseField
-    private String expiry_date;
+    private Boolean expiry_date;
 
     // DocumentPurpose
+    @Expose
     @DatabaseField
-    private String requires_expiry_date; // true || false
+    private Boolean require_date; // true || false
 
     // Unit
     @Expose
@@ -170,22 +179,39 @@ public class Extras extends DBTable {
     /** FOREIGN TABLES **/
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private transient RoutePlan routePlan;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_line_id")
-    private transient DocumentLine documentLine;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
-    private transient Invoice invoice;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_fr_id")
     private transient Customer customer;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_category_id")
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "category_id")
     private transient CustomerCategory customerCategory; // customer_type // (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private transient User user;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "unit_id")
     private transient Unit unit;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_id")
+    private transient Document document;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_line_id")
+    private transient DocumentLine documentLine;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_purpose_id")
+    private transient DocumentPurpose documentPurpose;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "document_type_id")
+    private transient DocumentType documentType;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "order_id")
+    private transient Order order;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "order_line_id")
+    private transient OrderLine orderLine;
+
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_id")
+    private transient Invoice invoice;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_line_id")
+    private transient InvoiceLine invoiceLine;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "payment_id")
     private transient InvoicePayment invoicePayment;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "invoice_tax_rate_id")
+    private transient InvoiceTaxRate invoiceTaxRate;
 
     public Extras() { }
 
@@ -212,7 +238,7 @@ public class Extras extends DBTable {
         latitude = builder.latitude;
         checkin_count = builder.checkin_count;
         last_checkin_at = builder.last_checkin_at;
-        requires_expiry_date = builder.requires_expiry_date;
+        require_date = builder.require_date;
         delivery_date = builder.delivery_date;
         brand = builder.brand;
         batch_no = builder.batch_no;
@@ -244,8 +270,9 @@ public class Extras extends DBTable {
         expiry_date = builder.expiry_date;
         default_selling_unit = builder.default_selling_unit;
         default_ordering_unit_id = builder.default_ordering_unit_id;
+
         salesman_id = builder.salesman_id;
-        category_id = builder.category_id;
+        customer_category_id = builder.category_id;
     }
 
     public int getIs_salesman() {
@@ -300,12 +327,20 @@ public class Extras extends DBTable {
         this.last_checkin_at = last_checkin_at;
     }
 
-    public String getRequires_expiry_date() {
-        return requires_expiry_date;
+    public Boolean require_date() {
+        return require_date;
     }
 
-    public void setRequires_expiry_date(String requires_expiry_date) {
-        this.requires_expiry_date = requires_expiry_date;
+    public void setRequire_date(Boolean require_date) {
+        this.require_date = require_date;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
     public DocumentLine getDocumentLine() {
@@ -615,11 +650,11 @@ public class Extras extends DBTable {
         this.invoice_purpose_name = invoice_purpose_name;
     }
 
-    public String getExpiry_date() {
+    public Boolean hasExpiry_date() {
         return expiry_date;
     }
 
-    public void setExpiry_date(String expiry_date) {
+    public void setExpiry_date(Boolean expiry_date) {
         this.expiry_date = expiry_date;
     }
 
@@ -639,12 +674,52 @@ public class Extras extends DBTable {
         this.default_ordering_unit_id = default_ordering_unit_id;
     }
 
-    public String getCategory_id() {
-        return category_id;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setCategory_id(String category_id) {
-        this.category_id = category_id;
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public OrderLine getOrderLine() {
+        return orderLine;
+    }
+
+    public void setOrderLine(OrderLine orderLine) {
+        this.orderLine = orderLine;
+    }
+
+    public InvoiceLine getInvoiceLine() {
+        return invoiceLine;
+    }
+
+    public void setInvoiceLine(InvoiceLine invoiceLine) {
+        this.invoiceLine = invoiceLine;
+    }
+
+    public DocumentType getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
+    }
+
+    public DocumentPurpose getDocumentPurpose() {
+        return documentPurpose;
+    }
+
+    public void setDocumentPurpose(DocumentPurpose documentPurpose) {
+        this.documentPurpose = documentPurpose;
+    }
+
+    public InvoiceTaxRate getInvoiceTaxRate() {
+        return invoiceTaxRate;
+    }
+
+    public void setInvoiceTaxRate(InvoiceTaxRate invoiceTaxRate) {
+        this.invoiceTaxRate = invoiceTaxRate;
     }
 
     public String getSalesman_id() {
@@ -653,6 +728,18 @@ public class Extras extends DBTable {
 
     public void setSalesman_id(String salesman_id) {
         this.salesman_id = salesman_id;
+    }
+
+    public void setIs_salesman(Integer is_salesman) {
+        this.is_salesman = is_salesman;
+    }
+
+    public String getCustomer_category_id() {
+        return customer_category_id;
+    }
+
+    public void setCustomer_category_id(String customer_category_id) {
+        this.customer_category_id = customer_category_id;
     }
 
     @Override
@@ -697,7 +784,7 @@ public class Extras extends DBTable {
         protected String latitude;
         protected String checkin_count;
         protected String last_checkin_at;
-        protected String requires_expiry_date; // true || false
+        protected Boolean require_date; // true || false
         protected String id;
         protected DocumentLine documentLine;
         protected RoutePlan routePlan;
@@ -739,7 +826,7 @@ public class Extras extends DBTable {
         protected Integer invoice_purpose_id;
         protected String invoice_purpose_code;
         protected String invoice_purpose_name;
-        protected String expiry_date;
+        protected Boolean expiry_date;
         protected String salesman_id;
         protected String category_id;
 
@@ -854,7 +941,7 @@ public class Extras extends DBTable {
             return this;
         }
 
-        public Builder expiry_date(String expiry_date) {
+        public Builder expiry_date(Boolean expiry_date) {
             this.expiry_date = expiry_date;
             return this;
         }
@@ -985,8 +1072,8 @@ public class Extras extends DBTable {
             return this;
         }
 
-        public Builder requires_expiry_date(String requires_expiry_date) {
-            this.requires_expiry_date = requires_expiry_date;
+        public Builder require_date(Boolean requires_expiry_date) {
+            this.require_date = requires_expiry_date;
             return this;
         }
 
@@ -1002,7 +1089,7 @@ public class Extras extends DBTable {
                     latitude == null &&
                     checkin_count == null &&
                     last_checkin_at == null &&
-                    requires_expiry_date == null;
+                    require_date == null;
         }
 
         public Extras buildIfNotEmpty() {

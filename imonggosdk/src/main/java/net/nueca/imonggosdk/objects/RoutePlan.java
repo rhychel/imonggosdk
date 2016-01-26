@@ -23,26 +23,12 @@ public class RoutePlan extends BaseTable {
 
     @DatabaseField
     private String code;
-    @DatabaseField
-    private String route_day; // (values: M, TU, TH, W, F, SA, SU)
-    @DatabaseField
-    private String frequency; // (values: W = weekly, BM1 = bi-monthly odd week, BM2 = bi-monthly even week, no monthly)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "user_id")
     private User user;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "branch_id")
-    private Branch branch;
     @ForeignCollectionField
     private ForeignCollection<Customer> foreignCustomers; // sequence (per customer_id)
 
     public RoutePlan() { }
-
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
 
     public ForeignCollection<Customer> getForeignCustomers() {
         return foreignCustomers;
@@ -60,22 +46,6 @@ public class RoutePlan extends BaseTable {
         this.code = code;
     }
 
-    public String getRoute_day() {
-        return route_day;
-    }
-
-    public void setRoute_day(String route_day) {
-        this.route_day = route_day;
-    }
-
-    public String getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(String frequency) {
-        this.frequency = frequency;
-    }
-
     public User getUser() {
         return user;
     }
@@ -89,10 +59,7 @@ public class RoutePlan extends BaseTable {
         return "RoutePlan{" +
                 "id='" + id + '\'' +
                 ", code='" + code + '\'' +
-                ", route_day='" + route_day + '\'' +
-                ", frequency='" + frequency + '\'' +
                 ", user=" + user +
-                ", branch=" + branch +
                 ", foreignCustomers=" + foreignCustomers +
                 '}';
     }

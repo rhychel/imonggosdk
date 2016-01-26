@@ -1,17 +1,21 @@
 package net.nueca.imonggosdk.objects.accountsettings;
 
-import com.j256.ormlite.dao.Dao;
+import android.util.Log;
+
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.SequenceType;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 11/16/15.
@@ -43,8 +47,12 @@ public class ModuleSetting extends DBTable {
     private boolean with_purpose = false;
     @DatabaseField
     private boolean with_customer = false;
+    @DatabaseField
+    private boolean is_view = false;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
+    @ForeignCollectionField(orderAscending = true, orderColumnName = "id")
+    private transient ForeignCollection<Sequence> sequences;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_listing_id")
     private transient ProductListing productListing;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "quantity_input_id")
@@ -223,6 +231,64 @@ public class ModuleSetting extends DBTable {
 
     public void setWith_customer(boolean with_customer) {
         this.with_customer = with_customer;
+    }
+
+    public ForeignCollection<Sequence> getSequences() {
+        return sequences;
+    }
+
+    public void setSequences(ForeignCollection<Sequence> sequences) {
+        this.sequences = sequences;
+    }
+
+    public int[] modulesToDownload(ImonggoDBHelper2 dbHelper) {
+        try {
+            List<Sequence> sequence = dbHelper.fetchForeignCollection(sequences.closeableIterator(), new ImonggoDBHelper2.Conditional<Sequence>() {
+                @Override
+                public boolean validate(Sequence obj) {
+                    return obj.getSequenceType() == SequenceType.DOWNLOAD;
+                }
+            });
+            Log.e("sequence", sequence.size()+"");
+            int []modules = new int[sequence.size()];
+            int i = 0;
+            for(Sequence ds : sequence) {
+                modules[i++] = ds.getTableValue().ordinal();
+                Log.e("tableValue", ds.getTable_key());
+            }
+            return modules;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new int[0];
+    }
+
+    public List<Table> modulesToUpdate(ImonggoDBHelper2 dbHelper) {
+        List<Table> modules = new ArrayList<>();
+        try {
+            List<Sequence> updateSequence = dbHelper.fetchForeignCollection(sequences.closeableIterator(), new ImonggoDBHelper2.Conditional<Sequence>() {
+                @Override
+                public boolean validate(Sequence obj) {
+                    return obj.getSequenceType() == SequenceType.UPDATE;
+                }
+            });
+            Log.e("modules", updateSequence.size()+"--");
+            for(Sequence us : updateSequence) {
+                Log.e("modules", us.getTableValue().getStringName());
+                modules.add(us.getTableValue());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return modules;
+    }
+
+    public boolean is_view() {
+        return is_view;
+    }
+
+    public void setIs_view(boolean is_view) {
+        this.is_view = is_view;
     }
 
     public ConcessioModule getModuleType() {

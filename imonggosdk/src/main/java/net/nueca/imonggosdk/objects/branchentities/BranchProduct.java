@@ -1,6 +1,10 @@
 package net.nueca.imonggosdk.objects.branchentities;
 
+import android.util.Log;
+
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
@@ -20,6 +24,10 @@ public class BranchProduct extends DBTable {
     private transient Product product;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_id", uniqueCombo = true)
     private transient Branch branch;
+    @ForeignCollectionField
+    private ForeignCollection<BranchUnit> branchUnits;
+    @DatabaseField
+    private int branch_product_id;
 
     @DatabaseField
     private transient boolean isBaseUnitSellable = false;
@@ -93,10 +101,27 @@ public class BranchProduct extends DBTable {
         this.unit_retail_price = unit_retail_price;
     }
 
+    public ForeignCollection<BranchUnit> getBranchUnits() {
+        return branchUnits;
+    }
+
+    public void setBranchUnits(ForeignCollection<BranchUnit> branchUnits) {
+        this.branchUnits = branchUnits;
+    }
+
+    public int getBranch_product_id() {
+        return branch_product_id;
+    }
+
+    public void setBranch_product_id(int branch_product_id) {
+        this.branch_product_id = branch_product_id;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(BranchProduct.class, this);
+            Log.e(TAG, "inserted to database");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -106,6 +131,7 @@ public class BranchProduct extends DBTable {
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.delete(BranchProduct.class, this);
+            Log.e(TAG, "deleted to database");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -115,6 +141,7 @@ public class BranchProduct extends DBTable {
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.update(BranchProduct.class, this);
+            Log.e(TAG, "updated to database");
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -33,25 +33,9 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        customerDetails.add(CustomerDetail.MOBILE_NO.setValue(customer.getMobile()));
-        customerDetails.add(CustomerDetail.TEL_NO.setValue(customer.getTelephone()));
-        customerDetails.add(CustomerDetail.COMPANY_NAME.setValue(customer.getCompany_name()));
-        customerDetails.add(CustomerDetail.ADDRESS.setValue(customer.getFullAddress()));
-        try {
-            CustomerCategory customerCategory = getHelper().fetchIntId(CustomerCategory.class).queryBuilder().where().eq("id", Integer.valueOf(customer.getExtras().getCategory_id())).queryForFirst();
-            if(customerCategory != null)
-                customerDetails.add(CustomerDetail.CUSTOMER_TYPE.setValue(customerCategory.getName()));
-            if(customer.getPaymentTerms() != null)
-                customerDetails.add(CustomerDetail.TERMS.setValue(customer.getPaymentTerms().getName()));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        customerDetails.add(CustomerDetail.SALES_ROUTE);
-        customerDetails.add(CustomerDetail.DISCOUNT);
-        customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS);
+        renderCustomerDetails(false);
 
         simpleCustomerDetailsRecyclerViewAdapter = new SimpleCustomerDetailsRecyclerViewAdapter(getActivity(), customerDetails);
-
     }
 
     @Nullable
@@ -66,6 +50,33 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
         rvCustomers.setAdapter(simpleCustomerDetailsRecyclerViewAdapter);
 
         return view;
+    }
+
+    public void renderCustomerDetails(boolean refreshList) {
+        customerDetails.clear();
+        customerDetails.add(CustomerDetail.MOBILE_NO.setValue(customer.getMobile()));
+        customerDetails.add(CustomerDetail.TEL_NO.setValue(customer.getTelephone()));
+        customerDetails.add(CustomerDetail.COMPANY_NAME.setValue(customer.getCompany_name()));
+        customerDetails.add(CustomerDetail.ADDRESS.setValue(customer.getFullAddress()));
+        if(customer.getCustomerCategory() != null)
+            customerDetails.add(CustomerDetail.CUSTOMER_TYPE.setValue(customer.getCustomerCategory().getName()));
+        if(customer.getPaymentTerms() != null)
+            customerDetails.add(CustomerDetail.TERMS.setValue(customer.getPaymentTerms().getName()));
+//        try {
+////            CustomerCategory customerCategory = getHelper().fetchIntId(CustomerCategory.class).queryBuilder().where().eq("id", customer.getCustomerCategory()).queryForFirst();
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+        customerDetails.add(CustomerDetail.SALES_ROUTE);
+        customerDetails.add(CustomerDetail.DISCOUNT);
+        customerDetails.add(CustomerDetail.AVAILABLE_POINTS.setValue(customer.getAvailable_points()));
+        customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS);
+        if(refreshList) {
+            if(setupActionBar != null)
+                setupActionBar.setupActionBar(tbActionBar);
+            simpleCustomerDetailsRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

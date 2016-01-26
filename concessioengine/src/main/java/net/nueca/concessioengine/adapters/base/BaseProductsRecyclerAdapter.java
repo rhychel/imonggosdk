@@ -24,8 +24,9 @@ import java.util.List;
  */
 public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHolder> extends BaseRecyclerAdapter<T, Product> {
 
-    private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
+//    private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
     protected boolean hasSubtotal = false;
+    protected boolean isReturnItems = false;
 
     public BaseProductsRecyclerAdapter(Context context) {
         super(context);
@@ -43,17 +44,23 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
     }
 
     public void clearSelectedItems() {
-        productsAdapterHelper.getSelectedProductItems().clear();
-        ProductListTools.restartLineNo();
+        if(isReturnItems)
+            ProductsAdapterHelper.getSelectedReturnProductItems().clear();
+        else {
+            ProductsAdapterHelper.getSelectedProductItems().clear();
+            ProductListTools.restartLineNo();
+        }
     }
 
     public SelectedProductItemList getSelectedProductItems() {
-        return productsAdapterHelper.getSelectedProductItems();
+        if(isReturnItems)
+            return ProductsAdapterHelper.getSelectedReturnProductItems();
+        return ProductsAdapterHelper.getSelectedProductItems();
     }
 
-    protected ProductsAdapterHelper getAdapterHelper() {
-        return productsAdapterHelper;
-    }
+//    protected ProductsAdapterHelper getAdapterHelper() {
+//        return productsAdapterHelper;
+//    }
 
     public void setHasSubtotal(boolean hasSubtotal) {
         this.hasSubtotal = hasSubtotal;
@@ -61,6 +68,10 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
 
     public void setDbHelper(ImonggoDBHelper2 dbHelper) {
         ProductsAdapterHelper.setDbHelper(dbHelper);
+    }
+
+    public void setReturnItems(boolean returnItems) {
+        isReturnItems = returnItems;
     }
 
     @Override

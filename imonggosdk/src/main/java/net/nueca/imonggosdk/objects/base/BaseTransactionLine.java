@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects.base;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 
@@ -110,6 +112,12 @@ public abstract class BaseTransactionLine extends BaseTable2 implements Extras.D
 
     public void setUnit_name(String unit_name) {
         this.unit_name = unit_name;
+    }
+
+    @Override
+    public String toString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
     }
 
     public static abstract class Builder<T extends Builder> {

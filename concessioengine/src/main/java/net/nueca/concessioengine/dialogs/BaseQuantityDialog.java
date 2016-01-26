@@ -20,6 +20,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
 public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public interface QuantityDialogListener {
-        void onSave(SelectedProductItem selectedProductItem);
+        void onSave(SelectedProductItem selectedProductItem, int position);
         void onDismiss();
     }
 
@@ -42,6 +43,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     protected SelectedProductItem selectedProductItem;
     protected Button btnSave, btnCancel;
+    protected List<InvoicePurpose> invoicePurposeList;
     protected List<Unit> unitList;
     protected List<String> brandList;
     protected QuantityDialogListener quantityDialogListener;
@@ -49,8 +51,9 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected FragmentManager fragmentManager;
     protected String deliveryDate;
 
-    protected boolean hasSubtotal = false;
+    protected boolean hasSubtotal = false, hasInvoicePurpose = false, hasExpiryDate = false, hasBadStock = false;
 
+    protected ArrayAdapter<InvoicePurpose> invoicePurposesAdapter;
     protected ArrayAdapter<Unit> unitsAdapter;
     protected ArrayAdapter<String> brandsAdapter;
 
@@ -61,6 +64,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, hasBatchNo = false, isMultiValue = false;
     protected int valuePosition = -1;
+    protected int listPosition = -1;
 
     public BaseQuantityDialog(Context context) {
         super(context);
@@ -213,5 +217,25 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setSalesBranch(Branch salesBranch) {
         this.salesBranch = salesBranch;
+    }
+
+    public void setListPosition(int listPosition) {
+        this.listPosition = listPosition;
+    }
+
+    public void setInvoicePurposeList(List<InvoicePurpose> invoicePurposeList) {
+        this.invoicePurposeList = invoicePurposeList;
+    }
+
+    public void setHasInvoicePurpose(boolean hasInvoicePurpose) {
+        this.hasInvoicePurpose = hasInvoicePurpose;
+    }
+
+    public void setHasExpiryDate(boolean hasExpiryDate) {
+        this.hasExpiryDate = hasExpiryDate;
+    }
+
+    public void setHasBadStock(boolean hasBadStock) {
+        this.hasBadStock = hasBadStock;
     }
 }

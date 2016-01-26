@@ -51,9 +51,15 @@ public class ImonggoTools {
                     parameterStr += "branch_id=%"+stringInputCount+"$s&";
                     stringInputCount++;
                     break;
-                case SALES_PUSH:
-                    parameterStr += "type=sales_push&";
-                    break;
+				case SALES_PUSH:
+					parameterStr += "type=sales_push&";
+					break;
+				case SALES_DISCOUNT:
+					parameterStr += "type=sales_discounts&";
+					break;
+				case SALES_POINTS:
+					parameterStr += "type=points&";
+					break;
                 case FROM:
                     parameterStr += "from=%"+stringInputCount+"$s&";
                     stringInputCount++;
@@ -89,6 +95,10 @@ public class ImonggoTools {
                     break;
                 case UNITS:
                     parameterStr += "q=units&";
+                    break;
+                case SALESMAN_ID:
+                    parameterStr += "salesman_id=%"+stringInputCount+"$s&";
+                    stringInputCount++;
                     break;
             }
         }

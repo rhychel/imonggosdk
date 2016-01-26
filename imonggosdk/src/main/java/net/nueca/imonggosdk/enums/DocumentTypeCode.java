@@ -4,17 +4,27 @@ package net.nueca.imonggosdk.enums;
  * Created by gama on 8/5/15.
  */
 public enum DocumentTypeCode {
-    PHYSICAL_COUNT("physical_count"),
-    RECEIVE_SUPPLIER("receive_supplier"),
-    RELEASE_SUPPLIER("release_supplier"),
-    RECEIVE_ADJUSTMENT("receive_adjustment"),
-    RELEASE_ADJUSTMENT("release_adjustment"),
-    RECEIVE_BRANCH("receive_branch"),
-    RELEASE_BRANCH("release_branch");
+    PHYSICAL_COUNT("physical_count", ConcessioModule.PHYSICAL_COUNT),
+    RECEIVE_SUPPLIER("receive_supplier", ConcessioModule.RECEIVE_SUPPLIER),
+    RELEASE_SUPPLIER("release_supplier", ConcessioModule.RELEASE_SUPPLIER),
+    RECEIVE_ADJUSTMENT("receive_adjustment", ConcessioModule.RECEIVE_ADJUSTMENT),
+    RELEASE_ADJUSTMENT("release_adjustment", ConcessioModule.RELEASE_ADJUSTMENT),
+    RECEIVE_BRANCH("receive_branch", ConcessioModule.RECEIVE_BRANCH),
+    RELEASE_BRANCH("release_branch", ConcessioModule.RELEASE_BRANCH);
 
     private String name;
+    private ConcessioModule concessioModule;
     DocumentTypeCode(String name) {
         this.name = name;
+    }
+
+    DocumentTypeCode(String name, ConcessioModule concessioModule) {
+        this.name = name;
+        this.concessioModule = concessioModule;
+    }
+
+    public ConcessioModule getConcessioModule() {
+        return concessioModule;
     }
 
     @Override
@@ -39,4 +49,5 @@ public enum DocumentTypeCode {
         }
         return PHYSICAL_COUNT;
     }
+
 }

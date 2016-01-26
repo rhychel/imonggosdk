@@ -8,10 +8,11 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 
 public class Configurations {
-    public static final String CONCESSIO_JSON = "concesio";
+    public static final String CONCESSIO_JSON = "concessio";
     public static final String[] MODULE_KEYS = {"stock_request", "physical_count",
                                         "receive_branch", "receive_branch_pullout",
                                         "release_branch","invoice",
@@ -90,10 +91,9 @@ public class Configurations {
             // ----- APIs With Branch IDs
             put(Table.BRANCH_USERS, "branches.json");
             put(Table.BRANCH_CUSTOMERS, "customers.json");
-            put(Table.BRANCH_ROUTE_PLANS, "route_plans.json");
 
             // ----- FOR REBISCO
-            put(Table.BRANCH_UNITS, "branch_products");
+            //put(Table.BRANCH_UNITS, "branch_products");
             put(Table.BRANCH_PRODUCTS, "branch_products.json");
             put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
             put(Table.PAYMENT_TERMS, "payment_terms.json");
@@ -101,13 +101,18 @@ public class Configurations {
             put(Table.PAYMENT_TYPES, "payment_types.json");
             put(Table.CUSTOMER_GROUPS, "customer_groups.json");
             put(Table.CUSTOMER_BY_SALESMAN, "customers.json");
+            put(Table.PRICE_LISTS_FROM_CUSTOMERS, "price_lists");
             put(Table.PRICE_LISTS, "price_lists.json");
             put(Table.BRANCH_PRICE_LISTS, "price_lists.json");
             put(Table.PRICE_LISTS_DETAILS, "price_lists");
             put(Table.SALES_PROMOTIONS, "sales_promotions.json");
-            put(Table.SALES_PROMOTIONS_DISCOUNT, "sales_promotions");
-            put(Table.SALES_PUSH, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_PUSH, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_POINTS, "sales_promotions.json");
+            put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
             put(Table.ROUTE_PLANS, "route_plans.json");
+            put(Table.ROUTE_PLANS_DETAILS, "route_plans");
 
         }
     };
@@ -117,46 +122,56 @@ public class Configurations {
         private static final long serialVersionUID = 9136022492409598128L;
         {
             // ----- Main APIs
-            put(Table.TOKENS, "tokens.json");
-            put(Table.CUSTOMERS, "customers.json");
-            put(Table.INVENTORIES, "inventories.json");
-            put(Table.PRODUCTS, "products.json");
-            put(Table.TAX_SETTINGS, "tax_settings.json");
-            put(Table.UNITS, "units.json");
-            put(Table.USERS, "users.json");
+            put(Table.TOKENS, "tokens");
+            put(Table.CUSTOMERS, "customers");
+            put(Table.INVENTORIES, "inventories");
+            put(Table.PRODUCTS, "products");
+            put(Table.TAX_SETTINGS, "tax_settings");
+            put(Table.UNITS, "units");
+            put(Table.USERS, "users");
             put(Table.USERS_ME, "users");
-            put(Table.BRANCHES, "branches.json");
-            put(Table.INVOICES, "invoices.json");
-            put(Table.SETTINGS, "settings.json");
+            put(Table.BRANCHES, "branches");
+            put(Table.INVOICES, "invoices");
+            put(Table.SETTINGS, "settings");
             put(Table.APPLICATION_SETTINGS, "application_settings");
-            put(Table.ORDERS, "orders.json");
-            put(Table.POS_DEVICES, "pos_devices.json");
-            put(Table.DAILY_SALES, "daily_sales.json");
-            put(Table.DOCUMENTS, "documents.json");
-            put(Table.DOCUMENT_TYPES, "document_types.json");
-            put(Table.DOCUMENT_PURPOSES, "document_purposes.json");
+            put(Table.ORDERS, "orders");
+            put(Table.POS_DEVICES, "pos_devices");
+            put(Table.DAILY_SALES, "daily_sales");
+            put(Table.DOCUMENTS, "documents");
+            put(Table.DOCUMENT_TYPES, "document_types");
+            put(Table.DOCUMENT_PURPOSES, "document_purposes");
 
             // ----- APIs With Branch IDs
-            put(Table.BRANCH_USERS, "branches.json");
-            put(Table.BRANCH_CUSTOMERS, "customers.json");
-            put(Table.BRANCH_ROUTE_PLANS, "route_plans.json");
+            put(Table.BRANCH_USERS, "branches");
+            put(Table.BRANCH_CUSTOMERS, "customers");
 
             // ----- FOR REBISCO
-            put(Table.BRANCH_UNITS, "branch_products");
-            put(Table.BRANCH_PRODUCTS, "branch_products.json");
-            put(Table.INVOICE_PURPOSES, "invoice_purposes.json");
-            put(Table.PAYMENT_TERMS, "payment_terms.json");
-            put(Table.CUSTOMER_CATEGORIES, "customer_categories.json");
-            put(Table.CUSTOMER_BY_SALESMAN, "customers.json");
-            put(Table.PAYMENT_TYPES, "payment_types.json");
-            put(Table.CUSTOMER_GROUPS, "customer_groups.json");
-            put(Table.PRICE_LISTS, "price_lists.json");
-            put(Table.BRANCH_PRICE_LISTS, "price_lists.json");
+            //put(Table.BRANCH_UNITS, "branch_products");
+            put(Table.BRANCH_PRODUCTS, "branch_products");
+            put(Table.INVOICE_PURPOSES, "invoice_purposes");
+            put(Table.PAYMENT_TERMS, "payment_terms");
+            put(Table.CUSTOMER_CATEGORIES, "customer_categories");
+            put(Table.CUSTOMER_BY_SALESMAN, "customers");
+            put(Table.PAYMENT_TYPES, "payment_types");
+            put(Table.CUSTOMER_GROUPS, "customer_groups");
+            put(Table.PRICE_LISTS, "price_lists");
+            put(Table.BRANCH_PRICE_LISTS, "price_lists");
             put(Table.PRICE_LISTS_DETAILS, "price_lists");
-            put(Table.SALES_PROMOTIONS, "sales_promotions.json");
-            put(Table.SALES_PROMOTIONS_DISCOUNT, "sales_promotions");
-            put(Table.SALES_PUSH, "sales_promotions.json");
-            put(Table.ROUTE_PLANS, "route_plans.json");
+            put(Table.SALES_PROMOTIONS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_PUSH, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_POINTS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
+            put(Table.ROUTE_PLANS, "route_plans");
+            put(Table.ROUTE_PLANS_DETAILS, "route_plans");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_PUSH, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_POINTS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
+            put(Table.ROUTE_PLANS, "route_plans");
+            put(Table.ROUTE_PLANS_DETAILS, "route_plans");
         }
     };
 

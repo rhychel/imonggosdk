@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
+import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Branch;
@@ -122,17 +123,36 @@ public class C_Welcome extends ModuleActivity {
             e.printStackTrace();
         }*/
 
-        Customer customer = new Customer.Builder()
+        /*Customer customer = new Customer.Builder()
                 .first_name("Johnny")
                 .last_name("Tester")
-                .extras(null)
                 .build();
         OfflineData offlineData = new SwableTools.Transaction(getHelper())
                 .toSend()
                 .forBranch(860)
                 .object(customer)
+                .queue();*/
+        /*try {
+            List<OfflineData> offlineDatas = getHelper().fetchObjectsList(OfflineData.class);
+            for(OfflineData offlineData : offlineDatas)
+                offlineData.deleteTo(getHelper());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        OfflineData offlineData = new OfflineData(
+                new Document.Builder()
+                        .addDocumentLine(new DocumentLine())
+                        .build(),
+                OfflineDataType.CANCEL_DOCUMENT);
+        offlineData.setBranch_id(876);
+        offlineData.setReturnId("60321");
+        offlineData.insertTo(getHelper());
+        new SwableTools.Transaction(getHelper())
+                .toCancel()
+                .object(offlineData)
+                .withReason("VOID")
                 .queue();
-        //SwableTools.startSwable(this);
+        SwableTools.startSwable(this);*/
 
         tvAgentName = (TextView) findViewById(R.id.tvAgentName);
         tvLogout = (TextView) findViewById(R.id.tvLogout);

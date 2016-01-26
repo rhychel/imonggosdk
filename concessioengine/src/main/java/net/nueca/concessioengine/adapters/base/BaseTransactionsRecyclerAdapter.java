@@ -2,6 +2,8 @@ package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
 
+import net.nueca.concessioengine.enums.ListingType;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.OfflineData;
 
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.List;
  */
 public abstract class BaseTransactionsRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHolder> extends BaseRecyclerAdapter<T, OfflineData>{
 
+    protected ImonggoDBHelper2 dbHelper;
+
     public BaseTransactionsRecyclerAdapter(Context context) {
         super(context);
     }
@@ -21,4 +25,12 @@ public abstract class BaseTransactionsRecyclerAdapter<T extends BaseRecyclerAdap
         setList(offlineDataList);
     }
 
+    public BaseTransactionsRecyclerAdapter(Context context, List<OfflineData> list, ListingType listingType) {
+        super(context, list);
+        this.listingType = listingType;
+    }
+
+    public void setDbHelper(ImonggoDBHelper2 dbHelper) {
+        this.dbHelper = dbHelper;
+    }
 }

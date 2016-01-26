@@ -241,8 +241,19 @@ public class DateTimeTools {
         return currentDate;
     }
 
+    public static Date getCurrentDateTimeUTC0() {
+        Calendar now = Calendar.getInstance();
+        now.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return now.getTime();
+    }
+
     public static String convertFromTo(String datetime, TimeZone from, TimeZone to) {
+        return convertFromTo(datetime, null, from, to);
+    }
+
+    public static String convertFromTo(String datetime, String format, TimeZone from, TimeZone to) {
         String convertedTime = datetime;
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         simpleDateFormat.setTimeZone(from);
         try {
@@ -250,6 +261,12 @@ public class DateTimeTools {
             simpleDateFormat.setTimeZone(to);
 
             convertedTime = simpleDateFormat.format(dateCreated);
+            if(format != null) {
+                SimpleDateFormat forDisplaying = new SimpleDateFormat(format);
+                forDisplaying.setTimeZone(to);
+
+                convertedTime = forDisplaying.format(dateCreated);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }

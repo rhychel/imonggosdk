@@ -1,6 +1,8 @@
 package net.nueca.imonggosdk.objects.customer;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
@@ -20,6 +22,8 @@ public class CustomerCategory extends BaseTable {
 
     @DatabaseField
     private String code, name, status;
+    @ForeignCollectionField
+    private ForeignCollection<Customer> customers;
 
     public CustomerCategory() {
     }
@@ -46,6 +50,19 @@ public class CustomerCategory extends BaseTable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public ForeignCollection<Customer> getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(ForeignCollection<Customer> customers) {
+        this.customers = customers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return id == ((CustomerCategory)o).getId();
     }
 
     @Override

@@ -23,7 +23,7 @@ import java.math.BigDecimal;
  * Created by rhymart on 5/14/15.
  * imonggosdk (c)2015
  */
-public class CheckoutFragment extends BaseCheckoutFragment {
+public class SimpleCheckoutFragment extends BaseCheckoutFragment {
     private EditText etAmountDue, etBalance;
 
     private RecyclerView rvPayments;

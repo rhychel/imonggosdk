@@ -84,7 +84,7 @@ public class Keypad extends DrawerLayout implements View.OnClickListener {
 
         ANIM_IN = AnimationUtils.loadAnimation(context, R.anim.abc_slide_in_bottom);
         ANIM_OUT = AnimationUtils.loadAnimation(context, R.anim.abc_slide_out_bottom);
-        //ANIM_CLICK = AnimationUtils.loadAnimation(context, R.anim.enlarge);
+        //ANIM_CLICK = AnimationUtils.loadAnimation(mContext, R.anim.enlarge);
 
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Keypad);
         handleBackbutton = typedArray.getBoolean(R.styleable.Keypad_handleBackbutton, true);

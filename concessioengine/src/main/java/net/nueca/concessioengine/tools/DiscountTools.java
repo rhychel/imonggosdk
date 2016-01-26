@@ -1,15 +1,18 @@
-package net.nueca.imonggosdk.tools;
+package net.nueca.concessioengine.tools;
 
 import android.util.Log;
 
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -98,7 +101,7 @@ public class DiscountTools {
         }
     }
 
-    private static BigDecimal applyDiscount(BigDecimal retail_price, BigDecimal qty, String discount_text) {
+    public static BigDecimal applyDiscount(BigDecimal retail_price, BigDecimal qty, String discount_text) {
         BigDecimal subtotal;
         if(discount_text.contains("%")) { // Percent Discount
             BigDecimal percentage = new BigDecimal(discount_text.replace("%", ""));
@@ -138,5 +141,20 @@ public class DiscountTools {
         return discount_text.matches("@?-?\\d+(\\.(\\d+))?") ||
                 discount_text.matches("-?\\d+(\\.(\\d+))?%?") ||
                 discount_text.matches("-?\\d+(\\.(\\d+))?");
+    }
+
+    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, BigDecimal qty, String discount_text, String separator) {
+        if(discount_text == null || discount_text.length() == 0)
+            return retail_price.multiply(qty);
+
+        List<String> discountStrs = Arrays.asList(discount_text.split(separator));
+
+        BigDecimal discountedPrice = retail_price;
+        for(String discountStr : discountStrs) {
+            if(!isValid(discountStr))
+                continue;
+            discountedPrice = applyDiscount(discountedPrice, BigDecimal.ONE, discountStr);
+        }
+        return discountedPrice.multiply(qty);
     }
 }

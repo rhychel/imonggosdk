@@ -31,6 +31,8 @@ import java.util.Map;
  * =====================================================
  */
 public class HTTPRequests {
+    private static final int RETRY_POLICY = 4;
+    private static final int TIMEDOUT_POLICY = 7500; // with backoff multiplier
 
     public static String TAG = "HTTPRequests";
 
@@ -70,7 +72,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -111,7 +113,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -151,7 +153,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonArrayRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonArrayRequest;
     }
@@ -192,7 +194,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -232,7 +234,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonArrayRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonArrayRequest;
     }
@@ -272,7 +274,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -311,7 +313,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -319,6 +321,7 @@ public class HTTPRequests {
     public static JsonObjectRequest sendDELETERequest(Context context, final Session session,
                                                       final VolleyRequestListener volleyRequestListener, Server server,
                                                       final Table table, String id, String parameter) {
+        Log.e("URL >> VOIDING", ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, RequestType.DELETE);
 
@@ -350,7 +353,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -404,7 +407,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -452,7 +455,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -496,7 +499,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonObjectRequest;
     }
@@ -536,7 +539,7 @@ public class HTTPRequests {
                 return params;
             }
         };
-        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonArrayRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
         return jsonArrayRequest;
     }

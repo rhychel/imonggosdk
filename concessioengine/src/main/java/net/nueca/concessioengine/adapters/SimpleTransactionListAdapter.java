@@ -59,7 +59,7 @@ public class SimpleTransactionListAdapter extends BaseTransactionsAdapter {
         lvh.tvTransactionRefNo.setText(offlineData.getReference_no());
         lvh.tvTransactionDate.setText(DateTimeTools.convertFromTo(offlineData.getDate(), TimeZone.getTimeZone("UTC"), Calendar.getInstance().getTimeZone()));
         lvh.tvTransactionType.setText(TransactionsAdapterHelper.getTransactionType(offlineData.getType()));
-        lvh.ivStatus.setImageResource(TransactionsAdapterHelper.getStatus(offlineData));
+        lvh.ivStatus.setImageResource(TransactionsAdapterHelper.getStatus(offlineData, true));
         if(lvh.ivStatus.getAnimation() != null)
             lvh.ivStatus.getAnimation().cancel();
         if(offlineData.isSyncing() && !offlineData.isSynced())
@@ -68,4 +68,11 @@ public class SimpleTransactionListAdapter extends BaseTransactionsAdapter {
         return convertView;
     }
 
+    @Override
+    public boolean updateList(List<OfflineData> offlineDatas) {
+        clear();
+        addAll(offlineDatas);
+        notifyDataSetChanged();
+        return getCount() > 0;
+    }
 }
