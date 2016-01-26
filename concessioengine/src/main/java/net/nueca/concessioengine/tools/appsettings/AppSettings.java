@@ -1,9 +1,24 @@
-package net.nueca.concessioengine.objects;
+package net.nueca.concessioengine.tools.appsettings;
 
 /**
  * Created by rhymartmanchus on 12/01/2016.
  */
 public class AppSettings {
+
+    public enum AppSettingEntry {
+        // Application
+        VERSION,
+        GET_LATEST_DOCUMENT, // --
+        CLEAR_CACHED_DOCS,
+        AUTO_UPDATE_APP,
+        SHOW_HISTORY_AFTER,
+        DEBUG_MODE,
+
+        // User
+        ENABLE_PIN_CODE,
+        CHANGE_PIN_CODE
+    }
+
     public enum AppSettingType {
         APPLICATION("APPLICATION"),
         USER("USER"),
@@ -24,10 +39,35 @@ public class AppSettings {
         }
     }
 
+    public enum ValueType {
+        LABEL,
+        LABEL_CLICK,
+        SWITCH,
+        BUTTON,
+        PIN,
+        DROPDOWN
+    }
+
     private boolean isHeader = false;
     private AppSettingType appSettingType;
+    private ValueType valueType = ValueType.LABEL;
     private String label;
     private int sectionFirstPosition = 0;
+
+    public AppSettings(boolean isHeader, AppSettingType appSettingType, ValueType valueType, String label, int sectionFirstPosition) {
+        this.isHeader = isHeader;
+        this.appSettingType = appSettingType;
+        this.valueType = valueType;
+        this.label = label;
+        this.sectionFirstPosition = sectionFirstPosition;
+    }
+
+    public AppSettings(boolean isHeader, AppSettingType appSettingType, String label, ValueType valueType) {
+        this.isHeader = isHeader;
+        this.appSettingType = appSettingType;
+        this.label = label;
+        this.valueType = valueType;
+    }
 
     public AppSettings(boolean isHeader, AppSettingType appSettingType, String label) {
         this.isHeader = isHeader;
@@ -77,5 +117,13 @@ public class AppSettings {
 
     public void setSectionFirstPosition(int sectionFirstPosition) {
         this.sectionFirstPosition = sectionFirstPosition;
+    }
+
+    public ValueType getValueType() {
+        return valueType;
+    }
+
+    public void setValueType(ValueType valueType) {
+        this.valueType = valueType;
     }
 }

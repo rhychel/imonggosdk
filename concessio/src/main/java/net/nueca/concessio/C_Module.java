@@ -314,7 +314,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setMultipleInput(true);
                 simpleProductsFragment.setMultiInputListener(multiInputListener);
                 simpleProductsFragment.setListingType(ListingType.SALES);
-                simpleProductsFragment.setDisplayOnly(true);
+                simpleProductsFragment.setDisplayOnly(getModuleSetting().is_view());
 
                 llFooter.setVisibility(View.VISIBLE);
                 btn1.setText("PRINT INVENTORY");

@@ -49,6 +49,10 @@ public class ModuleSetting extends DBTable {
     private boolean with_customer = false;
     @DatabaseField
     private boolean is_view = false;
+    @DatabaseField
+    private boolean has_get_latest_document = false;
+    @DatabaseField
+    private boolean has_pin_code = true;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
     @ForeignCollectionField(orderAscending = true, orderColumnName = "id")
@@ -289,6 +293,22 @@ public class ModuleSetting extends DBTable {
 
     public void setIs_view(boolean is_view) {
         this.is_view = is_view;
+    }
+
+    public boolean isHas_get_latest_document() {
+        return has_get_latest_document;
+    }
+
+    public void setHas_get_latest_document(boolean has_get_latest_document) {
+        this.has_get_latest_document = has_get_latest_document;
+    }
+
+    public boolean isHas_pin_code() {
+        return has_pin_code;
+    }
+
+    public void setHas_pin_code(boolean has_pin_code) {
+        this.has_pin_code = has_pin_code;
     }
 
     public ConcessioModule getModuleType() {
