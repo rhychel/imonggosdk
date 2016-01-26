@@ -9,12 +9,16 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 
+import java.sql.Array;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +29,7 @@ public class PriceTools {
             DEFAULT_PRICE = 0,
             PRICELIST_CUSTOMER = 1,
             PRICELIST_CUSTOMERGROUP = 2,
-            PRICELIST_BRANCH = 3;
+            BRANCHPRODUCT_PRICE = 3;
 
     public static Double identifyRetailPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch,
                                              CustomerGroup customerGroup, Customer customer) {
@@ -33,14 +37,43 @@ public class PriceTools {
     }
 
     public static Double identifyRetailPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch,
-                                             CustomerGroup customerGroup, Customer customer, Unit unit) {
+                                              CustomerGroup customerGroup, Customer customer, final Unit unit) {
+        //Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        //Log.e("UNIT", unit == null? "null" : unit.getName());
+        Double retail_price;
 
+        try {
+            retail_price = getBranchPrice(dbHelper2, product, branch, unit);
+            //Log.e("BRANCH PRICE", retail_price + "");
+
+            Price selectedPrice = identifyPrice(dbHelper2, product, branch, customerGroup, customer, unit);
+            if(selectedPrice != null)
+                retail_price = selectedPrice.getRetail_price();
+
+            //Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>> retail_price: " + retail_price);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return product.getRetail_price();
+        }
+        return retail_price;
+    }
+
+    public static Price identifyPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch,
+                                             CustomerGroup customerGroup, Customer customer, final Unit unit) {
+        //Log.e("PriceTools", "identifyPrice <<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         if(branch == null)
             Log.e("identifyRetailPrice", "branch is null");
         if(customerGroup == null)
             Log.e("identifyRetailPrice", "customerGroup is null");
         if(customer == null)
             Log.e("identifyRetailPrice", "customer is null");
+        if(unit == null)
+            Log.e("identifyRetailPrice", "unit is null");
+
+        /*Log.e("CustomerGroup", customerGroup == null? "null" : customerGroup.toJSONString());
+        Log.e("Customer", customer == null? "null" : customer.toJSONString());
+        Log.e("CustomerPriceList", customer == null || customer.getPriceList() == null? "null" :
+                customer.getPriceList().getId() + " ~ " + customer.getPriceList().toJSONString());*/
 
         Unit defaultUnit = null;
         if(product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && product.getExtras()
@@ -50,26 +83,142 @@ public class PriceTools {
                         .getDefault_selling_unit())).queryForFirst();
             } catch (SQLException e) { e.printStackTrace(); }
         }
-        Log.e("PriceTools", product.getName() + " : " + (defaultUnit != null? defaultUnit.getName() : "null" ) + " " +
-                (unit != null? unit.getName() : "null"));
+        Log.e("PriceTools", product.getName() + " : " + (defaultUnit != null? "["+defaultUnit.getId()+"] "+defaultUnit.getName() : "null" ) + " " +
+                (unit != null? "["+unit.getId()+"] "+unit.getName() : "null"));
+
+        Price selectedPrice = null;
+        try {
+            int type = DEFAULT_PRICE;
+
+            /** Using PriceList **/
+            Price customer_price = null, customergroup_price = null;
+
+            if (customer != null && customer.getPriceList() != null) {
+                List<PriceList> t_priceLists = dbHelper2.fetchObjects(PriceList.class).queryBuilder().where().eq("id", customer.getPriceList().getId())
+                        .query();
+                if(t_priceLists != null && t_priceLists.size() > 0) {
+                    Where<Price, ?> where = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
+                            .and().in("price_list_id", t_priceLists);
+                    Where<Price, ?> whereNullUnit = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
+                            .and().in("price_list_id", t_priceLists).and().isNull("unit_id");
+                    if(unit != null && unit.getId() != -1) {
+                        where.and().eq("unit_id", unit);
+                        customer_price = where.queryForFirst();
+                    }
+                    else
+                        customer_price = whereNullUnit.queryForFirst();
+                }
+            }
+            if (customerGroup != null && customerGroup.getPriceList() != null && !customerGroup.getStatus().equals("D")) {
+                List<PriceList> t_priceLists = dbHelper2.fetchObjects(PriceList.class).queryBuilder().where()
+                        .eq("id", customerGroup.getPriceList().getId()).query();
+
+                if(t_priceLists != null && t_priceLists.size() > 0) {
+                    Where<Price, ?> where = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
+                            .and().in("price_list_id", t_priceLists);
+                    Where<Price, ?> whereNullUnit = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
+                            .and().in("price_list_id", t_priceLists).and().isNull("unit_id");
+                    if(unit != null && unit.getId() != -1) {
+                        where.and().eq("unit_id", unit);
+                        customergroup_price = where.queryForFirst();
+                    }
+                    else
+                        customergroup_price = whereNullUnit.queryForFirst();
+                }
+            }
+
+            Log.e("CUSTOMER-GROUP-PRICE", "isNull? " + (customergroup_price == null));
+            if(customergroup_price != null) {
+                selectedPrice = customergroup_price;
+                type = PRICELIST_CUSTOMERGROUP;
+            }
+            Log.e("CUSTOMER-PRICE", "isNull? " + (customer_price == null));
+            if(customer_price != null) {
+                selectedPrice = customer_price;
+                type = PRICELIST_CUSTOMER;
+            }
+
+            //if(type == DEFAULT_PRICE && unit == null && defaultUnit != null)
+            //    return identifyPrice(dbHelper2, product, branch, customerGroup, customer, defaultUnit);
+
+            //Log.e("identifyRetailPrice", "type="+type);
+
+            Log.e("Price-" + type, selectedPrice == null? "null" : "retail_price:" + selectedPrice.getRetail_price() + " for " + product.getName());
+            //if(selectedPrice != null)
+            //    Log.e("Price ("+selectedPrice.getId()+") ~ " + selectedPrice.getPriceList().getId(), selectedPrice.toJSONString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return selectedPrice;
+    }
+
+    private static Double getBranchPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch, Unit unit) throws SQLException {
+        BranchProduct branchProduct = dbHelper2.fetchObjects(BranchProduct.class).queryBuilder().where()
+                .eq("product_id", product).and().eq("branch_id", branch).queryForFirst();
+        Log.e("BRANCH_PRODUCT", branchProduct == null? "null" : branchProduct.toJSONString());
+        if(branchProduct == null) {
+            if(unit != null)
+                return unit.getRetail_price();
+            return product.getRetail_price();
+        }
+        Where<BranchUnit, Integer> where = dbHelper2.fetchIntId(BranchUnit.class).queryBuilder().where()
+                .eq("bp_id", branchProduct);
+        if(unit != null)
+            where.and().eq("unit_id", unit);
+        else
+            where.and().isNull("unit_id");
+
+        BranchUnit branchUnit = where.queryForFirst();
+        Log.e("BRANCH_PRODUCT", branchUnit == null? "null" : branchUnit.toString());
+
+        if(branchUnit == null) {
+            if(unit != null)
+                return unit.getRetail_price();
+            return product.getRetail_price();
+        }
+
+        return branchUnit.getRetail_price();
+    }
+
+    @Deprecated
+    private static Double identifyRetailPrice2(ImonggoDBHelper2 dbHelper2, Product product, Branch branch,
+                                               CustomerGroup customerGroup, Customer customer, final Unit unit) {
+
+        if(branch == null)
+            Log.e("identifyRetailPrice", "branch is null");
+        if(customerGroup == null)
+            Log.e("identifyRetailPrice", "customerGroup is null");
+        if(customer == null)
+            Log.e("identifyRetailPrice", "customer is null");
+        if(unit == null)
+            Log.e("identifyRetailPrice", "unit is null");
+
+        Log.e("CustomerGroup", customerGroup.toJSONString());
+        Log.e("Customer", customer.toJSONString());
+        Log.e("CustomerPriceList", customer.getPriceList() == null? "null" :
+                customer.getPriceList().getId() + " ~ " + customer.getPriceList().toJSONString());
+
+        Unit defaultUnit = null;
+        if(product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && product.getExtras()
+                .getDefault_selling_unit().length() > 0) {
+            try {
+                defaultUnit = dbHelper2.fetchObjects(Unit.class).queryBuilder().where().eq("id", Integer.parseInt(product.getExtras()
+                        .getDefault_selling_unit())).queryForFirst();
+            } catch (SQLException e) { e.printStackTrace(); }
+        }
+        Log.e("PriceTools", product.getName() + " : " + (defaultUnit != null? "["+defaultUnit.getId()+"] "+defaultUnit.getName() : "null" ) + " " +
+                (unit != null? "["+unit.getId()+"] "+unit.getName() : "null"));
 
         Double retail_price = product.getRetail_price();
-        //Log.e("Product", "retail_price:" + retail_price + " for " + product.getName());
         try {
-            /** Using BranchPrice **/
-            /*if (branch != null) {
-                BranchPrice branchPrice = dbHelper2.fetchObjects(BranchPrice.class).queryBuilder().where().eq("branch_id", branch.getId()).and().eq
-                        ("product_id", product).queryForFirst();
-                if (branchPrice != null) {
-                    retail_price = branchPrice.getRetail_price();
-                    //Log.e("Price-BranchPrice", "retail_price:" + retail_price + " for " + product.getName());
-                }
-            }*/
+            int type = DEFAULT_PRICE;
+            retail_price = getBranchPrice(dbHelper2, product, branch, unit);
 
             /** Using PriceList **/
             //Log.e("PriceList", "count : " + dbHelper2.fetchObjects(PriceList.class).countOf() + " for " + product.getName() + "~" + product.getId());
-            int type = DEFAULT_PRICE;
-            Price customer_price = null, customergroup_price = null, branch_price = null;
+            Price customer_price = null, customergroup_price = null;// branch_price = null;
 
             if (customer != null && customer.getPriceList() != null) {
                 List<PriceList> t_priceLists = dbHelper2.fetchObjects(PriceList.class).queryBuilder().where().eq("id", customer.getPriceList().getId())
@@ -87,7 +236,7 @@ public class PriceTools {
                         customer_price = whereNullUnit.queryForFirst();
                 }
             }
-            if (customerGroup != null && customerGroup.getPriceList() != null) {
+            if (customerGroup != null && customerGroup.getPriceList() != null && !customerGroup.getStatus().equals("D")) {
                 List<PriceList> t_priceLists = dbHelper2.fetchObjects(PriceList.class).queryBuilder().where()
                         .eq("id", customerGroup.getPriceList().getId()).query();
 
@@ -104,43 +253,31 @@ public class PriceTools {
                         customergroup_price = whereNullUnit.queryForFirst();
                 }
             }
-            if (branch != null) {
-                List<PriceList> t_priceLists = dbHelper2.fetchObjects(PriceList.class).queryBuilder().where()
-                        .eq("branch_id", branch.getId()).query();
 
-                if(t_priceLists != null && t_priceLists.size() > 0) {
-                    Where<Price, ?> where = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
-                            .and().in("price_list_id", t_priceLists);
-                    Where<Price, ?> whereNullUnit = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
-                            .and().in("price_list_id", t_priceLists).and().isNull("unit_id");
-                    if(unit != null)
-                        where.and().eq("unit_id", unit);
-
-                    branch_price = where.queryForFirst();
-                    if(branch_price == null)
-                        branch_price = whereNullUnit.queryForFirst();
-                }
-            }
-
-            if(branch_price != null) {
-                retail_price = branch_price.getRetail_price();
-                type = PRICELIST_BRANCH;
-            }
+            Price selectedPrice = null;
+            Log.e("CUSTOMER-GROUP-PRICE", "isNull? " + (customergroup_price == null));
             if(customergroup_price != null) {
-                retail_price = customergroup_price.getRetail_price();
+                selectedPrice = customergroup_price;
+                if(customergroup_price.getRetail_price() != null)
+                    retail_price = customergroup_price.getRetail_price();
                 type = PRICELIST_CUSTOMERGROUP;
             }
+            Log.e("CUSTOMER-PRICE", "isNull? " + (customer_price == null));
             if(customer_price != null) {
-                retail_price = customer_price.getRetail_price();
+                selectedPrice = customer_price;
+                if(customer_price.getRetail_price() != null)
+                    retail_price = customer_price.getRetail_price();
                 type = PRICELIST_CUSTOMER;
             }
 
-            if(type == DEFAULT_PRICE && unit != null && !unit.equals(defaultUnit))
+            if(type == DEFAULT_PRICE && unit == null && defaultUnit != null)
                 return identifyRetailPrice(dbHelper2, product, branch, customerGroup, customer, defaultUnit);
 
             Log.e("identifyRetailPrice", "type="+type);
 
-            //Log.e("Price-" + type, "retail_price:" + retail_price + " for " + product.getName());
+            Log.e("Price-" + type, "retail_price:" + retail_price + " for " + product.getName());
+            if(selectedPrice != null)
+                Log.e("Price ("+selectedPrice.getId()+") ~ " + selectedPrice.getPriceList().getId(), selectedPrice.toJSONString());
         } catch (SQLException e) {
             e.printStackTrace();
             return product.getRetail_price();
@@ -152,112 +289,5 @@ public class PriceTools {
         if(price == null)
             return product.getRetail_price();
         return price.getRetail_price();*/
-    }
-
-    public static Price identifyPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch,
-                                             CustomerGroup customerGroup, Customer customer, Unit unit) {
-        Unit defaultUnit = null;
-        if(product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && product.getExtras()
-                .getDefault_selling_unit().length() > 0) {
-            try {
-                defaultUnit = dbHelper2.fetchObjects(Unit.class).queryBuilder().where().eq("id", Integer.parseInt(product.getExtras()
-                        .getDefault_selling_unit())).queryForFirst();
-            } catch (SQLException e) { e.printStackTrace(); }
-        }
-        Log.e("PriceTools", product.getName() + " : " + (defaultUnit != null? defaultUnit.getName() : "null" ) + " " +
-                (unit != null? unit.getName() : "null"));
-
-        Price price = null; // product.getRetail_price();
-        //Log.e("Product", "retail_price:" + retail_price + " for " + product.getName());
-        try {
-            /** Using BranchPrice **/
-            /*if (branch != null) {
-                BranchPrice branchPrice = dbHelper2.fetchObjects(BranchPrice.class).queryBuilder().where().eq("branch_id", branch.getId()).and().eq
-                        ("product_id", product).queryForFirst();
-                if (branchPrice != null) {
-                    retail_price = branchPrice.getRetail_price();
-                    //Log.e("Price-BranchPrice", "retail_price:" + retail_price + " for " + product.getName());
-                }
-            }*/
-
-            /** Using PriceList **/
-            //Log.e("PriceList", "count : " + dbHelper2.fetchObjects(PriceList.class).countOf() + " for " + product.getName() + "~" + product.getId());
-            int type = DEFAULT_PRICE;
-            Price customer_price = null, customergroup_price = null, branch_price = null;
-
-            if (customer != null && customer.getPriceList() != null) {
-                List<PriceList> t_priceLists = dbHelper2.fetchObjects(PriceList.class).queryBuilder().where().eq("id", customer.getPriceList().getId())
-                        .query();
-                if(t_priceLists != null && t_priceLists.size() > 0) {
-                    Where<Price, ?> where = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
-                            .and().in("price_list_id", t_priceLists);
-                    Where<Price, ?> whereNullUnit = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
-                            .and().in("price_list_id", t_priceLists).and().isNull("unit_id");
-                    if(unit != null)
-                        where.and().eq("unit_id", unit);
-
-                    customer_price = where.queryForFirst();
-                    if(customer_price == null)
-                        customer_price = whereNullUnit.queryForFirst();
-                }
-            }
-            if (customerGroup != null && customerGroup.getPriceList() != null) {
-                List<PriceList> t_priceLists = dbHelper2.fetchObjects(PriceList.class).queryBuilder().where()
-                        .eq("id", customerGroup.getPriceList().getId()).query();
-
-                if(t_priceLists != null && t_priceLists.size() > 0) {
-                    Where<Price, ?> where = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
-                            .and().in("price_list_id", t_priceLists);
-                    Where<Price, ?> whereNullUnit = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
-                            .and().in("price_list_id", t_priceLists).and().isNull("unit_id");
-                    if(unit != null)
-                        where.and().eq("unit_id", unit);
-
-                    customergroup_price = where.queryForFirst();
-                    if(customergroup_price == null)
-                        customergroup_price = whereNullUnit.queryForFirst();
-                }
-            }
-            if (branch != null) {
-                List<PriceList> t_priceLists = dbHelper2.fetchObjects(PriceList.class).queryBuilder().where()
-                        .eq("branch_id", branch.getId()).query();
-
-                if(t_priceLists != null && t_priceLists.size() > 0) {
-                    Where<Price, ?> where = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
-                            .and().in("price_list_id", t_priceLists);
-                    Where<Price, ?> whereNullUnit = dbHelper2.fetchObjects(Price.class).queryBuilder().where().eq("product_id", product.getId())
-                            .and().in("price_list_id", t_priceLists).and().isNull("unit_id");
-                    if(unit != null)
-                        where.and().eq("unit_id", unit);
-
-                    branch_price = where.queryForFirst();
-                    if(branch_price == null)
-                        branch_price = whereNullUnit.queryForFirst();
-                }
-            }
-
-            if(branch_price != null) {
-                price = branch_price;
-                type = PRICELIST_BRANCH;
-            }
-            if(customergroup_price != null) {
-                price = customergroup_price;
-                type = PRICELIST_CUSTOMERGROUP;
-            }
-            if(customer_price != null) {
-                price = customer_price;
-                type = PRICELIST_CUSTOMER;
-            }
-
-            if(type == DEFAULT_PRICE && unit != null && !unit.equals(defaultUnit))
-                return identifyPrice(dbHelper2, product, branch, customerGroup, customer, defaultUnit);
-
-            //Log.e("Price-" + type, "retail_price:" + (price!=null? price.getRetail_price() : "null") + " for " + product.getName());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return price;
     }
 }

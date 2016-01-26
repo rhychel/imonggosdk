@@ -158,6 +158,9 @@ public class OfflineData extends BaseTable2 {
     @DatabaseField
     private boolean isNewPagedSend = true;
 
+    @DatabaseField
+    private String statusLog;
+
     public OfflineData() {}
 
     public OfflineData(Invoice invoice, OfflineDataType offlineDataType) {
@@ -318,7 +321,15 @@ public class OfflineData extends BaseTable2 {
         }
 	}
 
-	public int getType() {
+    public String getStatusLog() {
+        return statusLog;
+    }
+
+    public void setStatusLog(String statusLog) {
+        this.statusLog = statusLog;
+    }
+
+    public int getType() {
 		return type;
 	}
 
@@ -620,8 +631,6 @@ public class OfflineData extends BaseTable2 {
                 if(OfflineDataType.identify(offlineDataTransactionType) == OfflineDataType.UPDATE_CUSTOMER)
                     customerData.updateTo(dbHelper);
                 else
-                    customerData.insertTo(dbHelper);
-                    customerData.insertTo(dbHelper);
                     customerData.insertTo(dbHelper);
                 break;
         }

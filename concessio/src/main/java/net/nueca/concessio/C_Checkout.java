@@ -1,6 +1,7 @@
 package net.nueca.concessio;
 
 import android.content.DialogInterface;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -9,18 +10,32 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import net.nueca.concessioengine.activities.checkout.CheckoutActivity;
 import net.nueca.concessioengine.adapters.SimpleSplitPaymentAdapter;
+import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
 import net.nueca.concessioengine.dialogs.TransactionDialog;
+import net.nueca.concessioengine.fragments.SimpleCheckoutFragment;
+import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.concessioengine.tools.InvoiceTools;
+import net.nueca.concessioengine.tools.LocationTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
+import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,12 +44,13 @@ import java.util.List;
 /**
  * Created by rhymart on 12/3/15.
  */
-public class C_Checkout extends CheckoutActivity {
+public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
     private Toolbar tbActionBar;
     private RecyclerView rvPayments;
     private SimpleSplitPaymentAdapter simpleSplitPaymentAdapter;
     private LinearLayout llBalance, llTotalAmount;
+    private TextView tvBalance, tvTotalAmount;
     private Button btn1, btn2;
 
     private ArrayList<InvoicePayment> invoicePayments = new ArrayList<>();
@@ -44,28 +60,51 @@ public class C_Checkout extends CheckoutActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_checkout_activity);
 
-        tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
-        rvPayments = (RecyclerView) findViewById(R.id.rvPayments);
+//        tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
+//        rvPayments = (RecyclerView) findViewById(R.id.rvPayments);
+        checkoutFragment = new SimpleCheckoutFragment();
+        checkoutFragment.setSetupActionBar(this);
+
         llBalance = (LinearLayout) findViewById(R.id.llBalance);
         llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
+        tvBalance = (TextView) findViewById(R.id.tvBalance);
+        tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
         btn1 = (Button) findViewById(R.id.btn1);
         btn2 = (Button) findViewById(R.id.btn2);
-
-        setSupportActionBar(tbActionBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Checkout");
 
         try {
             List<PaymentType> paymentTypes = getHelper().fetchIntId(PaymentType.class).queryBuilder().orderBy("id", true).where().eq("status", "A").query();
             for(PaymentType paymentType : paymentTypes) {
                 Log.e("id", paymentType.getId()+"---"+paymentType.getName());
             }
-            simpleSplitPaymentAdapter = new SimpleSplitPaymentAdapter(this, getHelper(), invoicePayments, paymentTypes, ListingType.COLORED_PAYMENTS);
+            simpleSplitPaymentAdapter = new SimpleSplitPaymentAdapter(this, getHelper(), invoicePayments, paymentTypes, ListingType
+                    .COLORED_PAYMENTS);
+            simpleSplitPaymentAdapter.setPaymentUpdateListener(new BaseSplitPaymentAdapter.OnPaymentUpdateListener() {
+                @Override
+                public void onAddPayment(InvoicePayment invoicePayment) {
+                    tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
+                    if(simpleSplitPaymentAdapter.isFullyPaid()) {
+                        btn1.setText("SUBMIT");
+                        btn2.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onDeletePayment(int location) {
+                    tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
+                    if(!simpleSplitPaymentAdapter.isFullyPaid()) {
+                        btn1.setText("PAY");
+                        btn2.setText("PARTIAL");
+                        btn2.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        simpleSplitPaymentAdapter.initializeRecyclerView(this, rvPayments);
-        rvPayments.setAdapter(simpleSplitPaymentAdapter);
+        ((SimpleCheckoutFragment)checkoutFragment).setSplitPaymentAdapter(simpleSplitPaymentAdapter);
+        //simpleSplitPaymentAdapter.initializeRecyclerView(this, rvPayments);
+        //rvPayments.setAdapter(simpleSplitPaymentAdapter);
 
         btn1.setText("PAY");
         btn2.setText("PARTIAL");
@@ -80,7 +119,30 @@ public class C_Checkout extends CheckoutActivity {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(rvPayments);
 
-        setupNavigationListener(tbActionBar);
+        List<InvoiceLine> invoiceLines = new ArrayList<>();
+        invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
+                .getSelectedProductItems()));
+        invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
+                .getSelectedReturnProductItems(), invoiceLines.size()));
+        Invoice.Builder invoiceBuilder = new Invoice.Builder()
+                .invoice_lines(invoiceLines);
+
+        checkoutFragment.setInvoice(invoiceBuilder.build());
+        ((SimpleCheckoutFragment) checkoutFragment).setAmountDueTextView(tvTotalAmount);
+        ((SimpleCheckoutFragment) checkoutFragment).setBalanceTextView(tvBalance);
+
+        simpleSplitPaymentAdapter.setComputation(checkoutFragment.getComputation());
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.flContent, checkoutFragment, "checkout")
+                .commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocationTools.startLocationSearch(C_Checkout.this);
+
     }
 
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -123,15 +185,14 @@ public class C_Checkout extends CheckoutActivity {
                             InvoicePayment.Builder builder = new InvoicePayment.Builder();
                             builder.tender(NumberTools.toDouble(paymentValue));
 
-                            if (paymentType != null)
+                            if (paymentType != null) {
                                 builder.payment_type_id(paymentType.getId());
+                            }
 
                             InvoicePayment invoicePayment = builder.build();
-                            simpleSplitPaymentAdapter.add(invoicePayment);
-                            simpleSplitPaymentAdapter.notifyItemInserted(simpleSplitPaymentAdapter.getItemCount());
-                            // check if the amount is fully paid
-                            btn1.setText("SUBMIT");
-                            btn2.setVisibility(View.GONE);
+                            simpleSplitPaymentAdapter.addPayment(invoicePayment);
+                            //simpleSplitPaymentAdapter.add(invoicePayment);
+                            //simpleSplitPaymentAdapter.notifyItemInserted(simpleSplitPaymentAdapter.getItemCount());
                         }
                     });
                     dialog.show();
@@ -144,6 +205,20 @@ public class C_Checkout extends CheckoutActivity {
                     transactionDialog.setCustomerName("Rhymart Manchus");
                     transactionDialog.setInStock("Transaction ID No. 123456");
                     transactionDialog.show();
+
+                    Invoice invoice = generateInvoice();
+                    try {
+                        new SwableTools.Transaction(getHelper())
+                                .toSend()
+                                .forBranch(getSession().getCurrent_branch_id())
+                                .fromModule(ConcessioModule.INVOICE)
+                                .object(invoice)
+                                .queue();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    Log.e("INVOICE", invoice.toJSONString());
                 }
             }
             else if(v.getId() == R.id.btn2) {
@@ -165,4 +240,42 @@ public class C_Checkout extends CheckoutActivity {
         }
     };
 
+    @Override
+    public void setupActionBar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Checkout");
+        this.tbActionBar = toolbar;
+
+        setupNavigationListener(tbActionBar);
+    }
+
+    @Override
+    protected void onStop() {
+        LocationTools.stopLocationSearch(this);
+        super.onStop();
+    }
+
+    public Invoice generateInvoice() {
+        Invoice invoice = checkoutFragment.getCheckoutInvoice();
+        Extras extras = invoice.getExtras() == null? new Extras() : invoice.getExtras();
+
+        try {
+            invoice.setReference(ReferenceNumberTool.generateRefNo(this, getSession().getDevice_id()));
+            invoice.setSalesman_id(getUser().getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        invoice.setInvoice_date(DateTimeTools.convertDateForUrl(DateTimeTools.getCurrentDateTimeUTCFormat().replaceAll("-","/")));
+
+        /** Location **/
+        Location location = LocationTools.getCurrentLocation();
+        if(location != null) {
+            extras.setLongitude("" + location.getLongitude());
+            extras.setLatitude("" + location.getLatitude());
+        }
+        invoice.setExtras(extras);
+
+        return invoice;
+    }
 }

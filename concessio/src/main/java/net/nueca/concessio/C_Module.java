@@ -267,6 +267,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             case INVOICE: {
                 changeToReview = true;
                 initializeProducts();
+                simpleProductsFragment.setHelper(getHelper());
                 simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES);
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
@@ -635,6 +636,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
         simpleProductsFragment.setReturnItems(isReturnItems);
+        Log.e("IS_RETURN_ITEMS", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + isReturnItems);
     }
 
     @Override

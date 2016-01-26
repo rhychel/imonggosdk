@@ -152,7 +152,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     @Override
     public void dismiss() {
         super.dismiss();
-        if(multiQuantityDialogListener != null)
+        if (multiQuantityDialogListener != null)
             multiQuantityDialogListener.onDismiss();
         if(quantityDialogListener != null)
             quantityDialogListener.onDismiss();
@@ -174,6 +174,8 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
      * @param button
      */
     protected void showDeliveryDatePicker(final Button button) {
+        deliveryDate = button.getText().toString();
+        deliveryDate = deliveryDate.replaceAll("[^0-9]","-");
         String[] date = deliveryDate.split("-");
         final DatePickerDialog deliveryDatePicker = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
             @Override

@@ -28,6 +28,7 @@ import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 
 import me.grantland.widget.AutofitTextView;
@@ -167,8 +168,19 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
 
         if(getHelper() != null && (salesCustomer != null || salesCustomerGroup != null || salesBranch != null)) {
+            Unit defaultUnit = spUnits.getSelectedItem() instanceof Unit? (Unit)spUnits.getSelectedItem() : null;
+            if(product.getExtras() != null && defaultUnit == null) {
+                try {
+                    defaultUnit = getHelper().fetchObjects(Unit.class).queryBuilder().where()
+                            .eq("id", product.getExtras().getDefault_selling_unit()).queryForFirst();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
             retailPrice = "P"+NumberTools.separateInCommas(PriceTools.identifyRetailPrice(getHelper(), product,
-                    salesBranch, salesCustomerGroup, salesCustomer));
+                    salesBranch, salesCustomerGroup, salesCustomer, defaultUnit));
         }
         tvRetailPrice.setText(retailPrice);
         tvSubtotal.setText(subtotal);
@@ -213,7 +225,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         public void onClick(View view) {
             String quantity = etQuantity.getText().toString().replace(",", "");
 
-            if(quantity.length() == 0)
+            if(quantity == null || quantity.length() == 0)
                 quantity = "0";
 
             if (quantity.equals("0") && !isMultiValue)
@@ -231,18 +243,23 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 else
                     values = new Values();
 
-                //Log.e("SIMPLE_SALES_QUANTITY_DIALOG", unit != null? unit.getName() : "null");
+                Log.e("SIMPLE_SALES_QUANTITY_DIALOG", unit != null? unit.getName() : "null");
+                Log.e("SIMPLE_SALES_QUANTITY_DIALOG", "is Helper NULL? " + (getHelper() == null));
 
                 if(getHelper() == null)
                     values.setValue(quantity, unit);
                 else {
                     Price price = PriceTools.identifyPrice(getHelper(), selectedProductItem.getProduct(),
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
+
+                    Log.e(getClass().getSimpleName(), "VALUES PRICE : isNull? " + (price == null));
                     if(price != null)
-                        values.setValue(quantity, price);
+                        values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
                     else
-                        values.setValue(quantity, unit, selectedProductItem.getRetail_price());
+                        values.setValue(quantity, unit, selectedProductItem.getRetail_price(),
+                                salesCustomer != null? salesCustomer.getDiscount_text() : null);
                 }
+                Log.e(getClass().getSimpleName(), "VALUES QTY : " + values.getQuantity());
 
                 if(hasInvoicePurpose) {
                     values.setInvoicePurpose((InvoicePurpose) spInvoicePurpose.getSelectedItem());

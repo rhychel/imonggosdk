@@ -48,6 +48,8 @@ public abstract class BaseTransactionLine extends BaseTable2 implements Extras.D
         unit_content_quantity = builder.unit_content_quantity;
         unit_retail_price = builder.unit_retail_price;
         unit_name = builder.unit_name;
+
+        extras = builder.extras;
     }
 
     public int getProduct_id() {
@@ -131,6 +133,12 @@ public abstract class BaseTransactionLine extends BaseTable2 implements Extras.D
         protected Double unit_retail_price = null;
         protected String unit_name = null;
 
+        protected Extras extras = null;
+
+        public T extras(Extras extras) {
+            this.extras = extras;
+            return (T)this;
+        }
         public T product_id(int product_id) {
             this.product_id = product_id;
             return (T)this;

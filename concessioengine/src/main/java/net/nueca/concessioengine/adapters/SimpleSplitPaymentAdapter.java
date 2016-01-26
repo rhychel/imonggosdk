@@ -150,11 +150,13 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                             builder.payment_type_id(paymentType.getId());
 
                         InvoicePayment invoicePayment = builder.build();
-                        add(invoicePayment);
+                        /*add(invoicePayment);
                         notifyItemInserted(getItemCount());
 
+                        computation.addPayment(invoicePayment);
                         if(paymentUpdateListener != null)
-                            paymentUpdateListener.onAddPayment(invoicePayment);
+                            paymentUpdateListener.onAddPayment(invoicePayment);*/
+                        addPayment(invoicePayment);
                     }
                 });
                 dialog.show();
