@@ -104,15 +104,6 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return null;
     }
 
-    protected ModuleSetting getAppSetting() {
-        try {
-            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(ConcessioModule.APP)).queryForFirst();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public List<ConcessioModule> getTransactionTypes() {
         return getTransactionTypes(true);
     }

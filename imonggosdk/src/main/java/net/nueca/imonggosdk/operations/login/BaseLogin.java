@@ -20,6 +20,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.RequestType;
+import net.nueca.imonggosdk.enums.SequenceType;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.exception.SyncException;
@@ -28,7 +29,7 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.accountsettings.Cutoff;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
-import net.nueca.imonggosdk.objects.accountsettings.DownloadSequence;
+import net.nueca.imonggosdk.objects.accountsettings.Sequence;
 import net.nueca.imonggosdk.objects.accountsettings.Manual;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.accountsettings.ProductListing;
@@ -544,13 +545,28 @@ public class BaseLogin {
 
                                                         // Download Sequence
                                                         JSONArray jsonArrDownloadSeq = module.getJSONArray("download_sequence");
-                                                        BatchList<DownloadSequence> downloadSequences = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
+                                                        BatchList<Sequence> downloadSequences = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
+                                                        int id = 1;
                                                         for(int j = 0;j < jsonArrDownloadSeq.length();j++) {
-                                                            DownloadSequence downloadSequence = new DownloadSequence(jsonArrDownloadSeq.getString(j), moduleSetting);
-                                                            downloadSequence.setId((j+1));
-                                                            downloadSequences.add(downloadSequence);
+                                                            Sequence sequence = new Sequence(jsonArrDownloadSeq.getString(j), moduleSetting, SequenceType.DOWNLOAD);
+                                                            Log.e("Download--", jsonArrDownloadSeq.getString(j));
+                                                            sequence.setId(id++);
+                                                            downloadSequences.add(sequence);
                                                         }
-                                                        downloadSequences.doOperation(DownloadSequence.class);
+                                                        downloadSequences.doOperation(Sequence.class);
+
+                                                        Log.e("Download---", module.toString());
+                                                        // Update Sequence
+                                                        JSONArray jsonArrUpdateSeq = module.getJSONArray("update_sequence");
+                                                        Log.e("Down-jsonArrUpdateSeq", jsonArrUpdateSeq.toString());
+                                                        BatchList<Sequence> updateSequences = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
+                                                        for(int j = 0;j < jsonArrUpdateSeq.length();j++) {
+                                                            Sequence sequence = new Sequence(jsonArrUpdateSeq.getString(j), moduleSetting, SequenceType.UPDATE);
+                                                            Log.e("Download---", jsonArrUpdateSeq.getString(j));
+                                                            sequence.setId(id++);
+                                                            updateSequences.add(sequence);
+                                                        }
+                                                        updateSequences.doOperation(Sequence.class);
                                                     } else if (key.equals("customers")) {
                                                         moduleSetting.insertTo(mDBHelper);
                                                         continue;

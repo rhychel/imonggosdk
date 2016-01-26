@@ -8,9 +8,12 @@ import android.view.View;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.ModuleSettingTools;
 
 import java.sql.SQLException;
 
@@ -72,5 +75,15 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
             }
         });
     }
+
+    protected ModuleSetting getAppSetting() {
+        try {
+            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(ConcessioModule.APP)).queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }
