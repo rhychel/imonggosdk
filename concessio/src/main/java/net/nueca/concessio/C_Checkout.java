@@ -142,6 +142,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     protected void onResume() {
         super.onResume();
         LocationTools.startLocationSearch(C_Checkout.this);
+
     }
 
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
