@@ -18,6 +18,8 @@ import java.util.List;
  */
 public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
 
+    private Double subtotal = 0d;
+
     private boolean isReturns = false;
 
     public SelectedProductItemList(int capacity) {
@@ -40,17 +42,23 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         selectedProductItem.setReturns(isReturns);
         int index = indexOf(selectedProductItem);
         if(index > -1) {
-            if(selectedProductItem.getValues().size() > 0)
+            if(selectedProductItem.getValues().size() > 0) {
                 set(index, selectedProductItem);
+                updateSubtotal();
+            }
             else {
                 remove(index);
+                updateSubtotal();
                 return false;
             }
             return true;
         }
 
-        if(selectedProductItem.getValues().size() > 0)
-            return super.add(selectedProductItem);
+        if(selectedProductItem.getValues().size() > 0) {
+            boolean ret = super.add(selectedProductItem);
+            updateSubtotal();
+            return ret;
+        }
         return true;
     }
 
@@ -126,5 +134,15 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     @Override
     public List<SelectedProductItem> subList(int start, int end) {
         return super.subList(start, end);
+    }
+
+    public Double getSubtotal() {
+        return subtotal;
+    }
+
+    public void updateSubtotal() {
+        subtotal = 0d;
+        for(SelectedProductItem selectedProductItem : this)
+            subtotal += selectedProductItem.getValuesSubtotal();
     }
 }

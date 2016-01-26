@@ -179,30 +179,30 @@ public class Values {
         if(this.price == null) {
             this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
 
-            if (customer_discount_text != null && customer_discount_text.length() > 0) {
-                this.subtotal = DiscountTools.applyMultipleDiscounts(
-                        new BigDecimal(this.retail_price), new BigDecimal(this.quantity),
-                        customer_discounts, customer_discount_text, ","
-                ).doubleValue();
-            } else {
+            //if (customer_discount_text != null && customer_discount_text.length() > 0) {
+            //    this.subtotal = DiscountTools.applyMultipleDiscounts(
+            //            new BigDecimal(this.retail_price), new BigDecimal(this.quantity),
+            //            customer_discounts, customer_discount_text, ","
+            //    ).doubleValue();
+            //} else {
                 this.subtotal = this.retail_price * Double.valueOf(this.quantity);
-            }
+            //}
         }
         else {
             this.no_discount_subtotal = this.retail_price * Double.valueOf(quantity);
 
-            if (customer_discount_text != null && customer_discount_text.length() > 0) {
-                this.subtotal = DiscountTools.applyMultipleDiscounts(
-                        new BigDecimal(this.retail_price), new BigDecimal(quantity),
-                        product_discounts, company_discounts, discount_text, ";", ",",
-                        customer_discounts, customer_discount_text
-                ).doubleValue();
-            } else {
+            //if (customer_discount_text != null && customer_discount_text.length() > 0) {
+            //    this.subtotal = DiscountTools.applyMultipleDiscounts(
+            //            new BigDecimal(this.retail_price), new BigDecimal(quantity),
+            //            product_discounts, company_discounts, discount_text, ";", ",",
+            //            customer_discounts, customer_discount_text
+            //    ).doubleValue();
+            //} else {
                 this.subtotal = DiscountTools.applyMultipleDiscounts(
                         new BigDecimal(this.retail_price), new BigDecimal(quantity),
                         product_discounts, discount_text, ","
                 ).doubleValue();
-            }
+            //}
         }
 
 
@@ -369,22 +369,6 @@ public class Values {
 
     public void setInvoicePurpose(InvoicePurpose invoicePurpose) {
         this.invoicePurpose = invoicePurpose;
-    }
-
-    public String getExpiry_date() {
-        return expiry_date;
-    }
-
-    public void setExpiry_date(String expiry_date) {
-        this.expiry_date = expiry_date;
-    }
-
-    public boolean isBadStock() {
-        return isBadStock;
-    }
-
-    public void setBadStock(boolean badStock) {
-        isBadStock = badStock;
     }
 
     @Override

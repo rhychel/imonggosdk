@@ -153,7 +153,7 @@ public class Extras extends DBTable {
     private String invoice_purpose_name;
     @Expose
     @DatabaseField
-    private Boolean expiry_date;
+    private String expiry_date;
 
     // DocumentPurpose
     @Expose
@@ -662,11 +662,11 @@ public class Extras extends DBTable {
         this.invoice_purpose_name = invoice_purpose_name;
     }
 
-    public Boolean hasExpiry_date() {
+    public String getExpiry_date() {
         return expiry_date;
     }
 
-    public void setExpiry_date(Boolean expiry_date) {
+    public void setExpiry_date(String expiry_date) {
         this.expiry_date = expiry_date;
     }
 
@@ -839,7 +839,7 @@ public class Extras extends DBTable {
         protected Integer invoice_purpose_id;
         protected String invoice_purpose_code;
         protected String invoice_purpose_name;
-        protected Boolean expiry_date;
+        protected String expiry_date;
         protected String salesman_id;
         protected String category_id;
 
@@ -959,7 +959,7 @@ public class Extras extends DBTable {
             return this;
         }
 
-        public Builder expiry_date(Boolean expiry_date) {
+        public Builder expiry_date(String expiry_date) {
             this.expiry_date = expiry_date;
             return this;
         }

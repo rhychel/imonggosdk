@@ -9,6 +9,7 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
@@ -63,20 +64,38 @@ public class InvoiceTools {
                     else
                         discount_text = itemValue.getCustomer_discount_text();
                 }
-                builder.discount_text(discount_text);
+                if(itemValue.getSubtotal() >= 0d) {
+                    builder.discount_text(discount_text);
 
-                Extras.Builder extrasBuilder = new Extras.Builder()
-                        .product_discount_text(itemValue.getProduct_discount_text())
-                        .product_discount_amount(generateDiscountAmount(itemValue.getProduct_discounts(),','))
-                        .company_discount_text(itemValue.getCompany_discount_text())
-                        .company_discount_amount(generateDiscountAmount(itemValue.getCompany_discounts(),','))
-                        .customer_discount_text(itemValue.getCustomer_discount_text())
-                        .customer_discount_amounts(generateDiscountAmount(itemValue.getCustomer_discounts(),','));
-                Extras extras = extrasBuilder.build();
-                if(extras.getProduct_discount_text() != null ||
-                        extras.getCompany_discount_text() != null ||
-                        extras.getCustomer_discount_text() != null)
-                    builder.extras(extrasBuilder.build());
+                    Extras.Builder extrasBuilder = new Extras.Builder();
+
+                    extrasBuilder.product_discount_text(itemValue.getProduct_discount_text())
+                            .product_discount_amount(generateDiscountAmount(itemValue.getProduct_discounts(), ','))
+                            .company_discount_text(itemValue.getCompany_discount_text())
+                            .company_discount_amount(generateDiscountAmount(itemValue.getCompany_discounts(), ','))
+                            /*.customer_discount_text(itemValue.getCustomer_discount_text())
+                            .customer_discount_amounts(generateDiscountAmount(itemValue.getCustomer_discounts(), ','))*/;
+
+                    Extras extras = extrasBuilder.build();
+                    if (extras.getProduct_discount_text() != null ||
+                            extras.getCompany_discount_text() != null ||
+                            extras.getCustomer_discount_text() != null)
+                        builder.extras(extrasBuilder.build());
+
+                /** Extras - BO and RGS **/
+                } else {
+                    Extras.Builder extrasBuilder = new Extras.Builder();
+
+                    extrasBuilder.is_bad_stock(itemValue.isBadStock());
+                    InvoicePurpose invoicePurpose = itemValue.getInvoicePurpose();
+                    extrasBuilder.invoice_purpose_id(invoicePurpose.getId());
+                    extrasBuilder.invoice_purpose_code(invoicePurpose.getCode());
+                    extrasBuilder.invoice_purpose_name(invoicePurpose.getName());
+                    extrasBuilder.expiry_date(itemValue.getExpiry_date());
+
+                    Extras extras = extrasBuilder.build();
+                    builder.extras(extras);
+                }
 
                 /** Quantity **/
                 builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).doubleValue());
@@ -133,7 +152,11 @@ public class InvoiceTools {
         return discounts;
     }
 
-    private static final int PRODUCT_DISCOUNT = 0, COMPANY_DISCOUNT = 1, CUSTOMER_DISCOUNT = 2, NO_DISCOUNT_SUBTOTAL = 3;
+    private static final int PRODUCT_DISCOUNT = 0,
+            COMPANY_DISCOUNT = 1,
+            CUSTOMER_DISCOUNT = 2,
+            NO_DISCOUNT_SUBTOTAL = 3,
+            SUBTOTAL = 4;
     private static List<Double> addAllField(List<InvoiceLine> invoiceLines, int field) {
         if(invoiceLines == null || invoiceLines.size() == 0)
             return null;
@@ -185,6 +208,15 @@ public class InvoiceTools {
                     discounts.add(Double.valueOf(invoiceLine.getNo_discount_subtotal()));
                 }
                 break;
+            case SUBTOTAL:
+                for (InvoiceLine invoiceLine : invoiceLines) {
+                    if(invoiceLine.getSubtotal() == null)
+                        continue;
+                    if(discounts == null)
+                        discounts = new ArrayList<>();
+                    discounts.add(Double.valueOf(invoiceLine.getSubtotal()));
+                }
+                break;
         }
         return discounts;
     }
@@ -210,6 +242,9 @@ public class InvoiceTools {
     }
     public static Double addNoDiscountSubtotals(List<InvoiceLine> invoiceLines) {
         return sum(addAllField(invoiceLines, NO_DISCOUNT_SUBTOTAL));
+    }
+    public static Double addSubtotals(List<InvoiceLine> invoiceLines) {
+        return sum(addAllField(invoiceLines, SUBTOTAL));
     }
     /*@Nullable
     public static Location getLastKnownLocation(Activity activity) {

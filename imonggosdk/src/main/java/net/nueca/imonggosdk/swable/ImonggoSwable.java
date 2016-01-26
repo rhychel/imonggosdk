@@ -142,15 +142,25 @@ public class ImonggoSwable extends SwableService {
 
                     //REQUEST_SUCCESS = 0;
                     //NOTIFICATION_ID++;
-
                     List<OfflineData> offlineDataList =
+                            getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
+                                    .eq("isSynced", false).and()
+                                    .eq("isSyncing", false).and()
+                                    .eq("isQueued", false).and()
+                                    .eq("isCancelled", false).and()
+                                    .eq("isBeingModified", false).and()
+                                    .eq("isPastCutoff", false).and()
+                                    .eq("type", OfflineData.CUSTOMER).query();
+
+                    offlineDataList.addAll(
                         getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
                                 .eq("isSynced", false).and()
                                 .eq("isSyncing", false).and()
                                 .eq("isQueued", false).and()
                                 .eq("isCancelled", false).and()
                                 .eq("isBeingModified", false).and()
-                                .eq("isPastCutoff", false).query();
+                                .eq("isPastCutoff", false).and()
+                                .ne("type", OfflineData.CUSTOMER).query());
 
                     if(offlineDataList.size() <= 0) {
                         Log.e("ImonggoSwable", "syncModule : nothing to sync");

@@ -9,6 +9,7 @@ import android.view.View;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.base.Extras;
@@ -17,6 +18,8 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -64,16 +67,24 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
 
         /** EXTRAS **/
         Extras extras = invoice.getExtras() == null? new Extras() : invoice.getExtras();
-        extras.setCustomer_discount_text_summary(customer.getDiscount_text());
-        extras.setCustomer_discount_amounts_summary(
-                InvoiceTools.generateDiscountAmount(InvoiceTools.consolidateCustomerDiscount(invoice.getInvoiceLines()),',')
-        );
+
         extras.setTotal_selling_price("" +
                 (InvoiceTools.addNoDiscountSubtotals(invoice.getInvoiceLines()) -
                         InvoiceTools.sum(InvoiceTools.getAllProductDiscount(invoice.getInvoiceLines())))
         );
         extras.setTotal_company_discount("" + InvoiceTools.sum(InvoiceTools.getAllCompanyDiscount(invoice.getInvoiceLines())));
-        extras.setTotal_customer_discount("" + InvoiceTools.sum(InvoiceTools.consolidateCustomerDiscount(invoice.getInvoiceLines())));
+        //extras.setTotal_customer_discount("" + InvoiceTools.sum(InvoiceTools.consolidateCustomerDiscount(invoice.getInvoiceLines())));
+
+        List<Double> customerDiscounts = new ArrayList<>();
+        double subtotal = InvoiceTools.addSubtotals(invoice.getInvoiceLines());
+        double totalCustomerDiscount = subtotal - DiscountTools.applyMultipleDiscounts(new BigDecimal(subtotal),
+                BigDecimal.ONE, customerDiscounts, customer.getDiscount_text(),",").doubleValue();
+        extras.setTotal_customer_discount("" + totalCustomerDiscount);
+        extras.setCustomer_discount_text_summary(customer.getDiscount_text());
+        extras.setCustomer_discount_amounts_summary(
+                //InvoiceTools.generateDiscountAmount(InvoiceTools.consolidateCustomerDiscount(invoice.getInvoiceLines()),',')
+                InvoiceTools.generateDiscountAmount(customerDiscounts,',')
+        );
 
         extras.setTotal_unit_retail_price("" +
                 ( Double.valueOf(extras.getTotal_selling_price()) -
