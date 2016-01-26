@@ -8,7 +8,7 @@ import android.view.View;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SettingsAdapter;
-import net.nueca.concessioengine.objects.AppSettings;
+import net.nueca.concessioengine.tools.appsettings.AppSettings;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class SettingsActivity extends ImonggoAppCompatActivity {
         add(new AppSettings(true, AppSettings.AppSettingType.APPLICATION, null, 0));
         add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Version: 1.1.1", 0));
         add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Clear transactions", 0));
-        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Clear cached doc", 0));
+        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Clear cached docs", 0));
         add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Auto update app", 0));
         add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Version: 1.1.1", 0));
         add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Clear transactions", 0));

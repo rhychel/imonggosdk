@@ -13,12 +13,8 @@ import com.tonicartos.superslim.LayoutManager;
 import com.tonicartos.superslim.LinearSLM;
 
 import net.nueca.concessioengine.R;
-import net.nueca.concessioengine.adapters.base.BaseAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
-import net.nueca.concessioengine.objects.AppSettings;
-import net.nueca.imonggosdk.objects.Settings;
-
-import org.w3c.dom.Text;
+import net.nueca.concessioengine.tools.appsettings.AppSettings;
 
 import java.util.List;
 
@@ -30,7 +26,6 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
     public SettingsAdapter(Context context, List<AppSettings> list) {
         super(context, list);
         headerDisplay = getContext().getResources().getInteger(R.integer.default_header_display);
-//        marginsFixed = getContext().getResources().getBoolean(R.bool.default_margins_fixed);
         marginsFixed = false;
     }
 
