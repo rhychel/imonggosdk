@@ -53,6 +53,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
@@ -122,6 +123,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         llFooter = (LinearLayout) findViewById(R.id.llFooter);
 
         llFooter.setVisibility(View.GONE);
+        Log.e(">>>>>>>>>>>>>>>>>>>>", ""+concessioModule.toString());
         switch (concessioModule) {
             case LAYAWAY: {
                 simpleTransactionsFragment = new SimpleTransactionsFragment();
@@ -278,7 +280,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setCustomer(customer);
                 simpleProductsFragment.setHasPromotionalProducts(true);
                 try {
-                    simpleProductsFragment.setCustomerGroup(customer.getCustomerGroups(getHelper()).get(0));
+                    List <CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+                    if(customerGroups != null && customerGroups.size() > 0)
+                        simpleProductsFragment.setCustomerGroup(customerGroups.get(0));
                     simpleProductsFragment.setBranch(getBranches().get(0));
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -295,7 +299,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setCustomer(customer);
                 finalizeFragment.setHasPromotionalProducts(true);
                 try {
-                    finalizeFragment.setCustomerGroup(customer.getCustomerGroups(getHelper()).get(0));
+                    List <CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+                    if(customerGroups != null && customerGroups.size() > 0)
+                        finalizeFragment.setCustomerGroup(customerGroups.get(0));
                     finalizeFragment.setBranch(getBranches().get(0));
                 } catch (SQLException e) {
                     e.printStackTrace();

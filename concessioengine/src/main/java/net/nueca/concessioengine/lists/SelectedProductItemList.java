@@ -109,13 +109,13 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     public String getUnitName(Product product, boolean withFormat) {
         SelectedProductItem selectedProductItem = getSelectedProductItem(product);
         if(selectedProductItem == null)
-            return "";
+            return product.getBase_unit_name();
         if(selectedProductItem.getValues().get(0).getUnit() != null) {
             if (withFormat)
                 return "<i>[" + selectedProductItem.getValues().get(0).getUnit().getName() + "]</i>";
             return selectedProductItem.getValues().get(0).getUnit().getName();
         }
-        return "";
+        return product.getBase_unit_name();
     }
 
     public boolean isReturns() {

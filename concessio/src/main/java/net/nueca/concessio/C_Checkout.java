@@ -179,6 +179,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 if (btn1.getText().toString().equals("PAY")) {
                     SimplePaymentDialog dialog = new SimplePaymentDialog(C_Checkout.this, simpleSplitPaymentAdapter.getPaymentTypeList(), R.style.AppCompatDialogStyle_Light_NoTitle);
                     dialog.setDialogType(DialogType.ADVANCED_PAY);
+                    dialog.setBalanceText(tvBalance.getText().toString());
+                    dialog.setTotalAmountText(tvTotalAmount.getText().toString());
                     dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
                         @Override
                         public void onAddPayment(PaymentType paymentType, String paymentValue) {

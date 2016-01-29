@@ -36,6 +36,8 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
 
     private List<PaymentType> paymentTypes;
 
+    private String totalAmount = "", balance = "";
+
     public SimplePaymentDialog(Context context, List<PaymentType> paymentTypes) {
         super(context);
         this.paymentTypes = paymentTypes;
@@ -98,6 +100,10 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
         else if(dialogType == DialogType.ADVANCED_PAY) {
             tvBalance = (TextView) super.findViewById(R.id.tvBalance);
             tvTotalAmount = (TextView) super.findViewById(R.id.tvTotalAmount);
+
+            tvBalance.setText(balance);
+            tvTotalAmount.setText(totalAmount);
+
             btnPay = (Button) super.findViewById(R.id.btnPay);
 
             btnPay.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +124,16 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
     public void showWithText(String txt) {
         show();
         etPayment.setText(txt);
+    }
+
+    public SimplePaymentDialog setTotalAmountText(String totalAmountText) {
+        totalAmount = totalAmountText;
+        return this;
+    }
+
+    public SimplePaymentDialog setBalanceText(String balanceText) {
+        balance = balanceText;
+        return this;
     }
 
     @Override

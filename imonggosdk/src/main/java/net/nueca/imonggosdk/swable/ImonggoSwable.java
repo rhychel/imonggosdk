@@ -108,6 +108,7 @@ public class ImonggoSwable extends SwableService {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.e("ImonggoSwable", "onCreate");
         if(!isReceiverAttached) {
             notificationFilter = new IntentFilter();
             notificationFilter.addAction(NOTIFICATION_ACTION);
@@ -237,6 +238,8 @@ public class ImonggoSwable extends SwableService {
                     if(swableStateListener != null)
                         swableStateListener.onSwableStarted();
                     getQueue().start();
+                    setSyncing(false);
+                    Log.e("ImonggoSwable", "isSyncing? " + isSyncing());
                 }
                 else {
                     if(!AccountTools.isUserActive(this))
