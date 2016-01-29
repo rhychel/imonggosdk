@@ -45,7 +45,7 @@ public class SwableSendModule {
 
     public void sendTransaction(Table table, final OfflineData offlineData) {
         Log.e("SwableSendModule", "sendTransaction " + table.getStringName() + " " + offlineData.getType());
-        Log.e("SwableSendModule", "sendTransaction " + offlineData.getObjectFromData().toString());
+        //Log.e("SwableSendModule", "sendTransaction " + offlineData.getObjectFromData().toString());
         try {
             Branch branch = dbHelper.fetchObjects(Branch.class).queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
@@ -70,7 +70,7 @@ public class SwableSendModule {
             //JSONObject data;
             JSONObject jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
                     offlineData.getData());
-            Log.e("SwableSendModule", "sendTransaction "+jsonObject.toString());
+            Log.e("SwableSendModule", "sendTransaction : non-paging : "+jsonObject.toString());
             //Log.e("JSON", jsonObject.toString());
 
             requestQueue.cancelAll(offlineData.getId());
@@ -493,8 +493,10 @@ public class SwableSendModule {
         }
         else if(table == Table.DOCUMENTS) {
             Document firstPage = (Document)offlineData.getObjectFromData();
-            firstPage.setDocument_lines(firstPage.getDocumentLineAt(0));
+            firstPage = firstPage.getChildDocumentAt(0);
+            //firstPage.setDocument_lines(firstPage.getDocumentLineAt(0));
             jsonObject = firstPage.toJSONObject();
+            Log.e("FIRST_PAGE >>>>> ", jsonObject.toString());
         }
         else return;
 
@@ -681,11 +683,16 @@ public class SwableSendModule {
                     .document_lines(((Document) offlineData.getObjectFromData()).getDocumentLineAt(page - 1));
             if(page == maxpage)
                 documentBuilder.reference(offlineData.getReference_no());
+            //Document document = (Document) offlineData.getObjectFromData();
+            //document = document.getChildDocumentAt(page - 1);
             jsonObject = documentBuilder.build().toJSONObject();
         }
         else return;
 
         Log.e("SwableSendModule", "sendNextPage : reference -> " + jsonObject.get("reference") + " page:" + page);
+        jsonObject.put("reference",null);
+        Log.e("SwableSendModule", "sendNextPage : " + jsonObject.toString());
+
         jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(), jsonObject);
 
         requestQueue.cancelAll(offlineData.getId()+ "-" +page);

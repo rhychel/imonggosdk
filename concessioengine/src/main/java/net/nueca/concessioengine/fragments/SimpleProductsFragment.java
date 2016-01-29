@@ -281,10 +281,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setListPosition(position);
                 simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
+                simpleSalesQuantityDialog.setHelper(getHelper());
 
                 if(productRecyclerViewAdapter instanceof BaseSalesProductRecyclerAdapter) {
                     BaseSalesProductRecyclerAdapter salesAdapter = (BaseSalesProductRecyclerAdapter) productRecyclerViewAdapter;
-                    Log.e("SimpleProductsFragment", "helper NULL?? "+(salesAdapter.getHelper() == null));
                     simpleSalesQuantityDialog.setHelper(salesAdapter.getHelper());
                     simpleSalesQuantityDialog.setSalesCustomer(salesAdapter.getCustomer());
                     simpleSalesQuantityDialog.setSalesCustomerGroup(salesAdapter.getCustomerGroup());

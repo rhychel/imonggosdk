@@ -108,8 +108,9 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if(!SwableTools.isImonggoSwableRunning(this))
+        //if(!SwableTools.isImonggoSwableRunning(this))
             SwableTools.startSwable(this);
+        Log.e("SWABLE", "START");
     }
 
     @Override
