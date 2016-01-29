@@ -12,6 +12,7 @@ import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -139,7 +140,7 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
 
                 dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
                     @Override
-                    public void onAddPayment(PaymentType paymentType, String paymentValue) {
+                    public void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras) {
                         InvoicePayment.Builder builder = new InvoicePayment.Builder();
                         builder.amount(NumberTools.toDouble(paymentValue));
 
@@ -150,6 +151,7 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                             builder.payment_type_id(paymentType.getId());
 
                         InvoicePayment invoicePayment = builder.build();
+                        invoicePayment.setExtras(extras);
                         /*add(invoicePayment);
                         notifyItemInserted(getItemCount());
 

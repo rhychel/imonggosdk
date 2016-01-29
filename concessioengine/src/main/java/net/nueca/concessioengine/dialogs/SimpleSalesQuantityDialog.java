@@ -243,8 +243,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 else
                     values = new Values();
 
-                Log.e("SIMPLE_SALES_QUANTITY_DIALOG", unit != null? unit.getName() : "null");
-                Log.e("SIMPLE_SALES_QUANTITY_DIALOG", "is Helper NULL? " + (getHelper() == null));
+                Log.e("SALES_QUANTITY_DIALOG", unit != null? unit.getName() : "null");
+                Log.e("SALES_QUANTITY_DIALOG", "is Helper NULL? " + (getHelper() == null));
 
                 if(getHelper() == null)
                     values.setValue(quantity, unit);

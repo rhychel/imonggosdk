@@ -44,14 +44,10 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
     public void onBindViewHolder(ListViewHolder holder, int position) {
         View itemView = holder.itemView;
         AppSettings appSettings = getItem(position);
-        if(!appSettings.isHeader()) {
-            holder.text1.setText(appSettings.getLabel());
-        }
-        else {
-            holder.tvHeader.setText(appSettings.getAppSettingType().getHeader());
-        }
+
         final GridSLM.LayoutParams lp = GridSLM.LayoutParams.from(itemView.getLayoutParams());
         if(appSettings.isHeader()) {
+            holder.tvHeader.setText(appSettings.getConcessioModule().toString());
 //            lp.headerDisplay = headerDisplay;
             if (lp.isHeaderInline() || (marginsFixed && !lp.isHeaderOverlay())) {
                 lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -61,6 +57,9 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
 
             lp.headerEndMarginIsAuto = !marginsFixed;
             lp.headerStartMarginIsAuto = !marginsFixed;
+        }
+        else {
+            holder.text1.setText(appSettings.getAppSettingEntry().getLabel());
         }
         lp.setSlm(LinearSLM.ID);
         lp.setColumnWidth(getContext().getResources().getDimensionPixelSize(R.dimen.grid_column_width));

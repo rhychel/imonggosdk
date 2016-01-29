@@ -7,9 +7,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import net.nueca.concessioengine.R;
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SettingsAdapter;
 import net.nueca.concessioengine.tools.appsettings.AppSettings;
+import net.nueca.concessioengine.tools.appsettings.AppTools;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,45 +20,7 @@ import java.util.List;
 /**
  * Created by rhymartmanchus on 12/01/2016.
  */
-public class SettingsActivity extends ImonggoAppCompatActivity {
-
-    private ArrayList<AppSettings> appSettings = new ArrayList<AppSettings>(){{
-        add(new AppSettings(true, AppSettings.AppSettingType.APPLICATION, null, 0));
-        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Version: 1.1.1", 0));
-        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Clear transactions", 0));
-        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Clear cached docs", 0));
-        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Auto update app", 0));
-        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Version: 1.1.1", 0));
-        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Clear transactions", 0));
-        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Clear cached doc", 0));
-        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Auto update app", 0));
-        add(new AppSettings(false, AppSettings.AppSettingType.APPLICATION, "Auto update app", 0)); // 9
-        add(new AppSettings(true, AppSettings.AppSettingType.USER, null, 10));
-        add(new AppSettings(false, AppSettings.AppSettingType.USER, "Sample", 10)); // 11
-        add(new AppSettings(false, AppSettings.AppSettingType.USER, "Sample", 10)); // 12
-        add(new AppSettings(false, AppSettings.AppSettingType.USER, "Sample", 10)); // 13
-        add(new AppSettings(false, AppSettings.AppSettingType.USER, "Sample", 10)); // 14
-        add(new AppSettings(false, AppSettings.AppSettingType.USER, "Sample", 10)); // 15
-        add(new AppSettings(false, AppSettings.AppSettingType.USER, "Sample", 10)); // 16
-        add(new AppSettings(false, AppSettings.AppSettingType.USER, "Sample", 10)); // 17
-        add(new AppSettings(false, AppSettings.AppSettingType.USER, "Sample", 10)); // 18
-        add(new AppSettings(false, AppSettings.AppSettingType.USER, "Sample", 10)); // 19
-        add(new AppSettings(true, AppSettings.AppSettingType.LISTING, null, 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-        add(new AppSettings(false, AppSettings.AppSettingType.LISTING, "Sample", 20));
-    }};
+public class SettingsActivity extends ModuleActivity {
 
     private RecyclerView rvCustomers;
     private Toolbar tbActionBar;
@@ -67,7 +32,7 @@ public class SettingsActivity extends ImonggoAppCompatActivity {
         rvCustomers = (RecyclerView) findViewById(R.id.rvCustomers);
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
 
-        SettingsAdapter settingsAdapter = new SettingsAdapter(this, appSettings);
+        SettingsAdapter settingsAdapter = new SettingsAdapter(this, generateSettings());
         settingsAdapter.initializeRecyclerView(this, rvCustomers);
         rvCustomers.setAdapter(settingsAdapter);
 
@@ -86,7 +51,14 @@ public class SettingsActivity extends ImonggoAppCompatActivity {
     }
 
     private List<AppSettings> generateSettings() {
+        ArrayList<AppSettings> appSettings = new ArrayList<>();
+        AppSettings appSetting = new AppSettings();
+        appSetting.setHeader(true);
+        appSetting.setSectionFirstPosition(0);
+        appSetting.setAppSettingEntry(AppSettings.AppSettingEntry.VERSION);
+        appSetting.setValue(AppTools.getAppVersionName(this));
+        appSetting.setConcessioModule(ConcessioModule.APPLICATION);
 
-        return null;
+        return appSettings;
     }
 }

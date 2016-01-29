@@ -237,6 +237,7 @@ public class ImonggoSwable extends SwableService {
                     if(swableStateListener != null)
                         swableStateListener.onSwableStarted();
                     getQueue().start();
+                    setSyncing(false); // -- restarter
                 }
                 else {
                     if(!AccountTools.isUserActive(this))

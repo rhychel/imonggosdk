@@ -181,7 +181,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     dialog.setDialogType(DialogType.ADVANCED_PAY);
                     dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
                         @Override
-                        public void onAddPayment(PaymentType paymentType, String paymentValue) {
+                        public void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras) {
                             InvoicePayment.Builder builder = new InvoicePayment.Builder();
                             builder.tender(NumberTools.toDouble(paymentValue));
 
@@ -190,6 +190,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             }
 
                             InvoicePayment invoicePayment = builder.build();
+                            invoicePayment.setExtras(extras);
                             simpleSplitPaymentAdapter.addPayment(invoicePayment);
                             //simpleSplitPaymentAdapter.add(invoicePayment);
                             //simpleSplitPaymentAdapter.notifyItemInserted(simpleSplitPaymentAdapter.getItemCount());
