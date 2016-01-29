@@ -62,6 +62,8 @@ public abstract class ImonggoService extends Service {
     }
 
     protected User getUser() {
-        return getSession().getUser();
+        if(mUser == null)
+            mUser = getSession().getUser();
+        return mUser;
     }
 }

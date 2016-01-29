@@ -155,6 +155,7 @@ public class PriceTools {
     }
 
     private static Double getBranchPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch, Unit unit) throws SQLException {
+        Log.e("PriceTools", "getBranchPrice " + (dbHelper2 == null) + " " + (product == null) + " " + (branch == null) + " " + (unit == null));
         BranchProduct branchProduct = dbHelper2.fetchObjects(BranchProduct.class).queryBuilder().where()
                 .eq("product_id", product).and().eq("branch_id", branch).queryForFirst();
         Log.e("BRANCH_PRODUCT", branchProduct == null? "null" : branchProduct.toJSONString());

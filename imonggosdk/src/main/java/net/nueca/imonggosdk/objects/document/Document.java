@@ -94,13 +94,13 @@ public class Document extends BaseTransactionTable {
     public Document(Builder builder) {
         super(builder);
         remark = builder.remark;
-        if(remark != null && !StringUtils.containsIgnoreCase(remark, "page")) {
+        /*if(remark != null && !StringUtils.containsIgnoreCase(remark, "page")) {
             if(!remark.isEmpty())
                 remark += ",";
             remark += "page=1/1";
         }
         else if(remark == null)
-            remark = "page=1/1";
+            remark = "page=1/1";*/
         document_type_code = builder.document_type_code;
         document_lines = builder.document_lines;
         target_branch_id = builder.target_branch_id;
@@ -531,15 +531,15 @@ public class Document extends BaseTransactionTable {
         return list;
     }
 
-    @Deprecated
+    //@Deprecated
     public Document getChildDocumentAt(int position) throws JSONException {
         Document document = Document.fromJSONObject(toJSONObject());
-        if(id == -1)
+        /*if(id == -1)
             document.setId((Math.abs(id) + position) * -1);
         else
-            document.setId(id + position);
+            document.setId(id + position);*/
         document.setDocument_lines(getDocumentLineAt(position));
-        document.setReference(reference + "-" + (position + 1));
+        //document.setReference(reference + "-" + (position + 1));
         //document.setRemark("page=" + (position + 1) + "/" + getChildCount());
         document.setRemark(
                 new RemarkBuilder()
