@@ -29,9 +29,11 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
 
     protected static final int SUCCESS = 10;
     protected static final int ERROR = 20;
+    protected static final int REFRESH = 30;
 
     protected static final int ADD_CUSTOMER = 100;
     protected static final int EDIT_CUSTOMER = 101;
+    protected static final int ALL_CUSTOMERS = 104;
     protected static final int REVIEW_SALES = 102;
     protected static final int RETURN_ITEMS_SALES = 103;
 

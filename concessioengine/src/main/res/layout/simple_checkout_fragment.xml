@@ -12,7 +12,7 @@
             sothree:theme="@style/ActionBar"
             android:elevation="3dp"
             android:layout_height="wrap_content"
-            >
+            android:theme="@style/ThemeOverlay.ActionBar.Concessio">
         </android.support.v7.widget.Toolbar>
 
     <LinearLayout
