@@ -14,6 +14,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.widgets.Numpad;
 
@@ -38,6 +39,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
     private LinearLayout llCheckName, llCheckNumber, llBankBranch, llCheckDate;
     private EditText etCheckName, etCheckNumber, etBankBranch;
     private Button btnCheckDate;
+    private InvoicePayment invoicePayment = null;
 
     private PaymentDialogListener listener;
 
@@ -89,19 +91,31 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
         spnPaymentType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                toggleCheckDetails(paymentTypes.get(position).getName().trim().toLowerCase().equals("check"));
+                toggleCheckDetails(paymentTypes.get(position).getName().trim().toLowerCase().equals("credit card"));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
-
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cancel();
             }
         });
+
+        if(invoicePayment != null) {
+            etPayment.setText(String.valueOf(invoicePayment.getTender()));
+            int selectedPosition = paymentTypes.indexOf(new PaymentType(invoicePayment.getPayment_type_id()));
+            spnPaymentType.setSelection(selectedPosition);
+            if(invoicePayment.getExtras() != null) {
+                toggleCheckDetails(true);
+                etBankBranch.setText(invoicePayment.getExtras().getBank_branch());
+                etCheckName.setText(invoicePayment.getExtras().getCheck_name());
+                etCheckNumber.setText(invoicePayment.getExtras().getCheck_number());
+                btnCheckDate.setText(invoicePayment.getExtras().getCheck_date());
+            }
+        }
 
         if(dialogType == DialogType.BASIC_PAY) {
             btnAdd = (Button) super.findViewById(R.id.btnAdd);
@@ -159,6 +173,15 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
         llCheckNumber.setVisibility(visibility);
         llCheckDate.setVisibility(visibility);
         llBankBranch.setVisibility(visibility);
+        if(show)
+            btnCheckDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDeliveryDatePicker(fragmentManager, btnCheckDate);
+                }
+            });
+        else
+            btnCheckDate.setOnClickListener(null);
     }
 
     public void setDialogType(DialogType dialogType) {
@@ -205,5 +228,9 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
 
     public interface PaymentDialogListener {
         void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras);
+    }
+
+    public void setInvoicePayment(InvoicePayment invoicePayment) {
+        this.invoicePayment = invoicePayment;
     }
 }

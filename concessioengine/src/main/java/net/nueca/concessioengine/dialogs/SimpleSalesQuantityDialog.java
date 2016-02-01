@@ -139,7 +139,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 btnExpiryDate.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showDeliveryDatePicker(btnExpiryDate);
+                        showDeliveryDatePicker(fragmentManager, btnExpiryDate);
                     }
                 });
             }
@@ -174,7 +174,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     Values value = selectedProductItem.getValues().get(valuePosition);
                     spUnits.setSelection(unitList.indexOf(value.getUnit() != null? value.getUnit() : defaultUnit));
                     if(hasInvoicePurpose) {
-                        deliveryDate = value.getExpiry_date();
+                        date = value.getExpiry_date();
                         spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
                     }
                     if(hasBadStock)
@@ -184,19 +184,19 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 Values value = selectedProductItem.getValues().get(0);
                 spUnits.setSelection(unitList.indexOf(value.getUnit() != null? value.getUnit() : defaultUnit));
                 if(hasInvoicePurpose) {
-                    deliveryDate = value.getExpiry_date();
+                    date = value.getExpiry_date();
                     spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
                 }
                 if(hasBadStock)
                     swcBadStock.setChecked(value.isBadStock());
             }
             if(hasExpiryDate) {
-                if(deliveryDate == null) {
+                if(date == null) {
                     Calendar now = Calendar.getInstance();
-                    deliveryDate = now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH);
+                    date = now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH);
                 }
-                deliveryDate = DateTimeTools.convertToDate(deliveryDate, "yyyy-M-d", "yyyy-MM-dd");
-                btnExpiryDate.setText(deliveryDate);
+                date = DateTimeTools.convertToDate(date, "yyyy-M-d", "yyyy-MM-dd");
+                btnExpiryDate.setText(date);
             }
         }
 
@@ -303,7 +303,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
 
                 if(hasInvoicePurpose) {
                     values.setInvoicePurpose((InvoicePurpose) spInvoicePurpose.getSelectedItem());
-                    values.setExpiry_date(deliveryDate);
+                    values.setExpiry_date(date);
                 }
                 if(hasBadStock)
                     values.setBadStock(swcBadStock.isChecked());

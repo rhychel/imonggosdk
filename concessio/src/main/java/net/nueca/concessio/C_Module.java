@@ -440,6 +440,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             @Override
                             public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
                                 Log.e("Reason", reason.getName());
+                                ProductsAdapterHelper.clearSelectedProductItemList(true);
                                 ProductsAdapterHelper.setSelectedCustomer(customer);
                                 ProductsAdapterHelper.setReason(reason);
 
