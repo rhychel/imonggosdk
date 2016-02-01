@@ -10,6 +10,8 @@ public class RemarkBuilder {
     private int pageTotal = 1;
 
     public RemarkBuilder parse(String remark) {
+        if(remark == null || remark.length() == 0)
+            return this;
         String elements[] = remark.split(",");
         for(String element : elements) {
             String keyvalue[] = element.split("=");

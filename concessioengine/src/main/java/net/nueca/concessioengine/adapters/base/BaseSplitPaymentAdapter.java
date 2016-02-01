@@ -23,6 +23,8 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
     private HashMap<Integer, PaymentType> paymentTypes;
     private List<PaymentType> paymentTypeList;
 
+    protected String totalAmount = "", balance = "";
+
     protected boolean isFullyPaid = false;
     protected boolean isDefaultCash = false;
 
@@ -108,6 +110,14 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
     public void setPaymentTypeList(List<PaymentType> paymentTypeList) {
         this.paymentTypeList = paymentTypeList;
+    }
+
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public void setBalance(String balance) {
+        this.balance = balance;
     }
 
     public void deletePayment(int position) {

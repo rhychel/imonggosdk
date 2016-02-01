@@ -15,6 +15,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.activities.checkout.CheckoutActivity;
 import net.nueca.concessioengine.adapters.SimpleSplitPaymentAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.enums.ListingType;
@@ -136,6 +137,16 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.flContent, checkoutFragment, "checkout")
                 .commit();
+
+        simpleSplitPaymentAdapter.setTotalAmount(NumberTools.separateInCommas(checkoutFragment.getAmountDue()));
+        simpleSplitPaymentAdapter.setBalance(NumberTools.separateInCommas(checkoutFragment.getComputation().getRemaining()));
+        simpleSplitPaymentAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClicked(View view, int position) {
+                tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
+                simpleSplitPaymentAdapter.setBalance(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
+            }
+        });
     }
 
     @Override
@@ -194,6 +205,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             InvoicePayment invoicePayment = builder.build();
                             invoicePayment.setExtras(extras);
                             simpleSplitPaymentAdapter.addPayment(invoicePayment);
+
+                            simpleSplitPaymentAdapter.setBalance(tvBalance.getText().toString());
                             //simpleSplitPaymentAdapter.add(invoicePayment);
                             //simpleSplitPaymentAdapter.notifyItemInserted(simpleSplitPaymentAdapter.getItemCount());
                         }

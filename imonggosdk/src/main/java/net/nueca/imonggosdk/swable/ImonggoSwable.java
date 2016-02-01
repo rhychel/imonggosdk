@@ -192,6 +192,10 @@ public class ImonggoSwable extends SwableService {
                             e.printStackTrace();
                         }*/
                         Log.e("ImonggoSwable", "OFFLINEDATA: " + offlineData.getReturnId());
+                        Log.e("ImonggoSwable", "isCancelled = "+offlineData.isCancelled());
+                        Log.e("ImonggoSwable", "isSyncing = "+offlineData.isSyncing());
+                        Log.e("ImonggoSwable", "isSynced = "+offlineData.isSynced());
+                        Log.e("ImonggoSwable", "isQueued = "+offlineData.isQueued());
 
                         offlineData.setQueued(true);
 

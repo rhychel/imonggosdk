@@ -652,12 +652,18 @@ public class SwableSendModule {
             return;
         }
         List<String> idList = offlineData.getReturnIdList();
+        boolean hasPendingNonLastPage = false;
         for(int i = 1; i < offlineData.getPagedRequestCount()-1; i++) {
-            if(i >= idList.size() || ( i < idList.size() && idList.get(i).equals("@") )) {
+            //Log.e("SwableSendModule", "queueNonLastPage : checking return id - " + idList.get(i) + " " + i);
+            if (i >= idList.size() || ( i < idList.size() && idList.get(i).equals("@") )) {
+                hasPendingNonLastPage = true;
                 Log.e("SwableSendModule", "queueNonLastPage : queueing page:" + (i+1) + " i:"+ i + " size:"+idList
                         .size() + " retId:" + (idList.size() <= i ? "@" : idList.get(i)));
                 sendNextPage(table, offlineData, id, i + 1);
             }
+        }
+        if(!hasPendingNonLastPage) {
+            sendNextPage(table, offlineData, id, offlineData.getPagedRequestCount());
         }
     }
 
@@ -829,6 +835,12 @@ public class SwableSendModule {
                                             Log.e("STR : SEND_DOCUMENT ID", documentId);
 
                                             offlineData.insertReturnIdAt(page - 1, documentId);
+                                            isNullReturnId = false;
+                                        } else if(errorMsg.contains("already posted or voided")) {
+                                            offlineData.setSynced(true);
+                                            offlineData.setForConfirmation(true);
+                                            if(offlineData.getReturnIdListAt(page - 1) == null)
+                                                offlineData.insertReturnIdAt(page - 1, ImonggoSwable.NO_RETURN_ID);
                                             isNullReturnId = false;
                                         }
                                     } else if(responseJson.has("base")) {
