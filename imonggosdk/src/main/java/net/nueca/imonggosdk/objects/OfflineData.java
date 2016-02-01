@@ -847,8 +847,10 @@ public class OfflineData extends BaseTable2 {
             return;
         }
         ArrayList<String> retIds = new ArrayList<>(getReturnIdList());
-        if(retIds.size() >= index+1 )
-            retIds.set(index, returnId);
+        if(retIds.size() >= index+1 ) {
+            if(retIds.get(index).equals("@") || retIds.get(index).length() == 0)
+                retIds.set(index, returnId);
+        }
         else {
             while(retIds.size() < index)
                 retIds.add("@");

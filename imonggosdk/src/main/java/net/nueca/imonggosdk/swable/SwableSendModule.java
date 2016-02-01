@@ -652,12 +652,17 @@ public class SwableSendModule {
             return;
         }
         List<String> idList = offlineData.getReturnIdList();
+        boolean hasPendingNonLastPage = false;
         for(int i = 1; i < offlineData.getPagedRequestCount()-1; i++) {
             if(i >= idList.size() || ( i < idList.size() && idList.get(i).equals("@") )) {
+                hasPendingNonLastPage = true;
                 Log.e("SwableSendModule", "queueNonLastPage : queueing page:" + (i+1) + " i:"+ i + " size:"+idList
                         .size() + " retId:" + (idList.size() <= i ? "@" : idList.get(i)));
                 sendNextPage(table, offlineData, id, i + 1);
             }
+        }
+        if(!hasPendingNonLastPage) {
+            sendNextPage(table, offlineData, id, offlineData.getPagedRequestCount());
         }
     }
 
