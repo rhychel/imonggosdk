@@ -111,6 +111,12 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
     }
 
     public double getRemainingBalance() {
+        return getRemainingBalance(false);
+    }
+
+    public double getRemainingBalance(boolean abs) {
+        if(abs)
+            return Math.abs(computation.getRemaining().doubleValue());
         return computation.getRemaining().doubleValue();
     }
 

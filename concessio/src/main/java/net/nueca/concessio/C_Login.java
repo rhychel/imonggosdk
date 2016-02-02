@@ -1,5 +1,6 @@
 package net.nueca.concessio;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.base.DBTable;
+import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
@@ -44,6 +46,15 @@ public class C_Login extends LoginActivity {
     protected void successLogin() {
         super.successLogin();
         int []modulesToDownload = generateModules();
+        if(modulesToDownload.length == 0) {
+            DialogTools.showDialog(this, "Ooops!", "Kindly contact admin to setup your Concessio.", "Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    unlinkAccount();
+                }
+            }, R.style.AppCompatDialogStyle_Light);
+            return;
+        }
         setModulesToSync(modulesToDownload);
         getSyncModules().initializeTablesToSync(modulesToDownload);
     }
@@ -69,8 +80,10 @@ public class C_Login extends LoginActivity {
         getSyncModules().setSyncAllModules(false);
 
         ModuleSetting app = ModuleSetting.fetchById(getHelper(), ModuleSetting.class, "app");
-        if(app != null && app.getSequences() == null)
+        if(app == null) {
             Log.e("App", "nothing is defined");
+            return new int[0];
+        }
         else
             Log.e("App", app.getSequences().size()+"---");
 
