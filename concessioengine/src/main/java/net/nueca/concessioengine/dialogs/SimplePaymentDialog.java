@@ -1,8 +1,12 @@
 package net.nueca.concessioengine.dialogs;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -10,14 +14,17 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.widgets.Numpad;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -30,7 +37,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
     private EditText etPayment;
     private Spinner spnPaymentType;
 
-    private TextView tvBalance, tvTotalAmount;
+    private TextView tvLabelBalance, tvBalance, tvTotalAmount;
     private Button btnPay;
 
     private Button btnAdd, btnCancel;
@@ -45,7 +52,8 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
 
     private List<PaymentType> paymentTypes;
 
-    private String totalAmount = "", balance = "";
+    private String totalAmount = "";
+    private double balance = 0.0;
 
     public SimplePaymentDialog(Context context, List<PaymentType> paymentTypes) {
         super(context);
@@ -137,21 +145,80 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
         }
         else if(dialogType == DialogType.ADVANCED_PAY) {
             tvBalance = (TextView) super.findViewById(R.id.tvBalance);
+            tvLabelBalance = (TextView) super.findViewById(R.id.tvLabelBalance);
             tvTotalAmount = (TextView) super.findViewById(R.id.tvTotalAmount);
-
-            tvBalance.setText(balance);
-            tvTotalAmount.setText(totalAmount);
-
             btnPay = (Button) super.findViewById(R.id.btnPay);
+
+            balanceColor(balance);
+            tvBalance.setText(NumberTools.separateInCommas(balance));
+            tvTotalAmount.setText(totalAmount);
 
             btnPay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(etPayment.length() == 0) {
+                        Toast.makeText(getContext(), "Tender payment cannot be empty.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
                     if(listener != null)
                         listener.onAddPayment((PaymentType) spnPaymentType.getSelectedItem(), etPayment.getText().toString(), generateExtrasForCheck());
                     dismiss();
                 }
             });
+            etPayment.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if(s.length() == 0) {
+                        tvBalance.setText(NumberTools.separateInCommas(balance));
+                        balanceColor(balance);
+                    }
+                    else if(invoicePayment != null) {
+                        BigDecimal currentBalance = new BigDecimal(balance);
+                        BigDecimal prevPayment = new BigDecimal(invoicePayment.getTender());
+                        BigDecimal payment = new BigDecimal(s.toString());
+                        double newBalance = currentBalance.add(prevPayment).subtract(payment).doubleValue();
+                        tvBalance.setText(NumberTools.separateInCommas(Math.abs(newBalance)));
+                        balanceColor(newBalance);
+                    }
+                    else {
+                        BigDecimal currentBalance = new BigDecimal(balance);
+                        BigDecimal payment = new BigDecimal(s.toString());
+                        double newBalance = currentBalance.subtract(payment).doubleValue();
+                        tvBalance.setText(NumberTools.separateInCommas(Math.abs(newBalance)));
+                        balanceColor(newBalance);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+            etPayment.setSelection(0, etPayment.getText().length());
+        }
+
+        setOnShowListener(new OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            }
+        });
+    }
+
+    private void balanceColor(double balance) {
+        if(balance > 0) {
+            tvLabelBalance.setText("Balance");
+            tvBalance.setTextColor(getContext().getResources().getColor(android.R.color.holo_red_dark));
+        }
+        else {
+            tvLabelBalance.setText("Change");
+            tvBalance.setTextColor(getContext().getResources().getColor(R.color.payment_color));
         }
     }
 
@@ -198,7 +265,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
         return this;
     }
 
-    public SimplePaymentDialog setBalanceText(String balanceText) {
+    public SimplePaymentDialog setBalanceText(double balanceText) {
         balance = balanceText;
         return this;
     }
