@@ -81,7 +81,7 @@ public class C_Finalize extends ModuleActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(C_Finalize.this, C_Checkout.class);
-                startActivity(intent);
+                startActivityForResult(intent, SALES);
             }
         });
 
@@ -158,6 +158,10 @@ public class C_Finalize extends ModuleActivity {
                 }
             };
             handler.sendEmptyMessageDelayed(0, 100);
+        }
+        else if(resultCode == SUCCESS) {
+            setResult(SUCCESS);
+            finish();
         }
     }
 

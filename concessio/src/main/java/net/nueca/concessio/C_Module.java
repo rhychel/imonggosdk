@@ -231,7 +231,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             intent.putExtra(ModuleActivity.INIT_SELECTED_CUSTOMER, false);
                             intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
                             intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.INVOICE.ordinal());
-                            startActivity(intent);
+                            startActivityForResult(intent, SALES);
                         }
                     });
                     btn2.setText("HISTORY");
@@ -264,7 +264,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .add(R.id.flContent, simpleCustomersFragment)
                         .commit();
             } break;
-            case STOCK_REQUEST:
+            case STOCK_REQUEST: { // TODO for Petron
+            } break;
             case INVOICE: {
                 CustomerGroup customerGroup = null;
 
@@ -311,7 +312,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .commit();
             }
             break;
-            case PHYSICAL_COUNT: {
+            case PHYSICAL_COUNT: { // TODO Revise for Petron
                 initializeProducts();
                 simpleProductsFragment.setProductCategories(getProductCategories(true));
                 simpleProductsFragment.setMultipleInput(true);
@@ -338,7 +339,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     .commit();
             }
             break;
-            case RECEIVE_BRANCH: {
+            case RECEIVE_BRANCH: { // TODO for Petron
                 changeToReview = true;
                 simpleReceiveFragment = new SimpleReceiveFragment();
                 simpleReceiveFragment.setHelper(getHelper());
@@ -405,7 +406,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .replace(R.id.flContent, simpleInventoryFragment)
                         .commit();
             } break;
-            case RELEASE_BRANCH: { // not used.
+            case RELEASE_BRANCH: { // TODO for Petron
                 changeToReview = true;
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
                 simplePulloutRequestDialog.setTitle("Choose a reason");
@@ -845,14 +846,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
         }
         else if(requestCode == REVIEW_SALES) {
-            Handler handler = new Handler(){
-                @Override
-                public void handleMessage(Message msg) {
-                    super.handleMessage(msg);
-                    simpleProductsFragment.refreshList();
-                }
-            };
-            handler.sendEmptyMessageDelayed(0, 100);
+            if(resultCode == SUCCESS) {
+                setResult(SUCCESS);
+                finish();
+            }
+            else {
+                Handler handler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        simpleProductsFragment.refreshList();
+                    }
+                };
+                handler.sendEmptyMessageDelayed(0, 100);
+            }
         }
         else if(requestCode == ALL_CUSTOMERS) {
             if(resultCode == REFRESH) {
@@ -865,6 +872,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 };
                 handler.sendEmptyMessageDelayed(0, 100);
             }
+        }
+        else if(requestCode == SALES) {
+            if(resultCode == SUCCESS)
+                finish();
         }
     }
 
