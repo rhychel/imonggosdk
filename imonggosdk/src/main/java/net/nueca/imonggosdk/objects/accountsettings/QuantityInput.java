@@ -17,6 +17,8 @@ public class QuantityInput extends DBTable {
     @DatabaseField(generatedId = true)
     private transient int id;
     @DatabaseField
+    private boolean has_one_unit = true;
+    @DatabaseField
     private boolean has_unit = true;
     @DatabaseField
     private boolean has_outright_return = false;
@@ -40,6 +42,14 @@ public class QuantityInput extends DBTable {
     private transient Manual manual;
 
     public QuantityInput() {
+    }
+
+    public boolean isHas_one_unit() {
+        return has_one_unit;
+    }
+
+    public void setHas_one_unit(boolean has_one_unit) {
+        this.has_one_unit = has_one_unit;
     }
 
     public boolean isHas_unit() {

@@ -37,11 +37,6 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Total Amount"
                 android:id="@+id/textView3"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_toLeftOf="@+id/spUnits"
-                android:layout_toStartOf="@+id/spUnits"
                 android:layout_weight="1"
                 android:textSize="13sp"
                 android:layout_gravity="center_vertical" />
@@ -52,11 +47,6 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="P1,000.00"
                 android:id="@+id/tvTotalAmount"
-                android:layout_below="@+id/spUnits"
-                android:layout_alignRight="@+id/spUnits"
-                android:layout_alignEnd="@+id/spUnits"
-                android:layout_alignLeft="@+id/spUnits"
-                android:layout_alignStart="@+id/spUnits"
                 android:textStyle="bold"
                 android:layout_weight="2"
                 android:layout_gravity="center_vertical"
@@ -77,10 +67,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Balance"
-                android:id="@+id/textView6"
-                android:layout_alignBottom="@+id/tvSubtotal"
-                android:layout_alignLeft="@+id/textView4"
-                android:layout_alignStart="@+id/textView4"
+                android:id="@+id/tvLabelBalance"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
                 android:textSize="13sp" />
@@ -91,11 +78,6 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="P1,000.00"
                 android:id="@+id/tvBalance"
-                android:layout_below="@+id/spUnits"
-                android:layout_alignRight="@+id/spUnits"
-                android:layout_alignEnd="@+id/spUnits"
-                android:layout_alignLeft="@+id/spUnits"
-                android:layout_alignStart="@+id/spUnits"
                 android:textStyle="bold"
                 android:layout_weight="2"
                 android:layout_gravity="center_vertical"
@@ -117,9 +99,6 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Payment Type"
                 android:id="@+id/textView4"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
                 android:layout_gravity="center_vertical"
                 android:textSize="13sp"
                 android:layout_weight="1" />
@@ -128,12 +107,128 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/spnPaymentType"
-                android:layout_above="@+id/textView4"
-                android:layout_alignLeft="@+id/textView4"
-                android:layout_alignStart="@+id/textView4"
                 android:layout_weight="2"
                 android:layout_marginLeft="16dp" />
         </LinearLayout>
+
+        <!-- Check fields -->
+        <LinearLayout
+            android:id="@+id/llCheckName"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:weightSum="3"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Check name"
+                android:layout_weight="1"
+                android:textSize="13sp" />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/etCheckName"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_weight="2"
+                android:layout_marginLeft="16dp"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/llCheckNumber"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:weightSum="3"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Check number"
+                android:layout_weight="1"
+                android:textSize="13sp" />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/etCheckNumber"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_weight="2"
+                android:layout_marginLeft="16dp"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/llBankBranch"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:weightSum="3"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Bank branch"
+                android:layout_weight="1"
+                android:textSize="13sp" />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/etBankBranch"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_weight="2"
+                android:layout_marginLeft="16dp"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/llCheckDate"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:weightSum="3"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Check date"
+                android:layout_weight="1"
+                android:textSize="13sp" />
+
+            <Button
+                style="?android:borderlessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:id="@+id/btnCheckDate"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="2016/01/01"
+                android:layout_weight="2"
+                android:layout_marginLeft="16dp"
+                android:textSize="18sp"
+                android:gravity="left" />
+        </LinearLayout>
+        <!-- End of Check fields -->
 
         <LinearLayout
             android:orientation="horizontal"
@@ -147,29 +242,22 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Amount"
                 android:id="@+id/textView14"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_toLeftOf="@+id/spUnits"
-                android:layout_toStartOf="@+id/spUnits"
                 android:layout_weight="1"
                 android:textSize="13sp" />
 
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:ems="10"
                 android:id="@+id/etPayment"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="4"
-                android:layout_alignBottom="@+id/textView14"
-                android:layout_toRightOf="@+id/textView14"
-                android:layout_toEndOf="@+id/textView14"
                 android:layout_weight="2"
                 android:layout_marginLeft="16dp"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:hint="0" />
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout

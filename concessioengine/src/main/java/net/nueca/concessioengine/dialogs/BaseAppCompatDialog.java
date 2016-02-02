@@ -1,10 +1,16 @@
 package net.nueca.concessioengine.dialogs;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.support.v7.app.AppCompatDialog;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import net.nueca.imonggosdk.tools.DateTimeTools;
 
 /**
  * Created by rhymart on 7/24/15.
@@ -13,6 +19,8 @@ import android.view.ViewGroup;
 public class BaseAppCompatDialog extends AppCompatDialog {
 
     protected static int NO_THEME = -1;
+    protected String date;
+    protected FragmentManager fragmentManager;
 
     public BaseAppCompatDialog(Context context) {
         super(context);
@@ -26,6 +34,9 @@ public class BaseAppCompatDialog extends AppCompatDialog {
         super(context, cancelable, cancelListener);
     }
 
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
+    }
     /**
      * Configure the width of the dialog to acquire the desired width.
      */
@@ -40,4 +51,23 @@ public class BaseAppCompatDialog extends AppCompatDialog {
         getWindow().setLayout(pxP + pxPadding, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
+    /**
+     * Show the delivery date picker. You need to pass the button where to set the new date.
+     *
+     * @param button
+     */
+    protected void showDeliveryDatePicker(final FragmentManager fragmentManager, final Button button) {
+        date = button.getText().toString();
+        date = date.replaceAll("[^0-9]","-");
+        String[] dateS = date.split("-");
+        final DatePickerDialog deliveryDatePicker = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
+                String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                date = DateTimeTools.convertToDate(date, "yyyy-M-d", "yyyy-MM-dd");
+                button.setText(date);
+            }
+        }, Integer.valueOf(dateS[0]), Integer.valueOf(dateS[1]) - 1, Integer.valueOf(dateS[2]));
+        deliveryDatePicker.show(fragmentManager, "delivery_date_picker");
+    }
 }

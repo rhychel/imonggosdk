@@ -84,7 +84,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
     private Toolbar toolbar;
     private boolean hasMenu = true, showsCustomer = false, // -- for the search
-            changeToReview = false;
+            changeToReview = false, refreshCustomerList = false;
 
     // for transaction details
     private String referenceNumber = "";
@@ -127,13 +127,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         llFooter = (LinearLayout) findViewById(R.id.llFooter);
 
         llFooter.setVisibility(View.GONE);
-        Log.e(">>>>>>>>>>>>>>>>>>>>", ""+concessioModule.toString());
         switch (concessioModule) {
             case LAYAWAY: {
                 simpleTransactionsFragment = new SimpleTransactionsFragment();
                 simpleTransactionsFragment.setHelper(getHelper());
                 simpleTransactionsFragment.setSetupActionBar(this);
-                simpleTransactionsFragment.setHasFilterByTransactionType(true);
+                simpleTransactionsFragment.onlyInvoices(true);
                 simpleTransactionsFragment.setTransactionTypes(getTransactionTypes());
                 simpleTransactionsFragment.setListingType(ListingType.DETAILED_HISTORY);
                 simpleTransactionsFragment.setTransactionsListener(new BaseTransactionsFragment.TransactionsListener() {
@@ -169,6 +168,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionsFragment.setHasFilterByTransactionType(true);
                 simpleTransactionsFragment.setTransactionTypes(getTransactionTypes());
                 simpleTransactionsFragment.setListingType(ListingType.DETAILED_HISTORY);
+                if(customer != null) {
+                    simpleTransactionsFragment.setCustomer(customer);
+                }
                 simpleTransactionsFragment.setTransactionsListener(new BaseTransactionsFragment.TransactionsListener() {
 
                     @Override
@@ -232,8 +234,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                 llFooter.setVisibility(View.VISIBLE);
                 llReview.setVisibility(View.VISIBLE);
-                if(isFromCustomersList)
+                if(isFromCustomersList) {
                     btn1.setText("VIEW HISTORY");
+                    btn1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(C_Module.this, C_Module.class);
+                            intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
+                            intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.HISTORY.ordinal());
+                            startActivity(intent);
+                        }
+                    });
+                }
                 else {
                     btn1.setText("TRANSACT");
                     btn1.setOnClickListener(new View.OnClickListener() {
@@ -245,7 +257,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             intent.putExtra(ModuleActivity.INIT_SELECTED_CUSTOMER, false);
                             intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
                             intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.INVOICE.ordinal());
-                            startActivity(intent);
+                            startActivityForResult(intent, SALES);
                         }
                     });
                     btn2.setText("HISTORY");
@@ -269,7 +281,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
                         intent.putExtra(ModuleActivity.FROM_CUSTOMERS_LIST, isFromCustomersList);
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
-                        startActivity(intent);
+                        startActivityForResult(intent, ALL_CUSTOMERS);
                     }
                 });
 
@@ -278,8 +290,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .add(R.id.flContent, simpleCustomersFragment)
                         .commit();
             } break;
-            case STOCK_REQUEST:
+            case STOCK_REQUEST: { // TODO for Petron
+            } break;
             case INVOICE: {
+                CustomerGroup customerGroup = null;
+
+                try {
+                    if(customer.getCustomerGroups(getHelper()).size() > 0)
+                        customerGroup = customer.getCustomerGroups(getHelper()).get(0);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
                 changeToReview = true;
                 initializeProducts();
                 simpleProductsFragment.setHelper(getHelper());
@@ -292,14 +314,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setUseSalesProductAdapter(true);
                 simpleProductsFragment.setCustomer(customer);
                 simpleProductsFragment.setHasPromotionalProducts(true);
-                try {
-                    List <CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
-                    if(customerGroups != null && customerGroups.size() > 0)
-                        simpleProductsFragment.setCustomerGroup(customerGroups.get(0));
-                    simpleProductsFragment.setBranch(getBranches().get(0));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                simpleProductsFragment.setCustomerGroup(customerGroup);
+                simpleProductsFragment.setBranch(getBranches().get(0));
 
                 initializeFinalize();
                 finalizeFragment.setListingType(ListingType.ADVANCED_SALES);
@@ -311,14 +327,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setUseSalesProductAdapter(true);
                 finalizeFragment.setCustomer(customer);
                 finalizeFragment.setHasPromotionalProducts(true);
-                try {
-                    List <CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
-                    if(customerGroups != null && customerGroups.size() > 0)
-                        finalizeFragment.setCustomerGroup(customerGroups.get(0));
-                    finalizeFragment.setBranch(getBranches().get(0));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                finalizeFragment.setCustomerGroup(customerGroup);
+                finalizeFragment.setBranch(getBranches().get(0));
 
                 prepareFooter();
                 btn1.setOnClickListener(nextClickedListener);
@@ -328,7 +338,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .commit();
             }
             break;
-            case PHYSICAL_COUNT: {
+            case PHYSICAL_COUNT: { // TODO Revise for Petron
                 initializeProducts();
                 simpleProductsFragment.setProductCategories(getProductCategories(true));
                 simpleProductsFragment.setMultipleInput(true);
@@ -355,7 +365,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     .commit();
             }
             break;
-            case RECEIVE_BRANCH: {
+            case RECEIVE_BRANCH: { // TODO for Petron
                 changeToReview = true;
                 simpleReceiveFragment = new SimpleReceiveFragment();
                 simpleReceiveFragment.setHelper(getHelper());
@@ -393,8 +403,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .commit();
             }
             break;
-            case RECEIVE_SUPPLIER: // Adjustment In -- Rebisco receiving
-            case RELEASE_SUPPLIER: { // Adjustment Out -- Rebisco pullout
+            case RECEIVE_SUPPLIER: // Rebisco receiving
+            case RELEASE_SUPPLIER: { // Rebisco pullout
                 changeToReview = true;
                 simpleInventoryFragment = new SimpleInventoryFragment();
                 simpleInventoryFragment.setHelper(getHelper());
@@ -422,7 +432,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .replace(R.id.flContent, simpleInventoryFragment)
                         .commit();
             } break;
-            case RELEASE_BRANCH: { // not used.
+            case RELEASE_BRANCH: { // TODO for Petron
                 changeToReview = true;
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
                 simplePulloutRequestDialog.setTitle("Choose a reason");
@@ -457,6 +467,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             @Override
                             public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
                                 Log.e("Reason", reason.getName());
+                                ProductsAdapterHelper.clearSelectedProductItemList(true);
                                 ProductsAdapterHelper.setSelectedCustomer(customer);
                                 ProductsAdapterHelper.setReason(reason);
 
@@ -557,6 +568,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
                         Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().getReference_no());
                         Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isCancelled()+"");
+
+                        Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isSynced()+" isSynced");
+                        Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isSyncing()+" isSyncing");
+                        Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isCancelled()+" isCancelled");
                         boolean useBtn2 = true;
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.INVOICE
                                 && simpleTransactionDetailsFragment.getOfflineData().isSynced()) {
@@ -629,6 +644,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 .withReason("VOID")
                                 .object(simpleTransactionDetailsFragment.getOfflineData())
                                 .queue();
+
+                        // <-- Voiding issue when the transaction is voided for Receive and Pullout -->
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER) // Receive
+                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), false);
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) // Pullout
+                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), true);
+
                         onBackPressed();
                     }
                 }, "No", new DialogInterface.OnClickListener() {
@@ -694,6 +716,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         simplePulloutToolbarExt.detach();
                 }
             }
+        }
+        if(refreshCustomerList) {
+            setResult(REFRESH);
         }
         super.onBackPressed();
     }
@@ -828,7 +853,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         startActivity(intent);
                     }
                 };
-                handler.sendEmptyMessageDelayed(0, 300);
+                handler.sendEmptyMessageDelayed(0, 100);
             }
         }
         else if(requestCode == EDIT_CUSTOMER) {
@@ -838,22 +863,45 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 Handler handler = new Handler() {
                     @Override
                     public void handleMessage(Message msg) {
+                        refreshCustomerList = true;
                         simpleCustomerDetailsFragment.setCustomer(customer);
                         simpleCustomerDetailsFragment.renderCustomerDetails(true);
                     }
                 };
-                handler.sendEmptyMessageDelayed(0, 300);
+                handler.sendEmptyMessageDelayed(0, 100);
             }
         }
         else if(requestCode == REVIEW_SALES) {
-            Handler handler = new Handler(){
-                @Override
-                public void handleMessage(Message msg) {
-                    super.handleMessage(msg);
-                    simpleProductsFragment.refreshList();
-                }
-            };
-            handler.sendEmptyMessageDelayed(0, 100);
+            if(resultCode == SUCCESS) {
+                setResult(SUCCESS);
+                finish();
+            }
+            else {
+                Handler handler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        simpleProductsFragment.refreshList();
+                    }
+                };
+                handler.sendEmptyMessageDelayed(0, 100);
+            }
+        }
+        else if(requestCode == ALL_CUSTOMERS) {
+            if(resultCode == REFRESH) {
+                Handler handler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        simpleCustomersFragment.reinitializeList();
+                    }
+                };
+                handler.sendEmptyMessageDelayed(0, 100);
+            }
+        }
+        else if(requestCode == SALES) {
+            if(resultCode == SUCCESS)
+                finish();
         }
     }
 
@@ -905,6 +953,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
         if(concessioModule == ConcessioModule.HISTORY)
             whenItemsSelectedUpdated();
+        if(concessioModule == ConcessioModule.LAYAWAY) {
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setTitle("Layaway");
+        }
     }
 
     /**

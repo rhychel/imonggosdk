@@ -15,6 +15,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.activities.checkout.CheckoutActivity;
 import net.nueca.concessioengine.adapters.SimpleSplitPaymentAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.enums.ListingType;
@@ -50,7 +51,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private RecyclerView rvPayments;
     private SimpleSplitPaymentAdapter simpleSplitPaymentAdapter;
     private LinearLayout llBalance, llTotalAmount;
-    private TextView tvBalance, tvTotalAmount;
+    private TextView tvLabelBalance, tvBalance, tvTotalAmount;
     private Button btn1, btn2;
 
     private ArrayList<InvoicePayment> invoicePayments = new ArrayList<>();
@@ -68,6 +69,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         llBalance = (LinearLayout) findViewById(R.id.llBalance);
         llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
         tvBalance = (TextView) findViewById(R.id.tvBalance);
+        tvLabelBalance = (TextView) findViewById(R.id.tvLabelBalance);
         tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
         btn1 = (Button) findViewById(R.id.btn1);
         btn2 = (Button) findViewById(R.id.btn2);
@@ -82,20 +84,28 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
             simpleSplitPaymentAdapter.setPaymentUpdateListener(new BaseSplitPaymentAdapter.OnPaymentUpdateListener() {
                 @Override
                 public void onAddPayment(InvoicePayment invoicePayment) {
-                    tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
+                    tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
                     if(simpleSplitPaymentAdapter.isFullyPaid()) {
+                        tvLabelBalance.setText("Change");
+                        tvBalance.setTextColor(getResources().getColor(R.color.payment_color));
                         btn1.setText("SUBMIT");
                         btn2.setVisibility(View.GONE);
+                    }
+                    else {
+                        tvLabelBalance.setText("Balance");
+                        tvBalance.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                        btn2.setVisibility(View.VISIBLE);
                     }
                 }
 
                 @Override
                 public void onDeletePayment(int location) {
-                    tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
+                    tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
                     if(!simpleSplitPaymentAdapter.isFullyPaid()) {
+                        tvLabelBalance.setText("Balance");
+                        tvBalance.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
                         btn1.setText("PAY");
-                        btn2.setText("PARTIAL");
-                        btn2.setVisibility(View.VISIBLE);
+                        btn2.setVisibility(simpleSplitPaymentAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
                     }
                 }
             });
@@ -108,7 +118,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
         btn1.setText("PAY");
         btn2.setText("PARTIAL");
-        btn2.setVisibility(View.VISIBLE);
 
         btn1.setOnClickListener(onClickListener);
         btn2.setOnClickListener(onClickListener);
@@ -136,6 +145,16 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.flContent, checkoutFragment, "checkout")
                 .commit();
+
+        simpleSplitPaymentAdapter.setTotalAmount(NumberTools.separateInCommas(checkoutFragment.getAmountDue()));
+        simpleSplitPaymentAdapter.setBalance(checkoutFragment.getRemainingBalance());
+        simpleSplitPaymentAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClicked(View view, int position) {
+                tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
+                simpleSplitPaymentAdapter.setBalance(checkoutFragment.getRemainingBalance());
+            }
+        });
     }
 
     @Override
@@ -179,11 +198,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 if (btn1.getText().toString().equals("PAY")) {
                     SimplePaymentDialog dialog = new SimplePaymentDialog(C_Checkout.this, simpleSplitPaymentAdapter.getPaymentTypeList(), R.style.AppCompatDialogStyle_Light_NoTitle);
                     dialog.setDialogType(DialogType.ADVANCED_PAY);
-                    dialog.setBalanceText(tvBalance.getText().toString());
+                    dialog.setBalanceText(checkoutFragment.getRemainingBalance());
                     dialog.setTotalAmountText(tvTotalAmount.getText().toString());
                     dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
                         @Override
-                        public void onAddPayment(PaymentType paymentType, String paymentValue) {
+                        public void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras) {
                             InvoicePayment.Builder builder = new InvoicePayment.Builder();
                             builder.tender(NumberTools.toDouble(paymentValue));
 
@@ -192,7 +211,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             }
 
                             InvoicePayment invoicePayment = builder.build();
+                            invoicePayment.setExtras(extras);
                             simpleSplitPaymentAdapter.addPayment(invoicePayment);
+
+                            simpleSplitPaymentAdapter.setBalance(checkoutFragment.getRemainingBalance());
                             //simpleSplitPaymentAdapter.add(invoicePayment);
                             //simpleSplitPaymentAdapter.notifyItemInserted(simpleSplitPaymentAdapter.getItemCount());
                         }
@@ -206,6 +228,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     transactionDialog.setAmountLabel("Amount");
                     transactionDialog.setCustomerName("Rhymart Manchus");
                     transactionDialog.setInStock("Transaction ID No. 123456");
+                    transactionDialog.setTransactionDialogListener(transactionDialogListener);
                     transactionDialog.show();
 
                     Invoice invoice = generateInvoice();
@@ -227,6 +250,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 DialogTools.showConfirmationDialog(C_Checkout.this, "Partial Payment", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        // TODO Render layaway invoice
+
                         TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                         transactionDialog.setTitle(ConcessioModule.INVOICE_PARTIAL);
                         transactionDialog.setStatusResource(R.drawable.ic_alert_red);
@@ -234,6 +259,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         transactionDialog.setAmountLabel("Remaining Balance");
                         transactionDialog.setCustomerName("Rhymart Manchus");
                         transactionDialog.setInStock("Transaction ID No. 123456");
+                        transactionDialog.setTransactionDialogListener(transactionDialogListener);
                         transactionDialog.show();
 
                         Invoice invoice = generateInvoice();
@@ -254,6 +280,14 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 }, "No", R.style.AppCompatDialogStyle_Light);
             }
 
+        }
+    };
+
+    private TransactionDialog.TransactionDialogListener transactionDialogListener = new TransactionDialog.TransactionDialogListener() {
+        @Override
+        public void whenDismissed() {
+            setResult(SUCCESS);
+            finish();
         }
     };
 
