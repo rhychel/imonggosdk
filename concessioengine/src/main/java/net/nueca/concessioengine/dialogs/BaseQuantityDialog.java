@@ -48,10 +48,10 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected List<String> brandList;
     protected QuantityDialogListener quantityDialogListener;
     protected MultiQuantityDialogListener multiQuantityDialogListener;
-    protected FragmentManager fragmentManager;
-    protected String deliveryDate;
+//    protected FragmentManager fragmentManager;
+//    protected String deliveryDate;
 
-    protected boolean hasSubtotal = false, hasInvoicePurpose = false, hasExpiryDate = false;
+    protected boolean hasSubtotal = false, hasInvoicePurpose = false, hasExpiryDate = false, hasBadStock = false;
 
     protected ArrayAdapter<InvoicePurpose> invoicePurposesAdapter;
     protected ArrayAdapter<Unit> unitsAdapter;
@@ -117,10 +117,6 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
         this.multiQuantityDialogListener = multiQuantityDialogListener;
     }
 
-    public void setFragmentManager(FragmentManager fragmentManager) {
-        this.fragmentManager = fragmentManager;
-    }
-
     public void setHasUnits(boolean hasUnits) {
         this.hasUnits = hasUnits;
     }
@@ -152,7 +148,7 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     @Override
     public void dismiss() {
         super.dismiss();
-        if(multiQuantityDialogListener != null)
+        if (multiQuantityDialogListener != null)
             multiQuantityDialogListener.onDismiss();
         if(quantityDialogListener != null)
             quantityDialogListener.onDismiss();
@@ -167,24 +163,26 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
         if (Build.VERSION.SDK_INT < 21)
             spinner.setDropDownVerticalOffset((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, -(spinner.getHeight() + 14), metrics));
     }
-
-    /**
-     * Show the delivery date picker. You need to pass the button where to set the new date.
-     *
-     * @param button
-     */
-    protected void showDeliveryDatePicker(final Button button) {
-        String[] date = deliveryDate.split("-");
-        final DatePickerDialog deliveryDatePicker = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
-                String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-                deliveryDate = DateTimeTools.convertToDate(date, "yyyy-M-d", "yyyy-MM-dd");
-                button.setText(deliveryDate);
-            }
-        }, Integer.valueOf(date[0]), Integer.valueOf(date[1]) - 1, Integer.valueOf(date[2]));
-        deliveryDatePicker.show(fragmentManager, "delivery_date_picker");
-    }
+//
+//    /**
+//     * Show the delivery date picker. You need to pass the button where to set the new date.
+//     *
+//     * @param button
+//     */
+//    protected void showDeliveryDatePicker(final Button button) {
+//        deliveryDate = button.getText().toString();
+//        deliveryDate = deliveryDate.replaceAll("[^0-9]","-");
+//        String[] date = deliveryDate.split("-");
+//        final DatePickerDialog deliveryDatePicker = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
+//            @Override
+//            public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
+//                String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+//                deliveryDate = DateTimeTools.convertToDate(date, "yyyy-M-d", "yyyy-MM-dd");
+//                button.setText(deliveryDate);
+//            }
+//        }, Integer.valueOf(date[0]), Integer.valueOf(date[1]) - 1, Integer.valueOf(date[2]));
+//        deliveryDatePicker.show(fragmentManager, "delivery_date_picker");
+//    }
 
 
     public ImonggoDBHelper2 getHelper() {
@@ -233,5 +231,9 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setHasExpiryDate(boolean hasExpiryDate) {
         this.hasExpiryDate = hasExpiryDate;
+    }
+
+    public void setHasBadStock(boolean hasBadStock) {
+        this.hasBadStock = hasBadStock;
     }
 }

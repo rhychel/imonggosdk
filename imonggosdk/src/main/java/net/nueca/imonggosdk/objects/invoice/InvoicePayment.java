@@ -26,6 +26,12 @@ public class InvoicePayment extends BaseTable2 implements Extras.DoOperationsFor
     protected int payment_type_id;
     @Expose
     @DatabaseField
+    protected String payment_type_code;
+    @Expose
+    @DatabaseField
+    protected String payment_type_name;
+    @Expose
+    @DatabaseField
     protected double amount;
     @Expose
     @DatabaseField
@@ -58,6 +64,22 @@ public class InvoicePayment extends BaseTable2 implements Extras.DoOperationsFor
         this.tender = tender;
     }
 
+    public String getPayment_type_code() {
+        return payment_type_code;
+    }
+
+    public void setPayment_type_code(String payment_type_code) {
+        this.payment_type_code = payment_type_code;
+    }
+
+    public String getPayment_type_name() {
+        return payment_type_name;
+    }
+
+    public void setPayment_type_name(String payment_type_name) {
+        this.payment_type_name = payment_type_name;
+    }
+
     public Invoice getInvoice() {
         return invoice;
     }
@@ -70,6 +92,8 @@ public class InvoicePayment extends BaseTable2 implements Extras.DoOperationsFor
 
     public InvoicePayment(Builder builder) {
         payment_type_id = builder.payment_type_id;
+        payment_type_code = builder.payment_type_code;
+        payment_type_name = builder.payment_type_name;
         amount = builder.amount;
         tender = builder.tender;
     }
@@ -89,7 +113,23 @@ public class InvoicePayment extends BaseTable2 implements Extras.DoOperationsFor
         protected int payment_type_id;
         protected double amount;
         protected double tender;
+        protected String payment_type_name, payment_type_code;
 
+        public Builder paymentType(PaymentType paymentType) {
+            this.payment_type_name = paymentType.getName();
+            this.payment_type_code = paymentType.getCode();
+            this.payment_type_id = paymentType.getId();
+            return this;
+        }
+
+        public Builder payment_type_name(String payment_type_name) {
+            this.payment_type_name = payment_type_name;
+            return this;
+        }
+        public Builder payment_type_code(String payment_type_code) {
+            this.payment_type_code = payment_type_code;
+            return this;
+        }
         public Builder payment_type_id(int payment_type_id) {
             this.payment_type_id = payment_type_id;
             return this;

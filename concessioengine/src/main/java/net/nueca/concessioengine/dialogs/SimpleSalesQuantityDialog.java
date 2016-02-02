@@ -3,6 +3,9 @@ package net.nueca.concessioengine.dialogs;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,6 +30,7 @@ import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 
 import me.grantland.widget.AutofitTextView;
@@ -46,8 +50,13 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
     private LinearLayout llInvoicePurpose, llExpiryDate;
     private Spinner spInvoicePurpose;
     private Button btnExpiryDate;
+    private SwitchCompat swcBadStock;
 
     private String subtotal, retailPrice;
+
+    private Unit defaultUnit;
+
+    private Product product;
 
     protected SimpleSalesQuantityDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
@@ -73,24 +82,44 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         tvSubtotal = (TextView) super.findViewById(R.id.tvSubtotal);
         etQuantity = (EditText) super.findViewById(R.id.etQuantity);
         spUnits = (Spinner) super.findViewById(R.id.spUnits);
-        spInvoicePurpose = (Spinner) super.findViewById(R.id.spInvoicePurpose);
         btnCancel = (Button) super.findViewById(R.id.btnCancel);
         btnSave = (Button) super.findViewById(R.id.btnSave);
         llSubtotal = (LinearLayout) super.findViewById(R.id.llSubtotal);
-        llInvoicePurpose = (LinearLayout) super.findViewById(R.id.llInvoicePurpose);
-        llExpiryDate = (LinearLayout) super.findViewById(R.id.llExpiryDate);
-        btnExpiryDate = (Button) super.findViewById(R.id.btnExpiryDate);
 
         etQuantity.setSelectAllOnFocus(true);
+        etQuantity.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                subtotal = String.valueOf(NumberTools.toDouble(etQuantity.getText().toString()) * NumberTools.toDouble(retailPrice));
+                tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
+                Log.e("SUBTOTAL AFTER", subtotal);
+            }
+        });
 
         boolean hasValues = selectedProductItem.getValues().size() > 0;
 
+        if(hasBadStock) {
+            swcBadStock = (SwitchCompat) super.findViewById(R.id.swcBadStock);
+            swcBadStock.setVisibility(View.VISIBLE);
+            swcBadStock.setChecked(true);
+        }
+
         if(hasInvoicePurpose) {
+            llInvoicePurpose = (LinearLayout) super.findViewById(R.id.llInvoicePurpose);
+            spInvoicePurpose = (Spinner) super.findViewById(R.id.spInvoicePurpose);
+
             llInvoicePurpose.setVisibility(View.VISIBLE);
             invoicePurposesAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, invoicePurposeList);
             invoicePurposesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
             spInvoicePurpose.setAdapter(invoicePurposesAdapter);
             if(hasExpiryDate) { // this is for the expiry date
+                llExpiryDate = (LinearLayout) super.findViewById(R.id.llExpiryDate);
+                btnExpiryDate = (Button) super.findViewById(R.id.btnExpiryDate);
+
                 spInvoicePurpose.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -110,59 +139,96 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 btnExpiryDate.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showDeliveryDatePicker(btnExpiryDate);
+                        showDeliveryDatePicker(fragmentManager, btnExpiryDate);
                     }
                 });
             }
 
         }
 
+        product = selectedProductItem.getProduct();
+
         unitsAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, unitList);
         unitsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
         spUnits.setAdapter(unitsAdapter);
+        spUnits.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                retailPrice = "P"+NumberTools.separateInCommas(PriceTools.identifyRetailPrice(getHelper(), product,
+                        salesBranch, salesCustomerGroup, salesCustomer, unitsAdapter.getItem(i)));
+                subtotal = String.valueOf(NumberTools.toDouble(etQuantity.getText().toString()) * NumberTools.toDouble(retailPrice));
+                tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                retailPrice = "P"+NumberTools.separateInCommas(PriceTools.identifyRetailPrice(getHelper(), product,
+                        salesBranch, salesCustomerGroup, salesCustomer, defaultUnit));
+                subtotal = String.valueOf(NumberTools.toDouble(etQuantity.getText().toString()) * NumberTools.toDouble(retailPrice));
+                tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
+            }
+        });
         if (hasValues) {
             if (isMultiValue) {
                 if (valuePosition > -1) {
                     Values value = selectedProductItem.getValues().get(valuePosition);
-                    spUnits.setSelection(unitList.indexOf(value.getUnit()));
+                    spUnits.setSelection(unitList.indexOf(value.getUnit() != null? value.getUnit() : defaultUnit));
                     if(hasInvoicePurpose) {
-                        deliveryDate = value.getExpiry_date();
+                        date = value.getExpiry_date();
                         spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
                     }
+                    if(hasBadStock)
+                        swcBadStock.setChecked(value.isBadStock());
                 }
             } else {
                 Values value = selectedProductItem.getValues().get(0);
-                spUnits.setSelection(unitList.indexOf(value.getUnit()));
+                spUnits.setSelection(unitList.indexOf(value.getUnit() != null? value.getUnit() : defaultUnit));
                 if(hasInvoicePurpose) {
-                    deliveryDate = value.getExpiry_date();
+                    date = value.getExpiry_date();
                     spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
                 }
+                if(hasBadStock)
+                    swcBadStock.setChecked(value.isBadStock());
             }
             if(hasExpiryDate) {
-                if(deliveryDate == null) {
+                if(date == null) {
                     Calendar now = Calendar.getInstance();
-                    deliveryDate = now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH);
+                    date = now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH);
                 }
-                deliveryDate = DateTimeTools.convertToDate(deliveryDate, "yyyy-M-d", "yyyy-MM-dd");
-                btnExpiryDate.setText(deliveryDate);
+                date = DateTimeTools.convertToDate(date, "yyyy-M-d", "yyyy-MM-dd");
+                btnExpiryDate.setText(date);
             }
         }
 
-        Product product = selectedProductItem.getProduct();
-        tvProductName.setText(product.getName());
-        tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
-
         if(getHelper() != null && (salesCustomer != null || salesCustomerGroup != null || salesBranch != null)) {
+            defaultUnit = spUnits.getSelectedItem() instanceof Unit? (Unit)spUnits.getSelectedItem() : null;
+            if(product.getExtras() != null && defaultUnit == null) {
+                try {
+                    defaultUnit = getHelper().fetchObjects(Unit.class).queryBuilder().where()
+                            .eq("id", product.getExtras().getDefault_selling_unit()).queryForFirst();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
             retailPrice = "P"+NumberTools.separateInCommas(PriceTools.identifyRetailPrice(getHelper(), product,
-                    salesBranch, salesCustomerGroup, salesCustomer));
+                    salesBranch, salesCustomerGroup, salesCustomer, (Unit) spUnits.getSelectedItem()));
         }
-        tvRetailPrice.setText(retailPrice);
-        tvSubtotal.setText(subtotal);
+
+        tvProductName.setText(product.getName());
+
         if (isMultiValue) {
             if (valuePosition > -1)
                 etQuantity.setText(selectedProductItem.getQuantity(valuePosition));
         } else
             etQuantity.setText(selectedProductItem.getQuantity());
+
+        tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+
+        tvRetailPrice.setText(retailPrice);
+        subtotal = String.valueOf(NumberTools.toDouble(etQuantity.getText().toString()) * NumberTools.toDouble(retailPrice));
+        tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
 
         llSubtotal.setVisibility(!hasSubtotal ? View.GONE : View.VISIBLE);
 
@@ -199,7 +265,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         public void onClick(View view) {
             String quantity = etQuantity.getText().toString().replace(",", "");
 
-            if(quantity.length() == 0)
+            if(quantity == null || quantity.length() == 0)
                 quantity = "0";
 
             if (quantity.equals("0") && !isMultiValue)
@@ -217,23 +283,30 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 else
                     values = new Values();
 
-                //Log.e("SIMPLE_SALES_QUANTITY_DIALOG", unit != null? unit.getName() : "null");
+                Log.e("SALES_QUANTITY_DIALOG", unit != null? unit.getName() : "null");
+                Log.e("SALES_QUANTITY_DIALOG", "is Helper NULL? " + (getHelper() == null));
 
                 if(getHelper() == null)
                     values.setValue(quantity, unit);
                 else {
                     Price price = PriceTools.identifyPrice(getHelper(), selectedProductItem.getProduct(),
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
+
+                    Log.e(getClass().getSimpleName(), "VALUES PRICE : isNull? " + (price == null));
                     if(price != null)
-                        values.setValue(quantity, price);
+                        values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
                     else
-                        values.setValue(quantity, unit, selectedProductItem.getRetail_price());
+                        values.setValue(quantity, unit, selectedProductItem.getRetail_price(),
+                                salesCustomer != null? salesCustomer.getDiscount_text() : null);
                 }
+                Log.e(getClass().getSimpleName(), "VALUES QTY : " + values.getQuantity());
 
                 if(hasInvoicePurpose) {
                     values.setInvoicePurpose((InvoicePurpose) spInvoicePurpose.getSelectedItem());
-                    values.setExpiry_date(deliveryDate);
+                    values.setExpiry_date(date);
                 }
+                if(hasBadStock)
+                    values.setBadStock(swcBadStock.isChecked());
 
                 if (isMultiValue) {
                     if (multiQuantityDialogListener != null)

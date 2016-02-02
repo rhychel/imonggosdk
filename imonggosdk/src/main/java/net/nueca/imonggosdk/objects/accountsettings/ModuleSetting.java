@@ -2,18 +2,19 @@ package net.nueca.imonggosdk.objects.accountsettings;
 
 import android.util.Log;
 
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.SequenceType;
+import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,10 +49,14 @@ public class ModuleSetting extends DBTable {
     private boolean with_customer = false;
     @DatabaseField
     private boolean is_view = false;
+    @DatabaseField
+    private boolean has_get_latest_document = false;
+    @DatabaseField
+    private boolean has_pin_code = true;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
     @ForeignCollectionField(orderAscending = true, orderColumnName = "id")
-    private transient ForeignCollection<DownloadSequence> downloadSequences;
+    private transient ForeignCollection<Sequence> sequences;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_listing_id")
     private transient ProductListing productListing;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "quantity_input_id")
@@ -232,23 +237,28 @@ public class ModuleSetting extends DBTable {
         this.with_customer = with_customer;
     }
 
-    public ForeignCollection<DownloadSequence> getDownloadSequences() {
-        return downloadSequences;
+    public ForeignCollection<Sequence> getSequences() {
+        return sequences;
     }
 
-    public void setDownloadSequences(ForeignCollection<DownloadSequence> downloadSequences) {
-        this.downloadSequences = downloadSequences;
+    public void setSequences(ForeignCollection<Sequence> sequences) {
+        this.sequences = sequences;
     }
 
     public int[] modulesToDownload(ImonggoDBHelper2 dbHelper) {
         try {
-            List<DownloadSequence> downloadSequence = dbHelper.fetchForeignCollection(downloadSequences.closeableIterator());
-            Log.e("downloadSequence", downloadSequence.size()+"");
-            int []modules = new int[downloadSequence.size()];
+            List<Sequence> sequence = dbHelper.fetchForeignCollection(sequences.closeableIterator(), new ImonggoDBHelper2.Conditional<Sequence>() {
+                @Override
+                public boolean validate(Sequence obj) {
+                    return obj.getSequenceType() == SequenceType.DOWNLOAD;
+                }
+            });
+            Log.e("sequence", sequence.size()+"");
+            int []modules = new int[sequence.size()];
             int i = 0;
-            for(DownloadSequence ds : downloadSequence) {
-                Log.e("tableValue", ds.getTable_key());
+            for(Sequence ds : sequence) {
                 modules[i++] = ds.getTableValue().ordinal();
+                Log.e("tableValue", ds.getTable_key());
             }
             return modules;
         } catch (SQLException e) {
@@ -257,12 +267,48 @@ public class ModuleSetting extends DBTable {
         return new int[0];
     }
 
+    public List<Table> modulesToUpdate(ImonggoDBHelper2 dbHelper) {
+        List<Table> modules = new ArrayList<>();
+        try {
+            List<Sequence> updateSequence = dbHelper.fetchForeignCollection(sequences.closeableIterator(), new ImonggoDBHelper2.Conditional<Sequence>() {
+                @Override
+                public boolean validate(Sequence obj) {
+                    return obj.getSequenceType() == SequenceType.UPDATE;
+                }
+            });
+            Log.e("modules", updateSequence.size()+"--");
+            for(Sequence us : updateSequence) {
+                Log.e("modules", us.getTableValue().getStringName());
+                modules.add(us.getTableValue());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return modules;
+    }
+
     public boolean is_view() {
         return is_view;
     }
 
     public void setIs_view(boolean is_view) {
         this.is_view = is_view;
+    }
+
+    public boolean isHas_get_latest_document() {
+        return has_get_latest_document;
+    }
+
+    public void setHas_get_latest_document(boolean has_get_latest_document) {
+        this.has_get_latest_document = has_get_latest_document;
+    }
+
+    public boolean isHas_pin_code() {
+        return has_pin_code;
+    }
+
+    public void setHas_pin_code(boolean has_pin_code) {
+        this.has_pin_code = has_pin_code;
     }
 
     public ConcessioModule getModuleType() {

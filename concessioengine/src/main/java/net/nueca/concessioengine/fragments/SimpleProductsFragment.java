@@ -146,9 +146,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             if(!isCustomAdapter) {
                 if (useSalesProductAdapter) {
                     productRecyclerViewAdapter = new SimpleSalesProductRecyclerAdapter(getActivity(), getHelper(), getProducts());//, customer, customerGroup, branch
-                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setBranch(branch);
-                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomer(customer);
-                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomerGroup(customerGroup);
+
+                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setBranch(ProductsAdapterHelper.getSelectedBranch());
+                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomer(ProductsAdapterHelper.getSelectedCustomer());
+                    ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomerGroup(ProductsAdapterHelper.getSelectedCustomerGroup());
                     ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setPromotionalProducts(promotionalProducts);
                 }
                 else
@@ -253,6 +254,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         isCustomAdapter = productRecyclerViewAdapter != null;
     }
 
+    public BaseProductsRecyclerAdapter getProductsRecyclerAdapter() {
+        return productRecyclerViewAdapter;
+    }
+
 
     public void refreshList() {
         if(useRecyclerView)
@@ -276,8 +281,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setListPosition(position);
                 simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
+                simpleSalesQuantityDialog.setHelper(getHelper());
 
-                if(isCustomAdapter && productRecyclerViewAdapter instanceof BaseSalesProductRecyclerAdapter) {
+                if(productRecyclerViewAdapter instanceof BaseSalesProductRecyclerAdapter) {
                     BaseSalesProductRecyclerAdapter salesAdapter = (BaseSalesProductRecyclerAdapter) productRecyclerViewAdapter;
                     simpleSalesQuantityDialog.setHelper(salesAdapter.getHelper());
                     simpleSalesQuantityDialog.setSalesCustomer(salesAdapter.getCustomer());
@@ -289,9 +295,11 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setHasUnits(true);
                 simpleSalesQuantityDialog.setHasInvoicePurpose(isReturnItems);
                 simpleSalesQuantityDialog.setHasExpiryDate(isReturnItems);
+                simpleSalesQuantityDialog.setHasBadStock(isReturnItems);
                 simpleSalesQuantityDialog.setInvoicePurposeList(InvoicePurpose.fetchAll(getHelper(), InvoicePurpose.class));
 
-                double subtotal = product.getRetail_price()*Double.valueOf(ProductsAdapterHelper.getSelectedProductItems().getQuantity(product));
+                double subtotal = product.getRetail_price() * Double.valueOf(productRecyclerViewAdapter.getSelectedProductItems().getQuantity
+                        (product));
                 simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
                 simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
                 simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
@@ -404,7 +412,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                             "Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                    ProductsAdapterHelper.clearSelectedProductItemList(false);
                                     changeCategory(category, position);
                                     productsFragmentListener.whenItemsSelectedUpdated();
                                 }

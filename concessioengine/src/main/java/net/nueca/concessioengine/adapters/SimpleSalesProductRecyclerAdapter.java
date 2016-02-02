@@ -68,8 +68,9 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
         Product product = getItem(position);
+        Log.e(getClass().getSimpleName(), "PRODUCT_NAME ~ " + product.getName() + " ~ " + listingType.name());
 
-        if(listingType == ListingType.BASIC) {
+        if(listingType == ListingType.BASIC || listingType == ListingType.SALES) {
             holder.tvInventoryCount.setText(String.format("%1$s %2$s", product.getInStock(), product.getBase_unit_name()));
             if(!hasSubtotal)
                 holder.tvSubtotal.setVisibility(View.GONE);
@@ -97,46 +98,67 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
 
             SelectedProductItem selectedProductItem = getSelectedProductItems().getSelectedProductItem(product);
             Unit unit = null;
-            if(selectedProductItem == null && product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && product.getExtras()
-                    .getDefault_selling_unit().length() > 0)
+            if(selectedProductItem != null && selectedProductItem.getValues() != null && selectedProductItem.getValues().size() > 0) {
+                Values values = selectedProductItem.getValues().get(0);
+                unit = values.getUnit();
+            }
+            if(unit == null) {
                 try {
-                    unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", Integer.parseInt(product.getExtras()
-                            .getDefault_selling_unit())).queryForFirst();
+                    unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("name", product.getUnit()).and().eq
+                            ("product_id", product).queryForFirst();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            // determine retail_price
-            Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer, unit);
+            }
 
-            Log.e("retail_price", retail_price.toString());
+            if(selectedProductItem == null && product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && product.getExtras()
+                    .getDefault_selling_unit().length() > 0 && unit == null) {
+                try {
+                    Unit t_unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", Integer.parseInt(product.getExtras()
+                            .getDefault_selling_unit())).queryForFirst();
+                    if(t_unit != null)
+                        unit = t_unit;
+                } catch (SQLException e) { e.printStackTrace(); }
+            }
+
+            Log.e(getClass().getSimpleName(), "selectedProductItem isNull? " + (selectedProductItem == null) );
+            Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice 1");
 
             // Set subtotal
             holder.tvSubtotal2.setText("");
             if(selectedProductItem != null) {
+                /*double subtotal = 0d;
                 for(Values values : selectedProductItem.getValues()) {
-                    if(values.getUnit() != null)
-                        unit = values.getUnit();
+                    subtotal += NumberTools.toDouble(values.getQuantity()) * values.getRetail_price();
+                    retail_price = values.getRetail_price();
+                    Log.e("values["+selectedProductItem.getValues().indexOf(values)+"] retail_price", retail_price.toString());
                 }
-                retail_price = PriceTools.identifyRetailPrice(getHelper(),product,branch,customerGroup,customer,unit);
-
-                selectedProductItem.setRetail_price(retail_price);
-                //retail_price = selectedProductItem.getRetail_price() == null ? retail_price : selectedProductItem.getRetail_price();
-                double subtotal = NumberTools.toDouble(selectedProductItem.getQuantity()) * retail_price;
-                holder.tvSubtotal2.setText(String.format("P%s", NumberTools.separateInCommas(subtotal)));
+                Log.e(getClass().getSimpleName(), "Subtotal : " + subtotal);*/
+                holder.tvSubtotal2.setText(String.format("P%s", NumberTools.separateInCommas(selectedProductItem.getValuesSubtotal())));
+                holder.tvRetailPrice.setText(String.format("P%s", selectedProductItem.getValuesRetailPrices(';')));
             }
             // set Retail price
-            holder.tvRetailPrice.setText(String.format("P%s", NumberTools.separateInCommas(retail_price)));
+            else {
+                Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer, unit);
+
+                if(retail_price == null)
+                    retail_price = product.getRetail_price();
+                Log.e("identified retail_price", retail_price.toString());
+                holder.tvRetailPrice.setText(String.format("P%s", NumberTools.separateInCommas(retail_price)));
+            }
 
             // Quantity
             if(getSelectedProductItems().hasSelectedProductItem(product)) {
                 holder.llQuantity.setVisibility(View.VISIBLE);
-                holder.tvQuantity2.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(product), getSelectedProductItems().getUnitName(product, false)));
+                holder.tvQuantity2.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(product), getSelectedProductItems()
+                        .getUnitName(product, false)));
                 if(hasSubtotal)
                     holder.tvSubtotal2.setVisibility(View.VISIBLE);
             }
         }
 
-        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
+        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
+                ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
         holder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
     }
 

@@ -27,7 +27,13 @@ public class InvoiceLine extends BaseTransactionLine implements Extras.DoOperati
     protected String discount_text;
     @Expose
     @DatabaseField
+    protected int line_no;
+    @Expose
+    @DatabaseField
     protected String subtotal;
+
+    @DatabaseField
+    protected transient String no_discount_subtotal;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "invoice_id")
     protected transient Invoice invoice;
@@ -38,6 +44,8 @@ public class InvoiceLine extends BaseTransactionLine implements Extras.DoOperati
         super(builder);
         discount_text = builder.discount_text;
         subtotal = builder.subtotal;
+        line_no = builder.line_no;
+        no_discount_subtotal = builder.no_discount_subtotal;
     }
 
     public String getDiscount_text() {
@@ -56,6 +64,22 @@ public class InvoiceLine extends BaseTransactionLine implements Extras.DoOperati
         this.subtotal = subtotal;
     }
 
+    public int getLine_no() {
+        return line_no;
+    }
+
+    public void setLine_no(int line_no) {
+        this.line_no = line_no;
+    }
+
+    public String getNo_discount_subtotal() {
+        return no_discount_subtotal;
+    }
+
+    public void setNo_discount_subtotal(String no_discount_subtotal) {
+        this.no_discount_subtotal = no_discount_subtotal;
+    }
+
     public Invoice getInvoice() {
         return invoice;
     }
@@ -72,7 +96,17 @@ public class InvoiceLine extends BaseTransactionLine implements Extras.DoOperati
     public static class Builder extends BaseTransactionLine.Builder<Builder> {
         protected String discount_text;
         protected String subtotal;
+        protected int line_no = 0;
+        protected String no_discount_subtotal;
 
+        public Builder no_discount_subtotal(String no_discount_subtotal) {
+            this.no_discount_subtotal = no_discount_subtotal;
+            return this;
+        }
+        public Builder line_no(int line_no) {
+            this.line_no = line_no;
+            return this;
+        }
         public Builder discount_text(String discount_text) {
             this.discount_text = discount_text;
             return this;

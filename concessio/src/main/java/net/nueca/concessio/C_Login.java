@@ -69,10 +69,10 @@ public class C_Login extends LoginActivity {
         getSyncModules().setSyncAllModules(false);
 
         ModuleSetting app = ModuleSetting.fetchById(getHelper(), ModuleSetting.class, "app");
-        if(app != null && app.getDownloadSequences() == null)
+        if(app != null && app.getSequences() == null)
             Log.e("App", "nothing is defined");
         else
-            Log.e("App", app.getDownloadSequences().size()+"---");
+            Log.e("App", app.getSequences().size()+"---");
 
         return app.modulesToDownload(getHelper());
 

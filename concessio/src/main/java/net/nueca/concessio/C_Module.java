@@ -53,6 +53,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
@@ -79,7 +80,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
     private Toolbar toolbar;
     private boolean hasMenu = true, showsCustomer = false, // -- for the search
-            changeToReview = false;
+            changeToReview = false, refreshCustomerList = false;
 
     // for transaction details
     private String referenceNumber = "";
@@ -254,7 +255,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
                         intent.putExtra(ModuleActivity.FROM_CUSTOMERS_LIST, isFromCustomersList);
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
-                        startActivity(intent);
+                        startActivityForResult(intent, ALL_CUSTOMERS);
                     }
                 });
 
@@ -265,8 +266,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             } break;
             case STOCK_REQUEST:
             case INVOICE: {
+                CustomerGroup customerGroup = null;
+
+                try {
+                    if(customer.getCustomerGroups(getHelper()).size() > 0)
+                        customerGroup = customer.getCustomerGroups(getHelper()).get(0);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
                 changeToReview = true;
                 initializeProducts();
+                simpleProductsFragment.setHelper(getHelper());
                 simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES);
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting().getProductListing().isLock_category()));
@@ -276,12 +287,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setUseSalesProductAdapter(true);
                 simpleProductsFragment.setCustomer(customer);
                 simpleProductsFragment.setHasPromotionalProducts(true);
-                try {
-                    simpleProductsFragment.setCustomerGroup(customer.getCustomerGroups(getHelper()).get(0));
-                    simpleProductsFragment.setBranch(getBranches().get(0));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                simpleProductsFragment.setCustomerGroup(customerGroup);
+                simpleProductsFragment.setBranch(getBranches().get(0));
 
                 initializeFinalize();
                 finalizeFragment.setListingType(ListingType.ADVANCED_SALES);
@@ -293,12 +300,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setUseSalesProductAdapter(true);
                 finalizeFragment.setCustomer(customer);
                 finalizeFragment.setHasPromotionalProducts(true);
-                try {
-                    finalizeFragment.setCustomerGroup(customer.getCustomerGroups(getHelper()).get(0));
-                    finalizeFragment.setBranch(getBranches().get(0));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                finalizeFragment.setCustomerGroup(customerGroup);
+                finalizeFragment.setBranch(getBranches().get(0));
 
                 prepareFooter();
                 btn1.setOnClickListener(nextClickedListener);
@@ -314,7 +317,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setMultipleInput(true);
                 simpleProductsFragment.setMultiInputListener(multiInputListener);
                 simpleProductsFragment.setListingType(ListingType.SALES);
-                simpleProductsFragment.setDisplayOnly(true);
+                simpleProductsFragment.setDisplayOnly(getModuleSetting().is_view());
 
                 llFooter.setVisibility(View.VISIBLE);
                 btn1.setText("PRINT INVENTORY");
@@ -373,8 +376,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .commit();
             }
             break;
-            case RECEIVE_SUPPLIER: // Adjustment In -- Rebisco receiving
-            case RELEASE_SUPPLIER: { // Adjustment Out -- Rebisco pullout
+            case RECEIVE_SUPPLIER: // Rebisco receiving
+            case RELEASE_SUPPLIER: { // Rebisco pullout
                 changeToReview = true;
                 simpleInventoryFragment = new SimpleInventoryFragment();
                 simpleInventoryFragment.setHelper(getHelper());
@@ -437,6 +440,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             @Override
                             public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
                                 Log.e("Reason", reason.getName());
+                                ProductsAdapterHelper.clearSelectedProductItemList(true);
                                 ProductsAdapterHelper.setSelectedCustomer(customer);
                                 ProductsAdapterHelper.setReason(reason);
 
@@ -537,6 +541,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
                         Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().getReference_no());
                         Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isCancelled()+"");
+
+                        Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isSynced()+" isSynced");
+                        Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isSyncing()+" isSyncing");
+                        Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isCancelled()+" isCancelled");
                         boolean useBtn2 = true;
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.INVOICE
                                 && simpleTransactionDetailsFragment.getOfflineData().isSynced()) {
@@ -609,6 +617,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 .withReason("VOID")
                                 .object(simpleTransactionDetailsFragment.getOfflineData())
                                 .queue();
+
+                        // <-- Voiding issue when the transaction is voided for Receive and Pullout -->
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER) // Receive
+                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), false);
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) // Pullout
+                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), true);
+
                         onBackPressed();
                     }
                 }, "No", new DialogInterface.OnClickListener() {
@@ -635,6 +650,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         simpleProductsFragment.setHelper(getHelper());
         simpleProductsFragment.setSetupActionBar(this);
         simpleProductsFragment.setReturnItems(isReturnItems);
+        Log.e("IS_RETURN_ITEMS", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + isReturnItems);
     }
 
     @Override
@@ -673,6 +689,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         simplePulloutToolbarExt.detach();
                 }
             }
+        }
+        if(refreshCustomerList) {
+            setResult(REFRESH);
         }
         super.onBackPressed();
     }
@@ -807,7 +826,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         startActivity(intent);
                     }
                 };
-                handler.sendEmptyMessageDelayed(0, 300);
+                handler.sendEmptyMessageDelayed(0, 100);
             }
         }
         else if(requestCode == EDIT_CUSTOMER) {
@@ -817,11 +836,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 Handler handler = new Handler() {
                     @Override
                     public void handleMessage(Message msg) {
+                        refreshCustomerList = true;
                         simpleCustomerDetailsFragment.setCustomer(customer);
                         simpleCustomerDetailsFragment.renderCustomerDetails(true);
                     }
                 };
-                handler.sendEmptyMessageDelayed(0, 300);
+                handler.sendEmptyMessageDelayed(0, 100);
             }
         }
         else if(requestCode == REVIEW_SALES) {
@@ -833,6 +853,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 }
             };
             handler.sendEmptyMessageDelayed(0, 100);
+        }
+        else if(requestCode == ALL_CUSTOMERS) {
+            if(resultCode == REFRESH) {
+                Handler handler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        simpleCustomersFragment.reinitializeList();
+                    }
+                };
+                handler.sendEmptyMessageDelayed(0, 100);
+            }
         }
     }
 

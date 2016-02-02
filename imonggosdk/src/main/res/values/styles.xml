@@ -20,6 +20,12 @@
     <style name="TextView.ProductItem.Quantity" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@android:color/black</item>
     </style>
+    <style name="TextView.ProductItem.InventoryCount" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="TextView.ProductItem.Subtotal" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
 
     <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:displayOptions">homeAsUp</item>

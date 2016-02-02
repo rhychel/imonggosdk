@@ -114,7 +114,7 @@
         <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
         <item name="colorAccent">@color/primary</item>
         <item name="android:textColorPrimary">@color/primary_textL</item>
-        <item name="android:background">#FFFFFF</item>
+        <!--<item name="android:background">#FFFFFF</item>-->
         <item name="windowNoTitle">true</item>
 
         <item name="colorControlNormal">@color/accent</item>

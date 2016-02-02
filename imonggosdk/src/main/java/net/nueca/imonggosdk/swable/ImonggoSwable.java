@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.NetworkTools;
 import net.nueca.imonggosdk.tools.NotificationTools;
 
 import org.json.JSONException;
@@ -125,21 +126,41 @@ public class ImonggoSwable extends SwableService {
             try {
                 if(AccountTools.isLoggedIn(getHelper()) && AccountTools.isUserActive(this)) {
                     Log.e("ImonggoSwable", "syncModule : trying to sync");
-                    if(!getSession().isHas_logged_in()) {
+                    if(getSession() == null /*|| !getSession().isHas_logged_in()*/) {
+                        if(getSession() == null)
+                            Log.e("ImonggoSwable", "syncModule : session is null");
+                        /*if(!getSession().isHas_logged_in())
+                            Log.e("ImonggoSwable", "syncModule : session not logged in");*/
                         setSyncing(false);
+                        return;
+                    }
+                    if(!NetworkTools.isInternetAvailable(this)) {
+                        setSyncing(false);
+                        Log.e("ImonggoSwable", "syncModule : not connected to network");
+                        return;
                     }
 
                     //REQUEST_SUCCESS = 0;
                     //NOTIFICATION_ID++;
-
                     List<OfflineData> offlineDataList =
+                            getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
+                                    .eq("isSynced", false).and()
+                                    .eq("isSyncing", false).and()
+                                    .eq("isQueued", false).and()
+                                    .eq("isCancelled", false).and()
+                                    .eq("isBeingModified", false).and()
+                                    .eq("isPastCutoff", false).and()
+                                    .eq("type", OfflineData.CUSTOMER).query();
+
+                    offlineDataList.addAll(
                         getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
                                 .eq("isSynced", false).and()
                                 .eq("isSyncing", false).and()
                                 .eq("isQueued", false).and()
                                 .eq("isCancelled", false).and()
                                 .eq("isBeingModified", false).and()
-                                .eq("isPastCutoff", false).query();
+                                .eq("isPastCutoff", false).and()
+                                .ne("type", OfflineData.CUSTOMER).query());
 
                     if(offlineDataList.size() <= 0) {
                         Log.e("ImonggoSwable", "syncModule : nothing to sync");
@@ -171,6 +192,10 @@ public class ImonggoSwable extends SwableService {
                             e.printStackTrace();
                         }*/
                         Log.e("ImonggoSwable", "OFFLINEDATA: " + offlineData.getReturnId());
+                        Log.e("ImonggoSwable", "isCancelled = "+offlineData.isCancelled());
+                        Log.e("ImonggoSwable", "isSyncing = "+offlineData.isSyncing());
+                        Log.e("ImonggoSwable", "isSynced = "+offlineData.isSynced());
+                        Log.e("ImonggoSwable", "isQueued = "+offlineData.isQueued());
 
                         offlineData.setQueued(true);
 
@@ -216,6 +241,7 @@ public class ImonggoSwable extends SwableService {
                     if(swableStateListener != null)
                         swableStateListener.onSwableStarted();
                     getQueue().start();
+                    setSyncing(false); // -- restarter
                 }
                 else {
                     if(!AccountTools.isUserActive(this))

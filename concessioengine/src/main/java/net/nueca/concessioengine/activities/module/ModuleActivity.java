@@ -104,13 +104,20 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return null;
     }
 
-    protected ModuleSetting getAppSetting() {
+    protected List<ModuleSetting> getActiveModuleSetting() {
         try {
-            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(ConcessioModule.APP)).queryForFirst();
+            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
+                    .where()
+                        .in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST, ConcessioModule.PHYSICAL_COUNT,
+                                ConcessioModule.RECEIVE_BRANCH, ConcessioModule.RECEIVE_BRANCH_PULLOUT, ConcessioModule.RELEASE_BRANCH,
+                                ConcessioModule.RECEIVE_SUPPLIER, ConcessioModule.RELEASE_SUPPLIER,
+                                ConcessioModule.RECEIVE_ADJUSTMENT, ConcessioModule.RELEASE_ADJUSTMENT,
+                                ConcessioModule.INVOICE))
+                    .query();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public List<ConcessioModule> getTransactionTypes() {
@@ -179,14 +186,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-//        if(AccountSettings.hasOrder(this))
-//            transactionTypes.add("Order");
-//        if(AccountSettings.hasCount(this))
-//            transactionTypes.add("Count");
-//        if(AccountSettings.hasReceive(this))
-//            transactionTypes.add("Receive");
-//        if(AccountSettings.hasPullout(this))
-//            transactionTypes.add("Pullout");
+
         return transactionTypes;
     }
 
@@ -393,6 +393,21 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 product.setInventory(updateInventory);
                 product.updateTo(getHelper());
                 updated++;
+            }
+        }
+        return updated;
+    }
+
+    protected int revertInventoryFromDocument(Document document, boolean shouldAdd) {
+        int updated = 0;
+        List<DocumentLine> documentLines = document.getDocument_lines();
+        for(DocumentLine documentLine : documentLines) {
+            try {
+                Inventory inventory = getHelper().fetchObjectsInt(Inventory.class).queryBuilder().where().eq("product_id", documentLine.getProduct_id()).queryForFirst();
+                inventory.operationQuantity(documentLine.getQuantity(), shouldAdd);
+                inventory.updateTo(getHelper());
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return updated;
