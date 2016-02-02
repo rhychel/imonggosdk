@@ -220,6 +220,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     transactionDialog.setAmountLabel("Amount");
                     transactionDialog.setCustomerName("Rhymart Manchus");
                     transactionDialog.setInStock("Transaction ID No. 123456");
+                    transactionDialog.setTransactionDialogListener(transactionDialogListener);
                     transactionDialog.show();
 
                     Invoice invoice = generateInvoice();
@@ -248,11 +249,20 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         transactionDialog.setAmountLabel("Remaining Balance");
                         transactionDialog.setCustomerName("Rhymart Manchus");
                         transactionDialog.setInStock("Transaction ID No. 123456");
+                        transactionDialog.setTransactionDialogListener(transactionDialogListener);
                         transactionDialog.show();
                     }
                 }, "No", R.style.AppCompatDialogStyle_Light);
             }
 
+        }
+    };
+
+    private TransactionDialog.TransactionDialogListener transactionDialogListener = new TransactionDialog.TransactionDialogListener() {
+        @Override
+        public void whenDismissed() {
+            setResult(SUCCESS);
+            finish();
         }
     };
 
