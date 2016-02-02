@@ -128,7 +128,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionsFragment = new SimpleTransactionsFragment();
                 simpleTransactionsFragment.setHelper(getHelper());
                 simpleTransactionsFragment.setSetupActionBar(this);
-                simpleTransactionsFragment.setHasFilterByTransactionType(true);
+                simpleTransactionsFragment.onlyInvoices(true);
                 simpleTransactionsFragment.setTransactionTypes(getTransactionTypes());
                 simpleTransactionsFragment.setListingType(ListingType.DETAILED_HISTORY);
                 simpleTransactionsFragment.setTransactionsListener(new BaseTransactionsFragment.TransactionsListener() {
@@ -155,6 +155,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionsFragment.setHasFilterByTransactionType(true);
                 simpleTransactionsFragment.setTransactionTypes(getTransactionTypes());
                 simpleTransactionsFragment.setListingType(ListingType.DETAILED_HISTORY);
+                if(customer != null) {
+                    simpleTransactionsFragment.setCustomer(customer);
+                }
                 simpleTransactionsFragment.setTransactionsListener(new BaseTransactionsFragment.TransactionsListener() {
 
                     @Override
@@ -218,8 +221,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                 llFooter.setVisibility(View.VISIBLE);
                 llReview.setVisibility(View.VISIBLE);
-                if(isFromCustomersList)
+                if(isFromCustomersList) {
                     btn1.setText("VIEW HISTORY");
+                    btn1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(C_Module.this, C_Module.class);
+                            intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
+                            intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.HISTORY.ordinal());
+                            startActivity(intent);
+                        }
+                    });
+                }
                 else {
                     btn1.setText("TRANSACT");
                     btn1.setOnClickListener(new View.OnClickListener() {
@@ -927,6 +940,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
         if(concessioModule == ConcessioModule.HISTORY)
             whenItemsSelectedUpdated();
+        if(concessioModule == ConcessioModule.LAYAWAY) {
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setTitle("Layaway");
+        }
     }
 
     /**
