@@ -12,6 +12,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
@@ -41,13 +42,17 @@ public class Invoice extends BaseTransactionTable2 {
     protected String email;
     @Expose
     @DatabaseField
-    protected int user_id;
+    protected Integer user_id;
     @Expose
     @DatabaseField
-    protected boolean tax_inclusive;
+    protected Integer salesman_id;
+    @Expose
+    @DatabaseField
+    protected Boolean tax_inclusive;
     @Expose
     @DatabaseField
     protected String remark;
+
     @Expose
     protected List<InvoiceLine> invoice_lines;
     @Expose
@@ -68,6 +73,9 @@ public class Invoice extends BaseTransactionTable2 {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
     protected transient Customer customer;
 
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_id")
+    protected transient Branch branch;
+
     public Invoice() {}
 
     public Invoice(Builder builder) {
@@ -82,6 +90,9 @@ public class Invoice extends BaseTransactionTable2 {
         invoice_tax_rates = builder.invoice_tax_rates;
         payments = builder.payments;
         customer = builder.customer;
+        branch = builder.branch;
+        salesman_id = builder.salesman_id;
+        //amount = builder.amount;
     }
 
     public void setInvoice_date(String date) { invoice_date = date; }
@@ -107,6 +118,14 @@ public class Invoice extends BaseTransactionTable2 {
         this.user_id = user_id;
     }
 
+    public Integer getSalesman_id() {
+        return salesman_id;
+    }
+
+    public void setSalesman_id(Integer salesman_id) {
+        this.salesman_id = salesman_id;
+    }
+
     public boolean isTax_inclusive() {
         return tax_inclusive;
     }
@@ -123,6 +142,14 @@ public class Invoice extends BaseTransactionTable2 {
         this.remark = remark;
     }
 
+    /*public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }*/
+
     public List<InvoiceLine> getInvoiceLines() {
         refresh();
         if(invoice_lines == null)
@@ -130,7 +157,7 @@ public class Invoice extends BaseTransactionTable2 {
         return invoice_lines;
     }
 
-    public void setInvoiceLines(BatchList<InvoiceLine> invoice_lines) {
+    public void setInvoiceLines(List<InvoiceLine> invoice_lines) {
         this.invoice_lines = invoice_lines;
     }
 
@@ -139,7 +166,7 @@ public class Invoice extends BaseTransactionTable2 {
         return payments;
     }
 
-    public void setPayments(BatchList<InvoicePayment> invoicePayments) {
+    public void setPayments(List<InvoicePayment> invoicePayments) {
         this.payments = invoicePayments;
     }
 
@@ -174,6 +201,14 @@ public class Invoice extends BaseTransactionTable2 {
         this.customer = customer;
     }
 
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
     public static Invoice fromJSONString(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         return fromJSONObject(jsonObject);
@@ -202,27 +237,53 @@ public class Invoice extends BaseTransactionTable2 {
     @Override
     public String toJSONString() {
         refresh();
+        try {
+            return toJSONObject().toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return super.toJSONString();
     }
 
     @Override
     public JSONObject toJSONObject() throws JSONException {
         refresh();
-        return super.toJSONObject();
+        JSONObject jsonObject = super.toJSONObject();
+        if(customer != null) {
+            jsonObject.put("customer_id", customer.getId());
+            jsonObject.put("customer_name", customer.getName());
+        }
+        return jsonObject;
     }
 
     public static class Builder extends BaseTransactionTable2.Builder<Builder> {
         protected String invoice_date;
         protected String status;
         protected String email;
-        protected int user_id;
-        protected boolean tax_inclusive = false;
+        protected Integer user_id, salesman_id;
+        protected Boolean tax_inclusive;
         protected String remark;
-        protected List<InvoiceLine> invoice_lines = new ArrayList<>();
-        protected List<InvoicePayment> payments = new ArrayList<>();
-        protected List<InvoiceTaxRate> invoice_tax_rates = new ArrayList<>();
+        protected List<InvoiceLine> invoice_lines;
+        protected List<InvoicePayment> payments;
+        protected List<InvoiceTaxRate> invoice_tax_rates;
         protected Customer customer;
+        protected Branch branch;
+        /*protected Double amount;
 
+        public Builder amount(Double amount) {
+            this.amount = amount;
+            return this;
+        }*/
+
+        public Builder salesman_id(Integer salesman_id) {
+            this.salesman_id = salesman_id;
+            return this;
+        }
+
+        public Builder branch(Branch branch) {
+            this.branch = branch;
+            return this;
+        }
         public Builder customer(Customer customer) {
             this.customer = customer;
             return this;

@@ -143,7 +143,7 @@ public class DiscountTools {
                 discount_text.matches("-?\\d+(\\.(\\d+))?");
     }
 
-    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, BigDecimal qty, String discount_text, String separator) {
+    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, final BigDecimal qty, String discount_text, String separator) {
         if(discount_text == null || discount_text.length() == 0)
             return retail_price.multiply(qty);
 
@@ -155,6 +155,79 @@ public class DiscountTools {
                 continue;
             discountedPrice = applyDiscount(discountedPrice, BigDecimal.ONE, discountStr);
         }
+        return discountedPrice.multiply(qty);
+    }
+
+    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, final BigDecimal qty, List<Double> discounts,String discount_text, String
+            separator) {
+        if(discount_text == null || discount_text.length() == 0)
+            return retail_price.multiply(qty);
+
+        List<String> discountStrs = Arrays.asList(discount_text.split(separator));
+
+        BigDecimal discountedPrice = retail_price;
+        for(String discountStr : discountStrs) {
+            if(!isValid(discountStr))
+                continue;
+            BigDecimal incomingDiscount = applyDiscount(discountedPrice, BigDecimal.ONE, discountStr);
+            discounts.add(discountedPrice.subtract(incomingDiscount).doubleValue() * qty.doubleValue());
+            if(incomingDiscount.doubleValue() >= 0d)
+                discountedPrice = incomingDiscount;
+        }
+        return discountedPrice.multiply(qty);
+    }
+
+    public static BigDecimal applyMultipleDiscounts(BigDecimal retail_price, final BigDecimal qty, List<Double> product_discounts, List<Double>
+            company_discounts, String discount_text, String discount_group_separator, String discount_separator, List<Double>
+            customer_discounts, String customer_discount_text) {
+        if(discount_text == null || discount_text.length() == 0)
+            return retail_price.multiply(qty);
+
+        List<String> discountGroup = Arrays.asList(discount_text.split(discount_group_separator));
+
+        List<String> p_discountStrs = Arrays.asList(discountGroup.get(0).split(discount_separator));
+        List<String> co_discountStrs = Arrays.asList(discountGroup.get(1).split(discount_separator));
+        List<String> cu_discountStrs = new ArrayList<>();
+
+        if(customer_discount_text != null && customer_discount_text.length() > 0)
+            cu_discountStrs = Arrays.asList(customer_discount_text.split(discount_separator));
+
+        BigDecimal discountedPrice = retail_price;
+
+        Log.e("PRODUCT_DISCOUNT_STR", discountGroup.get(0));
+        for(String discountStr : p_discountStrs) {
+            if(!isValid(discountStr))
+                continue;
+            BigDecimal incomingDiscount = applyDiscount(discountedPrice, BigDecimal.ONE, discountStr);
+            product_discounts.add(discountedPrice.subtract(incomingDiscount).doubleValue() * qty.doubleValue());
+            if(incomingDiscount.doubleValue() >= 0d)
+                discountedPrice = incomingDiscount;
+            Log.e("P Discount " + product_discounts.size(), product_discounts.get(product_discounts.size()-1)+"");
+        }
+
+        Log.e("COMPANY_DISCOUNT_STR", discountGroup.get(1));
+        for(String discountStr : co_discountStrs) {
+            if(!isValid(discountStr))
+                continue;
+            BigDecimal incomingDiscount = applyDiscount(discountedPrice, BigDecimal.ONE, discountStr);
+            company_discounts.add(discountedPrice.subtract(incomingDiscount).doubleValue() * qty.doubleValue());
+            if(incomingDiscount.doubleValue() >= 0d)
+                discountedPrice = incomingDiscount;
+            Log.e("Co Discount " + company_discounts.size(), company_discounts.get(company_discounts.size()-1)+"");
+        }
+
+        Log.e("CUSTOMER_DISCOUNT_STR", customer_discount_text);
+        for(String discountStr : cu_discountStrs) {
+            if(!isValid(discountStr))
+                continue;
+            BigDecimal incomingDiscount = applyDiscount(discountedPrice, BigDecimal.ONE, discountStr);
+            customer_discounts.add(discountedPrice.subtract(incomingDiscount).doubleValue() * qty.doubleValue());
+            if(incomingDiscount.doubleValue() >= 0d)
+                discountedPrice = incomingDiscount;
+            Log.e("Cu Discount " + customer_discounts.size(), customer_discounts.get(customer_discounts.size()-1)+"");
+        }
+
+        Log.e("FINAL DISCOUNTED PRICE", discountedPrice.multiply(qty).doubleValue() + "");
         return discountedPrice.multiply(qty);
     }
 }

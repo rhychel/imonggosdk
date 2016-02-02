@@ -1,5 +1,6 @@
 package net.nueca.concessioengine.adapters;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +10,11 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
+import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -24,6 +27,7 @@ import java.util.List;
  */
 public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSplitPaymentAdapter.ListViewHolder> {
     private ImonggoDBHelper2 dbHelper;
+    private FragmentManager fragmentManager;
 
     public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper2 dbHelper) {
         this(context, dbHelper, ListingType.BASIC_PAYMENTS);
@@ -79,6 +83,7 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         else {
             InvoicePayment invoicePayment = getItem(position);
 
+            lvh.itemView.setTag(position);
             lvh.tvPaymentType.setText(getPaymentTypeWithId(invoicePayment.getPayment_type_id()).getName());
             lvh.tvPaymentValue.setText("P" + NumberTools.separateInCommas(invoicePayment.getTender()));
             lvh.tvPaymentValue.setVisibility(View.VISIBLE);
@@ -103,6 +108,10 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         if(listingType == ListingType.COLORED_PAYMENTS)
             return getCount();
         return isFullyPaid ? getCount() : getCount()+1;
+    }
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
     }
 
     public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {
@@ -132,29 +141,63 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         }*/
 
         @Override
-        public void onClick(View v) {
-            if(isAdd) {
-                SimplePaymentDialog dialog = new SimplePaymentDialog(getContext(),
-                        new ArrayList<>(getPaymentTypes().values()));
+        public void onClick(final View v) {
+            if(listingType == ListingType.BASIC_PAYMENTS) {
+                if(isAdd) {
+                    SimplePaymentDialog dialog = new SimplePaymentDialog(getContext(),
+                            new ArrayList<>(getPaymentTypes().values()));
+                    dialog.setFragmentManager(fragmentManager);
 
+                    dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
+                        @Override
+                        public void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras) {
+                            InvoicePayment.Builder builder = new InvoicePayment.Builder();
+                            builder.amount(NumberTools.toDouble(paymentValue));
+
+                            // TODO: must set tender to be able to compute
+                            builder.tender(NumberTools.toDouble(paymentValue));
+
+                            if(paymentType != null)
+                                builder.payment_type_id(paymentType.getId());
+
+                            InvoicePayment invoicePayment = builder.build();
+                            invoicePayment.setExtras(extras);
+                            /*add(invoicePayment);
+                            notifyItemInserted(getItemCount());
+
+                            computation.addPayment(invoicePayment);
+                            if(paymentUpdateListener != null)
+                                paymentUpdateListener.onAddPayment(invoicePayment);*/
+                            addPayment(invoicePayment);
+                        }
+                    });
+                    dialog.show();
+                }
+            }
+            else {
+                final int position = (int)v.getTag();
+
+                SimplePaymentDialog dialog = new SimplePaymentDialog(getContext(), getPaymentTypeList(), R.style.AppCompatDialogStyle_Light_NoTitle);
+                dialog.setDialogType(DialogType.ADVANCED_PAY);
+                dialog.setBalanceText(balance); // should be updated
+                dialog.setTotalAmountText(totalAmount); // should be updated
+                dialog.setInvoicePayment(getItem(position));
                 dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
                     @Override
-                    public void onAddPayment(PaymentType paymentType, String paymentValue) {
-                        InvoicePayment.Builder builder = new InvoicePayment.Builder();
-                        builder.amount(NumberTools.toDouble(paymentValue));
+                    public void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras) {
+                        getItem(position).setTender(NumberTools.toDouble(paymentValue));
 
-                        // TODO: must set tender to be able to compute
-                        builder.tender(NumberTools.toDouble(paymentValue));
+                        if (paymentType != null)
+                            getItem(position).setPayment_type_id(paymentType.getId());
 
-                        if(paymentType != null)
-                            builder.payment_type_id(paymentType.getId());
+                        getItem(position).setExtras(extras);
 
-                        InvoicePayment invoicePayment = builder.build();
-                        add(invoicePayment);
-                        notifyItemInserted(getItemCount());
+                        notifyItemChanged(position);
 
-                        if(paymentUpdateListener != null)
-                            paymentUpdateListener.onAddPayment(invoicePayment);
+                        if(onItemClickListener != null)
+                            onItemClickListener.onItemClicked(v, position);
+                        //simpleSplitPaymentAdapter.add(invoicePayment);
+                        //simpleSplitPaymentAdapter.notifyItemInserted(simpleSplitPaymentAdapter.getItemCount());
                     }
                 });
                 dialog.show();

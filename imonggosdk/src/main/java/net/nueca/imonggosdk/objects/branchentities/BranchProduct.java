@@ -2,6 +2,9 @@ package net.nueca.imonggosdk.objects.branchentities;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -26,15 +29,21 @@ public class BranchProduct extends DBTable {
     private transient Branch branch;
     @ForeignCollectionField
     private ForeignCollection<BranchUnit> branchUnits;
+
+    @Expose
     @DatabaseField
     private int branch_product_id;
 
     @DatabaseField
     private transient boolean isBaseUnitSellable = false;
+
+    @Expose
     @DatabaseField
     private String name, description;
+    @Expose
     @DatabaseField
     private double retail_price = 0.0;
+    @Expose
     @DatabaseField
     private double unit_retail_price = 0.0;
 
@@ -115,6 +124,11 @@ public class BranchProduct extends DBTable {
 
     public void setBranch_product_id(int branch_product_id) {
         this.branch_product_id = branch_product_id;
+    }
+
+    public String toJSONString() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
     }
 
     @Override

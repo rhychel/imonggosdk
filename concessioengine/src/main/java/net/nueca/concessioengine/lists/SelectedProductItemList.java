@@ -18,6 +18,10 @@ import java.util.List;
  */
 public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
 
+    private Double subtotal = 0d;
+
+    private boolean isReturns = false;
+
     public SelectedProductItemList(int capacity) {
         super(capacity);
     }
@@ -35,19 +39,26 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
      */
     @Override
     public boolean add(SelectedProductItem selectedProductItem) {
+        selectedProductItem.setReturns(isReturns);
         int index = indexOf(selectedProductItem);
         if(index > -1) {
-            if(selectedProductItem.getValues().size() > 0)
+            if(selectedProductItem.getValues().size() > 0) {
                 set(index, selectedProductItem);
+                updateSubtotal();
+            }
             else {
                 remove(index);
+                updateSubtotal();
                 return false;
             }
             return true;
         }
 
-        if(selectedProductItem.getValues().size() > 0)
-            return super.add(selectedProductItem);
+        if(selectedProductItem.getValues().size() > 0) {
+            boolean ret = super.add(selectedProductItem);
+            updateSubtotal();
+            return ret;
+        }
         return true;
     }
 
@@ -71,7 +82,10 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     public SelectedProductItem initializeItem(Product product) {
         if(hasSelectedProductItem(product))
             return getSelectedProductItem(product);
-        return new SelectedProductItem(product);
+
+        SelectedProductItem selectedProductItem = new SelectedProductItem(product);
+        selectedProductItem.setReturns(isReturns);
+        return selectedProductItem;
     }
 
     public SelectedProductItem getSelectedProductItem(Product product) {
@@ -95,13 +109,21 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     public String getUnitName(Product product, boolean withFormat) {
         SelectedProductItem selectedProductItem = getSelectedProductItem(product);
         if(selectedProductItem == null)
-            return "";
+            return product.getBase_unit_name();
         if(selectedProductItem.getValues().get(0).getUnit() != null) {
             if (withFormat)
                 return "<i>[" + selectedProductItem.getValues().get(0).getUnit().getName() + "]</i>";
             return selectedProductItem.getValues().get(0).getUnit().getName();
         }
-        return "";
+        return product.getBase_unit_name();
+    }
+
+    public boolean isReturns() {
+        return isReturns;
+    }
+
+    public void setReturns(boolean returns) {
+        isReturns = returns;
     }
 
     public void renderToJson() {
@@ -112,5 +134,15 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     @Override
     public List<SelectedProductItem> subList(int start, int end) {
         return super.subList(start, end);
+    }
+
+    public Double getSubtotal() {
+        return subtotal;
+    }
+
+    public void updateSubtotal() {
+        subtotal = 0d;
+        for(SelectedProductItem selectedProductItem : this)
+            subtotal += selectedProductItem.getValuesSubtotal();
     }
 }

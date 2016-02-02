@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleSplitPaymentAdapter;
@@ -24,7 +26,8 @@ import java.math.BigDecimal;
  * imonggosdk (c)2015
  */
 public class SimpleCheckoutFragment extends BaseCheckoutFragment {
-    private EditText etAmountDue, etBalance;
+    private TextView tvAmountDue, tvBalance;
+    private LinearLayout llAmountDue, llBalance;
 
     private RecyclerView rvPayments;
 
@@ -40,23 +43,38 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.simple_checkout_fragment, container, false);
 
-        etAmountDue = (EditText) view.findViewById(R.id.etAmountDue);
-        etBalance = (EditText) view.findViewById(R.id.etBalance);
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
+
+        llAmountDue = (LinearLayout) view.findViewById(R.id.llCheckoutAmountDue);
+        llBalance = (LinearLayout) view.findViewById(R.id.llCheckoutBalance);
+
+        llAmountDue.setVisibility(View.GONE);
+        llBalance.setVisibility(View.GONE);
+
+        if(tvAmountDue == null) {
+            tvAmountDue = (EditText) view.findViewById(R.id.etAmountDue);
+            llAmountDue.setVisibility(View.VISIBLE);
+        }
+        if(tvBalance == null) {
+            tvBalance = (EditText) view.findViewById(R.id.etBalance);
+            llBalance.setVisibility(View.VISIBLE);
+        }
 
         rvPayments = (RecyclerView) view.findViewById(R.id.rvPayments);
 
-        etAmountDue.setText(NumberTools.separateInCommas(getAmountDue()));
+        tvAmountDue.setText(NumberTools.separateInCommas(getAmountDue()));
 
-        splitPaymentAdapter = new SimpleSplitPaymentAdapter(getActivity(), getHelper());
+        if(splitPaymentAdapter == null) {
+            splitPaymentAdapter = new SimpleSplitPaymentAdapter(getActivity(), getHelper());
+            splitPaymentAdapter.setPaymentUpdateListener(this);
+        }
         splitPaymentAdapter.initializeRecyclerView(getActivity(), rvPayments);
-        splitPaymentAdapter.setPaymentUpdateListener(this);
 
         rvPayments.setAdapter(splitPaymentAdapter);
 
         itemTouchHelper.attachToRecyclerView(rvPayments);
 
-        etBalance.setText(NumberTools.separateInCommas(computation.getTotalPayable()));
+        tvBalance.setText(NumberTools.separateInCommas(computation.getTotalPayable()));
 
         return view;
     }
@@ -71,20 +89,20 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
 
     @Override
     public void onAddPayment(InvoicePayment invoicePayment) {
-        computation.addPayment(invoicePayment);
-        etBalance.setText(NumberTools.separateInCommas(computation.getRemaining()));
+        //computation.addPayment(invoicePayment);
+        tvBalance.setText(NumberTools.separateInCommas(computation.getRemaining()));
 
-        splitPaymentAdapter.setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+        //splitPaymentAdapter.setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
 
         rvPayments.scrollToPosition(splitPaymentAdapter.getItemCount() - 1);
     }
 
     @Override
     public void onDeletePayment(int location) {
-        computation.removePayment(location);
-        etBalance.setText(NumberTools.separateInCommas(computation.getRemaining()));
+        //computation.removePayment(location);
+        tvBalance.setText(NumberTools.separateInCommas(computation.getRemaining()));
 
-        splitPaymentAdapter.setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+        //splitPaymentAdapter.setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
     }
 
     private ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper
@@ -106,4 +124,12 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
             }
         }
     });
+
+    public void setAmountDueTextView(TextView tvAmountDue) {
+        this.tvAmountDue = tvAmountDue;
+    }
+
+    public void setBalanceTextView(TextView tvBalance) {
+        this.tvBalance = tvBalance;
+    }
 }

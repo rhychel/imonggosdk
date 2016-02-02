@@ -98,6 +98,13 @@ public class Inventory extends DBTable {
         this.utc_created_at = utc_created_at;
     }
 
+    public void operationQuantity(double quantity, boolean shouldAdd) {
+        if(shouldAdd)
+            addQuantity(quantity);
+        else
+            subtractQuantity(quantity);
+    }
+
     public void addQuantity(double addQuantity) {
         this.quantity += addQuantity;
     }

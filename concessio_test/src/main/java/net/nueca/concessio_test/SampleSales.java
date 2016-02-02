@@ -1,5 +1,7 @@
 package net.nueca.concessio_test;
 
+import android.location.Criteria;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -18,9 +20,10 @@ import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.tools.InvoiceTools;
+import net.nueca.concessioengine.tools.LocationTools;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
+import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
+import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
@@ -121,15 +124,23 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             //for(Price price : prices)
             //    Log.e("@@@@@@@", price.toString());
 
-            List<Product> t_products = getHelper().fetchObjectsList(Product.class).subList(0,2);
+            /*List<Product> t_products = getHelper().fetchObjectsList(Product.class).subList(0,2);
             for(Product product : t_products)
                 Log.e("@@@@@@@ !!", product.toString());
             List<Product> products = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", t_products.get(0).getId()).query();
             for(Product product : products)
-                Log.e("@@@@@@@ **", product.toString());
+                Log.e("@@@@@@@ **", product.toString());*/
+
+            List<BranchProduct> branchProducts = getHelper().fetchObjectsList(BranchProduct.class);
+            for(BranchProduct branchProduct : branchProducts)
+                Log.e("*******", branchProduct.toString());
+            List<BranchUnit> branchUnits = getHelper().fetchObjectsList(BranchUnit.class);
+            for(BranchUnit branchUnit : branchUnits)
+                Log.e("$$$$$$$", branchUnit.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        //new SwableTools.Transaction(getHelper()).toUpdate().queue();
         Log.e("SAMPLE SALES", "Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ");
 
         setContentView(R.layout.c_module);
@@ -154,13 +165,15 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
         salesAdapter = new SimpleSalesProductRecyclerAdapter(this, getHelper());
 
         simpleProductsFragment.setProductsRecyclerAdapter(salesAdapter);
-        simpleProductsFragment.setListingType(ListingType.SALES);
+        simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES);
         finalizeFragment.setProductsRecyclerAdapter(salesAdapter);
-        finalizeFragment.setListingType(ListingType.SALES);
+        finalizeFragment.setListingType(ListingType.ADVANCED_SALES);
 
         simpleProductsFragment.setHasUnits(true);
         simpleProductsFragment.setProductCategories(getProductCategories(true));
+        simpleProductsFragment.setHasSubtotal(true);
 
+        finalizeFragment.setHasSubtotal(true);
         finalizeFragment.setHasCategories(false);
         finalizeFragment.setHasBrand(false);
         finalizeFragment.setHasDeliveryDate(false);
@@ -180,6 +193,25 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if(btnReview != null && btnReview.getText().toString().equals(CUSTOMER_LABEL)) {
+            getMenuInflater().inflate(R.menu.menu_sample_sales, menu);
+            SearchView mSearch = (SearchView) menu.findItem(R.id.mSearch).getActionView();
+
+            mSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    customersFragment.updateListWhenSearch(query);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    customersFragment.updateListWhenSearch(newText);
+                    return true;
+                }
+            });
+            miSearch = menu.findItem(R.id.mSearch);
+        }
         if(btnReview != null && btnReview.getText().toString().equals(REVIEW_LABEL)) {
             getMenuInflater().inflate(R.menu.menu_sample_sales, menu);
             SearchView mSearch = (SearchView) menu.findItem(R.id.mSearch).getActionView();
@@ -209,7 +241,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             miSearch = menu.findItem(R.id.mSearch);
         }
         if(miSearch != null)
-            miSearch.setVisible(btnReview.getText().toString().equals(REVIEW_LABEL));
+            miSearch.setVisible(btnReview.getText().toString().equals(REVIEW_LABEL) || btnReview.getText().toString().equals(CUSTOMER_LABEL));
         getSupportActionBar().setDisplayShowTitleEnabled(!btnReview.getText().toString().equals(REVIEW_LABEL));
         getSupportActionBar().setDisplayHomeAsUpEnabled(!btnReview.getText().toString().equals(CUSTOMER_LABEL));
         getSupportActionBar().setHomeButtonEnabled(!btnReview.getText().toString().equals(CUSTOMER_LABEL));
@@ -289,7 +321,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
             Invoice.Builder invoiceBuilder = new Invoice.Builder()
                     .invoice_lines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                            .getSelectedProductItems(), "10%"));
+                            .getSelectedProductItems()));
 
             simpleCheckoutFragment.setInvoice(invoiceBuilder.build());
             getSupportFragmentManager().beginTransaction()
@@ -329,9 +361,16 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
             btnReview.setText(REVIEW_LABEL);
         } else {
+            Location location = LocationTools.getLastKnownLocation(this);
+            if(location != null)
+                Log.e("ACCURACY", location.getAccuracy() + " " + Criteria.ACCURACY_HIGH);
             Log.e(">>>", new Invoice.Builder()
                     .payments(simpleCheckoutFragment.getPayments())
                     .invoice_lines(simpleCheckoutFragment.getInvoiceLines())
+                    /*.extras(new Extras.Builder()
+                            .latitude("" + LocationTools.limitDecimal(location.getLatitude(), 5))
+                            .longitude("" + LocationTools.limitDecimal(location.getLongitude(), 5))
+                            .build())*/
                     .build()
                     .toString());
         }

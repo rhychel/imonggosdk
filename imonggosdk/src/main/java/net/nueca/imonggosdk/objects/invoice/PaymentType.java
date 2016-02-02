@@ -31,6 +31,10 @@ public class PaymentType extends DBTable {
 
     public PaymentType() {}
 
+    public PaymentType(int id) {
+        this.id = id;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -61,6 +65,11 @@ public class PaymentType extends DBTable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return id == ((PaymentType)o).getId();
     }
 
     @Override

@@ -1,11 +1,14 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.nueca.concessioengine.enums.ListingType;
+import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +23,14 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
     private HashMap<Integer, PaymentType> paymentTypes;
     private List<PaymentType> paymentTypeList;
 
+    protected String totalAmount = "", balance = "";
+
     protected boolean isFullyPaid = false;
     protected boolean isDefaultCash = false;
 
     protected ListingType listingType = ListingType.BASIC_PAYMENTS;
+
+    protected InvoiceTools.PaymentsComputation computation = new InvoiceTools.PaymentsComputation();
 
     public BaseSplitPaymentAdapter(Context context, int listItemRes) {
         super(context, new ArrayList<InvoicePayment>());
@@ -105,11 +112,44 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
         this.paymentTypeList = paymentTypeList;
     }
 
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public void setBalance(String balance) {
+        this.balance = balance;
+    }
+
     public void deletePayment(int position) {
         remove(position);
         notifyDataSetChanged();
 
+        computation.removePayment(position);
+
+        setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+
         if(paymentUpdateListener != null)
             paymentUpdateListener.onDeletePayment(position);
+    }
+
+    public void addPayment(InvoicePayment payment) {
+        Log.e("ADDING PAYMENT", payment.getTender() + " " + computation.getRemaining().doubleValue());
+        add(payment);
+        notifyItemInserted(getItemCount());
+
+        computation.addPayment(payment);
+
+        setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+
+        if(paymentUpdateListener != null)
+            paymentUpdateListener.onAddPayment(payment);
+    }
+
+    public InvoiceTools.PaymentsComputation getComputation() {
+        return computation;
+    }
+
+    public void setComputation(InvoiceTools.PaymentsComputation computation) {
+        this.computation = computation;
     }
 }

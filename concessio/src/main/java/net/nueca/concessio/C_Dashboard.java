@@ -71,16 +71,18 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
         Log.e("ClassName", Customer.class.getSimpleName());
 
-//        try {
-//            getHelper().deleteAll(OfflineData.class);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            List<OfflineData> offlineDatas = getHelper().fetchObjects(OfflineData.class).queryForAll();
+            Log.e("OfflineDatas---", offlineDatas == null? "null" : offlineDatas.size()+"");
+            for(OfflineData offlineData : offlineDatas) {
+                Log.e("OfflineData " + offlineData.getId(), offlineData.getReturnId() + " ~ isQueued? "+ offlineData.isQueued() + " isSynced? " +
+                        offlineData.isSynced() + " isSyncing? " + offlineData.isSyncing() + " isCancelled? " + offlineData.isCancelled());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         setNextActivityClass(C_Module.class);
-
-        if(!SwableTools.isImonggoSwableRunning(this))
-            SwableTools.startSwable(this);
 
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
         rvModules = (RecyclerView) findViewById(R.id.rvModules);
@@ -101,6 +103,19 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            Log.e("SESSION", "isNULL? " + (getSession() == null));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.startSwable(this);
+        Log.e("SWABLE", "START");
     }
 
     @Override
@@ -219,8 +234,13 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 }
             } break;
             case R.id.mSettings: {
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+                try {
+                    getHelper().deleteAll(OfflineData.class);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+//                Intent intent = new Intent(this, SettingsActivity.class);
+//                startActivity(intent);
             } break;
         }
         return super.onOptionsItemSelected(item);
