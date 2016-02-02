@@ -9,6 +9,8 @@ import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 7/13/15.
@@ -55,9 +57,16 @@ public class Values {
     private boolean isBadStock = true;
     // ---- FOR INVOICE
     private String discount_text;
-    private Double subtotal;
+    private Double subtotal, no_discount_subtotal;
     private Double retail_price;
     private InvoicePurpose invoicePurpose;
+    private String product_discount_text = "",
+            company_discount_text = "",
+            customer_discount_text = "";
+    private List<Double> product_discounts = new ArrayList<>(),
+            company_discounts = new ArrayList<>(),
+            customer_discounts = new ArrayList<>();
+    private Price price = null;
 
     public Values() { }
 
@@ -80,59 +89,130 @@ public class Values {
 
     public void setValue(String quantity, Unit unit) {
         //Log.e("VALUES", "setValue(quantity="+quantity +", unit="+(unit!=null?unit.getName():"null")+")");
+        if(this.price != null && this.price.getUnit() != null && !this.price.getUnit().equals(unit))
+            this.price = null;
         if(unit != null)
             this.retail_price = unit.getRetail_price();
         setValue(quantity, unit, null);
     }
 
+    public void setValue(String quantity, Unit unit, double retail_price, String customer_discount_text) {
+        if(customer_discount_text != null)
+            this.customer_discount_text = customer_discount_text;
+        setValue(quantity, unit, retail_price);
+    }
+
     public void setValue(String quantity, Unit unit, double retail_price) {
         Log.e("VALUES", "setValue(quantity="+quantity +", unit="+(unit!=null?unit.getName():"null")+", retail_price="+retail_price+")");
+        if(this.price != null && this.price.getUnit() != null && !this.price.getUnit().equals(unit))
+            this.price = null;
         this.retail_price = retail_price;
         setValue(quantity, unit, null);
     }
 
+    public void setValue(String quantity, Price price, String customer_discount_text) {
+        setValue(quantity, price, customer_discount_text, null);
+    }
+
+    public void setValue(String quantity, Price price, String customer_discount_text, ExtendedAttributes extendedAttributes) {
+        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
+        if(customer_discount_text != null)
+            this.customer_discount_text = customer_discount_text;
+        setValue(quantity, price, extendedAttributes);
+    }
+
     public void setValue(String quantity, Price price) {
         Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
-        setValue(quantity, price, null);
+        setValue(quantity, price, (ExtendedAttributes) null);
     }
 
     public void setValue(String quantity, Price price, ExtendedAttributes extendedAttributes) {
         Log.e("VALUES", "setValue price isNull? " + (price==null));
-        this.retail_price = price.getRetail_price();
-        this.discount_text = price.getDiscount_text();
-        setValue(quantity, price.getUnit(), extendedAttributes);
+        this.price = price;
+        if(price != null) {
+            if (price.getRetail_price() != null)
+                this.retail_price = price.getRetail_price();
+            else
+                this.retail_price = price.getProduct().getRetail_price();
+            this.discount_text = price.getDiscount_text();
+        }
+        setValue(quantity, price == null? null : price.getUnit(), extendedAttributes);
     }
 
     public void setValue(String quantity, Unit unit, ExtendedAttributes extendedAttributes) {
         if(extendedAttributes != null)
             this.extendedAttributes = extendedAttributes;
-        if(unit != null && unit.getId() != -1) {
+        this.unit = unit;
+        if(isValidUnit()) {
             Log.e("Quantity-unit", unit.getQuantity()+" * "+quantity);
             if(quantity.length() > 0)
                 this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_quantity = quantity;
             this.unit_content_quantity = unit.getQuantity();
             this.unit_name = unit.getName();
-            this.unit_retail_price = unit.getRetail_price();
-            this.unit = unit;
+            this.unit_retail_price = unit.getRetail_price() * unit.getQuantity();
         }
         else {
             this.quantity = quantity;
-            this.unit = unit;
+            this.unit_quantity = null;
+            this.unit_content_quantity = 0d;
+            this.unit_retail_price = 0d;
             if(unit != null)
                 this.unit_name = unit.getName();
         }
 
-        ///this.subtotal = this.retail_price * Double.valueOf(quantity);
-        this.subtotal = DiscountTools.applyMultipleDiscounts(new BigDecimal(this.retail_price),
-                new BigDecimal(Double.valueOf(quantity)),this.discount_text,",").doubleValue();
+        Log.e("QTY", this.quantity + " ~ " + quantity);
 
+        Log.e("DISCOUNT TEXT", (this.discount_text == null? "null" : this.discount_text) );
+        if(this.discount_text != null && this.discount_text.length() > 0) {
+            if (this.discount_text.contains(";")) {
+                String[] discounts = this.discount_text.split(";");
+                this.product_discount_text = discounts[0];
+                if(discounts.length > 1)
+                    this.company_discount_text = discounts[1];
+            } else {
+                this.product_discount_text = this.discount_text;
+            }
+        }
+
+        Log.e("PRICE OBJ", "isNull? " + (price == null));
+        if(this.price == null) {
+            this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
+
+            //if (customer_discount_text != null && customer_discount_text.length() > 0) {
+            //    this.subtotal = DiscountTools.applyMultipleDiscounts(
+            //            new BigDecimal(this.retail_price), new BigDecimal(this.quantity),
+            //            customer_discounts, customer_discount_text, ","
+            //    ).doubleValue();
+            //} else {
+                this.subtotal = this.retail_price * Double.valueOf(this.quantity);
+            //}
+        }
+        else {
+            this.no_discount_subtotal = this.retail_price * Double.valueOf(quantity);
+
+            //if (customer_discount_text != null && customer_discount_text.length() > 0) {
+            //    this.subtotal = DiscountTools.applyMultipleDiscounts(
+            //            new BigDecimal(this.retail_price), new BigDecimal(quantity),
+            //            product_discounts, company_discounts, discount_text, ";", ",",
+            //            customer_discounts, customer_discount_text
+            //    ).doubleValue();
+            //} else {
+                this.subtotal = DiscountTools.applyMultipleDiscounts(
+                        new BigDecimal(this.retail_price), new BigDecimal(quantity),
+                        product_discounts, discount_text, ","
+                ).doubleValue();
+            //}
+        }
+
+
+        Log.e("QTY", this.quantity + " ~ " + quantity);
         Log.e("Unit", unit != null? unit.getName() : "null");
         Log.e("Values", "setValue : " + this.retail_price + " * " + quantity + " = " + this.subtotal);
     }
 
     public String getQuantity() {
-        if(unit != null && unit.getId() != -1)
+        if(isValidUnit() && unit_quantity != null)
             return unit_quantity;
         return quantity;
     }
@@ -177,6 +257,21 @@ public class Values {
         this.unit_retail_price = unit_retail_price;
     }
 
+    public String getExpiry_date() {
+        return expiry_date;
+    }
+
+    public void setExpiry_date(String expiry_date) {
+        this.expiry_date = expiry_date;
+    }
+
+    public boolean isBadStock() {
+        return isBadStock;
+    }
+
+    public void setBadStock(boolean badStock) {
+        isBadStock = badStock;
+    }
     public double getUnit_content_quantity() {
         return unit_content_quantity;
     }
@@ -230,12 +325,42 @@ public class Values {
         this.retail_price = retail_price;
     }
 
-    public void setSubtotal(Double subtotal) {
-        this.subtotal = subtotal;
+    public String getProduct_discount_text() {
+        if(product_discount_text.length() == 0)
+            return null;
+        return product_discount_text;
     }
 
-    public void setRetail_price(Double retail_price) {
-        this.retail_price = retail_price;
+    public String getCompany_discount_text() {
+        if(company_discount_text.length() == 0)
+            return null;
+        return company_discount_text;
+    }
+
+    public String getCustomer_discount_text() {
+        if(customer_discount_text.length() == 0)
+            return null;
+        return customer_discount_text;
+    }
+
+    public List<Double> getProduct_discounts() {
+        return product_discounts;
+    }
+
+    public List<Double> getCompany_discounts() {
+        return company_discounts;
+    }
+
+    public List<Double> getCustomer_discounts() {
+        return customer_discounts;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public Double getNoDiscountSubtotal() {
+        return no_discount_subtotal;
     }
 
     public InvoicePurpose getInvoicePurpose() {
@@ -244,22 +369,6 @@ public class Values {
 
     public void setInvoicePurpose(InvoicePurpose invoicePurpose) {
         this.invoicePurpose = invoicePurpose;
-    }
-
-    public String getExpiry_date() {
-        return expiry_date;
-    }
-
-    public void setExpiry_date(String expiry_date) {
-        this.expiry_date = expiry_date;
-    }
-
-    public boolean isBadStock() {
-        return isBadStock;
-    }
-
-    public void setBadStock(boolean badStock) {
-        isBadStock = badStock;
     }
 
     @Override

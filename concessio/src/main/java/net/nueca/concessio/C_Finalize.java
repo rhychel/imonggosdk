@@ -22,8 +22,13 @@ import android.widget.TextView;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
+import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.tools.NumberTools;
+
+import java.math.BigDecimal;
 
 /**
  * Created by rhymart on 8/22/15.
@@ -94,6 +99,18 @@ public class C_Finalize extends ModuleActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Double sales = DiscountTools.applyMultipleDiscounts(
+                new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
+                ProductsAdapterHelper.getSelectedCustomer() == null? null :
+                        ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
+        Double balance =
+                sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+        tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.simple_review_menu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -155,15 +172,28 @@ public class C_Finalize extends ModuleActivity {
         @Override
         public Fragment getItem(int position) {
             SimpleProductsFragment simpleProductsFragment = SimpleProductsFragment.newInstance();
+            simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES);
+            simpleProductsFragment.setUseSalesProductAdapter(true);
             if(position == 1)
                 returnsProductFragment = simpleProductsFragment;
             simpleProductsFragment.setHelper(getHelper());
-            simpleProductsFragment.setListingType(ListingType.SALES);
             simpleProductsFragment.setHasUnits(true);
             simpleProductsFragment.setHasToolBar(false);
             simpleProductsFragment.setHasCategories(false);
             simpleProductsFragment.setIsFinalize(true);
             simpleProductsFragment.setHasSubtotal(true);
+            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
+                @Override
+                public void whenItemsSelectedUpdated() {
+                    Double sales = DiscountTools.applyMultipleDiscounts(
+                            new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
+                            ProductsAdapterHelper.getSelectedCustomer() == null? null :
+                                    ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
+                    Double balance =
+                            sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+                    tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
+                }
+            });
             if(position == 0)// Positive Transactions
                 simpleProductsFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
             else {

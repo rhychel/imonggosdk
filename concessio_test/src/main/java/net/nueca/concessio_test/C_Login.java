@@ -3,11 +3,15 @@ package net.nueca.concessio_test;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.crashlytics.android.Crashlytics;
+
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.tools.SettingTools;
+
+import io.fabric.sdk.android.Fabric;
 
 
 /**
@@ -19,7 +23,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
     }
 
     @Override
@@ -27,7 +31,7 @@ public class C_Login extends LoginActivity {
         super.initLoginEquipments();
         //setIsUsingDefaultDialog(true);
         //setIsUsingDefaultLoginLayout(true);
-       // Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
         setRequireObjectConcessioSettings(false);
         setServer(Server.IRETAILCLOUD_NET);
@@ -35,12 +39,10 @@ public class C_Login extends LoginActivity {
         SettingTools.updateSettings(C_Login.this,
                 SettingsName.AUTO_UPDATE, false, "");
 
-
-
         setModulesToSync(
                 Table.USERS_ME.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
-                Table.SETTINGS.ordinal(),/*
+                Table.SETTINGS.ordinal(),
                 Table.PRODUCTS.ordinal(),
                 Table.UNITS.ordinal(),
                 Table.CUSTOMER_CATEGORIES.ordinal(),
@@ -49,11 +51,11 @@ public class C_Login extends LoginActivity {
                 Table.ROUTE_PLANS_DETAILS.ordinal(),
                 Table.BRANCH_PRODUCTS.ordinal(),
                 Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
-                Table.PRICE_LISTS_DETAILS.ordinal(),
+                Table.PRICE_LISTS_DETAILS.ordinal()/*,
                 Table.PAYMENT_TERMS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
-                */Table.INVOICES.ordinal(),
-                Table.INVOICE_PURPOSES.ordinal()/*,
+                Table.INVOICES.ordinal(),
+                Table.INVOICE_PURPOSES.ordinal(),
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS.ordinal(),
                 Table.SALES_PROMOTIONS_POINTS.ordinal(),
@@ -63,7 +65,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, (C_Customers.class));
+        Intent intent = new Intent(this, ( C_Welcome.class));
         startActivity(intent);
     }
 
@@ -73,10 +75,5 @@ public class C_Login extends LoginActivity {
         setEditTextAccountID("C5111");
         setEditTextEmail("C5111A_OSS-1@imonggo.com");
         setEditTextPassword("123rebisco456");
-    }
-
-    @Override
-    public void onPrepareDialog() {
-
     }
 }

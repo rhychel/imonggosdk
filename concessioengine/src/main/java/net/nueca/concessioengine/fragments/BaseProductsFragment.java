@@ -375,14 +375,17 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setBranch(Branch branch) {
         this.branch = branch;
+        ProductsAdapterHelper.setSelectedBranch(branch);
     }
 
     public void setCustomerGroup(CustomerGroup customerGroup) {
         this.customerGroup = customerGroup;
+        ProductsAdapterHelper.setSelectedCustomerGroup(customerGroup);
     }
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+        ProductsAdapterHelper.setSelectedCustomer(customer);
     }
 
     public void setHasPromotionalProducts(boolean hasPromotionalProducts) {

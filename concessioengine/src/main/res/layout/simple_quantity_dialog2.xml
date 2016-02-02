@@ -164,7 +164,8 @@
                 android:layout_toEndOf="@+id/textView3"
                 android:layout_weight="2"
                 android:layout_marginLeft="16dp"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:gravity="left" />
         </LinearLayout>
 
         <LinearLayout

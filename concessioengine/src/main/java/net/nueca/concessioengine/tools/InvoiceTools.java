@@ -6,9 +6,10 @@ import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
@@ -19,57 +20,250 @@ import java.util.List;
  * Created by gama on 16/10/2015.
  */
 public class InvoiceTools {
-    public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems) {
+    /*public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems) {
         return generateInvoiceLines(selectedProductItems, (String) null);
     }
 
     public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems, Customer customer) {
-        if(customer != null)
+        if (customer != null)
             return generateInvoiceLines(selectedProductItems, customer.getDiscount_text());
         return generateInvoiceLines(selectedProductItems);
+    }*/
+
+    public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems) {
+        return generateInvoiceLines(selectedProductItems, 0);
     }
 
-    public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems, String customerDiscount) {
+    public static List<InvoiceLine> generateInvoiceLines(SelectedProductItemList selectedProductItems, int line_no_start) {
         List<InvoiceLine> invoiceLines = new ArrayList<>();
 
-        for(SelectedProductItem selectedProductItem : selectedProductItems) {
+        for (SelectedProductItem selectedProductItem : selectedProductItems) {
             Product product = selectedProductItem.getProduct();
 
-            for(Values itemValue : selectedProductItem.getValues()) {
+            for (Values itemValue : selectedProductItem.getValues()) {
                 InvoiceLine.Builder builder = new InvoiceLine.Builder();
+                builder.line_no(invoiceLines.size() + line_no_start + 1);
+                /** Product ID **/
                 builder.product_id(product.getId());
 
+                /** Units **/
+                if(itemValue.isValidUnit()) {
+                    builder.unit_id(itemValue.getUnit().getId());
+                    builder.unit_name(itemValue.getUnit_name());
+                    builder.unit_quantity(Double.valueOf(itemValue.getUnit_quantity()));
+                    builder.unit_content_quantity(itemValue.getUnit_content_quantity());
+                    builder.unit_retail_price(itemValue.getUnit_retail_price());
+                } else
+                    builder.unit_name(product.getBase_unit_name());
+
+                /** Extras - Discounts **/
                 String discount_text = itemValue.getDiscount_text();
-                if(customerDiscount != null && customerDiscount.length() != 0) {
+                if (itemValue.getCustomer_discount_text() != null && itemValue.getCustomer_discount_text().length() != 0) {
                     if (discount_text != null && discount_text.length() != 0)
-                        discount_text += "," + customerDiscount;
+                        discount_text += ";" + itemValue.getCustomer_discount_text();
                     else
-                        discount_text = customerDiscount;
+                        discount_text = itemValue.getCustomer_discount_text();
                 }
-                builder.discount_text(discount_text);
+                if(itemValue.getSubtotal() >= 0d) {
+                    builder.discount_text(discount_text);
 
-                builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).intValue());
+                    Extras.Builder extrasBuilder = new Extras.Builder();
 
+                    extrasBuilder.product_discount_text(itemValue.getProduct_discount_text())
+                            .product_discount_amount(generateDiscountAmount(itemValue.getProduct_discounts(), ','))
+                            .company_discount_text(itemValue.getCompany_discount_text())
+                            .company_discount_amount(generateDiscountAmount(itemValue.getCompany_discounts(), ','))
+                            /*.customer_discount_text(itemValue.getCustomer_discount_text())
+                            .customer_discount_amounts(generateDiscountAmount(itemValue.getCustomer_discounts(), ','))*/;
+
+                    Extras extras = extrasBuilder.build();
+                    if (extras.getProduct_discount_text() != null ||
+                            extras.getCompany_discount_text() != null ||
+                            extras.getCustomer_discount_text() != null)
+                        builder.extras(extrasBuilder.build());
+
+                /** Extras - BO and RGS **/
+                } else {
+                    Extras.Builder extrasBuilder = new Extras.Builder();
+
+                    extrasBuilder.is_bad_stock(itemValue.isBadStock());
+                    InvoicePurpose invoicePurpose = itemValue.getInvoicePurpose();
+                    extrasBuilder.invoice_purpose_id(invoicePurpose.getId());
+                    extrasBuilder.invoice_purpose_code(invoicePurpose.getCode());
+                    extrasBuilder.invoice_purpose_name(invoicePurpose.getName());
+                    extrasBuilder.expiry_date(itemValue.getExpiry_date());
+
+                    Extras extras = extrasBuilder.build();
+                    builder.extras(extras);
+                }
+
+                /** Quantity **/
+                builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).doubleValue());
+
+                /** Retail Price **/
                 double retail_price = itemValue.isValidUnit() ?
+                        itemValue.getRetail_price() : itemValue.getPrice() != null?
                         itemValue.getRetail_price() : product.getRetail_price();
                 builder.retail_price(retail_price);
 
+                /** Subtotal **/
                 BigDecimal t_subtotal = new BigDecimal(itemValue.getQuantity())
                         .multiply(new BigDecimal(retail_price));
                 BigDecimal subtotal = new BigDecimal(itemValue.getSubtotal());
 
-                if(subtotal.doubleValue() == 0d)
-                    builder.subtotal(""+t_subtotal.doubleValue());
+                if (subtotal.doubleValue() == 0d)
+                    builder.subtotal("" + t_subtotal.doubleValue());
                 else
-                    builder.subtotal(""+itemValue.getSubtotal());
+                    builder.subtotal("" + itemValue.getSubtotal());
 
+                /** Subtotal No Discount **/
+                builder.no_discount_subtotal("" + itemValue.getNoDiscountSubtotal());
+
+                /** Add InvoiceLine **/
                 invoiceLines.add(builder.build());
                 Log.e("INVOICE", product.getName() + " " + t_subtotal.doubleValue() + " " + subtotal.doubleValue() + " ~ " + retail_price + " * " +
-                        itemValue.getQuantity() + " -- discount " + discount_text);
+                        itemValue.getQuantity() + " -- discount: " + discount_text + " | discounted price: " +
+                        DiscountTools.applyMultipleDiscounts(new BigDecimal(retail_price), NumberTools.toBigDecimal(itemValue.getQuantity()),
+                                discount_text, ",").doubleValue());
             }
         }
         return invoiceLines;
     }
+
+    public static String generateDiscountAmount(List<Double> discountAmounts, char delimiter) {
+        if(discountAmounts == null)
+            return null;
+        String str = "";
+        for (Double discount : discountAmounts) {
+            str += String.valueOf(discount);
+            if(discountAmounts.indexOf(discount) < discountAmounts.size())
+                str += delimiter;
+        }
+        if(str.length() == 0)
+            return null;
+        return str;
+    }
+    private static List<Double> parseDiscountAmount(String discountAmounts, char delimiter) {
+        String[] discountStr = discountAmounts.split(""+delimiter);
+        List<Double> discounts = new ArrayList<>();
+        for(String str : discountStr) {
+            discounts.add(Double.valueOf(str));
+        }
+        return discounts;
+    }
+
+    private static final int PRODUCT_DISCOUNT = 0,
+            COMPANY_DISCOUNT = 1,
+            CUSTOMER_DISCOUNT = 2,
+            NO_DISCOUNT_SUBTOTAL = 3,
+            SUBTOTAL = 4;
+    private static List<Double> addAllField(List<InvoiceLine> invoiceLines, int field) {
+        if(invoiceLines == null || invoiceLines.size() == 0)
+            return null;
+        List<Double> discounts = null;
+        switch (field) {
+            case PRODUCT_DISCOUNT:
+                for (InvoiceLine invoiceLine : invoiceLines) {
+                    if(invoiceLine.getExtras() == null || invoiceLine.getExtras().getProduct_discount_amount() == null)
+                        continue;
+                    if(discounts == null)
+                        discounts = new ArrayList<>();
+                    double itemDiscount = sum(parseDiscountAmount(invoiceLine.getExtras().getProduct_discount_amount(), ','));
+                    discounts.add(itemDiscount);
+                }
+                break;
+            case COMPANY_DISCOUNT:
+                for (InvoiceLine invoiceLine : invoiceLines) {
+                    if(invoiceLine.getExtras() == null || invoiceLine.getExtras().getCompany_discount_amount() == null)
+                        continue;
+                    if(discounts == null)
+                        discounts = new ArrayList<>();
+                    double itemDiscount = sum(parseDiscountAmount(invoiceLine.getExtras().getCompany_discount_amount(), ','));
+                    discounts.add(itemDiscount);
+                }
+                break;
+            case CUSTOMER_DISCOUNT:
+                for (InvoiceLine invoiceLine : invoiceLines) {
+                    if(invoiceLine.getExtras() == null || invoiceLine.getExtras().getCustomer_discount_amounts() == null)
+                        continue;
+                    if(discounts == null)
+                        discounts = parseDiscountAmount(invoiceLine.getExtras().getCustomer_discount_amounts(), ',');
+                    else {
+                        List<Double> forAdding = parseDiscountAmount(invoiceLine.getExtras().getCustomer_discount_amounts(), ',');
+                        for(int i=0; i < forAdding.size(); i++) {
+                            if(discounts.size() <= i)
+                                discounts.add(forAdding.get(i));
+                            else
+                                discounts.set(i, discounts.get(i)+forAdding.get(i));
+                        }
+                    }
+                }
+                break;
+            case NO_DISCOUNT_SUBTOTAL:
+                for (InvoiceLine invoiceLine : invoiceLines) {
+                    if(invoiceLine.getNo_discount_subtotal() == null)
+                        continue;
+                    if(discounts == null)
+                        discounts = new ArrayList<>();
+                    discounts.add(Double.valueOf(invoiceLine.getNo_discount_subtotal()));
+                }
+                break;
+            case SUBTOTAL:
+                for (InvoiceLine invoiceLine : invoiceLines) {
+                    if(invoiceLine.getSubtotal() == null)
+                        continue;
+                    if(discounts == null)
+                        discounts = new ArrayList<>();
+                    discounts.add(Double.valueOf(invoiceLine.getSubtotal()));
+                }
+                break;
+        }
+        return discounts;
+    }
+
+    public static Double sum(List<Double> doubles) {
+        if(doubles == null)
+            return 0d;
+        double sum = 0d;
+        for(Double d : doubles) {
+            sum += d;
+        }
+        return sum;
+    }
+
+    public static List<Double> getAllProductDiscount(List<InvoiceLine> invoiceLines) {
+        return addAllField(invoiceLines, PRODUCT_DISCOUNT);
+    }
+    public static List<Double> getAllCompanyDiscount(List<InvoiceLine> invoiceLines) {
+        return addAllField(invoiceLines, COMPANY_DISCOUNT);
+    }
+    public static List<Double> consolidateCustomerDiscount(List<InvoiceLine> invoiceLines) {
+        return addAllField(invoiceLines, CUSTOMER_DISCOUNT);
+    }
+    public static Double addNoDiscountSubtotals(List<InvoiceLine> invoiceLines) {
+        return sum(addAllField(invoiceLines, NO_DISCOUNT_SUBTOTAL));
+    }
+    public static Double addSubtotals(List<InvoiceLine> invoiceLines) {
+        return sum(addAllField(invoiceLines, SUBTOTAL));
+    }
+    /*@Nullable
+    public static Location getLastKnownLocation(Activity activity) {
+        String networkProvider = LocationManager.NETWORK_PROVIDER;
+        String gpsProvider = LocationManager.GPS_PROVIDER;
+
+        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+
+        Location location = locationManager.getLastKnownLocation(gpsProvider);
+        if(location == null)
+            location = locationManager.getLastKnownLocation(networkProvider);
+
+        return location;
+    }*/
 
     public static class PaymentsComputation {
         private List<InvoiceLine> invoiceLines = new ArrayList<>();

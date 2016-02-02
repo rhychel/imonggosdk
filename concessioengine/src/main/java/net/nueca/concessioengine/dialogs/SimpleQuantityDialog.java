@@ -106,9 +106,9 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
             btnDeliveryDate.setOnClickListener(onDeliveryDateClicked);
 
             Calendar now = Calendar.getInstance();
-            deliveryDate = now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH);
-            deliveryDate = DateTimeTools.convertToDate(deliveryDate, "yyyy-M-d", "yyyy-MM-dd");
-            btnDeliveryDate.setText(deliveryDate);
+            date = now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH);
+            date = DateTimeTools.convertToDate(date, "yyyy-M-d", "yyyy-MM-dd");
+            btnDeliveryDate.setText(date);
 
             if (selectedProductItem.getValues().size() > 0) {
                 if (isMultiValue) {
@@ -206,9 +206,10 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                     Price price = PriceTools.identifyPrice(getHelper(), selectedProductItem.getProduct(),
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
                     if(price != null)
-                        values.setValue(quantity, price);
+                        values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
                     else
-                        values.setValue(quantity, unit, selectedProductItem.getRetail_price());
+                        values.setValue(quantity, unit, selectedProductItem.getRetail_price(),
+                                salesCustomer != null? salesCustomer.getDiscount_text() : null);
                 }
 
                     selectedProductItem.getValues().set(valuePosition, values);
@@ -240,7 +241,7 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
     private View.OnClickListener onDeliveryDateClicked = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            showDeliveryDatePicker(btnDeliveryDate);
+            showDeliveryDatePicker(fragmentManager, btnDeliveryDate);
         }
     };
 }
