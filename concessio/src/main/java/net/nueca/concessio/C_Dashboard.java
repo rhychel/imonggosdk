@@ -71,11 +71,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
         Log.e("ClassName", Customer.class.getSimpleName());
 
-//        try {
-//            getHelper().deleteAll(OfflineData.class);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        /*try {
+            getHelper().deleteAll(OfflineData.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
 
         setNextActivityClass(C_Module.class);
 

@@ -37,6 +37,9 @@ public class InvoicePayment extends BaseTable2 implements Extras.DoOperationsFor
     @DatabaseField
     protected double tender;
 
+    @DatabaseField
+    protected transient Integer paymentBatchNo = null;
+
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "invoice_id")
     protected transient Invoice invoice;
 
@@ -208,5 +211,13 @@ public class InvoicePayment extends BaseTable2 implements Extras.DoOperationsFor
                 extras.insertTo(dbHelper);
             }
         }
+    }
+
+    public Integer getPaymentBatchNo() {
+        return paymentBatchNo;
+    }
+
+    public void setPaymentBatchNo(Integer paymentBatchNo) {
+        this.paymentBatchNo = paymentBatchNo;
     }
 }

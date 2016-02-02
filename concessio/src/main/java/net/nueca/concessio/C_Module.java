@@ -42,7 +42,10 @@ import net.nueca.concessioengine.fragments.SimpleTransactionsFragment;
 import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
+import net.nueca.concessioengine.lists.SelectedProductItemList;
+import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.tools.AnimationTools;
+import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -56,6 +59,7 @@ import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
@@ -136,6 +140,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     @Override
                     public void showTransactionDetails(OfflineData offlineData) {
                         // Show the C_Finalize, re-render items
+                        Log.e("Invoice", offlineData.getObjectFromData(Invoice.class).toJSONString());
+                        try {
+                            SelectedProductItemList list = InvoiceTools.generateSelectedProductItemList(getHelper(),offlineData,false,false);
+                            for(SelectedProductItem item : list) {
+                                Log.e("Item >> ", " >> " + item.toString());
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
 

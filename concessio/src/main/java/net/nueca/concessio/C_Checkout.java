@@ -235,6 +235,21 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         transactionDialog.setCustomerName("Rhymart Manchus");
                         transactionDialog.setInStock("Transaction ID No. 123456");
                         transactionDialog.show();
+
+                        Invoice invoice = generateInvoice();
+                        invoice.setStatus("L");
+                        try {
+                            new SwableTools.Transaction(getHelper())
+                                    .toSend()
+                                    .forBranch(getSession().getCurrent_branch_id())
+                                    .fromModule(ConcessioModule.INVOICE)
+                                    .object(invoice)
+                                    .queue();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+
+                        Log.e("INVOICE", invoice.toJSONString());
                     }
                 }, "No", R.style.AppCompatDialogStyle_Light);
             }

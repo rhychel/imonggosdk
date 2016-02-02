@@ -48,9 +48,6 @@ public class ImonggoSwable extends SwableService {
 
     private SwableStateListener swableStateListener;
 
-    protected int REQUEST_SUCCESS = 0;
-    protected int REQUEST_COUNT = 0;
-
     private int APP_ICON_DRAWABLE = R.drawable.ic_check_circle;
 
     private IntentFilter notificationFilter = new IntentFilter();
@@ -92,8 +89,7 @@ public class ImonggoSwable extends SwableService {
                     Log.e("--- RECEIVER", "called");
                     String action = intent.getAction();
                     if(action.equals(NOTIFICATION_ACTION)) {
-                        REQUEST_SUCCESS = 0;
-                        REQUEST_COUNT = 0;
+                        // Todo: Do something with notification trigger
                     }
                 }
             };
@@ -214,6 +210,9 @@ public class ImonggoSwable extends SwableService {
                                 swableSendModule.sendTransaction(Table.CUSTOMERS, offlineData);
                                 break;
 
+                            case UPDATE_INVOICE:
+                                swableUpdateModule.updateTransaction(Table.INVOICES, offlineData);
+                                break;
                             case UPDATE_CUSTOMER:
                                 swableUpdateModule.updateTransaction(Table.CUSTOMERS, offlineData);
                                 break;
@@ -235,11 +234,10 @@ public class ImonggoSwable extends SwableService {
                         //offlineData.updateTo(getHelper());
                     }
                     Log.e("ImonggoSwable", "starting sync : " + offlineDataList.size() + " queued transactions");
-                    REQUEST_COUNT += offlineDataList.size();
                     if(swableStateListener != null)
                         swableStateListener.onSwableStarted();
                     getQueue().start();
-                    setSyncing(false);
+                    //setSyncing(false);
                     Log.e("ImonggoSwable", "isSyncing? " + isSyncing());
                 }
                 else {
@@ -256,6 +254,17 @@ public class ImonggoSwable extends SwableService {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void updateSyncingStatus() {
+        Log.d("ImonggoSwable", "updateSyncingStatus : sending ~ " + swableSendModule.QUEUED_TRANSACTIONS);
+        Log.d("ImonggoSwable", "updateSyncingStatus : updating ~ " + swableUpdateModule.QUEUED_TRANSACTIONS);
+        Log.d("ImonggoSwable", "updateSyncingStatus : voiding ~ " + swableVoidModule.QUEUED_TRANSACTIONS);
+        setSyncing(swableSendModule.QUEUED_TRANSACTIONS > 0 ||
+                swableUpdateModule.QUEUED_TRANSACTIONS > 0 ||
+                swableVoidModule.QUEUED_TRANSACTIONS > 0);
+        Log.e("ImonggoSwable", "update ~ isSyncing : " + isSyncing());
     }
 
     public void setSwableStateListener(SwableStateListener swableStateListener) {
