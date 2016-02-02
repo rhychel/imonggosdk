@@ -1189,7 +1189,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 return;
                             } else {
 
-
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
@@ -1278,10 +1277,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         // is Base unit
                                         if (jsonObject.has("unit_id")) {
 
-                                            if (!jsonObject.getString("unit_id").isEmpty() || !jsonObject.get("unit_id").equals(null)) {
-                                               /* Log.e(TAG, "Branch Product API 'unit_id' field is empty or null");
-                                                branchProduct.setIsBaseUnitSellable(true);
-*/
+                                            if (!jsonObject.getString("unit_id").isEmpty() && !jsonObject.isNull("unit_id")) {
                                                 int unit_id = jsonObject.getInt("unit_id");
                                                 Unit unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit_id).queryForFirst();
 
@@ -1483,8 +1479,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
                                     }
 
+                                    product.setSearchKey(product.getName() + product.getStock_no());
                                     if (initialSync || lastUpdatedAt == null) {
-                                        product.setSearchKey(product.getName() + product.getStock_no());
                                         newProducts.add(product);
                                     } else {
                                         if (isExisting(product, Table.PRODUCTS)) {
@@ -2037,7 +2033,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         JSONObject json_extras = jsonObject.getJSONObject("extras");
                                         if (json_extras.has("require_date")) {
                                             if (!json_extras.getString("require_date").isEmpty()) {
-                                                extras.setRequire_date(json_extras.getString("require_date"));
+                                                extras.setRequire_date(json_extras.getBoolean("require_date"));
                                                 extras.insertTo(getHelper());
 
                                                 invoicePurpose.setExtras(extras);

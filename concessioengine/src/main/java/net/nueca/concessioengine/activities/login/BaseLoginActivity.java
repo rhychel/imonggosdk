@@ -187,6 +187,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
         autoUpdateChecker();
 
+        getIntent();
+
 
         //updater.execute();
     }
@@ -208,10 +210,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
             if (mSyncModules != null) {
                 mBounded = true;
-                Log.e(TAG, "Successfully bind Service and Activity");
+                Log.e(TAG, "Successfully bindLoginModule Service and Activity");
                 mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
             } else {
-                Log.e(TAG, "Cannot bind Service and Activity");
+                Log.e(TAG, "Cannot bindLoginModule Service and Activity");
             }
         }
 
@@ -325,13 +327,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             mModulesToDownload.add("Settings");
         }
     }
-
-    @Deprecated
-    public void createNewCustomDialogFrameLayout(Context context, List<String> moduleName) {
-        customDialogFrameLayout = new CustomDialogFrameLayout(context, moduleName);
-        customDialogFrameLayout.setLoginListener(mBaseLogin.getLoginListener());
-    }
-
 
     public void createNewCustomDialogFrameLayout(List<Table> moduleName, Context context) {
         customDialogFrameLayout = new CustomDialogFrameLayout(moduleName, context);
@@ -516,6 +511,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mSession = session;
                 setLoggedIn(true);
                 setUnlinked(false);
+                mSession.setHas_logged_in(true);
+                mSession.updateTo(getHelper());
 
                 try {
                     startSyncingImonggoModules();
@@ -703,7 +700,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     private void LogOutUser() {
         try {
+            mSession.setHas_logged_in(false);
+            mSession.updateTo(getHelper());
             AccountTools.logoutUser(this, getHelper(), this);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -974,6 +974,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         int progress = 0;
         String currentTable = getStringOfCurrentTable(table);
 
+        table.ordinal();
+
         progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
 
         Log.e(TAG, table + " progress: " + progress);
@@ -982,8 +984,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             if (mModulesToDownload != null && mTablesToDownload == null)
                 updateDownloadProgress(mModulesToDownload.indexOf(currentTable), progress);
 
-            if (mTablesToDownload != null &&
-                    mModulesToDownload == null)
+            if (mTablesToDownload != null && mModulesToDownload == null)
                 updateDownloadProgress(mTablesToDownload.indexOf(table), progress);
         }
     }
@@ -992,7 +993,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(position);
         customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(position, progress);
         customDialogFrameLayout.scrollToPositionWithOffset(position, 2);
-        //customDialogFrameLayout.getChildAt(position).setBackgroundColor(Color.parseColor("#F3F3F3"));
     }
 
     @Override
@@ -1007,6 +1007,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             customDialog.dismiss();
             customDialog = null;
         }
+        Log.e(TAG,">Session " + mSession.isHas_logged_in());
 
         DialogTools.hideIndeterminateProgressDialog();
         showNextActivityAfterLogin();

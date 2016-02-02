@@ -3,11 +3,8 @@ package net.nueca.imonggosdk.objects;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Server;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;

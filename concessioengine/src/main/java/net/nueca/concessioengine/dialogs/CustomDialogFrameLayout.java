@@ -1,7 +1,6 @@
 package net.nueca.concessioengine.dialogs;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,8 +11,6 @@ import android.widget.FrameLayout;
 import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.LoginListener;
-import net.nueca.imonggosdk.tools.LoggingTools;
-import net.nueca.imonggosdk.tools.TableTools;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -24,6 +21,7 @@ import java.util.List;
  */
 public class CustomDialogFrameLayout extends FrameLayout {
 
+    public static String TAG = "CustomDialogFrameLayout";
     private Context mContext;
     private View mView;
     private RecyclerView mRecyclerView;
@@ -32,13 +30,6 @@ public class CustomDialogFrameLayout extends FrameLayout {
     private List<String> mModuleName;
     private List<Table> mTableNames;
     private LoginListener mLoginListener;
-    private static String TAG = "CustomDialogFrameLayout";
-
-    @Deprecated
-    public CustomDialogFrameLayout(Context context, List<String> moduleName) {
-        super(context);
-        //customDialogFrameLayout(mContext, moduleName);
-    }
 
     public CustomDialogFrameLayout(final List<Table> moduleName, final Context context) {
        super(context);
@@ -60,24 +51,13 @@ public class CustomDialogFrameLayout extends FrameLayout {
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        //customModuleAdapter = new CustomModuleAdapter(mContext, R.layout.item_module, mModuleName);
         customModuleAdapter = new CustomModuleAdapter(moduleName, mContext, R.layout.item_module);
 
-        customModuleAdapter.setOnItemClickListener(new BaseCustomDialogRecyclerAdapter.OnItemClickListener() {
+        customModuleAdapter.setOnItemClickListener(new CustomDialogRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) throws SQLException {
                 Log.e(TAG, "OnItemClicked " + getCustomModuleAdapter().getModuleAt(position));
-               /* LoggingTools.showToast(mContext, "OnItemClicked" + getCustomModuleAdapter().getModuleAt(position));
-                view.setBackgroundColor(mContext.getResources().getColor(android.R.color.darker_gray));*/
-                //mLoginListener.onRetryButtonPressed(TableTools.convertStringToTableName(getCustomModuleAdapter().getModuleAt(position)));
                 mLoginListener.onRetryButtonPressed(getCustomModuleAdapter().getTableAt(position));
-            }
-        });
-
-        customModuleAdapter.setOnItemLongClickListener(new BaseCustomDialogRecyclerAdapter.OnItemLongClickListener() {
-            @Override
-            public void onItemLongClicked(View view, int position) {
-                /*LoggingTools.showToast(mContext, "OnItemLongClicked" + getCustomModuleAdapter().getModuleAt(position));*/
             }
         });
 
@@ -88,8 +68,6 @@ public class CustomDialogFrameLayout extends FrameLayout {
     public void scrollToPositionWithOffset(int position, int offset) {
         mLinearLayoutManager.scrollToPositionWithOffset(position, offset);
     }
-
-
 
     public void setLoginListener(LoginListener loginListener) {
         this.mLoginListener = loginListener;

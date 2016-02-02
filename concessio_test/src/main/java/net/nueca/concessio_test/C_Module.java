@@ -74,7 +74,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         btnReview.setOnClickListener(onClickContinue);
 
         /**  destroy selected items  **/
-        ProductsAdapterHelper.clearSelectedProductItemList();
+        //ProductsAdapterHelper.clearSelectedProductItemList();
 
         simpleProductsFragment = SimpleProductsFragment.newInstance();
         finalizeFragment = SimpleProductsFragment.newInstance();
@@ -373,7 +373,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
                                                         SwableTools.sendTransaction(getHelper(), branch.getId(),
                                                                 generateOrder(C_Module.this, warehouse.getId()), OfflineDataType.SEND_ORDER);
                                                         onBackPressed();
-                                                        ProductsAdapterHelper.clearSelectedProductItemList();
+                                                        //ProductsAdapterHelper.clearSelectedProductItemList();
                                                         simpleProductsFragment.refreshList();
                                                     } catch (SQLException | JSONException e) {
                                                         e.printStackTrace();
@@ -387,7 +387,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
                                                         Log.e("PCount", offlineData.getData().toString());
                                                         onBackPressed();
-                                                        ProductsAdapterHelper.clearSelectedProductItemList();
+                                                        //ProductsAdapterHelper.clearSelectedProductItemList();
                                                         simpleProductsFragment.refreshList();
                                                     } catch (SQLException | JSONException e) {
                                                         e.printStackTrace();
@@ -410,7 +410,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
 
                                                         Log.e("PULLOUT", offlineData.getData().toString());
                                                         onBackPressed();
-                                                        ProductsAdapterHelper.clearSelectedProductItemList();
+                                                        //ProductsAdapterHelper.clearSelectedProductItemList();
                                                         simpleProductsFragment.refreshList();
                                                     } catch (SQLException | JSONException e) {
                                                         e.printStackTrace();
