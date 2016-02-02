@@ -166,7 +166,7 @@ public class PriceTools {
                 if (branchProduct.isBaseUnitSellable())
                     return branchProduct.getRetail_price();
             }
-            return unit.getRetail_price();
+            return product.getRetail_price();
         }
 
         /*for(BranchProduct branchProduct : branchProducts) {
