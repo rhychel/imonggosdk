@@ -264,7 +264,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .add(R.id.flContent, simpleCustomersFragment)
                         .commit();
             } break;
-            case STOCK_REQUEST:
+            case STOCK_REQUEST: { // TODO for Petron
+            } break;
             case INVOICE: {
                 CustomerGroup customerGroup = null;
 
@@ -311,7 +312,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .commit();
             }
             break;
-            case PHYSICAL_COUNT: {
+            case PHYSICAL_COUNT: { // TODO Revise for Petron
                 initializeProducts();
                 simpleProductsFragment.setProductCategories(getProductCategories(true));
                 simpleProductsFragment.setMultipleInput(true);
@@ -338,7 +339,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     .commit();
             }
             break;
-            case RECEIVE_BRANCH: {
+            case RECEIVE_BRANCH: { // TODO for Petron
                 changeToReview = true;
                 simpleReceiveFragment = new SimpleReceiveFragment();
                 simpleReceiveFragment.setHelper(getHelper());
@@ -405,7 +406,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .replace(R.id.flContent, simpleInventoryFragment)
                         .commit();
             } break;
-            case RELEASE_BRANCH: { // not used.
+            case RELEASE_BRANCH: { // TODO for Petron
                 changeToReview = true;
                 simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
                 simplePulloutRequestDialog.setTitle("Choose a reason");
