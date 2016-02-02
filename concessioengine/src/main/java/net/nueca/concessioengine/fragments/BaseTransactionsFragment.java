@@ -15,6 +15,9 @@ import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.tools.ModuleSettingTools;
 
 import java.sql.SQLException;
@@ -37,8 +40,11 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
     protected ListingType listingType;
 
     protected boolean hasFilterByBranch = false, hasFilterByTransactionType = false;
-    protected boolean isTypesInitialized = false, hasDocument = false, hasOrder = false, hasInvoice = false;
+    protected boolean isTypesInitialized = false,
+            hasDocument = false, hasOrder = false, hasInvoice = false,
+            priorityDocument = true, priorityOrder = true, priorityInvoice = true, layawaysOnly = false;
     protected String searchKey = "";
+    protected Customer customer = null;
 
     protected TransactionTypesAdapter transactionTypeAdapter;
     protected List<ConcessioModule> transactionTypes;
@@ -73,14 +79,14 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
                 case RELEASE_BRANCH:
                 case RELEASE_SUPPLIER:
                 case RELEASE_ADJUSTMENT:
-                    hasDocument = true;
+                    hasDocument = true && priorityDocument;
                     break;
                 case INVOICE:
-                    hasInvoice = true;
+                    hasInvoice = true && priorityInvoice;
                     break;
                 case STOCK_REQUEST:
                 case PURCHASE_ORDERS:
-                    hasOrder = true;
+                    hasOrder = true && priorityOrder;
                     break;
             }
         }
@@ -92,7 +98,6 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
         try {
             boolean includeSearchKey = !searchKey.trim().isEmpty();
             Where<OfflineData, Integer> whereOfflineData = getHelper().fetchIntId(OfflineData.class).queryBuilder().where();
-            boolean hasOne = false;
 //            whereOfflineData.eq("user_id", getSession().getUser().getId());
             if(transactionType > 0)
                 whereOfflineData.eq("type", transactionType); //.and()
@@ -108,22 +113,14 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
                 if(hasInvoice)
                     transactionTypes.add(OfflineData.INVOICE);
 
-                if(hasOne)
-                    whereOfflineData.and().in("type", transactionTypes);
-                else {
-                    whereOfflineData.in("type", transactionTypes);//.and()
-                    hasOne = true;
-                }
+                whereOfflineData.in("type", transactionTypes);//.and()
                 if(includeSearchKey)
                     whereOfflineData.and().like("reference_no", "%"+searchKey+"%");
                 if(concessioModule != ConcessioModule.ALL)
                     whereOfflineData.and().eq("concessioModule", concessioModule);
             }
             if(branchId > 0) {
-                if(hasOne)
-                    whereOfflineData.and().eq("branch_id", branchId);//.and()
-                else
-                    whereOfflineData.eq("branch_id", branchId);
+                whereOfflineData.and().eq("branch_id", branchId);//.and()
             }
 
             QueryBuilder<OfflineData, Integer> resultTransactions = getHelper().fetchIntId(OfflineData.class).queryBuilder();
@@ -133,6 +130,25 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
             transactions = resultTransactions.query();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        if(layawaysOnly) {
+            List<OfflineData> finalTransactions = new ArrayList<>();
+            for(OfflineData offlineData : transactions) {
+                if(offlineData.getObjectFromData(Invoice.class).getStatus() != null && offlineData.getObjectFromData(Invoice.class).getStatus().equals("L"))
+                    finalTransactions.add(offlineData);
+            }
+            return finalTransactions;
+        }
+        if(customer != null) {
+            List<OfflineData> finalTransactions = new ArrayList<>();
+            for(OfflineData offlineData : transactions) {
+                if(offlineData.getObjectFromData() instanceof Document)
+                    if(offlineData.getObjectFromData(Document.class).getCustomer() != null && offlineData.getObjectFromData(Document.class).getCustomer().equals(customer))
+                        finalTransactions.add(offlineData);
+                if(offlineData.getObjectFromData() instanceof Invoice && offlineData.getObjectFromData(Invoice.class).getCustomer().equals(customer))
+                    finalTransactions.add(offlineData);
+            }
+            return finalTransactions;
         }
         return transactions;
     }
@@ -175,5 +191,25 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
 
     public void setSearchKey(String searchKey) {
         this.searchKey = searchKey;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public void onlyInvoices(boolean layawaysOnly) {
+        priorityOrder = false;
+        priorityDocument = false;
+        this.layawaysOnly = layawaysOnly;
+    }
+
+    public void onlyDocuments() {
+        priorityInvoice = false;
+        priorityOrder = false;
+    }
+
+    public void onlyOrders() {
+        priorityInvoice = false;
+        priorityDocument = false;
     }
 }
