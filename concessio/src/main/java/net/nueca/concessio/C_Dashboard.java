@@ -71,16 +71,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
         Log.e("ClassName", Customer.class.getSimpleName());
 
-        try {
-            List<OfflineData> offlineDatas = getHelper().fetchObjects(OfflineData.class).queryForAll();
-            Log.e("OfflineDatas---", offlineDatas == null? "null" : offlineDatas.size()+"");
-            for(OfflineData offlineData : offlineDatas) {
-                Log.e("OfflineData " + offlineData.getId(), offlineData.getReturnId() + " ~ isQueued? "+ offlineData.isQueued() + " isSynced? " +
-                        offlineData.isSynced() + " isSyncing? " + offlineData.isSyncing() + " isCancelled? " + offlineData.isCancelled());
-            }
+        /*try {
+            getHelper().deleteAll(OfflineData.class);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
 
         setNextActivityClass(C_Module.class);
 
@@ -234,13 +229,8 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 }
             } break;
             case R.id.mSettings: {
-                try {
-                    getHelper().deleteAll(OfflineData.class);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-//                Intent intent = new Intent(this, SettingsActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
             } break;
         }
         return super.onOptionsItemSelected(item);

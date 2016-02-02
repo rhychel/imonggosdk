@@ -30,6 +30,7 @@ public abstract class SwableService extends ImonggoService implements SwableConn
     private boolean isReceiverRegistered = false;
 	
 	public abstract void syncModule();
+	public abstract void updateSyncingStatus();
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -46,12 +47,13 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 						Thread.sleep(NO_INTERNET_DELAY); // 3 seconds
 						Log.d("SwableService", "---syncing started");
 						while(isShouldSync()) {
-							Log.d("SwableService", "---syncing data set "+isSyncing());
+							Log.d("SwableService", "---syncing data set ~ "+isSyncing());
 							if (!isSyncing()) {
 								Log.d("SwableService", "---syncing data called");
 								runSyncModule.sendEmptyMessage(0);
 								//syncModule();
 							}
+							updateSyncingStatus();
 							Thread.sleep(INTERNET_DELAY); // 30 seconds
 							Log.d("SwableService", "---syncing data");
 						}

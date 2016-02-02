@@ -27,21 +27,14 @@ import java.util.List;
 /**
  * Created by gama on 10/1/15.
  */
-public class SwableVoidModule {
-    private ImonggoDBHelper2 dbHelper;
-    private ImonggoSwable imonggoSwable;
-    private RequestQueue requestQueue;
-    private Session session;
+public class SwableVoidModule extends BaseSwableModule {
 
-    public SwableVoidModule(ImonggoSwable imonggoSwable, ImonggoDBHelper2 helper, Session session, RequestQueue
-            requestQueue) {
-        this.imonggoSwable = imonggoSwable;
-        this.dbHelper = helper;
-        this.session = session;
-        this.requestQueue = requestQueue;
+    public SwableVoidModule(ImonggoSwable imonggoSwable, ImonggoDBHelper2 helper, Session session, RequestQueue requestQueue) {
+        super(imonggoSwable, helper, session, requestQueue);
     }
 
     public void voidTransaction(Table table, final OfflineData offlineData) {
+        QUEUED_TRANSACTIONS++;
         try {
             Branch branch = dbHelper.fetchObjects(Branch.class).queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
@@ -72,6 +65,7 @@ public class SwableVoidModule {
 
                         @Override
                         public void onSuccess(Table table, RequestType requestType, Object response) {
+                            QUEUED_TRANSACTIONS--;
                             AccountTools.updateUserActiveStatus(imonggoSwable, true);
 
                             Log.e("ImonggoSwable", "deleting success : " + response);
@@ -86,18 +80,19 @@ public class SwableVoidModule {
                                 imonggoSwable.getSwableStateListener().onSynced(offlineData);
 
                             if (offlineData.isSynced()) {
-                                imonggoSwable.REQUEST_SUCCESS++;
-                                Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                SUCCESS_TRANSACTIONS++;
+                                Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                             }
 
-                            if (offlineData.isSynced() && imonggoSwable.REQUEST_COUNT == imonggoSwable.REQUEST_SUCCESS)
+                            if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
                                 NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID, imonggoSwable.getNotificationIcon(),
-                                        imonggoSwable.getResources().getString(R.string.app_name), imonggoSwable.REQUEST_SUCCESS + " transaction"
-                                                + (imonggoSwable.REQUEST_SUCCESS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
+                                        imonggoSwable.getResources().getString(R.string.app_name), SUCCESS_TRANSACTIONS + " transaction"
+                                                + (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
                         }
 
                         @Override
                         public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                            QUEUED_TRANSACTIONS--;
                             Log.e("ImonggoSwable", "deleting failed : isConnected? " + hasInternet + " : error [" +
                                     responseCode + "] : " + response);
                             offlineData.setSyncing(false);
@@ -126,13 +121,14 @@ public class SwableVoidModule {
                             }
 
                             if (offlineData.isSynced() && responseCode != ImonggoSwable.UNAUTHORIZED_ACCESS) {
-                                imonggoSwable.REQUEST_SUCCESS++;
-                                Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                SUCCESS_TRANSACTIONS++;
+                                Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                             }
                         }
 
                         @Override
                         public void onRequestError() {
+                            QUEUED_TRANSACTIONS--;
                             Log.e("ImonggoSwable", "deleting failed : request error");
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);
@@ -153,6 +149,7 @@ public class SwableVoidModule {
         }*/
     }
 
+    @Deprecated
     public void pagedDelete(Table table, final OfflineData offlineData) {
         final List<String> list = offlineData.getReturnIdList();
         try {
@@ -186,16 +183,16 @@ public class SwableVoidModule {
                                 list.set(list.indexOf(id), ImonggoSwable.NO_RETURN_ID); // indicator that this has been cancelled
 
                                 if (offlineData.isSynced() && Collections.frequency(list, ImonggoSwable.NO_RETURN_ID) == list.size()) {
-                                    imonggoSwable.REQUEST_SUCCESS++;
-                                    Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                    SUCCESS_TRANSACTIONS++;
+                                    Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                                     if (imonggoSwable.getSwableStateListener() != null)
                                         imonggoSwable.getSwableStateListener().onSynced(offlineData);
                                 }
 
-                                if (offlineData.isSynced() && imonggoSwable.REQUEST_COUNT == imonggoSwable.REQUEST_SUCCESS)
+                                if (offlineData.isSynced() && QUEUED_TRANSACTIONS == SUCCESS_TRANSACTIONS)
                                     NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID, imonggoSwable.getNotificationIcon(),
-                                            imonggoSwable.getResources().getString(R.string.app_name), imonggoSwable.REQUEST_SUCCESS + " transaction"
-                                                    + (imonggoSwable.REQUEST_SUCCESS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
+                                            imonggoSwable.getResources().getString(R.string.app_name), SUCCESS_TRANSACTIONS + " transaction"
+                                                    + (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
                             }
 
                             @Override
@@ -229,16 +226,16 @@ public class SwableVoidModule {
                                 }
 
                                 if (offlineData.isSynced() && Collections.frequency(list, ImonggoSwable.NO_RETURN_ID) == list.size()) {
-                                    imonggoSwable.REQUEST_SUCCESS++;
-                                    Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                    SUCCESS_TRANSACTIONS++;
+                                    Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                                     if (imonggoSwable.getSwableStateListener() != null)
                                         imonggoSwable.getSwableStateListener().onSynced(offlineData);
                                 }
 
-                                if (offlineData.isSynced() && imonggoSwable.REQUEST_COUNT == imonggoSwable.REQUEST_SUCCESS)
+                                if (offlineData.isSynced() && QUEUED_TRANSACTIONS == SUCCESS_TRANSACTIONS)
                                     NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID, imonggoSwable.getNotificationIcon(),
-                                            imonggoSwable.getResources().getString(R.string.app_name), imonggoSwable.REQUEST_SUCCESS + " transaction"
-                                                    + (imonggoSwable.REQUEST_SUCCESS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
+                                            imonggoSwable.getResources().getString(R.string.app_name), SUCCESS_TRANSACTIONS + " transaction"
+                                                    + (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
                             }
 
                             @Override
