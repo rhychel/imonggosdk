@@ -29,21 +29,14 @@ import java.util.List;
 /**
  * Created by gama on 10/1/15.
  */
-public class SwableSendModule {
-    private ImonggoDBHelper2 dbHelper;
-    private ImonggoSwable imonggoSwable;
-    private RequestQueue requestQueue;
-    private Session session;
+public class SwableSendModule extends BaseSwableModule {
 
-    public SwableSendModule(ImonggoSwable imonggoSwable, ImonggoDBHelper2 helper, Session session, RequestQueue
-            requestQueue) {
-        this.imonggoSwable = imonggoSwable;
-        this.dbHelper = helper;
-        this.session = session;
-        this.requestQueue = requestQueue;
+    public SwableSendModule(ImonggoSwable imonggoSwable, ImonggoDBHelper2 helper, Session session, RequestQueue requestQueue) {
+        super(imonggoSwable, helper, session, requestQueue);
     }
 
     public void sendTransaction(Table table, final OfflineData offlineData) {
+        QUEUED_TRANSACTIONS++;
         Log.e("SwableSendModule", "sendTransaction " + table.getStringName() + " " + offlineData.getType());
         //Log.e("SwableSendModule", "sendTransaction " + offlineData.getObjectFromData().toString());
         try {
@@ -58,7 +51,9 @@ public class SwableSendModule {
             if(offlineData.isPagedRequest()) {
                 if(offlineData.isNewPagedSend()) {
                     if (offlineData.getObjectFromData() == null) {
+                        Log.e("ImonggoSwable", "sending error : object is null ~ deleting offlinedata");
                         offlineData.deleteTo(dbHelper);
+                        QUEUED_TRANSACTIONS--;
                         return;
                     }
                     sendFirstPage(table, offlineData);
@@ -67,9 +62,20 @@ public class SwableSendModule {
                 return;
             }
 
-            //JSONObject data;
-            JSONObject jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
-                    offlineData.getData());
+            JSONObject jsonObject;
+            if(offlineData.getType() == OfflineData.INVOICE) {
+                Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                invoice.createNewPaymentBatch();
+                invoice.updateTo(dbHelper);
+
+                invoice.setPayments(invoice.getNewBatchPayment());
+                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
+                        invoice.toJSONObject());
+            }
+            else {
+                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
+                        offlineData.getData());
+            }
             Log.e("SwableSendModule", "sendTransaction : non-paging : "+jsonObject.toString());
             //Log.e("JSON", jsonObject.toString());
 
@@ -91,6 +97,7 @@ public class SwableSendModule {
 
                         @Override
                         public void onSuccess(Table table, RequestType requestType, Object response) {
+                            QUEUED_TRANSACTIONS--;
                             AccountTools.updateUserActiveStatus(imonggoSwable, true);
 
                             Log.e("ImonggoSwable", "sending success : " + response);
@@ -121,23 +128,24 @@ public class SwableSendModule {
                         }*/
 
                             if (offlineData.isSynced()) {
-                                imonggoSwable.REQUEST_SUCCESS++;
-                                Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                SUCCESS_TRANSACTIONS++;
+                                Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                             }
-                            Log.e("REQUEST", imonggoSwable.REQUEST_COUNT + " " + imonggoSwable.REQUEST_SUCCESS);
-                            if (offlineData.isSynced() && imonggoSwable.REQUEST_COUNT == imonggoSwable.REQUEST_SUCCESS)
+                            Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
+                            if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
                                 NotificationTools.postNotification(imonggoSwable,
                                         ImonggoSwable.NOTIFICATION_ID,
                                         imonggoSwable.getNotificationIcon(),
                                         imonggoSwable.getResources().getString(R.string.app_name),
-                                        imonggoSwable.REQUEST_SUCCESS +" transaction" +
-                                                (imonggoSwable.REQUEST_SUCCESS != 1 ? "s" : "") + " sent",
+                                        SUCCESS_TRANSACTIONS +" transaction" +
+                                                (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent",
                                         null,
                                         imonggoSwable.getPendingIntent());
                         }
 
                         @Override
                         public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                            QUEUED_TRANSACTIONS--;
                             Log.e("ImonggoSwable", "sending failed : isConnected? " + hasInternet + " : error [" +
                                     responseCode + "] : " + response);
 
@@ -218,13 +226,14 @@ public class SwableSendModule {
                             }
 
                             if (offlineData.isSynced() && responseCode != ImonggoSwable.UNAUTHORIZED_ACCESS) {
-                                imonggoSwable.REQUEST_SUCCESS++;
-                                Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                SUCCESS_TRANSACTIONS++;
+                                Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                             }
                         }
 
                         @Override
                         public void onRequestError() {
+                            QUEUED_TRANSACTIONS--;
                             Log.e("ImonggoSwable", "sending failed : request error");
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);
@@ -244,6 +253,7 @@ public class SwableSendModule {
         }
     }
 
+    @Deprecated
     public void pagedSend(Table table, final OfflineData offlineData) {
         try {
             if(table == Table.ORDERS) {
@@ -298,6 +308,7 @@ public class SwableSendModule {
         }
     }
 
+    @Deprecated
     private void sendThisPage(Table table, final int page, final int maxpage, final JSONObject jsonObject,
                               final OfflineData parent) throws JSONException {
 
@@ -352,15 +363,15 @@ public class SwableSendModule {
                                 if (imonggoSwable.getSwableStateListener() != null)
                                     imonggoSwable.getSwableStateListener().onSynced(parent);
 
-                                imonggoSwable.REQUEST_SUCCESS++;
-                                Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                SUCCESS_TRANSACTIONS++;
+                                Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
 
-                                if (parent.isSynced() && imonggoSwable.REQUEST_COUNT == imonggoSwable.REQUEST_SUCCESS)
+                                if (parent.isSynced() && QUEUED_TRANSACTIONS == 0)
                                     NotificationTools.postNotification(imonggoSwable,
                                             ImonggoSwable.NOTIFICATION_ID,
                                             imonggoSwable.getNotificationIcon(),
                                             imonggoSwable.getResources().getString(R.string.app_name),
-                                            imonggoSwable.REQUEST_SUCCESS + " " + "transactions" + " sent",
+                                            SUCCESS_TRANSACTIONS + " " + "transactions" + " sent",
                                             null,
                                             imonggoSwable.getPendingIntent());
 
@@ -451,8 +462,8 @@ public class SwableSendModule {
                         if (parent.isSynced() && !parent.getReturnId().contains(ImonggoSwable.NO_RETURN_ID) &&
                                 parent.getReturnIdList().size() == maxpage && responseCode != ImonggoSwable
                                 .UNAUTHORIZED_ACCESS) {
-                            imonggoSwable.REQUEST_SUCCESS++;
-                            Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                            SUCCESS_TRANSACTIONS++;
+                            Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                         }
                     }
 
@@ -496,12 +507,12 @@ public class SwableSendModule {
             firstPage = firstPage.getChildDocumentAt(0);
             //firstPage.setDocument_lines(firstPage.getDocumentLineAt(0));
             jsonObject = firstPage.toJSONObject();
-            Log.e("FIRST_PAGE >>>>> ", jsonObject.toString());
         }
         else return;
 
         Log.e("SwableSendModule", "sendFirstPage : reference -> " + jsonObject.get("reference"));
         jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(), jsonObject);
+        Log.e("FIRST_PAGE >>>>> ", jsonObject.toString());
 
         requestQueue.cancelAll(offlineData.getId()+ "-" +page);
         requestQueue.add(
@@ -524,6 +535,7 @@ public class SwableSendModule {
 
                     @Override
                     public void onSuccess(Table table, RequestType requestType, Object response) {
+                        QUEUED_TRANSACTIONS--;
                         AccountTools.updateUserActiveStatus(imonggoSwable, true);
 
                         Log.e("ImonggoSwable", "sending success [" + page + "] : " + response);
@@ -553,6 +565,7 @@ public class SwableSendModule {
 
                     @Override
                     public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                        QUEUED_TRANSACTIONS--;
                         Log.e("ImonggoSwable", "sending failed [" + page + "] : isConnected? " + hasInternet + " : error [" +
                                 responseCode + "] : " + response);
 
@@ -633,6 +646,7 @@ public class SwableSendModule {
 
                     @Override
                     public void onRequestError() {
+                        QUEUED_TRANSACTIONS--;
                         Log.e("ImonggoSwable", "sending failed [" + page + "] : request error");
                         offlineData.setSyncing(false);
                         offlineData.setQueued(false);
@@ -654,8 +668,7 @@ public class SwableSendModule {
         List<String> idList = offlineData.getReturnIdList();
         boolean hasPendingNonLastPage = false;
         for(int i = 1; i < offlineData.getPagedRequestCount()-1; i++) {
-            //Log.e("SwableSendModule", "queueNonLastPage : checking return id - " + idList.get(i) + " " + i);
-            if (i >= idList.size() || ( i < idList.size() && idList.get(i).equals("@") )) {
+            if(i >= idList.size() || ( i < idList.size() && idList.get(i).equals("@") )) {
                 hasPendingNonLastPage = true;
                 Log.e("SwableSendModule", "queueNonLastPage : queueing page:" + (i+1) + " i:"+ i + " size:"+idList
                         .size() + " retId:" + (idList.size() <= i ? "@" : idList.get(i)));
@@ -749,6 +762,21 @@ public class SwableSendModule {
                                     offlineData.getReturnIdList().size() >= maxpage-1 && page != maxpage) {
                                 sendNextPage(table, offlineData, id, maxpage);
                             }
+
+                            if (offlineData.isSynced() && page == maxpage) {
+                                SUCCESS_TRANSACTIONS++;
+                                Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
+                            }
+                            Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
+                            if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
+                                NotificationTools.postNotification(imonggoSwable,
+                                        ImonggoSwable.NOTIFICATION_ID,
+                                        imonggoSwable.getNotificationIcon(),
+                                        imonggoSwable.getResources().getString(R.string.app_name),
+                                        SUCCESS_TRANSACTIONS +" transaction" +
+                                                (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent",
+                                        null,
+                                        imonggoSwable.getPendingIntent());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -835,12 +863,6 @@ public class SwableSendModule {
                                             Log.e("STR : SEND_DOCUMENT ID", documentId);
 
                                             offlineData.insertReturnIdAt(page - 1, documentId);
-                                            isNullReturnId = false;
-                                        } else if(errorMsg.contains("already posted or voided")) {
-                                            offlineData.setSynced(true);
-                                            offlineData.setForConfirmation(true);
-                                            if(offlineData.getReturnIdListAt(page - 1) == null)
-                                                offlineData.insertReturnIdAt(page - 1, ImonggoSwable.NO_RETURN_ID);
                                             isNullReturnId = false;
                                         }
                                     } else if(responseJson.has("base")) {

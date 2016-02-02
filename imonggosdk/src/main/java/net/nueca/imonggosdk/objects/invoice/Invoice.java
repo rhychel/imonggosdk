@@ -76,6 +76,12 @@ public class Invoice extends BaseTransactionTable2 {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_id")
     protected transient Branch branch;
 
+    @DatabaseField
+    protected transient Integer currentPaymentBatchNo = null;
+
+    @DatabaseField
+    protected transient boolean hasNewPaymentBatch = false;
+
     public Invoice() {}
 
     public Invoice(Builder builder) {
@@ -483,4 +489,55 @@ public class Invoice extends BaseTransactionTable2 {
         }
     }
 
+    public Integer getCurrentPaymentBatchNo() {
+        if(currentPaymentBatchNo == null)
+            currentPaymentBatchNo = 0;
+        return currentPaymentBatchNo;
+    }
+
+    public void setCurrentPaymentBatchNo(Integer currentPaymentBatchNo) {
+        this.currentPaymentBatchNo = currentPaymentBatchNo;
+    }
+
+    public void updateCurrentPaymentBatch() {
+        refresh();
+        hasNewPaymentBatch = false;
+        for(InvoicePayment payment : payments) {
+            if(payment.getPaymentBatchNo() == null) {
+                hasNewPaymentBatch = true;
+                continue;
+            }
+            if(getCurrentPaymentBatchNo() < payment.getPaymentBatchNo())
+                setCurrentPaymentBatchNo(payment.getPaymentBatchNo());
+        }
+    }
+
+    public void createNewPaymentBatch() {
+        updateCurrentPaymentBatch();
+
+        for(InvoicePayment payment : payments) {
+            if(payment.getPaymentBatchNo() == null) {
+                hasNewPaymentBatch = true;
+                payment.setPaymentBatchNo(getCurrentPaymentBatchNo() + 1);
+            }
+        }
+    }
+
+    public List<InvoicePayment> getNewBatchPayment() {
+        refresh();
+        List<InvoicePayment> payments = new ArrayList<>();
+        for(InvoicePayment payment : this.payments) {
+            if(payment.getPaymentBatchNo() == null || payment.getPaymentBatchNo() > getCurrentPaymentBatchNo())
+                payments.add(payment);
+        }
+        return payments;
+    }
+
+    public boolean isHasNewPaymentBatch() {
+        return hasNewPaymentBatch;
+    }
+
+    public void setHasNewPaymentBatch(boolean hasNewPaymentBatch) {
+        this.hasNewPaymentBatch = hasNewPaymentBatch;
+    }
 }
