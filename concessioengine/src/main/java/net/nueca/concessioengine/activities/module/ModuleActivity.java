@@ -1,19 +1,24 @@
 package net.nueca.concessioengine.activities.module;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.tools.AnimationTools;
+import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -33,6 +38,7 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
+import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.StringUtilsEx;
 
@@ -46,12 +52,19 @@ import java.util.List;
  */
 public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
+    public interface HistoryDetailsListener {
+        void onVoidTransaction();
+        void onDuplicateTransaction();
+    }
+
     public static final String CONCESSIO_MODULE = "concessio_module";
     public static final String FROM_CUSTOMERS_LIST = "from_customers_list";
     public static final String FOR_CUSTOMER_DETAIL = "for_customer_detail";
     public static final String RETURN_ITEMS = "return_items";
     public static final String INIT_PRODUCT_ADAPTER_HELPER = "initialize_pahelper";
     public static final String INIT_SELECTED_CUSTOMER = "initialize_selected_customer";
+    public static final String FOR_HISTORY_DETAIL = "for_history_detail";
+    public static final String REFERENCE = "reference";
 
     protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
@@ -59,10 +72,12 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected boolean clearTransactions = true;
     protected boolean isReturnItems = false;
     protected boolean initSelectedCustomer = true;
+    protected boolean isForHistoryDetail = false;
     private ModuleSetting moduleSetting;
     protected Customer customer;
 
     protected int previousFragmentCount = 0;
+    protected HistoryDetailsListener historyDetailsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +88,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             customer = retrieveCustomer(getIntent().getIntExtra(FOR_CUSTOMER_DETAIL, 0));
         if(getIntent().hasExtra(RETURN_ITEMS))
             isReturnItems = getIntent().getBooleanExtra(RETURN_ITEMS, false);
+        if(getIntent().hasExtra(FOR_HISTORY_DETAIL))
+            isForHistoryDetail = getIntent().getBooleanExtra(FOR_HISTORY_DETAIL, false);
         clearTransactions = getIntent().getBooleanExtra(INIT_PRODUCT_ADAPTER_HELPER, false);
         initSelectedCustomer = getIntent().getBooleanExtra(INIT_SELECTED_CUSTOMER, true);
     }
@@ -498,5 +515,49 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
         AnimationTools.toggleShowHide(linearLayout, size == 0, 300);
     }
+
+
+    protected void initializeDuplicateButton(Button btn, final String referenceNumber) {
+        btn.setVisibility(View.VISIBLE);
+        btn.setText("DUPLICATE");
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogTools.showConfirmationDialog(ModuleActivity.this, "Duplicate " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(historyDetailsListener != null)
+                            historyDetailsListener.onDuplicateTransaction();
+                    }
+                }, "No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) { }
+                }, R.style.AppCompatDialogStyle_Light);
+            }
+        });
+    }
+
+    protected void initializeVoidButton(Button btn, final String referenceNumber) {
+        btn.setText("VOID");
+        btn.setVisibility(View.VISIBLE);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogTools.showConfirmationDialog(ModuleActivity.this, "Void " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(historyDetailsListener != null)
+                            historyDetailsListener.onVoidTransaction();
+                    }
+                }, "No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }, R.style.AppCompatDialogStyle_Light);
+            }
+        });
+    }
+
 
 }

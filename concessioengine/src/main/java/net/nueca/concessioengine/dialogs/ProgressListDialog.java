@@ -221,7 +221,7 @@ public class ProgressListDialog extends BaseAppCompatDialog {
             }
             else if(progress.isInProgress()) {
                 lvh.pbModuleProgress.setProgress(progress.getProgress());
-                lvh.pbModuleProgress.setMax(progress.getMax());
+                lvh.pbModuleProgress.setMax(100);
                 lvh.tvDownloadProgress.setText(progress.getProgress()+"%");
                 lvh.pbCircularProgressBar.setVisibility(View.INVISIBLE);
                 lvh.tvDownloadProgress.setVisibility(View.VISIBLE);

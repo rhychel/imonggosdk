@@ -26,9 +26,13 @@ import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 
 /**
  * Created by rhymart on 8/22/15.
@@ -41,7 +45,7 @@ public class C_Finalize extends ModuleActivity {
     private ViewPager vpReview;
 
     private TextView tvItems;
-    private Button btn1; // CHECKOUT
+    private Button btn1, btn2; // CHECKOUT
     private LinearLayout llReview, llBalance;
 
     private TextView tvBalance;
@@ -57,10 +61,6 @@ public class C_Finalize extends ModuleActivity {
         clearTransactions = false;
 
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
-        setSupportActionBar(tbActionBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Review");
-
         tlTotal = (TabLayout) findViewById(R.id.tlTotal);
         vpReview = (ViewPager) findViewById(R.id.vpReview);
         tvItems = (TextView) findViewById(R.id.tvItems);
@@ -70,20 +70,77 @@ public class C_Finalize extends ModuleActivity {
         tvBalance = (TextView) findViewById(R.id.tvBalance);
         viewStub = findViewById(R.id.viewStub);
 
+        setSupportActionBar(tbActionBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        btn1.setText("CHECKOUT");
+        if(isForHistoryDetail) {
+            getSupportActionBar().setTitle(getIntent().getStringExtra(REFERENCE));
+            try {
+                final OfflineData offlineData = getHelper().fetchObjectsInt(OfflineData.class).queryBuilder()
+                        .where().eq("reference_no", getIntent().getStringExtra(REFERENCE)).queryForFirst();
+                historyDetailsListener = new HistoryDetailsListener() {
+                    @Override
+                    public void onVoidTransaction() {
+                        // TODO for double checking..
+
+                        new SwableTools.Transaction(getHelper())
+                                .toCancel()
+                                .withReason("VOID")
+                                .object(offlineData)
+                                .queue();
+
+                        onBackPressed();
+                    }
+
+                    @Override
+                    public void onDuplicateTransaction() {
+                        // TODO for double checking..
+
+                        ProductsAdapterHelper.isDuplicating = true;
+                        Intent intent = new Intent(C_Finalize.this, C_Module.class);
+                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, offlineData.getConcessioModule().ordinal());
+                        startActivity(intent);
+                    }
+                };
+
+                if(offlineData == null) {
+                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History.", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }, R.style.AppCompatDialogStyle_Light_NoTitle);
+                    return;
+                }
+                else if(!offlineData.isSynced() && !offlineData.isSyncing()) {
+                    btn2 = (Button) findViewById(R.id.btn2);
+                    initializeVoidButton(btn1, getIntent().getStringExtra(REFERENCE));
+                    initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
+                }
+                else
+                    initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            getSupportActionBar().setTitle("Review");
+            btn1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(C_Finalize.this, C_Checkout.class);
+                    startActivityForResult(intent, SALES);
+                }
+            });
+        }
+
         viewStub.setVisibility(View.VISIBLE);
         llBalance.setVisibility(View.VISIBLE);
         tvItems.setVisibility(View.VISIBLE);
 
-        btn1.setText("CHECKOUT");
         toggleNext(llReview, tvItems);
 
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(C_Finalize.this, C_Checkout.class);
-                startActivityForResult(intent, SALES);
-            }
-        });
 
         reviewAdapter = new ReviewAdapter(getSupportFragmentManager());
         vpReview.setAdapter(reviewAdapter);
@@ -112,7 +169,8 @@ public class C_Finalize extends ModuleActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.simple_review_menu, menu);
+        if(!isForHistoryDetail)
+            getMenuInflater().inflate(R.menu.simple_review_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
