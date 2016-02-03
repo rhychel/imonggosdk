@@ -36,6 +36,7 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
     protected static final int ALL_CUSTOMERS = 104;
     protected static final int REVIEW_SALES = 102;
     protected static final int RETURN_ITEMS_SALES = 103;
+    protected static final int SALES = 105;
 
     private ImonggoDBHelper2 dbHelper2;
 
