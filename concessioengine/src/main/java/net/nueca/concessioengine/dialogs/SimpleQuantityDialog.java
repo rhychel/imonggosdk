@@ -157,7 +157,6 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                 if (spUnits.getVisibility() == View.VISIBLE)
                     offsetSpinnerBelowv21(spUnits);
 
-
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
             }

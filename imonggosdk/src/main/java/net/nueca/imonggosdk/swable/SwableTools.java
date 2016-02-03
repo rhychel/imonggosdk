@@ -445,6 +445,7 @@ public class SwableTools {
                 return offlineData;
             }
 
+            @Deprecated
             public DirectTransaction directCancel() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : SendTransaction : Transaction Object is null");
@@ -546,6 +547,7 @@ public class SwableTools {
                 offlineData.insertTo(helper);
                 return offlineData;
             }
+            @Deprecated
             public DirectTransaction directSend() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : SendTransaction : Transaction Object is null");
@@ -614,11 +616,11 @@ public class SwableTools {
             public UpdateTransaction object(Order order) {
                 offlineData = new OfflineData(order, OfflineDataType.UNKNOWN);
                 return this;
-            }
+            }*/
             public UpdateTransaction object(Invoice invoice) {
                 offlineData = new OfflineData(invoice, OfflineDataType.UNKNOWN);
                 return this;
-            }*/
+            }
             public UpdateTransaction object(Customer customer) {
                 offlineData = new OfflineData(customer, OfflineDataType.UNKNOWN);
                 return this;
@@ -640,8 +642,8 @@ public class SwableTools {
                 switch (offlineData.getType()) {
                     //case OfflineData.ORDER:
                     //    offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_ORDER); break;
-                    //case OfflineData.INVOICE:
-                    //    offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_INVOICE); break;
+                    case OfflineData.INVOICE:
+                        offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_INVOICE); break;
                     //case OfflineData.DOCUMENT:
                     //    offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_DOCUMENT); break;
                     case OfflineData.CUSTOMER:
@@ -651,6 +653,7 @@ public class SwableTools {
                 offlineData.insertTo(helper);
                 return offlineData;
             }
+            @Deprecated
             public DirectTransaction directUpdate() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : UpdateTransaction : Transaction Object is null");
@@ -666,8 +669,8 @@ public class SwableTools {
                 switch (offlineData.getType()) {
                     //case OfflineData.ORDER:
                     //    offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_ORDER); break;
-                    //case OfflineData.INVOICE:
-                    //    offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_INVOICE); break;
+                    case OfflineData.INVOICE:
+                        offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_INVOICE); break;
                     //case OfflineData.DOCUMENT:
                     //    offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_DOCUMENT); break;
                     case OfflineData.CUSTOMER:

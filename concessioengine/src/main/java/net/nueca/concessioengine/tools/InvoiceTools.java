@@ -5,14 +5,23 @@ import android.util.Log;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,6 +137,80 @@ public class InvoiceTools {
             }
         }
         return invoiceLines;
+    }
+
+    public static SelectedProductItemList generateSelectedProductItemList(ImonggoDBHelper2 helper, OfflineData offlineData,
+                                                                          boolean isReturns, boolean isMultiline)
+            throws SQLException {
+        if(offlineData.getType() != OfflineData.INVOICE)
+            throw new ClassCastException("OfflineData object is not of type INVOICE");
+
+        /** Invoice **/
+        Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+        /** Branch **/
+        Branch salesBranch = helper.fetchObjects(Branch.class).queryBuilder().where()
+                .eq("id", offlineData.getBranch_id()).queryForFirst();
+        /** Customer **/
+        Customer salesCustomer = invoice.getCustomer();
+
+        return generateSelectedProductItemList(helper, invoice, salesCustomer, salesBranch, isReturns, isMultiline);
+    }
+
+    public static SelectedProductItemList generateSelectedProductItemList(ImonggoDBHelper2 helper, Invoice invoice,
+                                          Customer newSalesCustomer, Branch newSalesBranch, boolean isReturns, boolean isMultiline)
+            throws SQLException {
+        Log.e("InvoiceTools", "generateSelectedProductItemList : starting");
+
+        SelectedProductItemList selectedProductItemList = new SelectedProductItemList();
+        selectedProductItemList.setReturns(isReturns);
+
+        /** CustomerGroup **/
+        List<CustomerGroup> customerGroups = newSalesCustomer.getCustomerGroups(helper);
+        CustomerGroup salesCustomerGroup = null;
+        if(customerGroups != null)
+            salesCustomerGroup = customerGroups.get(0);
+
+        for(InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
+            Log.e("InvoiceLine >> ", invoiceLine.getQuantity() +"");
+            if(isReturns && invoiceLine.getQuantity() >= 0d)
+                continue;
+            else if(!isReturns && invoiceLine.getQuantity() < 0d)
+                continue;
+
+            /** Product **/
+            Product product = helper.fetchObjects(Product.class).queryBuilder().where()
+                    .eq("id", invoiceLine.getProduct_id()).queryForFirst();
+
+            /** Unit **/
+            Unit unit = null;
+            if(invoiceLine.getUnit_id() != null)
+                unit = helper.fetchObjects(Unit.class).queryBuilder().where()
+                        .eq("id", invoiceLine.getUnit_id()).queryForFirst();
+
+            SelectedProductItem selectedProductItem = selectedProductItemList.getSelectedProductItem(product);
+            if(selectedProductItem == null)
+                selectedProductItem = selectedProductItemList.initializeItem(product);
+
+            /** Multiline **/
+            selectedProductItem.setIsMultiline(isMultiline);
+
+            Values values = new Values();
+
+            /** Price **/
+            Price price = PriceTools.identifyPrice(helper, product, newSalesBranch, salesCustomerGroup, newSalesCustomer, unit);
+            Double branchPrice = PriceTools.getBranchPrice(helper,product,newSalesBranch,unit);
+            if(price != null)
+                values.setValue("" + invoiceLine.getQuantity(), price);
+            else
+                values.setValue("" + invoiceLine.getQuantity(), unit, branchPrice);
+
+            selectedProductItem.addValues(values);
+            selectedProductItemList.add(selectedProductItem);
+            Log.e("InvoiceTools", " >> " + product.getId());
+        }
+
+        Log.e("InvoiceTools", "generateSelectedProductItemList : end");
+        return selectedProductItemList;
     }
 
     public static String generateDiscountAmount(List<Double> discountAmounts, char delimiter) {

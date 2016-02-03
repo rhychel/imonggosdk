@@ -28,12 +28,18 @@ import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
+import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,14 +57,14 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     private DashboardRecyclerAdapter dashboardRecyclerAdapter;
 
     private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>(){{
-
-
-        // Stock Request || ORDER || ConcessioModule.STOCK_REQUEST
-        add(new DashboardTile(ConcessioModule.STOCK_REQUEST, "Order", R.drawable.ic_mso));
-        add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Count", R.drawable.ic_physical_count));
-        add(new DashboardTile(ConcessioModule.RECEIVE_BRANCH, "Receive", R.drawable.ic_physical_count));
-        add(new DashboardTile(ConcessioModule.RELEASE_BRANCH, "Receive", R.drawable.ic_physical_count));
-        add(new DashboardTile(ConcessioModule.INVOICE, "Receive", R.drawable.ic_physical_count));
+        add(new DashboardTile(ConcessioModule.ROUTE_PLAN, "Sales", R.drawable.ic_booking));
+        add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers", R.drawable.ic_customers));
+        add(new DashboardTile(ConcessioModule.RECEIVE_SUPPLIER, "Receiving", R.drawable.ic_receiving));
+        add(new DashboardTile(ConcessioModule.RELEASE_SUPPLIER, "Pullout", R.drawable.ic_pullout));
+        add(new DashboardTile(ConcessioModule.RELEASE_ADJUSTMENT, "MSO", R.drawable.ic_mso));
+        add(new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
+        add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Physical Count", R.drawable.ic_physical_count));
+        add(new DashboardTile(ConcessioModule.HISTORY, "History", R.drawable.ic_history));
     }};
 
     @Override
@@ -68,16 +74,68 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
         Log.e("ClassName", Customer.class.getSimpleName());
 
-        try {
-            List<OfflineData> offlineDatas = getHelper().fetchObjects(OfflineData.class).queryForAll();
-            Log.e("OfflineDatas---", offlineDatas == null? "null" : offlineDatas.size()+"");
-            for(OfflineData offlineData : offlineDatas) {
-                Log.e("OfflineData " + offlineData.getId(), offlineData.getReturnId() + " ~ isQueued? "+ offlineData.isQueued() + " isSynced? " +
-                        offlineData.isSynced() + " isSyncing? " + offlineData.isSyncing() + " isCancelled? " + offlineData.isCancelled());
-            }
+        /*try {
+            getHelper().deleteAll(OfflineData.class);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        /*Invoice.Builder builder = new Invoice.Builder();
+        builder.invoice_date("2016-02-02T14:58:16Z");
+        builder.reference("14-1000");
+        builder.salesman_id(1204);
+        builder.status("L");
+        builder.addInvoiceLine(
+                new InvoiceLine.Builder()
+                        .quantity(1.0)
+                        .retail_price(100.0)
+                        .product_id(197447)
+                        .unit_name("Pc(s)")
+                        .line_no(1)
+                        .subtotal("100.0")
+                        .build()
+        );
+        builder.addInvoiceLine(
+                new InvoiceLine.Builder()
+                        .quantity(-1.0)
+                        .retail_price(20.0)
+                        .product_id(197449)
+                        .unit_name("Pc(s)")
+                        .line_no(2)
+                        .subtotal("-20.0")
+                        .build()
+        );
+        builder.addPayment(
+                new InvoicePayment.Builder()
+                        .amount(50.0)
+                        .tender(50.0)
+                        .payment_type_id(1)
+                        .build()
+        );
+        builder.extras(
+                new Extras.Builder()
+                        .total_company_discount("0.0")
+                        .total_unit_retail_price("80.0")
+                        .payment_term_id(28)
+                        .total_selling_price("80.0")
+                        .total_customer_discount("0.0")
+                        .customer_discount_text_summary("")
+                        .build()
+        );
+
+        try {
+            Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id",201925).queryForFirst();
+            builder.customer(customer);
+            new SwableTools.Transaction(getHelper())
+                    .toSend()
+                    .fromModule(ConcessioModule.INVOICE)
+                    .forBranch(getSession().getCurrent_branch_id())
+                    .object(builder.build())
+                    .queue();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
 
         setNextActivityClass(C_Module.class);
 
@@ -231,13 +289,8 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 }
             } break;
             case R.id.mSettings: {
-                try {
-                    getHelper().deleteAll(OfflineData.class);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-//                Intent intent = new Intent(this, SettingsActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
             } break;
         }
         return super.onOptionsItemSelected(item);

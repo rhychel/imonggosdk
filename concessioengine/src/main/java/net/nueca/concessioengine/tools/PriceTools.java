@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.objects.price.PriceList;
 import java.sql.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -154,33 +155,30 @@ public class PriceTools {
         return selectedPrice;
     }
 
-    private static Double getBranchPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch, Unit unit) throws SQLException {
+    public static Double getBranchPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch, Unit unit) throws SQLException {
         Log.e("PriceTools", "getBranchPrice " + (dbHelper2 == null) + " " + (product == null) + " " + (branch == null) + " " + (unit == null));
-        BranchProduct branchProduct = dbHelper2.fetchObjects(BranchProduct.class).queryBuilder().where()
-                .eq("product_id", product).and().eq("branch_id", branch).queryForFirst();
-        Log.e("BRANCH_PRODUCT", branchProduct == null? "null" : branchProduct.toJSONString());
-        if(branchProduct == null) {
-            if(unit != null)
-                return unit.getRetail_price();
-            return product.getRetail_price();
-        }
-        Where<BranchUnit, Integer> where = dbHelper2.fetchIntId(BranchUnit.class).queryBuilder().where()
-                .eq("bp_id", branchProduct);
-        if(unit != null)
-            where.and().eq("unit_id", unit);
-        else
-            where.and().isNull("unit_id");
 
-        BranchUnit branchUnit = where.queryForFirst();
-        Log.e("BRANCH_PRODUCT", branchUnit == null? "null" : branchUnit.toString());
+        List<BranchProduct> branchProducts = dbHelper2.fetchObjects(BranchProduct.class).queryBuilder().where()
+                .eq("product_id", product).and().eq("branch_id", branch).query();
 
-        if(branchUnit == null) {
-            if(unit != null)
-                return unit.getRetail_price();
+        if(unit == null) {
+            for(BranchProduct branchProduct : branchProducts) {
+                if (branchProduct.isBaseUnitSellable())
+                    return branchProduct.getRetail_price();
+            }
             return product.getRetail_price();
         }
 
-        return branchUnit.getRetail_price();
+        /*for(BranchProduct branchProduct : branchProducts) {
+            if(branchProduct.getBranchUnits() == null)
+                continue;
+            List<BranchUnit> branchUnits = Arrays.asList((BranchUnit[])branchProduct.getBranchUnits().toArray());
+            if(branchUnits.size() == 0)
+                continue;
+            if(branchUnits.get(0).getUnit().equals(unit))
+                return branchUnits.get(0).getRetail_price();
+        }*/
+        return unit.getRetail_price();
     }
 
     @Deprecated

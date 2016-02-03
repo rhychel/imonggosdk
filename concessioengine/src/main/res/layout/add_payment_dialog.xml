@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Balance"
-                android:id="@+id/textView6"
+                android:id="@+id/tvLabelBalance"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
                 android:textSize="13sp" />
@@ -248,14 +248,14 @@
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:ems="10"
                 android:id="@+id/etPayment"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="4"
                 android:layout_weight="2"
                 android:layout_marginLeft="16dp"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:hint="0" />
         </LinearLayout>
 
     </LinearLayout>
