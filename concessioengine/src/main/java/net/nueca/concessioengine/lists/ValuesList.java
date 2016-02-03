@@ -4,6 +4,7 @@ import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -31,7 +32,8 @@ public class ValuesList extends ArrayList<Values> {
                 totalQuantity = totalQuantity.add(new BigDecimal(qty));
         }
 
-        quantity = totalQuantity.toString();
+        DecimalFormat format = new DecimalFormat("#.##");
+        quantity = format.format(totalQuantity);
         return quantity;
     }
 

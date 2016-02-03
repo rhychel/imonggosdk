@@ -106,7 +106,7 @@ public class OfflineData extends BaseTable2 {
     @DatabaseField
     private int user_id = 0; // unused
 
-    @DatabaseField
+    @DatabaseField(index = true)
     private String reference_no = "";
 
     @DatabaseField
