@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import net.nueca.concessioengine.activities.DashboardActivity;
+import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.DashboardRecyclerAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
