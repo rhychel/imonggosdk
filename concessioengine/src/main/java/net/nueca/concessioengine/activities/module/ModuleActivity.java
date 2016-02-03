@@ -488,7 +488,6 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         else if(offlineData.getType() == OfflineData.INVOICE) {
 
         }
-
         return productList;
     }
 

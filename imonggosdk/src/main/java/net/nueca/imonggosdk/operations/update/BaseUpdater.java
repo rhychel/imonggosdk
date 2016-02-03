@@ -14,8 +14,6 @@ import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.LoggingTools;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class BaseUpdater implements SyncModulesListener {
 
@@ -36,7 +34,6 @@ public abstract class BaseUpdater implements SyncModulesListener {
     protected Context mContext;
 
     protected void startSync() throws SQLException {
-
         if (mServiceBounded) {
             setUpTablesToDownload();
             onPrepareDialog();
@@ -54,7 +51,6 @@ public abstract class BaseUpdater implements SyncModulesListener {
             startSyncService();
             mSyncModulesListener.onErrorDownload(null, "Cannot Start Update, Service not binded");
         }
-
     }
 
     @Override

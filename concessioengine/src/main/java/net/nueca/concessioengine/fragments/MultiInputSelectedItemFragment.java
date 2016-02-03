@@ -26,6 +26,7 @@ import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
+import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
@@ -48,7 +49,7 @@ import me.grantland.widget.AutofitTextView;
 public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
     public static final String PRODUCT_ID = "product_id";
-
+    public static String TAG = "MultiInputSelectedItemFragment";
     private int productId = 0;
     private NetworkImageView ivProductImage;
     private RecyclerView rvProducts;
@@ -57,10 +58,11 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
     private CollapsingToolbarLayout ctlActionBar;
     private SetupActionBar setupActionBar;
     private FloatingActionButton fabAddValue;
-
     private boolean hasUnits = false, hasBrand = true, hasDeliveryDate = true, hasBatchNo = false;
     private Product product;
     private SelectedProductItem selectedProductItem;
+
+    private DialogType mDialogType;
 
     private SimpleMultiInputAdapter simpleMultiInputAdapter;
 
@@ -83,7 +85,8 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
         try {
             product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", productId).queryForFirst();
-            hasBatchNo = product.getExtras()!= null && product.getExtras().isBatch_maintained();
+
+            hasBatchNo = product.getExtras() != null && product.getExtras().isBatch_maintained() != null ? product.getExtras().isBatch_maintained() : false;
 
             ctlActionBar.setTitle(product.getName());
             String imageUrl = ImonggoTools.buildProductImageUrl(getActivity(), getSession().getApiToken(),
@@ -92,7 +95,7 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
             ivProductImage.setColorFilter(Color.rgb(200, 200, 200), android.graphics.PorterDuff.Mode.MULTIPLY);
 
             selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().getSelectedProductItem(product);
-            if(selectedProductItem == null) {
+            if (selectedProductItem == null) {
                 selectedProductItem = new SelectedProductItem();
                 selectedProductItem.setProduct(product);
                 selectedProductItem.setIsMultiline(true);
@@ -110,6 +113,7 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
             @Override
             public void onItemClicked(View view, int position) {
                 showQuantityDialog(selectedProductItem, position);
+
             }
         });
 
@@ -137,56 +141,102 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(setupActionBar != null)
+        if (setupActionBar != null)
             setupActionBar.setupActionBar(tbActionBar);
     }
 
-    private void showQuantityDialog(final SelectedProductItem selectedProductItem, final int valuePosition) {
-        try {
+    public void setDialogType(DialogType dialogType) {
+        if (dialogType != null) {
+            mDialogType = dialogType;
+        }
+    }
+
+
+    private void showQuantityDialog(final SelectedProductItem selectedProductItem, final int position) {
+
+        if (mDialogType == DialogType.SALES) {
+
             SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
+            quantityDialog.setListPosition(position);
             quantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             quantityDialog.setSelectedProductItem(selectedProductItem);
-            if(hasUnits) {
+
+            if (hasUnits) {
                 quantityDialog.setHasUnits(true);
-                quantityDialog.setUnitList(getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query(), true);
+                try {
+                    quantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-            if(hasBrand) {
-                List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();
+
+            if (hasBrand) {
+                List<ProductTag> tags = null;
+                try {
+                    tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 List<String> brands = new ArrayList<>();
 
-                for(ProductTag productTag : tags)
-                    if(productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
+                for (ProductTag productTag : tags)
+                    if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
                         brands.add(productTag.getTag().replaceAll("##", ""));
                 quantityDialog.setBrandList(brands, true);
                 quantityDialog.setHasBrand(true);
             }
-            quantityDialog.setHasBrand(hasBrand);
             quantityDialog.setHasDeliveryDate(hasDeliveryDate);
-            quantityDialog.setHasBatchNo(hasBatchNo);
-            quantityDialog.setIsMultiValue(true);
-            quantityDialog.setValuePosition(valuePosition);
             quantityDialog.setFragmentManager(getActivity().getFragmentManager());
-            quantityDialog.setMultiQuantityDialogListener(new BaseQuantityDialog.MultiQuantityDialogListener() {
-                @Override
-                public void onSave(Values values) {
-                    if(values == null)
-                        selectedProductItem.remove(valuePosition);
-                    else {
-                        int index = selectedProductItem.addValues(values);
-                        if(index > -1)
-                            simpleMultiInputAdapter.getItem(index).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
+            //quantityDialog.setQuantityDialogListener(quantityDialogListener);
+            quantityDialog.show();
+        } else {
+            try {
+                SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
+                quantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                quantityDialog.setSelectedProductItem(selectedProductItem);
+                if (hasUnits) {
+                    quantityDialog.setHasUnits(true);
+                    quantityDialog.setUnitList(getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query(), true);
+                }
+                if (hasBrand) {
+                    List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();
+                    List<String> brands = new ArrayList<>();
+
+                    for (ProductTag productTag : tags)
+                        if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
+                            brands.add(productTag.getTag().replaceAll("##", ""));
+                    quantityDialog.setBrandList(brands, true);
+                    quantityDialog.setHasBrand(true);
+                }
+                quantityDialog.setHasBrand(hasBrand);
+                quantityDialog.setHasDeliveryDate(hasDeliveryDate);
+                quantityDialog.setHasBatchNo(hasBatchNo);
+                quantityDialog.setIsMultiValue(true);
+                quantityDialog.setValuePosition(position);
+                quantityDialog.setFragmentManager(getActivity().getFragmentManager());
+                quantityDialog.setMultiQuantityDialogListener(new BaseQuantityDialog.MultiQuantityDialogListener() {
+                    @Override
+                    public void onSave(Values values) {
+                        if (values == null)
+                            selectedProductItem.remove(position);
+                        else {
+                            int index = selectedProductItem.addValues(values);
+                            if (index > -1)
+                                simpleMultiInputAdapter.getItem(index).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
+                        }
+
+                        tvTotalQuantity.setText(selectedProductItem.getQuantity());
+                        simpleMultiInputAdapter.notifyDataSetChanged();
                     }
 
-                    tvTotalQuantity.setText(selectedProductItem.getQuantity());
-                    simpleMultiInputAdapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onDismiss() { }
-            });
-            quantityDialog.show();
-        } catch (SQLException e) {
-            e.printStackTrace();
+                    @Override
+                    public void onDismiss() {
+                    }
+                });
+                quantityDialog.show();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

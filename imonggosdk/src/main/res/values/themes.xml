@@ -152,5 +152,13 @@
         <item name="android:background">#FFFFFF</item>
         <item name="windowNoTitle">false</item>
     </style>
+
+    <style name="DiscoverPrinter.DialogFrameLayout" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:background">@android:color/white</item>
+        <item name="colorControlNormal">@color/accentL</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="android:textColorHint">@color/accentL</item>
+        <item name="android:textColorPrimary">@color/primary_textL</item>
+    </style>
     <!-- AppCompatDialog - END -->
 </resources>

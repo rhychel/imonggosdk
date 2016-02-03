@@ -13,7 +13,6 @@ import net.nueca.imonggosdk.tools.SettingTools;
 
 import io.fabric.sdk.android.Fabric;
 
-
 /**
  * Created by rhymart on 8/20/15.
  * imonggosdk2 (c)2015
@@ -45,13 +44,13 @@ public class C_Login extends LoginActivity {
                 Table.SETTINGS.ordinal(),
                 Table.PRODUCTS.ordinal(),
                 Table.UNITS.ordinal(),
-                Table.CUSTOMER_CATEGORIES.ordinal(),
+                /*Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_BY_SALESMAN.ordinal(),
                 Table.ROUTE_PLANS.ordinal(),
-                Table.ROUTE_PLANS_DETAILS.ordinal(),
-                Table.BRANCH_PRODUCTS.ordinal(),
-                Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
-                Table.PRICE_LISTS_DETAILS.ordinal()/*,
+                Table.ROUTE_PLANS_DETAILS.ordinal(),*/
+                Table.BRANCH_PRODUCTS.ordinal()
+                /*Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
+                Table.PRICE_LISTS_DETAILS.ordinal()*//*
                 Table.PAYMENT_TERMS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
                 Table.INVOICES.ordinal(),
@@ -72,8 +71,8 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
-        setEditTextAccountID("C5111");
-        setEditTextEmail("C5111A_OSS-1@imonggo.com");
+        setEditTextAccountID("A1029");
+        setEditTextEmail("A1072A_OSS-1@imonggo.com");
         setEditTextPassword("123rebisco456");
     }
 }
