@@ -65,6 +65,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public static final String INIT_SELECTED_CUSTOMER = "initialize_selected_customer";
     public static final String FOR_HISTORY_DETAIL = "for_history_detail";
     public static final String REFERENCE = "reference";
+    public static final String HISTORY_ITEM_FILTERS = "history_item_filters";
 
     protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
@@ -123,6 +124,11 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     protected List<ModuleSetting> getActiveModuleSetting() {
         try {
+            if(getIntent().hasExtra(HISTORY_ITEM_FILTERS))
+                return getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
+                        .where()
+                        .in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.convertToConcessioModules(getIntent().getIntArrayExtra(HISTORY_ITEM_FILTERS))))
+                        .query();
             return getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
                     .where()
                         .in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST, ConcessioModule.PHYSICAL_COUNT,
@@ -187,21 +193,11 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         if(includeAll)
             transactionTypes.add(ConcessioModule.ALL);
 
-        try {
-            List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                    .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST,
-                            ConcessioModule.RECEIVE_BRANCH, ConcessioModule.RECEIVE_BRANCH_PULLOUT, ConcessioModule.RELEASE_BRANCH,
-                            ConcessioModule.RECEIVE_ADJUSTMENT, ConcessioModule.RELEASE_ADJUSTMENT,
-                            ConcessioModule.RECEIVE_SUPPLIER, ConcessioModule.RELEASE_SUPPLIER,
-                            ConcessioModule.INVOICE)).query();
+        List<ModuleSetting> moduleSettings = getActiveModuleSetting();
 
-            for(ModuleSetting moduleSetting : moduleSettings) {
-                if(moduleSetting.is_enabled())
-                    transactionTypes.add(moduleSetting.getModuleType().setLabel(moduleSetting.getLabel()));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for(ModuleSetting moduleSetting : moduleSettings) {
+            if(moduleSetting.is_enabled())
+                transactionTypes.add(moduleSetting.getModuleType().setLabel(moduleSetting.getLabel()));
         }
 
         return transactionTypes;

@@ -25,8 +25,10 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.tools.DiscountTools;
+import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -46,9 +48,9 @@ public class C_Finalize extends ModuleActivity {
 
     private TextView tvItems;
     private Button btn1, btn2; // CHECKOUT
-    private LinearLayout llReview, llBalance;
+    private LinearLayout llTotalAmount, llReview, llBalance;
 
-    private TextView tvBalance;
+    private TextView tvBalance, tvTotalAmount;
     private View viewStub;
 
     private ReviewAdapter reviewAdapter;
@@ -73,6 +75,9 @@ public class C_Finalize extends ModuleActivity {
         setSupportActionBar(tbActionBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         btn1.setText("CHECKOUT");
+
+        llBalance.setVisibility(View.VISIBLE);
+
         if(isForHistoryDetail) {
             getSupportActionBar().setTitle(getIntent().getStringExtra(REFERENCE));
             try {
@@ -120,6 +125,22 @@ public class C_Finalize extends ModuleActivity {
                 else
                     initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
 
+                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.PaymentsComputation();
+                paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
+                paymentsComputation.addAllPayments(offlineData.getObjectFromData(Invoice.class).getPayments());
+
+                paymentsComputation.getTotalPayable(); // Total Amount
+                paymentsComputation.getRemaining(); // Total Balance
+
+                llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
+                tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
+
+                llTotalAmount.setVisibility(View.VISIBLE);
+                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable()));
+
+                if(paymentsComputation.getRemaining().doubleValue() == 0)
+                    llBalance.setVisibility(View.GONE);
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -136,7 +157,6 @@ public class C_Finalize extends ModuleActivity {
         }
 
         viewStub.setVisibility(View.VISIBLE);
-        llBalance.setVisibility(View.VISIBLE);
         tvItems.setVisibility(View.VISIBLE);
 
         toggleNext(llReview, tvItems);
@@ -244,6 +264,14 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setHasCategories(false);
             simpleProductsFragment.setIsFinalize(true);
             simpleProductsFragment.setHasSubtotal(true);
+            simpleProductsFragment.setDisplayOnly(isForHistoryDetail);
+            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
+                @Override
+                public void whenItemsSelectedUpdated() {
+                    toggleNext(llReview, tvItems);
+                }
+            });
+
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                 @Override
                 public void whenItemsSelectedUpdated() {

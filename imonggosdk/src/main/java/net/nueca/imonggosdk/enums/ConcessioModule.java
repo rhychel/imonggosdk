@@ -51,6 +51,18 @@ public enum ConcessioModule {
         return new ConcessioModule[]{STOCK_REQUEST, PHYSICAL_COUNT, INVOICE, RECEIVE_BRANCH, RECEIVE_BRANCH_PULLOUT, RELEASE_BRANCH, RECEIVE_ADJUSTMENT, RELEASE_ADJUSTMENT, RECEIVE_SUPPLIER, RELEASE_SUPPLIER};
     }
 
+    public static ConcessioModule[] convertToConcessioModules(int[] ordinals) {
+        if(ordinals == null)
+            return null;
+        ConcessioModule[] concessioModules = new ConcessioModule[ordinals.length];
+
+        int i = 0;
+        for(int ordinal : ordinals)
+            concessioModules[i++] = values()[ordinal];
+
+        return concessioModules;
+    }
+
     public String getLabel() {
         return label;
     }

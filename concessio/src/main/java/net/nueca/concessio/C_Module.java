@@ -168,6 +168,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionsFragment.setSetupActionBar(this);
                 simpleTransactionsFragment.setHasFilterByTransactionType(true);
                 simpleTransactionsFragment.setTransactionTypes(getTransactionTypes());
+                if(getIntent().hasExtra(HISTORY_ITEM_FILTERS))
+                    simpleTransactionsFragment.setFilterModules(ConcessioModule.convertToConcessioModules(getIntent().getIntArrayExtra(HISTORY_ITEM_FILTERS)));
                 simpleTransactionsFragment.setListingType(ListingType.DETAILED_HISTORY);
                 if(customer != null) {
                     simpleTransactionsFragment.setCustomer(customer);
@@ -282,17 +284,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                 llFooter.setVisibility(View.VISIBLE);
                 llReview.setVisibility(View.VISIBLE);
+
+                View.OnClickListener showHistory = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(C_Module.this, C_Module.class);
+                        intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
+                        intent.putExtra(ModuleActivity.HISTORY_ITEM_FILTERS, new int[]{ConcessioModule.INVOICE.ordinal(), ConcessioModule.RELEASE_ADJUSTMENT.ordinal()});
+                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.HISTORY.ordinal());
+                        startActivity(intent);
+                    }
+                };
                 if(isFromCustomersList) {
                     btn1.setText("VIEW HISTORY");
-                    btn1.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(C_Module.this, C_Module.class);
-                            intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
-                            intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.HISTORY.ordinal());
-                            startActivity(intent);
-                        }
-                    });
+                    btn1.setOnClickListener(showHistory);
                 }
                 else {
                     btn1.setText("TRANSACT");
@@ -309,6 +314,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         }
                     });
                     btn2.setText("HISTORY");
+                    btn2.setOnClickListener(showHistory);
                     btn2.setVisibility(View.VISIBLE);
                 }
 
