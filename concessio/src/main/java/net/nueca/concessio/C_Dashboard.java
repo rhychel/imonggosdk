@@ -9,13 +9,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import net.nueca.concessioengine.activities.DashboardActivity;
-import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.DashboardRecyclerAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
@@ -30,7 +28,6 @@ import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
-import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -54,14 +51,14 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     private DashboardRecyclerAdapter dashboardRecyclerAdapter;
 
     private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>(){{
-        add(new DashboardTile(ConcessioModule.ROUTE_PLAN, "Sales", R.drawable.ic_booking));
-        add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers", R.drawable.ic_customers));
-        add(new DashboardTile(ConcessioModule.RECEIVE_SUPPLIER, "Receiving", R.drawable.ic_receiving));
-        add(new DashboardTile(ConcessioModule.RELEASE_SUPPLIER, "Pullout", R.drawable.ic_pullout));
-        add(new DashboardTile(ConcessioModule.RELEASE_ADJUSTMENT, "MSO", R.drawable.ic_mso));
-        add(new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
-        add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Physical Count", R.drawable.ic_physical_count));
-        add(new DashboardTile(ConcessioModule.HISTORY, "History", R.drawable.ic_history));
+
+
+        // Stock Request || ORDER || ConcessioModule.STOCK_REQUEST
+        add(new DashboardTile(ConcessioModule.STOCK_REQUEST, "Order", R.drawable.ic_mso));
+        add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Count", R.drawable.ic_physical_count));
+        add(new DashboardTile(ConcessioModule.RECEIVE_BRANCH, "Receive", R.drawable.ic_physical_count));
+        add(new DashboardTile(ConcessioModule.RELEASE_BRANCH, "Receive", R.drawable.ic_physical_count));
+        add(new DashboardTile(ConcessioModule.INVOICE, "Receive", R.drawable.ic_physical_count));
     }};
 
     @Override

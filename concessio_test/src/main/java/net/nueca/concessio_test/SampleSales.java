@@ -56,11 +56,30 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
     private Customer selectedCustomer;
 
+    public void initComponents() {
+
+
+        List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+        List<BranchUnit> branchUnit =  BranchUnit.fetchAll(getHelper(), BranchUnit.class);
+
+        Log.e("SAMPLE SALES", "Branch Unit Size: " + branchUnit.size() );
+        Log.e("SAMPLE SALES", "Branch Product Size: " + branchProducts.size() );
+
+        for(BranchUnit b : branchUnit) {
+            Log.e("SAMPLE SALES", "Branch Unit: " + b.getRetail_price());
+        }
+
+        for(BranchProduct b : branchProducts) {
+            Log.e("SAMPLE SALES", "Branch Products: " + b.getName());
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e("SAMPLESALES", "onCreate");
         super.onCreate(savedInstanceState);
 
+        initComponents();
 
         /*try {
             Branch branch = getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", getSession().getCurrent_branch_id()).queryForFirst();

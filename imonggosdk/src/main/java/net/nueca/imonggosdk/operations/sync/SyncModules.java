@@ -67,6 +67,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
@@ -101,6 +102,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
                     mCurrentTableSyncing, getSession().getServer(), requestType,
                     getParameters(requestType));
+
+
         } else if (requestType == RequestType.API_CONTENT) {
             Log.e(TAG, "API CONTENT");
 
@@ -139,8 +142,16 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(mCurrentTableSyncing));
             }
 
+
+
             // get the last updated at
             lastUpdatedAt = getHelper().fetchObjects(LastUpdatedAt.class).queryForFirst(queryBuilder.prepare());
+
+            if(lastUpdatedAt != null) {
+                Log.e(TAG, ">> last update at not null " + lastUpdatedAt.toString());
+            } else {
+                Log.e(TAG, ">> last update at is null");
+            }
 
             if (mCurrentTableSyncing == Table.DAILY_SALES) {
                 ImonggoOperations.getAPIModule(this, getQueue(), getSession(),
@@ -194,6 +205,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     }
 
     private String getParameters(RequestType requestType) {
+
         if (requestType == RequestType.DAILY_SALES_TODAY) {
             Log.e(TAG, "parameter" + String.format(ImonggoTools.generateParameter(Parameter.CURRENT_DATE, Parameter.BRANCH_ID),
                     DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd"), getSession().getCurrent_branch_id()) + "");
@@ -260,8 +272,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
             }
 
-            if (mCurrentTableSyncing == Table.ROUTE_PLANS || mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
+            if (mCurrentTableSyncing == Table.ROUTE_PLANS ) {
                 return String.format(ImonggoTools.generateParameter(Parameter.SALESMAN_ID, Parameter.LAST_UPDATED_AT), getSession().getUser_id());
+            }
+
+            if(mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
+                return String.format(ImonggoTools.generateParameter(Parameter.LAST_UPDATED_AT));
             }
 
             return ImonggoTools.generateParameter(Parameter.LAST_UPDATED_AT);
@@ -421,8 +437,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 }
 
-                if (mCurrentTableSyncing == Table.ROUTE_PLANS ||
-                        mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
+                if (mCurrentTableSyncing == Table.ROUTE_PLANS) {
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.SALESMAN_ID,
                             Parameter.PAGE,
@@ -477,7 +492,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             Parameter.COUNT, Parameter.BRANCH_ID), getSession().getCurrent_branch_id());
                 }
 
-                if (mCurrentTableSyncing == Table.ROUTE_PLANS || mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
+                if (mCurrentTableSyncing == Table.ROUTE_PLANS) {
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.SALESMAN_ID,
                             Parameter.COUNT),
@@ -493,7 +508,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             } else {
                 if (mCurrentTableSyncing == Table.BRANCH_USERS) { // TODO last_updated_at of this should relay on NOW at the end of the request...
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.USER_ID, Parameter.AFTER),
-                            String.valueOf(getUser().getId()), DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                            String.valueOf(getUser().getId()), DateTimeTools.convertDateForUrl(newLastUpdatedAt.getLast_updated_at()));
                 }
                 if (mCurrentTableSyncing == Table.DOCUMENTS) {
                     return String.format(ImonggoTools.generateParameter(
@@ -507,7 +522,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             getTargetBranchId(branchIndex)
                     );
                 }
-
 
                 // request with branch id
                 if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
@@ -534,7 +548,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 }
 
-                if (mCurrentTableSyncing == Table.ROUTE_PLANS || mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
+                if (mCurrentTableSyncing == Table.ROUTE_PLANS) {
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.SALESMAN_ID,
                             Parameter.COUNT,
@@ -551,7 +565,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
 
                 return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.AFTER),
-                        DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                        DateTimeTools.convertDateForUrl(lastUpdatedAt .getLast_updated_at()));
             }
         }
         return "";
@@ -758,6 +772,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 // Last Updated At
                 if (requestType == RequestType.LAST_UPDATED_AT) {
+                    Log.e(TAG, "Last Updated At");
                     // since this is the first
                     count = 0;
                     page = 1;
@@ -768,10 +783,22 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module, getTargetBranchId(branchIndex) + ""));
                         Log.e(TAG, "Table Name: " + newLastUpdatedAt.getTableName());
                     } else {
+                        Log.e(TAG, "Setting table name of last update at");
                         newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module));
                     }
 
+
                     if (lastUpdatedAt != null) {
+                        Log.e(TAG, newLastUpdatedAt.toString());
+                        Log.e(TAG, lastUpdatedAt.toString());
+
+                        if(newLastUpdatedAt.toString().equals(lastUpdatedAt.toString())) {
+                            syncNext();
+                            return;
+                        } else {
+                            Log.e(TAG, ">> Hindi parehas" );
+                        }
+
                         newLastUpdatedAt.updateTo(getHelper());
                     } else {
                         newLastUpdatedAt.insertTo(getHelper());
@@ -1059,7 +1086,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             }
 
 
-
                             if (isExisting(priceList, Table.PRICE_LISTS)) {
                                 //TODO: Support last updated at
                                 try {
@@ -1290,8 +1316,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     Log.e(TAG, "Err Can't find 'unit' field from database");
                                                 }
 
-                                            }
-                                            else {
+                                            } else {
                                                 branchProduct.setIsBaseUnitSellable(true);
                                                 branchProduct.setRetail_price(jsonObject.getDouble("unit_retail_price"));
                                                 branchProduct.updateTo(getHelper());
@@ -1301,37 +1326,34 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             Log.e(TAG, mCurrentTableSyncing + " API don't have 'unit_id' field");
                                         }
 
-                                        Log.e(TAG, "---");
-
-                                        if (branchUnit != null) {
-                                            if (isExisting(branchUnit, Table.BRANCH_UNIT)) {
-                                                branchUnit.insertTo(getHelper());
-                                            }
-                                        }
 
                                         // TODO: HOW TO UPDATE flush branch units
                                         // if branch_products exist in database
                                         if (isExisting(branchProduct, Table.BRANCH_PRODUCTS)) {
                                             // Check Last Updated At
                                             try {
-                                                if (DateTimeTools.stringToDate(lastUpdatedAt.getLast_updated_at()).before(DateTimeTools.stringToDate(newLastUpdatedAt.getLast_updated_at()))) {
-                                                    // get the branch product in the database to delete branch unit
-                                                    BranchProduct bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().
-                                                            where().eq("product_id", product).and().eq("branch_id", branch).queryForFirst();
+                                                if (lastUpdatedAt != null && newLastUpdatedAt != null) {
+                                                    if (DateTimeTools.stringToDate(lastUpdatedAt.getLast_updated_at()).before(DateTimeTools.stringToDate(newLastUpdatedAt.getLast_updated_at()))) {
+                                                        // get the branch product in the database to delete branch unit
+                                                        BranchProduct bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().
+                                                                where().eq("product_id", product).and().eq("branch_id", branch).queryForFirst();
 
-                                                    if (bp != null) {
-                                                        List<BranchUnit> branchUnitList = getHelper().fetchObjects(BranchUnit.class).queryBuilder().where().eq("bp_id", bp).query();
+                                                        if (bp != null) {
+                                                            List<BranchUnit> branchUnitList = getHelper().fetchObjects(BranchUnit.class).queryBuilder().where().eq("bp_id", bp).query();
 
-                                                        Log.e(TAG, "Branch Unit Size: " + branchUnitList.size());
+                                                            Log.e(TAG, "Branch Unit Size: " + branchUnitList.size());
 
-                                                        for (BranchUnit bU : branchUnitList) {
-                                                            Log.e(TAG, "Delete this Branch Unit: " + bU.toString());
-                                                            bU.deleteTo(getHelper());
+                                                            for (BranchUnit bU : branchUnitList) {
+                                                                Log.e(TAG, "Delete this Branch Unit: " + bU.toString());
+                                                                bU.deleteTo(getHelper());
+                                                            }
+                                                        } else {
+                                                            Log.e(TAG, "Can't find branch product");
                                                         }
+                                                        branchProduct.updateTo(getHelper());
                                                     } else {
-                                                        Log.e(TAG, "Can't find branch product");
+                                                        branchProduct.insertTo(getHelper());
                                                     }
-                                                    branchProduct.updateTo(getHelper());
                                                 } else {
                                                     branchProduct.insertTo(getHelper());
                                                 }
@@ -1340,6 +1362,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             }
                                         } else {
                                             branchProduct.insertTo(getHelper());
+                                        }
+
+                                        Log.e(TAG, "---");
+
+                                        if (branchUnit != null) {
+                                            Log.e(TAG, "Inserting Branch Unit");
+                                            branchUnit.insertTo(getHelper());
+                                        } else {
+                                            Log.e(TAG, "Can't insert Branch Unit");
                                         }
 
                                     } else {
@@ -1936,7 +1967,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Document document = gson.fromJson(jsonObject.toString(), Document.class);
 
                                     if (initialSync || lastUpdatedAt == null) {
-                                        if(jsonObject.has("received")) {
+                                        if (jsonObject.has("received")) {
                                             if (!jsonObject.isNull("received") & !jsonObject.getString("received").isEmpty()) {
                                                 if (!document.getIntransit_status().equalsIgnoreCase("received")) {
                                                     newDocument.add(document);
@@ -2026,7 +2057,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-                                    for (int i = 0; i < size; i++) {
+                                for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     InvoicePurpose invoicePurpose = gson.fromJson(jsonObject.toString(), InvoicePurpose.class);
                                     Extras extras = new Extras();
@@ -2252,11 +2283,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     if (initialSync || lastUpdatedAt == null) {
                                         boolean status = true;
 
-                                        if(jsonObject.get("status").equals("D")) {
-                                           status = false;
+                                        if (jsonObject.get("status").equals("D")) {
+                                            status = false;
                                         }
 
-                                        if(jsonObject.get("status").equals("I")) {
+                                        if (jsonObject.get("status").equals("I")) {
                                             status = false;
                                         }
 

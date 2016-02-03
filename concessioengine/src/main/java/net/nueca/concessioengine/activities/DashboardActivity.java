@@ -69,5 +69,4 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
         }
         return assignedBranches;
     }
-
 }

@@ -475,7 +475,6 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         else if(offlineData.getType() == OfflineData.INVOICE) {
 
         }
-
         return productList;
     }
 
@@ -498,5 +497,4 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
         AnimationTools.toggleShowHide(linearLayout, size == 0, 300);
     }
-
 }
