@@ -31,6 +31,8 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
     protected SetupActionBar setupActionBar;
     protected Toolbar tbActionBar;
 
+    protected boolean isLayaway = false;
+
     protected Invoice invoice;
     protected InvoiceTools.PaymentsComputation computation = new InvoiceTools.PaymentsComputation();
 
@@ -39,6 +41,8 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
             invoice = (Invoice) getArguments().get(INVOICE_ARGUMENT_KEY);
             computation.clearAll();
             computation.addAllInvoiceLines(invoice.getInvoiceLines());
+            if(invoice.getPayments() != null)
+                computation.addAllPayments(invoice.getPayments());
         }
     }
 
@@ -51,8 +55,10 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
 
     public void setInvoice(Invoice invoice) {
         this.invoice = invoice;
+        Log.e("INVOICE RECEIVED", invoice.toJSONString());
         computation.clearAll();
         computation.addAllInvoiceLines(invoice.getInvoiceLines());
+        computation.addAllPayments(invoice.getPayments());
     }
 
     public Invoice getCheckoutInvoice() {
@@ -126,5 +132,13 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
 
     public void setSetupActionBar(SetupActionBar setupActionBar) {
         this.setupActionBar = setupActionBar;
+    }
+
+    public boolean isLayaway() {
+        return isLayaway;
+    }
+
+    public void setLayaway(boolean layaway) {
+        isLayaway = layaway;
     }
 }

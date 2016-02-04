@@ -156,7 +156,7 @@ public class PriceTools {
     }
 
     public static Double getBranchPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch, Unit unit) throws SQLException {
-        Log.e("PriceTools", "getBranchPrice " + (dbHelper2 == null) + " " + (product == null) + " " + (branch == null) + " " + (unit == null));
+        Log.e("PriceTools", "getBranchPrice " + (dbHelper2 == null) + " " + product.getName() + " " + (branch == null) + " " + (unit == null));
 
         List<BranchProduct> branchProducts = dbHelper2.fetchObjects(BranchProduct.class).queryBuilder().where()
                 .eq("product_id", product).and().eq("branch_id", branch).query();
@@ -166,7 +166,7 @@ public class PriceTools {
                 if (branchProduct.isBaseUnitSellable())
                     return branchProduct.getRetail_price();
             }
-            return unit.getRetail_price();
+            return product.getRetail_price();
         }
 
         /*for(BranchProduct branchProduct : branchProducts) {

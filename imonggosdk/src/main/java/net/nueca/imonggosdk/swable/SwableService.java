@@ -46,6 +46,7 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 					try {
 						Thread.sleep(NO_INTERNET_DELAY); // 3 seconds
 						Log.d("SwableService", "---syncing started");
+						Log.d("SwableService", "---should sync? " + isShouldSync());
 						while(isShouldSync()) {
 							Log.d("SwableService", "---syncing data set ~ "+isSyncing());
 							if (!isSyncing()) {

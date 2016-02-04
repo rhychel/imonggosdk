@@ -664,7 +664,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
         List<CustomerGroup> customerGroups = new ArrayList<>();
         for(CustomerCustomerGroupAssoc assoc : assocs) {
-            Log.e("ASSOC", assoc.toString());
+            //Log.e("ASSOC", assoc.toString());
             customerGroups.add(assoc.getCustomerGroup());
         }
         return customerGroups;

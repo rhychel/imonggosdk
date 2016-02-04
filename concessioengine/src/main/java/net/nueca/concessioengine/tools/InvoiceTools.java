@@ -142,12 +142,8 @@ public class InvoiceTools {
     public static SelectedProductItemList generateSelectedProductItemList(ImonggoDBHelper2 helper, OfflineData offlineData,
                                                                           boolean isReturns, boolean isMultiline)
             throws SQLException {
-        Log.e("InvoiceTools", "generateSelectedProductItemList : starting");
         if(offlineData.getType() != OfflineData.INVOICE)
             throw new ClassCastException("OfflineData object is not of type INVOICE");
-
-        SelectedProductItemList selectedProductItemList = new SelectedProductItemList();
-        selectedProductItemList.setReturns(isReturns);
 
         /** Invoice **/
         Invoice invoice = offlineData.getObjectFromData(Invoice.class);
@@ -156,8 +152,19 @@ public class InvoiceTools {
                 .eq("id", offlineData.getBranch_id()).queryForFirst();
         /** Customer **/
         Customer salesCustomer = invoice.getCustomer();
+
+        return generateSelectedProductItemList(helper, invoice, salesCustomer, salesBranch, isReturns, isMultiline);
+    }
+
+    public static SelectedProductItemList generateSelectedProductItemList(ImonggoDBHelper2 helper, Invoice invoice,
+                                          Customer newSalesCustomer, Branch newSalesBranch, boolean isReturns, boolean isMultiline)
+            throws SQLException {
+
+        SelectedProductItemList selectedProductItemList = new SelectedProductItemList();
+        selectedProductItemList.setReturns(isReturns);
+
         /** CustomerGroup **/
-        List<CustomerGroup> customerGroups = salesCustomer.getCustomerGroups(helper);
+        List<CustomerGroup> customerGroups = newSalesCustomer.getCustomerGroups(helper);
         CustomerGroup salesCustomerGroup = null;
         if(customerGroups != null)
             salesCustomerGroup = customerGroups.get(0);
@@ -173,8 +180,10 @@ public class InvoiceTools {
                     .eq("id", invoiceLine.getProduct_id()).queryForFirst();
 
             /** Unit **/
-            Unit unit = helper.fetchObjects(Unit.class).queryBuilder().where()
-                    .eq("id", invoiceLine.getUnit_id()).queryForFirst();
+            Unit unit = null;
+            if(invoiceLine.getUnit_id() != null)
+                unit = helper.fetchObjects(Unit.class).queryBuilder().where()
+                        .eq("id", invoiceLine.getUnit_id()).queryForFirst();
 
             SelectedProductItem selectedProductItem = selectedProductItemList.getSelectedProductItem(product);
             if(selectedProductItem == null)
@@ -186,8 +195,8 @@ public class InvoiceTools {
             Values values = new Values();
 
             /** Price **/
-            Price price = PriceTools.identifyPrice(helper, product, salesBranch, salesCustomerGroup, salesCustomer, unit);
-            Double branchPrice = PriceTools.getBranchPrice(helper,product,salesBranch,unit);
+            Price price = PriceTools.identifyPrice(helper, product, newSalesBranch, salesCustomerGroup, newSalesCustomer, unit);
+            Double branchPrice = PriceTools.getBranchPrice(helper,product,newSalesBranch,unit);
             if(price != null)
                 values.setValue("" + invoiceLine.getQuantity(), price);
             else
@@ -195,10 +204,8 @@ public class InvoiceTools {
 
             selectedProductItem.addValues(values);
             selectedProductItemList.add(selectedProductItem);
-            Log.e("InvoiceTools", " >> " + product.getId());
         }
 
-        Log.e("InvoiceTools", "generateSelectedProductItemList : end");
         return selectedProductItemList;
     }
 
@@ -345,6 +352,8 @@ public class InvoiceTools {
         private BigDecimal total_payment_made = BigDecimal.ZERO;
 
         public void addAllInvoiceLines(List<InvoiceLine> invoiceLines) {
+            if(invoiceLines == null)
+                return;
             for(InvoiceLine invoiceLine : invoiceLines)
                 addInvoiceLine(invoiceLine);
         }
@@ -363,6 +372,8 @@ public class InvoiceTools {
         }
 
         public void addAllPayments(List<InvoicePayment> payments) {
+            if(payments == null)
+                return;
             for(InvoicePayment payment : payments)
                 addPayment(payment);
         }
@@ -387,6 +398,23 @@ public class InvoiceTools {
 
             InvoicePayment forDelete = payments.remove(location);
             total_payment_made = total_payment_made.subtract(new BigDecimal(forDelete.getTender()));
+
+            refresh();
+        }
+
+        public InvoicePayment getPayment(int location) {
+            if(location >= payments.size())
+                return null;
+
+            return payments.get(location);
+        }
+
+        public void setPayment(int location, InvoicePayment payment) {
+            if(location >= payments.size()) {
+                addPayment(payment);
+                return;
+            }
+            payments.set(location, payment);
 
             refresh();
         }

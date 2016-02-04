@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import net.nueca.concessioengine.activities.checkout.CheckoutActivity;
 import net.nueca.concessioengine.adapters.SimpleSplitPaymentAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
@@ -54,17 +56,25 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private TextView tvLabelBalance, tvBalance, tvTotalAmount;
     private Button btn1, btn2;
 
-    private ArrayList<InvoicePayment> invoicePayments = new ArrayList<>();
+    private String reference_no;
+    private boolean isLayaway = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_checkout_activity);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            reference_no = extras.getString("offlinedata_reference_no");
+            isLayaway = extras.getBoolean("is_layaway", false);
+        }
+
 //        tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
 //        rvPayments = (RecyclerView) findViewById(R.id.rvPayments);
         checkoutFragment = new SimpleCheckoutFragment();
         checkoutFragment.setSetupActionBar(this);
+        checkoutFragment.setLayaway(isLayaway);
 
         llBalance = (LinearLayout) findViewById(R.id.llBalance);
         llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
@@ -74,17 +84,58 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         btn1 = (Button) findViewById(R.id.btn1);
         btn2 = (Button) findViewById(R.id.btn2);
 
+        if(reference_no == null || reference_no.length() == 0) {
+            List<InvoiceLine> invoiceLines = new ArrayList<>();
+            invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
+                    .getSelectedProductItems()));
+            invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
+                    .getSelectedReturnProductItems(), invoiceLines.size()));
+            Invoice.Builder invoiceBuilder = new Invoice.Builder()
+                    .invoice_lines(invoiceLines);
+
+            checkoutFragment.setInvoice(invoiceBuilder.build());
+        } else {
+            try {
+                OfflineData offlineData = getHelper().fetchObjects(OfflineData.class).queryBuilder()
+                        .where().eq("reference_no", reference_no).queryForFirst();
+                checkoutFragment.setInvoice(offlineData.getObjectFromData(Invoice.class));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        Gson gson = new Gson();
+        Log.e("C_Checkout", gson.toJson(checkoutFragment.getComputation().getPayments()));
+        Log.e("C_Checkout", checkoutFragment.getComputation().getRemaining().toPlainString());
+
         try {
             List<PaymentType> paymentTypes = getHelper().fetchIntId(PaymentType.class).queryBuilder().orderBy("id", true).where().eq("status", "A").query();
             for(PaymentType paymentType : paymentTypes) {
                 Log.e("id", paymentType.getId()+"---"+paymentType.getName());
             }
-            simpleSplitPaymentAdapter = new SimpleSplitPaymentAdapter(this, getHelper(), invoicePayments, paymentTypes, ListingType
-                    .COLORED_PAYMENTS);
+            simpleSplitPaymentAdapter = new SimpleSplitPaymentAdapter(this, getHelper(), ListingType
+                    .COLORED_PAYMENTS, null, paymentTypes);
             simpleSplitPaymentAdapter.setPaymentUpdateListener(new BaseSplitPaymentAdapter.OnPaymentUpdateListener() {
                 @Override
                 public void onAddPayment(InvoicePayment invoicePayment) {
                     tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
+
+                    if(simpleSplitPaymentAdapter.isFullyPaid()) {
+                        tvLabelBalance.setText("Change");
+                        tvBalance.setTextColor(getResources().getColor(R.color.payment_color));
+                        btn1.setText("SUBMIT");
+                        btn2.setVisibility(View.GONE);
+                    }
+                    else {
+                        tvLabelBalance.setText("Balance");
+                        tvBalance.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                        btn2.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onUpdatePayment(int location, InvoicePayment invoicePayment) {
+                    tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
+
                     if(simpleSplitPaymentAdapter.isFullyPaid()) {
                         tvLabelBalance.setText("Change");
                         tvBalance.setTextColor(getResources().getColor(R.color.payment_color));
@@ -101,6 +152,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 @Override
                 public void onDeletePayment(int location) {
                     tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
+
                     if(!simpleSplitPaymentAdapter.isFullyPaid()) {
                         tvLabelBalance.setText("Balance");
                         tvBalance.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
@@ -128,19 +180,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(rvPayments);
 
-        List<InvoiceLine> invoiceLines = new ArrayList<>();
-        invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                .getSelectedProductItems()));
-        invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                .getSelectedReturnProductItems(), invoiceLines.size()));
-        Invoice.Builder invoiceBuilder = new Invoice.Builder()
-                .invoice_lines(invoiceLines);
-
-        checkoutFragment.setInvoice(invoiceBuilder.build());
         ((SimpleCheckoutFragment) checkoutFragment).setAmountDueTextView(tvTotalAmount);
         ((SimpleCheckoutFragment) checkoutFragment).setBalanceTextView(tvBalance);
 
-        simpleSplitPaymentAdapter.setComputation(checkoutFragment.getComputation());
+        //Log.e(">>>>>>>>>>>",checkoutFragment.getComputation().getTotalPayable().toPlainString());
+        //simpleSplitPaymentAdapter.setComputation(checkoutFragment.getComputation());
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.flContent, checkoutFragment, "checkout")

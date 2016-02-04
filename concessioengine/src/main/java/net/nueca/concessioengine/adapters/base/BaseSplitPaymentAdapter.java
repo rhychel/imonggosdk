@@ -28,13 +28,15 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
     protected boolean isFullyPaid = false;
     protected boolean isDefaultCash = false;
+    protected boolean isLayaway = false;
 
     protected ListingType listingType = ListingType.BASIC_PAYMENTS;
 
-    protected InvoiceTools.PaymentsComputation computation = new InvoiceTools.PaymentsComputation();
+    protected InvoiceTools.PaymentsComputation computation;
 
-    public BaseSplitPaymentAdapter(Context context, int listItemRes) {
-        super(context, new ArrayList<InvoicePayment>());
+    public BaseSplitPaymentAdapter(Context context, int listItemRes, InvoiceTools.PaymentsComputation computation) {
+        super(context, computation == null || computation.getPayments() == null?
+                new ArrayList<InvoicePayment>() : computation.getPayments());
         this.listItemRes = listItemRes;
         this.paymentTypes = new HashMap<>();
         if(isDefaultCash) {
@@ -44,29 +46,19 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
             cash.setId(1);
             this.paymentTypes.put(1, cash);
         }
+        this.computation = computation != null? computation : new InvoiceTools.PaymentsComputation();
     }
 
-    public BaseSplitPaymentAdapter(Context context, int listItemRes, List<InvoicePayment> payments) {
-        super(context, payments);
-        this.listItemRes = listItemRes;
-        this.paymentTypes = new HashMap<>();
-        if(isDefaultCash) {
-            PaymentType cash = new PaymentType();
-            cash.setName("CASH");
-            cash.setCode("CASH");
-            cash.setId(1);
-            this.paymentTypes.put(1, cash);
-        }
-    }
-
-    public BaseSplitPaymentAdapter(Context context, int listItemRes, List<InvoicePayment> payments,
+    public BaseSplitPaymentAdapter(Context context, int listItemRes, InvoiceTools.PaymentsComputation computation,
                                    List<PaymentType> paymentTypes) {
-        super(context, payments);
+        super(context, computation == null || computation.getPayments() == null?
+                new ArrayList<InvoicePayment>() : computation.getPayments());
         this.listItemRes = listItemRes;
         this.paymentTypeList = paymentTypes;
         this.paymentTypes = new HashMap<>();
         for(PaymentType paymentType : paymentTypes)
             this.paymentTypes.put(paymentType.getId(), paymentType);
+        this.computation = computation != null? computation : new InvoiceTools.PaymentsComputation();
     }
 
     public HashMap<Integer, PaymentType> getPaymentTypes() {
@@ -86,6 +78,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
     public interface OnPaymentUpdateListener {
         void onAddPayment(InvoicePayment invoicePayment);
+        void onUpdatePayment(int location, InvoicePayment invoicePayment);
         void onDeletePayment(int location);
     }
 
@@ -146,11 +139,40 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
             paymentUpdateListener.onAddPayment(payment);
     }
 
+    public void updatePayment(int position, InvoicePayment payment) {
+        InvoicePayment thisPayment = getItem(position);
+        thisPayment.setAmount(payment.getAmount());
+        thisPayment.setTender(payment.getTender());
+        thisPayment.setPayment_type_id(payment.getPayment_type_id());
+        thisPayment.setExtras(payment.getExtras());
+
+        notifyDataSetChanged();
+
+        computation.setPayment(position, thisPayment);
+
+        setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+
+        if(paymentUpdateListener != null)
+            paymentUpdateListener.onUpdatePayment(position, thisPayment);
+    }
+
     public InvoiceTools.PaymentsComputation getComputation() {
         return computation;
     }
 
     public void setComputation(InvoiceTools.PaymentsComputation computation) {
         this.computation = computation;
+        if(this.computation.getPayments() != null) {
+            for(InvoicePayment payment : this.computation.getPayments())
+                add(payment);
+        }
+    }
+
+    public boolean isLayaway() {
+        return isLayaway;
+    }
+
+    public void setLayaway(boolean layaway) {
+        isLayaway = layaway;
     }
 }

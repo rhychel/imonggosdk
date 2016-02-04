@@ -138,15 +138,26 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionsFragment.setTransactionsListener(new BaseTransactionsFragment.TransactionsListener() {
                     @Override
                     public void showTransactionDetails(OfflineData offlineData) {
-                        // Show the C_Finalize, re-render items
-                        Log.e("Invoice", offlineData.getObjectFromData(Invoice.class).toJSONString());
-                        try {
-                            SelectedProductItemList list = InvoiceTools.generateSelectedProductItemList(getHelper(),offlineData,false,false);
-                            for(SelectedProductItem item : list) {
-                                Log.e("Item >> ", " >> " + item.toString());
+                        prepareFooter();
+                        ProductsAdapterHelper.clearSelectedProductItemList(true);
+
+                        if(offlineData.getType() == OfflineData.INVOICE) {
+                            try {
+                                SelectedProductItemList selecteds =
+                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
+                                SelectedProductItemList returns =
+                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
+
+                                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
+                                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+                            } catch (SQLException e) {
+                                e.printStackTrace();
                             }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+
+                            Intent intent = new Intent(C_Module.this, C_Finalize.class);
+                            intent.putExtra("offlinedata_reference_no", offlineData.getReference_no());
+                            intent.putExtra("is_layaway", true);
+                            startActivityForResult(intent, REVIEW_SALES);
                         }
                     }
                 });
@@ -178,20 +189,39 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         prepareFooter();
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
 
-                        try {
-                            simpleTransactionDetailsFragment.setFilterProductsBy(processOfflineData(offlineData));
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        if(offlineData.getType() == OfflineData.INVOICE) {
+                            try {
+                                SelectedProductItemList selecteds =
+                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
+                                SelectedProductItemList returns =
+                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
+
+                                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
+                                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+
+                            Intent intent = new Intent(C_Module.this, C_Finalize.class);
+                            intent.putExtra("offlinedata_reference_no", offlineData.getReference_no());
+                            startActivityForResult(intent, REVIEW_SALES);
                         }
+                        else {
+                            try {
+                                simpleTransactionDetailsFragment.setFilterProductsBy(processOfflineData(offlineData));
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
 
-                        referenceNumber = offlineData.getReference_no();
-                        simpleTransactionDetailsFragment.setOfflineData(offlineData);
+                            referenceNumber = offlineData.getReference_no();
+                            simpleTransactionDetailsFragment.setOfflineData(offlineData);
 
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                                .add(R.id.flContent, simpleTransactionDetailsFragment, "transaction_details")
-                                .addToBackStack("transaction_details")
-                                .commit();
+                            getSupportFragmentManager().beginTransaction()
+                                    .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                                    .add(R.id.flContent, simpleTransactionDetailsFragment, "transaction_details")
+                                    .addToBackStack("transaction_details")
+                                    .commit();
+                        }
 
                     }
                 });
@@ -881,7 +911,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     @Override
                     public void handleMessage(Message msg) {
                         super.handleMessage(msg);
-                        simpleProductsFragment.refreshList();
+                        if(simpleProductsFragment != null)
+                            simpleProductsFragment.refreshList();
                     }
                 };
                 handler.sendEmptyMessageDelayed(0, 100);
