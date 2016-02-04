@@ -194,7 +194,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             rvProducts.setAdapter(productRecyclerViewAdapter);
             rvProducts.addOnScrollListener(rvScrollListener);
 
-            if(isFinalize) {
+            if(isFinalize && !displayOnly) {
                 ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
                 itemTouchHelper.attachToRecyclerView(rvProducts);
             }
@@ -498,7 +498,6 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     }
 
     // ---------------------- Return
-
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
