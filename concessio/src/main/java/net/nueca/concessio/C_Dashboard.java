@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.j256.ormlite.stmt.QueryBuilder;
+
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -28,6 +30,8 @@ import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
+import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.Extras;
@@ -38,9 +42,11 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.LastUpdateAtTools;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,11 +59,20 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     private Spinner spBranches;
     private RecyclerView rvModules;
     private RecyclerView.LayoutManager layoutManager;
-
+    final APIDownloader apiDownloader = new APIDownloader(C_Dashboard.this, false);
     private ArrayAdapter<Branch> branchesAdapter;
     private DashboardRecyclerAdapter dashboardRecyclerAdapter;
 
     private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>(){{
+
+
+        // Stock Request || ORDER || ConcessioModule.STOCK_REQUEST
+        /*add(new DashboardTile(ConcessioModule.STOCK_REQUEST, "Order", R.drawable.ic_mso));
+        add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Count", R.drawable.ic_physical_count));
+        add(new DashboardTile(ConcessioModule.RECEIVE_BRANCH, "Receive", R.drawable.ic_physical_count));
+        add(new DashboardTile(ConcessioModule.RELEASE_BRANCH, "Receive", R.drawable.ic_physical_count));
+        add(new DashboardTile(ConcessioModule.INVOICE, "Receive", R.drawable.ic_physical_count));*/
+
         add(new DashboardTile(ConcessioModule.ROUTE_PLAN, "Sales", R.drawable.ic_booking));
         add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers", R.drawable.ic_customers));
         add(new DashboardTile(ConcessioModule.RECEIVE_SUPPLIER, "Receiving", R.drawable.ic_receiving));
@@ -137,6 +152,40 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             e.printStackTrace();
         }*/
 
+        try {
+            QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().fetchIntId(LastUpdatedAt.class).queryBuilder();
+
+            queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(Table.BRANCH_PRODUCTS));
+
+            LastUpdatedAt lastUpdatedAt = getHelper().fetchObjects(LastUpdatedAt.class).queryForFirst(queryBuilder.prepare());
+
+            lastUpdatedAt.setLast_updated_at("2016/01/01 07:20:13 +000");
+            lastUpdatedAt.updateTo(getHelper());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+/*
+
+
+        List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd h:m");
+
+
+        for(BranchProduct bp : branchProducts) {
+            Log.e("SampleSales", "before" + bp.getUtc_updated_at());
+            bp.setUtc_updated_at("2016-01-01T07:20:13Z");
+            bp.updateTo(getHelper());
+        }
+
+        List<BranchProduct> branchProduct = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+
+        for(BranchProduct bp : branchProduct) {
+            Log.e("SampleSales", "after" + bp.getUtc_updated_at());
+        }
+*/
+
+
 
         setNextActivityClass(C_Module.class);
 
@@ -200,7 +249,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         progressListDialog.setCanceledOnTouchOutside(false);
                         progressListDialog.setCancelable(false);
 
-                        final APIDownloader apiDownloader = new APIDownloader(C_Dashboard.this, false);
+
                         apiDownloader.setSyncServer(Server.IRETAILCLOUD_NET);
                         apiDownloader.setSyncModulesListener(new SyncModulesListener() {
                             @Override
@@ -258,6 +307,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         });
 
                         apiDownloader.forUpdating();
+
                         try {
                             apiDownloader.addModulesToUpdate(tables);
                             apiDownloader.execute(C_Dashboard.this);
@@ -317,6 +367,10 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     protected void onDestroy() {
         if(!SwableTools.isImonggoSwableRunning(this))
             SwableTools.stopSwable(this);
+
+        if(apiDownloader != null) {
+            apiDownloader.onUnbindSyncService();
+        }
         super.onDestroy();
     }
 }
