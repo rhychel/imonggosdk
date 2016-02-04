@@ -151,7 +151,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         } catch (SQLException e) {
             e.printStackTrace();
         }*/
-
+/*
         try {
             QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().fetchIntId(LastUpdatedAt.class).queryBuilder();
 
@@ -163,7 +163,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             lastUpdatedAt.updateTo(getHelper());
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
 /*
 
 
