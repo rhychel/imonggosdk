@@ -13,25 +13,25 @@ import android.widget.Button;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SimpleSalesProductRecyclerAdapter;
-import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.fragments.SimpleCheckoutFragment;
 import net.nueca.concessioengine.fragments.SimpleCustomersFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.tools.LocationTools;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
-import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.tools.DialogTools;
-import net.nueca.concessioengine.tools.DiscountTools;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class SampleSales extends ModuleActivity implements SetupActionBar, View.OnClickListener {
@@ -56,11 +56,29 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
     private Customer selectedCustomer;
 
+    public void initComponents() {
+
+
+        List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd h:m");
+
+
+        for(BranchProduct bp : branchProducts) {
+            Log.e("SampleSales", "Branch Product ID: " + bp.getId());
+
+            Log.e("SampleSales", bp.getUtc_updated_at());
+        }
+
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e("SAMPLESALES", "onCreate");
         super.onCreate(savedInstanceState);
 
+        initComponents();
 
         /*try {
             Branch branch = getHelper().fetchObjects(Branch.class).queryBuilder().where().eq("id", getSession().getCurrent_branch_id()).queryForFirst();
@@ -111,7 +129,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
 
         Log.e("SAMPLE SALES", "V V V V V V V V V V V V V V V V V V V V V V V V V");
         Log.e("TEST Discount", "" + DiscountTools.applyMultipleDiscounts(new BigDecimal("100"), new BigDecimal("1"), "5%,90,20%", ","));
-        try {
+     //   try {
             //List<CustomerCustomerGroupAssoc> assocs = getHelper().fetchObjectsList(CustomerCustomerGroupAssoc.class);
             //for(CustomerCustomerGroupAssoc assoc : assocs)
             //    Log.e("#######", assoc.toString());
@@ -131,15 +149,9 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             for(Product product : products)
                 Log.e("@@@@@@@ **", product.toString());*/
 
-            List<BranchProduct> branchProducts = getHelper().fetchObjectsList(BranchProduct.class);
-            for(BranchProduct branchProduct : branchProducts)
-                Log.e("*******", branchProduct.toString());
-            List<BranchUnit> branchUnits = getHelper().fetchObjectsList(BranchUnit.class);
-            for(BranchUnit branchUnit : branchUnits)
-                Log.e("$$$$$$$", branchUnit.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
         //new SwableTools.Transaction(getHelper()).toUpdate().queue();
         Log.e("SAMPLE SALES", "Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ Λ");
 

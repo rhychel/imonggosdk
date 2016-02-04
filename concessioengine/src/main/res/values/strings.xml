@@ -30,8 +30,8 @@
         <item quantity="other">%d Items</item>
     </plurals>
 
-    <string name="test_account_id">C5111</string>
-    <string name="test_email">C5111A_OSS-1@imonggo.com</string>
+    <string name="test_account_id">A1029</string>
+    <string name="test_email">A1072A_OSS-1@imonggo.com</string>
     <string name="test_password">123rebisco456</string>
 
 
@@ -95,5 +95,9 @@
     <string name="handlingmsg_err_offline">Printer is offline.\n</string>
 
     <string name="discover_printer">Discover Printer</string>
+    <string name="printer_not_supported">Printer not yet support</string>
+    <string name="printer_type_is_null">Printer Type is null!</string>
+    <string name="printer_manufacturer_is_null">Printer Manufacturer is null!</string>
+    <string name="printer_not_yet_supported">Printer not yet supported</string>
 
 </resources>

@@ -5,6 +5,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
+import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 
@@ -47,5 +48,4 @@ public class C_MultiInput extends ModuleActivity implements SetupActionBar {
             }
         });
     }
-
 }

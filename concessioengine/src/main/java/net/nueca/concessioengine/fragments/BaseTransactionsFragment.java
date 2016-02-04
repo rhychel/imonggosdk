@@ -22,6 +22,7 @@ import net.nueca.imonggosdk.tools.ModuleSettingTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -54,6 +55,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
 
     protected SetupActionBar setupActionBar;
     protected ConcessioModule concessioModule = ConcessioModule.ALL;
+    protected List<ConcessioModule> filterModules;
 
     protected abstract void toggleNoItems(String msg, boolean show);
 
@@ -142,11 +144,24 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
         if(customer != null) {
             List<OfflineData> finalTransactions = new ArrayList<>();
             for(OfflineData offlineData : transactions) {
+                if(filterModules != null && filterModules.size() > 0)
+                    if(!filterModules.contains(offlineData.getConcessioModule()))
+                        continue;
+
                 if(offlineData.getObjectFromData() instanceof Document)
                     if(offlineData.getObjectFromData(Document.class).getCustomer() != null && offlineData.getObjectFromData(Document.class).getCustomer().equals(customer))
                         finalTransactions.add(offlineData);
                 if(offlineData.getObjectFromData() instanceof Invoice && offlineData.getObjectFromData(Invoice.class).getCustomer().equals(customer))
                     finalTransactions.add(offlineData);
+            }
+            return finalTransactions;
+        }
+        if(filterModules != null && filterModules.size() > 0) {
+            List<OfflineData> finalTransactions = new ArrayList<>();
+            for(OfflineData offlineData : transactions) {
+                if(filterModules != null && filterModules.size() > 0)
+                    if(!filterModules.contains(offlineData.getConcessioModule()))
+                        continue;
             }
             return finalTransactions;
         }
@@ -211,5 +226,9 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
     public void onlyOrders() {
         priorityInvoice = false;
         priorityDocument = false;
+    }
+
+    public void setFilterModules(ConcessioModule... filterModules) {
+        this.filterModules = Arrays.asList(filterModules);;
     }
 }
