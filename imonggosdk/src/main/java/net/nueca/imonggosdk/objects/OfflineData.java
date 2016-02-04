@@ -50,10 +50,10 @@ public class OfflineData extends BaseTable2 {
     private Invoice invoiceData;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "order_id")
     private Order orderData;
-
-    private transient Document documentData;
-    @ForeignCollectionField(orderColumnName = "reference")
-    private transient ForeignCollection<Document> documentData_fc;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
+    private Document documentData;
+    //@ForeignCollectionField(orderColumnName = "reference")
+    //private transient ForeignCollection<Document> documentData_fc;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
     private Customer customerData;
@@ -248,7 +248,7 @@ public class OfflineData extends BaseTable2 {
             case ORDER:
                 return orderData.toJSONObject();
             case DOCUMENT:
-                generateParentDocument();
+                //generateParentDocument();
                 return documentData.toJSONObject();
             case CUSTOMER:
                 return customerData.toJSONObject();
@@ -257,8 +257,9 @@ public class OfflineData extends BaseTable2 {
         }
 	}
 
+    @Deprecated
     private Document generateParentDocument() {
-        if(documentData_fc != null) {
+        /*if(documentData_fc != null) {
             if(documentData != null) {
                 documentData.setDocument_lines(null);
                 documentData.setReference(reference_no);
@@ -274,16 +275,16 @@ public class OfflineData extends BaseTable2 {
                         documentData.addAllDocumentLine(document.getDocument_lines());
                 }
             }
-        }
+        }*/
 
         return documentData;
     }
 
     public List<Document> getChildDocuments() throws JSONException {
-        if(documentData_fc == null)
+        //if(documentData_fc == null)
             return documentData.getChildDocuments();
-        else
-            return new ArrayList<>(documentData_fc);
+        //else
+        //    return new ArrayList<>(documentData_fc);
     }
 
 	public void setData(JSONObject data) throws JSONException {
@@ -699,16 +700,16 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
-                generateParentDocument();
+                //generateParentDocument();
                 if(documentData == null)
                     break;
-                if(isPagedRequest() && !isNewPagedSend) {
+                /*if(isPagedRequest() && !isNewPagedSend) {
                     for(Document child : documentData_fc) {
                         child.deleteTo(dbHelper);
                     }
-                } else {
+                } else {*/
                     documentData.deleteTo(dbHelper);
-                }
+                //}
                 break;
             case CUSTOMER:
                 typeStr = "CUSTOMER";
@@ -748,7 +749,7 @@ public class OfflineData extends BaseTable2 {
                     orderData.updateTo(dbHelper);
                 break;
             case DOCUMENT:
-                generateParentDocument();
+                //generateParentDocument();
                 documentData.setOfflineData(this);
                 typeStr = "DOCUMENT";
                 if(getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0) {
@@ -781,10 +782,10 @@ public class OfflineData extends BaseTable2 {
                         }
                     }
                 } else {
-                    if(isPagedRequest() && !isNewPagedSend) {
+                    /*if(isPagedRequest() && !isNewPagedSend) {
                         for(Document child : documentData_fc)
                             child.updateTo(dbHelper);
-                    } else
+                    } else*/
                         documentData.updateTo(dbHelper);
                 }
                 break;
@@ -817,7 +818,8 @@ public class OfflineData extends BaseTable2 {
         else if(type == ORDER)
             return orderData;
         else if(type == DOCUMENT) {
-            return generateParentDocument();
+            //return generateParentDocument();
+            return documentData;
         }
         else if(type == CUSTOMER)
             return customerData;

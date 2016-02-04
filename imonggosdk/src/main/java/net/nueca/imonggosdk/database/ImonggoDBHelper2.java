@@ -12,6 +12,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -43,8 +44,6 @@ import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
-import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
-import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -79,13 +78,13 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 60;
+    private static final int DATABASE_VERSION = 62;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchTag.class, Customer.class,
             Inventory.class, Product.class, ProductTag.class, Session.class,
             Discount.class, TaxRate.class, TaxSetting.class, Unit.class, User.class,
-            BranchProduct.class, BranchUnit.class, DocumentType.class, DocumentPurpose.class,
+            BranchProduct.class, DocumentType.class, DocumentPurpose.class,
             BranchUserAssoc.class, ProductTaxRateAssoc.class,
             LastUpdatedAt.class, OfflineData.class, Document.class, DocumentLine.class,
             DailySales.class, Settings.class, Order.class, OrderLine.class,

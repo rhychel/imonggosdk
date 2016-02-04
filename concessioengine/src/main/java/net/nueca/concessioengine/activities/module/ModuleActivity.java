@@ -373,6 +373,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 pcount.addDocumentLine(documentLine);
             }
         }
+        pcount.customer(ProductsAdapterHelper.getSelectedCustomer()); // can be null
         pcount.document_type_code(documentTypeCode);
         if(targetBranchId > -1)
             pcount.target_branch_id(targetBranchId);

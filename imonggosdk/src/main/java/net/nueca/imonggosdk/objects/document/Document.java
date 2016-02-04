@@ -32,7 +32,7 @@ import java.util.List;
  * Created by gama on 7/20/15.
  */
 public class Document extends BaseTransactionTable {
-    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 50;
+    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 2;
 
     @Expose
     @DatabaseField

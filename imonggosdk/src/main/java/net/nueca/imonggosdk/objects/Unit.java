@@ -14,7 +14,6 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
-import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.base.Extras;
@@ -38,11 +37,14 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id")
     private transient Product product;
 
-    @ForeignCollectionField
-    private transient ForeignCollection<BranchPrice> branchPrices;
-
-    @ForeignCollectionField
-    private transient ForeignCollection<BranchUnit> branchUnits;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_product_id")
+    private transient BranchProduct branchProduct;
+//
+//    @ForeignCollectionField
+//    private transient ForeignCollection<BranchPrice> branchPrices;
+//
+//    @ForeignCollectionField
+//    private transient ForeignCollection<BranchUnit> branchUnits;
 
     @ForeignCollectionField // need?
     private transient ForeignCollection<Price> prices;
@@ -148,21 +150,30 @@ public class Unit extends BaseTable implements Extras.DoOperationsForExtras {
         this.prices = prices;
     }
 
-    public ForeignCollection<BranchPrice> getBranchPrices() {
-        return branchPrices;
+    public BranchProduct getBranchProduct() {
+        return branchProduct;
     }
 
-    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
-        this.branchPrices = branchPrices;
+    public void setBranchProduct(BranchProduct branchProduct) {
+        this.branchProduct = branchProduct;
     }
 
-    public ForeignCollection<BranchUnit> getBranchUnits() {
-        return branchUnits;
-    }
-
-    public void setBranchUnits(ForeignCollection<BranchUnit> branchUnits) {
-        this.branchUnits = branchUnits;
-    }
+    //
+//    public ForeignCollection<BranchPrice> getBranchPrices() {
+//        return branchPrices;
+//    }
+//
+//    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
+//        this.branchPrices = branchPrices;
+//    }
+//
+//    public ForeignCollection<BranchUnit> getBranchUnits() {
+//        return branchUnits;
+//    }
+//
+//    public void setBranchUnits(ForeignCollection<BranchUnit> branchUnits) {
+//        this.branchUnits = branchUnits;
+//    }
 
     @Override
     public boolean equals(Object o) {
