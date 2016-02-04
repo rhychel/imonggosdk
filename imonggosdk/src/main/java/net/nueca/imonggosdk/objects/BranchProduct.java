@@ -28,8 +28,16 @@ public class BranchProduct extends BaseTable {
     private transient Unit unit;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_id")
     private transient Branch branch;
+    @DatabaseField
+    private transient boolean isBaseUnitSellable = false;
 
     public BranchProduct() {
+
+    }
+
+    public BranchProduct(Product product, Branch branch) {
+        this.product = product;
+        this.branch = branch;
     }
 
     public Branch getBranch() {
@@ -86,6 +94,14 @@ public class BranchProduct extends BaseTable {
 
     public void setRetail_price(double retail_price) {
         this.retail_price = retail_price;
+    }
+
+    public boolean isBaseUnitSellable() {
+        return isBaseUnitSellable;
+    }
+
+    public void setBaseUnitSellable(boolean baseUnitSellable) {
+        isBaseUnitSellable = baseUnitSellable;
     }
 
     @Override
