@@ -218,5 +218,6 @@ public class APIDownloader extends BaseUpdater implements SyncServiceConnectionL
     public void onUnbindSyncService() {
 
     }
+
 }
 
