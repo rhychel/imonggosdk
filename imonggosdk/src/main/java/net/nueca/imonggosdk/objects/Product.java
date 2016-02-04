@@ -11,7 +11,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.Extras;
-import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.Price;
@@ -108,10 +107,13 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     private transient ForeignCollection<Price> prices;
 
     @ForeignCollectionField
-    private transient ForeignCollection<BranchPrice> branchPrices;
-
-    @ForeignCollectionField
     private transient ForeignCollection<BranchProduct> branchProducts;
+
+//    @ForeignCollectionField
+//    private transient ForeignCollection<BranchPrice> branchPrices;
+//
+//    @ForeignCollectionField
+//    private transient ForeignCollection<BranchProduct> branchProducts;
 
     @Expose
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
@@ -407,14 +409,6 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
         return inventory.getInventory();
     }
 
-    public ForeignCollection<BranchPrice> getBranchPrices() {
-        return branchPrices;
-    }
-
-    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
-        this.branchPrices = branchPrices;
-    }
-
     public ForeignCollection<Price> getPrices() {
         return prices;
     }
@@ -422,6 +416,14 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     public void setPrices(ForeignCollection<Price> prices) {
         this.prices = prices;
     }
+
+//    public ForeignCollection<BranchPrice> getBranchPrices() {
+//        return branchPrices;
+//    }
+//
+//    public void setBranchPrices(ForeignCollection<BranchPrice> branchPrices) {
+//        this.branchPrices = branchPrices;
+//    }
 
     public ForeignCollection<BranchProduct> getBranchProducts() {
         return branchProducts;
