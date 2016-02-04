@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.enums;
 
+import android.util.Log;
+
 /**
  * Created by rhymart on 8/22/15.
  * imonggosdk2 (c)2015
@@ -57,8 +59,12 @@ public enum ConcessioModule {
         ConcessioModule[] concessioModules = new ConcessioModule[ordinals.length];
 
         int i = 0;
-        for(int ordinal : ordinals)
+        for(int ordinal : ordinals) {
+            Log.e("ConcessioModule", ordinal+"--");
+            Log.e("ConcessioMOdule", values()[ordinal].name);
             concessioModules[i++] = values()[ordinal];
+        }
+        Log.e("ConcessioModule", concessioModules.length+"");
 
         return concessioModules;
     }
