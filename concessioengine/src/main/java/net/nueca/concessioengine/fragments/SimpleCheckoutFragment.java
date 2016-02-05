@@ -123,6 +123,14 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
                     splitPaymentAdapter.deletePayment(lvh.getItemIndex());
             }
         }
+
+        @Override
+        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            if(viewHolder instanceof SimpleSplitPaymentAdapter.ListViewHolder)
+                if(!((SimpleSplitPaymentAdapter.ListViewHolder) viewHolder).isEditable())
+                    return 0;
+            return super.getSwipeDirs(recyclerView, viewHolder);
+        }
     });
 
     public void setAmountDueTextView(TextView tvAmountDue) {

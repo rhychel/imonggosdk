@@ -216,7 +216,8 @@ public class SimpleCustomerRecyclerViewAdapter extends
                     tvAddress = (TextView) itemView.findViewById(R.id.tvAddress);
                 }
             }
-            itemView.setOnClickListener(this);
+            if(itemView.findViewById(R.id.tvLetterHeader) == null)
+                itemView.setOnClickListener(this);
         }
 
         public void setCustomer(Customer customer) {
