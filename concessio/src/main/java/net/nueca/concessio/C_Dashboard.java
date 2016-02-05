@@ -64,15 +64,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     private DashboardRecyclerAdapter dashboardRecyclerAdapter;
 
     private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>(){{
-
-
-        // Stock Request || ORDER || ConcessioModule.STOCK_REQUEST
-        /*add(new DashboardTile(ConcessioModule.STOCK_REQUEST, "Order", R.drawable.ic_mso));
-        add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Count", R.drawable.ic_physical_count));
-        add(new DashboardTile(ConcessioModule.RECEIVE_BRANCH, "Receive", R.drawable.ic_physical_count));
-        add(new DashboardTile(ConcessioModule.RELEASE_BRANCH, "Receive", R.drawable.ic_physical_count));
-        add(new DashboardTile(ConcessioModule.INVOICE, "Receive", R.drawable.ic_physical_count));*/
-
         add(new DashboardTile(ConcessioModule.ROUTE_PLAN, "Sales", R.drawable.ic_booking));
         add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers", R.drawable.ic_customers));
         add(new DashboardTile(ConcessioModule.RECEIVE_SUPPLIER, "Receiving", R.drawable.ic_receiving));

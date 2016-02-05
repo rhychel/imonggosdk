@@ -20,6 +20,7 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.document.Document;
 
 import java.util.List;
 
@@ -49,6 +50,11 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
         simpleProductRecyclerViewAdapter.setListingType(ListingType.SALES);
         simpleProductRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
         rvProducts.setAdapter(simpleProductRecyclerViewAdapter);
+
+        if(offlineData.getObjectFromData(Document.class).getCustomer() == null)
+            Log.e("TransactionsDetails", "customer is null");
+        else
+            Log.e("TransactionDetails", offlineData.getObjectFromData(Document.class).getCustomer().generateFullName());
 
         return view;
     }
