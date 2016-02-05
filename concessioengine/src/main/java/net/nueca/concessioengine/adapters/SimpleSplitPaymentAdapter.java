@@ -83,6 +83,8 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         else {
             InvoicePayment invoicePayment = getItem(position);
 
+            lvh.isEditable = invoicePayment.getPaymentBatchNo() == null;
+
             lvh.itemView.setTag(position);
             lvh.tvPaymentType.setText(getPaymentTypeWithId(invoicePayment.getPayment_type_id()).getName());
             lvh.tvPaymentValue.setText("P" + NumberTools.separateInCommas(invoicePayment.getTender()));
@@ -121,6 +123,7 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         //View llButtons;
         int position;
         boolean isLastItem = false;
+        boolean isEditable = true;
 
         public ListViewHolder(View itemView) {
             super(itemView);
@@ -142,6 +145,8 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
 
         @Override
         public void onClick(final View v) {
+            if(!isEditable)
+                return;
             if(listingType == ListingType.BASIC_PAYMENTS) {
                 if(isAdd) {
                     SimplePaymentDialog dialog = new SimplePaymentDialog(getContext(),
@@ -221,6 +226,13 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
             return position;
         }
 
+        public boolean isEditable() {
+            return isEditable;
+        }
+
+        public void setEditable(boolean editable) {
+            isEditable = editable;
+        }
         /*private View.OnClickListener delete = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

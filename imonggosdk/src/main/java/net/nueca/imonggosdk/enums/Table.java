@@ -120,7 +120,8 @@ public enum Table {
     ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class, "route_plans"),
     ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlanDetail.class, "route_plans_details"),
 
-    NONE(API_TYPE.NON_API, "none");
+    NONE(API_TYPE.NON_API, "none"),
+    ALL(API_TYPE.NON_API, "All");
 
     private final API_TYPE api_type;
     private final String name;
