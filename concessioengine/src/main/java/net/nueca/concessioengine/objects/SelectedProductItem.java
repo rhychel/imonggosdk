@@ -345,6 +345,12 @@ public class SelectedProductItem {
         return subtotal;
     }
 
+    public String getValuesUnit() {
+        for(Values values : valuesList)
+            return values.getUnit_name();
+        return "";
+    }
+
     @Deprecated
     public int addReceiveValues(Values value) {
         int index = valuesList.indexOf(value);

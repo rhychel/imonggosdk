@@ -105,10 +105,10 @@ public abstract class DBTable {
     }
 
     public static <T> List<T> fetchWithConditionInt(ImonggoDBHelper2 dbHelper, Class<T> c, ConditionsWindow<T, Integer> conditions) {
-        return fetchWithConditionInt(dbHelper, c, conditions, 0L, 0L);
+        return fetchWithConditionInt(dbHelper, c, conditions, null, null);
     }
 
-    public static <T> List<T> fetchWithConditionInt(ImonggoDBHelper2 dbHelper, Class<T> c, ConditionsWindow<T, Integer> conditions, long limit, long offset) {
+    public static <T> List<T> fetchWithConditionInt(ImonggoDBHelper2 dbHelper, Class<T> c, ConditionsWindow<T, Integer> conditions, Long limit, Long offset) {
         try {
             QueryBuilder<T, Integer> queryBuilder = dbHelper.fetchObjectsInt(c).queryBuilder();
             queryBuilder.setWhere(conditions.renderConditions(queryBuilder.where()));
@@ -120,10 +120,10 @@ public abstract class DBTable {
     }
 
     public static <T> List<T> fetchWithConditionStr(ImonggoDBHelper2 dbHelper, Class<T> c, ConditionsWindow<T, String> conditions) {
-        return fetchWithConditionStr(dbHelper, c, conditions, 0L, 0L);
+        return fetchWithConditionStr(dbHelper, c, conditions, null, null);
     }
 
-    public static <T> List<T> fetchWithConditionStr(ImonggoDBHelper2 dbHelper, Class<T> c, ConditionsWindow<T, String> conditions, long limit, long offset) {
+    public static <T> List<T> fetchWithConditionStr(ImonggoDBHelper2 dbHelper, Class<T> c, ConditionsWindow<T, String> conditions, Long limit, Long offset) {
         try {
             QueryBuilder<T, String> queryBuilder = dbHelper.fetchObjectsStr(c).queryBuilder();
             queryBuilder.setWhere(conditions.renderConditions(queryBuilder.where()));
