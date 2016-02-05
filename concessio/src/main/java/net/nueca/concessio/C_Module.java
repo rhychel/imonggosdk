@@ -1024,8 +1024,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     public void whenDismissed() {
                                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
-                                        onBackPressed();
-                                        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                        if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                             llFooter.setVisibility(View.GONE);
                                             simpleCustomersFragment.setHasSelected(false);
                                             simpleCustomersFragment.onViewCreated(null, null);
@@ -1033,11 +1032,31 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                             showsCustomer = true;
 
                                             Log.e("simple", "called customer fragment");
-                                            getSupportFragmentManager()
-                                                    .beginTransaction()
-                                                    .replace(R.id.flContent, simpleCustomersFragment)
-                                                    .commit();
+
+                                            Log.e("popBackStack", getSupportFragmentManager().getBackStackEntryCount()+"");
+                                            getSupportFragmentManager().popBackStackImmediate(); // finalize
+                                            getSupportFragmentManager().popBackStackImmediate(); // product list
+                                            previousFragmentCount = 0;
                                         }
+                                        else {
+                                            Log.e("popBackStack", "not release adjustment");
+                                            onBackPressed();
+                                        }
+//
+//                                        onBackPressed();
+//                                        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+//                                            llFooter.setVisibility(View.GONE);
+//                                            simpleCustomersFragment.setHasSelected(false);
+//                                            simpleCustomersFragment.onViewCreated(null, null);
+//                                            hasMenu = true;
+//                                            showsCustomer = true;
+//
+//                                            Log.e("simple", "called customer fragment");
+//                                            getSupportFragmentManager()
+//                                                    .beginTransaction()
+//                                                    .replace(R.id.flContent, simpleCustomersFragment)
+//                                                    .commit();
+//                                        }
                                     }
                                 });
                                 transactionDialog.show();
@@ -1095,7 +1114,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         public void whenDismissed() {
                                                             ProductsAdapterHelper.clearSelectedProductItemList(true);
                                                             ProductsAdapterHelper.clearSelectedReturnProductItemList();
-                                                            onBackPressed();
                                                             if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                                                 llFooter.setVisibility(View.GONE);
                                                                 simpleCustomersFragment.setHasSelected(false);
@@ -1105,9 +1123,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                                                 Log.e("simple", "called customer fragment");
 
+                                                                Log.e("popBackStack", getSupportFragmentManager().getBackStackEntryCount()+"");
                                                                 getSupportFragmentManager().popBackStackImmediate(); // finalize
                                                                 getSupportFragmentManager().popBackStackImmediate(); // product list
                                                                 previousFragmentCount = 0;
+                                                            }
+                                                            else {
+                                                                Log.e("popBackStack", "not release adjustment");
+                                                                onBackPressed();
                                                             }
                                                         }
                                                     });

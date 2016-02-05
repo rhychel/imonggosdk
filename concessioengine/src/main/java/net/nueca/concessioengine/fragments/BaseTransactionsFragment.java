@@ -3,7 +3,9 @@ package net.nueca.concessioengine.fragments;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.TransactionTypesAdapter;
@@ -128,16 +130,38 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
             }
 
             QueryBuilder<OfflineData, Integer> resultTransactions = getHelper().fetchIntId(OfflineData.class).queryBuilder();
-            if(customer != null) {// ?
+            if(customer != null) {
                 QueryBuilder<Invoice, Integer> custInvoices = getHelper().fetchIntId(Invoice.class).queryBuilder();
+                custInvoices.selectColumns("id");
                 custInvoices.where().eq("customer_id", customer);
+                List<Invoice> invoices = custInvoices.query();
 
                 QueryBuilder<Document, Integer> custDocuments = getHelper().fetchIntId(Document.class).queryBuilder();
+                custDocuments.selectColumns("id");
                 custDocuments.where().eq("customer_id", customer);
+                List<Document> documents = custDocuments.query();
 
-                whereOfflineData.in("invoice_id", custInvoices.query()).and().in("document_id", custDocuments.query());
-
-//                resultTransactions..joinOr(custDocuments).joinOr(custInvoices);//.joinOr(custDocuments);
+                SelectArg[] selectArgs = new SelectArg[invoices.size()+documents.size()];
+                String invQuery = "invoice_id IN (";
+                String docQuery = "document_id IN (";
+                int index = 0;
+                for(int i = 0;i < invoices.size();i++) {
+                    if(i > 0)
+                        invQuery+=",";
+                    selectArgs[index] = new SelectArg("invoice_id", invoices.get(i));
+                    invQuery += "?";
+                    index++;
+                }
+                invQuery += ")";
+                for(int i = 0;i < documents.size();i++) {
+                    if(i > 0)
+                        docQuery+=",";
+                    selectArgs[index] = new SelectArg("document_id", documents.get(i));
+                    docQuery += "?";
+                    index++;
+                }
+                docQuery += ")";
+                whereOfflineData.and().raw("("+invQuery+" OR "+docQuery+")", selectArgs);
             }
             resultTransactions.orderBy("dateCreated", false);
             resultTransactions.setWhere(whereOfflineData);

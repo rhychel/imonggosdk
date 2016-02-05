@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -16,10 +17,13 @@ import java.sql.SQLException;
 @DatabaseTable
 public class BranchProduct extends BaseTable {
 
+    @Expose
     @DatabaseField
     private double unit_retail_price;
+    @Expose
     @DatabaseField
     private String name, description;
+    @Expose
     @DatabaseField
     private double retail_price;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "product_id")
@@ -36,8 +40,14 @@ public class BranchProduct extends BaseTable {
     }
 
     public BranchProduct(Product product, Branch branch) {
+        this(product, branch, null);
+        isBaseUnitSellable = true;
+    }
+
+    public BranchProduct(Product product, Branch branch, Unit unit) {
         this.product = product;
         this.branch = branch;
+        this.unit = unit;
     }
 
     public Branch getBranch() {
@@ -129,5 +139,17 @@ public class BranchProduct extends BaseTable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String toString() {
+        return  "{" +
+                "product_id: " + product.getId() + ", " +
+                "unit_id: " + (unit == null? "null" : unit.getId()) + ", " +
+                "branch_id: " + branch.getId() + ", " +
+                "retail_price: " + retail_price + ", " +
+                "unit_retail_price: " + unit_retail_price + ", " +
+                "isBaseUnitSellable: " + isBaseUnitSellable +
+                "}";
     }
 }
