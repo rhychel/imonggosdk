@@ -107,6 +107,20 @@ public abstract class BaseUpdater implements SyncModulesListener {
 
     }
 
+    protected void unbindSyncService() {
+        if (mServiceBounded) {
+            mServiceBounded = false;
+            if (mContext != null) {
+                mContext.unbindService(mConnection);
+            } else {
+                Log.e(TAG, "Can't Unbind Service, Context is null");
+            }
+        } else {
+            Log.e(TAG, "Can't unbind service, its already unbinded");
+        }
+        mSyncServiceOperation.onUnbindSyncService();
+    }
+
     private void setUpTablesToDownload() {
         if (mModules.length == 0) {
             Log.e(TAG, "mModules is null getting in shared pref");
@@ -123,7 +137,7 @@ public abstract class BaseUpdater implements SyncModulesListener {
                 };
             }
         } else {
-            Log.e(TAG, "modules is not null, size: " + mModules.length );
+            Log.e(TAG, "modules is not null, size: " + mModules.length);
         }
 
         for (int module : mModules) {

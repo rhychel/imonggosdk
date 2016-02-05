@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.j256.ormlite.stmt.QueryBuilder;
+
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -28,6 +30,8 @@ import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
+import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.Extras;
@@ -38,9 +42,11 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.LastUpdateAtTools;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +59,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     private Spinner spBranches;
     private RecyclerView rvModules;
     private RecyclerView.LayoutManager layoutManager;
-
+    final APIDownloader apiDownloader = new APIDownloader(C_Dashboard.this, false);
     private ArrayAdapter<Branch> branchesAdapter;
     private DashboardRecyclerAdapter dashboardRecyclerAdapter;
 
@@ -75,11 +81,102 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
         Log.e("ClassName", Customer.class.getSimpleName());
 
-//        try {
-//            getHelper().deleteAll(OfflineData.class);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        /*try {
+            getHelper().deleteAll(OfflineData.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+        /*Invoice.Builder builder = new Invoice.Builder();
+        builder.invoice_date("2016-02-02T14:58:16Z");
+        builder.reference("14-1000");
+        builder.salesman_id(1204);
+        builder.status("L");
+        builder.addInvoiceLine(
+                new InvoiceLine.Builder()
+                        .quantity(1.0)
+                        .retail_price(100.0)
+                        .product_id(197447)
+                        .unit_name("Pc(s)")
+                        .line_no(1)
+                        .subtotal("100.0")
+                        .build()
+        );
+        builder.addInvoiceLine(
+                new InvoiceLine.Builder()
+                        .quantity(-1.0)
+                        .retail_price(20.0)
+                        .product_id(197449)
+                        .unit_name("Pc(s)")
+                        .line_no(2)
+                        .subtotal("-20.0")
+                        .build()
+        );
+        builder.addPayment(
+                new InvoicePayment.Builder()
+                        .amount(50.0)
+                        .tender(50.0)
+                        .payment_type_id(1)
+                        .build()
+        );
+        builder.extras(
+                new Extras.Builder()
+                        .total_company_discount("0.0")
+                        .total_unit_retail_price("80.0")
+                        .payment_term_id(28)
+                        .total_selling_price("80.0")
+                        .total_customer_discount("0.0")
+                        .customer_discount_text_summary("")
+                        .build()
+        );
+
+        try {
+            Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id",201925).queryForFirst();
+            builder.customer(customer);
+            new SwableTools.Transaction(getHelper())
+                    .toSend()
+                    .fromModule(ConcessioModule.INVOICE)
+                    .forBranch(getSession().getCurrent_branch_id())
+                    .object(builder.build())
+                    .queue();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+/*
+        try {
+            QueryBuilder<LastUpdatedAt, Integer> queryBuilder = getHelper().fetchIntId(LastUpdatedAt.class).queryBuilder();
+
+            queryBuilder.where().eq("tableName", LastUpdateAtTools.getTableToSync(Table.BRANCH_PRODUCTS));
+
+            LastUpdatedAt lastUpdatedAt = getHelper().fetchObjects(LastUpdatedAt.class).queryForFirst(queryBuilder.prepare());
+
+            lastUpdatedAt.setLast_updated_at("2016/01/01 07:20:13 +000");
+            lastUpdatedAt.updateTo(getHelper());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+/*
+
+
+        List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd h:m");
+
+
+        for(BranchProduct bp : branchProducts) {
+            Log.e("SampleSales", "before" + bp.getUtc_updated_at());
+            bp.setUtc_updated_at("2016-01-01T07:20:13Z");
+            bp.updateTo(getHelper());
+        }
+
+        List<BranchProduct> branchProduct = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+
+        for(BranchProduct bp : branchProduct) {
+            Log.e("SampleSales", "after" + bp.getUtc_updated_at());
+        }
+*/
+
+
 
         setNextActivityClass(C_Module.class);
 
@@ -143,7 +240,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         progressListDialog.setCanceledOnTouchOutside(false);
                         progressListDialog.setCancelable(false);
 
-                        final APIDownloader apiDownloader = new APIDownloader(C_Dashboard.this, false);
+
                         apiDownloader.setSyncServer(Server.IRETAILCLOUD_NET);
                         apiDownloader.setSyncModulesListener(new SyncModulesListener() {
                             @Override
@@ -201,6 +298,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         });
 
                         apiDownloader.forUpdating();
+
                         try {
                             apiDownloader.addModulesToUpdate(tables);
                             apiDownloader.execute(C_Dashboard.this);
@@ -260,6 +358,10 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     protected void onDestroy() {
         if(!SwableTools.isImonggoSwableRunning(this))
             SwableTools.stopSwable(this);
+
+        if(apiDownloader != null) {
+            apiDownloader.onUnbindSyncService();
+        }
         super.onDestroy();
     }
 }
