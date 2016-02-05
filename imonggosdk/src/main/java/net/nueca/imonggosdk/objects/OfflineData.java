@@ -624,7 +624,8 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
-                if(!isPagedRequest() || isNewPagedSend) // not a paged request
+                documentData.setId(id * -1);
+                //if(!isPagedRequest() || isNewPagedSend) // not a paged request
                     documentData.insertTo(dbHelper);
                 break;
             case CUSTOMER:
@@ -653,7 +654,7 @@ public class OfflineData extends BaseTable2 {
                 orderData.updateTo(dbHelper);
                 break;
             case DOCUMENT:
-                if(isPagedRequest() && !isNewPagedSend) {
+                /*if(isPagedRequest() && !isNewPagedSend) {
                     try {
                         List<Document> children = documentData.getChildDocuments();
                         for(Document child : children) {
@@ -668,10 +669,9 @@ public class OfflineData extends BaseTable2 {
                 } else {
                     documentData.setOfflineData(this);
                     documentData.updateTo(dbHelper);
-                }
-                documentData.deleteTo(dbHelper);
-                documentData.setId(id * -1);
-                documentData.insertTo(dbHelper);
+                }*/
+                documentData.setOfflineData(this);
+                documentData.updateTo(dbHelper);
                 break;
             //case CUSTOMER:
             //    customerData.updateTo(dbHelper);
@@ -753,7 +753,7 @@ public class OfflineData extends BaseTable2 {
                 documentData.setOfflineData(this);
                 typeStr = "DOCUMENT";
                 if(getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0) {
-                    if(isPagedRequest() && !isNewPagedSend) {
+                    /*if(isPagedRequest() && !isNewPagedSend) {
                         try {
                             List<Document> children = getChildDocuments();
 
@@ -774,13 +774,13 @@ public class OfflineData extends BaseTable2 {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    } else {
+                    } else {*/
                         if(!getReturnIdList().get(0).equals("@")) {
                             documentData.deleteTo(dbHelper);
                             documentData.setId(Integer.parseInt(getReturnIdList().get(0)));
                             documentData.insertTo(dbHelper);
                         }
-                    }
+                    //}
                 } else {
                     /*if(isPagedRequest() && !isNewPagedSend) {
                         for(Document child : documentData_fc)

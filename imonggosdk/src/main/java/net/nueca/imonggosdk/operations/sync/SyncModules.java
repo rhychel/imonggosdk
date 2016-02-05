@@ -63,6 +63,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -769,10 +770,27 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                     List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
 
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
                     for(BranchProduct bp :  branchProducts) {
-                        Log.e(TAG, "LastUpdatedAt: " + lastUpdatedAt.toString());
+                        Log.e(TAG, "LastUpdatedAt: " + lastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "UtcUpdateAt: " + bp.getUtc_updated_at());
+
+                        try {
+                        Date date1 = dateFormat.parse(lastUpdatedAt.getLast_updated_at());
+                            Date date2 = dateFormat.parse(bp.getUtc_updated_at());
+                            Log.e(TAG, "D1: " + date1.toString());
+                            Log.e(TAG, "D2: " + date2.toString());
+
+                            /*if(dateFormat.parse(date1.toString()).before()) {
+                                Log.e(TAG, lastUpdatedAt.getLast_updated_at() + " before " + bp.getUtc_updated_at());
+                            } else {
+                                Log.e(TAG, "after");
+                            }*/
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
+
                     // since this is the first
                     count = 0;
                     page = 1;
@@ -1297,7 +1315,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         if (jsonObject.has("unit_retail_price")) {
                                             if (!jsonObject.getString("unit_retail_price").isEmpty()) {
                                                 Log.e(TAG, "Unit Retail Price: " + jsonObject.getString("unit_retail_price"));
-                                                BRANCH_PRODUCT.setRetail_price(jsonObject.getDouble("unit_retail_price"));
+                                                BRANCH_PRODUCT.setUnit_retail_price(jsonObject.getDouble("unit_retail_price"));
                                             } else {
                                                 Log.e(TAG, "Branch Product API 'unit_retail_price' field is empty");
                                             }
@@ -1351,7 +1369,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         // 2. if updating sync
                                         //    2.2 last updated at after > BP.utc_updated_at <-local
                                         //    2.3 delete all branchproducts
-
 
 
                                         if (initialSync) {
