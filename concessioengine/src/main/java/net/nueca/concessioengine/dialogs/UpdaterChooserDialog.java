@@ -218,7 +218,7 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
     public int[] modulesToDownload() {
         tableList = new ArrayList<>();
         for(UpdateTable updateTable : chooserAdapter.getList()) {
-            if(updateTable.isSelected()) {
+            if(updateTable.isSelected() && updateTable.getTable() != Table.ALL) {
                 tableList.add(updateTable.getTable());
                 switch (updateTable.getTable()) {
                     case ROUTE_PLANS:
