@@ -280,6 +280,8 @@ public class ModuleSetting extends DBTable {
                     return obj.getSequenceType() == SequenceType.UPDATE;
                 }
             });
+            if(hasAll)
+                modules.add(Table.ALL);
             Log.e("modules", updateSequence.size()+"--");
             for(Sequence us : updateSequence) {
                 Log.e("modules", us.getTableValue().getStringName());

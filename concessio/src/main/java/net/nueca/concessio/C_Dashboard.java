@@ -260,7 +260,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         progressListDialog.setCanceledOnTouchOutside(false);
                         progressListDialog.setCancelable(false);
 
-
                         apiDownloader.setSyncServer(Server.IRETAILCLOUD_NET);
                         apiDownloader.setSyncModulesListener(new SyncModulesListener() {
                             @Override
