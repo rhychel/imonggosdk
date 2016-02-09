@@ -543,4 +543,5 @@ public class Invoice extends BaseTransactionTable2 {
     public void setLayaway_id(Integer layaway_id) {
         this.layaway_id = layaway_id;
     }
+
 }
