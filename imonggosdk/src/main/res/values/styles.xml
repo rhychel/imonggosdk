@@ -31,6 +31,14 @@
         <item name="android:displayOptions">homeAsUp</item>
     </style>
 
+    <style name="SwitchCompat.Orange" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="colorControlActivated">@color/primary</item>
+    </style>
+
+    <style name="Spinner.Orange" parent="Widget.AppCompat.Spinner">
+        <item name="colorControlActivated">@color/primary</item>
+    </style>
+
     <!-- Floating Action Button -->
     <style name="FloatingActionButton.Margin" parent="Widget.Design.FloatingActionButton">
         <item name="android:layout_marginLeft">0dp</item>
