@@ -89,7 +89,9 @@ public class ImonggoSwable extends SwableService {
                     Log.e("--- RECEIVER", "called");
                     String action = intent.getAction();
                     if(action.equals(NOTIFICATION_ACTION)) {
-                        // Todo: Do something with notification trigger
+                        swableSendModule.SUCCESS_TRANSACTIONS = 0;
+                        swableVoidModule.SUCCESS_TRANSACTIONS = 0;
+                        swableUpdateModule.SUCCESS_TRANSACTIONS = 0;
                     }
                 }
             };
@@ -218,13 +220,22 @@ public class ImonggoSwable extends SwableService {
                                 break;
 
                             case CANCEL_ORDER:
-                                swableVoidModule.voidTransaction(Table.ORDERS, offlineData);
+                                if(offlineData.isAllPageSynced())
+                                    swableVoidModule.voidTransaction(Table.ORDERS, offlineData);
+                                else
+                                    swableSendModule.sendTransaction(Table.ORDERS, offlineData);
                                 break;
                             case CANCEL_INVOICE:
-                                swableVoidModule.voidTransaction(Table.INVOICES, offlineData);
+                                if(offlineData.isAllPageSynced())
+                                    swableVoidModule.voidTransaction(Table.INVOICES, offlineData);
+                                else
+                                    swableSendModule.sendTransaction(Table.INVOICES, offlineData);
                                 break;
                             case CANCEL_DOCUMENT:
-                                swableVoidModule.voidTransaction(Table.DOCUMENTS, offlineData);
+                                if(offlineData.isAllPageSynced())
+                                    swableVoidModule.voidTransaction(Table.DOCUMENTS, offlineData);
+                                else
+                                    swableSendModule.sendTransaction(Table.DOCUMENTS, offlineData);
                                 break;
                             case DELETE_CUSTOMER:
                                 swableVoidModule.voidTransaction(Table.CUSTOMERS, offlineData);

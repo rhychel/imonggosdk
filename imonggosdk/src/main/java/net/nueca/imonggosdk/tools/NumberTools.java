@@ -78,6 +78,11 @@ public class NumberTools {
     public static final DecimalFormat FORMAT_OPTIONAL_DECIMAL =
             new DecimalFormat(StringUtils.repeat("###" + SEPARATOR, 5) + "##0." + StringUtils.repeat("#", DECIMAL_PLACE));
 
+    public static Double formatDouble(double value, int decimalPlace) {
+        DecimalFormat format = new DecimalFormat("##0." + StringUtils.repeat("0", decimalPlace));
+        return Double.valueOf(format.format(value));
+    }
+
     public static Double toDouble(String dblString) {
         if(dblString == null)
             return 0d;

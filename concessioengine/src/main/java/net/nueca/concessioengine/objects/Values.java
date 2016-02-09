@@ -2,13 +2,21 @@ package net.nueca.concessioengine.objects;
 
 import android.util.Log;
 
+import com.j256.ormlite.stmt.Where;
+
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.tools.DiscountTools;
+import net.nueca.imonggosdk.enums.SettingsName;
+import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,21 +147,21 @@ public class Values {
         setValue(quantity, price == null? null : price.getUnit(), extendedAttributes);
     }
 
-    public void setValue(String quantity, Unit unit, ExtendedAttributes extendedAttributes) {
+    public void setValue(String input_quantity, Unit unit, ExtendedAttributes extendedAttributes) {
         if(extendedAttributes != null)
             this.extendedAttributes = extendedAttributes;
         this.unit = unit;
         if(isValidUnit()) {
-            Log.e("Quantity-unit", unit.getQuantity()+" * "+quantity);
-            if(quantity.length() > 0)
-                this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
-            this.unit_quantity = quantity;
+            Log.e("Quantity-unit", unit.getQuantity()+" * "+input_quantity);
+            this.unit_quantity = input_quantity;
             this.unit_content_quantity = unit.getQuantity();
+            if(input_quantity.length() > 0)
+                this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(input_quantity)));
             this.unit_name = unit.getName();
-            this.unit_retail_price = unit.getRetail_price() * unit.getQuantity();
+            this.unit_retail_price = this.retail_price * Double.valueOf(this.unit_quantity);
         }
         else {
-            this.quantity = quantity;
+            this.quantity = input_quantity;
             this.unit_quantity = null;
             this.unit_content_quantity = 0d;
             this.unit_retail_price = 0d;
@@ -161,7 +169,7 @@ public class Values {
                 this.unit_name = unit.getName();
         }
 
-        Log.e("QTY", this.quantity + " ~ " + quantity);
+        Log.e("QTY", this.quantity + " ~ " + input_quantity);
 
         Log.e("DISCOUNT TEXT", (this.discount_text == null? "null" : this.discount_text) );
         if(this.discount_text != null && this.discount_text.length() > 0) {
@@ -177,38 +185,67 @@ public class Values {
 
         Log.e("PRICE OBJ", "isNull? " + (price == null));
         if(this.price == null) {
-            this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
+            if(isValidUnit()) {
+                this.no_discount_subtotal = this.unit_retail_price;
+                this.subtotal = this.unit_retail_price;
+            } else {
+                this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
+                this.subtotal = this.retail_price * Double.valueOf(this.quantity);
+            }
 
             //if (customer_discount_text != null && customer_discount_text.length() > 0) {
             //    this.subtotal = DiscountTools.applyMultipleDiscounts(
-            //            new BigDecimal(this.retail_price), new BigDecimal(this.quantity),
+            //            new BigDecimal(this.retail_price), new BigDecimal(this.input_quantity),
             //            customer_discounts, customer_discount_text, ","
             //    ).doubleValue();
             //} else {
-                this.subtotal = this.retail_price * Double.valueOf(this.quantity);
+            //    this.subtotal = this.retail_price * Double.valueOf(this.quantity);
             //}
         }
         else {
-            this.no_discount_subtotal = this.retail_price * Double.valueOf(quantity);
+            if(isValidUnit()) {
+                this.no_discount_subtotal = this.unit_retail_price;
+                this.subtotal = DiscountTools.applyMultipleDiscounts(
+                        new BigDecimal(this.retail_price), new BigDecimal(this.unit_quantity),
+                        product_discounts, discount_text, ","
+                ).doubleValue();
+            } else {
+                this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
+                this.subtotal = DiscountTools.applyMultipleDiscounts(
+                        new BigDecimal(this.retail_price), new BigDecimal(this.quantity),
+                        product_discounts, discount_text, ","
+                ).doubleValue();
+            }
 
             //if (customer_discount_text != null && customer_discount_text.length() > 0) {
             //    this.subtotal = DiscountTools.applyMultipleDiscounts(
-            //            new BigDecimal(this.retail_price), new BigDecimal(quantity),
+            //            new BigDecimal(this.retail_price), new BigDecimal(input_quantity),
             //            product_discounts, company_discounts, discount_text, ";", ",",
             //            customer_discounts, customer_discount_text
             //    ).doubleValue();
             //} else {
-                this.subtotal = DiscountTools.applyMultipleDiscounts(
-                        new BigDecimal(this.retail_price), new BigDecimal(quantity),
-                        product_discounts, discount_text, ","
-                ).doubleValue();
+            //    this.subtotal = DiscountTools.applyMultipleDiscounts(
+            //            new BigDecimal(this.retail_price), new BigDecimal(input_quantity),
+            //            product_discounts, discount_text, ","
+            //    ).doubleValue();
             //}
         }
 
+        /** DECIMAL FORMATTING **/
+        List<Settings> settingsList = Settings.fetchWithConditionInt(ProductsAdapterHelper.getDbHelper(),
+                Settings.class, new DBTable.ConditionsWindow<Settings,Integer>() {
+            @Override
+            public Where<Settings, Integer> renderConditions(Where<Settings, Integer> where) throws SQLException {
+                return where.eq("name", Configurations.SETTINGS_NAME.get(SettingsName.FORMAT_NO_OF_DECIMALS));
+            }
+        });
+        if(settingsList.size() > 0)
+            this.subtotal = NumberTools.formatDouble(this.subtotal, Integer.parseInt(settingsList.get(0).getValue()));
 
-        Log.e("QTY", this.quantity + " ~ " + quantity);
-        Log.e("Unit", unit != null? unit.getName() : "null");
-        Log.e("Values", "setValue : " + this.retail_price + " * " + quantity + " = " + this.subtotal);
+
+        Log.e("QTY", this.quantity + " ~ " + input_quantity);
+        Log.e("Unit", unit != null? unit.getName()+" id:"+unit.getId() : "null");
+        Log.e("Values", "setValue : " + this.retail_price + " * " + input_quantity + " = " + this.subtotal);
     }
 
     public String getQuantity() {

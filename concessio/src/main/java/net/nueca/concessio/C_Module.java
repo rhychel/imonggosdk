@@ -156,6 +156,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                             Intent intent = new Intent(C_Module.this, C_Finalize.class);
                             intent.putExtra("offlinedata_reference_no", offlineData.getReference_no());
+                            Log.e("INOVOICE SEND", offlineData.getObjectFromData(Invoice.class).toJSONString());
                             intent.putExtra("is_layaway", true);
                             startActivityForResult(intent, REVIEW_SALES);
                         }

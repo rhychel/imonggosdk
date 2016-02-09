@@ -65,20 +65,20 @@ public class SwableUpdateModule extends BaseSwableModule {
             JSONObject jsonObject;
             if(offlineData.getType() == OfflineData.INVOICE) {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
-                invoice.createNewPaymentBatch();
+                boolean hasNewPayment = invoice.createNewPaymentBatch();
                 invoice.updateTo(dbHelper);
 
-                if(!invoice.isHasNewPaymentBatch()) {
+                if(!hasNewPayment) {
                     QUEUED_TRANSACTIONS--;
                     return;
                 }
 
                 invoice.setPayments(invoice.getNewBatchPayment());
-                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
+                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         invoice.toJSONObject());
             }
             else {
-                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
+                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         offlineData.getData());
             }
             Log.e("SwableUpdateModule", "updateTransaction : "+jsonObject.toString());

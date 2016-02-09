@@ -50,10 +50,10 @@ public class OfflineData extends BaseTable2 {
     private Invoice invoiceData;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "order_id")
     private Order orderData;
-
-    private transient Document documentData;
-    @ForeignCollectionField(orderColumnName = "reference")
-    private transient ForeignCollection<Document> documentData_fc;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
+    private Document documentData;
+    //@ForeignCollectionField(orderColumnName = "reference")
+    //private transient ForeignCollection<Document> documentData_fc;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
     private Customer customerData;
@@ -131,7 +131,7 @@ public class OfflineData extends BaseTable2 {
     private String childrenReferences = "";  // unused
 
     @DatabaseField
-    private int offlineDataTransactionType = 1; // For COUNT ONLY!!!
+    private int offlineDataTransactionType = 1;
 
     @DatabaseField
     private boolean hasExtendedAttributes = false; // unused
@@ -178,6 +178,7 @@ public class OfflineData extends BaseTable2 {
         this.reference_no = invoice.getReference();
 
         this.isPagedRequest = false;
+        this.pagedRequestCount = 1;
     }
 
     public OfflineData(Order order, OfflineDataType offlineDataType) {
@@ -231,6 +232,7 @@ public class OfflineData extends BaseTable2 {
         this.customerData = customer;
 
         this.isPagedRequest = false;
+        this.pagedRequestCount = 1;
     }
 
     public boolean isNewPagedSend() {
@@ -248,7 +250,7 @@ public class OfflineData extends BaseTable2 {
             case ORDER:
                 return orderData.toJSONObject();
             case DOCUMENT:
-                generateParentDocument();
+                //generateParentDocument();
                 return documentData.toJSONObject();
             case CUSTOMER:
                 return customerData.toJSONObject();
@@ -257,8 +259,9 @@ public class OfflineData extends BaseTable2 {
         }
 	}
 
+    @Deprecated
     private Document generateParentDocument() {
-        if(documentData_fc != null) {
+        /*if(documentData_fc != null) {
             if(documentData != null) {
                 documentData.setDocument_lines(null);
                 documentData.setReference(reference_no);
@@ -274,16 +277,16 @@ public class OfflineData extends BaseTable2 {
                         documentData.addAllDocumentLine(document.getDocument_lines());
                 }
             }
-        }
+        }*/
 
         return documentData;
     }
 
     public List<Document> getChildDocuments() throws JSONException {
-        if(documentData_fc == null)
+        //if(documentData_fc == null)
             return documentData.getChildDocuments();
-        else
-            return new ArrayList<>(documentData_fc);
+        //else
+        //    return new ArrayList<>(documentData_fc);
     }
 
 	public void setData(JSONObject data) throws JSONException {
@@ -615,6 +618,7 @@ public class OfflineData extends BaseTable2 {
         switch (type) {
             case INVOICE:
                 typeStr = "INVOICE";
+                invoiceData.createNewPaymentBatch();
                 invoiceData.insertTo(dbHelper);
                 break;
             case ORDER:
@@ -623,7 +627,8 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
-                if(!isPagedRequest() || isNewPagedSend) // not a paged request
+                documentData.setId(id * -1);
+                //if(!isPagedRequest() || isNewPagedSend) // not a paged request
                     documentData.insertTo(dbHelper);
                 break;
             case CUSTOMER:
@@ -652,7 +657,7 @@ public class OfflineData extends BaseTable2 {
                 orderData.updateTo(dbHelper);
                 break;
             case DOCUMENT:
-                if(isPagedRequest() && !isNewPagedSend) {
+                /*if(isPagedRequest() && !isNewPagedSend) {
                     try {
                         List<Document> children = documentData.getChildDocuments();
                         for(Document child : children) {
@@ -667,10 +672,9 @@ public class OfflineData extends BaseTable2 {
                 } else {
                     documentData.setOfflineData(this);
                     documentData.updateTo(dbHelper);
-                }
-                documentData.deleteTo(dbHelper);
-                documentData.setId(id * -1);
-                documentData.insertTo(dbHelper);
+                }*/
+                documentData.setOfflineData(this);
+                documentData.updateTo(dbHelper);
                 break;
             //case CUSTOMER:
             //    customerData.updateTo(dbHelper);
@@ -699,16 +703,16 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
-                generateParentDocument();
+                //generateParentDocument();
                 if(documentData == null)
                     break;
-                if(isPagedRequest() && !isNewPagedSend) {
+                /*if(isPagedRequest() && !isNewPagedSend) {
                     for(Document child : documentData_fc) {
                         child.deleteTo(dbHelper);
                     }
-                } else {
+                } else {*/
                     documentData.deleteTo(dbHelper);
-                }
+                //}
                 break;
             case CUSTOMER:
                 typeStr = "CUSTOMER";
@@ -726,11 +730,13 @@ public class OfflineData extends BaseTable2 {
         String typeStr;
         switch (type) {
             case INVOICE:
+                invoiceData.createNewPaymentBatch();
                 invoiceData.setOfflineData(this);
                 typeStr = "INVOICE";
                 if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
                         && (invoiceData.getId() != Integer.parseInt(getReturnIdList().get(0))) ) {
                     invoiceData.deleteTo(dbHelper);
+                    invoiceData.setLayaway_id(invoiceData.getId());
                     invoiceData.setId(Integer.parseInt(getReturnIdList().get(0)));
                     invoiceData.insertTo(dbHelper);
                 } else
@@ -748,11 +754,11 @@ public class OfflineData extends BaseTable2 {
                     orderData.updateTo(dbHelper);
                 break;
             case DOCUMENT:
-                generateParentDocument();
+                //generateParentDocument();
                 documentData.setOfflineData(this);
                 typeStr = "DOCUMENT";
                 if(getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0) {
-                    if(isPagedRequest() && !isNewPagedSend) {
+                    /*if(isPagedRequest() && !isNewPagedSend) {
                         try {
                             List<Document> children = getChildDocuments();
 
@@ -773,18 +779,18 @@ public class OfflineData extends BaseTable2 {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    } else {
+                    } else {*/
                         if(!getReturnIdList().get(0).equals("@")) {
                             documentData.deleteTo(dbHelper);
                             documentData.setId(Integer.parseInt(getReturnIdList().get(0)));
                             documentData.insertTo(dbHelper);
                         }
-                    }
+                    //}
                 } else {
-                    if(isPagedRequest() && !isNewPagedSend) {
+                    /*if(isPagedRequest() && !isNewPagedSend) {
                         for(Document child : documentData_fc)
                             child.updateTo(dbHelper);
-                    } else
+                    } else*/
                         documentData.updateTo(dbHelper);
                 }
                 break;
@@ -812,17 +818,20 @@ public class OfflineData extends BaseTable2 {
     }
 
     public Object getObjectFromData() {
-        if(type == INVOICE)
-            return invoiceData;
-        else if(type == ORDER)
-            return orderData;
-        else if(type == DOCUMENT) {
-            return generateParentDocument();
+        switch (type) {
+            case INVOICE:
+                return invoiceData;
+            case ORDER:
+                return orderData;
+            case DOCUMENT: {
+                //return generateParentDocument();
+                return documentData;
+            }
+            case CUSTOMER:
+                return customerData;
+            default:
+                return null;
         }
-        else if(type == CUSTOMER)
-            return customerData;
-        else
-            return null;
     }
 
     public <T> T getObjectFromData(Class<T> clazz) {
@@ -877,7 +886,8 @@ public class OfflineData extends BaseTable2 {
     }
 
     public boolean isAllPageSynced() {
-        return getReturnIdList().size() == getPagedRequestCount() && !getReturnId().contains("@");
+        return getReturnIdList().size() == getPagedRequestCount() &&
+                getReturnId().length() > 0 && !getReturnId().contains("@");
     }
 
 }

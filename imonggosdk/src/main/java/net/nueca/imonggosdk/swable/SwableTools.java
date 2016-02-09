@@ -306,20 +306,20 @@ public class SwableTools {
         return transaction;
     }
 
-    public static JSONObject prepareTransactionJSON(OfflineDataType offlineDataType, JSONObject jsonObject) throws
+    public static JSONObject prepareTransactionJSON(int offlinedata_type, JSONObject jsonObject) throws
             JSONException {
         JSONObject transaction = new JSONObject();
-        switch(offlineDataType) {
-            case SEND_ORDER:
+        switch(offlinedata_type) {
+            case OfflineData.ORDER:
                 transaction.put("order", jsonObject);
                 break;
-            case SEND_INVOICE:
+            case OfflineData.INVOICE:
                 transaction.put("invoice", jsonObject);
                 break;
-            case SEND_DOCUMENT:
+            case OfflineData.DOCUMENT:
                 transaction.put("document", jsonObject);
                 break;
-            case ADD_CUSTOMER:
+            case OfflineData.CUSTOMER:
                 transaction.put("customer", jsonObject);
                 break;
         }
@@ -476,6 +476,8 @@ public class SwableTools {
             private String parameter = "";
             private ConcessioModule concessioModule = ConcessioModule.NONE;
 
+            private boolean isLayaway = false;
+
             SendTransaction(ImonggoDBHelper2 helper) {
                 this.helper = helper;
             }
@@ -519,6 +521,11 @@ public class SwableTools {
                 offlineData = new OfflineData(customer, OfflineDataType.UNKNOWN);
                 return this;
             }
+            public SendTransaction layawayOfflineData(OfflineData offlineData) {
+                this.offlineData = offlineData;
+                isLayaway = true;
+                return this;
+            }
             public OfflineData queue() {
                 if(offlineData == null)
                     throw new NullPointerException("SwableTools : SendTransaction : Transaction Object is null");
@@ -533,18 +540,28 @@ public class SwableTools {
                 if(concessioModule != ConcessioModule.NONE)
                     offlineData.setConcessioModule(concessioModule);
 
-                switch (offlineData.getType()) {
-                    case OfflineData.ORDER:
-                        offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_ORDER); break;
-                    case OfflineData.INVOICE:
-                        offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_INVOICE); break;
-                    case OfflineData.DOCUMENT:
-                        offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_DOCUMENT); break;
-                    case OfflineData.CUSTOMER:
-                        offlineData.setOfflineDataTransactionType(OfflineDataType.ADD_CUSTOMER); break;
+                if(!isLayaway) {
+                    switch (offlineData.getType()) {
+                        case OfflineData.ORDER:
+                            offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_ORDER);
+                            break;
+                        case OfflineData.INVOICE:
+                            offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_INVOICE);
+                            break;
+                        case OfflineData.DOCUMENT:
+                            offlineData.setOfflineDataTransactionType(OfflineDataType.SEND_DOCUMENT);
+                            break;
+                        case OfflineData.CUSTOMER:
+                            offlineData.setOfflineDataTransactionType(OfflineDataType.ADD_CUSTOMER);
+                            break;
+                    }
+                    offlineData.insertTo(helper);
+                } else {
+                    offlineData.setSynced(false);
+                    offlineData.updateTo(helper);
                 }
 
-                offlineData.insertTo(helper);
+
                 return offlineData;
             }
             @Deprecated
@@ -616,11 +633,11 @@ public class SwableTools {
             public UpdateTransaction object(Order order) {
                 offlineData = new OfflineData(order, OfflineDataType.UNKNOWN);
                 return this;
-            }*/
+            }
             public UpdateTransaction object(Invoice invoice) {
                 offlineData = new OfflineData(invoice, OfflineDataType.UNKNOWN);
                 return this;
-            }
+            }*/
             public UpdateTransaction object(Customer customer) {
                 offlineData = new OfflineData(customer, OfflineDataType.UNKNOWN);
                 return this;
@@ -642,8 +659,8 @@ public class SwableTools {
                 switch (offlineData.getType()) {
                     //case OfflineData.ORDER:
                     //    offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_ORDER); break;
-                    case OfflineData.INVOICE:
-                        offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_INVOICE); break;
+                    //case OfflineData.INVOICE:
+                    //    offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_INVOICE); break;
                     //case OfflineData.DOCUMENT:
                     //    offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_DOCUMENT); break;
                     case OfflineData.CUSTOMER:

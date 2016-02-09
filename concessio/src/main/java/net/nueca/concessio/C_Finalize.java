@@ -55,21 +55,12 @@ public class C_Finalize extends ModuleActivity {
 
     private ReviewAdapter reviewAdapter;
 
-    private String reference_no;
-    private boolean isLayaway = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_review_activity);
 
         clearTransactions = false;
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            reference_no = extras.getString("offlinedata_reference_no");
-            isLayaway = extras.getBoolean("is_layaway");
-        }
 
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
         tlTotal = (TabLayout) findViewById(R.id.tlTotal);
@@ -160,6 +151,8 @@ public class C_Finalize extends ModuleActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(C_Finalize.this, C_Checkout.class);
+                    intent.putExtra(REFERENCE, reference);
+                    intent.putExtra(IS_LAYAWAY, isLayaway);
                     startActivityForResult(intent, SALES);
                 }
             });

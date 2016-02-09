@@ -13,6 +13,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -28,6 +31,7 @@ import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.Extras;
@@ -81,49 +85,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             e.printStackTrace();
         }*/
 
-        /*Invoice.Builder builder = new Invoice.Builder();
-        builder.invoice_date("2016-02-02T14:58:16Z");
-        builder.reference("14-1000");
-        builder.salesman_id(1204);
-        builder.status("L");
-        builder.addInvoiceLine(
-                new InvoiceLine.Builder()
-                        .quantity(1.0)
-                        .retail_price(100.0)
-                        .product_id(197447)
-                        .unit_name("Pc(s)")
-                        .line_no(1)
-                        .subtotal("100.0")
-                        .build()
-        );
-        builder.addInvoiceLine(
-                new InvoiceLine.Builder()
-                        .quantity(-1.0)
-                        .retail_price(20.0)
-                        .product_id(197449)
-                        .unit_name("Pc(s)")
-                        .line_no(2)
-                        .subtotal("-20.0")
-                        .build()
-        );
-        builder.addPayment(
-                new InvoicePayment.Builder()
-                        .amount(50.0)
-                        .tender(50.0)
-                        .payment_type_id(1)
-                        .build()
-        );
-        builder.extras(
-                new Extras.Builder()
-                        .total_company_discount("0.0")
-                        .total_unit_retail_price("80.0")
-                        .payment_term_id(28)
-                        .total_selling_price("80.0")
-                        .total_customer_discount("0.0")
-                        .customer_discount_text_summary("")
-                        .build()
-        );
-
+        /*
         try {
             Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id",201925).queryForFirst();
             builder.customer(customer);
@@ -136,6 +98,73 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         } catch (SQLException e) {
             e.printStackTrace();
         }*/
+
+        try {
+            Log.e("DEBUG",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            for(OfflineData o : getHelper().fetchObjects(OfflineData.class).queryForAll() ) {
+                Log.e("OfflineData "+o.getId(), o.getStatusLog());
+            }
+            Invoice.Builder builder = new Invoice.Builder();
+            builder.invoice_date("2016-02-02T14:58:16Z");
+            builder.reference("14-1000");
+            builder.salesman_id(1204);
+            builder.status("L");
+            builder.addInvoiceLine(
+                    new InvoiceLine.Builder()
+                            .quantity(1.0)
+                            .retail_price(100.0)
+                            .product_id(197447)
+                            .unit_name("Pc(s)")
+                            .line_no(1)
+                            .subtotal("100.0")
+                            .build()
+            );
+            builder.addInvoiceLine(
+                    new InvoiceLine.Builder()
+                            .quantity(-1.0)
+                            .retail_price(20.0)
+                            .product_id(197449)
+                            .unit_name("Pc(s)")
+                            .line_no(2)
+                            .subtotal("-20.0")
+                            .build()
+            );
+            builder.addPayment(
+                    new InvoicePayment.Builder()
+                            .amount(50.0)
+                            .tender(50.0)
+                            .payment_type_id(1)
+                            .build()
+            );
+            builder.extras(
+                    new Extras.Builder()
+                            .total_company_discount("0.0")
+                            .total_unit_retail_price("80.0")
+                            .payment_term_id(28)
+                            .total_selling_price("80.0")
+                            .total_customer_discount("0.0")
+                            .customer_discount_text_summary("")
+                            .build()
+            );
+            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+            Invoice invoice = builder.build();
+            Log.e("INVOICE before createBatch", invoice.toJSONString());
+            invoice.createNewPaymentBatch();
+            Log.e("INVOICE after createBatch", invoice.toJSONString());
+            Log.e("NEW Payments", gson.toJson(invoice.getNewBatchPayment()));
+            invoice.addPayment(new InvoicePayment.Builder()
+                    .amount(10.0)
+                    .tender(10.0)
+                    .payment_type_id(1)
+                    .build());
+            invoice.createNewPaymentBatch();
+            Log.e("INVOICE after new Payment added", invoice.toJSONString());
+            Log.e("NEW Payments", gson.toJson(invoice.getNewBatchPayment()));
+
+            Log.e("DEBUG","<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
 
         setNextActivityClass(C_Module.class);

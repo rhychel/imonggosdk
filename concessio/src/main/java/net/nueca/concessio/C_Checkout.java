@@ -30,6 +30,7 @@ import net.nueca.concessioengine.tools.LocationTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -56,25 +57,21 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private TextView tvLabelBalance, tvBalance, tvTotalAmount;
     private Button btn1, btn2;
 
-    private String reference_no;
-    private boolean isLayaway = false;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.simple_checkout_activity);
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            reference_no = extras.getString("offlinedata_reference_no");
-            isLayaway = extras.getBoolean("is_layaway", false);
-        }
-
-//        tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
-//        rvPayments = (RecyclerView) findViewById(R.id.rvPayments);
+    protected void initializeFragment() {
         checkoutFragment = new SimpleCheckoutFragment();
         checkoutFragment.setSetupActionBar(this);
         checkoutFragment.setLayaway(isLayaway);
+        Log.e("C_Checkout", "initializeFragment " + (checkoutFragment == null));
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.simple_checkout_activity);
+
+//        tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
+//        rvPayments = (RecyclerView) findViewById(R.id.rvPayments);
 
         llBalance = (LinearLayout) findViewById(R.id.llBalance);
         llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
@@ -84,26 +81,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         btn1 = (Button) findViewById(R.id.btn1);
         btn2 = (Button) findViewById(R.id.btn2);
 
-        if(reference_no == null || reference_no.length() == 0) {
-            List<InvoiceLine> invoiceLines = new ArrayList<>();
-            invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                    .getSelectedProductItems()));
-            invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                    .getSelectedReturnProductItems(), invoiceLines.size()));
-            Invoice.Builder invoiceBuilder = new Invoice.Builder()
-                    .invoice_lines(invoiceLines);
-
-            checkoutFragment.setInvoice(invoiceBuilder.build());
-        } else {
-            try {
-                OfflineData offlineData = getHelper().fetchObjects(OfflineData.class).queryBuilder()
-                        .where().eq("reference_no", reference_no).queryForFirst();
-                checkoutFragment.setInvoice(offlineData.getObjectFromData(Invoice.class));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
         Gson gson = new Gson();
+        Log.e("C_Checkout", "checkoutFragment " + (checkoutFragment == null));
         Log.e("C_Checkout", gson.toJson(checkoutFragment.getComputation().getPayments()));
         Log.e("C_Checkout", checkoutFragment.getComputation().getRemaining().toPlainString());
 
@@ -201,13 +180,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LocationTools.startLocationSearch(C_Checkout.this);
-
-    }
-
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -222,8 +194,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             Log.e("onSwiped", "Index=" + viewHolder.getAdapterPosition());
-            simpleSplitPaymentAdapter.remove(viewHolder.getAdapterPosition());
-            simpleSplitPaymentAdapter.notifyItemChanged(0);
+            if(simpleSplitPaymentAdapter.getItem(viewHolder.getAdapterPosition()).getPaymentBatchNo() == null) {
+                simpleSplitPaymentAdapter.remove(viewHolder.getAdapterPosition());
+                simpleSplitPaymentAdapter.notifyItemChanged(0);
+            }
         }
 
         @Override
@@ -277,12 +251,22 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     Invoice invoice = generateInvoice();
                     try {
-                        new SwableTools.Transaction(getHelper())
-                                .toSend()
-                                .forBranch(getSession().getCurrent_branch_id())
-                                .fromModule(ConcessioModule.INVOICE)
-                                .object(invoice)
-                                .queue();
+                        if(!isLayaway) {
+                            new SwableTools.Transaction(getHelper())
+                                    .toSend()
+                                    .forBranch(getSession().getCurrent_branch_id())
+                                    .fromModule(ConcessioModule.INVOICE)
+                                    .object(invoice)
+                                    .queue();
+                        } else {
+                            invoice.updateTo(getHelper());
+                            new SwableTools.Transaction(getHelper())
+                                    .toSend()
+                                    .forBranch(getSession().getCurrent_branch_id())
+                                    .fromModule(ConcessioModule.INVOICE)
+                                    .layawayOfflineData(offlineData)
+                                    .queue();
+                        }
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -309,12 +293,22 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         Invoice invoice = generateInvoice();
                         invoice.setStatus("L");
                         try {
-                            new SwableTools.Transaction(getHelper())
-                                    .toSend()
-                                    .forBranch(getSession().getCurrent_branch_id())
-                                    .fromModule(ConcessioModule.INVOICE)
-                                    .object(invoice)
-                                    .queue();
+                            if(!isLayaway) {
+                                new SwableTools.Transaction(getHelper())
+                                        .toSend()
+                                        .forBranch(getSession().getCurrent_branch_id())
+                                        .fromModule(ConcessioModule.INVOICE)
+                                        .object(invoice)
+                                        .queue();
+                            } else {
+                                invoice.updateTo(getHelper());
+                                new SwableTools.Transaction(getHelper())
+                                        .toSend()
+                                        .forBranch(getSession().getCurrent_branch_id())
+                                        .fromModule(ConcessioModule.INVOICE)
+                                        .layawayOfflineData(offlineData)
+                                        .queue();
+                            }
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
@@ -343,34 +337,5 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         this.tbActionBar = toolbar;
 
         setupNavigationListener(tbActionBar);
-    }
-
-    @Override
-    protected void onStop() {
-        LocationTools.stopLocationSearch(this);
-        super.onStop();
-    }
-
-    public Invoice generateInvoice() {
-        Invoice invoice = checkoutFragment.getCheckoutInvoice();
-        Extras extras = invoice.getExtras() == null? new Extras() : invoice.getExtras();
-
-        try {
-            invoice.setReference(ReferenceNumberTool.generateRefNo(this, getSession().getDevice_id()));
-            invoice.setSalesman_id(getUser().getId());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        invoice.setInvoice_date(DateTimeTools.convertDateForUrl(DateTimeTools.getCurrentDateTimeUTCFormat().replaceAll("-","/")));
-
-        /** Location **/
-        Location location = LocationTools.getCurrentLocation();
-        if(location != null) {
-            extras.setLongitude("" + location.getLongitude());
-            extras.setLatitude("" + location.getLatitude());
-        }
-        invoice.setExtras(extras);
-
-        return invoice;
     }
 }
