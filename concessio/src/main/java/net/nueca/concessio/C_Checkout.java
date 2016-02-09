@@ -230,6 +230,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                             InvoicePayment invoicePayment = builder.build();
                             invoicePayment.setExtras(extras);
+                            // temp
+                            if(simpleSplitPaymentAdapter.getItemCount() % 2 == 0)
+                                invoicePayment.setPaymentBatchNo(1);
                             simpleSplitPaymentAdapter.addPayment(invoicePayment);
 
                             simpleSplitPaymentAdapter.setBalance(checkoutFragment.getRemainingBalance());

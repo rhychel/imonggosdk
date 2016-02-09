@@ -44,13 +44,13 @@ public class PriceTools {
 
         try {
             retail_price = getBranchPrice(dbHelper2, product, branch, unit);
-            Log.e("BRANCH PRICE", retail_price + "");
+            //Log.e("BRANCH PRICE", retail_price + "");
 
             Price selectedPrice = identifyPrice(dbHelper2, product, branch, customerGroup, customer, unit);
             if(selectedPrice != null)
                 retail_price = selectedPrice.getRetail_price();
 
-            Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>> retail_price: " + retail_price);
+            //Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>> retail_price: " + retail_price);
         } catch (SQLException e) {
             e.printStackTrace();
             return product.getRetail_price();

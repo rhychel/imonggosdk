@@ -8,6 +8,7 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
@@ -81,6 +82,9 @@ public class Invoice extends BaseTransactionTable2 {
     protected transient Integer currentPaymentBatchNo = 0;
 
     @Expose
+    @DatabaseField
+    protected transient Integer layaway_id;
+
     @DatabaseField
     protected transient Integer layaway_id;
 
@@ -534,6 +538,14 @@ public class Invoice extends BaseTransactionTable2 {
                 payments.add(payment);
         }
         return payments;
+    }
+
+    public Integer getLayaway_id() {
+        return layaway_id;
+    }
+
+    public void setLayaway_id(Integer layaway_id) {
+        this.layaway_id = layaway_id;
     }
 
     public Integer getLayaway_id() {

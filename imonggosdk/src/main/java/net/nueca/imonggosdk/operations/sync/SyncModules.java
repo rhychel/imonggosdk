@@ -84,6 +84,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
     private void startSyncModuleContents(RequestType requestType) throws SQLException {
 
+        mSkipNextModule = false;
         mCurrentRequestType = requestType;
 
         if (getHelper() == null) {
@@ -502,7 +503,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             } else {
                 if (mCurrentTableSyncing == Table.BRANCH_USERS) { // TODO last_updated_at of this should relay on NOW at the end of the request...
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.USER_ID, Parameter.AFTER),
-                            String.valueOf(getUser().getId()), DateTimeTools.convertDateForUrl(newLastUpdatedAt.getLast_updated_at()));
+                            String.valueOf(getUser().getId()), DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 }
                 if (mCurrentTableSyncing == Table.DOCUMENTS) {
                     return String.format(ImonggoTools.generateParameter(
@@ -621,7 +622,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     }
                     Log.e(TAG, "Added mCustomIndex: " + mCustomIndex);
 
-
                     startSyncModuleContents(RequestType.LAST_UPDATED_AT);
 
 
@@ -639,7 +639,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             Log.e(TAG, "Setting Up Route Plan Details...");
 
             //check if route plan is existing
-            if (getHelper().fetchObjectsList(RoutePlan.class).size() != 0) {
+            if (getHelper().fetchObjectsList(RoutePlan.class).size() != 0 && !mSkipNextModule) {
                 listOfIds = getHelper().fetchObjectsList(RoutePlan.class);
                 count = listOfIds.size();
                 mCustomIndex = 0;
@@ -657,7 +657,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             Log.e(TAG, "Setting Up Price List Details...");
 
             //check if price lists is existing
-            if (getHelper().fetchObjectsList(PriceList.class).size() != 0) {
+            if (getHelper().fetchObjectsList(PriceList.class).size() != 0 && !mSkipNextModule) {
                 listOfIds = getHelper().fetchObjectsList(PriceList.class);
                 count = listOfIds.size();
                 mCustomIndex = 0;
@@ -750,7 +750,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     public void onStart(Table module, RequestType requestType) {
         Log.e(TAG, "onStart downloading " + module.toString() + " " + requestType);
         if (mSyncModulesListener != null) {
-            mSyncModulesListener.onStartDownload(module);
+            mSyncModulesListener.onStartDownload(mCurrentTableSyncing);
         }
     }
 
@@ -768,29 +768,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 if (requestType == RequestType.LAST_UPDATED_AT) {
                     Log.e(TAG, "Last Updated At");
 
-                    List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
-
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
-                    for(BranchProduct bp :  branchProducts) {
-                        Log.e(TAG, "LastUpdatedAt: " + lastUpdatedAt.getLast_updated_at());
-                        Log.e(TAG, "UtcUpdateAt: " + bp.getUtc_updated_at());
-
-                        try {
-                        Date date1 = dateFormat.parse(lastUpdatedAt.getLast_updated_at());
-                            Date date2 = dateFormat.parse(bp.getUtc_updated_at());
-                            Log.e(TAG, "D1: " + date1.toString());
-                            Log.e(TAG, "D2: " + date2.toString());
-
-                            /*if(dateFormat.parse(date1.toString()).before()) {
-                                Log.e(TAG, lastUpdatedAt.getLast_updated_at() + " before " + bp.getUtc_updated_at());
-                            } else {
-                                Log.e(TAG, "after");
-                            }*/
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
                     // since this is the first
                     count = 0;
                     page = 1;
@@ -805,23 +782,65 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module));
                     }
 
-
                     if (lastUpdatedAt != null) {
-                        Log.e(TAG, newLastUpdatedAt.toString());
-                        Log.e(TAG, lastUpdatedAt.toString());
+                        Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
+                        Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
-                        if (newLastUpdatedAt.toString().equals(lastUpdatedAt.toString())) {
-                            syncNext();
-                            return;
-                        } else {
-                            Log.e(TAG, ">> Hindi parehas");
+
+
+                        SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        try {
+                            Date date1 = dateFormat1.parse(lastUpdatedAt.getLast_updated_at());
+                            Date date2 = dateFormat1.parse(newLastUpdatedAt.getLast_updated_at());
+
+                            if (date1.equals(date2)) {
+
+                                if(    mCurrentTableSyncing == Table.ROUTE_PLANS ||
+                                        mCurrentTableSyncing == Table.PRICE_LISTS ||
+                                        mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
+                                    mSkipNextModule = true;
+                                }
+
+                                syncNext();
+                                return;
+                            } else {
+
+                                Log.e(TAG, ">> Hindi parehas");
+                            }
+
+                        } catch (ParseException e) {
+                            Log.e(TAG, e.toString());
                         }
 
-                        newLastUpdatedAt.updateTo(getHelper());
                     } else {
                         newLastUpdatedAt.insertTo(getHelper());
                         Log.e(TAG, "New Last Updated At: " + jsonObject.toString());
                     }
+
+
+                    if(mCurrentTableSyncing == Table.BRANCH_PRODUCTS) {
+                        // if not initial sync delete all branch prices hehehe base on last update at
+                        List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+                        SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+                        for (BranchProduct bp : branchProducts) {
+                            try {
+                                Date date1 = dateFormat1.parse(newLastUpdatedAt.getLast_updated_at());
+                                Date date2 = dateFormat1.parse(DateTimeTools.convertToDate(bp.getUtc_updated_at(), "yyyy/MM/dd HH:mm:ss"));
+
+                                Log.e(TAG, "Checking: " + date1.toString() + " > " + date2.toString());
+                                if (date1.after(date2)) {
+                                    Log.e(TAG, "Deleting this BranchProduct");
+                                    bp.deleteTo(getHelper());
+                                } else {
+                                    Log.e(TAG, "not");
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
 
                     // USERS and  TAX SETTINGS DON'T SUPPORT COUNT
                     if (mCurrentTableSyncing == Table.USERS ||
@@ -829,6 +848,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             mCurrentTableSyncing == Table.ROUTE_PLANS ||
                             mCurrentTableSyncing == Table.PRICE_LISTS ||
                             mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
+
 
                         startSyncModuleContents(RequestType.API_CONTENT);
 
@@ -1288,7 +1308,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         Log.e(TAG, "branchProduct created ");
 
                                         // NAME
-                                        if(jsonObject.has("name")) {
+                                        if (jsonObject.has("name")) {
                                             if (!jsonObject.getString("name").isEmpty()) {
                                                 Log.e(TAG, "Branch Product Name: " + jsonObject.getString("name"));
                                                 BRANCH_PRODUCT.setName(jsonObject.getString("name"));
@@ -1326,7 +1346,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         // UTC UPDATED AT & UTC UPDATED AT
                                         if (jsonObject.has("utc_updated_at")) {
-                                            if(!jsonObject.getString("utc_updated_at").isEmpty()) {
+                                            if (!jsonObject.getString("utc_updated_at").isEmpty()) {
                                                 Log.e(TAG, "UTC UPDATED AT: " + jsonObject.getString("utc_updated_at"));
                                                 BRANCH_PRODUCT.setUtc_updated_at(jsonObject.getString("utc_updated_at"));
                                             }
@@ -1335,7 +1355,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
 
                                         if (jsonObject.has("utc_created_at")) {
-                                            if(!jsonObject.getString("utc_created_at").isEmpty()) {
+                                            if (!jsonObject.getString("utc_created_at").isEmpty()) {
                                                 Log.e(TAG, "UTC CREATED AT: " + jsonObject.getString("utc_created_at"));
                                                 BRANCH_PRODUCT.setUtc_created_at(jsonObject.getString("utc_created_at"));
                                             }
@@ -1354,7 +1374,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 } else {
                                                     Log.e(TAG, "Err Can't find 'unit' field from database");
                                                 }
-                                            }else {
+                                            } else {
                                                 BRANCH_PRODUCT.setBaseUnitSellable(true);
                                             }
 
@@ -1374,24 +1394,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         if (initialSync) {
                                             BRANCH_PRODUCT.insertTo(getHelper());
                                         } else {
+
                                             // if branch product is not existing
-                                            if(!isExisting(BRANCH_PRODUCT, Table.BRANCH_PRODUCTS)) {
+                                            if (!isExisting(BRANCH_PRODUCT, Table.BRANCH_PRODUCTS)) {
                                                 // insert to database
                                                 BRANCH_PRODUCT.insertTo(getHelper());
                                             } else {
-                                                BranchProduct bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("id", BRANCH_PRODUCT.getId()).queryForFirst();
-                                                if(bp != null) {
-                                                    Log.e(TAG, "Checking time");
-
-                                                    if(!lastUpdatedAt.toString().equals(BRANCH_PRODUCT.getUtc_updated_at())) {
-
-                                                    } else {
-
-                                                    }
-                                                } else {
-                                                    Log.e(TAG, "Can't find it in the database, oh well.. inserting to database..");
-                                                    BRANCH_PRODUCT.insertTo(getHelper());
-                                                }
+                                                // no code here
+                                                Log.e(TAG, "This branch product should be deleted, because I deleted all the outdated branch products " +
+                                                        "before this line of code giving way not update this branch product");
                                             }
                                         }
 

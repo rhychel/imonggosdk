@@ -3,7 +3,10 @@ package net.nueca.concessioengine.dialogs;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,8 +122,7 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
             super(context);
         }
 
-        public ChooserAdapter() {
-        }
+        public ChooserAdapter() { }
 
         @Override
         public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -135,6 +137,18 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
             holder.tvModule.setText(getItem(position).getTable().getStringName());
             holder.cbSelected.setTag(position);
             holder.cbSelected.setChecked(getItem(position).isSelected());
+            holder.cbSelected.setEnabled(true);
+            holder.cbSelected.setEnabled(getItem(position).isEnabled());
+        }
+
+        private void renderPrerequisites(Table table, boolean isChecked) {
+            for(Table preq : table.getPrerequisites()) {
+                UpdateTable comp = new UpdateTable(preq);
+                int indexOf = getList().indexOf(comp);
+                getItem(indexOf).setForcedSelected(true);
+                getItem(indexOf).setSelected(isChecked);
+                getItem(indexOf).setEnabled(!isChecked);
+            }
         }
 
         @Override
@@ -154,7 +168,38 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
                 this.cbSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        getItem((int)buttonView.getTag()).setSelected(isChecked);
+                        int position = (int)buttonView.getTag();
+                        if(getItem(position).isForcedSelected()) {
+                            getItem(position).setForcedSelected(false);
+                            return;
+                        }
+                        getItem(position).setSelected(isChecked);
+                        if(getItem(position).getTable() == Table.ALL) {
+                            for(int i = 1;i < getList().size();i++) {
+                                getItem(i).setSelected(isChecked);
+                                getItem(i).setEnabled(!isChecked);
+                            }
+                            Handler handler = new Handler(){
+                                @Override
+                                public void handleMessage(Message msg) {
+                                    super.handleMessage(msg);
+                                    notifyDataSetChanged();
+                                }
+                            };
+                            handler.sendEmptyMessageDelayed(0, 100);
+                        }
+                        else if(getItem(position).getTable().getPrerequisites() != null) {
+                            renderPrerequisites(getItem(position).getTable(), isChecked);
+                            getItem(position).setForcedSelected(true);
+                            Handler handler = new Handler(){
+                                @Override
+                                public void handleMessage(Message msg) {
+                                    super.handleMessage(msg);
+                                    notifyDataSetChanged();
+                                }
+                            };
+                            handler.sendEmptyMessageDelayed(0, 100);
+                        }
                     }
                 });
             }
@@ -173,7 +218,7 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
     public int[] modulesToDownload() {
         tableList = new ArrayList<>();
         for(UpdateTable updateTable : chooserAdapter.getList()) {
-            if(updateTable.isSelected()) {
+            if(updateTable.isSelected() && updateTable.getTable() != Table.ALL) {
                 tableList.add(updateTable.getTable());
                 switch (updateTable.getTable()) {
                     case ROUTE_PLANS:
@@ -197,4 +242,5 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
             toDownload[i++] = table.ordinal();
         return toDownload;
     }
+
 }

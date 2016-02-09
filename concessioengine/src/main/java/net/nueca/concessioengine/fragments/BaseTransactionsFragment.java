@@ -3,7 +3,9 @@ package net.nueca.concessioengine.fragments;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.j256.ormlite.stmt.ArgumentHolder;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.TransactionTypesAdapter;
@@ -22,7 +24,6 @@ import net.nueca.imonggosdk.tools.ModuleSettingTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -55,7 +56,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
 
     protected SetupActionBar setupActionBar;
     protected ConcessioModule concessioModule = ConcessioModule.ALL;
-    protected List<ConcessioModule> filterModules;
+    protected ConcessioModule[] filterModules;
 
     protected abstract void toggleNoItems(String msg, boolean show);
 
@@ -63,7 +64,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
         if(isTypesInitialized)
             return;
         List<ModuleSetting> moduleSettings = getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                .where().in("module_type", ModuleSettingTools.getModulesToString  (ConcessioModule.STOCK_REQUEST,
+                .where().in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST,
                         ConcessioModule.RECEIVE_BRANCH, ConcessioModule.RECEIVE_BRANCH_PULLOUT, ConcessioModule.RELEASE_BRANCH,
                         ConcessioModule.RECEIVE_ADJUSTMENT, ConcessioModule.RELEASE_ADJUSTMENT,
                         ConcessioModule.RECEIVE_SUPPLIER, ConcessioModule.RELEASE_SUPPLIER,
@@ -115,19 +116,56 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
                 if(hasInvoice)
                     transactionTypes.add(OfflineData.INVOICE);
 
+
                 whereOfflineData.in("type", transactionTypes);//.and()
                 if(includeSearchKey)
                     whereOfflineData.and().like("reference_no", "%"+searchKey+"%");
                 if(concessioModule != ConcessioModule.ALL)
                     whereOfflineData.and().eq("concessioModule", concessioModule);
+                else if(filterModules != null)
+                    whereOfflineData.and().in("concessioModule", filterModules);
             }
             if(branchId > 0) {
                 whereOfflineData.and().eq("branch_id", branchId);//.and()
             }
 
             QueryBuilder<OfflineData, Integer> resultTransactions = getHelper().fetchIntId(OfflineData.class).queryBuilder();
+            if(customer != null) {
+                QueryBuilder<Invoice, Integer> custInvoices = getHelper().fetchIntId(Invoice.class).queryBuilder();
+                custInvoices.selectColumns("id");
+                custInvoices.where().eq("customer_id", customer);
+                List<Invoice> invoices = custInvoices.query();
+
+                QueryBuilder<Document, Integer> custDocuments = getHelper().fetchIntId(Document.class).queryBuilder();
+                custDocuments.selectColumns("id");
+                custDocuments.where().eq("customer_id", customer);
+                List<Document> documents = custDocuments.query();
+
+                SelectArg[] selectArgs = new SelectArg[invoices.size()+documents.size()];
+                String invQuery = "invoice_id IN (";
+                String docQuery = "document_id IN (";
+                int index = 0;
+                for(int i = 0;i < invoices.size();i++) {
+                    if(i > 0)
+                        invQuery+=",";
+                    selectArgs[index] = new SelectArg("invoice_id", invoices.get(i));
+                    invQuery += "?";
+                    index++;
+                }
+                invQuery += ")";
+                for(int i = 0;i < documents.size();i++) {
+                    if(i > 0)
+                        docQuery+=",";
+                    selectArgs[index] = new SelectArg("document_id", documents.get(i));
+                    docQuery += "?";
+                    index++;
+                }
+                docQuery += ")";
+                whereOfflineData.and().raw("("+invQuery+" OR "+docQuery+")", selectArgs);
+            }
             resultTransactions.orderBy("dateCreated", false);
             resultTransactions.setWhere(whereOfflineData);
+            Log.e("Query", resultTransactions.prepareStatementString());
 
             transactions = resultTransactions.query();
         } catch (SQLException e) {
@@ -141,30 +179,30 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
             }
             return finalTransactions;
         }
-        if(customer != null) {
-            List<OfflineData> finalTransactions = new ArrayList<>();
-            for(OfflineData offlineData : transactions) {
-                if(filterModules != null && filterModules.size() > 0)
-                    if(!filterModules.contains(offlineData.getConcessioModule()))
-                        continue;
-
-                if(offlineData.getObjectFromData() instanceof Document)
-                    if(offlineData.getObjectFromData(Document.class).getCustomer() != null && offlineData.getObjectFromData(Document.class).getCustomer().equals(customer))
-                        finalTransactions.add(offlineData);
-                if(offlineData.getObjectFromData() instanceof Invoice && offlineData.getObjectFromData(Invoice.class).getCustomer().equals(customer))
-                    finalTransactions.add(offlineData);
-            }
-            return finalTransactions;
-        }
-        if(filterModules != null && filterModules.size() > 0) {
-            List<OfflineData> finalTransactions = new ArrayList<>();
-            for(OfflineData offlineData : transactions) {
-                if(filterModules != null && filterModules.size() > 0)
-                    if(!filterModules.contains(offlineData.getConcessioModule()))
-                        continue;
-            }
-            return finalTransactions;
-        }
+//        if(customer != null) {
+//            List<OfflineData> finalTransactions = new ArrayList<>();
+//            for(OfflineData offlineData : transactions) {
+////                if(filterModules != null && filterModules.size() > 0)
+////                    if(!filterModules.contains(offlineData.getConcessioModule()))
+////                        continue;
+//
+//                if(offlineData.getObjectFromData() instanceof Document)
+//                    if(offlineData.getObjectFromData(Document.class).getCustomer() != null && offlineData.getObjectFromData(Document.class).getCustomer().equals(customer))
+//                        finalTransactions.add(offlineData);
+//                if(offlineData.getObjectFromData() instanceof Invoice && offlineData.getObjectFromData(Invoice.class).getCustomer().equals(customer))
+//                    finalTransactions.add(offlineData);
+//            }
+//            return finalTransactions;
+//        }
+//        if(filterModules != null && filterModules.size() > 0) {
+//            List<OfflineData> finalTransactions = new ArrayList<>();
+//            for(OfflineData offlineData : transactions) {
+//                if(filterModules != null && filterModules.size() > 0)
+//                    if(!filterModules.contains(offlineData.getConcessioModule()))
+//                        continue;
+//            }
+//            return finalTransactions;
+//        }
         return transactions;
     }
 
@@ -229,6 +267,6 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
     }
 
     public void setFilterModules(ConcessioModule... filterModules) {
-        this.filterModules = Arrays.asList(filterModules);;
+        this.filterModules = filterModules;
     }
 }

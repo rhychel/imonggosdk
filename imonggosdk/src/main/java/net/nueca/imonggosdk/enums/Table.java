@@ -120,12 +120,15 @@ public enum Table {
     ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class, "route_plans"),
     ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlanDetail.class, "route_plans_details"),
 
-    NONE(API_TYPE.NON_API, "none");
+    NONE(API_TYPE.NON_API, "none"),
+    ALL(API_TYPE.NON_API, "All");
 
     private final API_TYPE api_type;
     private final String name;
     private final Class aClass;
     private final String tableKey;
+    private Table[] prerequisites;
+
 
     Table(API_TYPE api, String name) {
         this(api, name, null);
@@ -153,6 +156,29 @@ public enum Table {
         return this.name;
     }
     public String getTableKey() {return tableKey;}
+    public Table[] getPrerequisites() {
+        /*
+            + Branch Products
+               - Units
+               - Products
+
+            + Route Plans
+              - Route Plan Details
+
+            + Price List From Customers / Price Lists
+              - Price Lists Details
+
+            + Sales Promotions Sales Discount
+              - Sales Promotions Sales Discount Details
+
+            + Sales Promotions Points
+              - Sales Promotion Sales Points
+         */
+
+        if(this == BRANCH_PRODUCTS)
+            prerequisites = new Table[]{PRODUCTS, UNITS};
+        return prerequisites;
+    }
 
     public static Table convertFromKey(String tableKey) {
         for(Table table : Table.values()) {
@@ -164,4 +190,5 @@ public enum Table {
         }
         return NONE;
     }
+
 }

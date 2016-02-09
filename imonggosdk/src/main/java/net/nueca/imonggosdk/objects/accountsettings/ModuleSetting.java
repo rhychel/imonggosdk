@@ -268,6 +268,10 @@ public class ModuleSetting extends DBTable {
     }
 
     public List<Table> modulesToUpdate(ImonggoDBHelper2 dbHelper) {
+        return modulesToUpdate(dbHelper, true);
+    }
+
+    public List<Table> modulesToUpdate(ImonggoDBHelper2 dbHelper, boolean hasAll) {
         List<Table> modules = new ArrayList<>();
         try {
             List<Sequence> updateSequence = dbHelper.fetchForeignCollection(sequences.closeableIterator(), new ImonggoDBHelper2.Conditional<Sequence>() {
@@ -276,6 +280,8 @@ public class ModuleSetting extends DBTable {
                     return obj.getSequenceType() == SequenceType.UPDATE;
                 }
             });
+            if(hasAll)
+                modules.add(Table.ALL);
             Log.e("modules", updateSequence.size()+"--");
             for(Sequence us : updateSequence) {
                 Log.e("modules", us.getTableValue().getStringName());
