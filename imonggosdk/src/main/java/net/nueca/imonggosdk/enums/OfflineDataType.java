@@ -40,4 +40,16 @@ public enum OfflineDataType {
         }
         return UNKNOWN;
     }
+
+    public boolean isVoiding() {
+        switch (this) {
+            case CANCEL_ORDER:
+            case CANCEL_INVOICE:
+            case CANCEL_DOCUMENT:
+            case DELETE_CUSTOMER:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

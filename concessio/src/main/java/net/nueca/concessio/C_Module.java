@@ -140,16 +140,27 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionsFragment.setTransactionsListener(new BaseTransactionsFragment.TransactionsListener() {
                     @Override
                     public void showTransactionDetails(OfflineData offlineData) {
-                        // Show the C_Finalize, re-render items
-                        Log.e("Invoice", offlineData.getObjectFromData(Invoice.class).toJSONString());
-                        try {
-                            SelectedProductItemList list =
-                                    InvoiceTools.generateSelectedProductItemList(getHelper(),offlineData,false,false);
-                            for(SelectedProductItem item : list) {
-                                Log.e("Item >> ", " >> " + item.toString());
+                        prepareFooter();
+                        ProductsAdapterHelper.clearSelectedProductItemList(true);
+
+                        if(offlineData.getType() == OfflineData.INVOICE) {
+                            try {
+                                SelectedProductItemList selecteds =
+                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
+                                SelectedProductItemList returns =
+                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
+
+                                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
+                                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+                            } catch (SQLException e) {
+                                e.printStackTrace();
                             }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+
+                            Intent intent = new Intent(C_Module.this, C_Finalize.class);
+                            intent.putExtra("offlinedata_reference_no", offlineData.getReference_no());
+                            Log.e("INOVOICE SEND", offlineData.getObjectFromData(Invoice.class).toJSONString());
+                            intent.putExtra("is_layaway", true);
+                            startActivityForResult(intent, REVIEW_SALES);
                         }
                     }
                 });
@@ -972,7 +983,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     @Override
                     public void handleMessage(Message msg) {
                         super.handleMessage(msg);
-                        simpleProductsFragment.refreshList();
+                        if(simpleProductsFragment != null)
+                            simpleProductsFragment.refreshList();
                     }
                 };
                 handler.sendEmptyMessageDelayed(0, 100);

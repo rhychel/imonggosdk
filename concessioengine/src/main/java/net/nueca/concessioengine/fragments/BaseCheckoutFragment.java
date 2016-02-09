@@ -17,8 +17,10 @@ import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,8 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
     protected SetupActionBar setupActionBar;
     protected Toolbar tbActionBar;
 
+    protected boolean isLayaway = false;
+
     protected Invoice invoice;
     protected InvoiceTools.PaymentsComputation computation = new InvoiceTools.PaymentsComputation();
 
@@ -39,6 +43,8 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
             invoice = (Invoice) getArguments().get(INVOICE_ARGUMENT_KEY);
             computation.clearAll();
             computation.addAllInvoiceLines(invoice.getInvoiceLines());
+            if(invoice.getPayments() != null)
+                computation.addAllPayments(invoice.getPayments());
         }
     }
 
@@ -51,8 +57,10 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
 
     public void setInvoice(Invoice invoice) {
         this.invoice = invoice;
+        Log.e("INVOICE RECEIVED", invoice.toJSONString());
         computation.clearAll();
         computation.addAllInvoiceLines(invoice.getInvoiceLines());
+        computation.addAllPayments(invoice.getPayments());
     }
 
     public Invoice getCheckoutInvoice() {
@@ -69,18 +77,19 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         Extras extras = invoice.getExtras() == null? new Extras() : invoice.getExtras();
 
         extras.setTotal_selling_price("" +
-                (InvoiceTools.addNoDiscountSubtotals(invoice.getInvoiceLines()) -
-                        InvoiceTools.sum(InvoiceTools.getAllProductDiscount(invoice.getInvoiceLines())))
+                (NumberTools.formatDouble(InvoiceTools.addNoDiscountSubtotals(invoice.getInvoiceLines()),2) -
+                        NumberTools.formatDouble(InvoiceTools.sum(InvoiceTools.getAllProductDiscount(invoice.getInvoiceLines())),2))
         );
-        extras.setTotal_company_discount("" + InvoiceTools.sum(InvoiceTools.getAllCompanyDiscount(invoice.getInvoiceLines())));
+        extras.setTotal_company_discount("" +
+                NumberTools.formatDouble(InvoiceTools.sum(InvoiceTools.getAllCompanyDiscount(invoice.getInvoiceLines())),2));
         //extras.setTotal_customer_discount("" + InvoiceTools.sum(InvoiceTools.consolidateCustomerDiscount(invoice.getInvoiceLines())));
 
         List<Double> customerDiscounts = new ArrayList<>();
-        double subtotal = InvoiceTools.addSubtotals(invoice.getInvoiceLines());
-        double totalCustomerDiscount = subtotal - DiscountTools.applyMultipleDiscounts(new BigDecimal(subtotal),
-                BigDecimal.ONE, customerDiscounts, customer.getDiscount_text(),",").doubleValue();
+        double subtotal = NumberTools.formatDouble(InvoiceTools.addSubtotals(invoice.getInvoiceLines()),2);
+        double totalCustomerDiscount = NumberTools.formatDouble(subtotal - DiscountTools.applyMultipleDiscounts(new BigDecimal(subtotal),
+                BigDecimal.ONE, customerDiscounts, customer != null? customer.getDiscount_text() : "",",").doubleValue(),2);
         extras.setTotal_customer_discount("" + totalCustomerDiscount);
-        extras.setCustomer_discount_text_summary(customer.getDiscount_text());
+        extras.setCustomer_discount_text_summary(customer != null? customer.getDiscount_text() : "");
         extras.setCustomer_discount_amounts_summary(
                 //InvoiceTools.generateDiscountAmount(InvoiceTools.consolidateCustomerDiscount(invoice.getInvoiceLines()),',')
                 InvoiceTools.generateDiscountAmount(customerDiscounts,',')
@@ -91,8 +100,10 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
                         (Double.valueOf(extras.getTotal_company_discount()) +
                                 Double.valueOf(extras.getTotal_customer_discount())) )
         );
-        extras.setPayment_term_id(customer.getPayment_terms_id());
-        extras.setPayment_term_code(customer.getPaymentTerms() == null? null : customer.getPaymentTerms().getCode());
+        if(customer != null) {
+            extras.setPayment_term_id(customer.getPayment_terms_id());
+            extras.setPayment_term_code(customer.getPaymentTerms() == null ? null : customer.getPaymentTerms().getCode());
+        }
         invoice.setExtras(extras);
 
         return invoice;
@@ -126,5 +137,13 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
 
     public void setSetupActionBar(SetupActionBar setupActionBar) {
         this.setupActionBar = setupActionBar;
+    }
+
+    public boolean isLayaway() {
+        return isLayaway;
+    }
+
+    public void setLayaway(boolean layaway) {
+        isLayaway = layaway;
     }
 }

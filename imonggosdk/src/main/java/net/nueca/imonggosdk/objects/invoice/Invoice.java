@@ -1,6 +1,7 @@
 package net.nueca.imonggosdk.objects.invoice;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -78,10 +79,7 @@ public class Invoice extends BaseTransactionTable2 {
     protected transient Branch branch;
 
     @DatabaseField
-    protected transient Integer currentPaymentBatchNo = null;
-
-    @DatabaseField
-    protected transient boolean hasNewPaymentBatch = false;
+    protected transient Integer currentPaymentBatchNo = 0;
 
     @DatabaseField
     protected transient Integer layaway_id;
@@ -494,8 +492,6 @@ public class Invoice extends BaseTransactionTable2 {
     }
 
     public Integer getCurrentPaymentBatchNo() {
-        if(currentPaymentBatchNo == null)
-            currentPaymentBatchNo = 0;
         return currentPaymentBatchNo;
     }
 
@@ -503,46 +499,41 @@ public class Invoice extends BaseTransactionTable2 {
         this.currentPaymentBatchNo = currentPaymentBatchNo;
     }
 
-    public void updateCurrentPaymentBatch() {
+    public boolean updateCurrentPaymentBatch() {
         refresh();
-        hasNewPaymentBatch = false;
+        boolean hasNewPaymentBatch = false;
         for(InvoicePayment payment : payments) {
             if(payment.getPaymentBatchNo() == null) {
                 hasNewPaymentBatch = true;
                 continue;
             }
-            if(getCurrentPaymentBatchNo() < payment.getPaymentBatchNo())
-                setCurrentPaymentBatchNo(payment.getPaymentBatchNo());
+            if(currentPaymentBatchNo < payment.getPaymentBatchNo())
+                currentPaymentBatchNo = payment.getPaymentBatchNo();
         }
+        Log.e("hasNewPaymentBatch", ""+hasNewPaymentBatch);
+        return hasNewPaymentBatch;
     }
 
-    public void createNewPaymentBatch() {
-        updateCurrentPaymentBatch();
+    public boolean createNewPaymentBatch() {
+        if(!updateCurrentPaymentBatch())
+            return false;
 
         for(InvoicePayment payment : payments) {
             if(payment.getPaymentBatchNo() == null) {
-                hasNewPaymentBatch = true;
-                payment.setPaymentBatchNo(getCurrentPaymentBatchNo() + 1);
+                payment.setPaymentBatchNo(currentPaymentBatchNo + 1);
             }
         }
+        return true;
     }
 
     public List<InvoicePayment> getNewBatchPayment() {
         refresh();
         List<InvoicePayment> payments = new ArrayList<>();
         for(InvoicePayment payment : this.payments) {
-            if(payment.getPaymentBatchNo() == null || payment.getPaymentBatchNo() > getCurrentPaymentBatchNo())
+            if(payment.getPaymentBatchNo() == null || payment.getPaymentBatchNo() > currentPaymentBatchNo)
                 payments.add(payment);
         }
         return payments;
-    }
-
-    public boolean isHasNewPaymentBatch() {
-        return hasNewPaymentBatch;
-    }
-
-    public void setHasNewPaymentBatch(boolean hasNewPaymentBatch) {
-        this.hasNewPaymentBatch = hasNewPaymentBatch;
     }
 
     public Integer getLayaway_id() {
@@ -552,4 +543,5 @@ public class Invoice extends BaseTransactionTable2 {
     public void setLayaway_id(Integer layaway_id) {
         this.layaway_id = layaway_id;
     }
+
 }

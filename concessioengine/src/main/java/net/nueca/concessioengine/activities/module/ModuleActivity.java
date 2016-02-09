@@ -64,8 +64,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public static final String INIT_PRODUCT_ADAPTER_HELPER = "initialize_pahelper";
     public static final String INIT_SELECTED_CUSTOMER = "initialize_selected_customer";
     public static final String FOR_HISTORY_DETAIL = "for_history_detail";
-    public static final String REFERENCE = "reference";
     public static final String HISTORY_ITEM_FILTERS = "history_item_filters";
+
+    public static final String REFERENCE = "reference";
+    public static final String IS_LAYAWAY = "is_layaway";
 
     protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
@@ -76,6 +78,9 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected boolean isForHistoryDetail = false;
     private ModuleSetting moduleSetting;
     protected Customer customer;
+
+    protected String reference;
+    protected boolean isLayaway = false;
 
     protected int previousFragmentCount = 0;
     protected HistoryDetailsListener historyDetailsListener;
@@ -91,6 +96,12 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             isReturnItems = getIntent().getBooleanExtra(RETURN_ITEMS, false);
         if(getIntent().hasExtra(FOR_HISTORY_DETAIL))
             isForHistoryDetail = getIntent().getBooleanExtra(FOR_HISTORY_DETAIL, false);
+
+        if(getIntent().hasExtra(REFERENCE))
+            reference = getIntent().getStringExtra(REFERENCE);
+        if(getIntent().hasExtra(IS_LAYAWAY))
+            isLayaway = getIntent().getBooleanExtra(IS_LAYAWAY, false);
+
         clearTransactions = getIntent().getBooleanExtra(INIT_PRODUCT_ADAPTER_HELPER, false);
         initSelectedCustomer = getIntent().getBooleanExtra(INIT_SELECTED_CUSTOMER, true);
     }

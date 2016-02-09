@@ -131,7 +131,7 @@
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:inputType="textPersonName"
                 android:ems="10"
                 android:id="@+id/etCheckName"
                 android:textAppearance="?android:attr/textAppearanceLarge"
@@ -189,7 +189,7 @@
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:inputType="text"
                 android:ems="10"
                 android:id="@+id/etBankBranch"
                 android:textAppearance="?android:attr/textAppearanceLarge"

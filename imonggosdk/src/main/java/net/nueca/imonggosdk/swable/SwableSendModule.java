@@ -62,18 +62,18 @@ public class SwableSendModule extends BaseSwableModule {
                 return;
             }
 
+            Log.e("SwableSendModule", "sendTransaction : non-paging : "+offlineData.getObjectFromData().toString());
             JSONObject jsonObject;
             if(offlineData.getType() == OfflineData.INVOICE) {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
-                invoice.createNewPaymentBatch();
-                invoice.updateTo(dbHelper);
-
+                //invoice.createNewPaymentBatch();
+                //invoice.updateTo(dbHelper);
                 invoice.setPayments(invoice.getNewBatchPayment());
-                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
+                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         invoice.toJSONObject());
             }
             else {
-                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
+                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         offlineData.getData());
             }
             Log.e("SwableSendModule", "sendTransaction : non-paging : "+jsonObject.toString());
@@ -130,6 +130,10 @@ public class SwableSendModule extends BaseSwableModule {
                             if (offlineData.isSynced()) {
                                 SUCCESS_TRANSACTIONS++;
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
+                                if(offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                    offlineData.setSynced(false);
+                                    offlineData.updateTo(dbHelper);
+                                }
                             }
                             Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
                             if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
@@ -228,6 +232,10 @@ public class SwableSendModule extends BaseSwableModule {
                             if (offlineData.isSynced() && responseCode != ImonggoSwable.UNAUTHORIZED_ACCESS) {
                                 SUCCESS_TRANSACTIONS++;
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
+                                if(offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                    offlineData.setSynced(false);
+                                    offlineData.updateTo(dbHelper);
+                                }
                             }
                         }
 
@@ -268,13 +276,13 @@ public class SwableSendModule extends BaseSwableModule {
                     for(int i = 0; i < childOrders.size(); i++) {
                         if(returnIds.get(i).length() <= 0 || !returnIds.get(i).equals(ImonggoSwable.NO_RETURN_ID))
                             continue;
-                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType
-                                (), childOrders.get(i).toJSONObject()), offlineData);
+                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getType()
+                                , childOrders.get(i).toJSONObject()), offlineData);
                     }
                 } else {
                     List<Order> childOrders = order.getChildOrders();
                     for(int i = 0; i < childOrders.size(); i++) {
-                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getType
                                 (), childOrders.get(i).toJSONObject()), offlineData);
                     }
                 }
@@ -293,12 +301,12 @@ public class SwableSendModule extends BaseSwableModule {
                     for(int i = 0; i < childDocuments.size(); i++) {
                         if(returnIds.get(i).length() <= 0 || !returnIds.get(i).equals(ImonggoSwable.NO_RETURN_ID))
                             continue;
-                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getType
                                 (), childDocuments.get(i).toJSONObject()), offlineData);
                     }
                 } else {
                     for(int i = 0; i < childDocuments.size(); i++) {
-                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType
+                        sendThisPage(table, i+1, max_page, SwableTools.prepareTransactionJSON(offlineData.getType
                                 (), childDocuments.get(i).toJSONObject()), offlineData);
                     }
                 }
@@ -511,7 +519,7 @@ public class SwableSendModule extends BaseSwableModule {
         else return;
 
         Log.e("SwableSendModule", "sendFirstPage : reference -> " + jsonObject.get("reference"));
-        jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(), jsonObject);
+        jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(), jsonObject);
         Log.e("FIRST_PAGE >>>>> ", jsonObject.toString());
 
         requestQueue.cancelAll(offlineData.getId()+ "-" +page);
@@ -712,7 +720,7 @@ public class SwableSendModule extends BaseSwableModule {
         jsonObject.put("reference",null);
         Log.e("SwableSendModule", "sendNextPage : " + jsonObject.toString());
 
-        jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(), jsonObject);
+        jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(), jsonObject);
 
         requestQueue.cancelAll(offlineData.getId()+ "-" +page);
         requestQueue.add(
@@ -766,6 +774,10 @@ public class SwableSendModule extends BaseSwableModule {
                             if (offlineData.isSynced() && page == maxpage) {
                                 SUCCESS_TRANSACTIONS++;
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
+                                if(offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                    offlineData.setSynced(false);
+                                    offlineData.updateTo(dbHelper);
+                                }
                             }
                             Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
                             if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
@@ -893,6 +905,13 @@ public class SwableSendModule extends BaseSwableModule {
                                 imonggoSwable.getSwableStateListener().onUnauthorizedAccess(response, responseCode);
                             } else
                                 imonggoSwable.getSwableStateListener().onSyncProblem(offlineData, hasInternet, response, responseCode);
+                        }
+
+                        if(offlineData.isSynced()) {
+                            if(offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                offlineData.setSynced(false);
+                                offlineData.updateTo(dbHelper);
+                            }
                         }
                     }
 

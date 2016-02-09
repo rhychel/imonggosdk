@@ -153,6 +153,8 @@ public class C_Finalize extends ModuleActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(C_Finalize.this, C_Checkout.class);
+                    intent.putExtra(REFERENCE, reference);
+                    intent.putExtra(IS_LAYAWAY, isLayaway);
                     startActivityForResult(intent, SALES);
                 }
             });
