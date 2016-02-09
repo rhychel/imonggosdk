@@ -69,6 +69,16 @@ public class ProductSorting extends DBTable {
     }
 
     @Override
+    public String toString() {
+        return label;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return is_default == ((ProductSorting)o).is_default();
+    }
+
+    @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(ProductSorting.class, this);

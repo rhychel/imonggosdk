@@ -1,6 +1,11 @@
 package net.nueca.concessioengine.tools.appsettings;
 
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+
 import net.nueca.imonggosdk.enums.ConcessioModule;
+
+import java.util.List;
 
 /**
  * Created by rhymartmanchus on 12/01/2016.
@@ -9,9 +14,10 @@ public class AppSettings {
 
     public enum AppSettingEntry {
         // Application
-        VERSION("Version"),
+        VERSION("Version:"),
         GET_LATEST_DOCUMENT("Get latest documents"), // --
         CLEAR_CACHED_DOCS("Clear cached documents"),
+        CLEAR_TRANSACTIONS("Clear transactions"),
         AUTO_UPDATE_APP("Auto-update app"),
         SHOW_HISTORY_AFTER("Show history after transaction"),
         DEBUG_MODE("Debug mode"),
@@ -60,6 +66,8 @@ public class AppSettings {
     private ValueType valueType = ValueType.LABEL;
     private int sectionFirstPosition = 0;
     private Object value;
+    private ArrayAdapter<?> adapter;
+    private AdapterView.OnItemSelectedListener onItemSelectedListener;
 
     public ConcessioModule getConcessioModule() {
         return concessioModule;
@@ -93,12 +101,28 @@ public class AppSettings {
         this.valueType = valueType;
     }
 
-    public Object getValue() {
-        return value;
+    public <T> T getValue(Class<T> c) {
+        return (T)(c.cast(value));
     }
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    public ArrayAdapter<?> getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(ArrayAdapter<?> adapter) {
+        this.adapter = adapter;
+    }
+
+    public AdapterView.OnItemSelectedListener getOnItemSelectedListener() {
+        return onItemSelectedListener;
+    }
+
+    public void setOnItemSelectedListener(AdapterView.OnItemSelectedListener onItemSelectedListener) {
+        this.onItemSelectedListener = onItemSelectedListener;
     }
 
     public AppSettingEntry getAppSettingEntry() {
