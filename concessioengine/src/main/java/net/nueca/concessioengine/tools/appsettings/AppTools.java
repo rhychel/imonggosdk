@@ -16,7 +16,7 @@ public class AppTools {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        return "";
+        return "--";
     }
 
 }

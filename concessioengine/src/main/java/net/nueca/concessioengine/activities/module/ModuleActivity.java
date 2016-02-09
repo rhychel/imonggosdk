@@ -125,6 +125,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     }
 
     protected ModuleSetting getModuleSetting() {
+        return getModuleSetting(concessioModule);
+    }
+
+    protected ModuleSetting getModuleSetting(ConcessioModule concessioModule) {
         try {
             return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(concessioModule)).queryForFirst();
         } catch (SQLException e) {

@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -13,7 +15,10 @@ import net.nueca.concessioengine.tools.appsettings.AppSettings;
 import net.nueca.concessioengine.tools.appsettings.AppTools;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
+import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,12 +57,84 @@ public class SettingsActivity extends ModuleActivity {
 
     private List<AppSettings> generateSettings() {
         ArrayList<AppSettings> appSettings = new ArrayList<>();
-        AppSettings appSetting = new AppSettings();
-        appSetting.setHeader(true);
-        appSetting.setSectionFirstPosition(0);
-        appSetting.setAppSettingEntry(AppSettings.AppSettingEntry.VERSION);
-        appSetting.setValue(AppTools.getAppVersionName(this));
-        appSetting.setConcessioModule(ConcessioModule.APPLICATION);
+
+        // header
+        AppSettings headerApp = new AppSettings();
+        headerApp.setHeader(true);
+        headerApp.setSectionFirstPosition(0);
+        headerApp.setConcessioModule(ConcessioModule.APPLICATION);
+        // header
+
+        AppSettings version = new AppSettings();
+        version.setHeader(false);
+        version.setSectionFirstPosition(0);
+        version.setConcessioModule(ConcessioModule.APPLICATION);
+        version.setAppSettingEntry(AppSettings.AppSettingEntry.VERSION);
+        version.setValue(AppTools.getAppVersionName(this));
+
+        appSettings.add(headerApp);
+        appSettings.add(version);
+
+        DebugMode debugMode = getModuleSetting(ConcessioModule.APP).getDebugMode();
+        if(debugMode.is_enabled()) {
+            AppSettings debug = new AppSettings();
+            debug.setHeader(false);
+            debug.setSectionFirstPosition(0);
+            debug.setConcessioModule(ConcessioModule.APPLICATION);
+            debug.setAppSettingEntry(AppSettings.AppSettingEntry.CLEAR_TRANSACTIONS);
+            appSettings.add(debug);
+        }
+
+        AppSettings autoUpdate = new AppSettings();
+        autoUpdate.setHeader(false);
+        autoUpdate.setSectionFirstPosition(0);
+        autoUpdate.setConcessioModule(ConcessioModule.APPLICATION);
+        autoUpdate.setAppSettingEntry(AppSettings.AppSettingEntry.AUTO_UPDATE_APP);
+        autoUpdate.setValueType(AppSettings.ValueType.SWITCH);
+        appSettings.add(autoUpdate);
+
+        try {
+            final List<ProductSorting> productSortings = getHelper().fetchForeignCollection(getModuleSetting(ConcessioModule.APP).getProductSortings().closeableIterator());
+            int i = 0;
+            for(ProductSorting productSorting : productSortings) {
+                if(productSorting.is_default()) {
+                    if(i == 0)
+                        break;
+                    ProductSorting temp = productSorting;
+                    productSortings.add(0, temp);
+                    productSortings.remove(i+1);
+                }
+                i++;
+            }
+
+            ArrayAdapter<ProductSorting> psAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, productSortings);
+            AppSettings multi = new AppSettings();
+            multi.setHeader(false);
+            multi.setSectionFirstPosition(0);
+            multi.setConcessioModule(ConcessioModule.APPLICATION);
+            multi.setAppSettingEntry(AppSettings.AppSettingEntry.PRODUCT_SORTING);
+            multi.setValueType(AppSettings.ValueType.DROPDOWN);
+            multi.setAdapter(psAdapter);
+            multi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    ProductSorting prevSelected = new ProductSorting();
+                    prevSelected.setIs_default(true);
+                    int selected = productSortings.indexOf(prevSelected);
+                    prevSelected = productSortings.get(selected);
+                    prevSelected.updateTo(getHelper());
+
+                    ProductSorting newSelected = productSortings.get(position);
+                    newSelected.updateTo(getHelper());
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) { }
+            });
+            appSettings.add(multi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return appSettings;
     }
