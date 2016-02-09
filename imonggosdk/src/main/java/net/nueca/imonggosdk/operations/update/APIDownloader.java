@@ -197,6 +197,7 @@ public class APIDownloader extends BaseUpdater implements SyncServiceConnectionL
             if (mSyncModules == null) {
                 Log.e(TAG, "Binding services");
                 mContext.bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
+                Log.e(TAG, "Took so much time...");
             } else {
                 Log.e(TAG, "Service is already binded");
                 mServiceBounded = true;

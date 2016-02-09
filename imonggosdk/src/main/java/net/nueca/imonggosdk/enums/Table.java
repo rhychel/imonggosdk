@@ -127,6 +127,8 @@ public enum Table {
     private final String name;
     private final Class aClass;
     private final String tableKey;
+    private Table[] prerequisites;
+
 
     Table(API_TYPE api, String name) {
         this(api, name, null);
@@ -154,6 +156,29 @@ public enum Table {
         return this.name;
     }
     public String getTableKey() {return tableKey;}
+    public Table[] getPrerequisites() {
+        /*
+            + Branch Products
+               - Units
+               - Products
+
+            + Route Plans
+              - Route Plan Details
+
+            + Price List From Customers / Price Lists
+              - Price Lists Details
+
+            + Sales Promotions Sales Discount
+              - Sales Promotions Sales Discount Details
+
+            + Sales Promotions Points
+              - Sales Promotion Sales Points
+         */
+
+        if(this == BRANCH_PRODUCTS)
+            prerequisites = new Table[]{PRODUCTS, UNITS};
+        return prerequisites;
+    }
 
     public static Table convertFromKey(String tableKey) {
         for(Table table : Table.values()) {
@@ -165,4 +190,5 @@ public enum Table {
         }
         return NONE;
     }
+
 }

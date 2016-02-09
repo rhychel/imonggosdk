@@ -135,7 +135,7 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                 }
                 Log.e(getClass().getSimpleName(), "Subtotal : " + subtotal);*/
                 holder.tvSubtotal2.setText(String.format("P%s", NumberTools.separateInCommas(selectedProductItem.getValuesSubtotal())));
-                holder.tvRetailPrice.setText(String.format("P%s", selectedProductItem.getValuesRetailPrices(';')));
+                holder.tvRetailPrice.setText(String.format("P%s/%s", selectedProductItem.getValuesRetailPrices(';'), selectedProductItem.getValuesUnit()));
             }
             // set Retail price
             else {

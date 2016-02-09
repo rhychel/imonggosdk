@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
@@ -25,6 +26,7 @@ import net.nueca.concessioengine.dialogs.UpdaterChooserDialog;
 import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
@@ -34,6 +36,8 @@ import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.Settings;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
@@ -42,6 +46,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.LastUpdateAtTools;
 
 import java.sql.SQLException;
@@ -80,6 +85,23 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         setContentView(R.layout.c_dashboard);
 
         Log.e("ClassName", Customer.class.getSimpleName());
+
+
+        List<Settings> setting = Settings.fetchWithConditionInt(getHelper(), Settings.class, new DBTable.ConditionsWindow<Settings, Integer>() {
+            @Override
+            public Where<Settings, Integer> renderConditions(Where<Settings, Integer> where) throws SQLException {
+                return where.eq("name", Configurations.SETTINGS_NAME.get(SettingsName.FORMAT_NO_OF_DECIMALS));
+            }
+        });
+        if(setting.size() > 0)
+            Log.e("Setting", setting.get(0).getValue());
+        else {
+            try {
+                Log.e("Setting", getHelper().fetchObjects(Settings.class).countOf()+"");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
 
         /*try {
             getHelper().deleteAll(OfflineData.class);
@@ -176,8 +198,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         }
 */
 
-
-
         setNextActivityClass(C_Module.class);
 
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
@@ -239,7 +259,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         final ProgressListDialog progressListDialog = new ProgressListDialog(C_Dashboard.this, tableList);
                         progressListDialog.setCanceledOnTouchOutside(false);
                         progressListDialog.setCancelable(false);
-
 
                         apiDownloader.setSyncServer(Server.IRETAILCLOUD_NET);
                         apiDownloader.setSyncModulesListener(new SyncModulesListener() {
