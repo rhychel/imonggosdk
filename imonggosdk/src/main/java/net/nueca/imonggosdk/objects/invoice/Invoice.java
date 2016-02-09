@@ -81,10 +81,6 @@ public class Invoice extends BaseTransactionTable2 {
     @DatabaseField
     protected transient Integer currentPaymentBatchNo = 0;
 
-    @Expose
-    @DatabaseField
-    protected transient Integer layaway_id;
-
     @DatabaseField
     protected transient Integer layaway_id;
 
@@ -538,14 +534,6 @@ public class Invoice extends BaseTransactionTable2 {
                 payments.add(payment);
         }
         return payments;
-    }
-
-    public Integer getLayaway_id() {
-        return layaway_id;
-    }
-
-    public void setLayaway_id(Integer layaway_id) {
-        this.layaway_id = layaway_id;
     }
 
     public Integer getLayaway_id() {
