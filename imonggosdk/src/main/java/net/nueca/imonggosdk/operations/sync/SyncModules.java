@@ -65,7 +65,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -85,6 +84,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
     private void startSyncModuleContents(RequestType requestType) throws SQLException {
 
+        mSkipNextModule = false;
         mCurrentRequestType = requestType;
 
         if (getHelper() == null) {
@@ -639,7 +639,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             Log.e(TAG, "Setting Up Route Plan Details...");
 
             //check if route plan is existing
-            if (getHelper().fetchObjectsList(RoutePlan.class).size() != 0) {
+            if (getHelper().fetchObjectsList(RoutePlan.class).size() != 0 && !mSkipNextModule) {
                 listOfIds = getHelper().fetchObjectsList(RoutePlan.class);
                 count = listOfIds.size();
                 mCustomIndex = 0;
@@ -657,7 +657,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             Log.e(TAG, "Setting Up Price List Details...");
 
             //check if price lists is existing
-            if (getHelper().fetchObjectsList(PriceList.class).size() != 0) {
+            if (getHelper().fetchObjectsList(PriceList.class).size() != 0 && !mSkipNextModule) {
                 listOfIds = getHelper().fetchObjectsList(PriceList.class);
                 count = listOfIds.size();
                 mCustomIndex = 0;
@@ -750,7 +750,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     public void onStart(Table module, RequestType requestType) {
         Log.e(TAG, "onStart downloading " + module.toString() + " " + requestType);
         if (mSyncModulesListener != null) {
-            mSyncModulesListener.onStartDownload(module);
+            mSyncModulesListener.onStartDownload(mCurrentTableSyncing);
         }
     }
 
@@ -786,16 +786,25 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
+
+
                         SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                         try {
                             Date date1 = dateFormat1.parse(lastUpdatedAt.getLast_updated_at());
                             Date date2 = dateFormat1.parse(newLastUpdatedAt.getLast_updated_at());
 
                             if (date1.equals(date2)) {
+
+                                if(    mCurrentTableSyncing == Table.ROUTE_PLANS ||
+                                        mCurrentTableSyncing == Table.PRICE_LISTS ||
+                                        mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
+                                    mSkipNextModule = true;
+                                }
+
                                 syncNext();
                                 return;
-
                             } else {
+
                                 Log.e(TAG, ">> Hindi parehas");
                             }
 
@@ -803,7 +812,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             Log.e(TAG, e.toString());
                         }
 
-                        newLastUpdatedAt.updateTo(getHelper());
                     } else {
                         newLastUpdatedAt.insertTo(getHelper());
                         Log.e(TAG, "New Last Updated At: " + jsonObject.toString());
@@ -840,6 +848,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             mCurrentTableSyncing == Table.ROUTE_PLANS ||
                             mCurrentTableSyncing == Table.PRICE_LISTS ||
                             mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
+
 
                         startSyncModuleContents(RequestType.API_CONTENT);
 
