@@ -154,7 +154,7 @@ public class PriceTools {
         return selectedPrice;
     }
 
-    public static Double getBranchPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch, Unit unit) throws SQLException {
+    public static double getBranchPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch, Unit unit) throws SQLException {
         Log.e("PriceTools", "getBranchPrice " + (dbHelper2 == null) + " " + product.getName() + " " + (branch == null) + " " + (unit == null));
 
         BranchProduct branchProduct = null;

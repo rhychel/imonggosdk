@@ -101,12 +101,13 @@ public class C_Finalize extends ModuleActivity {
                     public void onDuplicateTransaction() {
                         // TODO Implement your duplication!
                         // TODO for double checking..
-                        DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
-                        return;
-//                        ProductsAdapterHelper.isDuplicating = true;
-//                        Intent intent = new Intent(C_Finalize.this, C_Module.class);
-//                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, offlineData.getConcessioModule().ordinal());
-//                        startActivity(intent);
+                        //DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
+                        //return;
+                        ProductsAdapterHelper.isDuplicating = true;
+                        Intent intent = new Intent(C_Finalize.this, C_Module.class);
+                        intent.putExtra(FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
+                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, offlineData.getConcessioModule().ordinal());
+                        startActivity(intent);
                     }
                 };
 

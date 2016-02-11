@@ -142,6 +142,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     public void showTransactionDetails(OfflineData offlineData) {
                         prepareFooter();
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
+                        ProductsAdapterHelper.setDbHelper(getHelper());
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
                             try {
@@ -157,9 +158,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             }
 
                             Intent intent = new Intent(C_Module.this, C_Finalize.class);
-                            intent.putExtra("offlinedata_reference_no", offlineData.getReference_no());
+                            intent.putExtra(REFERENCE, offlineData.getReference_no());
                             Log.e("INOVOICE SEND", offlineData.getObjectFromData(Invoice.class).toJSONString());
-                            intent.putExtra("is_layaway", true);
+                            intent.putExtra(IS_LAYAWAY, true);
                             startActivityForResult(intent, REVIEW_SALES);
                         }
                     }
@@ -194,6 +195,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     public void showTransactionDetails(OfflineData offlineData) {
                         prepareFooter();
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
+                        ProductsAdapterHelper.setDbHelper(getHelper());
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
                             try {
@@ -201,6 +203,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
                                 SelectedProductItemList returns =
                                         InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
+
+                                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
+                                ProductsAdapterHelper.setSelectedCustomer(customer);
+                                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+                                if(customerGroups.size() > 0)
+                                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
 
                                 ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
                                 ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
