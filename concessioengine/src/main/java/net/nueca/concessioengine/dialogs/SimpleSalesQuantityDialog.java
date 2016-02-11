@@ -94,7 +94,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             @Override
             public void afterTextChanged(Editable editable) {
-                subtotal = String.valueOf(NumberTools.toDouble(etQuantity.getText().toString()) * NumberTools.toDouble(retailPrice));
+                String quantity = etQuantity.getText().toString();
+                subtotal = String.valueOf(NumberTools.toDouble(quantity.equals("-") ? "0" : quantity) * NumberTools.toDouble(retailPrice));
                 tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
                 Log.e("SUBTOTAL AFTER", subtotal);
             }

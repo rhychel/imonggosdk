@@ -996,7 +996,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
         } else if (requestCode == REVIEW_SALES) {
             if (resultCode == SUCCESS) {
-                setResult(SUCCESS);
+                if(data.hasExtra(FOR_HISTORY_DETAIL))
+                    setResult(SUCCESS, data);
+                else
+                    setResult(SUCCESS);
                 finish();
             } else {
                 Handler handler = new Handler() {
@@ -1021,8 +1024,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 handler.sendEmptyMessageDelayed(0, 100);
             }
         } else if (requestCode == SALES) {
-            if (resultCode == SUCCESS)
+            if (resultCode == SUCCESS) {
                 finish();
+            }
         } else if(requestCode == IS_DUPLICATING) {
             if (resultCode == SUCCESS) {
                 Log.e("IS_DUPLICATING", "success");
@@ -1035,7 +1039,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         } else if(requestCode == HISTORY_DETAILS) {
             if (resultCode == SUCCESS) {
                 Log.e("HISTORY_DETAILS", "success");
-                onBackPressed();
+//                onBackPressed();
+                OfflineData newOfflineData = OfflineData.fetchById(getHelper(), OfflineData.class, data.getIntExtra(FOR_HISTORY_DETAIL, 0));
+                simpleTransactionsFragment.addOfflineData(newOfflineData);
             }
         }
     }
@@ -1186,6 +1192,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
 
+                                        if(ProductsAdapterHelper.isDuplicating) {
+                                            Intent intent = new Intent();
+                                            intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
+                                            setResult(SUCCESS, intent);
+                                            finish();
+                                            return;
+                                        }
+
                                         if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                             llFooter.setVisibility(View.GONE);
                                             simpleCustomersFragment.setHasSelected(false);
@@ -1203,20 +1217,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 //                                                    .commit();
                                         } else {
                                             // TODO
-                                            if(ProductsAdapterHelper.isDuplicating) {
-                                                Intent intent = new Intent();
-                                                intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
-                                                setResult(SUCCESS, intent);
-                                                finish();
-                                            }
-                                            else
-                                                onBackPressed();
+                                            onBackPressed();
                                         }
 
                                         if (concessioModule == ConcessioModule.STOCK_REQUEST) {
                                             simpleProductsFragment.refreshList();
                                             finalizeFragment.refreshList();
-
                                         }
                                     }
                                 });
@@ -1274,6 +1280,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         public void whenDismissed() {
                                                             ProductsAdapterHelper.clearSelectedProductItemList(true);
                                                             ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
+                                                            if(ProductsAdapterHelper.isDuplicating) {
+                                                                Intent intent = new Intent();
+                                                                intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
+                                                                setResult(SUCCESS, intent);
+                                                                finish();
+                                                                return;
+                                                            }
+
                                                             if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                                                 llFooter.setVisibility(View.GONE);
                                                                 simpleCustomersFragment.setHasSelected(false);
@@ -1290,14 +1305,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                                 previousFragmentCount = 0;
                                                             } else {
                                                                 // TODO
-                                                                if(ProductsAdapterHelper.isDuplicating) {
-                                                                    Intent intent = new Intent();
-                                                                    intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
-                                                                    setResult(SUCCESS, intent);
-                                                                    finish();
-                                                                }
-                                                                else
-                                                                    onBackPressed();
+                                                                onBackPressed();
                                                             }
                                                         }
                                                     });

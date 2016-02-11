@@ -137,7 +137,7 @@ public class SwableSendModule extends BaseSwableModule {
                                 }
                             }
                             Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
-                            /*if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
+                            if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
                                 NotificationTools.postNotification(imonggoSwable,
                                         ImonggoSwable.NOTIFICATION_ID,
                                         APP_ICON_DRAWABLE,
@@ -146,7 +146,7 @@ public class SwableSendModule extends BaseSwableModule {
                                         SUCCESS_TRANSACTIONS +" transaction" +
                                                 (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent",
                                         null,
-                                        imonggoSwable.getPendingIntent());*/
+                                        imonggoSwable.getPendingIntent());
                         }
 
                         @Override
@@ -376,7 +376,7 @@ public class SwableSendModule extends BaseSwableModule {
                                 SUCCESS_TRANSACTIONS++;
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
 
-                                /*if (parent.isSynced() && QUEUED_TRANSACTIONS == 0)
+                                if (parent.isSynced() && QUEUED_TRANSACTIONS == 0)
                                     NotificationTools.postNotification(imonggoSwable,
                                             ImonggoSwable.NOTIFICATION_ID,
                                             APP_ICON_DRAWABLE,
@@ -384,7 +384,7 @@ public class SwableSendModule extends BaseSwableModule {
                                             imonggoSwable.getResources().getString(R.string.app_name),
                                             SUCCESS_TRANSACTIONS + " " + "transactions" + " sent",
                                             null,
-                                            imonggoSwable.getPendingIntent());*/
+                                            imonggoSwable.getPendingIntent());
 
                             }
                         } catch (JSONException e) {
@@ -783,7 +783,7 @@ public class SwableSendModule extends BaseSwableModule {
                                 }
                             }
                             Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
-                            /*if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
+                            if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
                                 NotificationTools.postNotification(imonggoSwable,
                                         ImonggoSwable.NOTIFICATION_ID,
                                         APP_ICON_DRAWABLE,
@@ -792,7 +792,7 @@ public class SwableSendModule extends BaseSwableModule {
                                         SUCCESS_TRANSACTIONS +" transaction" +
                                                 (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent",
                                         null,
-                                        imonggoSwable.getPendingIntent());*/
+                                        imonggoSwable.getPendingIntent());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -108,7 +108,7 @@ public class C_Finalize extends ModuleActivity {
                         Intent intent = new Intent(C_Finalize.this, C_Module.class);
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, offlineData.getConcessioModule().ordinal());
-                        startActivity(intent);
+                        startActivityForResult(intent, IS_DUPLICATING);
                     }
                 };
 
@@ -194,7 +194,7 @@ public class C_Finalize extends ModuleActivity {
                         ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
         Double balance =
                 sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-        tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
+        tvBalance.setText("+++P"+ NumberTools.separateInCommas(balance));
     }
 
     @Override
@@ -247,8 +247,20 @@ public class C_Finalize extends ModuleActivity {
             };
             handler.sendEmptyMessageDelayed(0, 100);
         }
+        else if(requestCode == IS_DUPLICATING) {
+            if(resultCode == SUCCESS) {
+                if(data.hasExtra(FOR_HISTORY_DETAIL))
+                    setResult(SUCCESS, data);
+                else
+                    setResult(SUCCESS);
+                finish();
+            }
+        }
         else if(resultCode == SUCCESS) {
-            setResult(SUCCESS);
+            if(data.hasExtra(FOR_HISTORY_DETAIL))
+                setResult(SUCCESS, data);
+            else
+                setResult(SUCCESS);
             finish();
         }
     }
@@ -282,18 +294,19 @@ public class C_Finalize extends ModuleActivity {
                 }
             });
 
-            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
-                @Override
-                public void whenItemsSelectedUpdated() {
-                    Double sales = DiscountTools.applyMultipleDiscounts(
-                            new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
-                            ProductsAdapterHelper.getSelectedCustomer() == null? null :
-                                    ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
-                    Double balance =
-                            sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-                    tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
-                }
-            });
+            if(!isForHistoryDetail && !isLayaway)
+                simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
+                    @Override
+                    public void whenItemsSelectedUpdated() {
+                        Double sales = DiscountTools.applyMultipleDiscounts(
+                                new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
+                                ProductsAdapterHelper.getSelectedCustomer() == null? null :
+                                        ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
+                        Double balance =
+                                sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+                        tvBalance.setText("---P"+ NumberTools.separateInCommas(balance));
+                    }
+                });
             if(position == 0)// Positive Transactions
                 simpleProductsFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
             else {
