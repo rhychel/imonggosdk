@@ -35,8 +35,11 @@
         <item name="colorControlActivated">@color/primary</item>
     </style>
 
-    <style name="Spinner.Orange" parent="Widget.AppCompat.Spinner">
+    <style name="Spinner.Orange" parent="AppTheme.Concessio.Light.NoActionBar">
+        <item name="colorControlNormal">@color/primary</item>
         <item name="colorControlActivated">@color/primary</item>
+        <item name="colorControlHighlight">@color/primary</item>
+        <!--<item name="colorControlActivated">@color/primary</item>-->
     </style>
 
     <!-- Floating Action Button -->

@@ -10,6 +10,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.crashlytics.android.Crashlytics;
 import com.j256.ormlite.stmt.Where;
 
+import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.login.BaseLoginActivity;
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -104,7 +105,7 @@ public class C_Login extends LoginActivity {
                 (Button)findViewById(R.id.btnLogin));
 
         setEditTextAccountID("A1029");
-            setEditTextEmail("A1072A_OSS-1@imonggo.com");
+        setEditTextEmail("A1072A_OSS-1@imonggo.com");
         setEditTextPassword("123rebisco456");
 
     }

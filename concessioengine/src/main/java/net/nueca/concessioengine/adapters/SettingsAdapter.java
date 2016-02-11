@@ -75,6 +75,7 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
                 holder.spOptions.setVisibility(View.VISIBLE);
                 holder.tvLabel.setText(appSettings.getAppSettingEntry().getLabel());
                 holder.spOptions.setAdapter(appSettings.getAdapter());
+                holder.spOptions.setOnItemSelectedListener(appSettings.getOnItemSelectedListener());
             }
             else {
                 holder.llLabel.setVisibility(View.VISIBLE);

@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.tools;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import net.nueca.imonggosdk.R;
 
@@ -40,14 +42,18 @@ public class NotificationTools {
         if(whenDeletedIntent != null)
             mNoticationBuilder.setDeleteIntent(whenDeletedIntent);
 
-        mNoticationBuilder
-                .setSmallIcon(iconDrawableResource)
+        Log.e("postNotification", iconDrawableResource+"");
+//        if(iconDrawableResource == null)
+//            Log.e("postNotification", "iconDrawableResource is null shit!");
+        Notification notif = mNoticationBuilder
+                .setSmallIcon(iconDrawableResource) // R.drawable.ic_check_circle
                 .setContentTitle(title)
                 .setSound(alarmSound)
                 .setAutoCancel(true)
-                .setContentText(message);
+                .setContentText(message)
+                .build();
 
-        mNotificationManager.notify(notificationId, mNoticationBuilder.build());
+        mNotificationManager.notify(notificationId, notif);//mNoticationBuilder.build()
     }
 
     public static void cancelNotification(@NonNull Context context, int notificationId) {

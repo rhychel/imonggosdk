@@ -159,7 +159,6 @@ public class InvoiceTools {
     public static SelectedProductItemList generateSelectedProductItemList(ImonggoDBHelper2 helper, Invoice invoice,
                                           Customer newSalesCustomer, Branch newSalesBranch, boolean isReturns, boolean isMultiline)
             throws SQLException {
-        Log.e("InvoiceTools", "generateSelectedProductItemList : starting");
 
         SelectedProductItemList selectedProductItemList = new SelectedProductItemList();
         selectedProductItemList.setReturns(isReturns);
@@ -171,7 +170,6 @@ public class InvoiceTools {
             salesCustomerGroup = customerGroups.get(0);
 
         for(InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
-            Log.e("InvoiceLine >> ", invoiceLine.getQuantity() +"");
             if(isReturns && invoiceLine.getQuantity() >= 0d)
                 continue;
             else if(!isReturns && invoiceLine.getQuantity() < 0d)
@@ -206,10 +204,8 @@ public class InvoiceTools {
 
             selectedProductItem.addValues(values);
             selectedProductItemList.add(selectedProductItem);
-            Log.e("InvoiceTools", " >> " + product.getId());
         }
 
-        Log.e("InvoiceTools", "generateSelectedProductItemList : end");
         return selectedProductItemList;
     }
 
@@ -356,6 +352,8 @@ public class InvoiceTools {
         private BigDecimal total_payment_made = BigDecimal.ZERO;
 
         public void addAllInvoiceLines(List<InvoiceLine> invoiceLines) {
+            if(invoiceLines == null)
+                return;
             for(InvoiceLine invoiceLine : invoiceLines)
                 addInvoiceLine(invoiceLine);
         }
@@ -374,6 +372,8 @@ public class InvoiceTools {
         }
 
         public void addAllPayments(List<InvoicePayment> payments) {
+            if(payments == null)
+                return;
             for(InvoicePayment payment : payments)
                 addPayment(payment);
         }
@@ -398,6 +398,23 @@ public class InvoiceTools {
 
             InvoicePayment forDelete = payments.remove(location);
             total_payment_made = total_payment_made.subtract(new BigDecimal(forDelete.getTender()));
+
+            refresh();
+        }
+
+        public InvoicePayment getPayment(int location) {
+            if(location >= payments.size())
+                return null;
+
+            return payments.get(location);
+        }
+
+        public void setPayment(int location, InvoicePayment payment) {
+            if(location >= payments.size()) {
+                addPayment(payment);
+                return;
+            }
+            payments.set(location, payment);
 
             refresh();
         }

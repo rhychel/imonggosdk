@@ -99,7 +99,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
         spnPaymentType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                toggleCheckDetails(paymentTypes.get(position).getName().trim().toLowerCase().equals("credit card"));
+                toggleCheckDetails(paymentTypes.get(position).getName().trim().toLowerCase().equals("check"));
             }
 
             @Override

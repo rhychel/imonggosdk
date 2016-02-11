@@ -19,8 +19,6 @@ public abstract class BaseTable extends DBTable {
 
     public static final String TAG = "BASETABLE";
 
-    private Object obj;
-
     @DatabaseField(id=true)
     protected int id = -1;
 

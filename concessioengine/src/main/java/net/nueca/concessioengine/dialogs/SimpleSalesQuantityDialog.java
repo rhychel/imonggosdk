@@ -94,7 +94,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             @Override
             public void afterTextChanged(Editable editable) {
-                subtotal = String.valueOf(NumberTools.toDouble(etQuantity.getText().toString()) * NumberTools.toDouble(retailPrice));
+                String quantity = etQuantity.getText().toString();
+                subtotal = String.valueOf(NumberTools.toDouble(quantity.equals("-") ? "0" : quantity) * NumberTools.toDouble(retailPrice));
                 tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
                 Log.e("SUBTOTAL AFTER", subtotal);
             }
@@ -295,9 +296,16 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     Log.e(getClass().getSimpleName(), "VALUES PRICE : isNull? " + (price == null));
                     if(price != null)
                         values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
-                    else
-                        values.setValue(quantity, unit, selectedProductItem.getRetail_price(),
-                                salesCustomer != null? salesCustomer.getDiscount_text() : null);
+                    else {
+                        if(salesBranch == null)
+                            Log.e("sales branch", "shit its null");
+                        else
+                            Log.e("sales branch", "its not null shoot!");
+
+                        values.setValue(quantity, unit, PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
+                                salesBranch, salesCustomerGroup, salesCustomer, unit),
+                                salesCustomer != null ? salesCustomer.getDiscount_text() : null);
+                    }
                 }
                 Log.e(getClass().getSimpleName(), "VALUES QTY : " + values.getQuantity());
 

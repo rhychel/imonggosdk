@@ -108,6 +108,7 @@ public class SettingsActivity extends ModuleActivity {
             }
 
             ArrayAdapter<ProductSorting> psAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, productSortings);
+            psAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
             AppSettings multi = new AppSettings();
             multi.setHeader(false);
             multi.setSectionFirstPosition(0);

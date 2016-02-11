@@ -65,20 +65,20 @@ public class SwableUpdateModule extends BaseSwableModule {
             JSONObject jsonObject;
             if(offlineData.getType() == OfflineData.INVOICE) {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
-                invoice.createNewPaymentBatch();
+                boolean hasNewPayment = invoice.createNewPaymentBatch();
                 invoice.updateTo(dbHelper);
 
-                if(!invoice.isHasNewPaymentBatch()) {
+                if(!hasNewPayment) {
                     QUEUED_TRANSACTIONS--;
                     return;
                 }
 
                 invoice.setPayments(invoice.getNewBatchPayment());
-                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
+                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         invoice.toJSONObject());
             }
             else {
-                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getOfflineDataTransactionType(),
+                jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         offlineData.getData());
             }
             Log.e("SwableUpdateModule", "updateTransaction : "+jsonObject.toString());
@@ -138,7 +138,8 @@ public class SwableUpdateModule extends BaseSwableModule {
                             if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
                                 NotificationTools.postNotification(imonggoSwable,
                                         ImonggoSwable.NOTIFICATION_ID,
-                                        imonggoSwable.getNotificationIcon(),
+                                        APP_ICON_DRAWABLE,
+//                                        imonggoSwable.getNotificationIcon(),
                                         imonggoSwable.getResources().getString(R.string.app_name),
                                         SUCCESS_TRANSACTIONS +" transaction" +
                                                 (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent",

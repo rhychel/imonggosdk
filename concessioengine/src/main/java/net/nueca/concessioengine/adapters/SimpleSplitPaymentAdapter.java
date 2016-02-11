@@ -13,6 +13,7 @@ import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
+import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
@@ -33,24 +34,25 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         this(context, dbHelper, ListingType.BASIC_PAYMENTS);
     }
 
-    public SimpleSplitPaymentAdapter(Context context, List<InvoicePayment> payments, ImonggoDBHelper2 dbHelper) {
-        this(context, dbHelper, payments, ListingType.BASIC_PAYMENTS);
+    public SimpleSplitPaymentAdapter(Context context, InvoiceTools.PaymentsComputation computation, ImonggoDBHelper2 dbHelper) {
+        this(context, dbHelper, ListingType.BASIC_PAYMENTS, computation);
+    }
+
+    public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper2 dbHelper, ListingType listingType, InvoiceTools.PaymentsComputation computation) {
+        super(context, chooseLayout(listingType), computation);
+        this.dbHelper = dbHelper;
+        this.listingType = listingType;
     }
 
     public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper2 dbHelper, ListingType listingType) {
-        super(context, chooseLayout(listingType));
+        super(context, chooseLayout(listingType), null);
         this.dbHelper = dbHelper;
         this.listingType = listingType;
     }
 
-    public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper2 dbHelper, List<InvoicePayment> payments, ListingType listingType) {
-        super(context, chooseLayout(listingType), payments);
-        this.dbHelper = dbHelper;
-        this.listingType = listingType;
-    }
-
-    public SimpleSplitPaymentAdapter(Context context,  ImonggoDBHelper2 dbHelper, List<InvoicePayment> payments, List<PaymentType> paymentTypes, ListingType listingType) {
-        super(context, chooseLayout(listingType), payments, paymentTypes);
+    public SimpleSplitPaymentAdapter(Context context,  ImonggoDBHelper2 dbHelper, ListingType listingType, InvoiceTools.PaymentsComputation
+            computation, List<PaymentType> paymentTypes) {
+        super(context, chooseLayout(listingType), computation, paymentTypes);
         this.dbHelper = dbHelper;
         this.listingType = listingType;
     }
@@ -148,41 +150,45 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
             if(!isEditable)
                 return;
             if(listingType == ListingType.BASIC_PAYMENTS) {
-                if(isAdd) {
-                    SimplePaymentDialog dialog = new SimplePaymentDialog(getContext(),
-                            new ArrayList<>(getPaymentTypes().values()));
-                    dialog.setFragmentManager(fragmentManager);
+                SimplePaymentDialog dialog = new SimplePaymentDialog(getContext(),
+                        new ArrayList<>(getPaymentTypes().values()));
+                dialog.setFragmentManager(fragmentManager);
 
-                    dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
-                        @Override
-                        public void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras) {
-                            InvoicePayment.Builder builder = new InvoicePayment.Builder();
-                            builder.amount(NumberTools.toDouble(paymentValue));
+                dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
+                    @Override
+                    public void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras) {
+                        InvoicePayment.Builder builder = new InvoicePayment.Builder();
+                        builder.amount(NumberTools.toDouble(paymentValue));
 
-                            // TODO: must set tender to be able to compute
-                            builder.tender(NumberTools.toDouble(paymentValue));
+                        // TODO: must set tender to be able to compute
+                        builder.tender(NumberTools.toDouble(paymentValue));
 
-                            if(paymentType != null)
-                                builder.payment_type_id(paymentType.getId());
+                        if(paymentType != null)
+                            builder.payment_type_id(paymentType.getId());
 
-                            InvoicePayment invoicePayment = builder.build();
-                            invoicePayment.setExtras(extras);
-                            /*add(invoicePayment);
-                            notifyItemInserted(getItemCount());
+                        InvoicePayment invoicePayment = builder.build();
+                        invoicePayment.setExtras(extras);
+                        /*add(invoicePayment);
+                        notifyItemInserted(getItemCount());
 
-                            computation.addPayment(invoicePayment);
-                            if(paymentUpdateListener != null)
-                                paymentUpdateListener.onAddPayment(invoicePayment);*/
+                        computation.addPayment(invoicePayment);
+                        if(paymentUpdateListener != null)
+                            paymentUpdateListener.onAddPayment(invoicePayment);*/
+                        if(isAdd)
                             addPayment(invoicePayment);
+                        else {
+                            updatePayment(position, invoicePayment);
                         }
-                    });
+                    }
+                });
+                if(isAdd || !isLayaway)
                     dialog.show();
-                }
             }
             else {
                 final int position = (int)v.getTag();
 
-                SimplePaymentDialog dialog = new SimplePaymentDialog(getContext(), getPaymentTypeList(), R.style.AppCompatDialogStyle_Light_NoTitle);
+                SimplePaymentDialog dialog = new SimplePaymentDialog(getContext(), getPaymentTypeList(),
+                        R.style.AppCompatDialogStyle_Light_NoTitle);
                 dialog.setDialogType(DialogType.ADVANCED_PAY);
                 dialog.setBalanceText(balance); // should be updated
                 dialog.setTotalAmountText(totalAmount); // should be updated
@@ -190,14 +196,20 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                 dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
                     @Override
                     public void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras) {
-                        getItem(position).setTender(NumberTools.toDouble(paymentValue));
 
-                        if (paymentType != null)
-                            getItem(position).setPayment_type_id(paymentType.getId());
+                        InvoicePayment.Builder builder = new InvoicePayment.Builder();
+                        builder.amount(NumberTools.toDouble(paymentValue));
 
-                        getItem(position).setExtras(extras);
+                        // TODO: must set tender to be able to compute
+                        builder.tender(NumberTools.toDouble(paymentValue));
 
-                        notifyItemChanged(position);
+                        if(paymentType != null)
+                            builder.payment_type_id(paymentType.getId());
+
+                        InvoicePayment invoicePayment = builder.build();
+                        invoicePayment.setExtras(extras);
+
+                        updatePayment(position, invoicePayment);
 
                         if(onItemClickListener != null)
                             onItemClickListener.onItemClicked(v, position);
@@ -205,7 +217,8 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                         //simpleSplitPaymentAdapter.notifyItemInserted(simpleSplitPaymentAdapter.getItemCount());
                     }
                 });
-                dialog.show();
+                if(!isLayaway)
+                    dialog.show();
             }
         }
 

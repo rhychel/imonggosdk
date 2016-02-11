@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,8 +48,6 @@ public class ImonggoSwable extends SwableService {
     public static final int NOTIFICATION_ID = 1000;
 
     private SwableStateListener swableStateListener;
-
-    private int APP_ICON_DRAWABLE = R.drawable.ic_check_circle;
 
     private IntentFilter notificationFilter = new IntentFilter();
 
@@ -89,7 +88,9 @@ public class ImonggoSwable extends SwableService {
                     Log.e("--- RECEIVER", "called");
                     String action = intent.getAction();
                     if(action.equals(NOTIFICATION_ACTION)) {
-                        // Todo: Do something with notification trigger
+                        swableSendModule.SUCCESS_TRANSACTIONS = 0;
+                        swableVoidModule.SUCCESS_TRANSACTIONS = 0;
+                        swableUpdateModule.SUCCESS_TRANSACTIONS = 0;
                     }
                 }
             };
@@ -110,6 +111,7 @@ public class ImonggoSwable extends SwableService {
             notificationFilter.addAction(NOTIFICATION_ACTION);
             registerReceiver(receiver, notificationFilter);
         }
+
         swableSendModule = new SwableSendModule(this,getHelper(),getSession(),getQueue());
         swableVoidModule = new SwableVoidModule(this,getHelper(),getSession(),getQueue());
         swableUpdateModule = new SwableUpdateModule(this,getHelper(),getSession(),getQueue());
@@ -149,15 +151,17 @@ public class ImonggoSwable extends SwableService {
                                     .eq("isPastCutoff", false).and()
                                     .eq("type", OfflineData.CUSTOMER).query();
 
-                    offlineDataList.addAll(
-                        getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
-                                .eq("isSynced", false).and()
-                                .eq("isSyncing", false).and()
-                                .eq("isQueued", false).and()
-                                .eq("isCancelled", false).and()
-                                .eq("isBeingModified", false).and()
-                                .eq("isPastCutoff", false).and()
-                                .ne("type", OfflineData.CUSTOMER).query());
+                    if(offlineDataList == null || offlineDataList.size() == 0) {
+                        offlineDataList =
+                            getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
+                                    .eq("isSynced", false).and()
+                                    .eq("isSyncing", false).and()
+                                    .eq("isQueued", false).and()
+                                    .eq("isCancelled", false).and()
+                                    .eq("isBeingModified", false).and()
+                                    .eq("isPastCutoff", false).and()
+                                    .ne("type", OfflineData.CUSTOMER).query();
+                    }
 
                     if(offlineDataList.size() <= 0) {
                         Log.e("ImonggoSwable", "syncModule : nothing to sync");
@@ -179,7 +183,8 @@ public class ImonggoSwable extends SwableService {
                         }
                         if(offlineData.isQueued()) {
                             continue;
-                        }/*
+                        }
+                        /*
                         try {
                             if(offlineData.getObjectFromData() == null) {
                                 offlineData.deleteTo(getHelper());
@@ -218,13 +223,22 @@ public class ImonggoSwable extends SwableService {
                                 break;
 
                             case CANCEL_ORDER:
-                                swableVoidModule.voidTransaction(Table.ORDERS, offlineData);
+                                if(offlineData.isAllPageSynced())
+                                    swableVoidModule.voidTransaction(Table.ORDERS, offlineData);
+                                else
+                                    swableSendModule.sendTransaction(Table.ORDERS, offlineData);
                                 break;
                             case CANCEL_INVOICE:
-                                swableVoidModule.voidTransaction(Table.INVOICES, offlineData);
+                                if(offlineData.isAllPageSynced())
+                                    swableVoidModule.voidTransaction(Table.INVOICES, offlineData);
+                                else
+                                    swableSendModule.sendTransaction(Table.INVOICES, offlineData);
                                 break;
                             case CANCEL_DOCUMENT:
-                                swableVoidModule.voidTransaction(Table.DOCUMENTS, offlineData);
+                                if(offlineData.isAllPageSynced())
+                                    swableVoidModule.voidTransaction(Table.DOCUMENTS, offlineData);
+                                else
+                                    swableSendModule.sendTransaction(Table.DOCUMENTS, offlineData);
                                 break;
                             case DELETE_CUSTOMER:
                                 swableVoidModule.voidTransaction(Table.CUSTOMERS, offlineData);
@@ -275,12 +289,14 @@ public class ImonggoSwable extends SwableService {
         return swableStateListener;
     }
 
-    public void setNotificationIcon(@DrawableRes int iconResource) {
-        APP_ICON_DRAWABLE = iconResource;
-    }
-    public int getNotificationIcon() {
-        return APP_ICON_DRAWABLE;
-    }
+//    public void setNotificationIcon(@DrawableRes int iconResource) {
+//        APP_ICON_DRAWABLE = iconResource;
+//    }
+//
+//    @DrawableRes
+//    public int getNotificationIcon() {
+//        return APP_ICON_DRAWABLE;
+//    }
 
     public interface SwableStateListener {
         void onSwableStarted();

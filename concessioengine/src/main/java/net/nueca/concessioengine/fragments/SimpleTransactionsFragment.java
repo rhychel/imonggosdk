@@ -117,6 +117,17 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
         return view;
     }
 
+    /*
+    * Used after the duplication
+    * */
+    public void addOfflineData(OfflineData offlineData) {
+        if(useRecyclerView)
+            simpleTransactionRecyclerViewAdapter.add(0, offlineData);
+        else
+            simpleTransactionListAdapter.add(offlineData);
+
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

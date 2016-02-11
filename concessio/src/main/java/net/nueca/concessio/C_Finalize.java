@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,12 +102,13 @@ public class C_Finalize extends ModuleActivity {
                     public void onDuplicateTransaction() {
                         // TODO Implement your duplication!
                         // TODO for double checking..
-                        DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
-                        return;
-//                        ProductsAdapterHelper.isDuplicating = true;
-//                        Intent intent = new Intent(C_Finalize.this, C_Module.class);
-//                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, offlineData.getConcessioModule().ordinal());
-//                        startActivity(intent);
+//                        DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
+//                        return;
+                        ProductsAdapterHelper.isDuplicating = true;
+                        Intent intent = new Intent(C_Finalize.this, C_Module.class);
+                        intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
+                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, offlineData.getConcessioModule().ordinal());
+                        startActivityForResult(intent, IS_DUPLICATING);
                     }
                 };
 
@@ -138,6 +140,7 @@ public class C_Finalize extends ModuleActivity {
                 tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
 
                 llTotalAmount.setVisibility(View.VISIBLE);
+                Log.e("C_finalize", "tvTotalAmount---|>"+paymentsComputation.getTotalPayable());
                 tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable()));
 
                 if(paymentsComputation.getRemaining().doubleValue() == 0)
@@ -148,11 +151,16 @@ public class C_Finalize extends ModuleActivity {
             }
         }
         else {
-            getSupportActionBar().setTitle("Review");
+            if(isLayaway)
+                getSupportActionBar().setTitle(getIntent().getStringExtra(REFERENCE));
+            else
+                getSupportActionBar().setTitle("Review");
             btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(C_Finalize.this, C_Checkout.class);
+                    intent.putExtra(REFERENCE, reference);
+                    intent.putExtra(IS_LAYAWAY, isLayaway);
                     startActivityForResult(intent, SALES);
                 }
             });
@@ -186,12 +194,12 @@ public class C_Finalize extends ModuleActivity {
                         ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
         Double balance =
                 sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-        tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
+        tvBalance.setText("+++P"+ NumberTools.separateInCommas(balance));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(!isForHistoryDetail)
+        if(!isForHistoryDetail && !isLayaway)
             getMenuInflater().inflate(R.menu.simple_review_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -239,8 +247,20 @@ public class C_Finalize extends ModuleActivity {
             };
             handler.sendEmptyMessageDelayed(0, 100);
         }
+        else if(requestCode == IS_DUPLICATING) {
+            if(resultCode == SUCCESS) {
+                if(data.hasExtra(FOR_HISTORY_DETAIL))
+                    setResult(SUCCESS, data);
+                else
+                    setResult(SUCCESS);
+                finish();
+            }
+        }
         else if(resultCode == SUCCESS) {
-            setResult(SUCCESS);
+            if(data.hasExtra(FOR_HISTORY_DETAIL))
+                setResult(SUCCESS, data);
+            else
+                setResult(SUCCESS);
             finish();
         }
     }
@@ -266,7 +286,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setHasCategories(false);
             simpleProductsFragment.setIsFinalize(true);
             simpleProductsFragment.setHasSubtotal(true);
-            simpleProductsFragment.setDisplayOnly(isForHistoryDetail);
+            simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                 @Override
                 public void whenItemsSelectedUpdated() {
@@ -274,18 +294,19 @@ public class C_Finalize extends ModuleActivity {
                 }
             });
 
-            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
-                @Override
-                public void whenItemsSelectedUpdated() {
-                    Double sales = DiscountTools.applyMultipleDiscounts(
-                            new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
-                            ProductsAdapterHelper.getSelectedCustomer() == null? null :
-                                    ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
-                    Double balance =
-                            sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-                    tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
-                }
-            });
+            if(!isForHistoryDetail && !isLayaway)
+                simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
+                    @Override
+                    public void whenItemsSelectedUpdated() {
+                        Double sales = DiscountTools.applyMultipleDiscounts(
+                                new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
+                                ProductsAdapterHelper.getSelectedCustomer() == null? null :
+                                        ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
+                        Double balance =
+                                sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+                        tvBalance.setText("---P"+ NumberTools.separateInCommas(balance));
+                    }
+                });
             if(position == 0)// Positive Transactions
                 simpleProductsFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
             else {

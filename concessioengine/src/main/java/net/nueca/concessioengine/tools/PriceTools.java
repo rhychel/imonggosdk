@@ -44,13 +44,13 @@ public class PriceTools {
 
         try {
             retail_price = getBranchPrice(dbHelper2, product, branch, unit);
-            Log.e("BRANCH PRICE", retail_price + "");
+            //Log.e("BRANCH PRICE", retail_price + "");
 
             Price selectedPrice = identifyPrice(dbHelper2, product, branch, customerGroup, customer, unit);
             if(selectedPrice != null)
                 retail_price = selectedPrice.getRetail_price();
 
-            Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>> retail_price: " + retail_price);
+            //Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>> retail_price: " + retail_price);
         } catch (SQLException e) {
             e.printStackTrace();
             return product.getRetail_price();
@@ -154,8 +154,8 @@ public class PriceTools {
         return selectedPrice;
     }
 
-    public static Double getBranchPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch, Unit unit) throws SQLException {
-        Log.e("PriceTools", "getBranchPrice " + (dbHelper2 == null) + " " + (product == null) + " " + (branch == null) + " " + (unit == null));
+    public static double getBranchPrice(ImonggoDBHelper2 dbHelper2, Product product, Branch branch, Unit unit) throws SQLException {
+        Log.e("PriceTools", "getBranchPrice " + (dbHelper2 == null) + " " + product.getName() + " " + (branch == null) + " " + (unit == null));
 
         BranchProduct branchProduct = null;
 

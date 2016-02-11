@@ -16,6 +16,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable;
+import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -32,7 +33,7 @@ import java.util.List;
  * Created by gama on 7/20/15.
  */
 public class Document extends BaseTransactionTable {
-    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 2;
+    public static transient final int MAX_DOCUMENTLINES_PER_PAGE = 50;
 
     @Expose
     @DatabaseField
@@ -312,6 +313,7 @@ public class Document extends BaseTransactionTable {
 
         refresh();
         if(document_lines != null) {
+            BatchList<DocumentLine> batchList = new BatchList<>(DatabaseOperation.INSERT, dbHelper);
             for (DocumentLine documentLine : document_lines) {
                 documentLine.setDocument(this);
                 try {
@@ -322,8 +324,9 @@ public class Document extends BaseTransactionTable {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                documentLine.insertTo(dbHelper);
+                batchList.add(documentLine);
             }
+            batchList.doOperation(DocumentLine.class);
         }
 
         updateExtrasTo(dbHelper);
@@ -354,9 +357,10 @@ public class Document extends BaseTransactionTable {
         refresh();
         if(document_lines == null)
             return;
-        for(DocumentLine documentLine : document_lines) {
-            documentLine.deleteTo(dbHelper);
-        }
+
+        BatchList<DocumentLine> batchList = new BatchList<>(DatabaseOperation.DELETE, dbHelper);
+        batchList.addAll(document_lines);
+        batchList.doOperation(DocumentLine.class);
 
         deleteExtrasTo(dbHelper);
     }
@@ -379,6 +383,15 @@ public class Document extends BaseTransactionTable {
             dbHelper.update(Document.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        refresh();
+        if(document_lines != null) {
+            BatchList<DocumentLine> batchList = new BatchList<>(DatabaseOperation.UPDATE, dbHelper);
+            for (DocumentLine documentLine : document_lines) {
+                documentLine.setDocument(this);
+                batchList.add(documentLine);
+            }
+            batchList.doOperation(DocumentLine.class);
         }
 
         updateExtrasTo(dbHelper);
