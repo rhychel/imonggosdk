@@ -3,6 +3,7 @@ package net.nueca.concessioengine.activities.checkout;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.Log;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
@@ -50,6 +51,8 @@ public abstract class CheckoutActivity extends ModuleActivity {
         if(getIntent().hasExtra(IS_LAYAWAY))
             isLayaway = getIntent().getBooleanExtra(IS_LAYAWAY, false);
 
+        Log.e("CheckoutActivity", "onCreate : reference - " + reference);
+
         initializeFragment();
 
         if(reference == null || reference.length() == 0) {
@@ -79,6 +82,7 @@ public abstract class CheckoutActivity extends ModuleActivity {
                 e.printStackTrace();
             }
         }
+        Log.e("CheckoutActivity", "onCreate : invoice - " + invoice.toJSONString());
     }
 
     @Override
@@ -114,6 +118,8 @@ public abstract class CheckoutActivity extends ModuleActivity {
             extras.setLatitude("" + location.getLatitude());
         }
         invoice.setExtras(extras);
+
+        invoice.createNewPaymentBatch();
 
         return invoice;
     }

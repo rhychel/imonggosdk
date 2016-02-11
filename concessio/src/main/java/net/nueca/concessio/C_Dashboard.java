@@ -106,11 +106,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             }
         }
 
-        /*try {
+        try {
             getHelper().deleteAll(OfflineData.class);
         } catch (SQLException e) {
             e.printStackTrace();
-        }*/
+        }
 
         /*
         try {
@@ -129,7 +129,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         try {
             Log.e("DEBUG",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             for(OfflineData o : getHelper().fetchObjects(OfflineData.class).queryForAll() ) {
-                Log.e("OfflineData "+o.getId(), o.getStatusLog());
+                Log.e("OfflineData "+o.getId(), " >> " + o.getStatusLog());
             }
             Invoice.Builder builder = new Invoice.Builder();
             builder.invoice_date("2016-02-02T14:58:16Z");
@@ -175,24 +175,29 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             );
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             Invoice invoice = builder.build();
-            Log.e("INVOICE before createBatch", invoice.toJSONString());
+            List<InvoicePayment> payments = invoice.getNewBatchPayment();
+            Log.e("$$$$ before createBatch", invoice.toJSONString());
+            Log.e("NEW Payments " + (payments.size() > 0? payments.get(0).getPaymentBatchNo() : "null") + " " +
+                    invoice.getCurrentPaymentBatchNo(), gson.toJson(payments));
             invoice.createNewPaymentBatch();
-            Log.e("INVOICE after createBatch", invoice.toJSONString());
-            Log.e("NEW Payments", gson.toJson(invoice.getNewBatchPayment()));
+            Log.e("$$$$ after createBatch", invoice.toJSONString());
+            payments = invoice.getNewBatchPayment();
+            Log.e("NEW Payments " + (payments.size() > 0? payments.get(0).getPaymentBatchNo() : "null") + " " +
+                    invoice.getCurrentPaymentBatchNo(), gson.toJson(payments));
             invoice.addPayment(new InvoicePayment.Builder()
                     .amount(10.0)
                     .tender(10.0)
                     .payment_type_id(1)
                     .build());
             invoice.createNewPaymentBatch();
-            Log.e("INVOICE after new Payment added", invoice.toJSONString());
-            Log.e("NEW Payments", gson.toJson(invoice.getNewBatchPayment()));
+            Log.e("$$$$ after add Payment", invoice.toJSONString());
+            payments = invoice.getNewBatchPayment();
+            Log.e("NEW Payments " + payments.get(0).getPaymentBatchNo() + " " + invoice.getCurrentPaymentBatchNo(), gson.toJson(payments));
 
             Log.e("DEBUG","<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
 
         setNextActivityClass(C_Module.class);
 

@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
+import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.swable.SwableTools;
 
 import org.json.JSONException;
@@ -246,10 +247,12 @@ public class Order extends BaseTransactionTable2 {
 
         refresh();
         if(order_lines != null) {
+            BatchList<OrderLine> batchList = new BatchList<>(DatabaseOperation.INSERT, dbHelper);
             for (OrderLine orderLine : order_lines) {
                 orderLine.setOrder(this);
-                orderLine.insertTo(dbHelper);
+                batchList.add(orderLine);
             }
+            batchList.doOperation(OrderLine.class);
         }
 
         updateExtrasTo(dbHelper);
@@ -277,9 +280,9 @@ public class Order extends BaseTransactionTable2 {
 
         refresh();
         if(order_lines != null) {
-            for (OrderLine orderLine : order_lines) {
-                orderLine.deleteTo(dbHelper);
-            }
+            BatchList<OrderLine> batchList = new BatchList<>(DatabaseOperation.DELETE, dbHelper);
+            batchList.addAll(order_lines);
+            batchList.doOperation(OrderLine.class);
         }
 
         deleteExtrasTo(dbHelper);
@@ -305,10 +308,12 @@ public class Order extends BaseTransactionTable2 {
             e.printStackTrace();
         }
         if(order_lines != null) {
+            BatchList<OrderLine> batchList = new BatchList<>(DatabaseOperation.UPDATE, dbHelper);
             for (OrderLine orderLine : order_lines) {
                 orderLine.setOrder(this);
-                orderLine.updateTo(dbHelper);
+                batchList.add(orderLine);
             }
+            batchList.doOperation(OrderLine.class);
         }
 
         updateExtrasTo(dbHelper);

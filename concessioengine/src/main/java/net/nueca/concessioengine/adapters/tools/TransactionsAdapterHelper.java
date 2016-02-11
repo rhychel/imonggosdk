@@ -1,5 +1,7 @@
 package net.nueca.concessioengine.adapters.tools;
 
+import android.util.Log;
+
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
@@ -32,7 +34,9 @@ public class TransactionsAdapterHelper {
             return "Order";
         else if(offlineData.getType() == OfflineData.INVOICE)
             return "Sales";
-        ConcessioModule concessioModule = offlineData.getObjectFromData(Document.class).getDocument_type_code().getConcessioModule();
+        ConcessioModule concessioModule = offlineData.getObjectFromData(Document.class)
+                .getDocument_type_code()
+                .getConcessioModule();
         try {
             ModuleSetting moduleSetting = dbHelper.fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", concessioModule).queryForFirst();
             if(moduleSetting != null)

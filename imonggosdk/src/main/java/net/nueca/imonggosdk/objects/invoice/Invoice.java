@@ -79,7 +79,7 @@ public class Invoice extends BaseTransactionTable2 {
     protected transient Branch branch;
 
     @DatabaseField
-    protected transient Integer currentPaymentBatchNo = 0;
+    protected Integer currentPaymentBatchNo = 0;
 
     @DatabaseField
     protected transient Integer layaway_id;
@@ -382,22 +382,28 @@ public class Invoice extends BaseTransactionTable2 {
 
         refresh();
         if(invoice_lines != null) {
+            BatchList<InvoiceLine> batchList = new BatchList<>(DatabaseOperation.INSERT, dbHelper);
             for (InvoiceLine invoiceLine : invoice_lines) {
                 invoiceLine.setInvoice(this);
-                invoiceLine.insertTo(dbHelper);
+                batchList.add(invoiceLine);
             }
+            batchList.doOperation(InvoiceLine.class);
         }
         if(invoice_tax_rates != null) {
+            BatchList<InvoiceTaxRate> batchList = new BatchList<>(DatabaseOperation.INSERT, dbHelper);
             for (InvoiceTaxRate invoiceTaxRate : invoice_tax_rates) {
                 invoiceTaxRate.setInvoice(this);
-                invoiceTaxRate.insertTo(dbHelper);
+                batchList.add(invoiceTaxRate);
             }
+            batchList.doOperation(InvoiceTaxRate.class);
         }
         if(payments != null) {
+            BatchList<InvoicePayment> batchList = new BatchList<>(DatabaseOperation.INSERT, dbHelper);
             for (InvoicePayment payment : payments) {
                 payment.setInvoice(this);
-                payment.insertTo(dbHelper);
+                batchList.add(payment);
             }
+            batchList.doOperation(InvoicePayment.class);
         }
 
         updateExtrasTo(dbHelper);
@@ -413,19 +419,19 @@ public class Invoice extends BaseTransactionTable2 {
 
         refresh();
         if(invoice_lines != null) {
-            for (InvoiceLine invoiceLine : invoice_lines) {
-                invoiceLine.deleteTo(dbHelper);
-            }
+            BatchList<InvoiceLine> batchList = new BatchList<>(DatabaseOperation.DELETE, dbHelper);
+            batchList.addAll(invoice_lines);
+            batchList.doOperation(InvoiceLine.class);
         }
         if(invoice_tax_rates != null) {
-            for (InvoiceTaxRate invoiceTaxRate : invoice_tax_rates) {
-                invoiceTaxRate.deleteTo(dbHelper);
-            }
+            BatchList<InvoiceTaxRate> batchList = new BatchList<>(DatabaseOperation.DELETE, dbHelper);
+            batchList.addAll(invoice_tax_rates);
+            batchList.doOperation(InvoiceTaxRate.class);
         }
         if(payments != null) {
-            for (InvoicePayment payment : payments) {
-                payment.deleteTo(dbHelper);
-            }
+            BatchList<InvoicePayment> batchList = new BatchList<>(DatabaseOperation.DELETE, dbHelper);
+            batchList.addAll(payments);
+            batchList.doOperation(InvoicePayment.class);
         }
 
         deleteExtrasTo(dbHelper);
@@ -441,22 +447,28 @@ public class Invoice extends BaseTransactionTable2 {
 
         refresh();
         if(invoice_lines != null) {
+            BatchList<InvoiceLine> batchList = new BatchList<>(DatabaseOperation.UPDATE, dbHelper);
             for (InvoiceLine invoiceLine : invoice_lines) {
                 invoiceLine.setInvoice(this);
-                invoiceLine.updateTo(dbHelper);
+                batchList.add(invoiceLine);
             }
+            batchList.doOperation(InvoiceLine.class);
         }
         if(invoice_tax_rates != null) {
+            BatchList<InvoiceTaxRate> batchList = new BatchList<>(DatabaseOperation.UPDATE, dbHelper);
             for (InvoiceTaxRate invoiceTaxRate : invoice_tax_rates) {
                 invoiceTaxRate.setInvoice(this);
-                invoiceTaxRate.updateTo(dbHelper);
+                batchList.add(invoiceTaxRate);
             }
+            batchList.doOperation(InvoiceTaxRate.class);
         }
         if(payments != null) {
+            BatchList<InvoicePayment> batchList = new BatchList<>(DatabaseOperation.UPDATE, dbHelper);
             for (InvoicePayment payment : payments) {
                 payment.setInvoice(this);
-                payment.updateTo(dbHelper);
+                batchList.add(payment);
             }
+            batchList.doOperation(InvoicePayment.class);
         }
 
         updateExtrasTo(dbHelper);
@@ -523,14 +535,22 @@ public class Invoice extends BaseTransactionTable2 {
                 payment.setPaymentBatchNo(currentPaymentBatchNo + 1);
             }
         }
-        return true;
+        return updateCurrentPaymentBatch();
+    }
+
+    public void joinAllNewToCurrentPaymentBatch() {
+        for(InvoicePayment payment : payments) {
+            if(payment.getPaymentBatchNo() == null) {
+                payment.setPaymentBatchNo(currentPaymentBatchNo);
+            }
+        }
     }
 
     public List<InvoicePayment> getNewBatchPayment() {
         refresh();
         List<InvoicePayment> payments = new ArrayList<>();
         for(InvoicePayment payment : this.payments) {
-            if(payment.getPaymentBatchNo() == null || payment.getPaymentBatchNo() > currentPaymentBatchNo)
+            if(payment.getPaymentBatchNo() != null && payment.getPaymentBatchNo() == currentPaymentBatchNo)
                 payments.add(payment);
         }
         return payments;

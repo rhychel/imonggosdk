@@ -232,15 +232,7 @@ public class Values {
         }
 
         /** DECIMAL FORMATTING **/
-        List<Settings> settingsList = Settings.fetchWithConditionInt(ProductsAdapterHelper.getDbHelper(),
-                Settings.class, new DBTable.ConditionsWindow<Settings,Integer>() {
-            @Override
-            public Where<Settings, Integer> renderConditions(Where<Settings, Integer> where) throws SQLException {
-                return where.eq("name", Configurations.SETTINGS_NAME.get(SettingsName.FORMAT_NO_OF_DECIMALS));
-            }
-        });
-        if(settingsList.size() > 0)
-            this.subtotal = NumberTools.formatDouble(this.subtotal, Integer.parseInt(settingsList.get(0).getValue()));
+        this.subtotal = NumberTools.formatDouble(this.subtotal, ProductsAdapterHelper.getDecimalPlace());
 
 
         Log.e("QTY", this.quantity + " ~ " + input_quantity);

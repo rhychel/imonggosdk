@@ -627,7 +627,6 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
-                // documentData.setId(id * -1);
                 //if(!isPagedRequest() || isNewPagedSend) // not a paged request
                     //documentData.insertTo(dbHelper);
                 break;
