@@ -10,6 +10,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.crashlytics.android.Crashlytics;
 import com.j256.ormlite.stmt.Where;
 
+import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.login.BaseLoginActivity;
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;

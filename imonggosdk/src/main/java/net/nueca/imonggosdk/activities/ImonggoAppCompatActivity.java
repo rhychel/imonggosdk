@@ -38,6 +38,8 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
     protected static final int ALL_CUSTOMERS = 104;
     protected static final int SALES = 105;
     protected static final int HISTORY_DETAILS_SALES = 106;
+    protected static final int IS_DUPLICATING = 107;
+    protected static final int HISTORY_DETAILS = 108;
 
     private ImonggoDBHelper2 dbHelper2;
 

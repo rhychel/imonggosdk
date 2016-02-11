@@ -627,9 +627,9 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 typeStr = "DOCUMENT";
-                documentData.setId(id * -1);
+                // documentData.setId(id * -1);
                 //if(!isPagedRequest() || isNewPagedSend) // not a paged request
-                    documentData.insertTo(dbHelper);
+                    //documentData.insertTo(dbHelper);
                 break;
             case CUSTOMER:
                 typeStr = "CUSTOMER";
@@ -673,8 +673,15 @@ public class OfflineData extends BaseTable2 {
                     documentData.setOfflineData(this);
                     documentData.updateTo(dbHelper);
                 }*/
+                //documentData.deleteTo(dbHelper);
+                documentData.setId(id * -1);
                 documentData.setOfflineData(this);
-                documentData.updateTo(dbHelper);
+                documentData.insertTo(dbHelper);
+                try {
+                    dbHelper.update(OfflineData.class, this);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 break;
             //case CUSTOMER:
             //    customerData.updateTo(dbHelper);

@@ -85,7 +85,9 @@ public class SwableVoidModule extends BaseSwableModule {
                             }
 
                             if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
-                                NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID, imonggoSwable.getNotificationIcon(),
+                                NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID,
+                                        APP_ICON_DRAWABLE,
+//                                        imonggoSwable.getNotificationIcon(),
                                         imonggoSwable.getResources().getString(R.string.app_name), SUCCESS_TRANSACTIONS + " transaction"
                                                 + (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
                         }
@@ -190,7 +192,9 @@ public class SwableVoidModule extends BaseSwableModule {
                                 }
 
                                 if (offlineData.isSynced() && QUEUED_TRANSACTIONS == SUCCESS_TRANSACTIONS)
-                                    NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID, imonggoSwable.getNotificationIcon(),
+                                    NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID,
+                                            APP_ICON_DRAWABLE,
+//                                            imonggoSwable.getNotificationIcon(),
                                             imonggoSwable.getResources().getString(R.string.app_name), SUCCESS_TRANSACTIONS + " transaction"
                                                     + (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
                             }
@@ -233,7 +237,9 @@ public class SwableVoidModule extends BaseSwableModule {
                                 }
 
                                 if (offlineData.isSynced() && QUEUED_TRANSACTIONS == SUCCESS_TRANSACTIONS)
-                                    NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID, imonggoSwable.getNotificationIcon(),
+                                    NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID,
+                                            APP_ICON_DRAWABLE,
+//                                            imonggoSwable.getNotificationIcon(),
                                             imonggoSwable.getResources().getString(R.string.app_name), SUCCESS_TRANSACTIONS + " transaction"
                                                     + (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
                             }

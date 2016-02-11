@@ -30,8 +30,8 @@ public class ImonggoSwableServiceConnection implements ServiceConnection {
         imonggoSwableService = (ImonggoSwable)binder.getServerInstance();
         imonggoSwableService.setSwableStateListener(swableStateListener);
 
-        if(notificationIcon >= -1)
-            imonggoSwableService.setNotificationIcon(notificationIcon);
+//        if(notificationIcon >= -1)
+//            imonggoSwableService.setNotificationIcon(notificationIcon);
 
         isBound = true;
         Log.d("ImonggoSwableServiceCon", imonggoSwableService.getClass().getSimpleName() + " connected");
