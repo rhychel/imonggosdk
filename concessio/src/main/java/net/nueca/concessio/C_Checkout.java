@@ -255,6 +255,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     Invoice invoice = generateInvoice();
                     try {
                         if(!isLayaway) {
+                            updateInventoryFromSelectedItemList(false);
                             new SwableTools.Transaction(getHelper())
                                     .toSend()
                                     .forBranch(getSession().getCurrent_branch_id())

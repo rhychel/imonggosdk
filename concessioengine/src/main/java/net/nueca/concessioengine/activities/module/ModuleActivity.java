@@ -22,6 +22,7 @@ import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
@@ -33,6 +34,7 @@ import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
@@ -68,6 +70,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     public static final String REFERENCE = "reference";
     public static final String IS_LAYAWAY = "is_layaway";
+    public static final String FOR_DUPLICATING = "is_duplicating";
 
     protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
@@ -81,6 +84,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     protected String reference;
     protected boolean isLayaway = false;
+    protected boolean isDuplicating = false;
 
     protected int previousFragmentCount = 0;
     protected HistoryDetailsListener historyDetailsListener;
@@ -101,6 +105,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             reference = getIntent().getStringExtra(REFERENCE);
         if(getIntent().hasExtra(IS_LAYAWAY))
             isLayaway = getIntent().getBooleanExtra(IS_LAYAWAY, false);
+        if(getIntent().hasExtra(FOR_DUPLICATING))
+            isDuplicating = getIntent().getBooleanExtra(FOR_DUPLICATING, false);
 
         clearTransactions = getIntent().getBooleanExtra(INIT_PRODUCT_ADAPTER_HELPER, false);
         initSelectedCustomer = getIntent().getBooleanExtra(INIT_SELECTED_CUSTOMER, true);
@@ -406,24 +412,27 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     public int updateInventoryFromSelectedItemList(boolean shouldAdd) {
         int updated = 0;
+        BatchList<Inventory> updateInventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             if(selectedProductItem.getInventory() != null) {
                 Inventory updateInventory = selectedProductItem.getInventory();
                 updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
-                updateInventory.updateTo(getHelper());
+//                updateInventory.updateTo(getHelper());
+                updateInventories.add(updateInventory);
                 updated++;
             }
             else {
-                Inventory updateInventory = new Inventory();
-                updateInventory.setProduct(selectedProductItem.getProduct());
-                updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
-                updateInventory.insertTo(getHelper());
+                Inventory newInventory = new Inventory();
+                newInventory.setProduct(selectedProductItem.getProduct());
+                newInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
+                newInventory.insertTo(getHelper());
                 Product product = selectedProductItem.getProduct();
-                product.setInventory(updateInventory);
+                product.setInventory(newInventory);
                 product.updateTo(getHelper());
                 updated++;
             }
         }
+        updateInventories.doOperation(Inventory.class);
         return updated;
     }
 

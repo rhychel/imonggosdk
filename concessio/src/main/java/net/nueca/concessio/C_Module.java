@@ -146,6 +146,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
                             try {
+                                if(getHelper() == null)
+                                    Log.e("C_Module", "getHelper is null");
+                                else
+                                    Log.e("C_Module", "getHelper is NOT null");
+
                                 SelectedProductItemList selecteds =
                                         InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
                                 SelectedProductItemList returns =
@@ -199,6 +204,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
                             try {
+
+                                if(getHelper() == null)
+                                    Log.e("C_Module", "getHelper is null");
+                                else
+                                    Log.e("C_Module", "getHelper is NOT null");
+
+
                                 SelectedProductItemList selecteds =
                                         InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
                                 SelectedProductItemList returns =
@@ -219,7 +231,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             Intent intent = new Intent(C_Module.this, C_Finalize.class);
                             intent.putExtra(REFERENCE, offlineData.getReference_no());
                             intent.putExtra(FOR_HISTORY_DETAIL, true);
-                            startActivity(intent);
+                            startActivityForResult(intent, HISTORY_DETAILS);
                         }
                         else {
                             try {
@@ -266,7 +278,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Module.this, C_Module.class);
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
-                        startActivity(intent);
+                        startActivityForResult(intent, IS_DUPLICATING);
                     }
                 };
 
@@ -720,62 +732,62 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         });
     }
 
-    private void initializeDuplicateButton(Button btn) {
-        btn.setVisibility(View.VISIBLE);
-        btn.setText("DUPLICATE");
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogTools.showConfirmationDialog(C_Module.this, "Duplicate " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ProductsAdapterHelper.isDuplicating = true;
-                        Intent intent = new Intent(C_Module.this, C_Module.class);
-                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
-                        startActivity(intent);
-                    }
-                }, "No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }, R.style.AppCompatDialogStyle_Light);
-            }
-        });
-    }
-
-    private void initializeVoidButton(Button btn) {
-        btn.setText("VOID");
-        btn.setVisibility(View.VISIBLE);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogTools.showConfirmationDialog(C_Module.this, "Void " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        new SwableTools.Transaction(getHelper())
-                                .toCancel()
-                                .withReason("VOID")
-                                .object(simpleTransactionDetailsFragment.getOfflineData())
-                                .queue();
-
-                        // <-- Voiding issue when the transaction is voided for Receive and Pullout -->
-                        if (simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER) // Receive
-                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), false);
-                        if (simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) // Pullout
-                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), true);
-
-                        onBackPressed();
-                    }
-                }, "No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }, R.style.AppCompatDialogStyle_Light);
-            }
-        });
-    }
+//    private void initializeDuplicateButton(Button btn) {
+//        btn.setVisibility(View.VISIBLE);
+//        btn.setText("DUPLICATE");
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                DialogTools.showConfirmationDialog(C_Module.this, "Duplicate " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        ProductsAdapterHelper.isDuplicating = true;
+//                        Intent intent = new Intent(C_Module.this, C_Module.class);
+//                        intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
+//                        startActivity(intent);
+//                    }
+//                }, "No", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                    }
+//                }, R.style.AppCompatDialogStyle_Light);
+//            }
+//        });
+//    }
+//
+//    private void initializeVoidButton(Button btn) {
+//        btn.setText("VOID");
+//        btn.setVisibility(View.VISIBLE);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                DialogTools.showConfirmationDialog(C_Module.this, "Void " + referenceNumber, "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        new SwableTools.Transaction(getHelper())
+//                                .toCancel()
+//                                .withReason("VOID")
+//                                .object(simpleTransactionDetailsFragment.getOfflineData())
+//                                .queue();
+//
+//                        // <-- Voiding issue when the transaction is voided for Receive and Pullout -->
+//                        if (simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER) // Receive
+//                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), false);
+//                        if (simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) // Pullout
+//                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), true);
+//
+//                        onBackPressed();
+//                    }
+//                }, "No", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                    }
+//                }, R.style.AppCompatDialogStyle_Light);
+//            }
+//        });
+//    }
 
     private void initializeFinalize() {
         finalizeFragment = SimpleProductsFragment.newInstance();
@@ -1011,6 +1023,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         } else if (requestCode == SALES) {
             if (resultCode == SUCCESS)
                 finish();
+        } else if(requestCode == IS_DUPLICATING) {
+            if (resultCode == SUCCESS) {
+                Log.e("IS_DUPLICATING", "success");
+                onBackPressed();
+                OfflineData newOfflineData = OfflineData.fetchById(getHelper(), OfflineData.class, data.getIntExtra(FOR_HISTORY_DETAIL, 0));
+                simpleTransactionsFragment.addOfflineData(newOfflineData);
+//                setResult(SUCCESS);
+//                finish();
+            }
+        } else if(requestCode == HISTORY_DETAILS) {
+            if (resultCode == SUCCESS) {
+                Log.e("HISTORY_DETAILS", "success");
+                onBackPressed();
+            }
         }
     }
 
@@ -1143,7 +1169,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     Log.e("Inventory", inventory.getProduct().getName() + " = " + inventory.getQuantity());
                                 }
 
-                                OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                                final OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                         .toSend()
                                         .forBranch(branch)
                                         .object(document)
@@ -1159,7 +1185,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     public void whenDismissed() {
                                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
-                                        onBackPressed();
 
                                         if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                             llFooter.setVisibility(View.GONE);
@@ -1168,11 +1193,24 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                             hasMenu = true;
                                             showsCustomer = true;
 
+                                            getSupportFragmentManager().popBackStackImmediate(); // finalize
+                                            getSupportFragmentManager().popBackStackImmediate(); // product list
+                                            previousFragmentCount = 0;
                                             Log.e("simple", "called customer fragment");
-                                            getSupportFragmentManager()
-                                                    .beginTransaction()
-                                                    .replace(R.id.flContent, simpleCustomersFragment)
-                                                    .commit();
+//                                            getSupportFragmentManager()
+//                                                    .beginTransaction()
+//                                                    .replace(R.id.flContent, simpleCustomersFragment)
+//                                                    .commit();
+                                        } else {
+                                            // TODO
+                                            if(ProductsAdapterHelper.isDuplicating) {
+                                                Intent intent = new Intent();
+                                                intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
+                                                setResult(SUCCESS, intent);
+                                                finish();
+                                            }
+                                            else
+                                                onBackPressed();
                                         }
 
                                         if (concessioModule == ConcessioModule.STOCK_REQUEST) {
@@ -1220,7 +1258,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                                     updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
 
-                                                    OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                                                    final OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                                             .toSend()
                                                             .forBranch(branch)
                                                             .object(document)
@@ -1236,7 +1274,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         public void whenDismissed() {
                                                             ProductsAdapterHelper.clearSelectedProductItemList(true);
                                                             ProductsAdapterHelper.clearSelectedReturnProductItemList();
-                                                            onBackPressed();
                                                             if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                                                 llFooter.setVisibility(View.GONE);
                                                                 simpleCustomersFragment.setHasSelected(false);
@@ -1251,6 +1288,16 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                                 getSupportFragmentManager().popBackStackImmediate(); // finalize
                                                                 getSupportFragmentManager().popBackStackImmediate(); // product list
                                                                 previousFragmentCount = 0;
+                                                            } else {
+                                                                // TODO
+                                                                if(ProductsAdapterHelper.isDuplicating) {
+                                                                    Intent intent = new Intent();
+                                                                    intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
+                                                                    setResult(SUCCESS, intent);
+                                                                    finish();
+                                                                }
+                                                                else
+                                                                    onBackPressed();
                                                             }
                                                         }
                                                     });

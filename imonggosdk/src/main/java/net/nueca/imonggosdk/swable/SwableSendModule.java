@@ -140,7 +140,8 @@ public class SwableSendModule extends BaseSwableModule {
                             /*if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
                                 NotificationTools.postNotification(imonggoSwable,
                                         ImonggoSwable.NOTIFICATION_ID,
-                                        imonggoSwable.getNotificationIcon(),
+                                        APP_ICON_DRAWABLE,
+//                                        imonggoSwable.getNotificationIcon(),
                                         imonggoSwable.getResources().getString(R.string.app_name),
                                         SUCCESS_TRANSACTIONS +" transaction" +
                                                 (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent",
@@ -378,7 +379,8 @@ public class SwableSendModule extends BaseSwableModule {
                                 /*if (parent.isSynced() && QUEUED_TRANSACTIONS == 0)
                                     NotificationTools.postNotification(imonggoSwable,
                                             ImonggoSwable.NOTIFICATION_ID,
-                                            imonggoSwable.getNotificationIcon(),
+                                            APP_ICON_DRAWABLE,
+//                                            imonggoSwable.getNotificationIcon(),
                                             imonggoSwable.getResources().getString(R.string.app_name),
                                             SUCCESS_TRANSACTIONS + " " + "transactions" + " sent",
                                             null,
@@ -784,7 +786,8 @@ public class SwableSendModule extends BaseSwableModule {
                             /*if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
                                 NotificationTools.postNotification(imonggoSwable,
                                         ImonggoSwable.NOTIFICATION_ID,
-                                        imonggoSwable.getNotificationIcon(),
+                                        APP_ICON_DRAWABLE,
+//                                        imonggoSwable.getNotificationIcon(),
                                         imonggoSwable.getResources().getString(R.string.app_name),
                                         SUCCESS_TRANSACTIONS +" transaction" +
                                                 (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent",
