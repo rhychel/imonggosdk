@@ -538,6 +538,14 @@ public class Invoice extends BaseTransactionTable2 {
         return updateCurrentPaymentBatch();
     }
 
+    public void joinAllNewToCurrentPaymentBatch() {
+        for(InvoicePayment payment : payments) {
+            if(payment.getPaymentBatchNo() == null) {
+                payment.setPaymentBatchNo(currentPaymentBatchNo);
+            }
+        }
+    }
+
     public List<InvoicePayment> getNewBatchPayment() {
         refresh();
         List<InvoicePayment> payments = new ArrayList<>();

@@ -184,7 +184,8 @@ public class ImonggoSwable extends SwableService {
                         }
                         if(offlineData.isQueued()) {
                             continue;
-                        }/*
+                        }
+                        /*
                         try {
                             if(offlineData.getObjectFromData() == null) {
                                 offlineData.deleteTo(getHelper());

@@ -12,20 +12,26 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
+import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.interfaces.ImageLoaderListener;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.Settings;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.ProductListTools;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,6 +53,8 @@ public class ProductsAdapterHelper {
     private static Customer selectedCustomer;
     private static CustomerGroup selectedCustomerGroup;
     private static Branch selectedBranch;
+
+    private static int decimalPlace = 2;
 
     public static ImageLoader getImageLoaderInstance(Context context) {
         return getImageLoaderInstance(context, false);
@@ -105,6 +113,17 @@ public class ProductsAdapterHelper {
 
     public static void setDbHelper(ImonggoDBHelper2 dbHelper) {
         ProductsAdapterHelper.dbHelper = dbHelper;
+
+        /** set the decimal place! **/
+        List<Settings> settingsList = Settings.fetchWithConditionInt(ProductsAdapterHelper.dbHelper,
+                Settings.class, new DBTable.ConditionsWindow<Settings,Integer>() {
+                    @Override
+                    public Where<Settings, Integer> renderConditions(Where<Settings, Integer> where) throws SQLException {
+                        return where.eq("name", Configurations.SETTINGS_NAME.get(SettingsName.FORMAT_NO_OF_DECIMALS));
+                    }
+                });
+        if(settingsList.size() > 0)
+            decimalPlace = Integer.parseInt(settingsList.get(0).getValue());
     }
 
     public static ImonggoDBHelper2 getDbHelper() {
@@ -220,5 +239,9 @@ public class ProductsAdapterHelper {
 
     public static void setReason(DocumentPurpose reason) {
         ProductsAdapterHelper.reason = reason;
+    }
+
+    public static int getDecimalPlace() {
+        return decimalPlace;
     }
 }
