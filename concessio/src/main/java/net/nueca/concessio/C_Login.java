@@ -88,7 +88,7 @@ public class C_Login extends LoginActivity {
         else
             Log.e("App", app.getSequences().size()+"---");
 
-        return app.modulesToDownload(getHelper());
+        return app.modulesToDownload(getHelper(), app.isShow_only_sellable_products());
 
     }
 
