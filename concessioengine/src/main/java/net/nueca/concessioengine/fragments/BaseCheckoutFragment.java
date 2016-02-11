@@ -76,23 +76,28 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         /** EXTRAS **/
         Extras extras = invoice.getExtras() == null? new Extras() : invoice.getExtras();
 
+        int decimal = ProductsAdapterHelper.getDecimalPlace();
         extras.setTotal_selling_price("" +
-                (NumberTools.formatDouble(InvoiceTools.addNoDiscountSubtotals(invoice.getInvoiceLines()),2) -
-                        NumberTools.formatDouble(InvoiceTools.sum(InvoiceTools.getAllProductDiscount(invoice.getInvoiceLines())),2))
+                (NumberTools.formatDouble(computation.getTotalPayableNoDiscount().doubleValue(), decimal) -
+                NumberTools.formatDouble(computation.getTotalProductDiscount().doubleValue(), decimal))
+                //(NumberTools.formatDouble(InvoiceTools.addNoDiscountSubtotals(invoice.getInvoiceLines()),2) -
+                //        NumberTools.formatDouble(InvoiceTools.sum(InvoiceTools.getAllProductDiscount(invoice.getInvoiceLines())),2))
         );
         extras.setTotal_company_discount("" +
-                NumberTools.formatDouble(InvoiceTools.sum(InvoiceTools.getAllCompanyDiscount(invoice.getInvoiceLines())),2));
+                NumberTools.formatDouble(computation.getTotalCompanyDiscount().doubleValue(), decimal));
+                //NumberTools.formatDouble(InvoiceTools.sum(InvoiceTools.getAllCompanyDiscount(invoice.getInvoiceLines())),2));
         //extras.setTotal_customer_discount("" + InvoiceTools.sum(InvoiceTools.consolidateCustomerDiscount(invoice.getInvoiceLines())));
 
-        List<Double> customerDiscounts = new ArrayList<>();
-        double subtotal = NumberTools.formatDouble(InvoiceTools.addSubtotals(invoice.getInvoiceLines()),2);
-        double totalCustomerDiscount = NumberTools.formatDouble(subtotal - DiscountTools.applyMultipleDiscounts(new BigDecimal(subtotal),
-                BigDecimal.ONE, customerDiscounts, customer != null? customer.getDiscount_text() : "",",").doubleValue(),2);
+        //List<Double> customerDiscounts = new ArrayList<>();
+        //double subtotal = NumberTools.formatDouble(InvoiceTools.addSubtotals(invoice.getInvoiceLines()),2);
+        double totalCustomerDiscount = NumberTools.formatDouble(computation.getTotalCustomerDiscount().doubleValue(), decimal);
+        //double totalCustomerDiscount = NumberTools.formatDouble(subtotal - DiscountTools.applyMultipleDiscounts(new BigDecimal(subtotal),
+        //        BigDecimal.ONE, customerDiscounts, customer != null? customer.getDiscount_text() : "",",").doubleValue(),2);
         extras.setTotal_customer_discount("" + totalCustomerDiscount);
         extras.setCustomer_discount_text_summary(customer != null? customer.getDiscount_text() : "");
         extras.setCustomer_discount_amounts_summary(
-                //InvoiceTools.generateDiscountAmount(InvoiceTools.consolidateCustomerDiscount(invoice.getInvoiceLines()),',')
-                InvoiceTools.generateDiscountAmount(customerDiscounts,',')
+                //InvoiceTools.generateDiscountAmount(customerDiscounts,',')
+                InvoiceTools.generateDiscountAmount(computation.getCustomerDiscount(),',')
         );
 
         extras.setTotal_unit_retail_price("" +

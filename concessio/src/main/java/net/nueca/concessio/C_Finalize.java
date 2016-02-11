@@ -12,12 +12,15 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.enums.ListingType;
@@ -78,7 +81,7 @@ public class C_Finalize extends ModuleActivity {
 
         llBalance.setVisibility(View.VISIBLE);
 
-        if(isForHistoryDetail) {
+        if(isForHistoryDetail && !isLayaway) {
             getSupportActionBar().setTitle(getIntent().getStringExtra(REFERENCE));
             try {
                 final OfflineData offlineData = getHelper().fetchObjectsInt(OfflineData.class).queryBuilder()
@@ -103,6 +106,7 @@ public class C_Finalize extends ModuleActivity {
                         // TODO for double checking..
                         //DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
                         //return;
+                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Finalize.this, C_Module.class);
                         intent.putExtra(FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
@@ -143,10 +147,63 @@ public class C_Finalize extends ModuleActivity {
 
                 if(paymentsComputation.getRemaining().doubleValue() == 0)
                     llBalance.setVisibility(View.GONE);
+                //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
+                tvBalance.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getRemaining()));
 
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+        else if(!isForHistoryDetail && isLayaway) {
+            getSupportActionBar().setTitle(getIntent().getStringExtra(REFERENCE));
+            try {
+                final OfflineData offlineData = getHelper().fetchObjectsInt(OfflineData.class).queryBuilder()
+                        .where().eq("reference_no", getIntent().getStringExtra(REFERENCE)).queryForFirst();
+                if(offlineData == null) {
+                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History.", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }, R.style.AppCompatDialogStyle_Light_NoTitle);
+                    return;
+                }
+                else if(!offlineData.isSynced() && !offlineData.isSyncing()) {
+                    btn2 = (Button) findViewById(R.id.btn2);
+                    initializeVoidButton(btn1, getIntent().getStringExtra(REFERENCE));
+                    initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
+                }
+
+                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.PaymentsComputation();
+                paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
+                paymentsComputation.addAllPayments(offlineData.getObjectFromData(Invoice.class).getPayments());
+
+                paymentsComputation.getTotalPayable(); // Total Amount
+                paymentsComputation.getRemaining(); // Total Balance
+
+                llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
+                tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
+
+                llTotalAmount.setVisibility(View.VISIBLE);
+                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable()));
+
+                if(paymentsComputation.getRemaining().doubleValue() == 0)
+                    llBalance.setVisibility(View.GONE);
+                //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
+                tvBalance.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getRemaining()));
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            btn1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(C_Finalize.this, C_Checkout.class);
+                    intent.putExtra(REFERENCE, reference);
+                    intent.putExtra(IS_LAYAWAY, isLayaway);
+                    startActivityForResult(intent, SALES);
+                }
+            });
         }
         else {
             getSupportActionBar().setTitle("Review");
@@ -183,13 +240,16 @@ public class C_Finalize extends ModuleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Double sales = DiscountTools.applyMultipleDiscounts(
-                new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
-                ProductsAdapterHelper.getSelectedCustomer() == null? null :
-                        ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
-        Double balance =
-                sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-        tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
+        if(!isForHistoryDetail && !isLayaway) {
+            Double sales = DiscountTools.applyMultipleDiscounts(
+                    new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
+                    ProductsAdapterHelper.getSelectedCustomer() == null ? null :
+                            ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(), ",").doubleValue();
+            Double balance =
+                    sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+            Log.e("C_Finalize", "onResume : BALANCE: " + balance);
+            tvBalance.setText("P" + NumberTools.separateInCommas(balance));
+        }
     }
 
     @Override
@@ -280,13 +340,23 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                 @Override
                 public void whenItemsSelectedUpdated() {
-                    Double sales = DiscountTools.applyMultipleDiscounts(
-                            new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
-                            ProductsAdapterHelper.getSelectedCustomer() == null? null :
-                                    ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
-                    Double balance =
-                            sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-                    tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
+                    /*Gson gson = new Gson();
+                    Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                    Log.e("PRODUCTS ADAPTER HELPER", gson.toJson(ProductsAdapterHelper.getSelectedProductItems()));
+                    Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                    Log.e("PRODUCTS ADAPTER HELPER", gson.toJson(ProductsAdapterHelper.getSelectedReturnProductItems()));
+                    Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");*/
+
+                    if(!isForHistoryDetail && !isLayaway) {
+                        Double sales = DiscountTools.applyMultipleDiscounts(
+                                new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
+                                ProductsAdapterHelper.getSelectedCustomer() == null ? null :
+                                        ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(), ",").doubleValue();
+                        Double balance =
+                                sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+                        Log.e("C_Finalize", "ReviewAdapter : BALANCE: " + balance);
+                        tvBalance.setText("P" + NumberTools.separateInCommas(balance));
+                    }
                 }
             });
             if(position == 0)// Positive Transactions

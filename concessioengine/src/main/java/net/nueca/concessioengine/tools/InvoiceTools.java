@@ -97,9 +97,11 @@ public class InvoiceTools {
 
                     extrasBuilder.is_bad_stock(itemValue.isBadStock());
                     InvoicePurpose invoicePurpose = itemValue.getInvoicePurpose();
-                    extrasBuilder.invoice_purpose_id(invoicePurpose.getId());
-                    extrasBuilder.invoice_purpose_code(invoicePurpose.getCode());
-                    extrasBuilder.invoice_purpose_name(invoicePurpose.getName());
+                    if(invoicePurpose != null) {
+                        extrasBuilder.invoice_purpose_id(invoicePurpose.getId());
+                        extrasBuilder.invoice_purpose_code(invoicePurpose.getCode());
+                        extrasBuilder.invoice_purpose_name(invoicePurpose.getName());
+                    }
                     extrasBuilder.expiry_date(itemValue.getExpiry_date());
 
                     Extras extras = extrasBuilder.build();
@@ -348,8 +350,18 @@ public class InvoiceTools {
         private List<InvoiceLine> invoiceLines = new ArrayList<>();
         private List<InvoicePayment> payments = new ArrayList<>();
 
-        private BigDecimal total_payable = BigDecimal.ZERO;
-        private BigDecimal total_payment_made = BigDecimal.ZERO;
+        private List<Double> customerDiscount = new ArrayList<>();
+        private List<Double> companyDiscount = new ArrayList<>();
+        private List<Double> productDiscount = new ArrayList<>();
+
+        private BigDecimal totalCustomerDiscount = BigDecimal.ZERO;
+        private BigDecimal totalCompanyDiscount = BigDecimal.ZERO;
+        private BigDecimal totalProductDiscount = BigDecimal.ZERO;
+
+        private BigDecimal totalPayableNoDiscount = BigDecimal.ZERO;
+
+        private BigDecimal totalPayable = BigDecimal.ZERO;
+        private BigDecimal totalPaymentMade = BigDecimal.ZERO;
 
         public void addAllInvoiceLines(List<InvoiceLine> invoiceLines) {
             if(invoiceLines == null)
@@ -357,10 +369,17 @@ public class InvoiceTools {
             for(InvoiceLine invoiceLine : invoiceLines)
                 addInvoiceLine(invoiceLine);
         }
+        public void removeAllInvoiceLines() {
+            for(int i = 0 ; i < invoiceLines.size(); i++)
+                removeInvoiceLine(i);
+        }
 
         public void addInvoiceLine(InvoiceLine invoiceLine) {
             invoiceLines.add(invoiceLine);
-            total_payable = total_payable.add(new BigDecimal(invoiceLine.getSubtotal()));
+            totalPayable = totalPayable.add(new BigDecimal(invoiceLine.getSubtotal()));
+
+            totalPayableNoDiscount = totalPayableNoDiscount.add(new BigDecimal(invoiceLine.getNo_discount_subtotal()));
+            addDiscounts(invoiceLine);
         }
 
         public void removeInvoiceLine(int location) {
@@ -368,7 +387,53 @@ public class InvoiceTools {
                 return;
 
             InvoiceLine forDelete = invoiceLines.remove(location);
-            total_payable = total_payable.subtract(new BigDecimal(forDelete.getSubtotal()));
+            totalPayable = totalPayable.subtract(new BigDecimal(forDelete.getSubtotal()));
+
+            totalPayableNoDiscount = totalPayableNoDiscount.subtract(new BigDecimal(forDelete.getNo_discount_subtotal()));
+            removeDiscounts(location);
+        }
+
+        private void addDiscounts(InvoiceLine invoiceLine) {
+            if(invoiceLine.getExtras() == null)
+                return;
+            double itemDiscount;
+
+            if(invoiceLine.getExtras().getProduct_discount_amount() != null) {
+                itemDiscount = sum(parseDiscountAmount(invoiceLine.getExtras().getProduct_discount_amount(), ','));
+                totalProductDiscount = totalProductDiscount.add(new BigDecimal(itemDiscount));
+                productDiscount.add(itemDiscount);
+            } else {
+                productDiscount.add(0d);
+            }
+
+            if(invoiceLine.getExtras().getCompany_discount_amount() != null) {
+                itemDiscount = sum(parseDiscountAmount(invoiceLine.getExtras().getCompany_discount_amount(), ','));
+                totalCompanyDiscount = totalCompanyDiscount.add(new BigDecimal(itemDiscount));
+                companyDiscount.add(itemDiscount);
+            } else {
+                companyDiscount.add(0d);
+            }
+
+            if(invoiceLine.getExtras().getCustomer_discount_amounts() != null) {
+                itemDiscount = sum(parseDiscountAmount(invoiceLine.getExtras().getCustomer_discount_amounts(), ','));
+                totalCustomerDiscount = totalCustomerDiscount.add(new BigDecimal(itemDiscount));
+                customerDiscount.add(itemDiscount);
+            } else {
+                customerDiscount.add(0d);
+            }
+        }
+
+        private void removeDiscounts(int position) {
+            double itemDiscount;
+
+            itemDiscount = productDiscount.remove(position);
+            totalProductDiscount = totalProductDiscount.subtract(new BigDecimal(itemDiscount));
+
+            itemDiscount = companyDiscount.remove(position);
+            totalCompanyDiscount = totalCompanyDiscount.subtract(new BigDecimal(itemDiscount));
+
+            itemDiscount = customerDiscount.remove(position);
+            totalCustomerDiscount = totalCustomerDiscount.subtract(new BigDecimal(itemDiscount));
         }
 
         public void addAllPayments(List<InvoicePayment> payments) {
@@ -387,7 +452,7 @@ public class InvoiceTools {
             else    // tender > balance
                 payment.setAmount(balance);
 
-            total_payment_made = total_payment_made.add(new BigDecimal(payment.getTender()));
+            totalPaymentMade = totalPaymentMade.add(new BigDecimal(payment.getTender()));
 
             payments.add(payment);
         }
@@ -397,7 +462,7 @@ public class InvoiceTools {
                 return;
 
             InvoicePayment forDelete = payments.remove(location);
-            total_payment_made = total_payment_made.subtract(new BigDecimal(forDelete.getTender()));
+            totalPaymentMade = totalPaymentMade.subtract(new BigDecimal(forDelete.getTender()));
 
             refresh();
         }
@@ -429,14 +494,23 @@ public class InvoiceTools {
 
         public void clearPayments() {
             payments = new ArrayList<>();
-            total_payment_made = BigDecimal.ZERO;
+            totalPaymentMade = BigDecimal.ZERO;
         }
 
         public void clearAll() {
             invoiceLines = new ArrayList<>();
             payments = new ArrayList<>();
-            total_payable = BigDecimal.ZERO;
-            total_payment_made = BigDecimal.ZERO;
+            totalPayable = BigDecimal.ZERO;
+            totalPaymentMade = BigDecimal.ZERO;
+
+            customerDiscount = new ArrayList<>();
+            companyDiscount = new ArrayList<>();
+            productDiscount = new ArrayList<>();
+            totalCustomerDiscount = BigDecimal.ZERO;
+            totalCompanyDiscount = BigDecimal.ZERO;
+            totalProductDiscount = BigDecimal.ZERO;
+
+            totalPayableNoDiscount = BigDecimal.ZERO;
         }
 
         private void refresh() {
@@ -446,15 +520,15 @@ public class InvoiceTools {
         }
 
         public BigDecimal getTotalPaymentMade() {
-            return total_payment_made;
+            return totalPaymentMade;
         }
 
         public BigDecimal getTotalPayable() {
-            return total_payable;
+            return totalPayable;
         }
 
         public BigDecimal getRemaining() {
-            return total_payable.subtract(total_payment_made);
+            return totalPayable.subtract(totalPaymentMade);
         }
 
         public List<InvoicePayment> getPayments() {
@@ -463,6 +537,34 @@ public class InvoiceTools {
 
         public List<InvoiceLine> getInvoiceLines() {
             return invoiceLines;
+        }
+
+        public List<Double> getCustomerDiscount() {
+            return customerDiscount;
+        }
+
+        public List<Double> getCompanyDiscount() {
+            return companyDiscount;
+        }
+
+        public List<Double> getProductDiscount() {
+            return productDiscount;
+        }
+
+        public BigDecimal getTotalCustomerDiscount() {
+            return totalCustomerDiscount;
+        }
+
+        public BigDecimal getTotalCompanyDiscount() {
+            return totalCompanyDiscount;
+        }
+
+        public BigDecimal getTotalProductDiscount() {
+            return totalProductDiscount;
+        }
+
+        public BigDecimal getTotalPayableNoDiscount() {
+            return totalPayableNoDiscount;
         }
     }
 

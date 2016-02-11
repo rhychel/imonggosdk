@@ -142,6 +142,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     public void showTransactionDetails(OfflineData offlineData) {
                         prepareFooter();
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
+                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
                         ProductsAdapterHelper.setDbHelper(getHelper());
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
@@ -195,6 +196,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     public void showTransactionDetails(OfflineData offlineData) {
                         prepareFooter();
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
+                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
                         ProductsAdapterHelper.setDbHelper(getHelper());
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
@@ -585,6 +587,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
                                 Log.e("Reason", reason.getName());
                                 ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                ProductsAdapterHelper.clearSelectedReturnProductItemList();
                                 ProductsAdapterHelper.setSelectedCustomer(customer);
                                 ProductsAdapterHelper.setReason(reason);
 

@@ -38,7 +38,7 @@ public class Invoice extends BaseTransactionTable2 {
     protected String invoice_date;
     @Expose
     @DatabaseField
-    protected String status;
+    protected String status = "S";
     @Expose
     @DatabaseField
     protected String email;
