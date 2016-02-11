@@ -42,15 +42,15 @@ public class C_Login extends LoginActivity {
                 Table.USERS_ME.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
                 Table.SETTINGS.ordinal(),
-                Table.PRODUCTS.ordinal(),
+                /*Table.PRODUCTS.ordinal()
                 Table.UNITS.ordinal(),
-                /*Table.CUSTOMER_CATEGORIES.ordinal(),
+                Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_BY_SALESMAN.ordinal(),
                 Table.ROUTE_PLANS.ordinal(),
-                Table.ROUTE_PLANS_DETAILS.ordinal(),*/
-                Table.BRANCH_PRODUCTS.ordinal()
-                /*Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
-                Table.PRICE_LISTS_DETAILS.ordinal()*//*
+                Table.ROUTE_PLANS_DETAILS.ordinal(),
+                */Table.BRANCH_PRODUCTS.ordinal()/*,
+                Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
+                Table.PRICE_LISTS_DETAILS.ordinal()/*,
                 Table.PAYMENT_TERMS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
                 Table.INVOICES.ordinal(),

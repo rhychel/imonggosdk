@@ -73,6 +73,8 @@ public class ModuleSetting extends DBTable {
     private boolean show_history_after_transaction = false;
     @DatabaseField
     private boolean has_disable_image = false;
+    @DatabaseField
+    private boolean show_only_sellable_products = false;
 
     public ModuleSetting() {
     }
@@ -245,11 +247,14 @@ public class ModuleSetting extends DBTable {
         this.sequences = sequences;
     }
 
-    public int[] modulesToDownload(ImonggoDBHelper2 dbHelper) {
+    public int[] modulesToDownload(ImonggoDBHelper2 dbHelper, final boolean show_only_sellable_products) {
         try {
             List<Sequence> sequence = dbHelper.fetchForeignCollection(sequences.closeableIterator(), new ImonggoDBHelper2.Conditional<Sequence>() {
                 @Override
                 public boolean validate(Sequence obj) {
+                    if(show_only_sellable_products)
+                        if(obj.getTableValue() == Table.PRODUCTS)
+                            return false;
                     return obj.getSequenceType() == SequenceType.DOWNLOAD;
                 }
             });
@@ -317,6 +322,14 @@ public class ModuleSetting extends DBTable {
         this.has_pin_code = has_pin_code;
     }
 
+    public boolean isShow_only_sellable_products() {
+        return show_only_sellable_products;
+    }
+
+    public void setShow_only_sellable_products(boolean show_only_sellable_products) {
+        this.show_only_sellable_products = show_only_sellable_products;
+    }
+
     public ConcessioModule getModuleType() {
         if(module_type.equals("stock_request"))
             return ConcessioModule.STOCK_REQUEST;
@@ -372,4 +385,11 @@ public class ModuleSetting extends DBTable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "ModuleSetting{" +
+                "label='" + label + '\'' +
+                ", module_type='" + module_type + '\'' +
+                '}';
+    }
 }

@@ -152,6 +152,7 @@ public class Configurations {
             put(Table.PAYMENT_TERMS, "payment_terms");
             put(Table.CUSTOMER_CATEGORIES, "customer_categories");
             put(Table.CUSTOMER_BY_SALESMAN, "customers");
+            put(Table.PRICE_LISTS_FROM_CUSTOMERS, "price_lists");
             put(Table.PAYMENT_TYPES, "payment_types");
             put(Table.CUSTOMER_GROUPS, "customer_groups");
             put(Table.PRICE_LISTS, "price_lists");
