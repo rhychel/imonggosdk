@@ -1,6 +1,7 @@
 package net.nueca.concessio;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -256,7 +257,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     try {
                         if(!isLayaway) {
                             updateInventoryFromSelectedItemList(false);
-                            new SwableTools.Transaction(getHelper())
+                            offlineData = new SwableTools.Transaction(getHelper())
                                     .toSend()
                                     .forBranch(getSession().getCurrent_branch_id())
                                     .fromModule(ConcessioModule.INVOICE)
@@ -298,7 +299,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         invoice.setStatus("L");
                         try {
                             if(!isLayaway) {
-                                new SwableTools.Transaction(getHelper())
+                                offlineData = new SwableTools.Transaction(getHelper())
                                         .toSend()
                                         .forBranch(getSession().getCurrent_branch_id())
                                         .fromModule(ConcessioModule.INVOICE)
@@ -328,7 +329,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private TransactionDialog.TransactionDialogListener transactionDialogListener = new TransactionDialog.TransactionDialogListener() {
         @Override
         public void whenDismissed() {
-            setResult(SUCCESS);
+            Intent intent = new Intent();
+            intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
+            setResult(SUCCESS, intent);
             finish();
         }
     };
