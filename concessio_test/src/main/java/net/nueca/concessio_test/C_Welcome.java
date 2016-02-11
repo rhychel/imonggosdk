@@ -186,6 +186,10 @@ public class C_Welcome extends ModuleActivity {
         });
 
         try {
+            if(getSession().getUser() == null)
+                Log.e("User", "is null");
+            else
+                Log.e("User", "is not null");
             tvAgentName.setText("Hello, "+getSession().getUser().getName());
         } catch (SQLException e) {
             e.printStackTrace();

@@ -385,4 +385,11 @@ public class ModuleSetting extends DBTable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "ModuleSetting{" +
+                "label='" + label + '\'' +
+                ", module_type='" + module_type + '\'' +
+                '}';
+    }
 }

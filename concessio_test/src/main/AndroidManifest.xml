@@ -86,10 +86,6 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".epsonprinter.PrinterActivity"
-            android:label="@string/app_name">
-        </activity>
-        <activity
             android:name=".C_MultiInput"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Concessio.NoActionBar" />
