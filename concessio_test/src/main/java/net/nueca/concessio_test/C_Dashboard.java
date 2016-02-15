@@ -17,6 +17,9 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
@@ -35,8 +38,8 @@ import java.util.List;
  */
 public class C_Dashboard extends ImonggoAppCompatActivity {
 
+    private static String TAG = "C_Dashboard";
     private Button btnSales, btnOrder, btnCount, btnReceive, btnPullout, btnUnlink;
-
     private Button btnConcessio;
 
     @Override
@@ -112,6 +115,26 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
                 }
             }
         });
+
+        List<Product> products = Product.fetchAll(getHelper(), Product.class);
+
+        if(products != null) {
+            for(Product p: products) {
+                Log.e(TAG, p.getName());
+            }
+        } else {
+            Log.e(TAG, "Products is null");
+        }
+
+        List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+
+        if(products != null) {
+            for(BranchProduct bp: branchProducts) {
+                Log.e(TAG, bp.getName());
+            }
+        } else {
+            Log.e(TAG, "Branch Products is null");
+        }
     }
 
     private View.OnClickListener onChooseModule = new View.OnClickListener() {

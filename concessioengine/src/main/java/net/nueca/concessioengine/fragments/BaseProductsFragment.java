@@ -21,6 +21,7 @@ import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
@@ -89,6 +90,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     protected BaseProductsRecyclerAdapter productRecyclerViewAdapter;
     protected BaseProductsAdapter productListAdapter;
+
+    protected ConcessioModule concessioModule = ConcessioModule.NONE;
 
     protected abstract void showQuantityDialog(int position, Product product, SelectedProductItem selectedProductItem);
     protected abstract void showProductDetails(Product product);
@@ -184,7 +187,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             return products;
         try {
             Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
-            whereProducts.isNull("status");
+//            whereProducts.isNull("status"); -- changed without notice
+            whereProducts.eq("status", "A");
             Log.e("includeSearchKey", includeSearchKey + "");
             Log.e("includeCategory", includeCategory+"");
             Log.e("hasProductFilter", hasProductFilter+"");
@@ -394,5 +398,13 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setReturnItems(boolean returnItems) {
         isReturnItems = returnItems;
+    }
+
+    public ConcessioModule getConcessioModule() {
+        return concessioModule;
+    }
+
+    public void setConcessioModule(ConcessioModule concessioModule) {
+        this.concessioModule = concessioModule;
     }
 }

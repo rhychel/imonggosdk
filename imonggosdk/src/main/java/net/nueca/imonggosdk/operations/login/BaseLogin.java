@@ -527,6 +527,8 @@ public class BaseLogin {
                                                     if (key.equals("app")) {
                                                         moduleSetting.insertTo(mDBHelper);
 
+                                                        Log.e("app --> ", "show_only_sellable_products="+moduleSetting.isShow_only_sellable_products());
+
                                                         // Product Sorting
                                                         JSONArray jsonArrSorting = module.getJSONArray("product_sorting");
                                                         BatchList<ProductSorting> productSortings = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
