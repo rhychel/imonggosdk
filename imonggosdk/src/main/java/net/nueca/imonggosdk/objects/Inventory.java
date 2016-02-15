@@ -117,6 +117,8 @@ public class Inventory extends DBTable {
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(Inventory.class, this);
+            product.setInventory(this);
+            product.updateTo(dbHelper);
         } catch (SQLException e) {
             e.printStackTrace();
         }

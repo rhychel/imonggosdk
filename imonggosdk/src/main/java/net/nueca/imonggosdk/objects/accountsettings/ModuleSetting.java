@@ -272,16 +272,19 @@ public class ModuleSetting extends DBTable {
         return new int[0];
     }
 
-    public List<Table> modulesToUpdate(ImonggoDBHelper2 dbHelper) {
-        return modulesToUpdate(dbHelper, true);
+    public List<Table> modulesToUpdate(ImonggoDBHelper2 dbHelper, boolean show_only_sellable_products) {
+        return modulesToUpdate(dbHelper, true, show_only_sellable_products);
     }
 
-    public List<Table> modulesToUpdate(ImonggoDBHelper2 dbHelper, boolean hasAll) {
+    public List<Table> modulesToUpdate(ImonggoDBHelper2 dbHelper, boolean hasAll, final boolean show_only_sellable_products) {
         List<Table> modules = new ArrayList<>();
         try {
             List<Sequence> updateSequence = dbHelper.fetchForeignCollection(sequences.closeableIterator(), new ImonggoDBHelper2.Conditional<Sequence>() {
                 @Override
                 public boolean validate(Sequence obj) {
+                    if(show_only_sellable_products)
+                        if(obj.getTableValue() == Table.PRODUCTS)
+                            return false;
                     return obj.getSequenceType() == SequenceType.UPDATE;
                 }
             });
