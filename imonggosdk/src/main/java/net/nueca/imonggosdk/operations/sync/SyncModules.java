@@ -726,7 +726,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         } else if (mCurrentTableSyncing == Table.TAX_SETTINGS ||
                 mCurrentTableSyncing == Table.DOCUMENT_TYPES ||
                 mCurrentTableSyncing == Table.DOCUMENT_PURPOSES ||
-                mCurrentTableSyncing == Table.SETTINGS) {
+                mCurrentTableSyncing == Table.SETTINGS ||
+                mCurrentTableSyncing == Table.ROUTE_PLANS) {
             startSyncModuleContents(RequestType.API_CONTENT);
         } else {
             // otherwise, call the last updated at request {
@@ -1170,10 +1171,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                             Log.e(TAG, "This Price List ID is: " + listOfPricelistIds.get(mCustomIndex));
                         }
-
                         updateNext(requestType, listOfPricelistIds.size());
                     }
-
                 } else if (requestType == RequestType.DAILY_SALES_TODAY) {
                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                     String date_updated_at = DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd");
@@ -1358,34 +1357,48 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         if (!jsonObject.getString("id").isEmpty()) {
                                             if (show_only_sellable_products) {
                                                 PRODUCT = gson.fromJson(jsonObject.toString(), Product.class);
+                                                PRODUCT.setStatus(null);
 
                                                 if(PRODUCT != null) {
 
-                                                    Extras product_extras = new Extras();
+                                                    Extras product_extras = null;
 
                                                     if (jsonObject.has("extras")) {
-                                                        JSONObject json_extras = jsonObject.getJSONObject("extras");
+                                                            product_extras = new Extras();
+                                                            product_extras.setId(Product.class.getName().toUpperCase(), PRODUCT.getId());
+                                                            JSONObject json_extras = jsonObject.getJSONObject("extras");
 
-                                                        String default_selling_unit = "";
-                                                        String default_ordering_unit_id = "";
+                                                        if(!isExisting(product_extras, Table.EXTRAS)) {
+                                                            String default_selling_unit = "";
+                                                            String default_ordering_unit_id = "";
 
-                                                        if (json_extras.has("default_selling_unit")) {
-                                                            default_selling_unit = json_extras.getString("default_selling_unit");
+                                                            if (json_extras.has("default_selling_unit")) {
+                                                                default_selling_unit = json_extras.getString("default_selling_unit");
+                                                                Log.e(TAG, "API: " + mCurrentTableSyncing + " API has extras field 'default_selling_unit' on " + PRODUCT.getName());
+                                                            } else {
+                                                                Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_selling_unit' on " + PRODUCT.getName());
+                                                            }
+
+                                                            if (json_extras.has("default_ordering_unit_id")) {
+                                                                default_ordering_unit_id = json_extras.getString("default_ordering_unit_id");
+                                                                Log.e(TAG, "API: " + mCurrentTableSyncing + " API has extras field 'default_ordering_unit_id' on " + PRODUCT.getName());
+                                                            } else {
+                                                                Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_ordering_unit_id' on " + PRODUCT.getName());
+                                                            }
+
+                                                            product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
+                                                            product_extras.setDefault_selling_unit(default_selling_unit);
+                                                            product_extras.insertTo(getHelper());
                                                         } else {
-                                                            Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_selling_unit' on " + PRODUCT.getName());
+                                                            Log.e(PRODUCT.getName()+" EXTRAS", "is on the database!");
+                                                            product_extras = getHelper().fetchObjects(Extras.class).queryBuilder()
+                                                                    .where().eq("id", product_extras.getId()).queryForFirst();
                                                         }
-
-                                                        if (json_extras.has("default_ordering_unit_id")) {
-                                                            default_ordering_unit_id = json_extras.getString("default_ordering_unit_id");
-                                                        } else {
-                                                            Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_ordering_unit_id' on " + PRODUCT.getName());
-                                                        }
-
-                                                        product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
-                                                        product_extras.setDefault_selling_unit(default_selling_unit);
-                                                        product_extras.insertTo(getHelper());
 
                                                         PRODUCT.setExtras(product_extras);
+
+                                                        Log.e(TAG, "Extras Created. Tagging to Products. Inserting to DB: " + product_extras.toString());
+
                                                     } else {
                                                         Log.e(TAG, "This Product don't have extras");
                                                     }
@@ -1509,6 +1522,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         BRANCH_PRODUCT.setId(BRANCH_PRICE_ID);
 
                                         Log.e(TAG, "branchProduct created ");
+
+                                        Log.e(TAG, "Product Extras: " + PRODUCT.getExtras().toString() );
 
                                         // NAME
                                         if (jsonObject.has("name")) {
@@ -1638,28 +1653,40 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Extras product_extras = new Extras();
 
                                     if (jsonObject.has("extras")) {
+                                        product_extras = new Extras();
+                                        product_extras.setId(Product.class.getName().toUpperCase(), product.getId());
                                         JSONObject json_extras = jsonObject.getJSONObject("extras");
 
-                                        String default_selling_unit = "";
-                                        String default_ordering_unit_id = "";
+                                        if(!isExisting(product_extras, Table.EXTRAS)) {
+                                            String default_selling_unit = "";
+                                            String default_ordering_unit_id = "";
 
-                                        if (json_extras.has("default_selling_unit")) {
-                                            default_selling_unit = json_extras.getString("default_selling_unit");
+                                            if (json_extras.has("default_selling_unit")) {
+                                                default_selling_unit = json_extras.getString("default_selling_unit");
+                                                Log.e(TAG, "API: " + mCurrentTableSyncing + " API has extras field 'default_selling_unit' on " + product.getName());
+                                            } else {
+                                                Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_selling_unit' on " + product.getName());
+                                            }
+
+                                            if (json_extras.has("default_ordering_unit_id")) {
+                                                default_ordering_unit_id = json_extras.getString("default_ordering_unit_id");
+                                                Log.e(TAG, "API: " + mCurrentTableSyncing + " API has extras field 'default_ordering_unit_id' on " + product.getName());
+                                            } else {
+                                                Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_ordering_unit_id' on " + product.getName());
+                                            }
+
+                                            product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
+                                            product_extras.setDefault_selling_unit(default_selling_unit);
+                                            product_extras.insertTo(getHelper());
                                         } else {
-                                            Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_selling_unit' on " + product.getName());
+                                            Log.e(product.getName()+" EXTRAS", "is on the database!");
+                                            product_extras = getHelper().fetchObjects(Extras.class).queryBuilder()
+                                                    .where().eq("id", product_extras.getId()).queryForFirst();
                                         }
-
-                                        if (json_extras.has("default_ordering_unit_id")) {
-                                            default_ordering_unit_id = json_extras.getString("default_ordering_unit_id");
-                                        } else {
-                                            Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_ordering_unit_id' on " + product.getName());
-                                        }
-
-                                        product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
-                                        product_extras.setDefault_selling_unit(default_selling_unit);
-                                        product_extras.insertTo(getHelper());
 
                                         product.setExtras(product_extras);
+
+                                        Log.e(TAG, "Extras Created. Tagging to Products. Inserting to DB: " + product_extras.toString());
 
                                     } else {
                                         Log.e(TAG, "This Product don't have extras");
@@ -1973,49 +2000,56 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     if (jsonObject.has(name_extras)) {
                                         JSONObject json_extras = jsonObject.getJSONObject(name_extras);
 
-                                        user_id = 0;
-                                        customer_category_id = 0;
+                                        customer_extras = new Extras();
+                                        customer_extras.setId(Customer.class.getName().toUpperCase(), customer.getId());
+                                        if(!isExisting(customer_extras, Table.EXTRAS)) {
+                                            user_id = 0;
+                                            customer_category_id = 0;
 
-                                        if (json_extras.has(name_salesman_id)) {
-                                            if (!json_extras.getString(name_salesman_id).isEmpty()) {
-                                                salesman_id = json_extras.getString(name_salesman_id);
-                                                customer_extras = new Extras();
-                                                customer_extras.setSalesman_id(salesman_id);
+                                            if (json_extras.has(name_salesman_id)) {
+                                                if (!json_extras.getString(name_salesman_id).isEmpty()) {
+                                                    salesman_id = json_extras.getString(name_salesman_id);
+                                                    customer_extras.setSalesman_id(salesman_id);
+                                                } else {
+                                                    Log.e(TAG, mCurrentTableSyncing + " API '" + name_salesman_id + "' field don't have value.");
+                                                }
                                             } else {
-                                                Log.e(TAG, mCurrentTableSyncing + " API '" + name_salesman_id + "' field don't have value.");
+                                                Log.e(TAG, mCurrentTableSyncing + " API don't have '" + name_salesman_id + "' field.");
+                                            }
+
+                                            if (json_extras.has(name_customer_category)) {
+                                                if (!json_extras.getString(name_customer_category).isEmpty()) {
+                                                    customer_category_id = json_extras.getInt(name_customer_category);
+                                                } else {
+                                                    Log.e(TAG, mCurrentTableSyncing + " API '" + name_customer_category + "' field don't have value.");
+                                                }
+                                            } else {
+                                                Log.e(TAG, mCurrentTableSyncing + " API don't have '" + name_customer_category + "' field.");
+                                            }
+
+                                            User user;
+                                            if (user_id != 0) {
+                                                user = getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user_id).queryForFirst();
+                                                if (user != null) {
+                                                    customer_extras.setUser(user);
+                                                } else {
+                                                    Log.e(TAG, "User not found");
+                                                }
+                                            }
+                                            CustomerCategory customerCategory = null;
+                                            if (customer_category_id != 0) {
+                                                customerCategory = getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customer_category_id).queryForFirst();
+
+                                                if (customerCategory != null) {
+                                                    customer_extras.setCustomerCategory(customerCategory);
+                                                } else {
+                                                    Log.e(TAG, "Customer Category not found");
+                                                }
                                             }
                                         } else {
-                                            Log.e(TAG, mCurrentTableSyncing + " API don't have '" + name_salesman_id + "' field.");
-                                        }
-
-                                        if (json_extras.has(name_customer_category)) {
-                                            if (!json_extras.getString(name_customer_category).isEmpty()) {
-                                                customer_category_id = json_extras.getInt(name_customer_category);
-                                            } else {
-                                                Log.e(TAG, mCurrentTableSyncing + " API '" + name_customer_category + "' field don't have value.");
-                                            }
-                                        } else {
-                                            Log.e(TAG, mCurrentTableSyncing + " API don't have '" + name_customer_category + "' field.");
-                                        }
-
-                                        User user;
-                                        if (user_id != 0) {
-                                            user = getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user_id).queryForFirst();
-                                            if (user != null) {
-                                                customer_extras.setUser(user);
-                                            } else {
-                                                Log.e(TAG, "User not found");
-                                            }
-                                        }
-                                        CustomerCategory customerCategory = null;
-                                        if (customer_category_id != 0) {
-                                            customerCategory = getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customer_category_id).queryForFirst();
-
-                                            if (customerCategory != null) {
-                                                customer_extras.setCustomerCategory(customerCategory);
-                                            } else {
-                                                Log.e(TAG, "Customer Category not found");
-                                            }
+                                            Log.e(customer.getName()+" EXTRAS", "is on the database!");
+                                            customer_extras = getHelper().fetchObjects(Extras.class).queryBuilder()
+                                                    .where().eq("id", customer_extras.getId()).queryForFirst();
                                         }
 
                                         customer.setExtras(customer_extras);
@@ -2489,20 +2523,27 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     if (jsonObject.has("extras")) {
                                         JSONObject json_extras = jsonObject.getJSONObject("extras");
 
-                                        if (json_extras.has("additional_fields")) {
-                                            if (!json_extras.getString("additional_fields").isEmpty()) {
-                                                paymentType_extras = new Extras();
-                                                paymentType_extras.setAdditional_fields(json_extras.getString("additional_fields"));
+                                        paymentType_extras = new Extras();
+                                        paymentType_extras.setId(PaymentType.class.getName().toUpperCase(), paymentType.getId());
 
+                                        if (!isExisting(paymentType_extras, Table.EXTRAS)) {
+                                            if (json_extras.has("additional_fields")) {
+                                                if (!json_extras.getString("additional_fields").isEmpty()) {
+                                                    paymentType_extras.setAdditional_fields(json_extras.getString("additional_fields"));
+                                                } else {
+                                                    Log.e(TAG, mCurrentTableSyncing + " API " + " 'additional_fields' field don't have value");
+                                                }
                                             } else {
-                                                Log.e(TAG, mCurrentTableSyncing + " API " + " 'additional_fields' field don't have value");
+                                                Log.e(TAG, mCurrentTableSyncing + " API don't have " + "'additional_fields' field");
                                             }
-                                        } else {
-                                            Log.e(TAG, mCurrentTableSyncing + " API don't have " + "'additional_fields' field");
-                                        }
 
+                                        } else {
+                                            Log.e(TAG, "Payment Type API don't have 'extras' field");
+                                        }
                                     } else {
-                                        Log.e(TAG, "Payment Type API don't have 'extras' field");
+                                        Log.e(paymentType.getName()+" EXTRAS", "is on the database!");
+                                        paymentType_extras = getHelper().fetchObjects(Extras.class).queryBuilder()
+                                                .where().eq("id", paymentType.getId()).queryForFirst();
                                     }
 
                                     if (paymentType_extras != null) {

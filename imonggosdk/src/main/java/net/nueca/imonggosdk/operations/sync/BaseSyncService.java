@@ -31,6 +31,7 @@ import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -188,6 +189,10 @@ public abstract class BaseSyncService extends ImonggoService {
     public boolean isExisting(Object o, int id, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
 
         switch (table) {
+            case EXTRAS: {
+                Extras extras = (Extras) o;
+                return getHelper().fetchObjects(Extras.class).queryBuilder().where().eq("id", extras.getId()).queryForFirst() != null;
+            }
             case USERS: {
                 User user = (User) o;
                 return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;

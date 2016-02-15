@@ -116,11 +116,18 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
             }
         });
 
+
         List<Product> products = Product.fetchAll(getHelper(), Product.class);
 
         if(products != null) {
             for(Product p: products) {
-                Log.e(TAG, p.getName());
+                Log.e(TAG, "Product: " + p.getName() + " status: " + p.getStatus());
+
+                if(p.getExtras()==  null){
+                    Log.e(TAG, "Extras is null");
+                } else {
+                    Log.e(TAG, "Product Extras: " + p.getExtras().toString());
+                }
             }
         } else {
             Log.e(TAG, "Products is null");
@@ -130,11 +137,17 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
 
         if(products != null) {
             for(BranchProduct bp: branchProducts) {
-                Log.e(TAG, bp.getName());
+                Log.e(TAG,"Branch Product: " +  bp.getName() + " status: " + bp.getProduct().getStatus());
+                if(bp.getProduct().getExtras() ==  null){
+                    Log.e(TAG, "Extras is null");
+                } else {
+                    Log.e(TAG, "Product Extras: " + bp.getProduct().getExtras().toString());
+                }
             }
         } else {
             Log.e(TAG, "Branch Products is null");
         }
+
     }
 
     private View.OnClickListener onChooseModule = new View.OnClickListener() {
