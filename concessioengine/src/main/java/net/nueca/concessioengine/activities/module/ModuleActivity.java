@@ -22,6 +22,7 @@ import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
@@ -33,6 +34,7 @@ import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
@@ -41,9 +43,11 @@ import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.StringUtilsEx;
+import net.nueca.imonggosdk.tools.TimerTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -362,8 +366,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     public Document generateDocument(Context context, int targetBranchId, DocumentTypeCode documentTypeCode) {
         Document.Builder pcount = new Document.Builder();
+//        TimerTools.duration("generateDocument -- first loop", true);
         for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().get(i);
+//            TimerTools.duration("generateDocument -- second loop", true);
             for(Values value : selectedProductItem.getValues()) {
                 DocumentLine.Builder builder = new DocumentLine.Builder()
                         .line_no(value.getLine_no())
@@ -387,7 +393,9 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
                 pcount.addDocumentLine(documentLine);
             }
+//            TimerTools.duration("generateDocument -- second loop, end", true);
         }
+//        TimerTools.duration("generateDocument -- first loop, end", true);
         pcount.customer(ProductsAdapterHelper.getSelectedCustomer()); // can be null
         pcount.document_type_code(documentTypeCode);
         if(targetBranchId > -1)
@@ -397,6 +405,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+//        TimerTools.duration("generateDocument BUILD", true);
         return pcount.build();
     }
 
@@ -406,24 +415,34 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     public int updateInventoryFromSelectedItemList(boolean shouldAdd) {
         int updated = 0;
+        BatchList<Inventory> newInventories = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+        BatchList<Inventory> updateInventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+        TimerTools.duration("updateInventoryFromSelectedItemList, first loop", true);
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             if(selectedProductItem.getInventory() != null) {
                 Inventory updateInventory = selectedProductItem.getInventory();
                 updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
                 updateInventory.updateTo(getHelper());
+                updateInventories.add(updateInventory);
                 updated++;
             }
             else {
-                Inventory updateInventory = new Inventory();
-                updateInventory.setProduct(selectedProductItem.getProduct());
-                updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
-                updateInventory.insertTo(getHelper());
-                Product product = selectedProductItem.getProduct();
-                product.setInventory(updateInventory);
-                product.updateTo(getHelper());
+                Inventory newInventory = new Inventory();
+                newInventory.setProduct(selectedProductItem.getProduct());
+                newInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
+                newInventories.add(newInventory);
+//                newInventory.insertTo(getHelper());
+//                Product product = selectedProductItem.getProduct();
+//                product.setInventory(newInventory);
+//                product.updateTo(getHelper());
+                //product.setInventory(updateInventory);
+                //product.updateTo(getHelper());
                 updated++;
             }
         }
+        TimerTools.duration("updateInventoryFromSelectedItemList, first loop, end", true);
+        newInventories.doOperation(Inventory.class);
+        updateInventories.doOperation(Inventory.class);
         return updated;
     }
 
@@ -562,9 +581,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     }
                 }, "No", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
+                    public void onClick(DialogInterface dialog, int which) { }
                 }, R.style.AppCompatDialogStyle_Light);
             }
         });

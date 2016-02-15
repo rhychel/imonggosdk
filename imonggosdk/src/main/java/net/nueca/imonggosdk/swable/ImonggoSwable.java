@@ -197,6 +197,7 @@ public class ImonggoSwable extends SwableService {
                         Log.e("ImonggoSwable", "OFFLINEDATA: " + offlineData.getReturnId());
 
                         offlineData.setQueued(true);
+                        Log.e("ImonggoSwable " + 200, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                         offlineData.updateTo(getHelper());
 
                         if(swableStateListener != null)

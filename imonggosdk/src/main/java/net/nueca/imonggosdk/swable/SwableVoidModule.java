@@ -74,6 +74,7 @@ public class SwableVoidModule extends BaseSwableModule {
 
                             offlineData.setSynced(true);
                             offlineData.setCancelled(true);
+                            Log.e("SwableVoidModule " + 77, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
 
                             if (imonggoSwable.getSwableStateListener() != null && offlineData.isSynced())
@@ -110,6 +111,7 @@ public class SwableVoidModule extends BaseSwableModule {
                             }
 
                             offlineData.setSynced(offlineData.isCancelled() || responseCode == ImonggoSwable.NOT_FOUND);
+                            Log.e("SwableVoidModule " + 114, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
 
                             if (imonggoSwable.getSwableStateListener() != null) {
@@ -133,6 +135,7 @@ public class SwableVoidModule extends BaseSwableModule {
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);
                             offlineData.setSynced(false);
+                            Log.e("SwableVoidModule " + 138, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
                         }
                     }, session.getServer(), table, offlineData.getReturnIdListAt(0), "branch_id=" +
@@ -178,6 +181,7 @@ public class SwableVoidModule extends BaseSwableModule {
 
                                 offlineData.setCancelled(list.indexOf(id) == 0 || offlineData.isCancelled());
                                 offlineData.setSynced(offlineData.isCancelled());
+                                Log.e("SwableVoidModule " + 181, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                 offlineData.updateTo(dbHelper);
 
                                 list.set(list.indexOf(id), ImonggoSwable.NO_RETURN_ID); // indicator that this has been cancelled
@@ -215,6 +219,7 @@ public class SwableVoidModule extends BaseSwableModule {
 
                                 offlineData.setSynced(offlineData.isCancelled() || responseCode == ImonggoSwable.NOT_FOUND ||
                                         responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS);
+                                Log.e("SwableVoidModule " + 219, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                 offlineData.updateTo(dbHelper);
 
                                 if (imonggoSwable.getSwableStateListener() != null) {
@@ -245,6 +250,7 @@ public class SwableVoidModule extends BaseSwableModule {
                                 offlineData.setQueued(false);
                                 offlineData.setSynced(false);
                                 offlineData.setCancelled(false);
+                                Log.e("SwableVoidModule " + 250, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                 offlineData.updateTo(dbHelper);
                             }
                         }, session.getServer(), table, id, "branch_id=" + offlineData.getBranch_id() + "&reason="

@@ -363,6 +363,8 @@ public class Document extends BaseTransactionTable {
         batchList.doOperation(DocumentLine.class);
 
         deleteExtrasTo(dbHelper);
+
+        Log.e("DOCUMENT", "delete " + id + " ~ " + offlineData.getId());
     }
 
     @Override

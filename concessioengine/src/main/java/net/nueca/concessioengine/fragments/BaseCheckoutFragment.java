@@ -20,6 +20,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +37,19 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
     protected boolean isLayaway = false;
 
     protected Invoice invoice;
-    protected InvoiceTools.PaymentsComputation computation = new InvoiceTools.PaymentsComputation();
+    protected InvoiceTools.PaymentsComputation computation = new InvoiceTools
+            .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
 
     public BaseCheckoutFragment() {
         if(getArguments() != null && getArguments().containsKey(INVOICE_ARGUMENT_KEY)) {
             invoice = (Invoice) getArguments().get(INVOICE_ARGUMENT_KEY);
             computation.clearAll();
+            try {
+                computation.findReturnsPaymentType(getHelper());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
             computation.addAllInvoiceLines(invoice.getInvoiceLines());
             if(invoice.getPayments() != null)
                 computation.addAllPayments(invoice.getPayments());
@@ -59,6 +67,12 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         this.invoice = invoice;
         Log.e("INVOICE RECEIVED", invoice.toJSONString());
         computation.clearAll();
+        try {
+            computation.findReturnsPaymentType(ProductsAdapterHelper.getDbHelper());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         computation.addAllInvoiceLines(invoice.getInvoiceLines());
         computation.addAllPayments(invoice.getPayments());
     }
@@ -97,7 +111,7 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         extras.setCustomer_discount_text_summary(customer != null? customer.getDiscount_text() : "");
         extras.setCustomer_discount_amounts_summary(
                 //InvoiceTools.generateDiscountAmount(customerDiscounts,',')
-                InvoiceTools.generateDiscountAmount(computation.getCustomerDiscount(),',')
+                InvoiceTools.generateDiscountAmount(computation.getCustomerDiscount(),',', ProductsAdapterHelper.getDecimalPlace())
         );
 
         extras.setTotal_unit_retail_price("" +
@@ -119,11 +133,13 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
     }
 
     public List<InvoicePayment> getPayments() {
-        return computation.getPayments();
+        List<InvoicePayment> payments = computation.getPayments();
+        payments.addAll(computation.getReturnsPayments());
+        return payments;
     }
     
     public double getAmountDue() {
-        return computation.getTotalPayable().doubleValue();
+        return computation.getTotalPayable(true).doubleValue();
     }
 
     public double getRemainingBalance() {
@@ -134,6 +150,10 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         if(abs)
             return Math.abs(computation.getRemaining().doubleValue());
         return computation.getRemaining().doubleValue();
+    }
+
+    public double getTotalPaymentMade() {
+        return computation.getTotalPaymentMade().doubleValue();
     }
 
     public InvoiceTools.PaymentsComputation getComputation() {

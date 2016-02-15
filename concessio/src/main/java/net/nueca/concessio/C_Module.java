@@ -64,6 +64,7 @@ import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
+import net.nueca.imonggosdk.tools.TimerTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1108,7 +1109,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Gson gson = new GsonBuilder().serializeNulls().create();
 
+                            TimerTools.start("generateDocument");
                             Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
+                            TimerTools.duration("generateDocument -- end", true);
 
                             if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                 document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
@@ -1121,11 +1124,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                 try {
                                     int branch_id = getSession().getCurrent_branch_id();
+                                    Branch branch = getHelper().fetchObjects(Branch.class).queryBuilder()
+                                            .where().eq("id", branch_id).queryForFirst();
 
                                     Order order = generateOrder(getApplicationContext(), branch_id);
 
                                     new SwableTools.Transaction(getHelper())
-                                            .toSend().forBranch(branch_id)
+                                            .toSend()
+                                            .forBranch(branch)
                                             .fromModule(ConcessioModule.STOCK_REQUEST)
                                             .object(order)
                                             .queue();
@@ -1140,18 +1146,22 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 JSONObject jsonObject = new JSONObject(gson.toJson(document));
                                 Log.e("jsonObject", jsonObject.toString());
 
+                                TimerTools.start("updateInventoryFromSelectedItemList");
                                 updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
-                                List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
-                                for (Inventory inventory : inventoryList) {
-                                    Log.e("Inventory", inventory.getProduct().getName() + " = " + inventory.getQuantity());
-                                }
+                                TimerTools.duration("updateInventoryFromSelectedItemList --- end", true);
+//                                List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
+//                                for (Inventory inventory : inventoryList) {
+//                                    Log.e("Inventory", inventory.getProduct().getName() + " = " + inventory.getQuantity());
+//                                }
 
+                                TimerTools.start("SwableTools");
                                 OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                         .toSend()
                                         .forBranch(branch)
                                         .object(document)
                                         .fromModule(concessioModule)
                                         .queue();
+                                TimerTools.duration("SwableTools.queue --- end", true);
 
                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
                                 TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
@@ -1188,8 +1198,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 transactionDialog.show();
 
                             } catch (JSONException e) {
-                                e.printStackTrace();
-                            } catch (SQLException e) {
                                 e.printStackTrace();
                             }
                         }

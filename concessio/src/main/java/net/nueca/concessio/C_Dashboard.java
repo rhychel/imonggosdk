@@ -106,11 +106,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             }
         }
 
-        /*try {
+        try {
             getHelper().deleteAll(OfflineData.class);
         } catch (SQLException e) {
             e.printStackTrace();
-        }*/
+        }
 
         /*
         try {

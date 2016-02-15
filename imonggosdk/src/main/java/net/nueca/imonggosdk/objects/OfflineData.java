@@ -761,7 +761,6 @@ public class OfflineData extends BaseTable2 {
                 break;
             case DOCUMENT:
                 //generateParentDocument();
-                documentData.setOfflineData(this);
                 typeStr = "DOCUMENT";
                 if(getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0) {
                     /*if(isPagedRequest() && !isNewPagedSend) {
@@ -789,6 +788,7 @@ public class OfflineData extends BaseTable2 {
                         if(!getReturnIdList().get(0).equals("@")) {
                             documentData.deleteTo(dbHelper);
                             documentData.setId(Integer.parseInt(getReturnIdList().get(0)));
+                            documentData.setOfflineData(this);
                             documentData.insertTo(dbHelper);
                         }
                     //}
@@ -797,6 +797,8 @@ public class OfflineData extends BaseTable2 {
                         for(Document child : documentData_fc)
                             child.updateTo(dbHelper);
                     } else*/
+                    Log.e("OfflineData", id + " -- " + getReturnId());
+                        documentData.setOfflineData(this);
                         documentData.updateTo(dbHelper);
                 }
                 break;

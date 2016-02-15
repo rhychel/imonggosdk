@@ -132,23 +132,26 @@ public class C_Finalize extends ModuleActivity {
                 else
                     initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
 
-                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.PaymentsComputation();
+                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
+                        .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+                paymentsComputation.findReturnsPaymentType(getHelper());
+
                 paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
                 paymentsComputation.addAllPayments(offlineData.getObjectFromData(Invoice.class).getPayments());
 
-                paymentsComputation.getTotalPayable(); // Total Amount
-                paymentsComputation.getRemaining(); // Total Balance
+                //paymentsComputation.getTotalPayable(); // Total Amount
+                //paymentsComputation.getRemaining(); // Total Balance
 
                 llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
                 tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
 
                 llTotalAmount.setVisibility(View.VISIBLE);
-                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable()));
+                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable(true)));
 
                 if(paymentsComputation.getRemaining().doubleValue() == 0)
                     llBalance.setVisibility(View.GONE);
                 //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
-                tvBalance.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getRemaining()));
+                tvBalance.setText("P"+ NumberTools.separateInCommas(getBalance()));
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -174,23 +177,26 @@ public class C_Finalize extends ModuleActivity {
                     initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
                 }
 
-                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.PaymentsComputation();
+                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
+                        .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+                paymentsComputation.findReturnsPaymentType(getHelper());
+
                 paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
                 paymentsComputation.addAllPayments(offlineData.getObjectFromData(Invoice.class).getPayments());
 
-                paymentsComputation.getTotalPayable(); // Total Amount
-                paymentsComputation.getRemaining(); // Total Balance
+                //paymentsComputation.getTotalPayable(); // Total Amount
+                //paymentsComputation.getRemaining(); // Total Balance
 
                 llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
                 tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
 
                 llTotalAmount.setVisibility(View.VISIBLE);
-                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable()));
+                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable(true)));
 
                 if(paymentsComputation.getRemaining().doubleValue() == 0)
                     llBalance.setVisibility(View.GONE);
                 //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
-                tvBalance.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getRemaining()));
+                tvBalance.setText("P"+ NumberTools.separateInCommas(getBalance()));
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -223,7 +229,6 @@ public class C_Finalize extends ModuleActivity {
 
         toggleNext(llReview, tvItems);
 
-
         reviewAdapter = new ReviewAdapter(getSupportFragmentManager());
         vpReview.setAdapter(reviewAdapter);
 
@@ -241,15 +246,30 @@ public class C_Finalize extends ModuleActivity {
     protected void onResume() {
         super.onResume();
         if(!isForHistoryDetail && !isLayaway) {
-            Double sales = DiscountTools.applyMultipleDiscounts(
-                    new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
-                    ProductsAdapterHelper.getSelectedCustomer() == null ? null :
-                            ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(), ",").doubleValue();
-            Double balance =
-                    sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-            Log.e("C_Finalize", "onResume : BALANCE: " + balance);
-            tvBalance.setText("P" + NumberTools.separateInCommas(balance));
+            tvBalance.setText("P" + NumberTools.separateInCommas(getBalance()));
         }
+    }
+
+    private Double getBalance() {
+        /*Double sales = DiscountTools.applyMultipleDiscounts(
+                new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
+                ProductsAdapterHelper.getSelectedCustomer() == null ? null :
+                        ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(), ",").doubleValue();
+        Double balance =
+                sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();*/
+
+        InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
+                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+        try {
+            paymentsComputation.findReturnsPaymentType(getHelper());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        paymentsComputation.addAllInvoiceLines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper.getSelectedProductItems()));
+        paymentsComputation.addAllInvoiceLines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper.getSelectedReturnProductItems()));
+
+        return paymentsComputation.getRemaining().doubleValue();
     }
 
     @Override
@@ -348,14 +368,7 @@ public class C_Finalize extends ModuleActivity {
                     Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");*/
 
                     if(!isForHistoryDetail && !isLayaway) {
-                        Double sales = DiscountTools.applyMultipleDiscounts(
-                                new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
-                                ProductsAdapterHelper.getSelectedCustomer() == null ? null :
-                                        ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(), ",").doubleValue();
-                        Double balance =
-                                sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-                        Log.e("C_Finalize", "ReviewAdapter : BALANCE: " + balance);
-                        tvBalance.setText("P" + NumberTools.separateInCommas(balance));
+                        tvBalance.setText("P" + NumberTools.separateInCommas(getBalance()));
                     }
                 }
             });
