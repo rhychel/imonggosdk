@@ -63,6 +63,7 @@ import java.util.List;
  */
 public class C_Dashboard extends DashboardActivity implements OnItemClickListener {
 
+    private static String TAG = "C_Dashboard";
     private Toolbar tbActionBar;
     private Spinner spBranches;
     private RecyclerView rvModules;
@@ -126,78 +127,120 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             e.printStackTrace();
         }*/
 
-        try {
-            Log.e("DEBUG",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            for(OfflineData o : getHelper().fetchObjects(OfflineData.class).queryForAll() ) {
-                Log.e("OfflineData "+o.getId(), " >> " + o.getStatusLog());
-            }
-            Invoice.Builder builder = new Invoice.Builder();
-            builder.invoice_date("2016-02-02T14:58:16Z");
-            builder.reference("14-1000");
-            builder.salesman_id(1204);
-            builder.status("L");
-            builder.addInvoiceLine(
-                    new InvoiceLine.Builder()
-                            .quantity(1.0)
-                            .retail_price(100.0)
-                            .product_id(197447)
-                            .unit_name("Pc(s)")
-                            .line_no(1)
-                            .subtotal("100.0")
-                            .build()
-            );
-            builder.addInvoiceLine(
-                    new InvoiceLine.Builder()
-                            .quantity(-1.0)
-                            .retail_price(20.0)
-                            .product_id(197449)
-                            .unit_name("Pc(s)")
-                            .line_no(2)
-                            .subtotal("-20.0")
-                            .build()
-            );
-            builder.addPayment(
-                    new InvoicePayment.Builder()
-                            .amount(50.0)
-                            .tender(50.0)
-                            .payment_type_id(1)
-                            .build()
-            );
-            builder.extras(
-                    new Extras.Builder()
-                            .total_company_discount("0.0")
-                            .total_unit_retail_price("80.0")
-                            .payment_term_id(28)
-                            .total_selling_price("80.0")
-                            .total_customer_discount("0.0")
-                            .customer_discount_text_summary("")
-                            .build()
-            );
-            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-            Invoice invoice = builder.build();
-            List<InvoicePayment> payments = invoice.getNewBatchPayment();
-            Log.e("$$$$ before createBatch", invoice.toJSONString());
-            Log.e("NEW Payments " + (payments.size() > 0? payments.get(0).getPaymentBatchNo() : "null") + " " +
-                    invoice.getCurrentPaymentBatchNo(), gson.toJson(payments));
-            invoice.createNewPaymentBatch();
-            Log.e("$$$$ after createBatch", invoice.toJSONString());
-            payments = invoice.getNewBatchPayment();
-            Log.e("NEW Payments " + (payments.size() > 0? payments.get(0).getPaymentBatchNo() : "null") + " " +
-                    invoice.getCurrentPaymentBatchNo(), gson.toJson(payments));
-            invoice.addPayment(new InvoicePayment.Builder()
-                    .amount(10.0)
-                    .tender(10.0)
-                    .payment_type_id(1)
-                    .build());
-            invoice.createNewPaymentBatch();
-            Log.e("$$$$ after add Payment", invoice.toJSONString());
-            payments = invoice.getNewBatchPayment();
-            Log.e("NEW Payments " + payments.get(0).getPaymentBatchNo() + " " + invoice.getCurrentPaymentBatchNo(), gson.toJson(payments));
+/*
 
-            Log.e("DEBUG","<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        } catch (SQLException e) {
-            e.printStackTrace();
+        List<Product> products = Product.fetchAll(getHelper(), Product.class);
+
+        if(products != null) {
+            for(Product p: products) {
+                Log.e(TAG, "Product: " + p.getName() + " status: " + p.getStatus());
+
+                if(p.getExtras()==  null){
+                    Log.e(TAG, "Extras is null");
+                } else {
+                    Log.e(TAG, "Product Extras: " + p.getExtras().toString());
+                }
+            }
+        } else {
+            Log.e(TAG, "Products is null");
         }
+
+        List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+
+        if(products != null) {
+            for(BranchProduct bp: branchProducts) {
+                Log.e(TAG,"Branch Product: " +  bp.getName() + " status: " + bp.getProduct().getStatus());
+                if(bp.getProduct().getExtras() ==  null){
+                    Log.e(TAG, "Extras is null");
+                } else {
+                    Log.e(TAG, "Product Extras: " + bp.getProduct().getExtras().toString());
+                }
+            }
+        } else {
+            Log.e(TAG, "Branch Products is null");
+        }*/
+/*
+        List<Extras> extrases = Extras.fetchAll(getHelper(), Extras.class);
+
+        for(Extras extras : extrases) {
+            if(extras.getProduct() != null) {
+                Log.e(extras.getProduct().getName(), extras.getProduct().getExtras().getId()+"---");
+            }
+        }*/
+
+//
+//        try {
+//            Log.e("DEBUG",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//            for(OfflineData o : getHelper().fetchObjects(OfflineData.class).queryForAll() ) {
+//                Log.e("OfflineData "+o.getId(), " >> " + o.getStatusLog());
+//            }
+//            Invoice.Builder builder = new Invoice.Builder();
+//            builder.invoice_date("2016-02-02T14:58:16Z");
+//            builder.reference("14-1000");
+//            builder.salesman_id(1204);
+//            builder.status("L");
+//            builder.addInvoiceLine(
+//                    new InvoiceLine.Builder()
+//                            .quantity(1.0)
+//                            .retail_price(100.0)
+//                            .product_id(197447)
+//                            .unit_name("Pc(s)")
+//                            .line_no(1)
+//                            .subtotal("100.0")
+//                            .build()
+//            );
+//            builder.addInvoiceLine(
+//                    new InvoiceLine.Builder()
+//                            .quantity(-1.0)
+//                            .retail_price(20.0)
+//                            .product_id(197449)
+//                            .unit_name("Pc(s)")
+//                            .line_no(2)
+//                            .subtotal("-20.0")
+//                            .build()
+//            );
+//            builder.addPayment(
+//                    new InvoicePayment.Builder()
+//                            .amount(50.0)
+//                            .tender(50.0)
+//                            .payment_type_id(1)
+//                            .build()
+//            );
+//            builder.extras(
+//                    new Extras.Builder()
+//                            .total_company_discount("0.0")
+//                            .total_unit_retail_price("80.0")
+//                            .payment_term_id(28)
+//                            .total_selling_price("80.0")
+//                            .total_customer_discount("0.0")
+//                            .customer_discount_text_summary("")
+//                            .build()
+//            );
+//            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+//            Invoice invoice = builder.build();
+//            List<InvoicePayment> payments = invoice.getNewBatchPayment();
+//            Log.e("$$$$ before createBatch", invoice.toJSONString());
+//            Log.e("NEW Payments " + (payments.size() > 0? payments.get(0).getPaymentBatchNo() : "null") + " " +
+//                    invoice.getCurrentPaymentBatchNo(), gson.toJson(payments));
+//            invoice.createNewPaymentBatch();
+//            Log.e("$$$$ after createBatch", invoice.toJSONString());
+//            payments = invoice.getNewBatchPayment();
+//            Log.e("NEW Payments " + (payments.size() > 0? payments.get(0).getPaymentBatchNo() : "null") + " " +
+//                    invoice.getCurrentPaymentBatchNo(), gson.toJson(payments));
+//            invoice.addPayment(new InvoicePayment.Builder()
+//                    .amount(10.0)
+//                    .tender(10.0)
+//                    .payment_type_id(1)
+//                    .build());
+//            invoice.createNewPaymentBatch();
+//            Log.e("$$$$ after add Payment", invoice.toJSONString());
+//            payments = invoice.getNewBatchPayment();
+//            Log.e("NEW Payments " + payments.get(0).getPaymentBatchNo() + " " + invoice.getCurrentPaymentBatchNo(), gson.toJson(payments));
+//
+//            Log.e("DEBUG","<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
         setNextActivityClass(C_Module.class);
 

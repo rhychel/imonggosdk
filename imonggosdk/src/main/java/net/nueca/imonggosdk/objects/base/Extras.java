@@ -364,6 +364,7 @@ public class Extras extends DBTable {
     }
 
     public void setProduct(Product product) {
+
         this.product = product;
     }
 
@@ -770,6 +771,7 @@ public class Extras extends DBTable {
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(Extras.class, this);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -799,6 +801,12 @@ public class Extras extends DBTable {
         void updateExtrasTo(ImonggoDBHelper2 dbHelper);
     }
 
+    @Override
+    public String toString() {
+        return "Extras{" +
+                "id='" + id + '\'' +
+                '}';
+    }
 
     public static class Builder {
         protected Integer is_salesman;

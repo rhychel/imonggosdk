@@ -185,6 +185,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         try {
             Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
             whereProducts.isNull("status");
+//            whereProducts.eq("status", "A     ");
             Log.e("includeSearchKey", includeSearchKey + "");
             Log.e("includeCategory", includeCategory+"");
             Log.e("hasProductFilter", hasProductFilter+"");
