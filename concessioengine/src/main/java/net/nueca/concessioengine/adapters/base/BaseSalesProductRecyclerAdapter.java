@@ -18,7 +18,6 @@ import java.util.List;
 public abstract class BaseSalesProductRecyclerAdapter<T extends BaseProductsRecyclerAdapter.ViewHolder> extends BaseProductsRecyclerAdapter<T> {
     protected Customer customer;
     protected CustomerGroup customerGroup;
-    protected Branch branch;
     protected List<Product> promotionalProducts = new ArrayList<>();
 
     public BaseSalesProductRecyclerAdapter(Context context) {
@@ -55,18 +54,6 @@ public abstract class BaseSalesProductRecyclerAdapter<T extends BaseProductsRecy
 
     public void setCustomerGroup(CustomerGroup customerGroup) {
         this.customerGroup = customerGroup;
-    }
-
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
-
-    public ImonggoDBHelper2 getHelper() {
-        return ProductsAdapterHelper.getDbHelper();
     }
 
     public void setPromotionalProducts(List<Product> promotionalProducts) {

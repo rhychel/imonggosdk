@@ -194,7 +194,7 @@ public class C_Finalize extends ModuleActivity {
                         ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
         Double balance =
                 sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-        tvBalance.setText("+++P"+ NumberTools.separateInCommas(balance));
+        tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
     }
 
     @Override
@@ -305,7 +305,7 @@ public class C_Finalize extends ModuleActivity {
                                         ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
                         Double balance =
                                 sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-                        tvBalance.setText("---P"+ NumberTools.separateInCommas(balance));
+                        tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
                     }
                 });
             if(position == 0)// Positive Transactions

@@ -23,6 +23,8 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.tools.PriceTools;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
@@ -52,6 +54,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
     private Button btnExpiryDate;
     private SwitchCompat swcBadStock;
 
+    private boolean forceSellableUnit = false;
     private String subtotal, retailPrice;
 
     private Unit defaultUnit;
@@ -202,19 +205,44 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         }
 
         if(getHelper() != null && (salesCustomer != null || salesCustomerGroup != null || salesBranch != null)) {
-            defaultUnit = spUnits.getSelectedItem() instanceof Unit? (Unit)spUnits.getSelectedItem() : null;
-            if(product.getExtras() != null && defaultUnit == null) {
+            if(forceSellableUnit) {
                 try {
-                    defaultUnit = getHelper().fetchObjects(Unit.class).queryBuilder().where()
-                            .eq("id", product.getExtras().getDefault_selling_unit()).queryForFirst();
+                    BranchProduct branchProduct = getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+                        @Override
+                        public boolean validate(BranchProduct obj) {
+                            if(obj.getUnit() == null)
+                                return true;
+                            if(product.getExtras().getDefault_selling_unit() != null && !product.getExtras().getDefault_selling_unit().equals(""))
+                                return obj.getUnit().getId() == Integer.parseInt(product.getExtras().getDefault_selling_unit());
+//                            return obj.getUnit() == null;
+                            return false;
+                        }
+                    }).get(0);
+                    Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, salesBranch, null, null, branchProduct.getUnit());
+
+                    if(retail_price == null)
+                        retail_price = product.getRetail_price();
+                    Log.e("identified retail_price", retail_price.toString());
+                    retailPrice = String.format("P%s", NumberTools.separateInCommas(retail_price));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
+            else {
+                defaultUnit = spUnits.getSelectedItem() instanceof Unit ? (Unit) spUnits.getSelectedItem() : null;
+                if (product.getExtras() != null && defaultUnit == null) {
+                    try {
+                        defaultUnit = getHelper().fetchObjects(Unit.class).queryBuilder().where()
+                                .eq("id", product.getExtras().getDefault_selling_unit()).queryForFirst();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
+                retailPrice = "P"+NumberTools.separateInCommas(PriceTools.identifyRetailPrice(getHelper(), product,
+                        salesBranch, salesCustomerGroup, salesCustomer, (Unit) spUnits.getSelectedItem()));
+            }
 
-            Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
-            retailPrice = "P"+NumberTools.separateInCommas(PriceTools.identifyRetailPrice(getHelper(), product,
-                    salesBranch, salesCustomerGroup, salesCustomer, (Unit) spUnits.getSelectedItem()));
         }
 
         tvProductName.setText(product.getName());
@@ -260,6 +288,9 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         this.subtotal = subtotal;
     }
 
+    public void setForceSellableUnit(boolean forceSellableUnit) {
+        this.forceSellableUnit = forceSellableUnit;
+    }
 
     private View.OnClickListener onSaveClicked = new View.OnClickListener() {
         @Override

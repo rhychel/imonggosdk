@@ -449,20 +449,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setBranch(getBranches().get(0));
                 simpleProductsFragment.setConcessioModule(concessioModule);
 
-//                initializeFinalize();
-//                finalizeFragment.setListingType(ListingType.ADVANCED_SALES);
-//                finalizeFragment.setHasCategories(false);
-//                finalizeFragment.setHasBrand(false);
-//                finalizeFragment.setHasDeliveryDate(false);
-//                finalizeFragment.setHasUnits(true);
-//                finalizeFragment.setHasSubtotal(true);
-//                finalizeFragment.setUseSalesProductAdapter(true);
-//                finalizeFragment.setCustomer(customer);
-//                finalizeFragment.setHasPromotionalProducts(true);
-//                finalizeFragment.setCustomerGroup(customerGroup);
-//                finalizeFragment.setBranch(getBranches().get(0));
-//                finalizeFragment.setConcessioModule(concessioModule);
-
                 prepareFooter();
                 btn1.setOnClickListener(nextClickedListener);
 

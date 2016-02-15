@@ -16,10 +16,13 @@ import net.nueca.concessioengine.adapters.base.BaseProductsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.BranchPrice;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.operations.ImonggoTools;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -59,7 +62,7 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
 
     @Override
     public void onBindViewHolder(SimpleProductRecyclerViewAdapter.ListViewHolder viewHolder, int position) {
-        Product product = getItem(position);
+        final Product product = getItem(position);
 
         String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
         viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
@@ -74,10 +77,35 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             viewHolder.llQuantity.setVisibility(View.GONE);
             viewHolder.tvProductName.setText(product.getName());
             viewHolder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
-            double subtotal = product.getRetail_price()*Double.valueOf(getSelectedProductItems().getQuantity(product));
-            viewHolder.tvRetailPrice.setText(String.format("P%.2f", product.getRetail_price()));
+            double subtotal = 0.0;
+            if(branch != null) {
+                try {
+                    BranchProduct branchProduct = getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+                        @Override
+                        public boolean validate(BranchProduct obj) {
+                            if(obj.getUnit() == null)
+                                return true;
+                            if(product.getExtras().getDefault_selling_unit() != null && !product.getExtras().getDefault_selling_unit().equals(""))
+                                return obj.getUnit().getId() == Integer.parseInt(product.getExtras().getDefault_selling_unit());
+//                            return obj.getUnit() == null;
+                            return false;
+                        }
+                    }).get(0);
+                    Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, null, null, branchProduct.getUnit());
 
-//            Log.e("selectedItems", getSelectedProductItems().size()+"Size"+ProductsAdapterHelper.getSelectedProductItems().size());
+                    if(retail_price == null)
+                        retail_price = product.getRetail_price();
+                    Log.e("identified retail_price", retail_price.toString());
+                    viewHolder.tvRetailPrice.setText(String.format("P%s", NumberTools.separateInCommas(retail_price)));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                subtotal = product.getRetail_price() * Double.valueOf(getSelectedProductItems().getQuantity(product));
+                viewHolder.tvRetailPrice.setText(String.format("P%.2f", product.getRetail_price()));
+                //            Log.e("selectedItems", getSelectedProductItems().size()+"Size"+ProductsAdapterHelper.getSelectedProductItems().size());
+            }
             if(getSelectedProductItems().hasSelectedProductItem(product)) {
                 viewHolder.llQuantity.setVisibility(View.VISIBLE);
                 viewHolder.tvQuantity.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(product), getSelectedProductItems().getUnitName(product, false)));

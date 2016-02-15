@@ -120,7 +120,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
         computation.removePayment(position);
 
-        setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+        setIsFullyPaid(computation.getRemaining().doubleValue() <= 0d);
 
         if(paymentUpdateListener != null)
             paymentUpdateListener.onDeletePayment(position);
@@ -133,7 +133,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
         computation.addPayment(payment);
 
-        setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+        setIsFullyPaid(computation.getRemaining().doubleValue() <= 0d);
 
         if(paymentUpdateListener != null)
             paymentUpdateListener.onAddPayment(payment);
@@ -150,7 +150,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
         computation.setPayment(position, thisPayment);
 
-        setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+        setIsFullyPaid(computation.getRemaining().doubleValue() <= 0d);
 
         if(paymentUpdateListener != null)
             paymentUpdateListener.onUpdatePayment(position, thisPayment);

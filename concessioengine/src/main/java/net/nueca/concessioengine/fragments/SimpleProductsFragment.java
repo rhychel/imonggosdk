@@ -155,8 +155,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setCustomerGroup(ProductsAdapterHelper.getSelectedCustomerGroup());
                     ((SimpleSalesProductRecyclerAdapter)productRecyclerViewAdapter).setPromotionalProducts(promotionalProducts);
                 }
-                else
+                else {
                     productRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
+                    productRecyclerViewAdapter.setBranch(ProductsAdapterHelper.getSelectedBranch());
+                }
             }
             else {
                 productRecyclerViewAdapter.setDbHelper(getHelper());
@@ -291,8 +293,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     simpleSalesQuantityDialog.setHelper(salesAdapter.getHelper());
                     simpleSalesQuantityDialog.setSalesCustomer(salesAdapter.getCustomer());
                     simpleSalesQuantityDialog.setSalesCustomerGroup(salesAdapter.getCustomerGroup());
-                    simpleSalesQuantityDialog.setSalesBranch(salesAdapter.getBranch());
                 }
+                else
+                    simpleSalesQuantityDialog.setForceSellableUnit(true);
+                simpleSalesQuantityDialog.setSalesBranch(productRecyclerViewAdapter.getBranch());
 
                 simpleSalesQuantityDialog.setHasSubtotal(hasSubtotal);
                 simpleSalesQuantityDialog.setHasUnits(true);
@@ -308,6 +312,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
                 boolean addBaseProduct = true;
                 if(concessioModule == ConcessioModule.INVOICE) {
+                    // Improve!
                     addBaseProduct = !getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
                         @Override
                         public boolean validate(BranchProduct obj) {
