@@ -48,4 +48,5 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile project(':imonggosdk')
     compile files('libs/ePOS2.jar')
+     compile files('libs/StarIOPort3.1.jar')
 }

@@ -5,16 +5,17 @@ import android.util.Log;
 /**
  * Created by Jn on 31/01/16.
  */
-public enum EpsonPrinterType {
+public enum PrinterInterfaceType {
     BLUETOOTH("Bluetooth"),
     WIFI("Wifi"),
     USB("USB"),
+    ALL("ALL"),
     NOT_SUPPORTED("Not Supported");
 
-    private static String TAG = "EpsonPrinterType";
+    private static String TAG = "PrinterInterfaceType";
     private String name;
 
-    EpsonPrinterType(String name) {
+    PrinterInterfaceType(String name) {
         this.name = name;
     }
 
@@ -22,8 +23,8 @@ public enum EpsonPrinterType {
         return name;
     }
 
-    public static EpsonPrinterType getPrinterTypeByName(String name) {
-        for (EpsonPrinterType p : EpsonPrinterType.values()) {
+    public static PrinterInterfaceType getPrinterTypeByName(String name) {
+        for (PrinterInterfaceType p : PrinterInterfaceType.values()) {
             if(p.getName().equals(name)) {
                 Log.e(TAG, "Found! " + p.getName());
                 return p;

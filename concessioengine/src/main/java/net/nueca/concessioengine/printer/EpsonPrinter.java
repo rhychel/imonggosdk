@@ -1,10 +1,8 @@
 package net.nueca.concessioengine.printer;
 
-import android.widget.Toast;
-
 import net.nueca.concessioengine.printer.base.BaseEpsonPrinter;
 import net.nueca.concessioengine.printer.enums.EpsonPrinterSeries;
-import net.nueca.concessioengine.printer.enums.EpsonPrinterType;
+import net.nueca.concessioengine.printer.enums.PrinterInterfaceType;
 import net.nueca.concessioengine.printer.listener.PrinterSeriesListener;
 import net.nueca.concessioengine.printer.listener.PrinterTypeListener;
 
@@ -19,7 +17,7 @@ public class EpsonPrinter extends BaseEpsonPrinter implements PrinterSeriesListe
     }
 
     @Override
-    public EpsonPrinterType onSelectPrinterType() {
+    public PrinterInterfaceType onSelectPrinterType() {
 
         return null;
     }
@@ -35,7 +33,7 @@ public class EpsonPrinter extends BaseEpsonPrinter implements PrinterSeriesListe
     }
 
     @Override
-    public void onPrinterTypeSelected(EpsonPrinterType pType) {
+    public void onPrinterTypeSelected(PrinterInterfaceType pType) {
 
     }
 }

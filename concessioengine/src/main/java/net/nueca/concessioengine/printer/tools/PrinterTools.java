@@ -3,18 +3,28 @@ package net.nueca.concessioengine.printer.tools;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
+
+import com.starmicronics.stario.PortInfo;
+import com.starmicronics.stario.StarIOPort;
+import com.starmicronics.stario.StarIOPortException;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.printer.enums.EpsonPrinterSeries;
 import net.nueca.concessioengine.printer.enums.EpsonSelectionType;
-import net.nueca.concessioengine.printer.enums.EpsonPrinterType;
+import net.nueca.concessioengine.printer.enums.PrinterInterfaceType;
 import net.nueca.concessioengine.printer.listener.PrinterSeriesListener;
 import net.nueca.concessioengine.printer.listener.PrinterTypeListener;
-import net.nueca.imonggosdk.enums.Table;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Jn on 01/02/16.
@@ -24,7 +34,45 @@ public class PrinterTools {
     public static String PRINTER_TYPE = "PRINTER_TYPE";
     public static String PRINTER_NAME = "PRINTER_NAME";
 
-    public static void setPrinterType(Context context, EpsonPrinterType epsonPrinterType) {
+
+    // For Star Micronics Printers
+    public static List<PortInfo> getDiscoveredPorts(PrinterInterfaceType interfaceType) {
+        List<PortInfo> BTPorts;
+        List<PortInfo> USBPorts;
+
+        List<PortInfo> discoveredPortInfo = new ArrayList<>();
+        //List<String> discoveredPortNames = new ArrayList<>();
+
+        try {
+
+            if (interfaceType == PrinterInterfaceType.BLUETOOTH || interfaceType == PrinterInterfaceType.ALL) {
+                BTPorts = StarIOPort.searchPrinter("BT:");
+                for (PortInfo port : BTPorts) {
+                    discoveredPortInfo.add(port);
+                }
+            }
+
+            if (interfaceType == PrinterInterfaceType.USB || interfaceType == PrinterInterfaceType.ALL) {
+                USBPorts = StarIOPort.searchPrinter("USB:");
+                for (PortInfo port : USBPorts) {
+                    discoveredPortInfo.add(port);
+                }
+            }
+
+            return discoveredPortInfo;
+
+        } catch (StarIOPortException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
+
+    // TODO: DELETE THIS UNDER
+
+    public static void setPrinterType(Context context, PrinterInterfaceType epsonPrinterType) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
 
@@ -71,11 +119,11 @@ public class PrinterTools {
 
         final RadioGroup rgPrinterType = (RadioGroup) dialog.findViewById(R.id.rgEpsonPrinter);
 
-        if(selectionType == EpsonSelectionType.TYPE) {
+        if (selectionType == EpsonSelectionType.TYPE) {
             dialog_title = "Select Printer Type";
 
-            for (EpsonPrinterType p : EpsonPrinterType.values()) {
-                if (p != EpsonPrinterType.NOT_SUPPORTED) {
+            for (PrinterInterfaceType p : PrinterInterfaceType.values()) {
+                if (p != PrinterInterfaceType.NOT_SUPPORTED) {
                     RadioButton rb = new RadioButton(context);
                     rb.setText(p.getName());
                     rgPrinterType.addView(rb);
@@ -83,7 +131,7 @@ public class PrinterTools {
             }
         }
 
-        if(selectionType == EpsonSelectionType.MODEL) {
+        if (selectionType == EpsonSelectionType.MODEL) {
             dialog_title = "Select Printer Model";
             for (EpsonPrinterSeries p : EpsonPrinterSeries.values()) {
                 if (p != EpsonPrinterSeries.none) {
@@ -98,21 +146,20 @@ public class PrinterTools {
         dialog.setTitle(dialog_title);
 
 
-
         rgPrinterType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 RadioButton rb = (RadioButton) rgPrinterType.findViewById(checkedId);
                 String name = rb.getText().toString();
-                if(selectionType == EpsonSelectionType.TYPE) {
+                if (selectionType == EpsonSelectionType.TYPE) {
                     if (pTypeListener != null) {
-                        pTypeListener.onPrinterTypeSelected(EpsonPrinterType.getPrinterTypeByName(name));
+                        pTypeListener.onPrinterTypeSelected(PrinterInterfaceType.getPrinterTypeByName(name));
                     }
                 }
 
-                if(selectionType == EpsonSelectionType.MODEL) {
-                    if(pSeriesListener != null) {
+                if (selectionType == EpsonSelectionType.MODEL) {
+                    if (pSeriesListener != null) {
                         pSeriesListener.onPrinterModelSelected(EpsonPrinterSeries.getPrinterSeriesByName(name));
                     }
                 }

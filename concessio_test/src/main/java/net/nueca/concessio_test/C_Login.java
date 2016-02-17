@@ -64,7 +64,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, ( C_Welcome.class));
+        Intent intent = new Intent(this, TestPrinterActivity.class);
         startActivity(intent);
     }
 

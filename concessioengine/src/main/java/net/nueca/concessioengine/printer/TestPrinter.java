@@ -11,7 +11,7 @@ import net.nueca.concessioengine.dialogs.CustomDialog;
 import net.nueca.concessioengine.dialogs.DiscoverPrinterFL;
 import net.nueca.concessioengine.fragments.interfaces.PrinterDiscoveryListener;
 import net.nueca.concessioengine.printer.enums.EpsonPrinterSeries;
-import net.nueca.concessioengine.printer.enums.EpsonPrinterType;
+import net.nueca.concessioengine.printer.enums.PrinterInterfaceType;
 import net.nueca.concessioengine.printer.enums.EpsonSelectionType;
 import net.nueca.concessioengine.printer.enums.PrinterManufacturer;
 import net.nueca.concessioengine.printer.listener.PrinterSeriesListener;
@@ -24,7 +24,7 @@ public class TestPrinter {
     private static String TAG = "TestPrinter";
 
     private PrinterManufacturer mManufacturer;
-    private EpsonPrinterType mEpsonPrinterType;
+    private PrinterInterfaceType mEpsonPrinterType;
     private EpsonPrinterSeries mEpsonPrinterSeries;
     private static Context mContext;
     private String printData = "";
@@ -37,11 +37,11 @@ public class TestPrinter {
         this.mManufacturer = mf;
     }
 
-    public EpsonPrinterType getEpsonPrinterType() {
+    public PrinterInterfaceType getEpsonPrinterType() {
         return mEpsonPrinterType;
     }
 
-    public void setEpsonPrinterType(EpsonPrinterType mEpsonPrinterType) {
+    public void setEpsonPrinterType(PrinterInterfaceType mEpsonPrinterType) {
         this.mEpsonPrinterType = mEpsonPrinterType;
     }
 
@@ -58,7 +58,7 @@ public class TestPrinter {
         if (mManufacturer == PrinterManufacturer.EPSON) {
             PrinterTools.showSelectEpsonPrinterTypeDialog(mContext, EpsonSelectionType.TYPE, new PrinterTypeListener() {
                 @Override
-                public void onPrinterTypeSelected(EpsonPrinterType pType) {
+                public void onPrinterTypeSelected(PrinterInterfaceType pType) {
                     if (pType != null) {
                         mEpsonPrinterType = pType;
                         selectEpsonPrinterSeries(pType);
@@ -73,7 +73,7 @@ public class TestPrinter {
         }
     }
 
-    public void selectEpsonPrinterSeries(EpsonPrinterType printerType) {
+    public void selectEpsonPrinterSeries(PrinterInterfaceType printerType) {
 
         if (mManufacturer != null) {
 
@@ -83,7 +83,7 @@ public class TestPrinter {
                 if (printerType != null) {
                     Log.e(TAG, "Printer Selected: " + printerType.getName());
 
-                    if (printerType == EpsonPrinterType.BLUETOOTH) {
+                    if (printerType == PrinterInterfaceType.BLUETOOTH) {
                         // BLUETOOTH
                         PrinterTools.showSelectEpsonPrinterTypeDialog(mContext, EpsonSelectionType.MODEL, null, new PrinterSeriesListener() {
                             @Override
@@ -99,10 +99,10 @@ public class TestPrinter {
                         });
 
 
-                    } else if (printerType == EpsonPrinterType.WIFI) {
+                    } else if (printerType == PrinterInterfaceType.WIFI) {
                         // WIFI
                         LoggingTools.showToast(mContext, "Epson Wifi Printer Not Yet Supported");
-                    } else if (printerType == EpsonPrinterType.USB) {
+                    } else if (printerType == PrinterInterfaceType.USB) {
                         LoggingTools.showToast(mContext, "Epson USB Printer Not Yet Supported");
                     } else {
                         PrinterTools.printErrorLog(3, mContext);
