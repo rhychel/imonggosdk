@@ -3,6 +3,7 @@ package net.nueca.imonggosdk.swable;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
+import com.google.gson.Gson;
 
 import net.nueca.imonggosdk.R;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
@@ -62,7 +63,8 @@ public class SwableSendModule extends BaseSwableModule {
                 return;
             }
 
-            Log.e("SwableSendModule", "sendTransaction : non-paging : "+offlineData.getObjectFromData().toString());
+            Gson gson = new Gson();
+            Log.e("SwableSendModule", "sendTransaction : non-paging : "+gson.toJson(offlineData.getObjectFromData()));
             JSONObject jsonObject;
             if(offlineData.getType() == OfflineData.INVOICE) {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);

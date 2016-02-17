@@ -130,7 +130,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
     }
 
     public void addPayment(InvoicePayment payment) {
-        Log.e("ADDING PAYMENT", payment.getTender() + " " + computation.getRemaining().doubleValue());
+        Log.e("ADDING PAYMENT " + payment.getPaymentBatchNo(), payment.getTender() + " " + computation.getRemaining().doubleValue());
         add(payment);
         notifyItemInserted(getItemCount());
 

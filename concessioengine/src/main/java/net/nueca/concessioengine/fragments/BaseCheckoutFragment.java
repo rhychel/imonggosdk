@@ -6,6 +6,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.google.gson.Gson;
+
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
@@ -82,6 +84,9 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
             invoice = new Invoice();
         invoice.setInvoiceLines(getInvoiceLines());
         invoice.setPayments(getPayments());
+        Gson gson = new Gson();
+        Log.e(">>>>>>>>>>>>>>>>>>>>", gson.toJson(invoice.getPayments()));
+        //invoice.joinAllNewToCurrentPaymentBatch();
 
         Customer customer = ProductsAdapterHelper.getSelectedCustomer();
 

@@ -230,9 +230,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                             InvoicePayment invoicePayment = builder.build();
                             invoicePayment.setExtras(extras);
-                            // temp
-                            if(simpleSplitPaymentAdapter.getItemCount() % 2 == 0)
-                                invoicePayment.setPaymentBatchNo(1);
+
                             simpleSplitPaymentAdapter.addPayment(invoicePayment);
 
                             simpleSplitPaymentAdapter.setBalance(checkoutFragment.getRemainingBalance());
@@ -255,6 +253,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
                     transactionDialog.show();
 
+                    invoice.setStatus("S");
                     if(!isLayaway) {
                         new SwableTools.Transaction(getHelper())
                                 .toSend()

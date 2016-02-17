@@ -403,14 +403,15 @@ public class InvoiceTools {
                 Double subtotal = Double.parseDouble(invoiceLine.getSubtotal());
                 Double noDiscount = Double.parseDouble(invoiceLine.getNo_discount_subtotal());
 
-                if(subtotal >= 0d) {
+                if(subtotal >= 0d || invoiceLine.getExtras() == null) {
                     rspPayments.add(null);
                     cmPayments.add(null);
                     totalPayable = totalPayable.add(new BigDecimal(subtotal));
                     totalPayableNoDiscount = totalPayableNoDiscount.add(new BigDecimal(noDiscount));
                 } else {
                     InvoicePayment.Builder builder = new InvoicePayment.Builder();
-                    builder.amount(Math.abs(subtotal));
+                    //builder.amount(Math.abs(subtotal));
+                    builder.amount(subtotal);
                     if(invoiceLine.getExtras().getIs_bad_stock()) {
                         if(creditMemo != null) {
                             builder.paymentType(creditMemo);
@@ -651,7 +652,7 @@ public class InvoiceTools {
                 returnsPayments.add(cmPayment);
             if(rspPayment != null)
                 returnsPayments.add(rspPayment);
-            Log.e("RETURNS PAYMENTS", "isNULL "+(returnsPayments.size()));
+            Log.e("RETURNS PAYMENTS", "size "+(returnsPayments.size()));
             return returnsPayments;
         }
 
