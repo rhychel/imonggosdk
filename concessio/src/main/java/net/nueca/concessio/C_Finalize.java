@@ -111,7 +111,7 @@ public class C_Finalize extends ModuleActivity {
                         Intent intent = new Intent(C_Finalize.this, C_Module.class);
                         intent.putExtra(FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, offlineData.getConcessioModule().ordinal());
-                        startActivity(intent);
+                        startActivityForResult(intent, IS_DUPLICATING);
                     }
                 };
 
@@ -274,7 +274,7 @@ public class C_Finalize extends ModuleActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(!isForHistoryDetail)
+        if(!isForHistoryDetail && !isLayaway)
             getMenuInflater().inflate(R.menu.simple_review_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -322,8 +322,20 @@ public class C_Finalize extends ModuleActivity {
             };
             handler.sendEmptyMessageDelayed(0, 100);
         }
+        else if(requestCode == IS_DUPLICATING) {
+            if(resultCode == SUCCESS) {
+                if(data.hasExtra(FOR_HISTORY_DETAIL))
+                    setResult(SUCCESS, data);
+                else
+                    setResult(SUCCESS);
+                finish();
+            }
+        }
         else if(resultCode == SUCCESS) {
-            setResult(SUCCESS);
+            if(data.hasExtra(FOR_HISTORY_DETAIL))
+                setResult(SUCCESS, data);
+            else
+                setResult(SUCCESS);
             finish();
         }
     }
@@ -349,7 +361,8 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setHasCategories(false);
             simpleProductsFragment.setIsFinalize(true);
             simpleProductsFragment.setHasSubtotal(true);
-            simpleProductsFragment.setDisplayOnly(isForHistoryDetail);
+            simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
+            simpleProductsFragment.setConcessioModule(concessioModule);
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                 @Override
                 public void whenItemsSelectedUpdated() {

@@ -10,6 +10,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.crashlytics.android.Crashlytics;
 import com.j256.ormlite.stmt.Where;
 
+import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.login.BaseLoginActivity;
 import net.nueca.concessioengine.activities.login.LoginActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -17,6 +18,7 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.base.DBTable;
+import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.SettingTools;
@@ -87,7 +89,10 @@ public class C_Login extends LoginActivity {
         else
             Log.e("App", app.getSequences().size()+"---");
 
-        return app.modulesToDownload(getHelper());
+        return app.modulesToDownload(getHelper(), app.isShow_only_sellable_products());
+/*        return new int[]{Table.USERS_ME.ordinal(),
+                Table.BRANCH_USERS.ordinal(), Table.SETTINGS.ordinal(),
+                Table.UNITS.ordinal(), Table.BRANCH_PRODUCTS.ordinal()};*/
 
     }
 
@@ -96,6 +101,8 @@ public class C_Login extends LoginActivity {
         super.onCreateLoginLayout();
         setContentView(R.layout.c_login);
 
+        Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
+
         BaseLoginActivity.TEST_ACCOUNT = true;
 
         setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
@@ -103,9 +110,6 @@ public class C_Login extends LoginActivity {
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
 
-        setEditTextAccountID("A1029");
-        setEditTextEmail("A1072A_OSS-1@imonggo.com");
-        setEditTextPassword("123rebisco456");
 
     }
 }

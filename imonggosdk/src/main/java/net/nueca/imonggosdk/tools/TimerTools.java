@@ -20,7 +20,7 @@ public class TimerTools {
             long current = Calendar.getInstance().getTimeInMillis();
             long duration = current - startMS;
             startMS = current;
-            Log.e("TimerTools", label+" = "+current+"ms");
+            Log.e("TimerTools", label+" = "+duration+"ms");
         }
         Log.e("TimerTools", label+" = "+(Calendar.getInstance().getTimeInMillis()-startMS)+"ms");
     }

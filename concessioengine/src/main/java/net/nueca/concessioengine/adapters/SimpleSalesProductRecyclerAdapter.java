@@ -86,6 +86,7 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             }
         }
         else if(listingType == ListingType.ADVANCED_SALES) {
+            Log.e("Product", product.getId()+"---");
             if(!hasSubtotal)
                 holder.tvSubtotal2.setVisibility(View.GONE);
 
@@ -104,8 +105,8 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             }
             if(unit == null) {
                 try {
-                    unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("name", product.getUnit()).and().eq
-                            ("product_id", product).queryForFirst();
+                    unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("name", product.getUnit()).and()
+                            .eq("product_id", product).queryForFirst();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -121,6 +122,7 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                 } catch (SQLException e) { e.printStackTrace(); }
             }
 
+            Log.e(getClass().getSimpleName(), "unit : " + (unit == null? "null" : unit.getName()) );
             Log.e(getClass().getSimpleName(), "selectedProductItem isNull? " + (selectedProductItem == null) );
             Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice 1");
 

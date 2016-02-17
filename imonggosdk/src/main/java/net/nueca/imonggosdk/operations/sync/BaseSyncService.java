@@ -27,9 +27,11 @@ import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -90,6 +92,7 @@ public abstract class BaseSyncService extends ImonggoService {
     protected VolleyRequestListener mVolleyRequestListener = null;
     protected SyncModulesListener mSyncModulesListener = null;
     protected RequestType mCurrentRequestType;
+    protected ModuleSetting app = null;
 
     protected Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -186,6 +189,10 @@ public abstract class BaseSyncService extends ImonggoService {
     public boolean isExisting(Object o, int id, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
 
         switch (table) {
+            case EXTRAS: {
+                Extras extras = (Extras) o;
+                return getHelper().fetchObjects(Extras.class).queryBuilder().where().eq("id", extras.getId()).queryForFirst() != null;
+            }
             case USERS: {
                 User user = (User) o;
                 return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
@@ -249,6 +256,7 @@ public abstract class BaseSyncService extends ImonggoService {
                 InvoicePurpose invoicePurpose = (InvoicePurpose) o;
                 return getHelper().fetchObjects(InvoicePurpose.class).queryBuilder().where().eq("id", invoicePurpose.getId()).queryForFirst() != null;
             }
+            case PRICE_LISTS_FROM_CUSTOMERS:
             case PRICE_LISTS: {
                 PriceList priceList = (PriceList) o;
                 return getHelper().fetchObjects(PriceList.class).queryBuilder().where().eq("id", priceList.getId()).queryForFirst() != null;
@@ -286,9 +294,10 @@ public abstract class BaseSyncService extends ImonggoService {
                 Discount discount = (Discount) o;
                 return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("id", discount.getId()) != null;
             }
-            case PRICE_LISTS_DETAILS:
+            case PRICE_LISTS_DETAILS: {
                 Price price = (Price) o;
                 return getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst() != null;
+            }
             case DAILY_SALES: {
                 DailySales dailySales = (DailySales) o;
                 if (dailySalesEnums == DailySalesEnums.DATE_OF_DAILY_SALES) {

@@ -117,6 +117,30 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
         return view;
     }
 
+    /*
+    * Used after the duplication
+    * */
+    public void addOfflineData(OfflineData offlineData) {
+        if(useRecyclerView)
+            simpleTransactionRecyclerViewAdapter.add(0, offlineData);
+        else
+            simpleTransactionListAdapter.add(offlineData);
+
+    }
+
+    public void updateOfflineData(OfflineData offlineData) {
+        if(useRecyclerView) {
+            int indexOf = simpleTransactionRecyclerViewAdapter.getList().indexOf(offlineData);
+            simpleTransactionRecyclerViewAdapter.getItem(indexOf).setSynced(false);
+            simpleTransactionRecyclerViewAdapter.notifyItemChanged(indexOf);
+        }
+        else {
+            int indexOf = simpleTransactionListAdapter.getPosition(offlineData);
+            simpleTransactionListAdapter.getItem(indexOf).setSynced(false);
+            simpleTransactionListAdapter.notifyItemChanged(lvTransactions, indexOf);
+        }
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

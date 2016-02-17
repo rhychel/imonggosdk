@@ -60,7 +60,8 @@
             android:layout_height="match_parent"
             android:id="@+id/spOptions"
             android:visibility="gone"
-            android:layout_marginLeft="16dp" />
+            android:layout_marginLeft="16dp"
+            android:theme="@style/Spinner.Orange" />
 <!--
             android:layout_marginLeft="16dp"-->
     </LinearLayout>

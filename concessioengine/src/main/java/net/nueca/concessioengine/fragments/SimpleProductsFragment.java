@@ -39,9 +39,12 @@ import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleSalesQuantityDialog;
 import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
@@ -302,7 +305,18 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                         (product));
                 simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
                 simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
-                simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
+
+                boolean addBaseProduct = true;
+                if(concessioModule == ConcessioModule.INVOICE) {
+                    addBaseProduct = !getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+                        @Override
+                        public boolean validate(BranchProduct obj) {
+                            return obj.getUnit() == null;
+                        }
+                    }).isEmpty();
+                }
+
+                simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), addBaseProduct);
                 simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
                 simpleSalesQuantityDialog.setQuantityDialogListener(quantityDialogListener);
                 simpleSalesQuantityDialog.show();

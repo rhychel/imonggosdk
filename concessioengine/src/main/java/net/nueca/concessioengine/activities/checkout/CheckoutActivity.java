@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 
+import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.BaseCheckoutFragment;
 import net.nueca.concessioengine.fragments.SimpleCheckoutFragment;
@@ -27,7 +28,7 @@ import java.util.List;
  * Created by rhymart on 5/14/15.
  * imonggosdk (c)2015
  */
-public abstract class CheckoutActivity extends ImonggoAppCompatActivity {
+public abstract class CheckoutActivity extends ModuleActivity {
     protected BaseCheckoutFragment checkoutFragment;
 
     public static final String REFERENCE = "reference";

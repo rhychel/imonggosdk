@@ -72,6 +72,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     public static final String REFERENCE = "reference";
     public static final String IS_LAYAWAY = "is_layaway";
+    public static final String FOR_DUPLICATING = "is_duplicating";
 
     protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
@@ -85,6 +86,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     protected String reference;
     protected boolean isLayaway = false;
+    protected boolean isDuplicating = false;
 
     protected int previousFragmentCount = 0;
     protected HistoryDetailsListener historyDetailsListener;
@@ -105,6 +107,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             reference = getIntent().getStringExtra(REFERENCE);
         if(getIntent().hasExtra(IS_LAYAWAY))
             isLayaway = getIntent().getBooleanExtra(IS_LAYAWAY, false);
+        if(getIntent().hasExtra(FOR_DUPLICATING))
+            isDuplicating = getIntent().getBooleanExtra(FOR_DUPLICATING, false);
 
         clearTransactions = getIntent().getBooleanExtra(INIT_PRODUCT_ADAPTER_HELPER, false);
         initSelectedCustomer = getIntent().getBooleanExtra(INIT_SELECTED_CUSTOMER, true);
@@ -126,40 +130,6 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         if(ProductsAdapterHelper.isDuplicating)
             ProductsAdapterHelper.isDuplicating = false;
         super.onDestroy();
-    }
-
-    protected ModuleSetting getModuleSetting() {
-        return getModuleSetting(concessioModule);
-    }
-
-    protected ModuleSetting getModuleSetting(ConcessioModule concessioModule) {
-        try {
-            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(concessioModule)).queryForFirst();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected List<ModuleSetting> getActiveModuleSetting() {
-        try {
-            if(getIntent().hasExtra(HISTORY_ITEM_FILTERS))
-                return getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                        .where()
-                        .in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.convertToConcessioModules(getIntent().getIntArrayExtra(HISTORY_ITEM_FILTERS))))
-                        .query();
-            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                    .where()
-                        .in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST, ConcessioModule.PHYSICAL_COUNT,
-                                ConcessioModule.RECEIVE_BRANCH, ConcessioModule.RECEIVE_BRANCH_PULLOUT, ConcessioModule.RELEASE_BRANCH,
-                                ConcessioModule.RECEIVE_SUPPLIER, ConcessioModule.RELEASE_SUPPLIER,
-                                ConcessioModule.RECEIVE_ADJUSTMENT, ConcessioModule.RELEASE_ADJUSTMENT,
-                                ConcessioModule.INVOICE))
-                    .query();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
     }
 
     public List<ConcessioModule> getTransactionTypes() {
@@ -212,7 +182,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         if(includeAll)
             transactionTypes.add(ConcessioModule.ALL);
 
-        List<ModuleSetting> moduleSettings = getActiveModuleSetting();
+        List<ModuleSetting> moduleSettings = getActiveModuleSetting(HISTORY_ITEM_FILTERS);
 
         for(ModuleSetting moduleSetting : moduleSettings) {
             if(moduleSetting.is_enabled())
@@ -422,7 +392,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             if(selectedProductItem.getInventory() != null) {
                 Inventory updateInventory = selectedProductItem.getInventory();
                 updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
-                updateInventory.updateTo(getHelper());
+//                updateInventory.updateTo(getHelper());
                 updateInventories.add(updateInventory);
                 updated++;
             }
@@ -435,8 +405,6 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 //                Product product = selectedProductItem.getProduct();
 //                product.setInventory(newInventory);
 //                product.updateTo(getHelper());
-                //product.setInventory(updateInventory);
-                //product.updateTo(getHelper());
                 updated++;
             }
         }
@@ -449,15 +417,20 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected int revertInventoryFromDocument(Document document, boolean shouldAdd) {
         int updated = 0;
         List<DocumentLine> documentLines = document.getDocument_lines();
+        BatchList<Inventory> inventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
         for(DocumentLine documentLine : documentLines) {
             try {
+                Log.e("revertInventoryFromDoc", shouldAdd+"");
                 Inventory inventory = getHelper().fetchObjectsInt(Inventory.class).queryBuilder().where().eq("product_id", documentLine.getProduct_id()).queryForFirst();
                 inventory.operationQuantity(documentLine.getQuantity(), shouldAdd);
-                inventory.updateTo(getHelper());
+//                inventory.updateTo(getHelper());
+                inventories.add(inventory);
+                updated++;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+        inventories.doOperation(Inventory.class);
         return updated;
     }
 

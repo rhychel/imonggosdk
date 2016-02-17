@@ -74,6 +74,11 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         return objectList.size() > 0;
     }
 
+    public void add(int position, Obj obj) {
+        this.objectList.add(position, obj);
+        notifyDataSetChanged();
+    }
+
     public void add(Obj obj) {
         this.objectList.add(obj);
         notifyDataSetChanged();

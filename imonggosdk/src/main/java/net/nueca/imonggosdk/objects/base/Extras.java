@@ -178,6 +178,9 @@ public class Extras extends DBTable {
     @Expose
     @DatabaseField
     private String check_date;
+    @Expose
+    @DatabaseField
+    private String additional_fields;
 
     /** FOREIGN TABLES **/
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
@@ -274,6 +277,7 @@ public class Extras extends DBTable {
         expiry_date = builder.expiry_date;
         default_selling_unit = builder.default_selling_unit;
         default_ordering_unit_id = builder.default_ordering_unit_id;
+        additional_fields = builder.addditional_fields;
 
         salesman_id = builder.salesman_id;
         customer_category_id = builder.category_id;
@@ -360,6 +364,7 @@ public class Extras extends DBTable {
     }
 
     public void setProduct(Product product) {
+
         this.product = product;
     }
 
@@ -754,10 +759,19 @@ public class Extras extends DBTable {
         this.customer_category_id = customer_category_id;
     }
 
+    public String getAdditional_fields() {
+        return additional_fields;
+    }
+
+    public void setAdditional_fields(String additional_fields) {
+        this.additional_fields = additional_fields;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(Extras.class, this);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -787,6 +801,12 @@ public class Extras extends DBTable {
         void updateExtrasTo(ImonggoDBHelper2 dbHelper);
     }
 
+    @Override
+    public String toString() {
+        return "Extras{" +
+                "id='" + id + '\'' +
+                '}';
+    }
 
     public static class Builder {
         protected Integer is_salesman;
@@ -842,6 +862,7 @@ public class Extras extends DBTable {
         protected String expiry_date;
         protected String salesman_id;
         protected String category_id;
+        protected String addditional_fields;
 
         public Builder salesman_id(String salesman_id) {
             this.salesman_id = salesman_id;

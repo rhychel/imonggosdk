@@ -90,7 +90,7 @@ public class ProductSorting extends DBTable {
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.insert(ProductSorting.class, this);
+            dbHelper.delete(ProductSorting.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -99,7 +99,7 @@ public class ProductSorting extends DBTable {
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.insert(ProductSorting.class, this);
+            dbHelper.update(ProductSorting.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }

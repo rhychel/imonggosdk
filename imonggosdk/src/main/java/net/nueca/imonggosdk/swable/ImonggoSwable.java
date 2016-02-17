@@ -49,8 +49,6 @@ public class ImonggoSwable extends SwableService {
 
     private SwableStateListener swableStateListener;
 
-    private int APP_ICON_DRAWABLE = R.drawable.ic_check_circle;
-
     private IntentFilter notificationFilter = new IntentFilter();
 
     private SwableSendModule swableSendModule;
@@ -113,6 +111,7 @@ public class ImonggoSwable extends SwableService {
             notificationFilter.addAction(NOTIFICATION_ACTION);
             registerReceiver(receiver, notificationFilter);
         }
+
         swableSendModule = new SwableSendModule(this,getHelper(),getSession(),getQueue());
         swableVoidModule = new SwableVoidModule(this,getHelper(),getSession(),getQueue());
         swableUpdateModule = new SwableUpdateModule(this,getHelper(),getSession(),getQueue());
@@ -291,12 +290,14 @@ public class ImonggoSwable extends SwableService {
         return swableStateListener;
     }
 
-    public void setNotificationIcon(@DrawableRes int iconResource) {
-        APP_ICON_DRAWABLE = iconResource;
-    }
-    public int getNotificationIcon() {
-        return APP_ICON_DRAWABLE;
-    }
+//    public void setNotificationIcon(@DrawableRes int iconResource) {
+//        APP_ICON_DRAWABLE = iconResource;
+//    }
+//
+//    @DrawableRes
+//    public int getNotificationIcon() {
+//        return APP_ICON_DRAWABLE;
+//    }
 
     public interface SwableStateListener {
         void onSwableStarted();
