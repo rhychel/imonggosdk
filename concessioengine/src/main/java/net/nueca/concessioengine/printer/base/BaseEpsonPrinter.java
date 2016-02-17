@@ -1,7 +1,7 @@
 package net.nueca.concessioengine.printer.base;
 
 import net.nueca.concessioengine.printer.enums.EpsonPrinterSeries;
-import net.nueca.concessioengine.printer.enums.EpsonPrinterType;
+import net.nueca.concessioengine.printer.enums.PrinterInterfaceType;
 import net.nueca.concessioengine.printer.enums.PrinterManufacturer;
 
 /**
@@ -10,18 +10,18 @@ import net.nueca.concessioengine.printer.enums.PrinterManufacturer;
 public abstract class BaseEpsonPrinter {
 
     public static PrinterManufacturer manufacturer = PrinterManufacturer.EPSON;
-    protected EpsonPrinterType epsonPrinterType;
+    protected PrinterInterfaceType epsonPrinterType;
     protected EpsonPrinterSeries  epsonPrinterSeries;
 
     public abstract void initializePrinter();
-    public abstract EpsonPrinterType onSelectPrinterType();
+    public abstract PrinterInterfaceType onSelectPrinterType();
     public abstract void onStartDiscoverPrinter();
 
-    public EpsonPrinterType getEpsonPrinterType() {
+    public PrinterInterfaceType getEpsonPrinterType() {
         return epsonPrinterType;
     }
 
-    public void setEpsonPrinterType(EpsonPrinterType epsonPrinterType) {
+    public void setEpsonPrinterType(PrinterInterfaceType epsonPrinterType) {
         this.epsonPrinterType = epsonPrinterType;
     }
 

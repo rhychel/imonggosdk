@@ -3,6 +3,7 @@ package net.nueca.imonggosdk.swable;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
+import com.google.gson.Gson;
 
 import net.nueca.imonggosdk.R;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
@@ -62,7 +63,8 @@ public class SwableSendModule extends BaseSwableModule {
                 return;
             }
 
-            Log.e("SwableSendModule", "sendTransaction : non-paging : "+offlineData.getObjectFromData().toString());
+            Gson gson = new Gson();
+            Log.e("SwableSendModule", "sendTransaction : non-paging : "+gson.toJson(offlineData.getObjectFromData()));
             JSONObject jsonObject;
             if(offlineData.getType() == OfflineData.INVOICE) {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
@@ -117,6 +119,7 @@ public class SwableSendModule extends BaseSwableModule {
                                 }
 
                                 offlineData.setSynced(true);
+                                Log.e("SwableSendModule " + 120, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                 offlineData.updateTo(dbHelper);
 
                                 if (imonggoSwable.getSwableStateListener() != null && offlineData.isSynced())
@@ -133,6 +136,7 @@ public class SwableSendModule extends BaseSwableModule {
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                                 if(offlineData.getOfflineDataTransactionType().isVoiding()) {
                                     offlineData.setSynced(false);
+                                    Log.e("SwableSendModule " + 137, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                     offlineData.updateTo(dbHelper);
                                 }
                             }
@@ -221,6 +225,7 @@ public class SwableSendModule extends BaseSwableModule {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                            Log.e("SwableSendModule " + 225, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
 
                             if (imonggoSwable.getSwableStateListener() != null) {
@@ -236,6 +241,7 @@ public class SwableSendModule extends BaseSwableModule {
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                                 if(offlineData.getOfflineDataTransactionType().isVoiding()) {
                                     offlineData.setSynced(false);
+                                    Log.e("SwableSendModule " + 241, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                     offlineData.updateTo(dbHelper);
                                 }
                             }
@@ -249,6 +255,7 @@ public class SwableSendModule extends BaseSwableModule {
                             offlineData.setQueued(false);
                             offlineData.setSynced(false);
                             offlineData.setStatusLog("request error");
+                            Log.e("SwableSendModule " + 255, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
                         }
                     }, session.getServer(), table, jsonObject, (offlineData.getType() != OfflineData.CUSTOMER?
@@ -364,6 +371,7 @@ public class SwableSendModule extends BaseSwableModule {
                             }
 
                             parent.setSynced(page == 1 || parent.isSynced());
+                            Log.e("SwableSendModule " + 366, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             parent.updateTo(dbHelper);
 
                             if (parent.isSynced() && !parent.getReturnId().contains(ImonggoSwable.NO_RETURN_ID) &&
@@ -460,6 +468,7 @@ public class SwableSendModule extends BaseSwableModule {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        Log.e("SwableSendModule " + 462, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                         parent.updateTo(dbHelper);
 
                         if (imonggoSwable.getSwableStateListener() != null) {
@@ -485,6 +494,7 @@ public class SwableSendModule extends BaseSwableModule {
                         parent.setQueued(false);
                         parent.setSynced(false);
                         parent.setStatusLog("request error");
+                        Log.e("SwableSendModule " + 488, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                         parent.updateTo(dbHelper);
                     }
                 }, session.getServer(), table, jsonObject, "?branch_id="+ parent.getBranch_id() + parent.getParameters()
@@ -566,6 +576,7 @@ public class SwableSendModule extends BaseSwableModule {
                             offlineData.setSynced(offlineData.isAllPageSynced());
                             offlineData.setSyncing(true);
                             offlineData.setQueued(true);
+                            Log.e("SwableSendModule " + 567, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
 
                             queueNonLastPage(table, offlineData, offlineData.getReturnIdList().get(page - 1));
@@ -644,6 +655,7 @@ public class SwableSendModule extends BaseSwableModule {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        Log.e("SwableSendModule " + 646, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                         offlineData.updateTo(dbHelper);
 
                         if (imonggoSwable.getSwableStateListener() != null) {
@@ -663,6 +675,7 @@ public class SwableSendModule extends BaseSwableModule {
                         offlineData.setQueued(false);
                         offlineData.setSynced(false);
                         offlineData.setStatusLog("request error");
+                        Log.e("SwableSendModule " + 666, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                         offlineData.updateTo(dbHelper);
                     }
                 }, session.getServer(), table, jsonObject, offlineData.getBranch_id(), offlineData.getParameters())
@@ -767,6 +780,7 @@ public class SwableSendModule extends BaseSwableModule {
                             }
 
                             offlineData.setSynced(offlineData.isAllPageSynced());
+                            Log.e("SwableSendModule " + 771, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
 
                             if(!offlineData.getReturnId().contains(ImonggoSwable.NO_RETURN_ID) &&
@@ -779,6 +793,7 @@ public class SwableSendModule extends BaseSwableModule {
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                                 if(offlineData.getOfflineDataTransactionType().isVoiding()) {
                                     offlineData.setSynced(false);
+                                    Log.e("SwableSendModule " + 784, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                     offlineData.updateTo(dbHelper);
                                 }
                             }
@@ -810,6 +825,7 @@ public class SwableSendModule extends BaseSwableModule {
                             offlineData.setSynced(false);
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);
+                            Log.e("SwableSendModule " + 815, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
                             return;
                         }
@@ -901,6 +917,7 @@ public class SwableSendModule extends BaseSwableModule {
                             e.printStackTrace();
                         }
 
+                        Log.e("SwableSendModule " + 907, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                         offlineData.updateTo(dbHelper);
 
                         if (imonggoSwable.getSwableStateListener() != null) {
@@ -914,6 +931,7 @@ public class SwableSendModule extends BaseSwableModule {
                         if(offlineData.isSynced()) {
                             if(offlineData.getOfflineDataTransactionType().isVoiding()) {
                                 offlineData.setSynced(false);
+                                Log.e("SwableSendModule " + 921, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                 offlineData.updateTo(dbHelper);
                             }
                         }
@@ -926,6 +944,7 @@ public class SwableSendModule extends BaseSwableModule {
                         offlineData.setQueued(false);
                         offlineData.setSynced(false);
                         offlineData.setStatusLog("request error");
+                        Log.e("SwableSendModule " + 934, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                         offlineData.updateTo(dbHelper);
                     }
                 }, session.getServer(), table, jsonObject, id, offlineData.getBranch_id(), page == maxpage, offlineData

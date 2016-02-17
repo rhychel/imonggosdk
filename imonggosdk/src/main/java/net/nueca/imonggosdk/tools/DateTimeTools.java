@@ -291,4 +291,9 @@ public class DateTimeTools {
         SimpleDateFormat convertStringToDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
         return convertStringToDate.parse(dateTime);
     }
+
+    public static boolean isNowBetween(Date lowerBound, Date upperBound) {
+        Date now = new Date();
+        return now.compareTo(lowerBound) >= 0 && now.compareTo(upperBound) <= 0;
+    }
 }

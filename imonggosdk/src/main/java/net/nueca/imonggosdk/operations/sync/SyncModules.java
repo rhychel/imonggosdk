@@ -2955,7 +2955,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 if (mCustomIndex < size) {
 
-                    if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
+                   /* if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
+
                         int plID = listOfPricelistIds.get(mCustomIndex) != null ? listOfPricelistIds.get(mCustomIndex) : 0;
                         Log.e(TAG, "Price List Id: " + plID);
 
@@ -3006,7 +3007,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
                             }
                         }
-                    }
+                    }*/
 
                     startSyncModuleContents(requestType);
 

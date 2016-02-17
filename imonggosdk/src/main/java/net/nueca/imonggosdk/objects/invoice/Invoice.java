@@ -100,7 +100,6 @@ public class Invoice extends BaseTransactionTable2 {
         customer = builder.customer;
         branch = builder.branch;
         salesman_id = builder.salesman_id;
-        //amount = builder.amount;
     }
 
     public void setInvoice_date(String date) { invoice_date = date; }

@@ -100,4 +100,11 @@
     <string name="printer_manufacturer_is_null">Printer Manufacturer is null!</string>
     <string name="printer_not_yet_supported">Printer not yet supported</string>
 
+    <string name="PortName_Label" translatable="false">PortName:</string>
+    <string name="PortSettings_Label" translatable="false">PortSettings:</string>
+    <string name="printArea2inch" translatable="false">2inch (58mm)</string>
+    <string name="printArea3inch" translatable="false">3inch (80mm)</string>
+    <string name='printArea4inch' translatable="false">4inch (112mm)</string>
+
+
 </resources>

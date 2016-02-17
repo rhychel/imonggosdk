@@ -143,15 +143,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     public void showTransactionDetails(OfflineData offlineData) {
                         prepareFooter();
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
+                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
                         ProductsAdapterHelper.setDbHelper(getHelper());
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
                             try {
-                                if(getHelper() == null)
-                                    Log.e("C_Module", "getHelper is null");
-                                else
-                                    Log.e("C_Module", "getHelper is NOT null");
-
                                 SelectedProductItemList selecteds =
                                         InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
                                 SelectedProductItemList returns =
@@ -201,17 +197,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     public void showTransactionDetails(OfflineData offlineData) {
                         prepareFooter();
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
+                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
                         ProductsAdapterHelper.setDbHelper(getHelper());
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
                             try {
-
-                                if(getHelper() == null)
-                                    Log.e("C_Module", "getHelper is null");
-                                else
-                                    Log.e("C_Module", "getHelper is NOT null");
-
-
                                 SelectedProductItemList selecteds =
                                         InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
                                 SelectedProductItemList returns =
@@ -265,7 +255,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 .object(simpleTransactionDetailsFragment.getOfflineData())
                                 .queue();
 
-                        Log.e("C_Module", simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().getLabel());
                         // <-- Voiding issue when the transaction is voided for Receive and Pullout -->
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER) // Receive
                             revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), false);
@@ -594,6 +583,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
                                 Log.e("Reason", reason.getName());
                                 ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                ProductsAdapterHelper.clearSelectedReturnProductItemList();
                                 ProductsAdapterHelper.setSelectedCustomer(customer);
                                 ProductsAdapterHelper.setReason(reason);
 
@@ -1095,11 +1085,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                 try {
                                     int branch_id = getSession().getCurrent_branch_id();
+                                    Branch branch = getHelper().fetchObjects(Branch.class).queryBuilder()
+                                            .where().eq("id", branch_id).queryForFirst();
 
                                     Order order = generateOrder(getApplicationContext(), branch_id);
 
                                     new SwableTools.Transaction(getHelper())
-                                            .toSend().forBranch(branch_id)
+                                            .toSend()
+                                            .forBranch(branch)
                                             .fromModule(ConcessioModule.STOCK_REQUEST)
                                             .object(order)
                                             .queue();

@@ -336,10 +336,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     public Document generateDocument(Context context, int targetBranchId, DocumentTypeCode documentTypeCode) {
         Document.Builder pcount = new Document.Builder();
-        TimerTools.duration("generateDocument -- first loop", true);
+//        TimerTools.duration("generateDocument -- first loop", true);
         for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().get(i);
-            TimerTools.duration("generateDocument -- second loop", true);
+//            TimerTools.duration("generateDocument -- second loop", true);
             for(Values value : selectedProductItem.getValues()) {
                 DocumentLine.Builder builder = new DocumentLine.Builder()
                         .line_no(value.getLine_no())
@@ -363,9 +363,9 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
                 pcount.addDocumentLine(documentLine);
             }
-            TimerTools.duration("generateDocument -- second loop, end", true);
+//            TimerTools.duration("generateDocument -- second loop, end", true);
         }
-        TimerTools.duration("generateDocument -- first loop, end", true);
+//        TimerTools.duration("generateDocument -- first loop, end", true);
         pcount.customer(ProductsAdapterHelper.getSelectedCustomer()); // can be null
         pcount.document_type_code(documentTypeCode);
         if(targetBranchId > -1)
@@ -375,7 +375,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        TimerTools.duration("generateDocument BUILD", true);
+//        TimerTools.duration("generateDocument BUILD", true);
         return pcount.build();
     }
 
