@@ -531,10 +531,19 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             Log.e("onSwiped", "Index=" + viewHolder.getAdapterPosition());
-            SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().getSelectedProductItem(productRecyclerViewAdapter.getItem(viewHolder.getAdapterPosition()));
-            Log.e("onSwiped", ProductsAdapterHelper.getSelectedProductItems().size()+"-before");
-            ProductsAdapterHelper.getSelectedProductItems().remove(selectedProductItem);
-            Log.e("onSwiped", ProductsAdapterHelper.getSelectedProductItems().size() + "-after");
+            if(isReturnItems) {
+                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedReturnProductItems().getSelectedProductItem(productRecyclerViewAdapter.getItem(viewHolder.getAdapterPosition()));
+                Log.e("onSwiped="+isReturnItems, ProductsAdapterHelper.getSelectedReturnProductItems().size() + "-before");
+                ProductsAdapterHelper.getSelectedReturnProductItems().remove(selectedProductItem);
+                Log.e("onSwiped="+isReturnItems, ProductsAdapterHelper.getSelectedReturnProductItems().size() + "-after");
+            }
+            else {
+                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().getSelectedProductItem(productRecyclerViewAdapter.getItem(viewHolder.getAdapterPosition()));
+                Log.e("onSwiped="+isReturnItems, ProductsAdapterHelper.getSelectedProductItems().size() + "-before");
+                ProductsAdapterHelper.getSelectedProductItems().remove(selectedProductItem);
+                Log.e("onSwiped="+isReturnItems, ProductsAdapterHelper.getSelectedProductItems().size() + "-after");
+            }
+
             productRecyclerViewAdapter.remove(viewHolder.getAdapterPosition());
             productRecyclerViewAdapter.notifyItemChanged(0);
             productRecyclerViewAdapter.notifyDataSetChanged();

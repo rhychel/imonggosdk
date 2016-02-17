@@ -158,6 +158,11 @@ public class C_Finalize extends ModuleActivity {
             btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(((Double)tvBalance.getTag()) < 0) {
+                        DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total return amount cannot be greater than to your total sales amount.", R.style.AppCompatDialogStyle_Light);
+                        return;
+                    }
+
                     Intent intent = new Intent(C_Finalize.this, C_Checkout.class);
                     intent.putExtra(REFERENCE, reference);
                     intent.putExtra(IS_LAYAWAY, isLayaway);
@@ -195,6 +200,7 @@ public class C_Finalize extends ModuleActivity {
         Double balance =
                 sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
         tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
+        tvBalance.setTag(balance);
     }
 
     @Override
@@ -288,17 +294,18 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setHasSubtotal(true);
             simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
             simpleProductsFragment.setConcessioModule(concessioModule);
-            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
-                @Override
-                public void whenItemsSelectedUpdated() {
-                    toggleNext(llReview, tvItems);
-                }
-            });
+//            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
+//                @Override
+//                public void whenItemsSelectedUpdated() {
+//                    toggleNext(llReview, tvItems);
+//                }
+//            });
 
             if(!isForHistoryDetail && !isLayaway)
                 simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                     @Override
                     public void whenItemsSelectedUpdated() {
+                        Log.e("whenItemsSelectedupd", "---called");
                         Double sales = DiscountTools.applyMultipleDiscounts(
                                 new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
                                 ProductsAdapterHelper.getSelectedCustomer() == null? null :
@@ -306,6 +313,8 @@ public class C_Finalize extends ModuleActivity {
                         Double balance =
                                 sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
                         tvBalance.setText("P"+ NumberTools.separateInCommas(balance));
+                        tvBalance.setTag(balance);
+                        toggleNext(llReview, tvItems);
                     }
                 });
             if(position == 0)// Positive Transactions
