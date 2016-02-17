@@ -231,9 +231,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                             InvoicePayment invoicePayment = builder.build();
                             invoicePayment.setExtras(extras);
-                            // temp
-                            if(simpleSplitPaymentAdapter.getItemCount() % 2 == 0)
-                                invoicePayment.setPaymentBatchNo(1);
+
                             simpleSplitPaymentAdapter.addPayment(invoicePayment);
 
                             simpleSplitPaymentAdapter.setBalance(checkoutFragment.getRemainingBalance());
@@ -246,34 +244,32 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 else {
                     TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                     transactionDialog.setTitle(ConcessioModule.INVOICE);
-                    transactionDialog.setAmount("P2,500.00");
+                    transactionDialog.setAmount("P"+NumberTools.separateInCommas(checkoutFragment.getTotalPaymentMade()));
                     transactionDialog.setAmountLabel("Amount");
-                    transactionDialog.setCustomerName("Rhymart Manchus");
-                    transactionDialog.setInStock("Transaction ID No. 123456");
+                    transactionDialog.setCustomerName(ProductsAdapterHelper.getSelectedCustomer().getName());
                     transactionDialog.setTransactionDialogListener(transactionDialogListener);
-                    transactionDialog.show();
 
                     Invoice invoice = generateInvoice();
-                    try {
-                        if(!isLayaway) {
-                            updateInventoryFromSelectedItemList(false);
-                            offlineData = new SwableTools.Transaction(getHelper())
-                                    .toSend()
-                                    .forBranch(getSession().getCurrent_branch_id())
-                                    .fromModule(ConcessioModule.INVOICE)
-                                    .object(invoice)
-                                    .queue();
-                        } else {
-                            invoice.updateTo(getHelper());
-                            new SwableTools.Transaction(getHelper())
-                                    .toSend()
-                                    .forBranch(getSession().getCurrent_branch_id())
-                                    .fromModule(ConcessioModule.INVOICE)
-                                    .layawayOfflineData(offlineData)
-                                    .queue();
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+
+                    transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
+                    transactionDialog.show();
+
+                    invoice.setStatus("S");
+                    if(!isLayaway) {
+                        new SwableTools.Transaction(getHelper())
+                                .toSend()
+                                .forBranch(ProductsAdapterHelper.getSelectedBranch())
+                                .fromModule(ConcessioModule.INVOICE)
+                                .object(invoice)
+                                .queue();
+                    } else {
+                        invoice.updateTo(getHelper());
+                        new SwableTools.Transaction(getHelper())
+                                .toSend()
+                                .forBranch(ProductsAdapterHelper.getSelectedBranch())
+                                .fromModule(ConcessioModule.INVOICE)
+                                .layawayOfflineData(offlineData)
+                                .queue();
                     }
 
                     Log.e("INVOICE", invoice.toJSONString());
@@ -288,34 +284,32 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                         transactionDialog.setTitle(ConcessioModule.INVOICE_PARTIAL);
                         transactionDialog.setStatusResource(R.drawable.ic_alert_red);
-                        transactionDialog.setAmount("P2,500.00");
+                        transactionDialog.setAmount("P"+NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
                         transactionDialog.setAmountLabel("Remaining Balance");
-                        transactionDialog.setCustomerName("Rhymart Manchus");
-                        transactionDialog.setInStock("Transaction ID No. 123456");
+                        transactionDialog.setCustomerName(ProductsAdapterHelper.getSelectedCustomer().getName());
                         transactionDialog.setTransactionDialogListener(transactionDialogListener);
-                        transactionDialog.show();
 
                         Invoice invoice = generateInvoice();
+
+                        transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
+                        transactionDialog.show();
+
                         invoice.setStatus("L");
-                        try {
-                            if(!isLayaway) {
-                                offlineData = new SwableTools.Transaction(getHelper())
-                                        .toSend()
-                                        .forBranch(getSession().getCurrent_branch_id())
-                                        .fromModule(ConcessioModule.INVOICE)
-                                        .object(invoice)
-                                        .queue();
-                            } else {
-                                invoice.updateTo(getHelper());
-                                new SwableTools.Transaction(getHelper())
-                                        .toSend()
-                                        .forBranch(getSession().getCurrent_branch_id())
-                                        .fromModule(ConcessioModule.INVOICE)
-                                        .layawayOfflineData(offlineData)
-                                        .queue();
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        if(!isLayaway) {
+                            new SwableTools.Transaction(getHelper())
+                                    .toSend()
+                                    .forBranch(ProductsAdapterHelper.getSelectedBranch())
+                                    .fromModule(ConcessioModule.INVOICE)
+                                    .object(invoice)
+                                    .queue();
+                        } else {
+                            invoice.updateTo(getHelper());
+                            new SwableTools.Transaction(getHelper())
+                                    .toSend()
+                                    .forBranch(ProductsAdapterHelper.getSelectedBranch())
+                                    .fromModule(ConcessioModule.INVOICE)
+                                    .layawayOfflineData(offlineData)
+                                    .queue();
                         }
 
                         Log.e("INVOICE", invoice.toJSONString());

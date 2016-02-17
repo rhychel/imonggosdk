@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
 
-    private Double subtotal = 0d;
+    //private Double subtotal = 0d;
 
     private boolean isReturns = false;
 
@@ -44,11 +44,11 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         if(index > -1) {
             if(selectedProductItem.getValues().size() > 0) {
                 set(index, selectedProductItem);
-                updateSubtotal();
+                //updateSubtotal();
             }
             else {
                 remove(index);
-                updateSubtotal();
+                //updateSubtotal();
                 return false;
             }
             return true;
@@ -56,7 +56,7 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
 
         if(selectedProductItem.getValues().size() > 0) {
             boolean ret = super.add(selectedProductItem);
-            updateSubtotal();
+            //updateSubtotal();
             return ret;
         }
         return true;
@@ -137,12 +137,15 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     }
 
     public Double getSubtotal() {
+        double subtotal = 0d;
+        for(SelectedProductItem selectedProductItem : this)
+            subtotal += selectedProductItem.getValuesSubtotal();
         return subtotal;
     }
 
-    public void updateSubtotal() {
+    /*public void updateSubtotal() {
         subtotal = 0d;
         for(SelectedProductItem selectedProductItem : this)
             subtotal += selectedProductItem.getValuesSubtotal();
-    }
+    }*/
 }

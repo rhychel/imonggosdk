@@ -20,6 +20,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
@@ -79,7 +81,7 @@ public class C_Finalize extends ModuleActivity {
 
         llBalance.setVisibility(View.VISIBLE);
 
-        if(isForHistoryDetail) {
+        if(isForHistoryDetail && !isLayaway) {
             getSupportActionBar().setTitle(getIntent().getStringExtra(REFERENCE));
             try {
                 final OfflineData offlineData = getHelper().fetchObjectsInt(OfflineData.class).queryBuilder()
@@ -102,11 +104,12 @@ public class C_Finalize extends ModuleActivity {
                     public void onDuplicateTransaction() {
                         // TODO Implement your duplication!
                         // TODO for double checking..
-//                        DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
-//                        return;
+                        //DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
+                        //return;
+                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Finalize.this, C_Module.class);
-                        intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
+                        intent.putExtra(FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, offlineData.getConcessioModule().ordinal());
                         startActivityForResult(intent, IS_DUPLICATING);
                     }
@@ -129,32 +132,87 @@ public class C_Finalize extends ModuleActivity {
                 else
                     initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
 
-                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.PaymentsComputation();
+                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
+                        .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+                paymentsComputation.findReturnsPaymentType(getHelper());
+
                 paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
                 paymentsComputation.addAllPayments(offlineData.getObjectFromData(Invoice.class).getPayments());
 
-                paymentsComputation.getTotalPayable(); // Total Amount
-                paymentsComputation.getRemaining(); // Total Balance
+                //paymentsComputation.getTotalPayable(); // Total Amount
+                //paymentsComputation.getRemaining(); // Total Balance
 
                 llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
                 tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
 
                 llTotalAmount.setVisibility(View.VISIBLE);
-                Log.e("C_finalize", "tvTotalAmount---|>"+paymentsComputation.getTotalPayable());
-                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable()));
+                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable(true)));
 
                 if(paymentsComputation.getRemaining().doubleValue() == 0)
                     llBalance.setVisibility(View.GONE);
+                //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
+                tvBalance.setText("P"+ NumberTools.separateInCommas(getBalance()));
 
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+        else if(!isForHistoryDetail && isLayaway) {
+            getSupportActionBar().setTitle(getIntent().getStringExtra(REFERENCE));
+            try {
+                final OfflineData offlineData = getHelper().fetchObjectsInt(OfflineData.class).queryBuilder()
+                        .where().eq("reference_no", getIntent().getStringExtra(REFERENCE)).queryForFirst();
+                if(offlineData == null) {
+                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History.", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }, R.style.AppCompatDialogStyle_Light_NoTitle);
+                    return;
+                }
+                else if(!offlineData.isSynced() && !offlineData.isSyncing()) {
+                    btn2 = (Button) findViewById(R.id.btn2);
+                    initializeVoidButton(btn1, getIntent().getStringExtra(REFERENCE));
+                    initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
+                }
+
+                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
+                        .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+                paymentsComputation.findReturnsPaymentType(getHelper());
+
+                paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
+                paymentsComputation.addAllPayments(offlineData.getObjectFromData(Invoice.class).getPayments());
+
+                //paymentsComputation.getTotalPayable(); // Total Amount
+                //paymentsComputation.getRemaining(); // Total Balance
+
+                llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
+                tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
+
+                llTotalAmount.setVisibility(View.VISIBLE);
+                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable(true)));
+
+                if(paymentsComputation.getRemaining().doubleValue() == 0)
+                    llBalance.setVisibility(View.GONE);
+                //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
+                tvBalance.setText("P"+ NumberTools.separateInCommas(getBalance()));
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            btn1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(C_Finalize.this, C_Checkout.class);
+                    intent.putExtra(REFERENCE, reference);
+                    intent.putExtra(IS_LAYAWAY, isLayaway);
+                    startActivityForResult(intent, SALES);
+                }
+            });
+        }
         else {
-            if(isLayaway)
-                getSupportActionBar().setTitle(getIntent().getStringExtra(REFERENCE));
-            else
-                getSupportActionBar().setTitle("Review");
+            getSupportActionBar().setTitle("Review");
             btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -170,7 +228,6 @@ public class C_Finalize extends ModuleActivity {
         tvItems.setVisibility(View.VISIBLE);
 
         toggleNext(llReview, tvItems);
-
 
         reviewAdapter = new ReviewAdapter(getSupportFragmentManager());
         vpReview.setAdapter(reviewAdapter);
@@ -188,13 +245,31 @@ public class C_Finalize extends ModuleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Double sales = DiscountTools.applyMultipleDiscounts(
+        if(!isForHistoryDetail && !isLayaway) {
+            tvBalance.setText("P" + NumberTools.separateInCommas(getBalance()));
+        }
+    }
+
+    private Double getBalance() {
+        /*Double sales = DiscountTools.applyMultipleDiscounts(
                 new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
-                ProductsAdapterHelper.getSelectedCustomer() == null? null :
-                        ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
+                ProductsAdapterHelper.getSelectedCustomer() == null ? null :
+                        ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(), ",").doubleValue();
         Double balance =
-                sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-        tvBalance.setText("+++P"+ NumberTools.separateInCommas(balance));
+                sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();*/
+
+        InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
+                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+        try {
+            paymentsComputation.findReturnsPaymentType(getHelper());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        paymentsComputation.addAllInvoiceLines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper.getSelectedProductItems()));
+        paymentsComputation.addAllInvoiceLines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper.getSelectedReturnProductItems()));
+
+        return paymentsComputation.getRemaining().doubleValue();
     }
 
     @Override
@@ -287,6 +362,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setIsFinalize(true);
             simpleProductsFragment.setHasSubtotal(true);
             simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
+            simpleProductsFragment.setConcessioModule(concessioModule);
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                 @Override
                 public void whenItemsSelectedUpdated() {
@@ -294,19 +370,21 @@ public class C_Finalize extends ModuleActivity {
                 }
             });
 
-            if(!isForHistoryDetail && !isLayaway)
-                simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
-                    @Override
-                    public void whenItemsSelectedUpdated() {
-                        Double sales = DiscountTools.applyMultipleDiscounts(
-                                new BigDecimal(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()), BigDecimal.ONE,
-                                ProductsAdapterHelper.getSelectedCustomer() == null? null :
-                                        ProductsAdapterHelper.getSelectedCustomer().getDiscount_text(),",").doubleValue();
-                        Double balance =
-                                sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
-                        tvBalance.setText("---P"+ NumberTools.separateInCommas(balance));
+            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
+                @Override
+                public void whenItemsSelectedUpdated() {
+                    /*Gson gson = new Gson();
+                    Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                    Log.e("PRODUCTS ADAPTER HELPER", gson.toJson(ProductsAdapterHelper.getSelectedProductItems()));
+                    Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                    Log.e("PRODUCTS ADAPTER HELPER", gson.toJson(ProductsAdapterHelper.getSelectedReturnProductItems()));
+                    Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");*/
+
+                    if(!isForHistoryDetail && !isLayaway) {
+                        tvBalance.setText("P" + NumberTools.separateInCommas(getBalance()));
                     }
-                });
+                }
+            });
             if(position == 0)// Positive Transactions
                 simpleProductsFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
             else {

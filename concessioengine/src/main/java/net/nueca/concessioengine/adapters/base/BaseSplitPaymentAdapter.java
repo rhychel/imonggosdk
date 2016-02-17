@@ -3,6 +3,7 @@ package net.nueca.concessioengine.adapters.base;
 import android.content.Context;
 import android.util.Log;
 
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
@@ -46,7 +47,8 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
             cash.setId(1);
             this.paymentTypes.put(1, cash);
         }
-        this.computation = computation != null? computation : new InvoiceTools.PaymentsComputation();
+        this.computation = computation != null? computation : new InvoiceTools
+                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
     }
 
     public BaseSplitPaymentAdapter(Context context, int listItemRes, InvoiceTools.PaymentsComputation computation,
@@ -58,7 +60,8 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
         this.paymentTypes = new HashMap<>();
         for(PaymentType paymentType : paymentTypes)
             this.paymentTypes.put(paymentType.getId(), paymentType);
-        this.computation = computation != null? computation : new InvoiceTools.PaymentsComputation();
+        this.computation = computation != null? computation : new InvoiceTools
+                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
     }
 
     public HashMap<Integer, PaymentType> getPaymentTypes() {
@@ -120,20 +123,20 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
         computation.removePayment(position);
 
-        setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+        setIsFullyPaid(computation.getRemaining().doubleValue() <= 0d);
 
         if(paymentUpdateListener != null)
             paymentUpdateListener.onDeletePayment(position);
     }
 
     public void addPayment(InvoicePayment payment) {
-        Log.e("ADDING PAYMENT", payment.getTender() + " " + computation.getRemaining().doubleValue());
+        Log.e("ADDING PAYMENT " + payment.getPaymentBatchNo(), payment.getTender() + " " + computation.getRemaining().doubleValue());
         add(payment);
         notifyItemInserted(getItemCount());
 
         computation.addPayment(payment);
 
-        setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+        setIsFullyPaid(computation.getRemaining().doubleValue() <= 0d);
 
         if(paymentUpdateListener != null)
             paymentUpdateListener.onAddPayment(payment);
@@ -150,7 +153,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
         computation.setPayment(position, thisPayment);
 
-        setIsFullyPaid(computation.getRemaining().compareTo(BigDecimal.ZERO) <= 0);
+        setIsFullyPaid(computation.getRemaining().doubleValue() <= 0d);
 
         if(paymentUpdateListener != null)
             paymentUpdateListener.onUpdatePayment(position, thisPayment);

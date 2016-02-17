@@ -43,9 +43,11 @@ import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.StringUtilsEx;
+import net.nueca.imonggosdk.tools.TimerTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -130,40 +132,6 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         super.onDestroy();
     }
 
-    protected ModuleSetting getModuleSetting() {
-        return getModuleSetting(concessioModule);
-    }
-
-    protected ModuleSetting getModuleSetting(ConcessioModule concessioModule) {
-        try {
-            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(concessioModule)).queryForFirst();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected List<ModuleSetting> getActiveModuleSetting() {
-        try {
-            if(getIntent().hasExtra(HISTORY_ITEM_FILTERS))
-                return getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                        .where()
-                        .in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.convertToConcessioModules(getIntent().getIntArrayExtra(HISTORY_ITEM_FILTERS))))
-                        .query();
-            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
-                    .where()
-                        .in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST, ConcessioModule.PHYSICAL_COUNT,
-                                ConcessioModule.RECEIVE_BRANCH, ConcessioModule.RECEIVE_BRANCH_PULLOUT, ConcessioModule.RELEASE_BRANCH,
-                                ConcessioModule.RECEIVE_SUPPLIER, ConcessioModule.RELEASE_SUPPLIER,
-                                ConcessioModule.RECEIVE_ADJUSTMENT, ConcessioModule.RELEASE_ADJUSTMENT,
-                                ConcessioModule.INVOICE))
-                    .query();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
-    }
-
     public List<ConcessioModule> getTransactionTypes() {
         return getTransactionTypes(true);
     }
@@ -214,7 +182,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         if(includeAll)
             transactionTypes.add(ConcessioModule.ALL);
 
-        List<ModuleSetting> moduleSettings = getActiveModuleSetting();
+        List<ModuleSetting> moduleSettings = getActiveModuleSetting(HISTORY_ITEM_FILTERS);
 
         for(ModuleSetting moduleSetting : moduleSettings) {
             if(moduleSetting.is_enabled())
@@ -368,8 +336,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     public Document generateDocument(Context context, int targetBranchId, DocumentTypeCode documentTypeCode) {
         Document.Builder pcount = new Document.Builder();
+//        TimerTools.duration("generateDocument -- first loop", true);
         for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().get(i);
+//            TimerTools.duration("generateDocument -- second loop", true);
             for(Values value : selectedProductItem.getValues()) {
                 DocumentLine.Builder builder = new DocumentLine.Builder()
                         .line_no(value.getLine_no())
@@ -393,7 +363,9 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
                 pcount.addDocumentLine(documentLine);
             }
+//            TimerTools.duration("generateDocument -- second loop, end", true);
         }
+//        TimerTools.duration("generateDocument -- first loop, end", true);
         pcount.customer(ProductsAdapterHelper.getSelectedCustomer()); // can be null
         pcount.document_type_code(documentTypeCode);
         if(targetBranchId > -1)
@@ -403,6 +375,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+//        TimerTools.duration("generateDocument BUILD", true);
         return pcount.build();
     }
 
@@ -412,7 +385,9 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     public int updateInventoryFromSelectedItemList(boolean shouldAdd) {
         int updated = 0;
+        BatchList<Inventory> newInventories = new BatchList<>(DatabaseOperation.INSERT, getHelper());
         BatchList<Inventory> updateInventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+        TimerTools.duration("updateInventoryFromSelectedItemList, first loop", true);
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             if(selectedProductItem.getInventory() != null) {
                 Inventory updateInventory = selectedProductItem.getInventory();
@@ -425,13 +400,16 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 Inventory newInventory = new Inventory();
                 newInventory.setProduct(selectedProductItem.getProduct());
                 newInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
-                newInventory.insertTo(getHelper());
-                Product product = selectedProductItem.getProduct();
-                product.setInventory(newInventory);
-                product.updateTo(getHelper());
+                newInventories.add(newInventory);
+//                newInventory.insertTo(getHelper());
+//                Product product = selectedProductItem.getProduct();
+//                product.setInventory(newInventory);
+//                product.updateTo(getHelper());
                 updated++;
             }
         }
+        TimerTools.duration("updateInventoryFromSelectedItemList, first loop, end", true);
+        newInventories.doOperation(Inventory.class);
         updateInventories.doOperation(Inventory.class);
         return updated;
     }
@@ -439,15 +417,20 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected int revertInventoryFromDocument(Document document, boolean shouldAdd) {
         int updated = 0;
         List<DocumentLine> documentLines = document.getDocument_lines();
+        BatchList<Inventory> inventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
         for(DocumentLine documentLine : documentLines) {
             try {
+                Log.e("revertInventoryFromDoc", shouldAdd+"");
                 Inventory inventory = getHelper().fetchObjectsInt(Inventory.class).queryBuilder().where().eq("product_id", documentLine.getProduct_id()).queryForFirst();
                 inventory.operationQuantity(documentLine.getQuantity(), shouldAdd);
-                inventory.updateTo(getHelper());
+//                inventory.updateTo(getHelper());
+                inventories.add(inventory);
+                updated++;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+        inventories.doOperation(Inventory.class);
         return updated;
     }
 
@@ -571,9 +554,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     }
                 }, "No", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
+                    public void onClick(DialogInterface dialog, int which) { }
                 }, R.style.AppCompatDialogStyle_Light);
             }
         });

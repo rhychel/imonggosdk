@@ -161,7 +161,8 @@ public class PriceTools {
 
         if(unit == null || unit.getId() == -1) {
             Where<BranchProduct, ?> branchProductWhere = dbHelper2.fetchObjects(BranchProduct.class).queryBuilder().where()
-                    .eq("product_id", product).and().eq("branch_id", branch).and().eq("isBaseUnitSellable", true);
+                    .eq("product_id", product).and().eq("branch_id", branch)/*.and().eq("isBaseUnitSellable", true)*/
+                    .and().isNull("unit_id");
             branchProduct = branchProductWhere.queryForFirst();
         } else {
             Where<BranchProduct, ?> branchProductWhere = dbHelper2.fetchObjects(BranchProduct.class).queryBuilder().where()
