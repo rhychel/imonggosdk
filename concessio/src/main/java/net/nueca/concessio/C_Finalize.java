@@ -246,7 +246,9 @@ public class C_Finalize extends ModuleActivity {
     protected void onResume() {
         super.onResume();
         if(!isForHistoryDetail && !isLayaway) {
-            tvBalance.setText("P" + NumberTools.separateInCommas(getBalance()));
+            Double balance = getBalance();
+            tvBalance.setText("P" + NumberTools.separateInCommas(balance));
+            tvBalance.setTag(balance);
         }
     }
 
@@ -381,7 +383,8 @@ public class C_Finalize extends ModuleActivity {
                     Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");*/
 
                     if(!isForHistoryDetail && !isLayaway) {
-                        tvBalance.setText("P" + NumberTools.separateInCommas(getBalance()));
+                        Double balance = getBalance();
+                        tvBalance.setText("P" + NumberTools.separateInCommas(balance));
                     }
                 }
             });
