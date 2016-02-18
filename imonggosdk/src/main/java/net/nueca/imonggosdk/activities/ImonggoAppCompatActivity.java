@@ -85,11 +85,6 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
     }
 
     protected ModuleSetting getAppSetting() {
-//        try {
-//            return getHelper().fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", ModuleSettingTools.getModuleToString(ConcessioModule.APP)).queryForFirst();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
         return getModuleSetting(ConcessioModule.APP);
     }
 

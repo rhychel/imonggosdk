@@ -1,22 +1,32 @@
 package net.nueca.concessioengine.activities;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
+
+import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SettingsAdapter;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.tools.appsettings.AppSettings;
 import net.nueca.concessioengine.tools.appsettings.AppTools;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
+import net.nueca.imonggosdk.objects.base.DBTable;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.tools.DialogTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -82,6 +92,34 @@ public class SettingsActivity extends ModuleActivity {
             debug.setSectionFirstPosition(0);
             debug.setConcessioModule(ConcessioModule.APPLICATION);
             debug.setAppSettingEntry(AppSettings.AppSettingEntry.CLEAR_TRANSACTIONS);
+            debug.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClicked(View view, int position) {
+                    Log.e("Offline Datas", OfflineData.fetchAll(getHelper(), OfflineData.class).size()+"---");
+                    Log.e("Offline Datas", Document.fetchAll(getHelper(), Document.class).size()+"---");
+
+                    DialogTools.showConfirmationDialog(SettingsActivity.this, "Clear Transactions", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                getHelper().deleteAll(OfflineData.class, new DBTable.ConditionsWindow<OfflineData, Integer>() {
+                                    @Override
+                                    public Where<OfflineData, Integer> renderConditions(Where<OfflineData, Integer> where) throws SQLException {
+                                        return where.in("type", OfflineData.DOCUMENT, OfflineData.INVOICE, OfflineData.ORDER);
+                                    }
+                                });
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+
+                            Toast.makeText(SettingsActivity.this, "Transactions deleted!", Toast.LENGTH_LONG).show();
+                        }
+                    }, "No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) { }
+                    }, R.style.AppCompatDialogStyle_Light);
+                }
+            });
             appSettings.add(debug);
         }
 
@@ -95,21 +133,14 @@ public class SettingsActivity extends ModuleActivity {
 
         try {
             final List<ProductSorting> productSortings = getHelper().fetchForeignCollection(getModuleSetting(ConcessioModule.APP).getProductSortings().closeableIterator());
-            int i = 0;
-            for(ProductSorting productSorting : productSortings) {
-                if(productSorting.is_default()) {
-                    if(i == 0)
-                        break;
-                    ProductSorting temp = productSorting;
-                    productSortings.add(0, temp);
-                    productSortings.remove(i+1);
-                }
-                i++;
-            }
+            ProductSorting defaultSorting = new ProductSorting();
+            defaultSorting.setIs_default(true);
+            int selected = productSortings.indexOf(defaultSorting);
 
             ArrayAdapter<ProductSorting> psAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, productSortings);
             psAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
             AppSettings multi = new AppSettings();
+            multi.setSelectedItem(selected);
             multi.setHeader(false);
             multi.setSectionFirstPosition(0);
             multi.setConcessioModule(ConcessioModule.APPLICATION);
@@ -123,9 +154,11 @@ public class SettingsActivity extends ModuleActivity {
                     prevSelected.setIs_default(true);
                     int selected = productSortings.indexOf(prevSelected);
                     prevSelected = productSortings.get(selected);
+                    prevSelected.setIs_default(false);
                     prevSelected.updateTo(getHelper());
 
                     ProductSorting newSelected = productSortings.get(position);
+                    newSelected.setIs_default(true);
                     newSelected.updateTo(getHelper());
                 }
 

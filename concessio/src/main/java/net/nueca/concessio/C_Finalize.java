@@ -116,7 +116,7 @@ public class C_Finalize extends ModuleActivity {
                 };
 
                 if(offlineData == null) {
-                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History.", new DialogInterface.OnClickListener() {
+                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
@@ -163,7 +163,7 @@ public class C_Finalize extends ModuleActivity {
                 final OfflineData offlineData = getHelper().fetchObjectsInt(OfflineData.class).queryBuilder()
                         .where().eq("reference_no", getIntent().getStringExtra(REFERENCE)).queryForFirst();
                 if(offlineData == null) {
-                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History.", new DialogInterface.OnClickListener() {
+                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
@@ -251,7 +251,9 @@ public class C_Finalize extends ModuleActivity {
     protected void onResume() {
         super.onResume();
         if(!isForHistoryDetail && !isLayaway) {
-            tvBalance.setText("P" + NumberTools.separateInCommas(getBalance()));
+            Double balance = getBalance();
+            tvBalance.setText("P" + NumberTools.separateInCommas(balance));
+            tvBalance.setTag(balance);
         }
     }
 
@@ -386,7 +388,8 @@ public class C_Finalize extends ModuleActivity {
                     Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");*/
 
                     if(!isForHistoryDetail && !isLayaway) {
-                        tvBalance.setText("P" + NumberTools.separateInCommas(getBalance()));
+                        Double balance = getBalance();
+                        tvBalance.setText("P" + NumberTools.separateInCommas(balance));
                         tvBalance.setTag(balance);
                         toggleNext(llReview, tvItems);
                     }

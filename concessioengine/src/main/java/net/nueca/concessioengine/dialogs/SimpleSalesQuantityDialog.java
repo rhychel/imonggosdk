@@ -217,8 +217,11 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
 //                            return obj.getUnit() == null;
                             return false;
                         }
-                    }).get(0);
-                    Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, salesBranch, null, null, branchProduct.getUnit());
+                    }, 0);
+                    Unit unit = null;
+                    if(branchProduct != null)
+                        unit = branchProduct.getUnit();
+                    Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, salesBranch, null, null, unit);
 
                     if(retail_price == null)
                         retail_price = product.getRetail_price();
@@ -300,7 +303,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             if(quantity == null || quantity.length() == 0)
                 quantity = "0";
 
-            if (quantity.equals("0") && !isMultiValue)
+            if (Double.valueOf(quantity) == 0 && !isMultiValue)
                 selectedProductItem.removeAll(); // TODO handle this
             else if (quantity.equals("0") && isMultiValue) {
                 if (multiQuantityDialogListener != null)

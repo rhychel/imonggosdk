@@ -113,6 +113,37 @@
 
         <!-- Check fields -->
         <LinearLayout
+            android:id="@+id/llPointsToPeso"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:weightSum="3"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Points to Peso"
+                android:layout_weight="1"
+                android:textSize="13sp"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:ems="10"
+                android:text="Points to Peso"
+                android:layout_weight="2"
+                android:layout_marginLeft="16dp"
+                android:textSize="16sp"
+                android:id="@+id/tvPointsToPeso"
+                android:layout_gravity="center_vertical" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/llCheckName"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -126,7 +157,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Check name"
                 android:layout_weight="1"
-                android:textSize="13sp" />
+                android:textSize="13sp"/>
 
             <EditText
                 android:layout_width="0dp"

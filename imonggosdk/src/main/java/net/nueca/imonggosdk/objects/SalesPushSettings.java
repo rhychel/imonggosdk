@@ -25,7 +25,7 @@ public class SalesPushSettings extends DBTable {
     @DatabaseField
     private String offline_message = "", encouragement_message = "", trigger = "", congratulation_message = "";
 
-    @DatabaseField(foreign = true, columnName = "sales_push")
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "sales_push")
     private SalesPromotion salesPromotion;
 
     @Override

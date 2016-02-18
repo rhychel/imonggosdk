@@ -423,6 +423,13 @@ public class OfflineData extends BaseTable2 {
         return reference_no;
     }
 
+    public String getReferenceNumber() {
+        if(invoiceData != null)
+            if(invoiceData.getCustomer() != null)
+                return reference_no + "/" + invoiceData.getCustomer().generateFullName();
+        return reference_no;
+    }
+
     public void setReference_no(String reference_no) {
         this.reference_no = reference_no;
     }

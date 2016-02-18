@@ -179,6 +179,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionDetailsFragment.setHelper(getHelper());
                 simpleTransactionDetailsFragment.setHasCategories(false);
                 simpleTransactionDetailsFragment.setSetupActionBar(this);
+                // if there's branch product
+                simpleTransactionDetailsFragment.setBranch(getBranches().get(0));
 
                 simpleTransactionsFragment = new SimpleTransactionsFragment();
                 simpleTransactionsFragment.setHelper(getHelper());
@@ -223,6 +225,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             intent.putExtra(REFERENCE, offlineData.getReference_no());
                             intent.putExtra(FOR_HISTORY_DETAIL, true);
                             startActivityForResult(intent, HISTORY_DETAILS);
+                        }
+                        else if(offlineData.getType() == OfflineData.CUSTOMER) {
+                            Intent intent = new Intent(C_Module.this, C_Module.class);
+                            intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, offlineData.getObjectFromData(Customer.class).getId());
+                            intent.putExtra(ModuleActivity.FOR_HISTORY_DETAIL, true);
+                            intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
+                            startActivityForResult(intent, ALL_CUSTOMERS);
                         }
                         else {
                             try {
@@ -328,6 +337,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 if(isFromCustomersList) {
                     btn1.setText("VIEW HISTORY");
                     btn1.setOnClickListener(showHistory);
+                }
+                else if (isForHistoryDetail) {
+                    llFooter.setVisibility(View.GONE);
                 }
                 else {
                     btn1.setText("TRANSACT");
@@ -453,6 +465,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setMultiInputListener(multiInputListener);
                 simpleProductsFragment.setListingType(ListingType.SALES);
                 simpleProductsFragment.setDisplayOnly(getModuleSetting(concessioModule).is_view());
+                // if there's branch product
+                simpleProductsFragment.setBranch(getBranches().get(0));
 
                 llFooter.setVisibility(View.VISIBLE);
                 btn1.setText("PRINT INVENTORY");
@@ -596,6 +610,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 simpleProductsFragment.setProductCategories(getProductCategories(false));
                                 simpleProductsFragment.setShowCategoryOnStart(getModuleSetting(concessioModule).getProductListing().isShow_categories_on_start());
                                 simpleProductsFragment.setProductsFragmentListener(C_Module.this);
+                                // if there's branch product
+                                simpleProductsFragment.setBranch(getBranches().get(0));
 
                                 initializeFinalize();
                                 finalizeFragment.setHasCategories(false);
@@ -603,6 +619,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 finalizeFragment.setHasDeliveryDate(false);
                                 finalizeFragment.setHasUnits(true);
                                 finalizeFragment.setListingType(ListingType.SALES);
+                                // if there's branch product
+                                finalizeFragment.setBranch(getBranches().get(0));
 
                                 prepareFooter();
 

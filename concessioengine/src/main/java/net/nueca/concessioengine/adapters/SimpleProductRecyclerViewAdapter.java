@@ -21,6 +21,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -90,8 +91,11 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
 //                            return obj.getUnit() == null;
                             return false;
                         }
-                    }).get(0);
-                    Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, null, null, branchProduct.getUnit());
+                    }, 0);
+                    Unit unit = null;
+                    if(branchProduct != null)
+                        unit = branchProduct.getUnit();
+                    Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, null, null, unit);
 
                     if(retail_price == null)
                         retail_price = product.getRetail_price();

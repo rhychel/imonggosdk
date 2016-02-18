@@ -145,9 +145,11 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
             for(Table preq : table.getPrerequisites()) {
                 UpdateTable comp = new UpdateTable(preq);
                 int indexOf = getList().indexOf(comp);
-                getItem(indexOf).setForcedSelected(true);
-                getItem(indexOf).setSelected(isChecked);
-                getItem(indexOf).setEnabled(!isChecked);
+                if(indexOf > -1) {
+                    getItem(indexOf).setForcedSelected(true);
+                    getItem(indexOf).setSelected(isChecked);
+                    getItem(indexOf).setEnabled(!isChecked);
+                }
             }
         }
 

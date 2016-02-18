@@ -37,13 +37,13 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
     private EditText etPayment;
     private Spinner spnPaymentType;
 
-    private TextView tvLabelBalance, tvBalance, tvTotalAmount;
+    private TextView tvLabelBalance, tvBalance, tvTotalAmount, tvPointsToPeso;
     private Button btnPay;
 
     private Button btnAdd, btnCancel;
     private Numpad npInput;
 
-    private LinearLayout llCheckName, llCheckNumber, llBankBranch, llCheckDate;
+    private LinearLayout llCheckName, llCheckNumber, llBankBranch, llCheckDate, llPointsToPeso;
     private EditText etCheckName, etCheckNumber, etBankBranch;
     private Button btnCheckDate;
     private InvoicePayment invoicePayment = null;
@@ -100,6 +100,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 toggleCheckDetails(paymentTypes.get(position).getName().trim().toLowerCase().equals("check"));
+                togglePointsDetails(paymentTypes.get(position).getName().trim().toLowerCase().equals("points"));
             }
 
             @Override
@@ -146,7 +147,9 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
         else if(dialogType == DialogType.ADVANCED_PAY) {
             tvBalance = (TextView) super.findViewById(R.id.tvBalance);
             tvLabelBalance = (TextView) super.findViewById(R.id.tvLabelBalance);
+            tvPointsToPeso = (TextView) super.findViewById(R.id.tvPointsToPeso);
             tvTotalAmount = (TextView) super.findViewById(R.id.tvTotalAmount);
+            llPointsToPeso = (LinearLayout) super.findViewById(R.id.llPointsToPeso);
             btnPay = (Button) super.findViewById(R.id.btnPay);
 
             balanceColor(balance);
@@ -249,6 +252,13 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
             });
         else
             btnCheckDate.setOnClickListener(null);
+    }
+
+    private void togglePointsDetails(boolean show) {
+        int visibility = show ? View.VISIBLE : View.GONE;
+        llPointsToPeso.setVisibility(visibility);
+        tvPointsToPeso.setText("P0.00"); // <---- put the points here...
+
     }
 
     public void setDialogType(DialogType dialogType) {

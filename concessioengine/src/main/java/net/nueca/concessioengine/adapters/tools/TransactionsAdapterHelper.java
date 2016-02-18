@@ -34,6 +34,8 @@ public class TransactionsAdapterHelper {
             return "Order";
         else if(offlineData.getType() == OfflineData.INVOICE)
             return "Sales";
+        else if(offlineData.getType() == OfflineData.CUSTOMER)
+            return "Customer";
         ConcessioModule concessioModule = offlineData.getObjectFromData(Document.class)
                 .getDocument_type_code()
                 .getConcessioModule();

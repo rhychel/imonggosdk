@@ -256,7 +256,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     invoice.setStatus("S");
                     if(!isLayaway) {
-                        new SwableTools.Transaction(getHelper())
+                        offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()
                                 .forBranch(ProductsAdapterHelper.getSelectedBranch())
                                 .fromModule(ConcessioModule.INVOICE)
@@ -264,7 +264,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                 .queue();
                     } else {
                         invoice.updateTo(getHelper());
-                        new SwableTools.Transaction(getHelper())
+                        offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()
                                 .forBranch(ProductsAdapterHelper.getSelectedBranch())
                                 .fromModule(ConcessioModule.INVOICE)
@@ -296,7 +296,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                         invoice.setStatus("L");
                         if(!isLayaway) {
-                            new SwableTools.Transaction(getHelper())
+                            offlineData = new SwableTools.Transaction(getHelper())
                                     .toSend()
                                     .forBranch(ProductsAdapterHelper.getSelectedBranch())
                                     .fromModule(ConcessioModule.INVOICE)
@@ -304,7 +304,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                     .queue();
                         } else {
                             invoice.updateTo(getHelper());
-                            new SwableTools.Transaction(getHelper())
+                            offlineData = new SwableTools.Transaction(getHelper())
                                     .toSend()
                                     .forBranch(ProductsAdapterHelper.getSelectedBranch())
                                     .fromModule(ConcessioModule.INVOICE)
@@ -323,6 +323,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private TransactionDialog.TransactionDialogListener transactionDialogListener = new TransactionDialog.TransactionDialogListener() {
         @Override
         public void whenDismissed() {
+            updateInventoryFromSelectedItemList(false);
             Intent intent = new Intent();
             intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
             setResult(SUCCESS, intent);
