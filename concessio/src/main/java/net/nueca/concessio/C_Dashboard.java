@@ -39,6 +39,7 @@ import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.SalesPushSettings;
 import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
@@ -89,6 +90,13 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         setContentView(R.layout.c_dashboard);
 
         Log.e("ClassName", Customer.class.getSimpleName());
+
+        try {
+            for(SalesPushSettings settings : getHelper().fetchObjectsList(SalesPushSettings.class))
+                Log.e(">>>", settings.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         setNextActivityClass(C_Module.class);
 

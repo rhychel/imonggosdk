@@ -2,7 +2,6 @@ package net.nueca.concessio;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -26,24 +25,18 @@ import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
 import net.nueca.concessioengine.dialogs.TransactionDialog;
 import net.nueca.concessioengine.fragments.SimpleCheckoutFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
-import net.nueca.concessioengine.tools.InvoiceTools;
-import net.nueca.concessioengine.tools.LocationTools;
+import net.nueca.concessioengine.tools.PointsTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
-import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.base.Extras;
-import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
-import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.swable.SwableTools;
-import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
-import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,6 +63,13 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_checkout_activity);
+
+        try {
+            SalesPromotion salesPromotion = PointsTools.getPointSalesPromotion(getHelper());
+            Log.e("$$$$$$$$$$$$$$$$$", salesPromotion == null? "null" : salesPromotion.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
 //        tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
 //        rvPayments = (RecyclerView) findViewById(R.id.rvPayments);
@@ -217,6 +217,19 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 if (btn1.getText().toString().equals("PAY")) {
                     SimplePaymentDialog dialog = new SimplePaymentDialog(C_Checkout.this, simpleSplitPaymentAdapter.getPaymentTypeList(), R.style.AppCompatDialogStyle_Light_NoTitle);
                     dialog.setDialogType(DialogType.ADVANCED_PAY);
+
+                    Double availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
+                    Double pointsInPeso = 0d;
+                    try {
+                        SalesPromotion salesPromotion = PointsTools.getPointSalesPromotion(getHelper());
+                        if(salesPromotion != null && salesPromotion.getSettings() != null)
+                            pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    dialog.setAvailablePoints(availablePoints);
+                    dialog.setPointsInPesoText(pointsInPeso);
+
                     dialog.setBalanceText(checkoutFragment.getRemainingBalance());
                     dialog.setTotalAmountText(tvTotalAmount.getText().toString());
                     dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {

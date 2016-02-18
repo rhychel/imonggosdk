@@ -37,13 +37,13 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
     private EditText etPayment;
     private Spinner spnPaymentType;
 
-    private TextView tvLabelBalance, tvBalance, tvTotalAmount, tvPointsToPeso;
+    private TextView tvLabelBalance, tvBalance, tvTotalAmount, tvPointsInPeso, tvAvailablePoints;
     private Button btnPay;
 
     private Button btnAdd, btnCancel;
     private Numpad npInput;
 
-    private LinearLayout llCheckName, llCheckNumber, llBankBranch, llCheckDate, llPointsToPeso;
+    private LinearLayout llCheckName, llCheckNumber, llBankBranch, llCheckDate, llPointsToPeso, llAvailablePoints;
     private EditText etCheckName, etCheckNumber, etBankBranch;
     private Button btnCheckDate;
     private InvoicePayment invoicePayment = null;
@@ -54,6 +54,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
 
     private String totalAmount = "";
     private double balance = 0.0;
+    private double pointsInPeso = 0d, availablePoints = 0d;
 
     public SimplePaymentDialog(Context context, List<PaymentType> paymentTypes) {
         super(context);
@@ -147,9 +148,11 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
         else if(dialogType == DialogType.ADVANCED_PAY) {
             tvBalance = (TextView) super.findViewById(R.id.tvBalance);
             tvLabelBalance = (TextView) super.findViewById(R.id.tvLabelBalance);
-            tvPointsToPeso = (TextView) super.findViewById(R.id.tvPointsToPeso);
+            tvPointsInPeso = (TextView) super.findViewById(R.id.tvPointsInPeso);
+            tvAvailablePoints = (TextView) super.findViewById(R.id.tvAvailablePoints);
             tvTotalAmount = (TextView) super.findViewById(R.id.tvTotalAmount);
             llPointsToPeso = (LinearLayout) super.findViewById(R.id.llPointsToPeso);
+            llAvailablePoints = (LinearLayout) super.findViewById(R.id.llAvailablePoints);
             btnPay = (Button) super.findViewById(R.id.btnPay);
 
             balanceColor(balance);
@@ -169,37 +172,34 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                 }
             });
             etPayment.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                private String newText;
 
-                }
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if(s.length() == 0) {
-                        tvBalance.setText(NumberTools.separateInCommas(balance));
-                        balanceColor(balance);
-                    }
-                    else if(invoicePayment != null) {
-                        BigDecimal currentBalance = new BigDecimal(balance);
-                        BigDecimal prevPayment = new BigDecimal(invoicePayment.getTender());
-                        BigDecimal payment = new BigDecimal(s.toString());
-                        double newBalance = currentBalance.add(prevPayment).subtract(payment).doubleValue();
-                        tvBalance.setText(NumberTools.separateInCommas(Math.abs(newBalance)));
-                        balanceColor(newBalance);
-                    }
-                    else {
-                        BigDecimal currentBalance = new BigDecimal(balance);
-                        BigDecimal payment = new BigDecimal(s.toString());
-                        double newBalance = currentBalance.subtract(payment).doubleValue();
-                        tvBalance.setText(NumberTools.separateInCommas(Math.abs(newBalance)));
-                        balanceColor(newBalance);
-                    }
+                    newText = "0" + s.toString();
                 }
 
                 @Override
-                public void afterTextChanged(Editable s) {
+                public void afterTextChanged(Editable editable) {
+                    BigDecimal currentBalance = new BigDecimal(balance);
+                    BigDecimal payment = new BigDecimal(newText);
+                    double newBalance;
 
+                    if(newText.length() == 0) {
+                        newBalance = balance;
+                    }
+                    else if(invoicePayment != null) {
+                        BigDecimal prevPayment = new BigDecimal(invoicePayment.getTender());
+                        newBalance = currentBalance.add(prevPayment).subtract(payment).doubleValue();
+                    }
+                    else {
+                        newBalance = currentBalance.subtract(payment).doubleValue();
+                    }
+                    tvBalance.setText(NumberTools.separateInCommas(Math.abs(newBalance)));
+                    balanceColor(newBalance);
                 }
             });
             etPayment.setSelection(0, etPayment.getText().length());
@@ -256,9 +256,11 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
 
     private void togglePointsDetails(boolean show) {
         int visibility = show ? View.VISIBLE : View.GONE;
-        llPointsToPeso.setVisibility(visibility);
-        tvPointsToPeso.setText("P0.00"); // <---- put the points here...
+        llAvailablePoints.setVisibility(visibility);
+        tvAvailablePoints.setText(NumberTools.separateInCommas(availablePoints));
 
+        llPointsToPeso.setVisibility(visibility);
+        tvPointsInPeso.setText(NumberTools.separateInCommas(pointsInPeso));
     }
 
     public void setDialogType(DialogType dialogType) {
@@ -277,6 +279,16 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
 
     public SimplePaymentDialog setBalanceText(double balanceText) {
         balance = balanceText;
+        return this;
+    }
+
+    public SimplePaymentDialog setPointsInPesoText(double pointsInPeso) {
+        this.pointsInPeso = pointsInPeso;
+        return this;
+    }
+
+    public SimplePaymentDialog setAvailablePoints(double availablePoints) {
+        this.availablePoints = availablePoints;
         return this;
     }
 

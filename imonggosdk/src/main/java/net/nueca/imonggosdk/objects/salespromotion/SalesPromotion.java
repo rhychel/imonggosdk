@@ -47,6 +47,7 @@ public class SalesPromotion extends BaseTable {
             to_date = "",
             from_date = "";
 
+    @Expose
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private SalesPushSettings settings;
 
