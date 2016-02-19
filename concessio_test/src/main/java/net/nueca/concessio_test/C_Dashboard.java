@@ -81,7 +81,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
 
                         @Override
                         public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                            Log.e("onError", "hasInternet="+hasInternet+" || responseCode="+responseCode);
+                            Log.e("onDiscoveryError", "hasInternet="+hasInternet+" || responseCode="+responseCode);
                         }
 
                         @Override

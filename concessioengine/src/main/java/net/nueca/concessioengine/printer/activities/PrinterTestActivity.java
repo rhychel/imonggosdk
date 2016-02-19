@@ -31,7 +31,7 @@ public class PrinterTestActivity extends ImonggoAppCompatActivity implements Pri
     private DiscoveryListener mDiscoveryListener = new DiscoveryListener() {
         @Override
         public void onDiscovery(final DeviceInfo deviceInfo) {
-            Log.e(TAG,"EpsonPrinter Discovered: " + deviceInfo.getDeviceName());
+            Log.e(TAG,"EPSONPrinterTools Discovered: " + deviceInfo.getDeviceName());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

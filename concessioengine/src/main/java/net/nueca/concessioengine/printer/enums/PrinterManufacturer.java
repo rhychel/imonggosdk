@@ -4,7 +4,7 @@ package net.nueca.concessioengine.printer.enums;
  * Created by Jn on 31/01/16.
  */
 public enum  PrinterManufacturer {
-    EPSON("EpsonPrinter"),
+    EPSON("EPSONPrinterTools"),
     OTHERS("Others");
 
     private String name;
