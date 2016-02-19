@@ -69,6 +69,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
         rvFields = (RecyclerView) findViewById(R.id.rvFields);
         tbAddCustomer = (Toolbar) findViewById(R.id.tbAddCustomer);
         if(getIntent().hasExtra(CUSTOMER_ID)) {
+            Log.e("CUSTOMER_ID", getIntent().getIntExtra(CUSTOMER_ID, -1)+"<----");
             try {
                 updateCustomer = getHelper().fetchIntId(Customer.class).queryForId(getIntent().getIntExtra(CUSTOMER_ID, -1));
             } catch (SQLException e) {
@@ -94,6 +95,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
             customerFieldArrayList.add(new CustomerField("Work", FieldType.EDITTEXT, Customer.CustomerFields.TELEPHONE, updateCustomer.getTelephone()));
             customerFieldArrayList.add(new CustomerField("Company", FieldType.EDITTEXT, R.drawable.ic_branch_orange, Customer.CustomerFields.COMPANY_NAME, updateCustomer.getCompany_name()));
             customerFieldArrayList.add(new CustomerField("Address", FieldType.EDITTEXT, Customer.CustomerFields.STREET, updateCustomer.getStreet()));
+            getSupportActionBar().setTitle("Update Customer");
             try {
                 initSpinnerValues(true, true);
             } catch (SQLException e) {

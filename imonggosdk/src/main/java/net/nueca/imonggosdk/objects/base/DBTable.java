@@ -15,7 +15,8 @@ import java.util.List;
 /**
  * Created by rhymart on 11/16/15.
  */
-public abstract class DBTable {
+public abstract class
+DBTable {
     public static final String TAG = "DBTable";
 
     // NEW --------

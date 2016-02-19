@@ -23,8 +23,10 @@
     android:layout_height="48dp"
     android:paddingLeft="58dp"
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-    android:paddingRight="?android:attr/listPreferredItemPaddingRight">
-
+    android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+    android:background="?android:attr/selectableItemBackground">
+    <!--android:focusable="true"-->
+    <!--android:focusableInTouchMode="true"-->
     <android.support.v7.widget.SwitchCompat
         android:layout_width="match_parent"
         android:layout_height="48dp"
