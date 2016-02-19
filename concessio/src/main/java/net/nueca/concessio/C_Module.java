@@ -903,6 +903,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             Intent intent = new Intent(this, AddEditCustomerActivity.class);
             startActivityForResult(intent, ADD_CUSTOMER);
         } else if (item.getItemId() == R.id.mEditCustomer) {
+            Log.e("EditCustomer", customer.getId()+"---");
             Intent intent = new Intent(this, AddEditCustomerActivity.class);
             intent.putExtra(CUSTOMER_ID, customer.getId());
             startActivityForResult(intent, EDIT_CUSTOMER);
@@ -926,7 +927,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customerId);
                         intent.putExtra(ModuleActivity.FROM_CUSTOMERS_LIST, isFromCustomersList);
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
-                        startActivity(intent);
+                        startActivityForResult(intent, ALL_CUSTOMERS);
                     }
                 };
                 handler.sendEmptyMessageDelayed(0, 100);
