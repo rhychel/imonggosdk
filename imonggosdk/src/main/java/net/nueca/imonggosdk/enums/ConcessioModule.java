@@ -10,6 +10,7 @@ public enum ConcessioModule {
     APPLICATION("APPLICATION"),
     USER("USER"),
     PRODUCTS("PRODUCTS"),
+    PRINTER("PRINTER"),
 
     STOCK_REQUEST("stock_request"), // Orders
     PURCHASE_ORDERS("purchase_orders"),

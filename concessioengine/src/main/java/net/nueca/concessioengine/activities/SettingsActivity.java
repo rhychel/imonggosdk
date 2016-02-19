@@ -71,18 +71,19 @@ public class SettingsActivity extends ModuleActivity {
     }
 
     private List<AppSettings> generateSettings() {
+        int sectionFirstPosition = 0;
         ArrayList<AppSettings> appSettings = new ArrayList<>();
 
         // header
         AppSettings headerApp = new AppSettings();
         headerApp.setHeader(true);
-        headerApp.setSectionFirstPosition(0);
+        headerApp.setSectionFirstPosition(sectionFirstPosition);
         headerApp.setConcessioModule(ConcessioModule.APPLICATION);
         // header
 
         AppSettings version = new AppSettings();
         version.setHeader(false);
-        version.setSectionFirstPosition(0);
+        version.setSectionFirstPosition(sectionFirstPosition);
         version.setConcessioModule(ConcessioModule.APPLICATION);
         version.setAppSettingEntry(AppSettings.AppSettingEntry.VERSION);
         version.setValue(AppTools.getAppVersionName(this));
@@ -94,7 +95,7 @@ public class SettingsActivity extends ModuleActivity {
         if(debugMode.is_enabled()) {
             AppSettings debug = new AppSettings();
             debug.setHeader(false);
-            debug.setSectionFirstPosition(0);
+            debug.setSectionFirstPosition(sectionFirstPosition);
             debug.setConcessioModule(ConcessioModule.APPLICATION);
             debug.setAppSettingEntry(AppSettings.AppSettingEntry.CLEAR_TRANSACTIONS);
             debug.setOnItemClickListener(new OnItemClickListener() {
@@ -147,7 +148,7 @@ public class SettingsActivity extends ModuleActivity {
 
         AppSettings autoUpdate = new AppSettings();
         autoUpdate.setHeader(false);
-        autoUpdate.setSectionFirstPosition(0);
+        autoUpdate.setSectionFirstPosition(sectionFirstPosition);
         autoUpdate.setConcessioModule(ConcessioModule.APPLICATION);
         autoUpdate.setAppSettingEntry(AppSettings.AppSettingEntry.AUTO_UPDATE_APP);
         autoUpdate.setValueType(AppSettings.ValueType.SWITCH);
@@ -164,7 +165,7 @@ public class SettingsActivity extends ModuleActivity {
             AppSettings multi = new AppSettings();
             multi.setSelectedItem(selected);
             multi.setHeader(false);
-            multi.setSectionFirstPosition(0);
+            multi.setSectionFirstPosition(sectionFirstPosition);
             multi.setConcessioModule(ConcessioModule.APPLICATION);
             multi.setAppSettingEntry(AppSettings.AppSettingEntry.PRODUCT_SORTING);
             multi.setValueType(AppSettings.ValueType.DROPDOWN);
@@ -191,6 +192,29 @@ public class SettingsActivity extends ModuleActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        // --------- PRINTER
+        sectionFirstPosition = appSettings.size()-1;
+
+        AppSettings printerHeader = new AppSettings();
+        printerHeader.setHeader(true);
+        printerHeader.setSectionFirstPosition(sectionFirstPosition);
+        printerHeader.setConcessioModule(ConcessioModule.PRINTER);
+        appSettings.add(printerHeader);
+
+        AppSettings epsonPrinter = new AppSettings();
+        epsonPrinter.setHeader(false);
+        epsonPrinter.setSectionFirstPosition(sectionFirstPosition);
+        epsonPrinter.setConcessioModule(ConcessioModule.PRINTER);
+        epsonPrinter.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_EPSON_PRINTER);
+        epsonPrinter.setValue("Not Connected!");
+        epsonPrinter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClicked(View view, int position) {
+
+            }
+        });
+        appSettings.add(epsonPrinter);
 
         return appSettings;
     }
