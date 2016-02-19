@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -19,13 +20,19 @@ public class SalesPushSettings extends DBTable {
     @DatabaseField(generatedId = true, columnName = "id")
     int id;
 
+    @Expose
     @DatabaseField
     private int enable_threshold, threshold, return_trigger;
 
+    @Expose
     @DatabaseField
     private String offline_message = "", encouragement_message = "", trigger = "", congratulation_message = "";
 
-    @DatabaseField(foreign = true, columnName = "sales_push")
+    @Expose
+    @DatabaseField
+    private double conversion_to_currency;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "sales_push")
     private SalesPromotion salesPromotion;
 
     @Override
@@ -40,6 +47,7 @@ public class SalesPushSettings extends DBTable {
                 ", trigger='" + trigger + '\'' +
                 ", congratulation_message='" + congratulation_message + '\'' +
                 ", salesPromotion=" + salesPromotion +
+                ", conversion_to_currency=" + conversion_to_currency +
                 '}';
     }
 
@@ -105,6 +113,14 @@ public class SalesPushSettings extends DBTable {
 
     public void setSalesPromotion(SalesPromotion salesPromotion) {
         this.salesPromotion = salesPromotion;
+    }
+
+    public double getConversion_to_currency() {
+        return conversion_to_currency;
+    }
+
+    public void setConversion_to_currency(double conversion_to_currency) {
+        this.conversion_to_currency = conversion_to_currency;
     }
 
     @Override

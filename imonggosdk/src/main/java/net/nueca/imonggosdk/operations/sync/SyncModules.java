@@ -2608,6 +2608,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     SalesPushSettings salesPushSettings = null;
                                     if (jsonObject.has("settings")) {
                                         JSONObject settingsJSONObject = jsonObject.getJSONObject("settings");
+                                        Log.e("ABCDEFG", settingsJSONObject.toString());
                                         if (settingsJSONObject != null) {
                                             salesPushSettings = gson.fromJson(settingsJSONObject.toString(), SalesPushSettings.class);
                                             salesPushSettings.insertTo(getHelper());

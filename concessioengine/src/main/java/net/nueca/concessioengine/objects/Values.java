@@ -207,13 +207,13 @@ public class Values {
                 this.no_discount_subtotal = this.unit_retail_price;
                 this.subtotal = DiscountTools.applyMultipleDiscounts(
                         new BigDecimal(this.retail_price), new BigDecimal(this.unit_quantity),
-                        product_discounts, discount_text, ","
+                        product_discounts, company_discounts, discount_text, ";", ","
                 ).doubleValue();
             } else {
                 this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
                 this.subtotal = DiscountTools.applyMultipleDiscounts(
                         new BigDecimal(this.retail_price), new BigDecimal(this.quantity),
-                        product_discounts, discount_text, ","
+                        product_discounts, company_discounts, discount_text, ";", ","
                 ).doubleValue();
             }
 
