@@ -3,6 +3,8 @@ package net.nueca.concessioengine.printer.tools;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -22,17 +24,47 @@ import net.nueca.concessioengine.printer.enums.PrinterInterfaceType;
 import net.nueca.concessioengine.printer.listener.PrinterSeriesListener;
 import net.nueca.concessioengine.printer.listener.PrinterTypeListener;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by Jn on 01/02/16.
  */
 public class PrinterTools {
     public static String TAG = "PrinterTools";
-    public static String PRINTER_TYPE = "PRINTER_TYPE";
-    public static String PRINTER_NAME = "PRINTER_NAME";
+    public static String PRINTER = "_printer";
+
+    public static void updatePrinter(Context context, HashMap<String,String> inputMap) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            SharedPreferences.Editor editor = preferences.edit();
+
+            JSONObject jsonObject = new JSONObject(inputMap);
+            String jsonString = jsonObject.toString();
+            editor.putString(pinfo.packageName + PRINTER, jsonString);
+            editor.apply();
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Key[updateIsUnlinked]", "Not Found");
+            e.printStackTrace();
+        }
+    }
+
+    public void getPrintersName(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            //return preferences.getBoolean(pinfo.packageName + PRINTER, true);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Key[isUnlinked]", "Not Found");
+            //return true;
+        }
+    }
 
 
     // For Star Micronics Printers
@@ -44,23 +76,19 @@ public class PrinterTools {
         //List<String> discoveredPortNames = new ArrayList<>();
 
         try {
-
             if (interfaceType == PrinterInterfaceType.BLUETOOTH || interfaceType == PrinterInterfaceType.ALL) {
                 BTPorts = StarIOPort.searchPrinter("BT:");
                 for (PortInfo port : BTPorts) {
                     discoveredPortInfo.add(port);
                 }
             }
-
             if (interfaceType == PrinterInterfaceType.USB || interfaceType == PrinterInterfaceType.ALL) {
                 USBPorts = StarIOPort.searchPrinter("USB:");
                 for (PortInfo port : USBPorts) {
                     discoveredPortInfo.add(port);
                 }
             }
-
             return discoveredPortInfo;
-
         } catch (StarIOPortException e) {
             e.printStackTrace();
         }
@@ -68,18 +96,7 @@ public class PrinterTools {
     }
 
 
-
-
     // TODO: DELETE THIS UNDER
-
-    public static void setPrinterType(Context context, PrinterInterfaceType epsonPrinterType) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-
-        editor.putInt(PRINTER_TYPE, epsonPrinterType == null ? 0 : epsonPrinterType.ordinal());
-        editor.apply();
-
-    }
 
     public static void printErrorLog(int errorNumber, Context c) {
         switch (errorNumber) {
@@ -107,8 +124,6 @@ public class PrinterTools {
     public static void showSelectEpsonPrinterModel(Context context) {
         final Dialog dialog = new Dialog(context);
         dialog.setTitle("Select PrinterModel");
-
-
     }
 
     public static void showSelectEpsonPrinterTypeDialog(Context context, final EpsonSelectionType selectionType, final PrinterTypeListener pTypeListener, final PrinterSeriesListener pSeriesListener) {
@@ -142,14 +157,10 @@ public class PrinterTools {
             }
         }
 
-
         dialog.setTitle(dialog_title);
-
-
         rgPrinterType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-
                 RadioButton rb = (RadioButton) rgPrinterType.findViewById(checkedId);
                 String name = rb.getText().toString();
                 if (selectionType == EpsonSelectionType.TYPE) {
@@ -157,18 +168,14 @@ public class PrinterTools {
                         pTypeListener.onPrinterTypeSelected(PrinterInterfaceType.getPrinterTypeByName(name));
                     }
                 }
-
                 if (selectionType == EpsonSelectionType.MODEL) {
                     if (pSeriesListener != null) {
                         pSeriesListener.onPrinterModelSelected(EpsonPrinterSeries.getPrinterSeriesByName(name));
                     }
                 }
-
                 dialog.dismiss();
             }
         });
-
         dialog.show();
-
     }
 }
