@@ -183,7 +183,7 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
             if(quantity.length() == 0)
                 quantity = "0";
 
-            if (quantity.equals("0") && !isMultiValue)
+            if (Double.valueOf(quantity) == 0 && !isMultiValue)
                 selectedProductItem.removeAll(); // TODO handle this
             else if (quantity.equals("0") && isMultiValue) {
                 if (multiQuantityDialogListener != null)

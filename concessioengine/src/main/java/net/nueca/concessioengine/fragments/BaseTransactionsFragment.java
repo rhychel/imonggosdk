@@ -43,7 +43,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
 
     protected boolean hasFilterByBranch = false, hasFilterByTransactionType = false;
     protected boolean isTypesInitialized = false,
-            hasDocument = false, hasOrder = false, hasInvoice = false,
+            hasDocument = false, hasOrder = false, hasInvoice = false, hasCustomer = false,
             priorityDocument = true, priorityOrder = true, priorityInvoice = true, layawaysOnly = false;
     protected String searchKey = "";
     protected Customer customer = null;
@@ -115,6 +115,8 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
                     transactionTypes.add(OfflineData.ORDER);
                 if(hasInvoice)
                     transactionTypes.add(OfflineData.INVOICE);
+
+                transactionTypes.add(OfflineData.CUSTOMER);
 
 
                 whereOfflineData.in("type", transactionTypes);//.and()

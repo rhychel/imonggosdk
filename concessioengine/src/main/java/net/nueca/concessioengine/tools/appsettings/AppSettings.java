@@ -3,6 +3,7 @@ package net.nueca.concessioengine.tools.appsettings;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 
 import java.util.List;
@@ -68,6 +69,9 @@ public class AppSettings {
     private Object value;
     private ArrayAdapter<?> adapter;
     private AdapterView.OnItemSelectedListener onItemSelectedListener;
+    private int selectedItem = 0;
+    private OnItemClickListener onItemClickListener;
+
 
     public ConcessioModule getConcessioModule() {
         return concessioModule;
@@ -91,6 +95,16 @@ public class AppSettings {
 
     public void setSectionFirstPosition(int sectionFirstPosition) {
         this.sectionFirstPosition = sectionFirstPosition;
+    }
+
+    public int getSelectedItem() {
+        if(selectedItem < 0)
+            return 0;
+        return selectedItem;
+    }
+
+    public void setSelectedItem(int selectedItem) {
+        this.selectedItem = selectedItem;
     }
 
     public ValueType getValueType() {
@@ -131,5 +145,13 @@ public class AppSettings {
 
     public void setAppSettingEntry(AppSettingEntry appSettingEntry) {
         this.appSettingEntry = appSettingEntry;
+    }
+
+    public OnItemClickListener getOnItemClickListener() {
+        return onItemClickListener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 }

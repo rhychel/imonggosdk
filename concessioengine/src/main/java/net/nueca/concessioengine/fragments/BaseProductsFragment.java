@@ -26,6 +26,7 @@ import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
@@ -220,7 +221,15 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
                 }
                 orderBy += " ELSE 1000000 END, ";
             }
-            orderBy += "name COLLATE NOCASE ASC";
+            ProductSorting productSorting = getHelper().fetchForeignCollection(getAppSetting().getProductSortings().closeableIterator(), new ImonggoDBHelper2.Conditional<ProductSorting>() {
+                @Override
+                public boolean validate(ProductSorting obj) {
+                    if(obj.is_default())
+                        return true;
+                    return false;
+                }
+            }, 0);
+            orderBy += (productSorting == null ? "name" : productSorting.getColumn()) + " COLLATE NOCASE ASC";
 
             QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder().orderByRaw(orderBy)
                     .limit(LIMIT).offset(offset);
