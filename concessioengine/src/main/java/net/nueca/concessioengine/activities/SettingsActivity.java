@@ -26,6 +26,11 @@ import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.tools.DialogTools;
 
 import java.sql.SQLException;
@@ -97,11 +102,29 @@ public class SettingsActivity extends ModuleActivity {
                 public void onItemClicked(View view, int position) {
                     Log.e("Offline Datas", OfflineData.fetchAll(getHelper(), OfflineData.class).size()+"---");
                     Log.e("Offline Datas", Document.fetchAll(getHelper(), Document.class).size()+"---");
-
                     DialogTools.showConfirmationDialog(SettingsActivity.this, "Clear Transactions", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             try {
+                                getHelper().deleteAll(DocumentLine.class, InvoiceLine.class, OrderLine.class);
+                                getHelper().deleteAll(Order.class, new DBTable.ConditionsWindow<Order, Integer>() {
+                                    @Override
+                                    public Where<Order, Integer> renderConditions(Where<Order, Integer> where) throws SQLException {
+                                        return where.isNotNull("offlinedata_id");
+                                    }
+                                });
+                                getHelper().deleteAll(Document.class, new DBTable.ConditionsWindow<Document, Integer>() {
+                                    @Override
+                                    public Where<Document, Integer> renderConditions(Where<Document, Integer> where) throws SQLException {
+                                        return where.isNotNull("offlinedata_id");
+                                    }
+                                });
+                                getHelper().deleteAll(Invoice.class, new DBTable.ConditionsWindow<Invoice, Integer>() {
+                                    @Override
+                                    public Where<Invoice, Integer> renderConditions(Where<Invoice, Integer> where) throws SQLException {
+                                        return where.isNotNull("offlinedata_id");
+                                    }
+                                });
                                 getHelper().deleteAll(OfflineData.class, new DBTable.ConditionsWindow<OfflineData, Integer>() {
                                     @Override
                                     public Where<OfflineData, Integer> renderConditions(Where<OfflineData, Integer> where) throws SQLException {
@@ -111,7 +134,6 @@ public class SettingsActivity extends ModuleActivity {
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
-
                             Toast.makeText(SettingsActivity.this, "Transactions deleted!", Toast.LENGTH_LONG).show();
                         }
                     }, "No", new DialogInterface.OnClickListener() {

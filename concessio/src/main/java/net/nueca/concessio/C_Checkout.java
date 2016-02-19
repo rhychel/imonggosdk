@@ -27,6 +27,7 @@ import net.nueca.concessioengine.fragments.SimpleCheckoutFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.tools.PointsTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -230,6 +231,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     dialog.setAvailablePoints(availablePoints);
                     dialog.setPointsInPesoText(pointsInPeso);
 
+                    dialog.setFragmentManager(getFragmentManager());
                     dialog.setBalanceText(checkoutFragment.getRemainingBalance());
                     dialog.setTotalAmountText(tvTotalAmount.getText().toString());
                     dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
@@ -276,10 +278,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                 .object(invoice)
                                 .queue();
                     } else {
+                        Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
                         invoice.updateTo(getHelper());
                         offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()
-                                .forBranch(ProductsAdapterHelper.getSelectedBranch())
+                                .forBranch(branch)
                                 .fromModule(ConcessioModule.INVOICE)
                                 .layawayOfflineData(offlineData)
                                 .queue();
@@ -316,10 +319,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                     .object(invoice)
                                     .queue();
                         } else {
+                            Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
                             invoice.updateTo(getHelper());
                             offlineData = new SwableTools.Transaction(getHelper())
                                     .toSend()
-                                    .forBranch(ProductsAdapterHelper.getSelectedBranch())
+                                    .forBranch(branch)
                                     .fromModule(ConcessioModule.INVOICE)
                                     .layawayOfflineData(offlineData)
                                     .queue();

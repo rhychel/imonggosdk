@@ -164,9 +164,9 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
         return deleteAll(objClass, null);//getDao(objClass).deleteBuilder().delete();
     }
 
-    public <D> int deleteAll(Class<D>... objClass) throws SQLException {
+    public int deleteAll(Class<?>... objClass) throws SQLException {
         int deletes = 0;
-        for(Class<D> obj : objClass) {
+        for(Class<?> obj : objClass) {
             deletes += deleteAll(obj);
         }
         return deletes;

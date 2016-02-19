@@ -151,7 +151,10 @@ public class C_Finalize extends ModuleActivity {
                 if(paymentsComputation.getRemaining().doubleValue() == 0)
                     llBalance.setVisibility(View.GONE);
                 //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
-                tvBalance.setText("P"+ NumberTools.separateInCommas(getBalance()));
+                if(paymentsComputation.getRemaining().doubleValue() > 0)
+                    tvBalance.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getRemaining()));
+                else
+                    tvBalance.setText("P0.00");
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -171,7 +174,7 @@ public class C_Finalize extends ModuleActivity {
                     }, R.style.AppCompatDialogStyle_Light_NoTitle);
                     return;
                 }
-                else if(!offlineData.isSynced() && !offlineData.isSyncing()) {
+                else if(!offlineData.isSynced() && !offlineData.isSyncing() && !isLayaway) {
                     btn2 = (Button) findViewById(R.id.btn2);
                     initializeVoidButton(btn1, getIntent().getStringExtra(REFERENCE));
                     initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
@@ -196,7 +199,10 @@ public class C_Finalize extends ModuleActivity {
                 if(paymentsComputation.getRemaining().doubleValue() == 0)
                     llBalance.setVisibility(View.GONE);
                 //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
-                tvBalance.setText("P"+ NumberTools.separateInCommas(getBalance()));
+                if(paymentsComputation.getRemaining().doubleValue() > 0)
+                    tvBalance.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getRemaining()));
+                else
+                    tvBalance.setText("P0.00");
 
             } catch (SQLException e) {
                 e.printStackTrace();
