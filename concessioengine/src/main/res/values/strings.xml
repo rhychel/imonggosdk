@@ -12,6 +12,10 @@
     <string name="LOGIN_UI_TEXT_HINT_PASSWORD_ID">PASSWORD</string>
     <string name="LOGIN_UI_BUTTON_SIGNIN">Log In</string>
 
+    <string name="discoverPrinterTitle"> Search Printer </string>
+    <string name="discoverPrinterOk"> DISCOVER </string>
+    <string name="discoverPrinterCancel"> CANCEL </string>
+
     <string-array name="gender_array">
         <item>Male</item>
         <item>Female</item>

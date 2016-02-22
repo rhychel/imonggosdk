@@ -1,4 +1,4 @@
-package net.nueca.concessioengine.printer.enums;
+package net.nueca.concessioengine.printer.starmicronics.enums;
 
 /**
  * Created by Jn on 16/02/16.
