@@ -121,7 +121,6 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                         unit = t_unit;
                 } catch (SQLException e) { e.printStackTrace(); }
             }
-
             Log.e(getClass().getSimpleName(), "unit : " + (unit == null? "null" : unit.getName()) );
             Log.e(getClass().getSimpleName(), "selectedProductItem isNull? " + (selectedProductItem == null) );
             Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice 1");

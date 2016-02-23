@@ -36,6 +36,7 @@ import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
+import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
@@ -91,12 +92,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
         Log.e("ClassName", Customer.class.getSimpleName());
 
-        try {
-            for(SalesPushSettings settings : getHelper().fetchObjectsList(SalesPushSettings.class))
-                Log.e(">>>", settings.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            getHelper().deleteAll(Inventory.class);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
         setNextActivityClass(C_Module.class);
 

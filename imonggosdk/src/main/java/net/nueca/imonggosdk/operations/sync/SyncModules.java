@@ -2544,6 +2544,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             } else {
                                                 Log.e(TAG, mCurrentTableSyncing + " API don't have " + "'additional_fields' field");
                                             }
+                                            if (json_extras.has("show")) {
+                                                if (!json_extras.getString("show").isEmpty()) {
+                                                    paymentType_extras.setShow(json_extras.getInt("show"));
+                                                } else {
+                                                    Log.e(TAG, mCurrentTableSyncing + " API " + " 'show' field don't have value");
+                                                }
+                                            } else {
+                                                Log.e(TAG, mCurrentTableSyncing + " API don't have " + "'show' field");
+                                            }
 
                                         } else {
                                             Log.e(TAG, "Payment Type API don't have 'extras' field");

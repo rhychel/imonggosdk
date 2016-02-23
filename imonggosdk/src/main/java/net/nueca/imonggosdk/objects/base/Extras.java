@@ -181,6 +181,9 @@ public class Extras extends DBTable {
     @Expose
     @DatabaseField
     private String additional_fields;
+    @Expose
+    @DatabaseField
+    private Integer show = 1;
 
     /** FOREIGN TABLES **/
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
@@ -765,6 +768,14 @@ public class Extras extends DBTable {
 
     public void setAdditional_fields(String additional_fields) {
         this.additional_fields = additional_fields;
+    }
+
+    public Boolean shouldShow() {
+        return show == 1;
+    }
+
+    public void setShow(Integer show) {
+        this.show = show;
     }
 
     @Override

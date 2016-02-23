@@ -62,6 +62,11 @@ public class Invoice extends BaseTransactionTable2 {
     @Expose
     protected List<InvoiceTaxRate> invoice_tax_rates;
 
+    private transient List<InvoiceLine> sales_invoice_lines;
+    private transient List<InvoiceLine> return_invoice_lines;
+    private transient List<InvoiceLine> bo_invoice_lines;
+    private transient List<InvoiceLine> rgs_invoice_lines;
+
     @ForeignCollectionField
     private transient ForeignCollection<InvoiceLine> invoice_lines_fc;
     @ForeignCollectionField
@@ -162,6 +167,74 @@ public class Invoice extends BaseTransactionTable2 {
         if(invoice_lines == null)
             invoice_lines = new BatchList<>(DatabaseOperation.INSERT);
         return invoice_lines;
+    }
+
+    public List<InvoiceLine> getSalesInvoiceLines() {
+        refresh();
+        if(sales_invoice_lines == null) {
+            sales_invoice_lines = new ArrayList<>();
+            for(InvoiceLine invoiceLine : getInvoiceLines()) {
+                if(invoiceLine.getUnit_quantity() != null && invoiceLine.getUnit_quantity() >= 0)
+                    sales_invoice_lines.add(invoiceLine);
+                else if(invoiceLine.getQuantity() >= 0)
+                    sales_invoice_lines.add(invoiceLine);
+            }
+        }
+        return sales_invoice_lines;
+    }
+
+    public List<InvoiceLine> getReturnInvoiceLines() {
+        refresh();
+        if(return_invoice_lines == null) {
+            bo_invoice_lines = new ArrayList<>();
+            rgs_invoice_lines = new ArrayList<>();
+            return_invoice_lines = new ArrayList<>();
+            for(InvoiceLine invoiceLine : getInvoiceLines()) {
+                if(invoiceLine.getUnit_quantity() != null && invoiceLine.getUnit_quantity() < 0) {
+                    return_invoice_lines.add(invoiceLine);
+                    if(invoiceLine.getExtras().getIs_bad_stock())
+                        bo_invoice_lines.add(invoiceLine);
+                    else
+                        rgs_invoice_lines.add(invoiceLine);
+                }
+                else if(invoiceLine.getQuantity() < 0) {
+                    return_invoice_lines.add(invoiceLine);
+                    if(invoiceLine.getExtras().getIs_bad_stock())
+                        bo_invoice_lines.add(invoiceLine);
+                    else
+                        rgs_invoice_lines.add(invoiceLine);
+                }
+            }
+        }
+        return return_invoice_lines;
+    }
+
+    public List<InvoiceLine> getBoInvoiceLines() {
+        refresh();
+        if(bo_invoice_lines == null) {
+            bo_invoice_lines = new ArrayList<>();
+            for(InvoiceLine invoiceLine : getInvoiceLines()) {
+                if(invoiceLine.getUnit_quantity() != null && invoiceLine.getUnit_quantity() < 0 && invoiceLine.getExtras().getIs_bad_stock())
+                    bo_invoice_lines.add(invoiceLine);
+                else if(invoiceLine.getQuantity() < 0 && invoiceLine.getExtras().getIs_bad_stock())
+                    bo_invoice_lines.add(invoiceLine);
+            }
+        }
+        return bo_invoice_lines;
+    }
+
+    public List<InvoiceLine> getRgsInvoiceLines() {
+        refresh();
+        if(rgs_invoice_lines == null) {
+            rgs_invoice_lines = new ArrayList<>();
+            for(InvoiceLine invoiceLine : getInvoiceLines()) {
+                if(invoiceLine.getUnit_quantity() != null && invoiceLine.getUnit_quantity() < 0 && !invoiceLine.getExtras().getIs_bad_stock())
+                    rgs_invoice_lines.add(invoiceLine);
+                else if(invoiceLine.getQuantity() < 0 && !invoiceLine.getExtras().getIs_bad_stock())
+                    rgs_invoice_lines.add(invoiceLine);
+            }
+        }
+        return rgs_invoice_lines;
     }
 
     public void setInvoiceLines(List<InvoiceLine> invoice_lines) {

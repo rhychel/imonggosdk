@@ -57,7 +57,7 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
         customerDetails.add(CustomerDetail.MOBILE_NO.setValue(customer.getMobile()));
         customerDetails.add(CustomerDetail.TEL_NO.setValue(customer.getTelephone()));
         customerDetails.add(CustomerDetail.COMPANY_NAME.setValue(customer.getCompany_name()));
-        customerDetails.add(CustomerDetail.ADDRESS.setValue(customer.getFullAddress()));
+        customerDetails.add(CustomerDetail.ADDRESS.setValue(customer.generateAddress()));
         if(customer.getCustomerCategory() != null)
             customerDetails.add(CustomerDetail.CUSTOMER_TYPE.setValue(customer.getCustomerCategory().getName()));
         if(customer.getPaymentTerms() != null)

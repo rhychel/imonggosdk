@@ -76,14 +76,14 @@ public class SimpleCustomerListAdapter extends BaseCustomersAdapter {
 
         viewHolder.tvCustomerName.setText(name);
         viewHolder.tvAlternateId.setText(customer.getAlternate_code());
-        viewHolder.tvAddress.setText(customer.getFullAddress());
+        viewHolder.tvAddress.setText(customer.generateAddress());
 
         if(customer.getAlternate_code() != null && !customer.getAlternate_code().isEmpty())
             viewHolder.tvAlternateId.setVisibility(View.VISIBLE);
         else
             viewHolder.tvAlternateId.setVisibility(View.GONE);
 
-        if(customer.getFullAddress() != null && !customer.getFullAddress().isEmpty())
+        if(customer.generateAddress() != null && !customer.generateAddress().isEmpty())
             viewHolder.tvAddress.setVisibility(View.VISIBLE);
         else
             viewHolder.tvAddress.setVisibility(View.GONE);

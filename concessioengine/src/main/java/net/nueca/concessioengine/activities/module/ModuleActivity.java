@@ -422,6 +422,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             try {
                 Log.e("revertInventoryFromDoc", shouldAdd+"");
                 Inventory inventory = getHelper().fetchObjectsInt(Inventory.class).queryBuilder().where().eq("product_id", documentLine.getProduct_id()).queryForFirst();
+                Log.e("revertInventoryFromDoc", "Qty="+documentLine.getQuantity()+" -- "+documentLine.getUnit_quantity());
                 inventory.operationQuantity(documentLine.getQuantity(), shouldAdd);
 //                inventory.updateTo(getHelper());
                 inventories.add(inventory);
@@ -430,6 +431,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 e.printStackTrace();
             }
         }
+        Log.e("revertInventoryFromDoc", inventories.size()+" size");
         inventories.doOperation(Inventory.class);
         return updated;
     }

@@ -36,7 +36,7 @@ DBTable {
         }
     }
 
-    public static <T> T fetchById(ImonggoDBHelper2 dbHelper, Class<T> c, int id) {
+    public static <T> T fetchById(ImonggoDBHelper2 dbHelper, Class<T> c, Integer id) {
         try {
             return dbHelper.fetchIntId(c).queryForId(id);
         } catch (SQLException e) {
