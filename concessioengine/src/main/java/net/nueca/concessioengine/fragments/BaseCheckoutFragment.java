@@ -40,7 +40,7 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
 
     protected Invoice invoice;
     protected InvoiceTools.PaymentsComputation computation = new InvoiceTools
-            .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+            .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
 
     public BaseCheckoutFragment() {
         if(getArguments() != null && getArguments().containsKey(INVOICE_ARGUMENT_KEY)) {

@@ -48,7 +48,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
             this.paymentTypes.put(1, cash);
         }
         this.computation = computation != null? computation : new InvoiceTools
-                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
     }
 
     public BaseSplitPaymentAdapter(Context context, int listItemRes, InvoiceTools.PaymentsComputation computation,
@@ -61,7 +61,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
         for(PaymentType paymentType : paymentTypes)
             this.paymentTypes.put(paymentType.getId(), paymentType);
         this.computation = computation != null? computation : new InvoiceTools
-                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
     }
 
     public HashMap<Integer, PaymentType> getPaymentTypes() {

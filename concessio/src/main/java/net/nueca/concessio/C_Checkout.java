@@ -488,7 +488,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             printer.addText("--------------------------------");
                             printer.addTextAlign(Printer.ALIGN_LEFT);
 
-                            InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+                            InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.
+                                    PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
                             paymentsComputation.findReturnsPaymentType(getHelper());
                             paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
                             paymentsComputation.addAllPayments(invoice.getPayments());

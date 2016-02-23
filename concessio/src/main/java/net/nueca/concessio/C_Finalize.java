@@ -134,7 +134,7 @@ public class C_Finalize extends ModuleActivity {
                     initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
 
                 InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
-                        .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+                        .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
                 paymentsComputation.findReturnsPaymentType(getHelper());
 
                 paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
@@ -185,7 +185,7 @@ public class C_Finalize extends ModuleActivity {
                 }
 
                 InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
-                        .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+                        .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
                 paymentsComputation.findReturnsPaymentType(getHelper());
 
                 paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
@@ -276,7 +276,7 @@ public class C_Finalize extends ModuleActivity {
                 sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();*/
 
         InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
-                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer());
+                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
         try {
             paymentsComputation.findReturnsPaymentType(getHelper());
         } catch (SQLException e) {
