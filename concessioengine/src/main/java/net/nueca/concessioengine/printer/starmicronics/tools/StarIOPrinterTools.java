@@ -1,4 +1,4 @@
-package net.nueca.concessioengine.printer;
+package net.nueca.concessioengine.printer.starmicronics.tools;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,7 +7,7 @@ import com.starmicronics.stario.StarIOPort;
 import com.starmicronics.stario.StarIOPortException;
 import com.starmicronics.stario.StarPrinterStatus;
 
-import net.nueca.concessioengine.printer.enums.StarIOPaperSize;
+import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by Jn on 16/02/16.
  */
-public class StarIOPrinterFunctions {
+public class StarIOPrinterTools {
     /**
      * This function shows how to read the MSR data(credit card) of a portable(ESC/POS) printer. The function first puts the printer into MSR read mode, then asks the user to swipe a credit card The function waits for a response from the user. The user can cancel MSR mode or have the printer read the card.
      *  @param context
