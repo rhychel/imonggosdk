@@ -24,6 +24,7 @@ import java.util.List;
  */
 public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHolder> extends BaseRecyclerAdapter<T, Product> {
 
+    protected Branch branch;
 //    private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
     protected boolean hasSubtotal = false;
     protected boolean isReturnItems = false;
@@ -74,6 +75,14 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
         isReturnItems = returnItems;
     }
 
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
     @Override
     public Product getItem(int position) {
         return super.getItem(position);
@@ -98,4 +107,9 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
     public void setList(List<Product> objectList) {
         super.setList(objectList);
     }
+
+    public ImonggoDBHelper2 getHelper() {
+        return ProductsAdapterHelper.getDbHelper();
+    }
+
 }

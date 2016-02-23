@@ -618,7 +618,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         return name;
     }
 
-    public String getFullAddress() {
+    public String generateAddress() {
         String address = "";
 
         if(street != null && !street.isEmpty())

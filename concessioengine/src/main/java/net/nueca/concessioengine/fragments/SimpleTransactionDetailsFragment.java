@@ -48,6 +48,7 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
 
         simpleProductRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
         simpleProductRecyclerViewAdapter.setListingType(ListingType.SALES);
+        simpleProductRecyclerViewAdapter.setBranch(branch);
         simpleProductRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
         rvProducts.setAdapter(simpleProductRecyclerViewAdapter);
 

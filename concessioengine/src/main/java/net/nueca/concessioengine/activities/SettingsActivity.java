@@ -1,26 +1,49 @@
 package net.nueca.concessioengine.activities;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
+
+import com.epson.epos2.Epos2Exception;
+import com.epson.epos2.discovery.Discovery;
+import com.epson.epos2.discovery.FilterOption;
+import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SettingsAdapter;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.concessioengine.printer.epson.listener.DiscoveryListener;
+import net.nueca.concessioengine.printer.epson.tools.EPSONPrinterTools;
+//import net.nueca.concessioengine.printer.tools.PrinterTools;
 import net.nueca.concessioengine.tools.appsettings.AppSettings;
 import net.nueca.concessioengine.tools.appsettings.AppTools;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
+import net.nueca.imonggosdk.objects.base.DBTable;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
+import net.nueca.imonggosdk.tools.DialogTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by rhymartmanchus on 12/01/2016.
@@ -56,18 +79,19 @@ public class SettingsActivity extends ModuleActivity {
     }
 
     private List<AppSettings> generateSettings() {
+        int sectionFirstPosition = 0;
         ArrayList<AppSettings> appSettings = new ArrayList<>();
 
         // header
         AppSettings headerApp = new AppSettings();
         headerApp.setHeader(true);
-        headerApp.setSectionFirstPosition(0);
+        headerApp.setSectionFirstPosition(sectionFirstPosition);
         headerApp.setConcessioModule(ConcessioModule.APPLICATION);
         // header
 
         AppSettings version = new AppSettings();
         version.setHeader(false);
-        version.setSectionFirstPosition(0);
+        version.setSectionFirstPosition(sectionFirstPosition);
         version.setConcessioModule(ConcessioModule.APPLICATION);
         version.setAppSettingEntry(AppSettings.AppSettingEntry.VERSION);
         version.setValue(AppTools.getAppVersionName(this));
@@ -79,15 +103,60 @@ public class SettingsActivity extends ModuleActivity {
         if(debugMode.is_enabled()) {
             AppSettings debug = new AppSettings();
             debug.setHeader(false);
-            debug.setSectionFirstPosition(0);
+            debug.setSectionFirstPosition(sectionFirstPosition);
             debug.setConcessioModule(ConcessioModule.APPLICATION);
             debug.setAppSettingEntry(AppSettings.AppSettingEntry.CLEAR_TRANSACTIONS);
+            debug.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClicked(View view, int position) {
+                    Log.e("Offline Datas", OfflineData.fetchAll(getHelper(), OfflineData.class).size()+"---");
+                    Log.e("Offline Datas", Document.fetchAll(getHelper(), Document.class).size()+"---");
+                    DialogTools.showConfirmationDialog(SettingsActivity.this, "Clear Transactions", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                getHelper().deleteAll(DocumentLine.class, InvoiceLine.class, OrderLine.class);
+                                getHelper().deleteAll(Order.class, new DBTable.ConditionsWindow<Order, Integer>() {
+                                    @Override
+                                    public Where<Order, Integer> renderConditions(Where<Order, Integer> where) throws SQLException {
+                                        return where.isNotNull("offlinedata_id");
+                                    }
+                                });
+                                getHelper().deleteAll(Document.class, new DBTable.ConditionsWindow<Document, Integer>() {
+                                    @Override
+                                    public Where<Document, Integer> renderConditions(Where<Document, Integer> where) throws SQLException {
+                                        return where.isNotNull("offlinedata_id");
+                                    }
+                                });
+                                getHelper().deleteAll(Invoice.class, new DBTable.ConditionsWindow<Invoice, Integer>() {
+                                    @Override
+                                    public Where<Invoice, Integer> renderConditions(Where<Invoice, Integer> where) throws SQLException {
+                                        return where.isNotNull("offlinedata_id");
+                                    }
+                                });
+                                getHelper().deleteAll(OfflineData.class, new DBTable.ConditionsWindow<OfflineData, Integer>() {
+                                    @Override
+                                    public Where<OfflineData, Integer> renderConditions(Where<OfflineData, Integer> where) throws SQLException {
+                                        return where.in("type", OfflineData.DOCUMENT, OfflineData.INVOICE, OfflineData.ORDER);
+                                    }
+                                });
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                            Toast.makeText(SettingsActivity.this, "Transactions deleted!", Toast.LENGTH_LONG).show();
+                        }
+                    }, "No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) { }
+                    }, R.style.AppCompatDialogStyle_Light);
+                }
+            });
             appSettings.add(debug);
         }
 
         AppSettings autoUpdate = new AppSettings();
         autoUpdate.setHeader(false);
-        autoUpdate.setSectionFirstPosition(0);
+        autoUpdate.setSectionFirstPosition(sectionFirstPosition);
         autoUpdate.setConcessioModule(ConcessioModule.APPLICATION);
         autoUpdate.setAppSettingEntry(AppSettings.AppSettingEntry.AUTO_UPDATE_APP);
         autoUpdate.setValueType(AppSettings.ValueType.SWITCH);
@@ -95,23 +164,16 @@ public class SettingsActivity extends ModuleActivity {
 
         try {
             final List<ProductSorting> productSortings = getHelper().fetchForeignCollection(getModuleSetting(ConcessioModule.APP).getProductSortings().closeableIterator());
-            int i = 0;
-            for(ProductSorting productSorting : productSortings) {
-                if(productSorting.is_default()) {
-                    if(i == 0)
-                        break;
-                    ProductSorting temp = productSorting;
-                    productSortings.add(0, temp);
-                    productSortings.remove(i+1);
-                }
-                i++;
-            }
+            ProductSorting defaultSorting = new ProductSorting();
+            defaultSorting.setIs_default(true);
+            int selected = productSortings.indexOf(defaultSorting);
 
             ArrayAdapter<ProductSorting> psAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, productSortings);
             psAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
             AppSettings multi = new AppSettings();
+            multi.setSelectedItem(selected);
             multi.setHeader(false);
-            multi.setSectionFirstPosition(0);
+            multi.setSectionFirstPosition(sectionFirstPosition);
             multi.setConcessioModule(ConcessioModule.APPLICATION);
             multi.setAppSettingEntry(AppSettings.AppSettingEntry.PRODUCT_SORTING);
             multi.setValueType(AppSettings.ValueType.DROPDOWN);
@@ -123,9 +185,11 @@ public class SettingsActivity extends ModuleActivity {
                     prevSelected.setIs_default(true);
                     int selected = productSortings.indexOf(prevSelected);
                     prevSelected = productSortings.get(selected);
+                    prevSelected.setIs_default(false);
                     prevSelected.updateTo(getHelper());
 
                     ProductSorting newSelected = productSortings.get(position);
+                    newSelected.setIs_default(true);
                     newSelected.updateTo(getHelper());
                 }
 
@@ -137,6 +201,61 @@ public class SettingsActivity extends ModuleActivity {
             e.printStackTrace();
         }
 
+        // --------- PRINTER
+        sectionFirstPosition = appSettings.size()-1;
+
+        AppSettings printerHeader = new AppSettings();
+        printerHeader.setHeader(true);
+        printerHeader.setSectionFirstPosition(sectionFirstPosition);
+        printerHeader.setConcessioModule(ConcessioModule.PRINTER);
+        appSettings.add(printerHeader);
+
+        AppSettings epsonPrinter = new AppSettings();
+        epsonPrinter.setHeader(false);
+        epsonPrinter.setSectionFirstPosition(sectionFirstPosition);
+        epsonPrinter.setConcessioModule(ConcessioModule.PRINTER);
+        epsonPrinter.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_EPSON_PRINTER);
+        epsonPrinter.setValue("Not Connected!");
+        epsonPrinter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClicked(View view, int position) {
+                EPSONPrinterTools.startDiscovery(SettingsActivity.this,
+                        EPSONPrinterTools.getFilterOptions(Discovery.PORTTYPE_BLUETOOTH, null, Discovery.MODEL_ALL, Discovery.FILTER_NAME, Discovery.TYPE_PRINTER),
+                        new DiscoveryListener() {
+                            @Override
+                            public void onDiscovered(HashMap<String, String> printer) {
+                                Log.e("onDiscovered", "yeah");
+                                for(Map.Entry<String, String> entry : printer.entrySet()) {
+                                    Log.e("DISCOVERING: "+entry.getKey(), entry.getValue());
+                                }
+                                EPSONPrinterTools.updateTargetPrinter(SettingsActivity.this, printer);
+                                if(!printer.isEmpty())
+                                    try {
+                                        EPSONPrinterTools.stopDiscovery();
+                                    } catch (Epos2Exception e) {
+                                        e.printStackTrace();
+                                    }
+                            }
+
+                            @Override
+                            public void onDiscoveryError(Exception e) {
+                                Log.e("onDiscoveryError", e.toString());
+                            }
+                        });
+            }
+        });
+        appSettings.add(epsonPrinter);
+
         return appSettings;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            EPSONPrinterTools.stopDiscovery();
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
     }
 }

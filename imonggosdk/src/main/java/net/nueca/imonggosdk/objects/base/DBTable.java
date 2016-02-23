@@ -15,7 +15,8 @@ import java.util.List;
 /**
  * Created by rhymart on 11/16/15.
  */
-public abstract class DBTable {
+public abstract class
+DBTable {
     public static final String TAG = "DBTable";
 
     // NEW --------
@@ -35,7 +36,7 @@ public abstract class DBTable {
         }
     }
 
-    public static <T> T fetchById(ImonggoDBHelper2 dbHelper, Class<T> c, int id) {
+    public static <T> T fetchById(ImonggoDBHelper2 dbHelper, Class<T> c, Integer id) {
         try {
             return dbHelper.fetchIntId(c).queryForId(id);
         } catch (SQLException e) {

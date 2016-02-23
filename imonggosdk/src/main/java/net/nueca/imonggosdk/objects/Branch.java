@@ -48,6 +48,21 @@ public class Branch extends BaseTable {
 
     public Branch() { }
 
+    public String generateAddress() {
+        StringBuilder address = new StringBuilder();
+        boolean hasPrevious = false;
+        if(street != null) {
+            address.append(street);
+            hasPrevious = true;
+        }
+        if(zipcode != null) {
+            if(hasPrevious)
+                address.append(", ");
+            address.append(zipcode);
+        }
+        return address.toString();
+    }
+
     public int getSubscription_type() {
         return subscription_type;
     }

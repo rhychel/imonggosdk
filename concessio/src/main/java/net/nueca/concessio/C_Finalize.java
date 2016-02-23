@@ -91,6 +91,7 @@ public class C_Finalize extends ModuleActivity {
                     public void onVoidTransaction() {
                         // TODO for double checking..
 
+
                         new SwableTools.Transaction(getHelper())
                                 .toCancel()
                                 .withReason("VOID")
@@ -109,14 +110,14 @@ public class C_Finalize extends ModuleActivity {
                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Finalize.this, C_Module.class);
-                        intent.putExtra(FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
+                        intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, offlineData.getConcessioModule().ordinal());
                         startActivityForResult(intent, IS_DUPLICATING);
                     }
                 };
 
                 if(offlineData == null) {
-                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History.", new DialogInterface.OnClickListener() {
+                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
@@ -169,7 +170,7 @@ public class C_Finalize extends ModuleActivity {
                 final OfflineData offlineData = getHelper().fetchObjectsInt(OfflineData.class).queryBuilder()
                         .where().eq("reference_no", getIntent().getStringExtra(REFERENCE)).queryForFirst();
                 if(offlineData == null) {
-                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History.", new DialogInterface.OnClickListener() {
+                    DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
@@ -177,7 +178,7 @@ public class C_Finalize extends ModuleActivity {
                     }, R.style.AppCompatDialogStyle_Light_NoTitle);
                     return;
                 }
-                else if(!offlineData.isSynced() && !offlineData.isSyncing()) {
+                else if(!offlineData.isSynced() && !offlineData.isSyncing() && !isLayaway) {
                     btn2 = (Button) findViewById(R.id.btn2);
                     initializeVoidButton(btn1, getIntent().getStringExtra(REFERENCE));
                     initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
@@ -225,6 +226,11 @@ public class C_Finalize extends ModuleActivity {
             btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(((Double)tvBalance.getTag()) < 0) {
+                        DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total return amount cannot be greater than to your total sales amount.", R.style.AppCompatDialogStyle_Light);
+                        return;
+                    }
+
                     Intent intent = new Intent(C_Finalize.this, C_Checkout.class);
                     intent.putExtra(REFERENCE, reference);
                     intent.putExtra(IS_LAYAWAY, isLayaway);
@@ -394,6 +400,8 @@ public class C_Finalize extends ModuleActivity {
                     if(!isForHistoryDetail && !isLayaway) {
                         Double balance = getBalance();
                         tvBalance.setText("P" + NumberTools.separateInCommas(balance));
+                        tvBalance.setTag(balance);
+                        toggleNext(llReview, tvItems);
                     }
                 }
             });

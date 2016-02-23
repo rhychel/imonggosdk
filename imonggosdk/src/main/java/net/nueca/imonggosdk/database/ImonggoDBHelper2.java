@@ -7,6 +7,8 @@ import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -160,7 +162,22 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     }
 
     public <D> int deleteAll(Class<D> objClass) throws SQLException {
-        return getDao(objClass).deleteBuilder().delete();
+        return deleteAll(objClass, null);//getDao(objClass).deleteBuilder().delete();
+    }
+
+    public int deleteAll(Class<?>... objClass) throws SQLException {
+        int deletes = 0;
+        for(Class<?> obj : objClass) {
+            deletes += deleteAll(obj);
+        }
+        return deletes;
+    }
+
+    public <D> int deleteAll(Class<D> objClass, DBTable.ConditionsWindow<D, Integer> where) throws SQLException {
+        DeleteBuilder<D, Integer> deleteBuilder = fetchObjectsInt(objClass).deleteBuilder();
+        if(where != null)
+            deleteBuilder.setWhere(where.renderConditions(deleteBuilder.where()));
+        return deleteBuilder.delete();
     }
 
     public void deleteAllDatabaseValues() throws SQLException {
@@ -271,6 +288,14 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
         }
 
         return theList;
+    }
+
+    public <D> D fetchForeignCollection(CloseableIterator<D> iterator, Conditional<D> conditional, int index) throws SQLException {
+        List<D> theList = fetchForeignCollection(iterator, conditional);
+
+        if(theList.size() > 0)
+            return theList.get(index);
+        return null;
     }
 
     public interface Conditional<D> {

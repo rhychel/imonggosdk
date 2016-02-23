@@ -75,6 +75,7 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
                 holder.spOptions.setVisibility(View.VISIBLE);
                 holder.tvLabel.setText(appSettings.getAppSettingEntry().getLabel());
                 holder.spOptions.setAdapter(appSettings.getAdapter());
+                holder.spOptions.setSelection(appSettings.getSelectedItem());
                 holder.spOptions.setOnItemSelectedListener(appSettings.getOnItemSelectedListener());
             }
             else {
@@ -129,11 +130,15 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
                 spOptions = (Spinner) itemView.findViewById(R.id.spOptions);
                 swcSetting = (SwitchCompat) itemView.findViewById(R.id.swcSetting);
             }
+
+            this.itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-
+            Log.e("onClick", "YEAH");
+            if(getItem(getLayoutPosition()).getOnItemClickListener() != null)
+                getItem(getLayoutPosition()).getOnItemClickListener().onItemClicked(v, getLayoutPosition());
         }
 
         @Override
