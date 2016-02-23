@@ -11,6 +11,8 @@ public enum OfflineDataType {
     SEND_DOCUMENT   (2),
     ADD_CUSTOMER    (3),
 
+    //SEND_LAYAWAY_INVOICE(4),
+
     //UPDATE_ORDER        (50),
     UPDATE_INVOICE      (51),
     //UPDATE_DOCUMENT     (52),

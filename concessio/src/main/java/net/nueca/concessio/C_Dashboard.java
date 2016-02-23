@@ -47,6 +47,7 @@ import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -92,8 +93,9 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         Log.e("ClassName", Customer.class.getSimpleName());
 
         try {
-            for(SalesPushSettings settings : getHelper().fetchObjectsList(SalesPushSettings.class))
-                Log.e(">>>", settings.toString());
+            Gson gson = new Gson();
+            for(RoutePlanDetail a : getHelper().fetchObjectsList(RoutePlanDetail.class))
+                Log.e(">>>", gson.toJson(a));
         } catch (SQLException e) {
             e.printStackTrace();
         }

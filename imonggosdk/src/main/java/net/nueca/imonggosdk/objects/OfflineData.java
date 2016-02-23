@@ -16,8 +16,6 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
-import net.nueca.imonggosdk.objects.base.BaseTransaction;
-import net.nueca.imonggosdk.objects.base.BaseTransactionTable;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
@@ -628,7 +626,7 @@ public class OfflineData extends BaseTable2 {
             case DOCUMENT:
                 typeStr = "DOCUMENT";
                 //if(!isPagedRequest() || isNewPagedSend) // not a paged request
-                    //documentData.insertTo(dbHelper);
+                documentData.insertTo(dbHelper);
                 break;
             case CUSTOMER:
                 typeStr = "CUSTOMER";
@@ -656,31 +654,15 @@ public class OfflineData extends BaseTable2 {
                 orderData.updateTo(dbHelper);
                 break;
             case DOCUMENT:
-                /*if(isPagedRequest() && !isNewPagedSend) {
-                    try {
-                        List<Document> children = documentData.getChildDocuments();
-                        for(Document child : children) {
-                            Log.e("OfflineData", "insertTo : CHILD : " + child.getReference());
-                            child.setId(id * -1000 + children.indexOf(child));
-                            child.setOfflineData(this);
-                            child.insertTo(dbHelper);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    documentData.setOfflineData(this);
-                    documentData.updateTo(dbHelper);
-                }*/
                 //documentData.deleteTo(dbHelper);
-                documentData.setId(id * -1);
+                //documentData.setId(id * -1);
                 documentData.setOfflineData(this);
-                documentData.insertTo(dbHelper);
-                try {
+                documentData.updateTo(dbHelper);
+                /*try {
                     dbHelper.update(OfflineData.class, this);
                 } catch (SQLException e) {
                     e.printStackTrace();
-                }
+                }*/
                 break;
             //case CUSTOMER:
             //    customerData.updateTo(dbHelper);
@@ -740,77 +722,40 @@ public class OfflineData extends BaseTable2 {
                 invoiceData.setOfflineData(this);
                 typeStr = "INVOICE";
                 if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
-                        && (invoiceData.getId() != Integer.parseInt(getReturnIdList().get(0))) ) {
-                    invoiceData.deleteTo(dbHelper);
-                    invoiceData.setLayaway_id(invoiceData.getId());
-                    invoiceData.setId(Integer.parseInt(getReturnIdList().get(0)));
-                    invoiceData.insertTo(dbHelper);
-                } else
-                    invoiceData.updateTo(dbHelper);
+                        && (invoiceData.getReturnId() != Integer.parseInt(getReturnIdList().get(0))) ) {
+                    //invoiceData.deleteTo(dbHelper);
+                    invoiceData.setLayaway_id(invoiceData.getReturnId());
+                    invoiceData.setReturnId(Integer.parseInt(getReturnIdList().get(0)));
+                }
+                invoiceData.updateTo(dbHelper);
                 break;
             case ORDER:
                 orderData.setOfflineData(this);
                 typeStr = "ORDER";
                 if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
-                        && (orderData.getId() != Integer.parseInt(getReturnIdList().get(0))) ) {
-                    orderData.deleteTo(dbHelper);
-                    orderData.setId(Integer.parseInt(getReturnIdList().get(0)));
-                    orderData.insertTo(dbHelper);
-                } else
-                    orderData.updateTo(dbHelper);
+                        && (orderData.getReturnId() != Integer.parseInt(getReturnIdList().get(0))) ) {
+                    orderData.setReturnId(Integer.parseInt(getReturnIdList().get(0)));
+                }
+                orderData.updateTo(dbHelper);
                 break;
             case DOCUMENT:
                 //generateParentDocument();
                 typeStr = "DOCUMENT";
                 if(getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0) {
-                    /*if(isPagedRequest() && !isNewPagedSend) {
-                        try {
-                            List<Document> children = getChildDocuments();
-
-                            List<String> ids = getReturnIdList();
-                            for(int i=0; i<children.size(); i++) {
-                                if(i >= ids.size())
-                                    break;
-                                Document child = children.get(i);
-
-
-                                if(!getReturnIdList().get(0).equals("@")) {
-                                    child.deleteTo(dbHelper);
-                                    child.setId(Integer.parseInt(ids.get(i)));
-                                    child.setOfflineData(this);
-                                    child.insertTo(dbHelper);
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    } else {*/
-                        if(!getReturnIdList().get(0).equals("@")) {
-                            documentData.deleteTo(dbHelper);
-                            documentData.setId(Integer.parseInt(getReturnIdList().get(0)));
-                            documentData.setOfflineData(this);
-                            documentData.insertTo(dbHelper);
-                        }
-                    //}
-                } else {
-                    /*if(isPagedRequest() && !isNewPagedSend) {
-                        for(Document child : documentData_fc)
-                            child.updateTo(dbHelper);
-                    } else*/
-                    Log.e("OfflineData", id + " -- " + getReturnId());
-                        documentData.setOfflineData(this);
-                        documentData.updateTo(dbHelper);
+                    if(!getReturnIdList().get(0).equals("@")) {
+                        documentData.setReturnId(Integer.parseInt(getReturnIdList().get(0)));
+                    }
                 }
+                documentData.setOfflineData(this);
+                documentData.updateTo(dbHelper);
                 break;
             case CUSTOMER:
                 typeStr = "CUSTOMER";
                 if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
-                        && (customerData.getId() != Integer.parseInt(getReturnIdList().get(0))) ) {
-                    customerData.deleteTo(dbHelper);
-                    customerData.setId(Integer.parseInt(getReturnIdList().get(0)));
-                    customerData.insertTo(dbHelper);
-                } else
-                    customerData.updateTo(dbHelper);
+                        && (customerData.getReturnId() != Integer.parseInt(getReturnIdList().get(0))) ) {
+                    customerData.setReturnId(Integer.parseInt(getReturnIdList().get(0)));
+                }
+                customerData.updateTo(dbHelper);
                 break;
             default:
                 typeStr = "UNKNOWN";

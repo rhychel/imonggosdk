@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,9 +36,12 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
     public void onBindViewHolder(ListViewHolder holder, int position) {
         Customer customer = getItem(position);
 
-        holder.tvCustomerName.setText(customer.getName());
-        holder.tvCompany.setText(customer.getCompany_name());
-        holder.tvLastTransaction.setText(customer.getLastPurchase());
+        if(customer != null) {
+            Log.e("Customer", "is not null -- adapter");
+            holder.tvCustomerName.setText(customer.getName());
+            holder.tvCompany.setText(customer.getCompany_name());
+            holder.tvLastTransaction.setText(customer.getLastPurchase());
+        }
     }
 
     @Override

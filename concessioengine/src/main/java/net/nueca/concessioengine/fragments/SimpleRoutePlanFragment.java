@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleRoutePlanRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
@@ -89,6 +91,8 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
         simpleRoutePlanRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
+                Gson gson = new Gson();
+                Log.e("><><><><><><><><><><><", gson.toJson(simpleRoutePlanRecyclerViewAdapter.getList()));
                 if (routePlanListener != null)
                     routePlanListener.itemClicked(simpleRoutePlanRecyclerViewAdapter.getItem(position)); // pass the customer
             }
@@ -145,6 +149,7 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
             RoutePlan routePlan = getHelper().fetchIntId(RoutePlan.class).queryBuilder().where().isNull("status").and().eq("user_id", getSession().getUser()).queryForFirst();
             if(routePlan == null)
                 return routes;
+
             List<RoutePlanDetail> routePlanDetails = getHelper().fetchForeignCollection(routePlan.getRoutePlanDetails().closeableIterator());
             for(RoutePlanDetail routePlanDetail : routePlanDetails) {
                 if(!day.getShortname().equals(routePlanDetail.getRoute_day()))
@@ -159,10 +164,10 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
                 Log.e("sequence", routePlanDetail.getSequence()+"");
                 if(routePlanDetail.getCustomer() == null)
                     Log.e("Customer", "is null");
-                else
+                else {
                     Log.e("Customer", "is not null");
-
-                Log.e("Customer", routePlanDetail.getCustomer().getName()+" -- "+routes.size());
+                    Log.e("Customer", routePlanDetail.getCustomer().getName() + " -- " + routes.size());
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

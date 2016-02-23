@@ -14,6 +14,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.base.BaseTable3;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
@@ -237,6 +238,7 @@ public class SwableUpdateModule extends BaseSwableModule {
                     }, session.getServer(), table, jsonObject, "" + (
                             offlineData.getObjectFromData() instanceof BaseTable  ? ((BaseTable) offlineData.getObjectFromData()).getId() :
                             offlineData.getObjectFromData() instanceof BaseTable2 ? ((BaseTable2) offlineData.getObjectFromData()).getId() :
+                            offlineData.getObjectFromData() instanceof BaseTable3 ? ((BaseTable3) offlineData.getObjectFromData()).getReturnId() :
                             offlineData.getReturnId()),
                             (offlineData.getType() != OfflineData.CUSTOMER?
                             "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() :

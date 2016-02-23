@@ -139,6 +139,9 @@ public class C_Finalize extends ModuleActivity {
                 paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
                 paymentsComputation.addAllPayments(offlineData.getObjectFromData(Invoice.class).getPayments());
 
+                Gson gson = new Gson();
+                Log.e("C_Finalize", "HISTORY " + gson.toJson(paymentsComputation.getPayments()));
+
                 //paymentsComputation.getTotalPayable(); // Total Amount
                 //paymentsComputation.getRemaining(); // Total Balance
 
@@ -151,7 +154,10 @@ public class C_Finalize extends ModuleActivity {
                 if(paymentsComputation.getRemaining().doubleValue() == 0)
                     llBalance.setVisibility(View.GONE);
                 //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
-                tvBalance.setText("P"+ NumberTools.separateInCommas(getBalance()));
+                if(paymentsComputation.getRemaining().doubleValue() > 0)
+                    tvBalance.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getRemaining()));
+                else
+                    tvBalance.setText("P0.00");
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -196,7 +202,10 @@ public class C_Finalize extends ModuleActivity {
                 if(paymentsComputation.getRemaining().doubleValue() == 0)
                     llBalance.setVisibility(View.GONE);
                 //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
-                tvBalance.setText("P"+ NumberTools.separateInCommas(getBalance()));
+                if(paymentsComputation.getRemaining().doubleValue() > 0)
+                    tvBalance.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getRemaining()));
+                else
+                    tvBalance.setText("P0.00");
 
             } catch (SQLException e) {
                 e.printStackTrace();

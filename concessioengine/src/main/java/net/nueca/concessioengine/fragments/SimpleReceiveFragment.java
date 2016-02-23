@@ -139,7 +139,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
                     prevLast = 0;
 
                     setDeliveryReceiptNo(deliveryReceiptNo);
-                    setParentDocumentId(document.getId());
+                    setParentDocumentId(document.getReturnId());
                     forceUpdateProductList();
 
                     if (tvDRNo != null)

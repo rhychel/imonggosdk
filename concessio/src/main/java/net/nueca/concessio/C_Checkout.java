@@ -64,13 +64,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_checkout_activity);
 
-        try {
-            SalesPromotion salesPromotion = PointsTools.getPointSalesPromotion(getHelper());
-            Log.e("$$$$$$$$$$$$$$$$$", salesPromotion == null? "null" : salesPromotion.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
 //        tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
 //        rvPayments = (RecyclerView) findViewById(R.id.rvPayments);
 
@@ -254,7 +247,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     });
                     dialog.show();
                 }
-                else {
+                else { /** SEND **/
                     TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                     transactionDialog.setTitle(ConcessioModule.INVOICE);
                     transactionDialog.setAmount("P"+NumberTools.separateInCommas(checkoutFragment.getTotalPaymentMade()));
@@ -288,7 +281,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     Log.e("INVOICE", invoice.toJSONString());
                 }
             }
-            else if(v.getId() == R.id.btn2) {
+            else if(v.getId() == R.id.btn2) { /** PARTIAL **/
                 DialogTools.showConfirmationDialog(C_Checkout.this, "Partial Payment", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

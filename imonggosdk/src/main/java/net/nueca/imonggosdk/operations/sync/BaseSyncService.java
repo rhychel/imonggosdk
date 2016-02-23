@@ -215,7 +215,7 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case CUSTOMERS: {
                 Customer customer = (Customer) o;
-                return getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", customer.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId", customer.getReturnId()).queryForFirst() != null;
             }
             case INVENTORIES: {
                 Inventory inventory = (Inventory) o;

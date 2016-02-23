@@ -114,6 +114,20 @@ public class BatchList<T> extends ArrayList<T> {
         dbHelper.batchCreateOrUpdateBT2(objClass, this, databaseOperation);
     }
 
+    public <T extends BaseTable3> void doOperationBT3(Class<T> objClass) {
+        if(dbHelper2 == null)
+            throw new NullPointerException("Oops! Your dbHelper2 is null!");
+        doOperationBT3(objClass, dbHelper2);
+    }
+
+    public <T extends BaseTable3> void doOperationBT3(Class<T> objClass, ImonggoDBHelper2 dbHelper) {
+        if(size() == 0) {
+            Log.e(TAG, "Ooops! There's nothing to " + databaseOperation.toString());
+            return;
+        }
+        dbHelper.batchCreateOrUpdateBT3(objClass, this, databaseOperation);
+    }
+
     public <T extends DBTable> void doOperation(Class<T> objClass) {
         if(dbHelper2 == null)
             throw new NullPointerException("Oops! Your dbHelper2 is null!");

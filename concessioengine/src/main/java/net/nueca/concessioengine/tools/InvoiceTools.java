@@ -2,7 +2,6 @@ package net.nueca.concessioengine.tools;
 
 import android.util.Log;
 
-import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
@@ -175,7 +174,7 @@ public class InvoiceTools {
         /** CustomerGroup **/
         List<CustomerGroup> customerGroups = newSalesCustomer.getCustomerGroups(helper);
         CustomerGroup salesCustomerGroup = null;
-        if(customerGroups != null)
+        if(customerGroups != null && customerGroups.size() > 0)
             salesCustomerGroup = customerGroups.get(0);
 
         for(InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
@@ -355,6 +354,7 @@ public class InvoiceTools {
 
     public static class PaymentsComputation {
         private Customer selectedCustomer = null;
+        private int decimalPlace = 2;
 
         private List<InvoiceLine> invoiceLines = new ArrayList<>();
         private List<InvoicePayment> payments = new ArrayList<>();
@@ -375,10 +375,16 @@ public class InvoiceTools {
         private PaymentType rsSlip, creditMemo;
         private BigDecimal totalReturnsPayment = BigDecimal.ZERO;
         private List<InvoicePayment> cmPayments = new ArrayList<>();
-        private List<InvoicePayment> rspPayments = new ArrayList<>();
+        private List<InvoicePayment> rsPayments = new ArrayList<>();
 
         public PaymentsComputation(Customer customer) {
+            this(customer, null);
+        }
+
+        public PaymentsComputation(Customer customer, Integer decimalPlace) {
             selectedCustomer = customer;
+            if(decimalPlace != null)
+                this.decimalPlace = decimalPlace;
         }
 
         public void addAllInvoiceLines(List<InvoiceLine> invoiceLines) {
@@ -404,7 +410,7 @@ public class InvoiceTools {
                 Double noDiscount = Double.parseDouble(invoiceLine.getNo_discount_subtotal());
 
                 if(subtotal >= 0d || invoiceLine.getExtras() == null) {
-                    rspPayments.add(null);
+                    rsPayments.add(null);
                     cmPayments.add(null);
                     totalPayable = totalPayable.add(new BigDecimal(subtotal));
                     totalPayableNoDiscount = totalPayableNoDiscount.add(new BigDecimal(noDiscount));
@@ -415,12 +421,12 @@ public class InvoiceTools {
                     if(invoiceLine.getExtras().getIs_bad_stock()) {
                         if(creditMemo != null) {
                             builder.paymentType(creditMemo);
-                            rspPayments.add(null);
+                            rsPayments.add(null);
                             cmPayments.add(builder.build());
                             //totalPayable = totalPayable.add(new BigDecimal(Math.abs(subtotal)));
                             //totalPayableNoDiscount = totalPayableNoDiscount.add(new BigDecimal(Math.abs(noDiscount)));
                         } else {
-                            rspPayments.add(null);
+                            rsPayments.add(null);
                             cmPayments.add(null);
                             totalPayable = totalPayable.add(new BigDecimal(subtotal));
                             totalPayableNoDiscount = totalPayableNoDiscount.add(new BigDecimal(noDiscount));
@@ -428,12 +434,12 @@ public class InvoiceTools {
                     } else {
                         if(rsSlip != null) {
                             builder.paymentType(rsSlip);
-                            rspPayments.add(builder.build());
+                            rsPayments.add(builder.build());
                             cmPayments.add(null);
                             //totalPayable = totalPayable.add(new BigDecimal(Math.abs(subtotal)));
                             //totalPayableNoDiscount = totalPayableNoDiscount.add(new BigDecimal(Math.abs(noDiscount)));
                         } else {
-                            rspPayments.add(null);
+                            rsPayments.add(null);
                             cmPayments.add(null);
                             totalPayable = totalPayable.add(new BigDecimal(subtotal));
                             totalPayableNoDiscount = totalPayableNoDiscount.add(new BigDecimal(noDiscount));
@@ -451,6 +457,7 @@ public class InvoiceTools {
             }
 
             addDiscounts(invoiceLine);
+            trimValues();
         }
 
         public void removeInvoiceLine(int location) {
@@ -467,7 +474,7 @@ public class InvoiceTools {
                 Double subtotal = Double.parseDouble(forDelete.getSubtotal());
                 Double noDiscount = Double.parseDouble(forDelete.getNo_discount_subtotal());
 
-                if(rspPayments.get(location) == null && cmPayments.get(location) == null) {
+                if(rsPayments.get(location) == null && cmPayments.get(location) == null) {
                     totalPayable = totalPayable.subtract(new BigDecimal(subtotal));
                     totalPayableNoDiscount = totalPayableNoDiscount.subtract(new BigDecimal(noDiscount));
                 } else {
@@ -475,7 +482,7 @@ public class InvoiceTools {
                     //totalPayableNoDiscount = totalPayableNoDiscount.subtract(new BigDecimal(Math.abs(noDiscount)));
                 }
 
-                rspPayments.remove(location);
+                rsPayments.remove(location);
                 cmPayments.remove(location);
 
                 totalReturnsPayment = totalReturnsPayment.subtract(new BigDecimal(Math.abs(subtotal)));
@@ -488,6 +495,7 @@ public class InvoiceTools {
             }
 
             removeDiscounts(location);
+            trimValues();
         }
 
         private void addDiscounts(InvoiceLine invoiceLine) {
@@ -549,9 +557,25 @@ public class InvoiceTools {
             else    // tender > balance
                 payment.setAmount(balance);
 
-            totalPaymentMade = totalPaymentMade.add(new BigDecimal(payment.getTender()));
-
-            payments.add(payment);
+            if(rsSlip == null && creditMemo == null) {
+                totalPaymentMade = totalPaymentMade.add(new BigDecimal(payment.getTender()));
+                payments.add(payment);
+            }
+            else {
+                if (creditMemo != null && payment.getPayment_type_id() == creditMemo.getId()) {
+                    //totalReturnsPayment = totalReturnsPayment.add(new BigDecimal(payment.getTender()).abs());
+                    //cmPayments.add(payment);
+                }
+                else if (rsSlip != null && payment.getPayment_type_id() == rsSlip.getId()) {
+                    //totalReturnsPayment = totalReturnsPayment.add(new BigDecimal(payment.getTender()).abs());
+                    //rsPayments.add(payment);
+                }
+                else {
+                    totalPaymentMade = totalPaymentMade.add(new BigDecimal(payment.getTender()));
+                    payments.add(payment);
+                }
+            }
+            trimValues();
         }
 
         public void removePayment(int location) {
@@ -562,6 +586,7 @@ public class InvoiceTools {
             totalPaymentMade = totalPaymentMade.subtract(new BigDecimal(forDelete.getTender()));
 
             refresh();
+            trimValues();
         }
 
         public InvoicePayment getPayment(int location) {
@@ -610,7 +635,7 @@ public class InvoiceTools {
             totalPayableNoDiscount = BigDecimal.ZERO;
 
             cmPayments = new ArrayList<>();
-            rspPayments = new ArrayList<>();
+            rsPayments = new ArrayList<>();
             totalReturnsPayment = BigDecimal.ZERO;
         }
 
@@ -634,11 +659,11 @@ public class InvoiceTools {
                 if(total == 0d)
                     cmPayment = null;
             }
-            if(rsSlip != null && rspPayments != null && rspPayments.size() != 0) {
+            if(rsSlip != null && rsPayments != null && rsPayments.size() != 0) {
                 rspPayment = new InvoicePayment.Builder()
                         .payment_type_id(rsSlip.getId()).build();
                 Double total = 0d;
-                for(InvoicePayment payment : rspPayments)
+                for(InvoicePayment payment : rsPayments)
                     if(payment != null)
                         total += payment.getAmount();
                 rspPayment.setAmount(total);
@@ -658,6 +683,12 @@ public class InvoiceTools {
 
         public BigDecimal getTotalPaymentMade() {
             return totalPaymentMade;
+        }
+
+        public BigDecimal getTotalPayableNoReturns(boolean applyCustomerDiscount) {
+            if(applyCustomerDiscount)
+                return totalPayable.subtract(totalCustomerDiscount);
+            return totalPayable;
         }
 
         public BigDecimal getTotalPayable(boolean applyCustomerDiscount) {
@@ -726,6 +757,19 @@ public class InvoiceTools {
                 if(rs != null && rs.size() != 0)
                     rsSlip = rs.get(0);
             //}
+        }
+
+        public void trimValues() {
+            totalCustomerDiscount = new BigDecimal(NumberTools.formatDouble(totalCustomerDiscount.doubleValue(), decimalPlace));
+            totalCompanyDiscount = new BigDecimal(NumberTools.formatDouble(totalCompanyDiscount.doubleValue(), decimalPlace));
+            totalProductDiscount = new BigDecimal(NumberTools.formatDouble(totalProductDiscount.doubleValue(), decimalPlace));
+
+            totalPayableNoDiscount = new BigDecimal(NumberTools.formatDouble(totalPayableNoDiscount.doubleValue(), decimalPlace));
+
+            totalPayable = new BigDecimal(NumberTools.formatDouble(totalPayable.doubleValue(), decimalPlace));
+            totalPaymentMade = new BigDecimal(NumberTools.formatDouble(totalPaymentMade.doubleValue(), decimalPlace));
+
+            totalReturnsPayment = new BigDecimal(NumberTools.formatDouble(totalReturnsPayment.doubleValue(), decimalPlace));
         }
     }
 

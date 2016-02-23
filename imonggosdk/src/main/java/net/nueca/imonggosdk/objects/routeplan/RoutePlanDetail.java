@@ -25,7 +25,7 @@ public class RoutePlanDetail extends BaseTable2 {
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id", uniqueCombo = true)
     private transient RoutePlan routePlan;
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "customer_id", uniqueCombo = true)
-    private transient Customer customer;
+    private Customer customer;
 
     public RoutePlanDetail() { }
 

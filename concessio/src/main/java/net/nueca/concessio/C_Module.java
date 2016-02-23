@@ -290,7 +290,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleRoutePlanFragment.setRoutePlanListener(new SimpleRoutePlanFragment.RoutePlanListener() {
                     @Override
                     public void itemClicked(Customer customer) {
-                        Log.e("Customer Details", "Clicked!");
+                        Log.e("Customer Details", "Clicked! -- isCustomerNull? " + (customer == null));
                         Intent intent = new Intent(C_Module.this, C_Module.class);
                         intent.putExtra(ModuleActivity.INIT_PRODUCT_ADAPTER_HELPER, true);
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
@@ -1091,7 +1091,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                 document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
                                 Extras extras = new Extras();
-                                extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getId());
+                                extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
                                 document.setExtras(extras);
                             }
 
@@ -1209,7 +1209,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 //                                                  document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
 
                                                     Extras extras = new Extras();
-                                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getId());
+                                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
                                                     document.setExtras(extras);
                                                 }
                                                 try {

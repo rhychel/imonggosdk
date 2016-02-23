@@ -41,6 +41,7 @@ import net.nueca.imonggosdk.objects.associatives.ProductSalesPromotionAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.base.BaseTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
@@ -78,7 +79,7 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 69;
+    private static final int DATABASE_VERSION = 70;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchTag.class, Customer.class,
@@ -191,6 +192,25 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     }
 
     public <D extends BaseTable2> void batchCreateOrUpdateBT2(Class<D> objClass, final BatchList batchList, final DatabaseOperation databaseOperations) {
+        try {
+            Dao<D, ?> daoBatchLists = getDao(objClass);
+            daoBatchLists.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for(D item : ((BatchList<D>)batchList))
+                        item.dbOperation(ImonggoDBHelper2.this, databaseOperations);
+                    return null;
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public <D extends BaseTable3> void batchCreateOrUpdateBT3(Class<D> objClass, final BatchList batchList, final DatabaseOperation
+            databaseOperations) {
         try {
             Dao<D, ?> daoBatchLists = getDao(objClass);
             daoBatchLists.callBatchTasks(new Callable<Void>() {

@@ -17,6 +17,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.Document;
@@ -39,7 +40,7 @@ import java.util.List;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
+public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras {
 
     public enum CustomerFields {
         CODE("code"),

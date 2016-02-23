@@ -17,7 +17,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
+import net.nueca.imonggosdk.objects.base.BaseTransactionTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Created by gama on 7/1/15.
  */
-public class Invoice extends BaseTransactionTable2 {
+public class Invoice extends BaseTransactionTable3 {
     @Expose
     @DatabaseField
     protected String invoice_date;
@@ -257,13 +257,13 @@ public class Invoice extends BaseTransactionTable2 {
         refresh();
         JSONObject jsonObject = super.toJSONObject();
         if(customer != null) {
-            jsonObject.put("customer_id", customer.getId());
+            jsonObject.put("customer_id", customer.getReturnId());
             jsonObject.put("customer_name", customer.getName());
         }
         return jsonObject;
     }
 
-    public static class Builder extends BaseTransactionTable2.Builder<Builder> {
+    public static class Builder extends BaseTransactionTable3.Builder<Builder> {
         protected String invoice_date;
         protected String status;
         protected String email;

@@ -207,6 +207,7 @@ public class ImonggoSwable extends SwableService {
                                 swableSendModule.sendTransaction(Table.ORDERS, offlineData);
                                 break;
                             case SEND_INVOICE:
+                            //case SEND_LAYAWAY_INVOICE:
                                 swableSendModule.sendTransaction(Table.INVOICES, offlineData);
                                 break;
                             case SEND_DOCUMENT:

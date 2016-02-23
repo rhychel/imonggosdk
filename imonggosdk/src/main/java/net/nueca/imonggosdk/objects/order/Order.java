@@ -14,7 +14,7 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
+import net.nueca.imonggosdk.objects.base.BaseTransactionTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.swable.SwableTools;
 
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Created by gama on 7/1/15.
  */
-public class Order extends BaseTransactionTable2 {
+public class Order extends BaseTransactionTable3 {
     public static transient final int MAX_ORDERLINES_PER_PAGE = 50;
 
     @Expose
@@ -161,7 +161,7 @@ public class Order extends BaseTransactionTable2 {
         }
     }
 
-    public static class Builder extends BaseTransactionTable2.Builder<Builder> {
+    public static class Builder extends BaseTransactionTable3.Builder<Builder> {
         private String target_delivery_date = ""; // current_date+2days
         private String remark = "";
         private String order_type_code = "stock_request"; // purchase order

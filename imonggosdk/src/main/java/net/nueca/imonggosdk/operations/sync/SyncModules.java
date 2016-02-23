@@ -31,6 +31,7 @@ import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
@@ -1104,11 +1105,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                             Log.e(TAG, "PriceList Custom Index: " + mCustomIndex);
 
-                            BaseTable tempObject;
+                            //BaseTable tempObject;
 
                             if (listPriceListStorage.get(mCustomIndex) instanceof Customer) {
                                 Log.e(TAG, "PriceList came from customer ");
-                                tempObject = (Customer) listPriceListStorage.get(mCustomIndex);
+                                BaseTable3 tempObject = (Customer) listPriceListStorage.get(mCustomIndex);
 
                                 if (tempObject != null) {
                                     Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", tempObject.getId()).queryForFirst();
@@ -1127,7 +1128,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                             } else if (listPriceListStorage.get(mCustomIndex) instanceof CustomerGroup) {
                                 Log.e(TAG, "PriceList came from customer group ");
-                                tempObject = (CustomerGroup) listPriceListStorage.get(mCustomIndex);
+                                BaseTable tempObject = (CustomerGroup) listPriceListStorage.get(mCustomIndex);
 
                                 if (tempObject != null) {
                                     CustomerGroup customerGroup = getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", tempObject.getId()).queryForFirst();
@@ -1991,6 +1992,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
+                                    customer.setReturnId(customer.getId());
                                     customer.setSearchKey(customer.getName() + customer.getCode() + customer.getAlternate_code()); // # searchkey
                                     Extras customer_extras = null;
                                     PriceList priceList;
@@ -2150,9 +2152,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     }
                                 }
 
-                                newCustomer.doOperationBT(Customer.class);
-                                updateCustomer.doOperationBT(Customer.class);
-                                deleteCustomer.doOperationBT(Customer.class);
+                                newCustomer.doOperationBT3(Customer.class);
+                                updateCustomer.doOperationBT3(Customer.class);
+                                deleteCustomer.doOperationBT3(Customer.class);
 
                                 updateNext(requestType, size);
                             }
@@ -2287,9 +2289,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
                             }
 
-                            newDocument.doOperationBT(Document.class);
-                            updateDocument.doOperationBT(Document.class);
-                            deleteDocument.doOperationBT(Document.class);
+                            newDocument.doOperationBT3(Document.class);
+                            updateDocument.doOperationBT3(Document.class);
+                            deleteDocument.doOperationBT3(Document.class);
                             updateNext(requestType, size);
                             break;
                         case SETTINGS:
@@ -2337,8 +2339,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             newInvoice.add(invoice);
                                         }
                                     }
-                                    newInvoice.doOperationBT2(Invoice.class);
-                                    updateInvoice.doOperationBT2(Invoice.class);
+                                    newInvoice.doOperationBT3(Invoice.class);
+                                    updateInvoice.doOperationBT3(Invoice.class);
                                 }
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
                             }
@@ -2733,7 +2735,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         Log.e(TAG, "'customer_id' field is null");
                                     } else {
                                         int customer_id = routePlanDetailJsonObject.getInt("customer_id");
-                                        Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", customer_id).queryForFirst();
+                                        Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId",
+                                                customer_id).queryForFirst();
                                         if (customer != null) {
                                             Log.e(TAG, "Customer: " + customer.getName());
                                             routePlanDetails.setCustomer(customer);
