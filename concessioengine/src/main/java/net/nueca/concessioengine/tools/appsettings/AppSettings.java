@@ -27,10 +27,14 @@ public class AppSettings {
 
         // User
         ENABLE_PIN_CODE("Enable PIN code"),
-        CHANGE_PIN_CODE("Change PIN code");
+        CHANGE_PIN_CODE("Change PIN code"),
+
+        // Printer
+        CONFIGURE_EPSON_PRINTER("Epson Printer:");
 
         // -- Module dependent label
         // --
+
 
         private String label;
 

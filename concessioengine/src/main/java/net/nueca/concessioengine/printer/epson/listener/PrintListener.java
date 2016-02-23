@@ -12,5 +12,5 @@ public interface PrintListener {
     void onPrinterWarning(String message);
     void onPrinterReceive(Printer printerObj, int code, PrinterStatusInfo status, String printJobId);
     void onPrintError(String message);
-
+    void onPrintSuccess();
 }

@@ -91,6 +91,7 @@ public class C_Finalize extends ModuleActivity {
                     public void onVoidTransaction() {
                         // TODO for double checking..
 
+
                         new SwableTools.Transaction(getHelper())
                                 .toCancel()
                                 .withReason("VOID")

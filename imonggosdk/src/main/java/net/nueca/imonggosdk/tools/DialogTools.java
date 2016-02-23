@@ -37,12 +37,12 @@ public class DialogTools<T> {
         });
         dialog.show();
     }
-    public static void showDialog(Context context, String title, String message, String btnText, DialogInterface.OnClickListener callback, int theme) {
+    public static AlertDialog showDialog(Context context, String title, String message, String btnText, DialogInterface.OnClickListener callback, int theme) {
         AlertDialog.Builder dialog = (theme == NO_THEME) ? new AlertDialog.Builder(context) : new AlertDialog.Builder(context, theme);
         dialog.setTitle(title);
         dialog.setMessage(message);
         dialog.setPositiveButton(btnText, callback);
-        dialog.show();
+        return dialog.show();
     }
 
     public static void showConfirmationDialog(Context context, String title, String message,

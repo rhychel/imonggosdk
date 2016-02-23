@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,6 +18,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.epson.epos2.Epos2Exception;
+import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -44,26 +48,35 @@ import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.concessioengine.printer.PrinterTask;
+import net.nueca.concessioengine.printer.epson.listener.PrintListener;
+import net.nueca.concessioengine.printer.epson.tools.EPSONPrinterTools;
 import net.nueca.concessioengine.tools.AnimationTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
+import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
+import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.tools.TimerTools;
 
 import org.json.JSONException;
@@ -473,12 +486,89 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 btn1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DialogTools.showDialog(C_Module.this, "Print Inventory", "This should be printing...", "Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        // ---- So let's print...
+                        final AlertDialog dialog = DialogTools.showDialog(C_Module.this, "Print Inventory", "Printing...", null, null, R.style.AppCompatDialogStyle_Light);
+                        String targetPrinter = EPSONPrinterTools.targetPrinter(getApplicationContext());
+                        if(targetPrinter != null) {
+                            EPSONPrinterTools.print(targetPrinter, new PrintListener() {
+                                @Override
+                                public Printer initializePrinter() {
+                                    try {
+                                        return new Printer(Printer.TM_T20, Printer.MODEL_ANK, getApplicationContext());
+                                    } catch (Epos2Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    return null;
+                                }
 
-                            }
-                        }, R.style.AppCompatDialogStyle_Light);
+                                @Override
+                                public Printer onBuildPrintData(Printer printer) {
+                                    Branch branch = getBranches().get(0);
+                                    StringBuilder printText = new StringBuilder();
+                                    try {
+                                        printer.addTextFont(Printer.FONT_A);
+                                        printText.append(branch.getName());
+                                        printText.append("\n");
+                                        printText.append(branch.generateAddress());
+                                        printText.append("\n");
+                                        printer.addTextAlign(Printer.ALIGN_CENTER);
+                                        printer.addFeedLine(2);
+                                        printer.addText(printText.toString());
+                                        printer.addFeedLine(2);
+                                        printer.addText("INVENTORY SLIP");
+                                        printer.addFeedLine(2);
+                                        printer.addText("Salesman: "+getSession().getUser().getName()+"\n");
+                                        printText.delete(0, printText.length());
+                                        printer.addTextAlign(Printer.ALIGN_LEFT);
+                                        printer.addText("Ref #: 324-34\n");
+                                        printer.addText("Date: Sept 30, 2016  23:59 PM\n");
+                                        printer.addText("================================");
+                                        printer.addText("Quantity                  Amount");
+                                        printer.addText("================================");
+                                        // loop
+                                        Product product = getHelper().fetchObjectsList(Product.class).get(0);
+                                        printer.addText(product.getName()+"\n");
+                                        printer.addText("  888.88   LUNCHBOX x 1000.00\n");
+                                        printer.addTextAlign(Printer.ALIGN_RIGHT);
+                                        printer.addText("11111110.00\n");
+                                        // loop
+                                        printer.addTextAlign(Printer.ALIGN_LEFT);
+                                        printer.addText("--------------------------------");
+                                        printer.addText("Total Quantity: 254\n");
+                                        printer.addText("Total Order Amount: \n");
+                                        printer.addTextAlign(Printer.ALIGN_CENTER);
+                                        printer.addText("*Salesman Copy*");
+
+                                        printer.addFeedLine(6);
+                                    } catch (Epos2Exception | SQLException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    return printer;
+                                }
+
+                                @Override
+                                public void onPrintSuccess() {
+                                    Log.e("Printer", "onPrintSuccess");
+                                    dialog.dismiss();
+                                }
+
+                                @Override
+                                public void onPrinterWarning(String message) {
+
+                                }
+
+                                @Override
+                                public void onPrinterReceive(Printer printerObj, int code, PrinterStatusInfo status, String printJobId) {
+
+                                }
+
+                                @Override
+                                public void onPrintError(String message) {
+
+                                }
+                            }, getApplicationContext());
+                        }
                     }
                 });
                 tvItems.setVisibility(View.INVISIBLE);
@@ -1099,7 +1189,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getId());
                                 document.setExtras(extras);
                             }
-
                             if (concessioModule == ConcessioModule.STOCK_REQUEST) {
 
                                 try {
@@ -1142,6 +1231,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .fromModule(concessioModule)
                                         .queue();
                                 TimerTools.duration("SwableTools.queue --- end", true);
+
+//                                printTransaction(offlineData, 2, "*Salesman Copy*", "*Office Copy*");
 
                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
                                 TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
@@ -1209,6 +1300,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                             public void onClick(DialogInterface dialogInterface, int i) {
                                                 Gson gson = new GsonBuilder().serializeNulls().create();
                                                 Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
+
                                                 if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                                     document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
 //                                                  document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
@@ -1229,6 +1321,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .object(document)
                                                             .fromModule(concessioModule)
                                                             .queue();
+
+//                                                    printTransaction(offlineData, 2, "*Salesman Copy*", "*Office Copy*");
 
                                                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
                                                     TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
@@ -1301,5 +1395,143 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
     };
 
+    private void printTransaction(final OfflineData offlineData, final int copies, final String... labels) {
+        final AlertDialog dialog = DialogTools.showDialog(C_Module.this, "Print Inventory", "Printing...", null, null, R.style.AppCompatDialogStyle_Light);
+        String targetPrinter = EPSONPrinterTools.targetPrinter(getApplicationContext());
+        if(targetPrinter != null) {
+            EPSONPrinterTools.print(targetPrinter, new PrintListener() {
+                @Override
+                public Printer initializePrinter() {
+                    try {
+                        return new Printer(Printer.TM_T20, Printer.MODEL_ANK, getApplicationContext());
+                    } catch (Epos2Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                public Printer onBuildPrintData(Printer printer) {
+                    Branch branch = getBranches().get(0);
+                    for(int i = 0;i < copies;i++) {
+                        StringBuilder printText = new StringBuilder();
+                        try {
+                            // ---------- HEADER
+                            printer.addTextFont(Printer.FONT_A);
+                            printText.append(branch.getName());
+                            printText.append("\n");
+                            printText.append(branch.generateAddress());
+                            printText.append("\n");
+                            printer.addTextAlign(Printer.ALIGN_CENTER);
+                            printer.addFeedLine(2);
+                            printer.addText(printText.toString());
+                            printer.addFeedLine(2);
+                            printer.addText("INVENTORY SLIP");
+                            printer.addFeedLine(2);
+                            printer.addText("Salesman: " + getSession().getUser().getName() + "\n");
+                            printText.delete(0, printText.length());
+                            printer.addTextAlign(Printer.ALIGN_LEFT);
+                            printer.addText("Ref #: " + offlineData.getReference_no() + "\n");
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+                            printer.addText("Date: " + simpleDateFormat.format(offlineData.getDateCreated()) + "\n");
+                            // ---------- HEADER
+                            double totalQuantity = 0.0;
+                            double totalAmount = 0.0;
+                            if (offlineData.getType() == OfflineData.DOCUMENT) {
+                                printer.addText("================================");
+                                printer.addText("Quantity                  Amount");
+                                printer.addText("================================");
+                                for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
+                                    Double retail_price = 0.0;
+                                    try {
+                                        final BranchProduct branchProduct = getHelper().fetchForeignCollection(documentLine.getProduct().getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+                                            @Override
+                                            public boolean validate(BranchProduct obj) {
+                                                if(documentLine.getUnit_id() == null) {
+                                                    if(obj.getUnit() == null)
+                                                        return true;
+                                                }
+                                                else if(obj.getUnit() != null && documentLine.getUnit_id() == obj.getUnit().getId())
+                                                    return true;
+                                                return false;
+                                            }
+                                        }, 0);
+
+                                        Unit unit = null;
+                                        if(branchProduct != null)
+                                            unit = branchProduct.getUnit();
+                                        retail_price = PriceTools.identifyRetailPrice(getHelper(), documentLine.getProduct(), branch, null, null, unit);
+
+                                        if(retail_price == null)
+                                            retail_price = documentLine.getRetail_price();
+                                        Log.e("identified retail_price", retail_price.toString());
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    printer.addTextAlign(Printer.ALIGN_LEFT);
+                                    printer.addText(documentLine.getProduct().getName() + "\n");
+                                    if (documentLine.getUnit_id() != null) {
+                                        totalQuantity += documentLine.getUnit_quantity();
+                                        printer.addText("  " + documentLine.getUnit_quantity() + "   " + documentLine.getUnit_name() + " x " + NumberTools.separateInCommas(retail_price)+"\n");
+                                        Double subtotal = documentLine.getUnit_quantity() * retail_price;
+                                        printer.addTextAlign(Printer.ALIGN_RIGHT);
+                                        printer.addText(NumberTools.separateInCommas(subtotal)+"\n");
+                                        totalAmount += subtotal;
+                                    } else {
+                                        totalQuantity += documentLine.getQuantity();
+                                        printer.addText("  " + documentLine.getQuantity() + "   " + documentLine.getProduct().getBase_unit_name() + " x " + NumberTools.separateInCommas(retail_price) + "\n");
+                                        Double subtotal = documentLine.getQuantity() * retail_price;
+                                        printer.addTextAlign(Printer.ALIGN_RIGHT);
+                                        printer.addText(NumberTools.separateInCommas(subtotal)+"\n");
+                                        totalAmount += subtotal;
+                                    }
+                                }
+                            }
+
+                            printer.addTextAlign(Printer.ALIGN_LEFT);
+                            printer.addText("--------------------------------");
+                            printer.addText("Total Quantity: " + totalQuantity + "\n");
+                            printer.addText("Total Order Amount:   "+NumberTools.separateInCommas(totalAmount)+"\n\n");
+                            printer.addTextAlign(Printer.ALIGN_CENTER);
+                            printer.addText(labels[i]);
+                            if(i < copies-1) {
+                                printer.addFeedLine(4);
+                                printer.addText("- - - - - - CUT HERE - - - - - -");
+                            }
+                            else
+                                printer.addFeedLine(6);
+
+                        } catch (Epos2Exception | SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    return printer;
+                }
+
+                @Override
+                public void onPrintSuccess() {
+                    Log.e("Printer", "onPrintSuccess");
+                    dialog.dismiss();
+                }
+
+                @Override
+                public void onPrinterWarning(String message) {
+
+                }
+
+                @Override
+                public void onPrinterReceive(Printer printerObj, int code, PrinterStatusInfo status, String printJobId) {
+
+                }
+
+                @Override
+                public void onPrintError(String message) {
+
+                }
+            }, getApplicationContext());
+        }
+    }
 
 }

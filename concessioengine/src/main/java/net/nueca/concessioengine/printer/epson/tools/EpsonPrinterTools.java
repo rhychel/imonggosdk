@@ -132,7 +132,9 @@ public class EPSONPrinterTools {
 
                 // send data
                 try {
-                    printer.sendData(Printer.PARAM_DEFAULT);
+                    printer.sendData(30000);
+                    if(printListener != null)
+                        printListener.onPrintSuccess();
                 } catch (Epos2Exception e) {
                     onPrintError(printListener, "cannot send data to printer. ", e);
                     disconnectPrinter(printer);
@@ -211,7 +213,8 @@ public class EPSONPrinterTools {
      * @throws Epos2Exception
      */
     public static void stopDiscovery() throws Epos2Exception {
-        Discovery.stop();
+        if(Discovery.isRunning())
+            Discovery.stop();
     }
 
     public static void updatePortType(Context context, int portType) {

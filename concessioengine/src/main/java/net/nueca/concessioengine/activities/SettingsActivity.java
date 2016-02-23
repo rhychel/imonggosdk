@@ -11,12 +11,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.epson.epos2.Epos2Exception;
+import com.epson.epos2.discovery.Discovery;
+import com.epson.epos2.discovery.FilterOption;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SettingsAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.concessioengine.printer.epson.listener.DiscoveryListener;
+import net.nueca.concessioengine.printer.epson.tools.EPSONPrinterTools;
+//import net.nueca.concessioengine.printer.tools.PrinterTools;
 import net.nueca.concessioengine.tools.appsettings.AppSettings;
 import net.nueca.concessioengine.tools.appsettings.AppTools;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
@@ -35,7 +41,9 @@ import net.nueca.imonggosdk.tools.DialogTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by rhymartmanchus on 12/01/2016.
@@ -71,18 +79,19 @@ public class SettingsActivity extends ModuleActivity {
     }
 
     private List<AppSettings> generateSettings() {
+        int sectionFirstPosition = 0;
         ArrayList<AppSettings> appSettings = new ArrayList<>();
 
         // header
         AppSettings headerApp = new AppSettings();
         headerApp.setHeader(true);
-        headerApp.setSectionFirstPosition(0);
+        headerApp.setSectionFirstPosition(sectionFirstPosition);
         headerApp.setConcessioModule(ConcessioModule.APPLICATION);
         // header
 
         AppSettings version = new AppSettings();
         version.setHeader(false);
-        version.setSectionFirstPosition(0);
+        version.setSectionFirstPosition(sectionFirstPosition);
         version.setConcessioModule(ConcessioModule.APPLICATION);
         version.setAppSettingEntry(AppSettings.AppSettingEntry.VERSION);
         version.setValue(AppTools.getAppVersionName(this));
@@ -94,7 +103,7 @@ public class SettingsActivity extends ModuleActivity {
         if(debugMode.is_enabled()) {
             AppSettings debug = new AppSettings();
             debug.setHeader(false);
-            debug.setSectionFirstPosition(0);
+            debug.setSectionFirstPosition(sectionFirstPosition);
             debug.setConcessioModule(ConcessioModule.APPLICATION);
             debug.setAppSettingEntry(AppSettings.AppSettingEntry.CLEAR_TRANSACTIONS);
             debug.setOnItemClickListener(new OnItemClickListener() {
@@ -147,7 +156,7 @@ public class SettingsActivity extends ModuleActivity {
 
         AppSettings autoUpdate = new AppSettings();
         autoUpdate.setHeader(false);
-        autoUpdate.setSectionFirstPosition(0);
+        autoUpdate.setSectionFirstPosition(sectionFirstPosition);
         autoUpdate.setConcessioModule(ConcessioModule.APPLICATION);
         autoUpdate.setAppSettingEntry(AppSettings.AppSettingEntry.AUTO_UPDATE_APP);
         autoUpdate.setValueType(AppSettings.ValueType.SWITCH);
@@ -164,7 +173,7 @@ public class SettingsActivity extends ModuleActivity {
             AppSettings multi = new AppSettings();
             multi.setSelectedItem(selected);
             multi.setHeader(false);
-            multi.setSectionFirstPosition(0);
+            multi.setSectionFirstPosition(sectionFirstPosition);
             multi.setConcessioModule(ConcessioModule.APPLICATION);
             multi.setAppSettingEntry(AppSettings.AppSettingEntry.PRODUCT_SORTING);
             multi.setValueType(AppSettings.ValueType.DROPDOWN);
@@ -192,6 +201,61 @@ public class SettingsActivity extends ModuleActivity {
             e.printStackTrace();
         }
 
+        // --------- PRINTER
+        sectionFirstPosition = appSettings.size()-1;
+
+        AppSettings printerHeader = new AppSettings();
+        printerHeader.setHeader(true);
+        printerHeader.setSectionFirstPosition(sectionFirstPosition);
+        printerHeader.setConcessioModule(ConcessioModule.PRINTER);
+        appSettings.add(printerHeader);
+
+        AppSettings epsonPrinter = new AppSettings();
+        epsonPrinter.setHeader(false);
+        epsonPrinter.setSectionFirstPosition(sectionFirstPosition);
+        epsonPrinter.setConcessioModule(ConcessioModule.PRINTER);
+        epsonPrinter.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_EPSON_PRINTER);
+        epsonPrinter.setValue("Not Connected!");
+        epsonPrinter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClicked(View view, int position) {
+                EPSONPrinterTools.startDiscovery(SettingsActivity.this,
+                        EPSONPrinterTools.getFilterOptions(Discovery.PORTTYPE_BLUETOOTH, null, Discovery.MODEL_ALL, Discovery.FILTER_NAME, Discovery.TYPE_PRINTER),
+                        new DiscoveryListener() {
+                            @Override
+                            public void onDiscovered(HashMap<String, String> printer) {
+                                Log.e("onDiscovered", "yeah");
+                                for(Map.Entry<String, String> entry : printer.entrySet()) {
+                                    Log.e("DISCOVERING: "+entry.getKey(), entry.getValue());
+                                }
+                                EPSONPrinterTools.updateTargetPrinter(SettingsActivity.this, printer);
+                                if(!printer.isEmpty())
+                                    try {
+                                        EPSONPrinterTools.stopDiscovery();
+                                    } catch (Epos2Exception e) {
+                                        e.printStackTrace();
+                                    }
+                            }
+
+                            @Override
+                            public void onDiscoveryError(Exception e) {
+                                Log.e("onDiscoveryError", e.toString());
+                            }
+                        });
+            }
+        });
+        appSettings.add(epsonPrinter);
+
         return appSettings;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            EPSONPrinterTools.stopDiscovery();
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -99,14 +99,14 @@ public class SimpleCustomerRecyclerViewAdapter extends
 
             listViewHolder.tvCustomerName.setText(name);
             listViewHolder.tvAlternateId.setText(customer.getAlternate_code());
-            listViewHolder.tvAddress.setText(customer.getFullAddress());
+            listViewHolder.tvAddress.setText(customer.generateAddress());
 
             if (customer.getAlternate_code() != null && !customer.getAlternate_code().isEmpty())
                 listViewHolder.tvAlternateId.setVisibility(View.VISIBLE);
             else
                 listViewHolder.tvAlternateId.setVisibility(View.GONE);
 
-            if (customer.getFullAddress() != null && !customer.getFullAddress().isEmpty())
+            if (customer.generateAddress() != null && !customer.generateAddress().isEmpty())
                 listViewHolder.tvAddress.setVisibility(View.VISIBLE);
             else
                 listViewHolder.tvAddress.setVisibility(View.GONE);
@@ -125,9 +125,9 @@ public class SimpleCustomerRecyclerViewAdapter extends
                 listViewHolder.setCustomer(customer);
 
                 listViewHolder.tvCustomerName.setText(name);
-                listViewHolder.tvAddress.setText(customer.getFullAddress());
+                listViewHolder.tvAddress.setText(customer.generateAddress());
 
-                if (customer.getFullAddress() != null && !customer.getFullAddress().isEmpty())
+                if (customer.generateAddress() != null && !customer.generateAddress().isEmpty())
                     listViewHolder.tvAddress.setVisibility(View.VISIBLE);
                 else
                     listViewHolder.tvAddress.setVisibility(View.GONE);

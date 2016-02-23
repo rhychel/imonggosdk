@@ -26,6 +26,7 @@ import net.nueca.imonggosdk.swable.ImonggoSwable;
 import net.nueca.imonggosdk.swable.SwableSendModule;
 import net.nueca.imonggosdk.swable.SwableTools;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -90,8 +91,14 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
             simpleTransactionRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClicked(View view, int position) {
-                    if(transactionsListener != null)
-                        transactionsListener.showTransactionDetails(simpleTransactionRecyclerViewAdapter.getItem(position));
+                    try {
+                        OfflineData updatedOfflineData = getHelper().fetchObjects(OfflineData.class).queryBuilder()
+                                .where().eq("id", simpleTransactionRecyclerViewAdapter.getItem(position).getId()).queryForFirst();
+                        if(transactionsListener != null)
+                            transactionsListener.showTransactionDetails(updatedOfflineData);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 
@@ -107,8 +114,14 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
             lvTransactions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    if(transactionsListener != null)
-                        transactionsListener.showTransactionDetails(simpleTransactionListAdapter.getItem(position));
+                    try {
+                        OfflineData updatedOfflineData = getHelper().fetchObjects(OfflineData.class).queryBuilder()
+                                .where().eq("id", simpleTransactionListAdapter.getItem(position).getId()).queryForFirst();
+                        if(transactionsListener != null)
+                            transactionsListener.showTransactionDetails(updatedOfflineData);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 
