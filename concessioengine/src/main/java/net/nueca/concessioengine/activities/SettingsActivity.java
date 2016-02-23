@@ -22,7 +22,7 @@ import net.nueca.concessioengine.adapters.SettingsAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.printer.epson.listener.DiscoveryListener;
 import net.nueca.concessioengine.printer.epson.tools.EPSONPrinterTools;
-import net.nueca.concessioengine.printer.tools.PrinterTools;
+//import net.nueca.concessioengine.printer.tools.PrinterTools;
 import net.nueca.concessioengine.tools.appsettings.AppSettings;
 import net.nueca.concessioengine.tools.appsettings.AppTools;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
