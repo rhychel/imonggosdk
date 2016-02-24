@@ -39,18 +39,12 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
     protected boolean isLayaway = false;
 
     protected Invoice invoice;
-    protected InvoiceTools.PaymentsComputation computation = new InvoiceTools
-            .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
+    protected InvoiceTools.PaymentsComputation computation = new InvoiceTools.PaymentsComputation();
 
     public BaseCheckoutFragment() {
         if(getArguments() != null && getArguments().containsKey(INVOICE_ARGUMENT_KEY)) {
             invoice = (Invoice) getArguments().get(INVOICE_ARGUMENT_KEY);
             computation.clearAll();
-            try {
-                computation.findReturnsPaymentType(getHelper());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
 
             computation.addAllInvoiceLines(invoice.getInvoiceLines());
             if(invoice.getPayments() != null)
@@ -69,11 +63,6 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         this.invoice = invoice;
         Log.e("INVOICE RECEIVED", invoice.toJSONString());
         computation.clearAll();
-        try {
-            computation.findReturnsPaymentType(ProductsAdapterHelper.getDbHelper());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         computation.addAllInvoiceLines(invoice.getInvoiceLines());
         computation.addAllPayments(invoice.getPayments());
@@ -131,6 +120,10 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         invoice.setExtras(extras);
 
         return invoice;
+    }
+
+    public BigDecimal getPointsInAmountUsed() {
+        return computation.getTotalPointsPayment();
     }
 
     public List<InvoiceLine> getInvoiceLines() {

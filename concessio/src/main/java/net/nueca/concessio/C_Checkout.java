@@ -68,6 +68,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private TextView tvLabelBalance, tvBalance, tvTotalAmount;
     private Button btn1, btn2;
 
+    private SalesPromotion salesPromotion;
+
     @Override
     protected void initializeFragment() {
         checkoutFragment = new SimpleCheckoutFragment();
@@ -189,6 +191,12 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 simpleSplitPaymentAdapter.setBalance(checkoutFragment.getRemainingBalance());
             }
         });
+
+        try {
+            salesPromotion = PointsTools.getPointSalesPromotion(getHelper());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -230,13 +238,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     Double availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
                     Double pointsInPeso = 0d;
-                    try {
-                        SalesPromotion salesPromotion = PointsTools.getPointSalesPromotion(getHelper());
-                        if(salesPromotion != null && salesPromotion.getSettings() != null)
-                            pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+
+                    if(salesPromotion != null && salesPromotion.getSettings() != null)
+                        pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
+
                     dialog.setAvailablePoints(availablePoints);
                     dialog.setPointsInPesoText(pointsInPeso);
 
@@ -315,6 +320,20 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                 .queue();
                     }
 
+                    customer = ProductsAdapterHelper.getSelectedCustomer();
+                    Double availablePoints = Double.parseDouble(customer.getAvailable_points());
+                    Double pointsUsed = 0d;
+
+                    if(salesPromotion != null && salesPromotion.getSettings() != null)
+                        pointsUsed = PointsTools.amountToPoints(salesPromotion.getSettings(),
+                                getNewPointsInAmountUsed(invoice, checkoutFragment.getComputation().getPoints()));
+
+                    Log.e("C_Checkout", "SEND " + availablePoints + " ~ " + pointsUsed);
+
+                    customer.setAvailable_points(String.valueOf(NumberTools.formatDouble(availablePoints - pointsUsed,
+                            ProductsAdapterHelper.getDecimalPlace())));
+                    customer.updateTo(getHelper());
+
                     Log.e("INVOICE", invoice.toJSONString());
                 }
             }
@@ -369,6 +388,20 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                     .layawayOfflineData(offlineData)
                                     .queue();
                         }
+
+                        customer = ProductsAdapterHelper.getSelectedCustomer();
+                        Double availablePoints = Double.parseDouble(customer.getAvailable_points());
+                        Double pointsUsed = 0d;
+
+                        if(salesPromotion != null && salesPromotion.getSettings() != null)
+                            pointsUsed = PointsTools.amountToPoints(salesPromotion.getSettings(),
+                                    getNewPointsInAmountUsed(invoice, checkoutFragment.getComputation().getPoints()));
+
+                        Log.e("C_Checkout", "PARTIAL " + availablePoints + " ~ " + pointsUsed);
+
+                        customer.setAvailable_points(String.valueOf(NumberTools.formatDouble(availablePoints - pointsUsed,
+                                ProductsAdapterHelper.getDecimalPlace())));
+                        customer.updateTo(getHelper());
 
                         Log.e("INVOICE", invoice.toJSONString());
                     }
@@ -488,9 +521,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             printer.addText("--------------------------------");
                             printer.addTextAlign(Printer.ALIGN_LEFT);
 
-                            InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.
-                                    PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
-                            paymentsComputation.findReturnsPaymentType(getHelper());
+                            InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.PaymentsComputation();
                             paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
                             paymentsComputation.addAllPayments(invoice.getPayments());
 
