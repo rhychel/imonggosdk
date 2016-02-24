@@ -1,5 +1,6 @@
 package net.nueca.concessioengine.printer.epson.tools;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -59,6 +60,22 @@ public class EPSONPrinterTools {
     static List<String> mPrinterNameList = null;
     static List<String> mTargetPrinterList = null;
     private static String TAG = "EPSONPrinterTools";
+
+
+    public static String spacer(String text1, String text2, int maxChar) {
+        String finalText = text1+text2;
+        int combinedLength = text1.length()+text2.length();
+        if(combinedLength < maxChar) {
+            int spaces = maxChar-combinedLength;
+            String space = "";
+            for(int i = 0;i < spaces;i++)
+                space += " ";
+
+            finalText = text1+space+text2;
+        }
+        return finalText;
+    }
+
 
     public static void print(String target, final PrintListener printListener,
                              Context context) {
@@ -506,11 +523,17 @@ public class EPSONPrinterTools {
         List<String> filter = getFilterTypes();
 
         ArrayAdapter<String> portTypeAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, portTypes);
+        portTypeAdapter.setDropDownViewResource(R.layout.textview_printername);
         ArrayAdapter<String> modelTypeAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, models);
+        modelTypeAdapter.setDropDownViewResource(R.layout.textview_printername);
         ArrayAdapter<String> seriesTypeAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, series);
+        seriesTypeAdapter.setDropDownViewResource(R.layout.textview_printername);
         ArrayAdapter<String> devicesTypeAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, devices);
+        devicesTypeAdapter.setDropDownViewResource(R.layout.textview_printername);
         ArrayAdapter<String> languageTypeAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, language);
+        languageTypeAdapter.setDropDownViewResource(R.layout.textview_printername);
         ArrayAdapter<String> filterTypeAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, filter);
+        filterTypeAdapter.setDropDownViewResource(R.layout.textview_printername);
 
         MaterialDialog discoveryDialog = new MaterialDialog.Builder(context)
                 .customView(R.layout.discovery_customview, true)
@@ -527,6 +550,7 @@ public class EPSONPrinterTools {
                         View viewDiscoveredPrinter;
                         mPrinterNameList = new ArrayList<>();
                         mPrinterListAdapter = new ArrayAdapter<>(context, R.layout.textview_printername, mPrinterNameList);
+                        mPrinterListAdapter.setDropDownViewResource(R.layout.textview_printername);
                         mTargetPrinterList = new ArrayList<String>();
 
                         final MaterialDialog discoverDialog = new MaterialDialog.Builder(context)
@@ -573,13 +597,13 @@ public class EPSONPrinterTools {
                                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                                 @Override
                                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                    listener.onTargetPrinterSelected(target_printer);
 
                                                     HashMap<String, String> selectedPrinter = new HashMap<>();
                                                     selectedPrinter.put(PRINTER_NAME, name);
                                                     selectedPrinter.put(TARGET_PRINTER, target_printer);
                                                     updateTargetPrinter(context, selectedPrinter);
 
+                                                    listener.onTargetPrinterSelected(target_printer);
                                                     try {
                                                         stopDiscovery();
                                                     } catch (Epos2Exception e) {
@@ -616,11 +640,15 @@ public class EPSONPrinterTools {
                                 String name = printer.get(PRINTER_NAME);
                                 String target_printer = printer.get(TARGET_PRINTER);
 
-
                                 mPrinterNameList.add(name);
                                 mTargetPrinterList.add(target_printer);
 
-                                mPrinterListAdapter.notifyDataSetChanged();
+                                ((Activity)context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mPrinterListAdapter.notifyDataSetChanged();
+                                    }
+                                });
 
                                 listener.onPrinterDiscovered(printer);
                             }

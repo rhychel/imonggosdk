@@ -38,6 +38,8 @@ DBTable {
 
     public static <T> T fetchById(ImonggoDBHelper2 dbHelper, Class<T> c, Integer id) {
         try {
+            if(id == null)
+                return null;
             return dbHelper.fetchIntId(c).queryForId(id);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -47,6 +49,8 @@ DBTable {
 
     public static <T> T fetchById(ImonggoDBHelper2 dbHelper, Class<T> c, String id) {
         try {
+            if(id == null)
+                return null;
             return dbHelper.fetchStrId(c).queryForId(id);
         } catch (SQLException e) {
             e.printStackTrace();

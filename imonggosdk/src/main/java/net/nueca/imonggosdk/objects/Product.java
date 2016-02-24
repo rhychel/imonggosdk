@@ -488,6 +488,11 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
+//            if(dbHelper.fetchObjects(Extras.class).queryBuilder().where().eq("id", extras.getId()).queryForFirst() == null) {
+//                insertExtrasTo(dbHelper);
+//            } else {
+//                updateExtrasTo(dbHelper);
+//            }
             dbHelper.update(Product.class, this);
         } catch (SQLException e) {
             e.printStackTrace();

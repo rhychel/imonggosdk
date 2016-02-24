@@ -272,11 +272,13 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     transactionDialog.setAmountLabel("Amount");
                     transactionDialog.setCustomerName(ProductsAdapterHelper.getSelectedCustomer().getName());
                     transactionDialog.setTransactionDialogListener(transactionDialogListener);
+                    transactionDialog.setCanceledOnTouchOutside(false);
+                    transactionDialog.setCancelable(false);
 
                     Invoice invoice = generateInvoice();
 
                     // Print
-                    printTransaction(invoice, 1, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                    printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                     // Print
 
                     transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
@@ -284,7 +286,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     // Transaction Date
                     SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     fromDate.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, h:mma");
                     simpleDateFormat.setTimeZone(TimeZone.getDefault());
                     try {
                         Date date = fromDate.parse(invoice.getInvoice_date().split("T")[0]+" "+invoice.getInvoice_date().split("T")[1].replace("Z", ""));
@@ -331,15 +333,19 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         transactionDialog.setAmountLabel("Remaining Balance");
                         transactionDialog.setCustomerName(ProductsAdapterHelper.getSelectedCustomer().getName());
                         transactionDialog.setTransactionDialogListener(transactionDialogListener);
+                        transactionDialog.setCanceledOnTouchOutside(false);
+                        transactionDialog.setCancelable(false);
 
                         Invoice invoice = generateInvoice();
+
+                        printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
 
                         transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
 
                         // Transaction Date
                         SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         fromDate.setTimeZone(TimeZone.getTimeZone("UTC"));
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, h:mma");
                         simpleDateFormat.setTimeZone(TimeZone.getDefault());
                         try {
                             Date date = fromDate.parse(invoice.getInvoice_date().split("T")[0]+" "+invoice.getInvoice_date().split("T")[1].replace("Z", ""));
@@ -399,21 +405,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         setupNavigationListener(tbActionBar);
     }
 
-    private String spacer(String text1, String text2, int maxChar) {
-        String finalText = text1+text2;
-        int combinedLength = text1.length()+text2.length();
-        if(combinedLength < maxChar) {
-            int spaces = maxChar-combinedLength;
-            String space = "";
-            for(int i = 0;i < spaces;i++)
-                space += " ";
-
-            finalText = text1+space+text2;
-        }
-        return finalText;
-    }
-
-    private void printTransaction(final Invoice invoice, final int copies, final String... labels) {
+    private void printTransaction(final Invoice invoice, final String... labels) {
         String targetPrinter = EPSONPrinterTools.targetPrinter(getApplicationContext());
         if(targetPrinter != null) {
             EPSONPrinterTools.print(targetPrinter, new PrintListener() {
@@ -430,7 +422,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 @Override
                 public Printer onBuildPrintData(Printer printer) {
                     Branch branch = getBranches().get(0);
-                    for(int i = 0;i < copies;i++) {
+                    for(int i = 0;i < labels.length;i++) {
                         StringBuilder printText = new StringBuilder();
                         try {
                             // ---------- HEADER
@@ -494,27 +486,27 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
                             paymentsComputation.addAllPayments(invoice.getPayments());
 
-                            printer.addText(spacer("Total Quantity: ", String.valueOf(totalQuantity), 32)+"\n");
-                            printer.addText(spacer("Gross Amount: ", String.valueOf(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\n");
+                            printer.addText(EPSONPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\n");
+                            printer.addText(EPSONPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\n");
 //                            printer.addText(spacer("Gross Amount: ", invoice.getExtras().getTotal_selling_price(), 32)+"\n");
 
                             if(invoice.getExtras().getCustomer_discount_text_summary() != null) {
-                                printer.addText(spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\n");
+                                printer.addText(EPSONPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\n");
                                 printer.addTextAlign(Printer.ALIGN_RIGHT);
                                 for (Double cusDisc : paymentsComputation.getCustomerDiscount())
-                                    printer.addText("(" + cusDisc + ")\n");
+                                    printer.addText("(" + NumberTools.separateInCommas(cusDisc) + ")\n");
                             }
                             if(invoice.getExtras().getTotal_company_discount() != null) {
-                                printer.addText(spacer("LESS Company Discount: ", String.valueOf("("+NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2)+")"), 32) + "\n");
+                                printer.addText(EPSONPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\n");
                                 printer.addTextAlign(Printer.ALIGN_RIGHT);
                             }
                             if(paymentsComputation.getTotalProductDiscount() != BigDecimal.ZERO) {
-                                printer.addText(spacer("LESS Product Discount: ", String.valueOf("("+NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2)+")"), 32) + "\n");
+                                printer.addText(EPSONPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\n");
                                 printer.addTextAlign(Printer.ALIGN_RIGHT);
                             }
 
                             printer.addTextAlign(Printer.ALIGN_LEFT);
-                            printer.addText(spacer("Net Order Amount: ", String.valueOf(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(true).doubleValue(), 2)), 32)+"\n\n");
+                            printer.addText(EPSONPrinterTools.spacer("Net Order Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(true).doubleValue(), 2)), 32)+"\n\n");
 
                             invoice.getReturnInvoiceLines();
                             if(invoice.getBoInvoiceLines().size() > 0) {
@@ -545,8 +537,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                     }
                                 }
                                 printer.addText("--------------------------------");
-                                printer.addText(spacer("Total Quantity: ", String.valueOf(NumberTools.formatDouble(Math.abs(totalQuantity), 2)), 32)+"\n");
-                                printer.addText(spacer("Net BO Amount: ", String.valueOf(NumberTools.formatDouble(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()),2)), 32)+"\n\n");
+                                printer.addText(EPSONPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(totalQuantity), 2)), 32)+"\n");
+                                printer.addText(EPSONPrinterTools.spacer("Net BO Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()),2)), 32)+"\n\n");
                             }
                             if(invoice.getRgsInvoiceLines().size() > 0) {
                                 totalQuantity = 0.0;
@@ -576,47 +568,53 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                     }
                                 }
                                 printer.addText("--------------------------------");
-                                printer.addText(spacer("Total Quantity: ", String.valueOf(Math.abs(totalQuantity)), 32)+"\n");
+                                printer.addText(EPSONPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(Math.abs(totalQuantity)), 32)+"\n");
                                 if(paymentsComputation.getReturnsPayments().size() > 1)
-                                    printer.addText(spacer("Net RGS Amount: ", String.valueOf(Math.abs(paymentsComputation.getReturnsPayments().get(1).getAmount())), 32)+"\n\n");
+                                    printer.addText(EPSONPrinterTools.spacer("Net RGS Amount: ", NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(1).getAmount())), 32)+"\n\n");
                                 else
-                                    printer.addText(spacer("Net RGS Amount: ", String.valueOf(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount())), 32)+"\n\n");
+                                    printer.addText(EPSONPrinterTools.spacer("Net RGS Amount: ", NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount())), 32)+"\n\n");
                             }
 
-                            printer.addText(spacer("Amount Due: ", String.valueOf(NumberTools.formatDouble(paymentsComputation.getTotalPayable(true).doubleValue(), 2)), 32)+"\n\n");
+                            printer.addText(EPSONPrinterTools.spacer("Amount Due: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(true).doubleValue(), 2)), 32)+"\n\n");
 
                             printer.addText("PAYMENTS\n");
                             printer.addText("================================");
                             printer.addText("Payments                  Amount");
                             for(InvoicePayment invoicePayment : invoice.getPayments()) {
                                 PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
-                                printer.addText(spacer(paymentType.getName(), String.valueOf(invoicePayment.getTender()), 32)+"\n");
+                                printer.addText(EPSONPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\n");
                             }
-                            printer.addText(spacer("Paid Amount: ", String.valueOf(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\n");
+                            printer.addText(EPSONPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\n");
                             printer.addText("--------------------------------");
-                            printer.addText(spacer("Balance: ", String.valueOf(NumberTools.formatDouble(paymentsComputation.getRemaining().doubleValue(), 2)), 32)+"\n\n");
-
+                            if(paymentsComputation.getRemaining().doubleValue() < 0) {
+                                printer.addText(EPSONPrinterTools.spacer("Balance: ", "0.00", 32) + "\n\n");
+                                printer.addText(EPSONPrinterTools.spacer("Change: ", NumberTools.separateInCommas(Math.abs(NumberTools.formatDouble(paymentsComputation.getRemaining().doubleValue(), 2))), 32) + "\n\n");
+                            }
+                            else
+                                printer.addText(EPSONPrinterTools.spacer("Balance: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getRemaining().doubleValue(), 2)), 32) + "\n\n");
                             SimpleDateFormat nowFormat = new SimpleDateFormat("yyyy-MM-dd");
                             printer.addText("Available Points("+nowFormat.format(Calendar.getInstance().getTime())+"):\n");
                             printer.addTextAlign(Printer.ALIGN_RIGHT);
-                            printer.addText(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points()+"\n");
+                            printer.addText(NumberTools.separateInCommas(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points())+"\n");
 
                             printer.addTextAlign(Printer.ALIGN_LEFT);
                             printer.addText("\n\nCustomer Name: "+ProductsAdapterHelper.getSelectedCustomer().generateFullName()+"\n");
                             printer.addText("Customer Code: "+ProductsAdapterHelper.getSelectedCustomer().getCode()+"\n");
                             printer.addText("Address: "+ProductsAdapterHelper.getSelectedCustomer().generateAddress()+"\n");
-                            printer.addText("Signature:______________________\n\n");
+                            printer.addText("Signature:______________________\n");
                             if(ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms() != null)
-                                printer.addText("Terms: "+ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms().getName()+"\n");
+                                printer.addText("Terms: "+ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms().getName()+"\n\n");
+                            else
+                                printer.addText("\n");
 
                             printer.addTextAlign(Printer.ALIGN_CENTER);
                             printer.addText(labels[i]);
-                            if(i < copies-1) {
-                                printer.addFeedLine(4);
-                                printer.addText("- - - - - - CUT HERE - - - - - -");
+                            if(i < labels.length-1) {
+                                printer.addFeedLine(3);
+                                printer.addText("- - - - - - CUT HERE - - - - - -\n");
                             }
                             else
-                                printer.addFeedLine(6);
+                                printer.addFeedLine(5);
 
                         } catch (Epos2Exception | SQLException e) {
                             e.printStackTrace();

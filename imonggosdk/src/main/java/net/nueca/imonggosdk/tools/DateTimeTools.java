@@ -273,6 +273,22 @@ public class DateTimeTools {
         return convertedTime;
     }
 
+    public static String convertFromTo(Date date, String format, TimeZone to) {
+        String convertedTime = "";
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        simpleDateFormat.setTimeZone(to);
+
+        convertedTime = simpleDateFormat.format(date);
+        if(format != null) {
+            SimpleDateFormat forDisplaying = new SimpleDateFormat(format);
+            forDisplaying.setTimeZone(to);
+
+            convertedTime = forDisplaying.format(date);
+        }
+        return convertedTime;
+    }
+
     public static String convertTo12HourFormat(String time) {
         try {
             final SimpleDateFormat sdf = new SimpleDateFormat("H:mm");
