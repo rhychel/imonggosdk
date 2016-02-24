@@ -494,6 +494,7 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 //                updateExtrasTo(dbHelper);
 //            }
             dbHelper.update(Product.class, this);
+            Log.e("Product.Extras["+name+"]", extras.getDefault_selling_unit()+"<---");
         } catch (SQLException e) {
             e.printStackTrace();
         }
