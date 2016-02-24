@@ -493,8 +493,9 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 //            } else {
 //                updateExtrasTo(dbHelper);
 //            }
+            Log.e("Product.Extras["+name+"]o", extras.getDefault_selling_unit()+"<---");
             dbHelper.update(Product.class, this);
-            Log.e("Product.Extras["+name+"]", extras.getDefault_selling_unit()+"<---");
+            Log.e("Product.Extras["+name+"]o", extras.getDefault_selling_unit()+"after<---");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -518,7 +519,10 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
-        if(extras != null)
+        Log.e("Product.Extras["+name+"]p", "updateExtras"+extras.getId());
+        if(extras != null) {
+            extras.setProduct(this);
             extras.updateTo(dbHelper);
+        }
     }
 }
