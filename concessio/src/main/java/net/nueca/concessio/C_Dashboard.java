@@ -28,6 +28,7 @@ import net.nueca.concessioengine.dialogs.ProgressListDialog;
 import net.nueca.concessioengine.dialogs.UpdaterChooserDialog;
 import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
@@ -98,6 +99,17 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
+
+        /*try {
+            List<OfflineData> offlineDatas = getHelper().fetchObjectsList(OfflineData.class);
+            for(OfflineData offlineData : offlineDatas) {
+                if(offlineData.getOfflineDataTransactionType().equals(OfflineDataType.UPDATE_CUSTOMER))
+                    offlineData.deleteTo(getHelper());
+            }
+            getHelper().deleteAll(OfflineData.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
 
         setNextActivityClass(C_Module.class);
 

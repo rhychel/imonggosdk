@@ -75,6 +75,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            Log.e("Customer Return ID", "" + updateCustomer.getReturnId());
         }
 
         setSupportActionBar(tbAddCustomer);
@@ -438,10 +439,13 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                     jsonObject.put(customerField.getFieldName().getLabel(), customerField.getEditTextValue());
                 }
                 customer = gson.fromJson(jsonObject.toString(), Customer.class);
-                if(updateCustomer == null)
+                if(updateCustomer == null) {
                     customer.setId(TempIdGenerator.generateTempId(getContext(), Customer.class));
-                else
+                }
+                else {
                     customer.setId(updateCustomer.getId());
+                    customer.setReturnId(updateCustomer.getReturnId());
+                }
                 customer.setExtras(extras);
                 if(paymentTerm == null)
                     Log.e("paymentTerm", "null");

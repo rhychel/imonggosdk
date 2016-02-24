@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +76,7 @@ public class SimpleTransactionRecyclerViewAdapter extends BaseTransactionsRecycl
         viewHolder.tvLastPurchase.setVisibility(View.VISIBLE);
         if(offlineData.getType() == OfflineData.CUSTOMER) {
 //            viewHolder.isEditable = false;
+            Log.e("tvTransactionRefNo", (viewHolder.tvTransactionRefNo == null) + "");
             viewHolder.tvTransactionRefNo.setText(offlineData.getObjectFromData(Customer.class).generateFullName());
             viewHolder.llBranch.setVisibility(View.GONE);
             viewHolder.llLastTransaction.setVisibility(View.GONE);
