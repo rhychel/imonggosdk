@@ -8,6 +8,7 @@ import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,8 +48,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
             cash.setId(1);
             this.paymentTypes.put(1, cash);
         }
-        this.computation = computation != null? computation : new InvoiceTools
-                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
+        this.computation = computation != null? computation : new InvoiceTools.PaymentsComputation();
     }
 
     public BaseSplitPaymentAdapter(Context context, int listItemRes, InvoiceTools.PaymentsComputation computation,
@@ -60,8 +60,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
         this.paymentTypes = new HashMap<>();
         for(PaymentType paymentType : paymentTypes)
             this.paymentTypes.put(paymentType.getId(), paymentType);
-        this.computation = computation != null? computation : new InvoiceTools
-                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
+        this.computation = computation != null? computation : new InvoiceTools.PaymentsComputation();
     }
 
     public HashMap<Integer, PaymentType> getPaymentTypes() {
@@ -123,7 +122,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
         computation.removePayment(position);
 
-        setIsFullyPaid(computation.getRemaining().doubleValue() <= 0d);
+        setIsFullyPaid(NumberTools.formatDouble(computation.getRemaining().doubleValue(),computation.getDecimalPlace()) <= 0d);
 
         if(paymentUpdateListener != null)
             paymentUpdateListener.onDeletePayment(position);
@@ -136,7 +135,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
         computation.addPayment(payment);
 
-        setIsFullyPaid(computation.getRemaining().doubleValue() <= 0d);
+        setIsFullyPaid(NumberTools.formatDouble(computation.getRemaining().doubleValue(),computation.getDecimalPlace()) <= 0d);
 
         if(paymentUpdateListener != null)
             paymentUpdateListener.onAddPayment(payment);
@@ -153,7 +152,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
         computation.setPayment(position, thisPayment);
 
-        setIsFullyPaid(computation.getRemaining().doubleValue() <= 0d);
+        setIsFullyPaid(NumberTools.formatDouble(computation.getRemaining().doubleValue(),computation.getDecimalPlace()) <= 0d);
 
         if(paymentUpdateListener != null)
             paymentUpdateListener.onUpdatePayment(position, thisPayment);

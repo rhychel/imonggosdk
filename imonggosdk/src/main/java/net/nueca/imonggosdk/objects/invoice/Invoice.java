@@ -621,7 +621,10 @@ public class Invoice extends BaseTransactionTable3 {
     public List<InvoicePayment> getNewBatchPayment() {
         refresh();
         List<InvoicePayment> payments = new ArrayList<>();
+        Log.e("Invoice", "getNewBatchPayment ~ " + this.payments.size());
         for(InvoicePayment payment : this.payments) {
+            Log.e("PaymentBatchNo", currentPaymentBatchNo + " == " +
+                    (payment.getPaymentBatchNo() == null? "null" : payment.getPaymentBatchNo()));
             if(payment.getPaymentBatchNo() != null && payment.getPaymentBatchNo() == currentPaymentBatchNo)
                 payments.add(payment);
         }

@@ -372,19 +372,20 @@ public class InvoiceTools {
         private BigDecimal totalPayable = BigDecimal.ZERO;
         private BigDecimal totalPaymentMade = BigDecimal.ZERO;
 
-        private PaymentType rsSlip, creditMemo;
+        private PaymentType rsSlip, creditMemo, points;
         private BigDecimal totalReturnsPayment = BigDecimal.ZERO;
         private List<InvoicePayment> cmPayments = new ArrayList<>();
         private List<InvoicePayment> rsPayments = new ArrayList<>();
+        private BigDecimal totalPointsPayment = BigDecimal.ZERO;
 
-        public PaymentsComputation(Customer customer) {
-            this(customer, null);
-        }
-
-        public PaymentsComputation(Customer customer, Integer decimalPlace) {
-            selectedCustomer = customer;
-            if(decimalPlace != null)
-                this.decimalPlace = decimalPlace;
+        public PaymentsComputation() {
+            selectedCustomer = ProductsAdapterHelper.getSelectedCustomer();
+            decimalPlace = ProductsAdapterHelper.getDecimalPlace();
+            try {
+                findPaymentType(ProductsAdapterHelper.getDbHelper());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         public void addAllInvoiceLines(List<InvoiceLine> invoiceLines) {
@@ -393,6 +394,7 @@ public class InvoiceTools {
             for(InvoiceLine invoiceLine : invoiceLines)
                 addInvoiceLine(invoiceLine);
         }
+
         public void removeAllInvoiceLines() {
             for(int i = 0 ; i < invoiceLines.size(); i++)
                 removeInvoiceLine(i);
@@ -575,6 +577,10 @@ public class InvoiceTools {
                     payments.add(payment);
                 }
             }
+
+            if(points != null && payment.getPayment_type_id() == points.getId())
+                totalPointsPayment = totalPointsPayment.add(new BigDecimal(payment.getTender()));
+
             trimValues();
         }
 
@@ -584,6 +590,9 @@ public class InvoiceTools {
 
             InvoicePayment forDelete = payments.remove(location);
             totalPaymentMade = totalPaymentMade.subtract(new BigDecimal(forDelete.getTender()));
+
+            if(points != null && forDelete.getPayment_type_id() == points.getId())
+                totalPointsPayment = totalPointsPayment.add(new BigDecimal(forDelete.getTender()));
 
             refresh();
             trimValues();
@@ -617,6 +626,7 @@ public class InvoiceTools {
         public void clearPayments() {
             payments = new ArrayList<>();
             totalPaymentMade = BigDecimal.ZERO;
+            totalPointsPayment = BigDecimal.ZERO;
         }
 
         public void clearAll() {
@@ -637,6 +647,8 @@ public class InvoiceTools {
             cmPayments = new ArrayList<>();
             rsPayments = new ArrayList<>();
             totalReturnsPayment = BigDecimal.ZERO;
+
+            totalPointsPayment = BigDecimal.ZERO;
         }
 
         private void refresh() {
@@ -737,6 +749,10 @@ public class InvoiceTools {
             return totalPayableNoDiscount;
         }
 
+        public BigDecimal getTotalPointsPayment() {
+            return totalPointsPayment;
+        }
+
         public void setRsSlip(PaymentType rsSlip) {
             this.rsSlip = rsSlip;
         }
@@ -745,7 +761,27 @@ public class InvoiceTools {
             this.creditMemo = creditMemo;
         }
 
-        public void findReturnsPaymentType(ImonggoDBHelper2 helper) throws SQLException {
+        public void setPoints(PaymentType points) {
+            this.points = points;
+        }
+
+        public PaymentType getPoints() {
+            return points;
+        }
+
+        public PaymentType getCreditMemo() {
+            return creditMemo;
+        }
+
+        public PaymentType getRsSlip() {
+            return rsSlip;
+        }
+
+        public int getDecimalPlace() {
+            return decimalPlace;
+        }
+
+        private void findPaymentType(ImonggoDBHelper2 helper) throws SQLException {
             //if(helper != null) {
                 Where<PaymentType, ?> where = helper.fetchObjects(PaymentType.class).queryBuilder().where();
                 List<PaymentType> cm = helper.fetchObjects(PaymentType.class).query(where.like("name", "credit memo").prepare());
@@ -756,6 +792,11 @@ public class InvoiceTools {
                 List<PaymentType> rs = helper.fetchObjects(PaymentType.class).query(where.like("name", "rs slip").prepare());
                 if(rs != null && rs.size() != 0)
                     rsSlip = rs.get(0);
+
+                where = helper.fetchObjects(PaymentType.class).queryBuilder().where();
+                List<PaymentType> p = helper.fetchObjects(PaymentType.class).query(where.like("name", "%point%").prepare());
+                if(p != null && p.size() != 0)
+                    points = p.get(0);
             //}
         }
 
@@ -770,6 +811,8 @@ public class InvoiceTools {
             totalPaymentMade = new BigDecimal(NumberTools.formatDouble(totalPaymentMade.doubleValue(), decimalPlace));
 
             totalReturnsPayment = new BigDecimal(NumberTools.formatDouble(totalReturnsPayment.doubleValue(), decimalPlace));
+
+            totalPointsPayment = new BigDecimal(NumberTools.formatDouble(totalPointsPayment.doubleValue(), decimalPlace));
         }
     }
 

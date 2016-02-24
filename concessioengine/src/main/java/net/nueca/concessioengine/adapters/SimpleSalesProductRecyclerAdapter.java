@@ -123,7 +123,6 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             }
             Log.e(getClass().getSimpleName(), "unit : " + (unit == null? "null" : unit.getName()) );
             Log.e(getClass().getSimpleName(), "selectedProductItem isNull? " + (selectedProductItem == null) );
-            Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice 1");
 
             // Set subtotal
             holder.tvSubtotal2.setText("");
@@ -140,6 +139,7 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             }
             // set Retail price
             else {
+                Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice 1");
                 Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer, unit);
 
                 if(retail_price == null)

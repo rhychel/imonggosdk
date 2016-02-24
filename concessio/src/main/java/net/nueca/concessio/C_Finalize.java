@@ -134,8 +134,7 @@ public class C_Finalize extends ModuleActivity {
                     initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
 
                 InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
-                        .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
-                paymentsComputation.findReturnsPaymentType(getHelper());
+                        .PaymentsComputation();
 
                 paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
                 paymentsComputation.addAllPayments(offlineData.getObjectFromData(Invoice.class).getPayments());
@@ -185,8 +184,7 @@ public class C_Finalize extends ModuleActivity {
                 }
 
                 InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
-                        .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
-                paymentsComputation.findReturnsPaymentType(getHelper());
+                        .PaymentsComputation();
 
                 paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
                 paymentsComputation.addAllPayments(offlineData.getObjectFromData(Invoice.class).getPayments());
@@ -276,12 +274,7 @@ public class C_Finalize extends ModuleActivity {
                 sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();*/
 
         InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
-                .PaymentsComputation(ProductsAdapterHelper.getSelectedCustomer(), ProductsAdapterHelper.getDecimalPlace());
-        try {
-            paymentsComputation.findReturnsPaymentType(getHelper());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+                .PaymentsComputation();
 
         paymentsComputation.addAllInvoiceLines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper.getSelectedProductItems()));
         paymentsComputation.addAllInvoiceLines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper.getSelectedReturnProductItems()));

@@ -17,9 +17,13 @@ import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
+import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.tools.DateTimeTools;
+import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +99,19 @@ public abstract class CheckoutActivity extends ModuleActivity {
     protected void onStop() {
         LocationTools.stopLocationSearch(this);
         super.onStop();
+    }
+
+    public Double getNewPointsInAmountUsed(Invoice invoice, PaymentType pointsPaymentType) {
+        if(pointsPaymentType == null)
+            return 0d;
+
+        List<InvoicePayment> payments = invoice.getNewBatchPayment();
+        BigDecimal newPointsPayment = BigDecimal.ZERO;
+        for(InvoicePayment payment : payments) {
+            if(payment.getPayment_type_id() == pointsPaymentType.getId())
+                newPointsPayment = newPointsPayment.add(new BigDecimal(payment.getTender()));
+        }
+        return NumberTools.formatDouble(newPointsPayment.doubleValue(),ProductsAdapterHelper.getDecimalPlace());
     }
 
     public Invoice generateInvoice() {
