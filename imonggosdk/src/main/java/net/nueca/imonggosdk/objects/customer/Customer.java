@@ -371,6 +371,8 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     }
 
     public String getAvailable_points() {
+        if(available_points == null)
+            return "0";
         return available_points;
     }
 
