@@ -71,6 +71,8 @@ public class SwableSendModule extends BaseSwableModule {
                 //invoice.createNewPaymentBatch();
                 //invoice.updateTo(dbHelper);
                 invoice.joinAllNewToCurrentPaymentBatch();
+                Log.e("Customer", invoice.getCustomer() == null? "null" : invoice.getCustomer().getId() + " "
+                        + invoice.getCustomer().getReturnId());
                 //invoice.setPayments(invoice.getNewBatchPayment());
                 jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         invoice.toJSONObject());

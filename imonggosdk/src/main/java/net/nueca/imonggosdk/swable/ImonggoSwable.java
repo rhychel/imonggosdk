@@ -151,7 +151,7 @@ public class ImonggoSwable extends SwableService {
                                     .eq("isPastCutoff", false).and()
                                     .eq("type", OfflineData.CUSTOMER).query();
 
-                    if(offlineDataList == null || offlineDataList.size() == 0) {
+                    if((offlineDataList == null || offlineDataList.size() == 0) && swableSendModule.QUEUED_TRANSACTIONS == 0) {
                         offlineDataList =
                             getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
                                     .eq("isSynced", false).and()

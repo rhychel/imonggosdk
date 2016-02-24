@@ -23,11 +23,11 @@ android {
     buildToolsVersion '23.0.2'
 
     defaultConfig {
-        applicationId "net.nueca.concessio.alpha"
+        applicationId "net.nueca.concessio"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
-        versionName "0.9.4.1"
+        versionName "1.0.0-BETA"
     }
     buildTypes {
         release {
