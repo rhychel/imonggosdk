@@ -115,8 +115,12 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     private String code, alternate_code, first_name, middle_name, last_name, name, company_name,
             tin, street = "", city, state, zipcode, country, telephone, fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
-            available_points, birthdate, status, birthday,
+            birthdate, status, birthday,
             membership_expired_at, membership_start_at, biometric_signature, gender;
+
+    @DatabaseField
+    private String available_points;
+
     @Expose
     @DatabaseField
     private boolean tax_exempt;
@@ -371,6 +375,8 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     }
 
     public String getAvailable_points() {
+        if(available_points == null)
+            return "0";
         return available_points;
     }
 
