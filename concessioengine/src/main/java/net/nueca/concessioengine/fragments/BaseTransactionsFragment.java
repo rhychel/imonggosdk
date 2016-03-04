@@ -116,7 +116,8 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
                 if(hasInvoice)
                     transactionTypes.add(OfflineData.INVOICE);
 
-                transactionTypes.add(OfflineData.CUSTOMER);
+                if(!layawaysOnly)
+                    transactionTypes.add(OfflineData.CUSTOMER);
 
 
                 whereOfflineData.in("type", transactionTypes);//.and()
