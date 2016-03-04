@@ -118,6 +118,12 @@ public class SwableSendModule extends BaseSwableModule {
                                                 responseJson.getString("id"));
                                         offlineData.setReturnId(responseJson.getString("id"));
                                     }
+                                    if (offlineData.getType() == OfflineData.INVOICE && responseJson.has("customer_points")) {
+                                        Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                        Customer customer = invoice.getCustomer();
+                                        customer.setAvailable_points(responseJson.getString("customer_points"));
+                                        customer.updateTo(dbHelper);
+                                    }
                                 }
 
                                 offlineData.setSynced(true);
