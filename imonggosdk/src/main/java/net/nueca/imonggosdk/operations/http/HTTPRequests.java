@@ -42,7 +42,7 @@ public class HTTPRequests {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
-        Log.e(TAG, "-" + ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+        Log.e(TAG, "-" + ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),

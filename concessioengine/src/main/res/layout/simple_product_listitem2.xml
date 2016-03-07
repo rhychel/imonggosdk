@@ -52,7 +52,8 @@
 
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="12dp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:src="@drawable/ic_orange_star" />
         </LinearLayout>
 
         <LinearLayout
