@@ -2,17 +2,19 @@ package net.nueca.concessioengine.printer.epson.enums;
 
 import android.util.Log;
 
+import com.epson.epos2.printer.Printer;
+
 /**
  * Created by Jn on 22/02/16.
  */
 public enum EPSONLanguage {
-    ENGLISH("ENGLISH", 0),
-    JAPANESE("JAPANESE", 1),
-    CHINESE("CHINESE", 2),
-    TAIWAN("TAIWAN", 3),
-    KOREAN("KOREAN", 4),
-    THAI("THAI", 5),
-    SOUTHASIA("SOUTHASIA", 6),
+    ENGLISH("ENGLISH", Printer.MODEL_ANK),
+    JAPANESE("JAPANESE", Printer.MODEL_JAPANESE),
+    CHINESE("CHINESE", Printer.MODEL_CHINESE),
+    TAIWAN("TAIWAN", Printer.MODEL_TAIWAN),
+    KOREAN("KOREAN", Printer.MODEL_KOREAN),
+    THAI("THAI", Printer.MODEL_THAI),
+    SOUTHASIA("SOUTHASIA", Printer.MODEL_SOUTHASIA),
     NOT_SUPPORTED("NOT SUPPORTED", -1);
 
     private static String TAG = "EPSONLanguage";

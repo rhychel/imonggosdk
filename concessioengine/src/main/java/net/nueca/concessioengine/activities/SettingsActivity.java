@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.activities;
 
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.discovery.Discovery;
 import com.epson.epos2.discovery.FilterOption;
+import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.R;
@@ -21,6 +24,8 @@ import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SettingsAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.printer.epson.listener.DiscoveryListener;
+import net.nueca.concessioengine.printer.epson.listener.DiscoverySettingsListener;
+import net.nueca.concessioengine.printer.epson.listener.PrintListener;
 import net.nueca.concessioengine.printer.epson.tools.EPSONPrinterTools;
 //import net.nueca.concessioengine.printer.tools.PrinterTools;
 import net.nueca.concessioengine.tools.appsettings.AppSettings;
@@ -28,6 +33,7 @@ import net.nueca.concessioengine.tools.appsettings.AppTools;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.base.DBTable;
@@ -52,6 +58,7 @@ public class SettingsActivity extends ModuleActivity {
 
     private RecyclerView rvCustomers;
     private Toolbar tbActionBar;
+    private SettingsAdapter settingsAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,7 +67,7 @@ public class SettingsActivity extends ModuleActivity {
         rvCustomers = (RecyclerView) findViewById(R.id.rvCustomers);
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
 
-        SettingsAdapter settingsAdapter = new SettingsAdapter(this, generateSettings());
+        settingsAdapter = new SettingsAdapter(this, generateSettings());
         settingsAdapter.initializeRecyclerView(this, rvCustomers);
         rvCustomers.setAdapter(settingsAdapter);
 
@@ -137,7 +144,7 @@ public class SettingsActivity extends ModuleActivity {
                                 getHelper().deleteAll(OfflineData.class, new DBTable.ConditionsWindow<OfflineData, Integer>() {
                                     @Override
                                     public Where<OfflineData, Integer> renderConditions(Where<OfflineData, Integer> where) throws SQLException {
-                                        return where.in("type", OfflineData.DOCUMENT, OfflineData.INVOICE, OfflineData.ORDER);
+                                        return where.in("type", OfflineData.DOCUMENT, OfflineData.INVOICE, OfflineData.ORDER, OfflineData.CUSTOMER);
                                     }
                                 });
                             } catch (SQLException e) {
@@ -215,33 +222,93 @@ public class SettingsActivity extends ModuleActivity {
         epsonPrinter.setSectionFirstPosition(sectionFirstPosition);
         epsonPrinter.setConcessioModule(ConcessioModule.PRINTER);
         epsonPrinter.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_EPSON_PRINTER);
-        epsonPrinter.setValue("Not Connected!");
+
+        EPSONPrinterTools.updateTargetPrinter(this, new HashMap<String, String>(){{
+            put(EPSONPrinterTools.PRINTER_NAME, "");
+            put(EPSONPrinterTools.TARGET_PRINTER, "");
+        }});
+
+        if(EPSONPrinterTools.targetPrinterName(this).equals(""))
+            epsonPrinter.setValue("Not Connected!");
+        else
+            epsonPrinter.setValue(EPSONPrinterTools.targetPrinterName(this));
         epsonPrinter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                EPSONPrinterTools.startDiscovery(SettingsActivity.this,
-                        EPSONPrinterTools.getFilterOptions(Discovery.PORTTYPE_BLUETOOTH, null, Discovery.MODEL_ALL, Discovery.FILTER_NAME, Discovery.TYPE_PRINTER),
-                        new DiscoveryListener() {
+                EPSONPrinterTools.showDiscoveryDialog(SettingsActivity.this, new DiscoverySettingsListener() {
+                    @Override
+                    public void onPortTypeSelected(int portType) { }
+
+                    @Override
+                    public void onModelTypeSelected(int model) { }
+
+                    @Override
+                    public void onDeviceTypeSelected(int deviceType) { }
+
+                    @Override
+                    public void onLanguageSelected(int language) { }
+
+                    @Override
+                    public void onPrinterSeriesSelected(int series) { }
+
+                    @Override
+                    public void onFilterTypeSelected(int filterType) { }
+
+                    @Override
+                    public void onPrinterDiscovered(HashMap<String, String> printer) { }
+
+                    @Override
+                    public void onDiscoveryError(Exception e) { }
+
+                    @Override
+                    public void onTargetPrinterSelected(String targetPrinter) {
+                        AppSettings printer = new AppSettings();
+                        printer.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_EPSON_PRINTER);
+                        int index = settingsAdapter.getList().indexOf(printer);
+                        settingsAdapter.getItem(index).setValue(EPSONPrinterTools.targetPrinterName(SettingsActivity.this));
+                        settingsAdapter.notifyDataSetChanged();
+
+                        EPSONPrinterTools.print(targetPrinter, new PrintListener() {
                             @Override
-                            public void onDiscovered(HashMap<String, String> printer) {
-                                Log.e("onDiscovered", "yeah");
-                                for(Map.Entry<String, String> entry : printer.entrySet()) {
-                                    Log.e("DISCOVERING: "+entry.getKey(), entry.getValue());
+                            public Printer initializePrinter() {
+                                try {
+                                    return new Printer(EPSONPrinterTools.getPrinterProperties(SettingsActivity.this, EPSONPrinterTools.PRINTER_SERIES),
+                                            EPSONPrinterTools.getPrinterProperties(SettingsActivity.this, EPSONPrinterTools.PRINTER_LANGUAGE), SettingsActivity.this);
+                                } catch (Epos2Exception e) {
+                                    e.printStackTrace();
                                 }
-                                EPSONPrinterTools.updateTargetPrinter(SettingsActivity.this, printer);
-                                if(!printer.isEmpty())
-                                    try {
-                                        EPSONPrinterTools.stopDiscovery();
-                                    } catch (Epos2Exception e) {
-                                        e.printStackTrace();
-                                    }
+                                return null;
                             }
 
                             @Override
-                            public void onDiscoveryError(Exception e) {
-                                Log.e("onDiscoveryError", e.toString());
+                            public Printer onBuildPrintData(Printer printer) {
+                                try {
+                                    printer.addTextFont(Printer.FONT_A);
+                                    printer.addFeedLine(5);
+                                    printer.addTextAlign(Printer.ALIGN_CENTER);
+                                    printer.addText("TEST PRINT\n");
+                                    printer.addText(Build.MODEL+" is connected!\n");
+                                    printer.addFeedLine(5);
+                                } catch (Epos2Exception e) {
+                                    e.printStackTrace();
+                                }
+                                return printer;
                             }
-                        });
+
+                            @Override
+                            public void onPrinterWarning(String message) { }
+
+                            @Override
+                            public void onPrinterReceive(Printer printerObj, int code, PrinterStatusInfo status, String printJobId) { }
+
+                            @Override
+                            public void onPrintError(String message) { }
+
+                            @Override
+                            public void onPrintSuccess() { }
+                        }, SettingsActivity.this);
+                    }
+                });
             }
         });
         appSettings.add(epsonPrinter);

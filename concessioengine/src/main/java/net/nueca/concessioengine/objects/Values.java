@@ -95,6 +95,7 @@ public class Values {
         return unit;
     }
 
+    // UNIT
     public void setValue(String quantity, Unit unit) {
         //Log.e("VALUES", "setValue(quantity="+quantity +", unit="+(unit!=null?unit.getName():"null")+")");
         if(this.price != null && this.price.getUnit() != null && !this.price.getUnit().equals(unit))
@@ -118,50 +119,21 @@ public class Values {
         setValue(quantity, unit, null);
     }
 
-    public void setValue(String quantity, Price price, String customer_discount_text) {
-        setValue(quantity, price, customer_discount_text, null);
-    }
-
-    public void setValue(String quantity, Price price, String customer_discount_text, ExtendedAttributes extendedAttributes) {
-        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
-        if(customer_discount_text != null)
-            this.customer_discount_text = customer_discount_text;
-        setValue(quantity, price, extendedAttributes);
-    }
-
-    public void setValue(String quantity, Price price) {
-        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
-        setValue(quantity, price, (ExtendedAttributes) null);
-    }
-
-    public void setValue(String quantity, Price price, ExtendedAttributes extendedAttributes) {
-        Log.e("VALUES", "setValue price isNull? " + (price==null));
-        this.price = price;
-        if(price != null) {
-            if (price.getRetail_price() != null)
-                this.retail_price = price.getRetail_price();
-            else
-                this.retail_price = price.getProduct().getRetail_price();
-            this.discount_text = price.getDiscount_text();
-        }
-        setValue(quantity, price == null? null : price.getUnit(), extendedAttributes);
-    }
-
-    public void setValue(String input_quantity, Unit unit, ExtendedAttributes extendedAttributes) {
+    public void setValue(String quantity, Unit unit, ExtendedAttributes extendedAttributes) {
         if(extendedAttributes != null)
             this.extendedAttributes = extendedAttributes;
         this.unit = unit;
         if(isValidUnit()) {
-            Log.e("Quantity-unit", unit.getQuantity()+" * "+input_quantity);
-            this.unit_quantity = input_quantity;
+            Log.e("Quantity-unit", unit.getQuantity()+" * "+quantity);
+            this.unit_quantity = quantity;
             this.unit_content_quantity = unit.getQuantity();
-            if(input_quantity.length() > 0)
-                this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(input_quantity)));
+            if(quantity.length() > 0)
+                this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_name = unit.getName();
             this.unit_retail_price = this.retail_price * Double.valueOf(this.unit_quantity);
         }
         else {
-            this.quantity = input_quantity;
+            this.quantity = quantity;
             this.unit_quantity = null;
             this.unit_content_quantity = 0d;
             this.unit_retail_price = 0d;
@@ -169,7 +141,7 @@ public class Values {
                 this.unit_name = unit.getName();
         }
 
-        Log.e("QTY", this.quantity + " ~ " + input_quantity);
+        Log.e("QTY", this.quantity + " ~ " + quantity);
 
         Log.e("DISCOUNT TEXT", (this.discount_text == null? "null" : this.discount_text) );
         if(this.discount_text != null && this.discount_text.length() > 0) {
@@ -235,9 +207,39 @@ public class Values {
         this.subtotal = NumberTools.formatDouble(this.subtotal, ProductsAdapterHelper.getDecimalPlace());
 
 
-        Log.e("QTY", this.quantity + " ~ " + input_quantity);
+        Log.e("QTY", this.quantity + " ~ " + quantity);
         Log.e("Unit", unit != null? unit.getName()+" id:"+unit.getId() : "null");
-        Log.e("Values", "setValue : " + this.retail_price + " * " + input_quantity + " = " + this.subtotal);
+        Log.e("Values", "setValue : " + this.retail_price + " * " + quantity + " = " + this.subtotal);
+    }
+
+    // PRICE
+    public void setValue(String quantity, Price price) {
+        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
+        setValue(quantity, price, (ExtendedAttributes) null);
+    }
+
+    public void setValue(String quantity, Price price, ExtendedAttributes extendedAttributes) {
+        Log.e("VALUES", "setValue price isNull? " + (price==null));
+        this.price = price;
+        if(price != null) {
+            if (price.getRetail_price() != null)
+                this.retail_price = price.getRetail_price();
+            else
+                this.retail_price = price.getProduct().getRetail_price();
+            this.discount_text = price.getDiscount_text();
+        }
+        setValue(quantity, price == null? null : price.getUnit(), extendedAttributes);
+    }
+
+    public void setValue(String quantity, Price price, String customer_discount_text) {
+        setValue(quantity, price, customer_discount_text, null);
+    }
+
+    public void setValue(String quantity, Price price, String customer_discount_text, ExtendedAttributes extendedAttributes) {
+        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
+        if(customer_discount_text != null)
+            this.customer_discount_text = customer_discount_text;
+        setValue(quantity, price, extendedAttributes);
     }
 
     public String getQuantity() {

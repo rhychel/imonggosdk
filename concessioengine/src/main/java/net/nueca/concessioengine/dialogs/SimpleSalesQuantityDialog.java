@@ -124,6 +124,10 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 llExpiryDate = (LinearLayout) super.findViewById(R.id.llExpiryDate);
                 btnExpiryDate = (Button) super.findViewById(R.id.btnExpiryDate);
 
+                Calendar now = Calendar.getInstance();
+                date = DateTimeTools.convertToDate(now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH), "yyyy-M-d", "yyyy-MM-dd");
+                btnExpiryDate.setText(date);
+
                 spInvoicePurpose.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -196,9 +200,12 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             }
             if(hasExpiryDate) {
                 if(date == null) {
+                    Log.e("date", "isnull");
                     Calendar now = Calendar.getInstance();
                     date = now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH);
                 }
+                else
+                    Log.e("date", "is not null="+date);
                 date = DateTimeTools.convertToDate(date, "yyyy-M-d", "yyyy-MM-dd");
                 btnExpiryDate.setText(date);
             }
@@ -342,6 +349,9 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     }
                 }
                 Log.e(getClass().getSimpleName(), "VALUES QTY : " + values.getQuantity());
+                if(hasExpiryDate) {
+                    date = btnExpiryDate.getText().toString();
+                }
 
                 if(hasInvoicePurpose) {
                     values.setInvoicePurpose((InvoicePurpose) spInvoicePurpose.getSelectedItem());

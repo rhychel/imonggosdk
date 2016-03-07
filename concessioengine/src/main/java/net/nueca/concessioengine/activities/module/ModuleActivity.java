@@ -391,6 +391,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             if(selectedProductItem.getInventory() != null) {
                 Inventory updateInventory = selectedProductItem.getInventory();
+                updateInventory.setProduct(selectedProductItem.getProduct());
                 updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
 //                updateInventory.updateTo(getHelper());
                 updateInventories.add(updateInventory);
@@ -398,13 +399,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             }
             else {
                 Inventory newInventory = new Inventory();
+                Log.e("Product.Extras["+selectedProductItem.getProduct().getName()+"]", "updateInventory="+selectedProductItem.getProduct().getExtras().getDefault_selling_unit());
                 newInventory.setProduct(selectedProductItem.getProduct());
                 newInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
                 newInventories.add(newInventory);
-//                newInventory.insertTo(getHelper());
-//                Product product = selectedProductItem.getProduct();
-//                product.setInventory(newInventory);
-//                product.updateTo(getHelper());
                 updated++;
             }
         }

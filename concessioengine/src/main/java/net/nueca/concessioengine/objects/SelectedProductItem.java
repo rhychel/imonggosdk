@@ -71,27 +71,29 @@ public class SelectedProductItem {
         }*/
         if(!isMultiline) {
             if(valuesList.size() == 1) {
+                setValues(0, value, true);
                 //Log.e(TAG, "Index is 1 setting the value");
-                if(value.getExtendedAttributes() == null) {
-                    if(value.getPrice() != null) {
-                        setValues(0, value.getQuantity(), value.getPrice());
-                    } else {
-                        if (value.getRetail_price() != null) {
-                            setValues(0, value.getQuantity(), value.getUnit(), value.getRetail_price());
-                        } else
-                            setValues(0, value.getQuantity(), value.getUnit());
-                    }
-                }
-                else {
-                    if(value.getPrice() != null) {
-                        setValues(0, value.getQuantity(), value.getPrice(), value.getExtendedAttributes());
-                    } else {
-                        if (value.getRetail_price() != null)
-                            setValues(0, value.getQuantity(), value.getUnit(), value.getExtendedAttributes(), value.getRetail_price());
-                        else
-                            setValues(0, value.getQuantity(), value.getUnit(), value.getExtendedAttributes());
-                    }
-                }
+                // DEPRECATED
+//                if(value.getExtendedAttributes() == null) {
+//                    if(value.getPrice() != null) {
+//                        setValues(0, value.getQuantity(), value.getPrice());
+//                    } else {
+//                        if (value.getRetail_price() != null) {
+//                            setValues(0, value.getQuantity(), value.getUnit(), value.getRetail_price());
+//                        } else
+//                            setValues(0, value.getQuantity(), value.getUnit());
+//                    }
+//                }
+//                else {
+//                    if(value.getPrice() != null) {
+//                        setValues(0, value.getQuantity(), value.getPrice(), value.getExtendedAttributes());
+//                    } else {
+//                        if (value.getRetail_price() != null)
+//                            setValues(0, value.getQuantity(), value.getUnit(), value.getExtendedAttributes(), value.getRetail_price());
+//                        else
+//                            setValues(0, value.getQuantity(), value.getUnit(), value.getExtendedAttributes());
+//                    }
+//                }
                 return -1;
             }
         }
@@ -127,33 +129,69 @@ public class SelectedProductItem {
 
     public void setValues(int position, Values values) {
         //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, Values values)");
+        setValues(position, values, false);
+//        setValues();
+    }
 
-        String qty = fixQuantity(values.getQuantity());
-        if(values.getRetail_price() != null) {
-            if(values.getPrice() != null)
-                this.valuesList.get(position).setValue(qty,values.getPrice(),values.getExtendedAttributes());
-            else {
-                this.valuesList.get(position).setValue(qty, values.getUnit(), values.getRetail_price());
-                this.valuesList.get(position).setExtendedAttributes(values.getExtendedAttributes());
+    public void setValues(int position, Values value, boolean isAdvanced) {
+        String qty = fixQuantity(value.getQuantity());
+
+        this.valuesList.get(position).setBadStock(value.isBadStock());
+        this.valuesList.get(position).setInvoicePurpose(value.getInvoicePurpose());
+        this.valuesList.get(position).setExpiry_date(value.getExpiry_date());
+        if(isAdvanced) {
+            if(value.getPrice() != null) {
+                this.valuesList.get(position).setValue(qty, value.getPrice(), value.getExtendedAttributes());
             }
-        } else {
-            this.valuesList.get(position).setValue(qty, values.getUnit(), values.getExtendedAttributes());
+            else {
+                if(value.getExtendedAttributes() == null) {
+                    if(value.getRetail_price() != null)
+                        this.valuesList.get(position).setValue(qty, value.getUnit(), value.getRetail_price());
+                    else
+                        this.valuesList.get(position).setValue(qty, value.getUnit());
+                }
+                else {
+                    if(value.getRetail_price() != null) {
+                        this.valuesList.get(position).setValue(qty, value.getUnit(), value.getRetail_price());
+                        this.valuesList.get(position).setExtendedAttributes(value.getExtendedAttributes());
+                    }
+                    else
+                        this.valuesList.get(position).setValue(qty, value.getUnit(), value.getExtendedAttributes());
+                }
+            }
+        }
+        else {
+//            String qty = fixQuantity(values.getQuantity());
+            if(value.getRetail_price() != null) {
+                if(value.getPrice() != null)
+                    this.valuesList.get(position).setValue(qty, value.getPrice(), value.getExtendedAttributes());
+                else {
+                    this.valuesList.get(position).setValue(qty, value.getUnit(), value.getRetail_price());
+                    this.valuesList.get(position).setExtendedAttributes(value.getExtendedAttributes());
+                }
+            } else {
+                this.valuesList.get(position).setValue(qty, value.getUnit(), value.getExtendedAttributes());
+            }
         }
         setValues();
     }
 
+    // UNIT
+    @Deprecated
     public void setValues(int position, String quantity, Unit unit) {
         //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, String quantity, Unit unit)");
         quantity = fixQuantity(quantity);
         this.valuesList.get(position).setValue(quantity, unit);
         setValues();
     }
+    @Deprecated
     public void setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes) {
         //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes)");
         quantity = fixQuantity(quantity);
         this.valuesList.get(position).setValue(quantity, unit, extendedAttributes);
         setValues();
     }
+    @Deprecated
     public void setValues(int position, String quantity, Unit unit, double retail_price) {
         quantity = fixQuantity(quantity);
         Log.e("SELECTED_PRODUCT_ITEM", "setValues(position="+position+", quantity="+quantity+", unit="+(unit!=null?unit.getName():"null")+", " +
@@ -161,15 +199,7 @@ public class SelectedProductItem {
         this.valuesList.get(position).setValue(quantity, unit, retail_price);
         setValues();
     }
-    public void setValues(int position, String quantity, Price price) {
-        setValues(position, quantity, price, null);
-    }
-    public void setValues(int position, String quantity, Price price, ExtendedAttributes extendedAttributes) {
-        quantity = fixQuantity(quantity);
-        this.valuesList.get(position).setValue(quantity, price, extendedAttributes);
-        setValues();
-    }
-
+    @Deprecated
     public void setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes, double retail_price) {
         //Log.e("SELECTED_PRODUCT_ITEM", "setValues(int position, String quantity, Unit unit, ExtendedAttributes extendedAttributes, double " +
         //        "retail_price)");
@@ -178,6 +208,19 @@ public class SelectedProductItem {
         this.valuesList.get(position).setExtendedAttributes(extendedAttributes);
         setValues();
     }
+
+    // PRICE
+    @Deprecated
+    public void setValues(int position, String quantity, Price price) {
+        setValues(position, quantity, price, null);
+    }
+    @Deprecated
+    public void setValues(int position, String quantity, Price price, ExtendedAttributes extendedAttributes) {
+        quantity = fixQuantity(quantity);
+        this.valuesList.get(position).setValue(quantity, price, extendedAttributes);
+        setValues();
+    }
+
 
     private void setValues() {
         this.total_quantity = valuesList.getQuantity();
