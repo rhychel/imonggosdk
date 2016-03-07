@@ -45,12 +45,10 @@ public class ImonggoOperations {
                 URL = ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, true);
                 break;
             case IRETAILCLOUD_COM:
-                URL = ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, false);
-                break;
             case IRETAILCLOUD_NET:
-                URL = ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, false);
-                break;
             case PLDTRETAILCLOUD:
+            case PETRONDIS_COM:
+            case PETRONDIS_NET:
                 URL = ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, false);
                 break;
             default:
@@ -74,12 +72,11 @@ public class ImonggoOperations {
             case IMONGGO:
                 return ImonggoTools.buildAPIModuleURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, parameter, true);
             case IRETAILCLOUD_COM:
-                return ImonggoTools.buildAPIModuleURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, parameter, false);
             case IRETAILCLOUD_NET:
-                return ImonggoTools.buildAPIModuleURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, parameter, false);
             case PLDTRETAILCLOUD:
-                return ImonggoTools.buildAPIModuleURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, parameter, false);
             case IMONGGO_NET:
+            case PETRONDIS_NET:
+            case PETRONDIS_COM:
                 return ImonggoTools.buildAPIModuleURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, parameter, false);
             default:
                 return "";
@@ -103,12 +100,10 @@ public class ImonggoOperations {
                 URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, true);
                 break;
             case IRETAILCLOUD_COM:
-                URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, false);
-                break;
             case IRETAILCLOUD_NET:
-                URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, false);
-                break;
             case PLDTRETAILCLOUD:
+            case PETRONDIS_COM:
+            case PETRONDIS_NET:
                 URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, false);
                 break;
             default:

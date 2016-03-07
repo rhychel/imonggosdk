@@ -6,25 +6,15 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.crashlytics.android.Crashlytics;
-import com.j256.ormlite.stmt.Where;
 
-import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.login.BaseLoginActivity;
 import net.nueca.concessioengine.activities.login.LoginActivity;
-import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
-import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DialogTools;
-import net.nueca.imonggosdk.tools.ModuleSettingTools;
 import net.nueca.imonggosdk.tools.SettingTools;
-
-import java.sql.SQLException;
-import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 

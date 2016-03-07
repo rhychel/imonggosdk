@@ -713,7 +713,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
             }
 
-            if (mSkipNextModule) {
+            if (!mSkipNextModule) {
                 if (listOfIds.size() != 0) {
                     count = listOfIds.size();
                     mCustomIndex = 0;
@@ -1277,12 +1277,16 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 updateUsers.doOperationBT(User.class);
                                 deleteUsers.doOperationBT(User.class);
 
-                                User current_user = getUser();
-
-                                getSession().setUser(current_user);
-                                getSession().setCurrent_branch_id(current_user.getHome_branch_id());
-                                Log.e(TAG, "User Home Branch ID: " + current_user.getHome_branch_id());
-                                getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
+//                                User current_user = getUser();
+                                if(getSession().getUser() == null) {
+                                    User current_user = getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
+                                    if(current_user != null) {
+                                        getSession().setUser(current_user);
+                                        getSession().setCurrent_branch_id(current_user.getHome_branch_id());
+                                        Log.e(TAG, "User Home Branch ID: " + current_user.getHome_branch_id());
+                                        getSession().dbOperation(getHelper(), DatabaseOperation.UPDATE);
+                                    }
+                                }
 
                                 updateNext(requestType, size);
                             }
@@ -2735,51 +2739,56 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         case ROUTE_PLANS_DETAILS:
                             BatchList<RoutePlanDetail> newRoutePlanDetails = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<RoutePlanDetail> updateRoutePlanDetails = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
+                                RoutePlan xRoutePlan = (RoutePlan) listOfIds.get(mCustomIndex);
 
-                            RoutePlan xRoutePlan = (RoutePlan) listOfIds.get(mCustomIndex);
+                                for (int i = 0; i < size; i++) {
 
-                            for (int i = 0; i < size; i++) {
+                                    JSONObject routePlanDetailJsonObject = jsonArray.getJSONObject(i);
 
-                                JSONObject routePlanDetailJsonObject = jsonArray.getJSONObject(i);
+                                    RoutePlanDetail routePlanDetails = gson.fromJson(routePlanDetailJsonObject.toString(), RoutePlanDetail.class);
+                                    //set Route Plan
+                                    routePlanDetails.setRoutePlan(xRoutePlan);
 
-                                RoutePlanDetail routePlanDetails = gson.fromJson(routePlanDetailJsonObject.toString(), RoutePlanDetail.class);
-                                //set Route Plan
-                                routePlanDetails.setRoutePlan(xRoutePlan);
-
-                                // set Customer
-                                if (routePlanDetailJsonObject.has("customer_id")) {
-                                    if (routePlanDetailJsonObject.getString("customer_id").equals("") || routePlanDetailJsonObject.isNull("customer_id")) {
-                                        Log.e(TAG, "'customer_id' field is null");
-                                    } else {
-                                        int customer_id = routePlanDetailJsonObject.getInt("customer_id");
-                                        Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId",
-                                                customer_id).queryForFirst();
-                                        if (customer != null) {
-                                            Log.e(TAG, "Customer: " + customer.getName());
-                                            routePlanDetails.setCustomer(customer);
+                                    // set Customer
+                                    if (routePlanDetailJsonObject.has("customer_id")) {
+                                        if (routePlanDetailJsonObject.getString("customer_id").equals("") || routePlanDetailJsonObject.isNull("customer_id")) {
+                                            Log.e(TAG, "'customer_id' field is null");
                                         } else {
-                                            Log.e(TAG, "Can't find customer with id " + routePlanDetailJsonObject.getInt("customer_id"));
+                                            int customer_id = routePlanDetailJsonObject.getInt("customer_id");
+                                            Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId",
+                                                    customer_id).queryForFirst();
+                                            if (customer != null) {
+                                                Log.e(TAG, "Customer: " + customer.getName());
+                                                routePlanDetails.setCustomer(customer);
+                                            } else {
+                                                Log.e(TAG, "Can't find customer with id " + routePlanDetailJsonObject.getInt("customer_id"));
+                                            }
                                         }
+                                    } else {
+                                        Log.e(TAG, mCurrentTableSyncing + " API don't have 'customer_id' field.");
                                     }
-                                } else {
-                                    Log.e(TAG, mCurrentTableSyncing + " API don't have 'customer_id' field.");
-                                }
 
-                                if (initialSync || lastUpdatedAt == null) {
-                                    newRoutePlanDetails.add(routePlanDetails);
-                                } else {
-                                    if (isExisting(routePlanDetails, Table.ROUTE_PLANS_DETAILS)) {
+                                    if (initialSync || lastUpdatedAt == null) {
                                         newRoutePlanDetails.add(routePlanDetails);
                                     } else {
-                                        updateRoutePlanDetails.add(routePlanDetails);
+                                        if (isExisting(routePlanDetails, Table.ROUTE_PLANS_DETAILS)) {
+                                            newRoutePlanDetails.add(routePlanDetails);
+                                        } else {
+                                            updateRoutePlanDetails.add(routePlanDetails);
+                                        }
                                     }
                                 }
+
+                                newRoutePlanDetails.doOperationBT2(RoutePlanDetail.class);
+                                updateRoutePlanDetails.doOperationBT2(RoutePlanDetail.class);
+
+                                Log.e(TAG, "Route Plan Details");
                             }
-
-                            newRoutePlanDetails.doOperationBT2(RoutePlanDetail.class);
-                            updateRoutePlanDetails.doOperationBT2(RoutePlanDetail.class);
-
-                            Log.e(TAG, "Route Plan Details");
                             updateNext(requestType, count);
                             break;
                         case PRICE_LISTS_DETAILS:
@@ -3115,7 +3124,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 mCurrentTableSyncing == Table.DOCUMENT_PURPOSES ||
                 mCurrentTableSyncing == Table.SETTINGS ||
                 mCurrentTableSyncing == Table.ROUTE_PLANS) {
+
             startSyncModuleContents(RequestType.API_CONTENT);
+
         } else if (mCurrentTableSyncing == Table.DAILY_SALES) {
             startSyncModuleContents(RequestType.DAILY_SALES_TODAY);
         } else {
