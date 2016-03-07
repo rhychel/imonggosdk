@@ -535,12 +535,17 @@ public class Invoice extends BaseTransactionTable3 {
             batchList.doOperation(InvoiceTaxRate.class);
         }
         if(payments != null) {
-            BatchList<InvoicePayment> batchList = new BatchList<>(DatabaseOperation.UPDATE, dbHelper);
+            BatchList<InvoicePayment> batchListUpdate = new BatchList<>(DatabaseOperation.UPDATE, dbHelper);
+            BatchList<InvoicePayment> batchListInsert = new BatchList<>(DatabaseOperation.INSERT, dbHelper);
             for (InvoicePayment payment : payments) {
                 payment.setInvoice(this);
-                batchList.add(payment);
+                if(payment.getId() > 0)
+                    batchListUpdate.add(payment);
+                else
+                    batchListInsert.add(payment);
             }
-            batchList.doOperation(InvoicePayment.class);
+            batchListUpdate.doOperation(InvoicePayment.class);
+            batchListInsert.doOperation(InvoicePayment.class);
         }
 
         updateExtrasTo(dbHelper);

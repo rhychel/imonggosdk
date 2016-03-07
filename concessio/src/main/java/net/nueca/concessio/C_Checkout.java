@@ -47,6 +47,8 @@ import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
+import org.json.JSONException;
+
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -403,7 +405,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                 ProductsAdapterHelper.getDecimalPlace())));
                         customer.updateTo(getHelper());
 
-                        Log.e("INVOICE", invoice.toJSONString());
+                        Gson gson = new Gson();
+                        Log.e("INVOICE", gson.toJson(invoice));
                     }
                 }, "No", R.style.AppCompatDialogStyle_Light);
             }
