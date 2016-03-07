@@ -46,12 +46,15 @@ public class TransactionDialog extends BaseAppCompatDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.transaction_complete_dialog);
+        setCancelable(false);
+        setCanceledOnTouchOutside(false);
 
         btnDone = (Button) super.findViewById(R.id.btnDone);
         tvTitle = (TextView) super.findViewById(R.id.tvTitle);
         tvInStock = (TextView) super.findViewById(R.id.tvInStock);
         ivStatus = (ImageView) super.findViewById(R.id.ivStatus);
         llDetails = (LinearLayout) super.findViewById(R.id.llDetails);
+        tvDatetime = (TextView) super.findViewById(R.id.tvDatetime);
 
         tvCustomerName = (TextView) super.findViewById(R.id.tvCustomerName);
         tvAmount = (TextView) super.findViewById(R.id.tvAmount);
@@ -66,6 +69,7 @@ public class TransactionDialog extends BaseAppCompatDialog {
         tvTitle.setText(title);
         tvInStock.setText(inStock);
         ivStatus.setImageResource(statusResource);
+        tvDatetime.setText(datetime);
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override

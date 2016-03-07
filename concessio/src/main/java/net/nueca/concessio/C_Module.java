@@ -23,6 +23,8 @@ import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.activities.AddEditCustomerActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -65,6 +67,8 @@ import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -75,6 +79,7 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.tools.TimerTools;
@@ -85,7 +90,9 @@ import org.json.JSONObject;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by rhymart on 8/21/15.
@@ -487,88 +494,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     @Override
                     public void onClick(View v) {
                         // ---- So let's print...
-                        final AlertDialog dialog = DialogTools.showDialog(C_Module.this, "Print Inventory", "Printing...", null, null, R.style.AppCompatDialogStyle_Light);
-                        String targetPrinter = EPSONPrinterTools.targetPrinter(getApplicationContext());
-                        if(targetPrinter != null) {
-                            EPSONPrinterTools.print(targetPrinter, new PrintListener() {
-                                @Override
-                                public Printer initializePrinter() {
-                                    try {
-                                        return new Printer(Printer.TM_T20, Printer.MODEL_ANK, getApplicationContext());
-                                    } catch (Epos2Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    return null;
-                                }
-
-                                @Override
-                                public Printer onBuildPrintData(Printer printer) {
-                                    Branch branch = getBranches().get(0);
-                                    StringBuilder printText = new StringBuilder();
-                                    try {
-                                        printer.addTextFont(Printer.FONT_A);
-                                        printText.append(branch.getName());
-                                        printText.append("\n");
-                                        printText.append(branch.generateAddress());
-                                        printText.append("\n");
-                                        printer.addTextAlign(Printer.ALIGN_CENTER);
-                                        printer.addFeedLine(2);
-                                        printer.addText(printText.toString());
-                                        printer.addFeedLine(2);
-                                        printer.addText("INVENTORY SLIP");
-                                        printer.addFeedLine(2);
-                                        printer.addText("Salesman: "+getSession().getUser().getName()+"\n");
-                                        printText.delete(0, printText.length());
-                                        printer.addTextAlign(Printer.ALIGN_LEFT);
-                                        printer.addText("Ref #: 324-34\n");
-                                        printer.addText("Date: Sept 30, 2016  23:59 PM\n");
-                                        printer.addText("================================");
-                                        printer.addText("Quantity                  Amount");
-                                        printer.addText("================================");
-                                        // loop
-                                        Product product = getHelper().fetchObjectsList(Product.class).get(0);
-                                        printer.addText(product.getName()+"\n");
-                                        printer.addText("  888.88   LUNCHBOX x 1000.00\n");
-                                        printer.addTextAlign(Printer.ALIGN_RIGHT);
-                                        printer.addText("11111110.00\n");
-                                        // loop
-                                        printer.addTextAlign(Printer.ALIGN_LEFT);
-                                        printer.addText("--------------------------------");
-                                        printer.addText("Total Quantity: 254\n");
-                                        printer.addText("Total Order Amount: \n");
-                                        printer.addTextAlign(Printer.ALIGN_CENTER);
-                                        printer.addText("*Salesman Copy*");
-
-                                        printer.addFeedLine(6);
-                                    } catch (Epos2Exception | SQLException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    return printer;
-                                }
-
-                                @Override
-                                public void onPrintSuccess() {
-                                    Log.e("Printer", "onPrintSuccess");
-                                    dialog.dismiss();
-                                }
-
-                                @Override
-                                public void onPrinterWarning(String message) {
-
-                                }
-
-                                @Override
-                                public void onPrinterReceive(Printer printerObj, int code, PrinterStatusInfo status, String printJobId) {
-
-                                }
-
-                                @Override
-                                public void onPrintError(String message) {
-
-                                }
-                            }, getApplicationContext());
-                        }
+                        printTransaction(null, "*Salesman Copy*");//, "*Office Copy*"
                     }
                 });
                 tvItems.setVisibility(View.INVISIBLE);
@@ -1232,12 +1158,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .queue();
                                 TimerTools.duration("SwableTools.queue --- end", true);
 
-//                                printTransaction(offlineData, 2, "*Salesman Copy*", "*Office Copy*");
+                                printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
 
-                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
                                 TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                                 transactionDialog.setTitle(concessioModule);
-                                transactionDialog.setInStock(simpleDateFormat.format(offlineData.getDateCreated()));
+                                String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
+                                transactionDialog.setInStock(dateTime);
                                 transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
                                     @Override
                                     public void whenDismissed() {
@@ -1322,12 +1248,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .fromModule(concessioModule)
                                                             .queue();
 
-//                                                    printTransaction(offlineData, 2, "*Salesman Copy*", "*Office Copy*");
+                                                    printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
 
-                                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, K:mma");
                                                     TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                                                     transactionDialog.setTitle(concessioModule);
-                                                    transactionDialog.setInStock(simpleDateFormat.format(offlineData.getDateCreated()));
+                                                    String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
+                                                    transactionDialog.setInStock(dateTime);
                                                     transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
                                                         @Override
                                                         public void whenDismissed() {
@@ -1395,8 +1321,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
     };
 
-    private void printTransaction(final OfflineData offlineData, final int copies, final String... labels) {
-        final AlertDialog dialog = DialogTools.showDialog(C_Module.this, "Print Inventory", "Printing...", null, null, R.style.AppCompatDialogStyle_Light);
+    private void printTransaction(final OfflineData offlineData, final String... labels) {
         String targetPrinter = EPSONPrinterTools.targetPrinter(getApplicationContext());
         if(targetPrinter != null) {
             EPSONPrinterTools.print(targetPrinter, new PrintListener() {
@@ -1413,7 +1338,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 @Override
                 public Printer onBuildPrintData(Printer printer) {
                     Branch branch = getBranches().get(0);
-                    for(int i = 0;i < copies;i++) {
+                    for(int i = 0;i < labels.length;i++) {
                         StringBuilder printText = new StringBuilder();
                         try {
                             // ---------- HEADER
@@ -1431,16 +1356,21 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             printer.addText("Salesman: " + getSession().getUser().getName() + "\n");
                             printText.delete(0, printText.length());
                             printer.addTextAlign(Printer.ALIGN_LEFT);
-                            printer.addText("Ref #: " + offlineData.getReference_no() + "\n");
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
-                            printer.addText("Date: " + simpleDateFormat.format(offlineData.getDateCreated()) + "\n");
+                            if(offlineData != null) {
+                                printer.addText("Ref #: " + offlineData.getReference_no() + "\n");
+                                printer.addText("Date: " + simpleDateFormat.format(offlineData.getDateCreated()) + "\n");
+                            }
+                            else
+                                printer.addText("Date: " + simpleDateFormat.format(Calendar.getInstance().getTime()) + "\n");
+
                             // ---------- HEADER
                             double totalQuantity = 0.0;
                             double totalAmount = 0.0;
-                            if (offlineData.getType() == OfflineData.DOCUMENT) {
-                                printer.addText("================================");
-                                printer.addText("Quantity                  Amount");
-                                printer.addText("================================");
+                            printer.addText("================================");
+                            printer.addText("Quantity                  Amount");
+                            printer.addText("================================");
+                            if (offlineData != null && offlineData.getType() == OfflineData.DOCUMENT && concessioModule == ConcessioModule.RECEIVE_SUPPLIER) {
                                 for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
                                     Double retail_price = 0.0;
                                     try {
@@ -1488,19 +1418,74 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     }
                                 }
                             }
+                            else {
+                                QueryBuilder<Inventory, Integer> currentInventories = getHelper().fetchObjectsInt(Inventory.class).queryBuilder();
+                                currentInventories.selectColumns("id");
+                                currentInventories.where().gt("quantity", 0.0);
+
+                                ProductSorting productSorting = getHelper().fetchForeignCollection(getAppSetting().getProductSortings().closeableIterator(), new ImonggoDBHelper2.Conditional<ProductSorting>() {
+                                    @Override
+                                    public boolean validate(ProductSorting obj) {
+                                        if(obj.is_default())
+                                            return true;
+                                        return false;
+                                    }
+                                }, 0);
+                                List<Product> products = getHelper().fetchObjects(Product.class).queryBuilder()
+                                        .orderBy(productSorting.getColumn(), true)
+                                        .where()
+                                            .isNotNull("inventory_id").and()
+                                            .in("inventory_id", currentInventories)
+                                        .query();
+                                for(Product product : products) {
+                                    Double retail_price = 0.0;
+                                    final Unit unit = Unit.fetchById(getHelper(), Unit.class, product.getExtras().getDefault_selling_unit());
+                                    try {
+                                        final BranchProduct branchProduct = getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+                                            @Override
+                                            public boolean validate(BranchProduct obj) {
+                                                if(unit == null) {
+                                                    if(obj.getUnit() == null)
+                                                        return true;
+                                                }
+                                                else if(obj.getUnit() != null && unit.getId() == obj.getUnit().getId())
+                                                    return true;
+                                                return false;
+                                            }
+                                        }, 0);
+
+                                        retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, null, null, unit);
+
+                                        if(retail_price == null)
+                                            retail_price = branchProduct.getUnit_retail_price();
+                                        Log.e("identified retail_price", retail_price.toString());
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    printer.addTextAlign(Printer.ALIGN_LEFT);
+                                    printer.addText(product.getName() + "\n");
+                                    printer.addText("  " + product.getInventory().getQuantity() + "   "
+                                            + (unit == null ? product.getBase_unit_name() : unit.getName()) + " x "
+                                            + NumberTools.separateInCommas(retail_price)+"\n");
+                                    Double subtotal = product.getInventory().getQuantity() * retail_price;
+                                    printer.addTextAlign(Printer.ALIGN_RIGHT);
+                                    printer.addText(NumberTools.separateInCommas(subtotal)+"\n");
+                                }
+                            }
 
                             printer.addTextAlign(Printer.ALIGN_LEFT);
                             printer.addText("--------------------------------");
-                            printer.addText("Total Quantity: " + totalQuantity + "\n");
-                            printer.addText("Total Order Amount:   "+NumberTools.separateInCommas(totalAmount)+"\n\n");
+                            printer.addText("Total Quantity: " + NumberTools.separateInCommas(totalQuantity) + "\n");
+                            printer.addText(EPSONPrinterTools.spacer("Total Order Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\n\n");
                             printer.addTextAlign(Printer.ALIGN_CENTER);
                             printer.addText(labels[i]);
-                            if(i < copies-1) {
-                                printer.addFeedLine(4);
-                                printer.addText("- - - - - - CUT HERE - - - - - -");
+                            if(i < labels.length-1) {
+                                printer.addFeedLine(3);
+                                printer.addText("- - - - - - CUT HERE - - - - - -\n\n");
                             }
                             else
-                                printer.addFeedLine(6);
+                                printer.addFeedLine(5);
 
                         } catch (Epos2Exception | SQLException e) {
                             e.printStackTrace();
@@ -1513,7 +1498,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 @Override
                 public void onPrintSuccess() {
                     Log.e("Printer", "onPrintSuccess");
-                    dialog.dismiss();
                 }
 
                 @Override

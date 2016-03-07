@@ -76,6 +76,10 @@ public class AppSettings {
     private int selectedItem = 0;
     private OnItemClickListener onItemClickListener;
 
+    @Override
+    public boolean equals(Object o) {
+        return appSettingEntry == ((AppSettings)o).getAppSettingEntry();
+    }
 
     public ConcessioModule getConcessioModule() {
         return concessioModule;

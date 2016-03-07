@@ -71,6 +71,8 @@ public class SwableSendModule extends BaseSwableModule {
                 //invoice.createNewPaymentBatch();
                 //invoice.updateTo(dbHelper);
                 invoice.joinAllNewToCurrentPaymentBatch();
+                Log.e("Customer", invoice.getCustomer() == null? "null" : invoice.getCustomer().getId() + " "
+                        + invoice.getCustomer().getReturnId());
                 //invoice.setPayments(invoice.getNewBatchPayment());
                 jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         invoice.toJSONObject());
@@ -115,6 +117,12 @@ public class SwableSendModule extends BaseSwableModule {
                                         Log.d("ImonggoSwable", "sending success : return ID : " +
                                                 responseJson.getString("id"));
                                         offlineData.setReturnId(responseJson.getString("id"));
+                                    }
+                                    if (offlineData.getType() == OfflineData.INVOICE && responseJson.has("customer_points")) {
+                                        Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                        Customer customer = invoice.getCustomer();
+                                        customer.setAvailable_points(responseJson.getString("customer_points"));
+                                        customer.updateTo(dbHelper);
                                     }
                                 }
 

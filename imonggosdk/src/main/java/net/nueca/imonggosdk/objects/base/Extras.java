@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects.base;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -229,6 +231,7 @@ public class Extras extends DBTable {
     }
 
     protected Extras(Builder builder) {
+
         is_salesman = builder.is_salesman;
         documentLine = builder.documentLine;
         routePlan = builder.routePlan;

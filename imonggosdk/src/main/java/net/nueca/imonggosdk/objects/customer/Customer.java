@@ -115,8 +115,12 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     private String code, alternate_code, first_name, middle_name, last_name, name, company_name,
             tin, street = "", city, state, zipcode, country, telephone, fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
-            available_points, birthdate, status, birthday,
+            birthdate, status, birthday,
             membership_expired_at, membership_start_at, biometric_signature, gender;
+
+    @DatabaseField
+    private String available_points;
+
     @Expose
     @DatabaseField
     private boolean tax_exempt;
@@ -190,10 +194,6 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         this.state = builder.state;
         this.tin = builder.tin;
         this.gender = builder.gender;
-    }
-
-    public Customer(String s, String s1, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String gender) {
-        super();
     }
 
     public int getPoint_to_amount_ratio() {
@@ -371,6 +371,8 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     }
 
     public String getAvailable_points() {
+        if(available_points == null)
+            return "0";
         return available_points;
     }
 
