@@ -132,6 +132,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
     private ImonggoSwableServiceConnection imonggoSwableServiceConnection;
 
+    private OfflineData offlineData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -429,7 +431,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setHasCategories(false);
                 finalizeFragment.setHasDeliveryDate(false);
                 finalizeFragment.setHasUnits(false);
-                finalizeFragment.setHasSubtotal(true);
+                finalizeFragment.setHasSubtotal(false);
                 finalizeFragment.setUseSalesProductAdapter(false);
 
                 prepareFooter();
@@ -488,16 +490,21 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 // if there's branch product
                 simpleProductsFragment.setBranch(getBranches().get(0));
 
-                llFooter.setVisibility(View.VISIBLE);
-                btn1.setText("PRINT INVENTORY");
-                btn1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // ---- So let's print...
-                        printTransaction(null, "*Salesman Copy*");//, "*Office Copy*"
-                    }
-                });
-                tvItems.setVisibility(View.INVISIBLE);
+                if(getModuleSetting(concessioModule).is_view()) {
+                    llFooter.setVisibility(View.VISIBLE);
+                    btn1.setText("PRINT INVENTORY");
+                    btn1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // ---- So let's print...
+                            printTransaction(null, "*Salesman Copy*");//, "*Office Copy*"
+                        }
+                    });
+                    tvItems.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    prepareFooter();
+                }
 
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.flContent, simpleProductsFragment)
@@ -1104,111 +1111,99 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Gson gson = new GsonBuilder().serializeNulls().create();
-
-                            TimerTools.start("generateDocument");
-                            Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
-                            TimerTools.duration("generateDocument -- end", true);
-
-                            if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
-                                Extras extras = new Extras();
-                                extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
-                                document.setExtras(extras);
-                            }
-                            if (concessioModule == ConcessioModule.STOCK_REQUEST) {
+                            if(concessioModule == ConcessioModule.STOCK_REQUEST) {
+                                Order order = generateOrder(getApplicationContext(), branch.getId());
 
                                 try {
-                                    int branch_id = getSession().getCurrent_branch_id();
-                                    Branch branch = getHelper().fetchObjects(Branch.class).queryBuilder()
-                                            .where().eq("id", branch_id).queryForFirst();
-
-                                    Order order = generateOrder(getApplicationContext(), branch_id);
-
-                                    new SwableTools.Transaction(getHelper())
-                                            .toSend()
-                                            .forBranch(branch)
-                                            .fromModule(ConcessioModule.STOCK_REQUEST)
-                                            .object(order)
-                                            .queue();
-
-                                } catch (SQLException e) {
+                                    JSONObject jsonObject = new JSONObject(gson.toJson(order));
+                                    Log.e("jsonObject", jsonObject.toString());
+                                } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+
+                                offlineData = new SwableTools.Transaction(getHelper())
+                                        .toSend()
+                                        .forBranch(branch)
+                                        .fromModule(ConcessioModule.STOCK_REQUEST)
+                                        .object(order)
+                                        .queue();
                             }
+                            else {
+                                Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
 
+                                try {
+                                    JSONObject jsonObject = new JSONObject(gson.toJson(document));
+                                    Log.e("jsonObject", jsonObject.toString());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
 
-                            try {
-                                JSONObject jsonObject = new JSONObject(gson.toJson(document));
-                                Log.e("jsonObject", jsonObject.toString());
+                                if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                    document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
+                                    Extras extras = new Extras();
+                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
+                                    document.setExtras(extras);
+                                }
 
-                                TimerTools.start("updateInventoryFromSelectedItemList");
                                 updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
-                                TimerTools.duration("updateInventoryFromSelectedItemList --- end", true);
-//                                List<Inventory> inventoryList = getHelper().fetchObjectsList(Inventory.class);
-//                                for (Inventory inventory : inventoryList) {
-//                                    Log.e("Inventory", inventory.getProduct().getName() + " = " + inventory.getQuantity());
-//                                }
 
-                                TimerTools.start("SwableTools");
-                                final OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                                offlineData = new SwableTools.Transaction(getHelper())
                                         .toSend()
                                         .forBranch(branch)
                                         .object(document)
                                         .fromModule(concessioModule)
                                         .queue();
-                                TimerTools.duration("SwableTools.queue --- end", true);
 
                                 printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-
-                                TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
-                                transactionDialog.setTitle(concessioModule);
-                                String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
-                                transactionDialog.setInStock(dateTime);
-                                transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
-                                    @Override
-                                    public void whenDismissed() {
-                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
-                                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
-
-                                        if(ProductsAdapterHelper.isDuplicating) {
-                                            Intent intent = new Intent();
-                                            intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
-                                            setResult(SUCCESS, intent);
-                                            finish();
-                                            return;
-                                        }
-
-                                        if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                            llFooter.setVisibility(View.GONE);
-                                            simpleCustomersFragment.setHasSelected(false);
-                                            simpleCustomersFragment.onViewCreated(null, null);
-                                            hasMenu = true;
-                                            showsCustomer = true;
-
-                                            getSupportFragmentManager().popBackStackImmediate(); // finalize
-                                            getSupportFragmentManager().popBackStackImmediate(); // product list
-                                            previousFragmentCount = 0;
-                                            Log.e("simple", "called customer fragment");
-//                                            getSupportFragmentManager()
-//                                                    .beginTransaction()
-//                                                    .replace(R.id.flContent, simpleCustomersFragment)
-//                                                    .commit();
-                                        } else {
-                                            // TODO
-                                            onBackPressed();
-                                        }
-
-                                        if (concessioModule == ConcessioModule.STOCK_REQUEST) {
-                                            simpleProductsFragment.refreshList();
-                                            finalizeFragment.refreshList();
-                                        }
-                                    }
-                                });
-                                transactionDialog.show();
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
                             }
+
+                            TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                            transactionDialog.setTitle(concessioModule);
+                            String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
+                            transactionDialog.setInStock(dateTime);
+                            transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
+                                @Override
+                                public void whenDismissed() {
+                                    ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                    ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
+                                    if(ProductsAdapterHelper.isDuplicating) {
+                                        Intent intent = new Intent();
+                                        intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
+                                        setResult(SUCCESS, intent);
+                                        finish();
+                                        return;
+                                    }
+
+                                    if (concessioModule == ConcessioModule.STOCK_REQUEST) {
+                                        simpleProductsFragment.refreshList();
+                                        finalizeFragment.refreshList();
+                                        onBackPressed();
+                                    }
+                                    else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                        llFooter.setVisibility(View.GONE);
+                                        simpleCustomersFragment.setHasSelected(false);
+                                        simpleCustomersFragment.onViewCreated(null, null);
+                                        hasMenu = true;
+                                        showsCustomer = true;
+
+                                        getSupportFragmentManager().popBackStackImmediate(); // finalize
+                                        getSupportFragmentManager().popBackStackImmediate(); // product list
+                                        previousFragmentCount = 0;
+                                        Log.e("simple", "called customer fragment");
+                                    } else {
+                                        // TODO
+                                        onBackPressed();
+                                    }
+//
+//                                    if (concessioModule == ConcessioModule.STOCK_REQUEST) {
+//                                        simpleProductsFragment.refreshList();
+//                                        finalizeFragment.refreshList();
+//                                    }
+                                }
+                            });
+                            transactionDialog.show();
+
                         }
                     }, "No", R.style.AppCompatDialogStyle_Light);
                 } else {
@@ -1225,19 +1220,42 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
                                                 Gson gson = new GsonBuilder().serializeNulls().create();
-                                                Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
 
-                                                if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                                    document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
+                                                if(concessioModule == ConcessioModule.STOCK_REQUEST) {
+                                                    Order order = generateOrder(getApplicationContext(), branch.getId());
+
+                                                    try {
+                                                        JSONObject jsonObject = new JSONObject(gson.toJson(order));
+                                                        Log.e("jsonObject", jsonObject.toString());
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                    offlineData = new SwableTools.Transaction(getHelper())
+                                                            .toSend()
+                                                            .forBranch(branch)
+                                                            .fromModule(ConcessioModule.STOCK_REQUEST)
+                                                            .object(order)
+                                                            .queue();
+                                                }
+                                                else {
+                                                    Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
+
+                                                    if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                                        document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
 //                                                  document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
 
-                                                    Extras extras = new Extras();
-                                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
-                                                    document.setExtras(extras);
-                                                }
-                                                try {
-                                                    JSONObject jsonObject = new JSONObject(gson.toJson(document));
-                                                    Log.e("jsonObject", jsonObject.toString());
+                                                        Extras extras = new Extras();
+                                                        extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
+                                                        document.setExtras(extras);
+                                                    }
+
+                                                    try {
+                                                        JSONObject jsonObject = new JSONObject(gson.toJson(document));
+                                                        Log.e("jsonObject", jsonObject.toString());
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
 
                                                     updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
 
@@ -1249,50 +1267,54 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .queue();
 
                                                     printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-
-                                                    TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
-                                                    transactionDialog.setTitle(concessioModule);
-                                                    String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
-                                                    transactionDialog.setInStock(dateTime);
-                                                    transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
-                                                        @Override
-                                                        public void whenDismissed() {
-                                                            ProductsAdapterHelper.clearSelectedProductItemList(true);
-                                                            ProductsAdapterHelper.clearSelectedReturnProductItemList();
-
-                                                            if(ProductsAdapterHelper.isDuplicating) {
-                                                                Intent intent = new Intent();
-                                                                intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
-                                                                setResult(SUCCESS, intent);
-                                                                finish();
-                                                                return;
-                                                            }
-
-                                                            if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                                                llFooter.setVisibility(View.GONE);
-                                                                simpleCustomersFragment.setHasSelected(false);
-                                                                simpleCustomersFragment.onViewCreated(null, null);
-
-
-                                                                hasMenu = true;
-                                                                showsCustomer = true;
-
-                                                                Log.e("simple", "called customer fragment");
-
-                                                                getSupportFragmentManager().popBackStackImmediate(); // finalize
-                                                                getSupportFragmentManager().popBackStackImmediate(); // product list
-                                                                previousFragmentCount = 0;
-                                                            } else {
-                                                                // TODO
-                                                                onBackPressed();
-                                                            }
-                                                        }
-                                                    });
-                                                    transactionDialog.show();
-
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
                                                 }
+
+
+                                                TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                                transactionDialog.setTitle(concessioModule);
+                                                String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
+                                                transactionDialog.setInStock(dateTime);
+                                                transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
+                                                    @Override
+                                                    public void whenDismissed() {
+                                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
+                                                        if(ProductsAdapterHelper.isDuplicating) {
+                                                            Intent intent = new Intent();
+                                                            intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
+                                                            setResult(SUCCESS, intent);
+                                                            finish();
+                                                            return;
+                                                        }
+
+                                                        if (concessioModule == ConcessioModule.STOCK_REQUEST) {
+                                                            simpleProductsFragment.refreshList();
+                                                            finalizeFragment.refreshList();
+                                                            onBackPressed();
+                                                        }
+                                                        else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                                            llFooter.setVisibility(View.GONE);
+                                                            simpleCustomersFragment.setHasSelected(false);
+                                                            simpleCustomersFragment.onViewCreated(null, null);
+
+
+                                                            hasMenu = true;
+                                                            showsCustomer = true;
+
+                                                            Log.e("simple", "called customer fragment");
+
+                                                            getSupportFragmentManager().popBackStackImmediate(); // finalize
+                                                            getSupportFragmentManager().popBackStackImmediate(); // product list
+                                                            previousFragmentCount = 0;
+                                                        } else {
+                                                            // TODO
+                                                            onBackPressed();
+                                                        }
+                                                    }
+                                                });
+                                                transactionDialog.show();
+
                                             }
                                         }, "No", R.style.AppCompatDialogStyle_Light);
                                     }

@@ -182,7 +182,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         if(includeAll)
             transactionTypes.add(ConcessioModule.ALL);
 
-        List<ModuleSetting> moduleSettings = getActiveModuleSetting(HISTORY_ITEM_FILTERS);
+        List<ModuleSetting> moduleSettings = getActiveModuleSetting(HISTORY_ITEM_FILTERS, false);
 
         for(ModuleSetting moduleSetting : moduleSettings) {
             if(moduleSetting.is_enabled())

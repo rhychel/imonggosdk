@@ -160,7 +160,7 @@ public class Values {
             if(isValidUnit()) {
                 this.no_discount_subtotal = this.unit_retail_price;
                 this.subtotal = this.unit_retail_price;
-            } else {
+            } else if(this.retail_price != null) {
                 this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
                 this.subtotal = this.retail_price * Double.valueOf(this.quantity);
             }
@@ -204,7 +204,10 @@ public class Values {
         }
 
         /** DECIMAL FORMATTING **/
-        this.subtotal = NumberTools.formatDouble(this.subtotal, ProductsAdapterHelper.getDecimalPlace());
+        if(this.subtotal != null)
+            this.subtotal = NumberTools.formatDouble(this.subtotal, ProductsAdapterHelper.getDecimalPlace());
+        else
+            this.subtotal = 0.0;
 
 
         Log.e("QTY", this.quantity + " ~ " + quantity);

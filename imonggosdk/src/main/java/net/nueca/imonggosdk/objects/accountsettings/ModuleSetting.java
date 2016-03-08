@@ -53,6 +53,8 @@ public class ModuleSetting extends DBTable {
     private boolean has_get_latest_document = false;
     @DatabaseField
     private boolean has_pin_code = true;
+    @DatabaseField
+    private int display_sequence = 1;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
     @ForeignCollectionField(orderAscending = true, orderColumnName = "id")
@@ -333,6 +335,14 @@ public class ModuleSetting extends DBTable {
         this.show_only_sellable_products = show_only_sellable_products;
     }
 
+    public int getDisplay_sequence() {
+        return display_sequence;
+    }
+
+    public void setDisplay_sequence(int display_sequence) {
+        this.display_sequence = display_sequence;
+    }
+
     public ConcessioModule getModuleType() {
         if(module_type.equals("stock_request"))
             return ConcessioModule.STOCK_REQUEST;
@@ -358,6 +368,8 @@ public class ModuleSetting extends DBTable {
 
         if(module_type.equals("invoice"))
             return ConcessioModule.INVOICE;
+        if(module_type.equals("customers"))
+            return ConcessioModule.CUSTOMERS;
         return ConcessioModule.APP;
     }
 

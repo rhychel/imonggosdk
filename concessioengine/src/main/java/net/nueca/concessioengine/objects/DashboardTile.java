@@ -20,7 +20,11 @@ public class DashboardTile {
 
     public DashboardTile(ConcessioModule concessioModule, String label) {
         this.concessioModule = concessioModule;
-        this.label = label;
+        if(concessioModule == ConcessioModule.CUSTOMERS)
+            this.label = "Customers";
+        else
+            this.label = label;
+        this.imageResource = concessioModule.getLogo();
     }
 
     public DashboardTile(ConcessioModule concessioModule, String label, int imageResource) {

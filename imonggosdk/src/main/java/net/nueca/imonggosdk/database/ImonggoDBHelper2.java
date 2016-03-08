@@ -13,6 +13,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.objects.AccountPrice;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.BranchTag;
@@ -81,7 +82,7 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 71;
+    private static final int DATABASE_VERSION = 73;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchTag.class, Customer.class,
@@ -95,7 +96,7 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
             Extras.class, CustomerCategory.class, CustomerGroup.class, InvoicePurpose.class,
             PaymentTerms.class, PaymentType.class, SalesPromotion.class, net.nueca.imonggosdk.objects.salespromotion.Discount.class, Price.class,
             PriceList.class, RoutePlan.class, RoutePlanDetail.class, CustomerCustomerGroupAssoc.class,
-            ProductSalesPromotionAssoc.class, ModuleSetting.class, Sequence.class, DebugMode.class, ProductSorting.class,
+            ProductSalesPromotionAssoc.class, AccountPrice.class, ModuleSetting.class, Sequence.class, DebugMode.class, ProductSorting.class,
             Cutoff.class, ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};
 
     public ImonggoDBHelper2(Context context) { super(context, DATABASE_NAME, null, DATABASE_VERSION); }

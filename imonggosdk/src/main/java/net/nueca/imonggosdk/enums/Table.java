@@ -2,6 +2,7 @@ package net.nueca.imonggosdk.enums;
 
 import android.util.Log;
 
+import net.nueca.imonggosdk.objects.AccountPrice;
 import net.nueca.imonggosdk.objects.ApplicationSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
@@ -11,7 +12,6 @@ import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.invoice.Discount;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
@@ -54,6 +54,7 @@ public enum Table {
     PRODUCTS(API_TYPE.API, "Products", Product.class, "products"),
     TAX_SETTINGS(API_TYPE.API, "Tax Settings", TaxSetting.class, "tax_settings"),
     UNITS(API_TYPE.API, "Units", Unit.class, "units"),
+    ACCOUNT_PRICES(API_TYPE.API, "Account Prices", AccountPrice.class, "account_prices"),
     USERS(API_TYPE.API, "Users", User.class, "users"),
     USERS_ME(API_TYPE.API, "Users", User.class, "users_me"),
     BRANCHES(API_TYPE.API, "Branches", Branch.class, "branches"),
