@@ -26,8 +26,8 @@ public class AccountPrice extends BaseTable2 {
 
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "product_id")
     private Product product;
-    @DatabaseField
-    private Unit unit = null;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "unit_id")
+    private Unit unit;
     @DatabaseField
     private Double wholesale_quantity;
     @DatabaseField
@@ -80,7 +80,7 @@ public class AccountPrice extends BaseTable2 {
 
     @Override
     public String toString() {
-        return product.getName();
+        return "id: " + id;
     }
 
     @Override

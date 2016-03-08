@@ -1,9 +1,6 @@
 package net.nueca.concessioengine.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -11,31 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
-
 import net.nueca.concessioengine.R;
-import net.nueca.concessioengine.adapters.SimpleMultiInputAdapter;
 import net.nueca.concessioengine.adapters.SimpleReceiveMultiInputAdapter;
-import net.nueca.concessioengine.adapters.SimpleReceiveRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
-import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
-import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
-import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleReceiveDialog;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.ProductTag;
-import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.NumberTools;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import me.grantland.widget.AutofitTextView;
 
 /**
  * Created by gama on 9/22/15.
@@ -59,7 +40,7 @@ public class ReceiveMultiInputFragment extends ImonggoFragment {
         View view = inflater.inflate(R.layout.simple_receive_multiinput_layout, container, false);
 
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
-        tbActionBar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        // tbActionBar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         tbActionBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

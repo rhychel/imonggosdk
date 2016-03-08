@@ -33,28 +33,29 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
         setRequireObjectConcessioSettings(false);
-        setServer(Server.IRETAILCLOUD_NET);
+        setServer(Server.PETRONDIS_NET);
 
         SettingTools.updateSettings(C_Login.this,
                 SettingsName.AUTO_UPDATE, false, "");
 
         setModulesToSync(
-                Table.USERS_ME.ordinal(),
+                Table.USERS.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
                 Table.SETTINGS.ordinal(),
-                /*Table.PRODUCTS.ordinal()
+                Table.PRODUCTS.ordinal(),
                 Table.UNITS.ordinal(),
-                */Table.CUSTOMER_CATEGORIES.ordinal(),
-                Table.CUSTOMER_BY_SALESMAN.ordinal(),/*
+                /*Table.CUSTOMER_CATEGORIES.ordinal(),
+                Table.CUSTOMER_BY_SALESMAN.ordinal(),
                 Table.ROUTE_PLANS.ordinal(),
                 Table.ROUTE_PLANS_DETAILS.ordinal(),
-                */Table.BRANCH_PRODUCTS.ordinal()/*,
-                Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
-                Table.PRICE_LISTS_DETAILS.ordinal()/*,
+                Table.BRANCH_PRODUCTS.ordinal(),*/
+                Table.ACCOUNT_PRICES.ordinal()
+               /* Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
+                Table.PRICE_LISTS_DETAILS.ordinal()
                 Table.PAYMENT_TERMS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
-                Table.INVOICES.ordinal(),
-                Table.INVOICE_PURPOSES.ordinal(),
+                Table.INVOICES.ordinal(), */
+               /* Table.INVOICE_PURPOSES.ordinal(),
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS.ordinal(),
                 Table.SALES_PROMOTIONS_POINTS.ordinal(),
@@ -64,15 +65,15 @@ public class C_Login extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-//        Intent intent = new Intent(this, TestPrinterActivity.class);
-//        startActivity(intent);
+        Intent intent = new Intent(this, C_Dashboard.class);
+        startActivity(intent);
     }
 
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
-        setEditTextAccountID("A1029");
-        setEditTextEmail("A1072A_OSS-1@imonggo.com");
-        setEditTextPassword("123rebisco456");
+        setEditTextAccountID("1034092");
+        setEditTextEmail("unitedbig3@yahoo.com.ph");
+        setEditTextPassword("password");
     }
 }

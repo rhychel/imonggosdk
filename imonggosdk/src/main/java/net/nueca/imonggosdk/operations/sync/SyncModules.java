@@ -12,6 +12,7 @@ import net.nueca.imonggosdk.enums.Parameter;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
+import net.nueca.imonggosdk.objects.AccountPrice;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.BranchTag;
@@ -1278,9 +1279,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 deleteUsers.doOperationBT(User.class);
 
 //                                User current_user = getUser();
-                                if(getSession().getUser() == null) {
+                                if (getSession().getUser() == null) {
                                     User current_user = getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getSession().getEmail()).queryForFirst();
-                                    if(current_user != null) {
+                                    if (current_user != null) {
                                         getSession().setUser(current_user);
                                         getSession().setCurrent_branch_id(current_user.getHome_branch_id());
                                         Log.e(TAG, "User Home Branch ID: " + current_user.getHome_branch_id());
@@ -2951,6 +2952,79 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                 newRoutePlans.doOperationBT(RoutePlan.class);
                                 updateRoutePlans.doOperationBT(RoutePlan.class);
+                            }
+                            updateNext(requestType, size);
+                            break;
+                        case ACCOUNT_PRICES:
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                syncNext();
+                                return;
+                            } else {
+                                BatchList<AccountPrice> newAccountPrice = new BatchList<>();
+                                BatchList<AccountPrice> updateAccountPrice = new BatchList<>();
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    AccountPrice accountPrice = gson.fromJson(jsonObject.toString(), AccountPrice.class);
+
+                                    int product_id = 0;
+                                    int unit_id = 0;
+
+                                    if (jsonObject.has("product_id")) {
+                                        if (!jsonObject.isNull("product_id")) {
+                                            product_id = jsonObject.getInt("product_id");
+                                        } else {
+                                            Log.e(TAG, "product_id is null");
+                                        }
+                                    } else {
+                                        Log.e(TAG, mCurrentTableSyncing + " API don't have 'product_id' field");
+                                    }
+
+                                    if (jsonObject.has("unit_id")) {
+                                        if (!jsonObject.isNull("unit_id")) {
+                                            unit_id = jsonObject.getInt("unit_id");
+                                        } else {
+                                            Log.e(TAG, "unit_id is null");
+                                        }
+                                    } else {
+                                        Log.e(TAG, mCurrentTableSyncing + " API don't have 'product_id' field");
+                                    }
+
+
+                                    if (product_id != 0) {
+                                        Product px = Product.fetchById(getHelper(), Product.class, product_id);
+
+                                        if (px != null) {
+                                            Log.e(TAG, "Product with id " + product_id + " found.");
+                                        } else {
+                                            Log.e(TAG, "Product with id " + product_id + " not found.");
+                                        }
+                                    }
+
+
+                                    if (unit_id != 0) {
+                                        Unit u = Unit.fetchById(getHelper(), Unit.class, unit_id);
+                                        if (u != null) {
+                                            Log.e(TAG, "Unit with id " + unit_id + " found.");
+                                        } else {
+                                            Log.e(TAG, "Unit with id " + unit_id + " not found.");
+                                        }
+                                    }
+
+                                    if (initialSync || lastUpdatedAt == null) {
+                                        newAccountPrice.add(accountPrice);
+                                    } else {
+                                        if (isExisting(accountPrice, Table.ACCOUNT_PRICES)) {
+                                            updateAccountPrice.add(accountPrice);
+                                        } else {
+                                            newAccountPrice.add(accountPrice);
+                                        }
+                                    }
+
+                                }
+
+                                newAccountPrice.doOperation(AccountPrice.class, getHelper());
+                                updateAccountPrice.doOperation(AccountPrice.class, getHelper());
                             }
                             updateNext(requestType, size);
                             break;
