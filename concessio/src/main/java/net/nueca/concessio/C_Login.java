@@ -28,8 +28,12 @@ public class C_Login extends LoginActivity {
     protected void initLoginEquipments() {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
-        setServer(Server.IRETAILCLOUD_NET);
+        setServer(Server.PETRONDIS_NET);
 
+        /**
+         * ,
+         "payment_types"
+         */
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
     }

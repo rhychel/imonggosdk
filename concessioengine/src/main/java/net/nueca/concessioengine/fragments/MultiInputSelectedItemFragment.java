@@ -26,6 +26,7 @@ import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
+import net.nueca.concessioengine.dialogs.SimpleSalesQuantityDialog;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
@@ -153,91 +154,158 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
 
     private void showQuantityDialog(final SelectedProductItem selectedProductItem, final int position) {
+        SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
+        simpleSalesQuantityDialog.setListPosition(position);
+        simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
+        simpleSalesQuantityDialog.setHelper(getHelper());
 
-        if (mDialogType == DialogType.SALES) {
+//        if(productRecyclerViewAdapter instanceof BaseSalesProductRecyclerAdapter) {
+//            BaseSalesProductRecyclerAdapter salesAdapter = (BaseSalesProductRecyclerAdapter) productRecyclerViewAdapter;
+//            simpleSalesQuantityDialog.setHelper(salesAdapter.getHelper());
+//            simpleSalesQuantityDialog.setSalesCustomer(salesAdapter.getCustomer());
+//            simpleSalesQuantityDialog.setSalesCustomerGroup(salesAdapter.getCustomerGroup());
+//        }
+//        else
+//            simpleSalesQuantityDialog.setForceSellableUnit(true);
+//        simpleSalesQuantityDialog.setSalesBranch(productRecyclerViewAdapter.getBranch());
 
-            SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
-            quantityDialog.setListPosition(position);
-            quantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-            quantityDialog.setSelectedProductItem(selectedProductItem);
+//        simpleSalesQuantityDialog.setHasSubtotal(hasSubtotal);
+        simpleSalesQuantityDialog.setHasUnits(true);
+//        simpleSalesQuantityDialog.setHasInvoicePurpose(isReturnItems);
+//        simpleSalesQuantityDialog.setHasExpiryDate(isReturnItems);
+//        simpleSalesQuantityDialog.setHasBadStock(isReturnItems);
+//        simpleSalesQuantityDialog.setInvoicePurposeList(InvoicePurpose.fetchAll(getHelper(), InvoicePurpose.class));
 
-            if (hasUnits) {
-                quantityDialog.setHasUnits(true);
-                try {
-                    quantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+//        double subtotal = product.getRetail_price() * Double.valueOf(productRecyclerViewAdapter.getSelectedProductItems().getQuantity
+//                (product));
+//        simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
+//        simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
 
-            if (hasBrand) {
-                List<ProductTag> tags = null;
-                try {
-                    tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                List<String> brands = new ArrayList<>();
+//        boolean addBaseProduct = true;
+//        if(concessioModule == ConcessioModule.INVOICE) {
+//            // Improve!
+//            addBaseProduct = !getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+//                @Override
+//                public boolean validate(BranchProduct obj) {
+//                    return obj.getUnit() == null;
+//                }
+//            }).isEmpty();
+//        }
 
-                for (ProductTag productTag : tags)
-                    if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
-                        brands.add(productTag.getTag().replaceAll("##", ""));
-                quantityDialog.setBrandList(brands, true);
-                quantityDialog.setHasBrand(true);
-            }
-            quantityDialog.setHasDeliveryDate(hasDeliveryDate);
-            quantityDialog.setFragmentManager(getActivity().getFragmentManager());
-            //quantityDialog.setQuantityDialogListener(quantityDialogListener);
-            quantityDialog.show();
-        } else {
-            try {
-                SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
-                quantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-                quantityDialog.setSelectedProductItem(selectedProductItem);
-                if (hasUnits) {
-                    quantityDialog.setHasUnits(true);
-                    quantityDialog.setUnitList(getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query(), true);
-                }
-                if (hasBrand) {
-                    List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();
-                    List<String> brands = new ArrayList<>();
-
-                    for (ProductTag productTag : tags)
-                        if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
-                            brands.add(productTag.getTag().replaceAll("##", ""));
-                    quantityDialog.setBrandList(brands, true);
-                    quantityDialog.setHasBrand(true);
-                }
-                quantityDialog.setHasBrand(hasBrand);
-                quantityDialog.setHasDeliveryDate(hasDeliveryDate);
-                quantityDialog.setHasBatchNo(hasBatchNo);
-                quantityDialog.setIsMultiValue(true);
-                quantityDialog.setValuePosition(position);
-                quantityDialog.setFragmentManager(getActivity().getFragmentManager());
-                quantityDialog.setMultiQuantityDialogListener(new BaseQuantityDialog.MultiQuantityDialogListener() {
-                    @Override
-                    public void onSave(Values values) {
-                        if (values == null)
-                            selectedProductItem.remove(position);
-                        else {
-                            int index = selectedProductItem.addValues(values);
-                            if (index > -1)
-                                simpleMultiInputAdapter.getItem(index).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
-                        }
-
-                        tvTotalQuantity.setText(selectedProductItem.getQuantity());
-                        simpleMultiInputAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onDismiss() {
-                    }
-                });
-                quantityDialog.show();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        try {
+            simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
+        simpleSalesQuantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
+            @Override
+            public void onSave(SelectedProductItem selectedProductItem, int position) {
+                simpleMultiInputAdapter.updateList(selectedProductItem.getValues());
+                simpleMultiInputAdapter.notifyDataSetChanged();
+                Log.e("items", simpleMultiInputAdapter.getItemCount()+" size");
+//                        if (values == null)
+//                            selectedProductItem.remove(position);
+//                        else {
+//                            int index = selectedProductItem.addValues(values);
+//                            if (index > -1)
+//                                simpleMultiInputAdapter.getItem(index).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
+//                        }
+//
+//                        tvTotalQuantity.setText(selectedProductItem.getQuantity());
+//                        simpleMultiInputAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onDismiss() { }
+        });
+        simpleSalesQuantityDialog.show();
+
+//        if (mDialogType == DialogType.SALES) {
+//            SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
+//            quantityDialog.setListPosition(position);
+//            quantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//            quantityDialog.setSelectedProductItem(selectedProductItem);
+//
+//            if (hasUnits) {
+//                quantityDialog.setHasUnits(true);
+//                try {
+//                    quantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            if (hasBrand) {
+//                List<ProductTag> tags = null;
+//                try {
+//                    tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//                List<String> brands = new ArrayList<>();
+//
+//                for (ProductTag productTag : tags)
+//                    if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
+//                        brands.add(productTag.getTag().replaceAll("##", ""));
+//                quantityDialog.setBrandList(brands, true);
+//                quantityDialog.setHasBrand(true);
+//            }
+//            quantityDialog.setHasDeliveryDate(hasDeliveryDate);
+//            quantityDialog.setFragmentManager(getActivity().getFragmentManager());
+//            //quantityDialog.setQuantityDialogListener(quantityDialogListener);
+//            quantityDialog.show();
+//        } else {
+//            try {
+//                SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
+//                quantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//                quantityDialog.setSelectedProductItem(selectedProductItem);
+//                if (hasUnits) {
+//                    quantityDialog.setHasUnits(true);
+//                    quantityDialog.setUnitList(getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).query(), true);
+//                }
+//                if (hasBrand) {
+//                    List<ProductTag> tags = getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("product_id", product).query();
+//                    List<String> brands = new ArrayList<>();
+//
+//                    for (ProductTag productTag : tags)
+//                        if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
+//                            brands.add(productTag.getTag().replaceAll("##", ""));
+//                    quantityDialog.setBrandList(brands, true);
+//                    quantityDialog.setHasBrand(true);
+//                }
+//                quantityDialog.setHasBrand(hasBrand);
+//                quantityDialog.setHasDeliveryDate(hasDeliveryDate);
+//                quantityDialog.setHasBatchNo(hasBatchNo);
+//                quantityDialog.setIsMultiValue(true);
+//                quantityDialog.setValuePosition(position);
+//                quantityDialog.setFragmentManager(getActivity().getFragmentManager());
+//                quantityDialog.setMultiQuantityDialogListener(new BaseQuantityDialog.MultiQuantityDialogListener() {
+//                    @Override
+//                    public void onSave(Values values) {
+//                        if (values == null)
+//                            selectedProductItem.remove(position);
+//                        else {
+//                            int index = selectedProductItem.addValues(values);
+//                            if (index > -1)
+//                                simpleMultiInputAdapter.getItem(index).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
+//                        }
+//
+//                        tvTotalQuantity.setText(selectedProductItem.getQuantity());
+//                        simpleMultiInputAdapter.notifyDataSetChanged();
+//                    }
+//
+//                    @Override
+//                    public void onDismiss() {
+//                    }
+//                });
+//                quantityDialog.show();
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     public void updateSelectedProductItem() {
