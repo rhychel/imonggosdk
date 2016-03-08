@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
+import net.nueca.imonggosdk.objects.AccountPrice;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.BranchTag;
@@ -298,6 +299,32 @@ public abstract class BaseSyncService extends ImonggoService {
                 Price price = (Price) o;
                 return getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst() != null;
             }
+            case ACCOUNT_PRICES: {
+                AccountPrice accountPrice = (AccountPrice) o;
+                Product px = null;
+                Unit ux = null;
+
+                if (accountPrice.getProduct() != null) {
+                    px = accountPrice.getProduct();
+                }
+
+                if (accountPrice.getUnit() != null) {
+                    ux = accountPrice.getUnit();
+                }
+
+                if (px != null && ux != null) {
+                    return getHelper().fetchObjects(AccountPrice.class).queryBuilder().where().eq("product_id", px).and().eq("unit_id", ux).queryForFirst() != null;
+                }
+
+                if (px != null) {
+                    return getHelper().fetchObjects(AccountPrice.class).queryBuilder().where().eq("product_id", px).queryForFirst() != null;
+                }
+
+                if (ux != null) {
+                    return getHelper().fetchObjects(AccountPrice.class).queryBuilder().where().eq("unit_id", ux).queryForFirst() != null;
+                }
+
+            }
             case DAILY_SALES: {
                 DailySales dailySales = (DailySales) o;
                 if (dailySalesEnums == DailySalesEnums.DATE_OF_DAILY_SALES) {
@@ -370,21 +397,9 @@ public abstract class BaseSyncService extends ImonggoService {
         Log.e(TAG, "Sync Service has stopped");
     }
 
-    /**
-     * Class for clients to access.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with
-     * IPC.
-     */
-    public class LocalBinder extends Binder {
-        public BaseSyncService getService() {
-            return BaseSyncService.this;
-        }
-    }
-
     public Table getCurrentTableSyncing() {
         return mCurrentTableSyncing;
     }
-
 
     /**
      * removes modules from array for Re-Sync
@@ -436,5 +451,16 @@ public abstract class BaseSyncService extends ImonggoService {
 
     public VolleyRequestListener getVolleyRequestListener() {
         return this.mVolleyRequestListener;
+    }
+
+    /**
+     * Class for clients to access.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with
+     * IPC.
+     */
+    public class LocalBinder extends Binder {
+        public BaseSyncService getService() {
+            return BaseSyncService.this;
+        }
     }
 }

@@ -12,14 +12,11 @@ public enum RequestType {
     SETTINGS,
     LOGIN,
     DOCUMENT_TYPES,
-
     POST,
     DELETE,
     PUT,
     GET,
-
     INVENTORIES,
-
     CUSTOMER_CHECKIN,
     DAILY_SALES_TODAY,
     DAILY_SALES_YESTERDAY,
