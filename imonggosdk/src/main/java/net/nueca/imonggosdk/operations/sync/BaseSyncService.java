@@ -301,29 +301,9 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case ACCOUNT_PRICES: {
                 AccountPrice accountPrice = (AccountPrice) o;
-                Product px = null;
-                Unit ux = null;
+                Product px = accountPrice.getProduct();
 
-                if (accountPrice.getProduct() != null) {
-                    px = accountPrice.getProduct();
-                }
-
-                if (accountPrice.getUnit() != null) {
-                    ux = accountPrice.getUnit();
-                }
-
-                if (px != null && ux != null) {
-                    return getHelper().fetchObjects(AccountPrice.class).queryBuilder().where().eq("product_id", px).and().eq("unit_id", ux).queryForFirst() != null;
-                }
-
-                if (px != null) {
-                    return getHelper().fetchObjects(AccountPrice.class).queryBuilder().where().eq("product_id", px).queryForFirst() != null;
-                }
-
-                if (ux != null) {
-                    return getHelper().fetchObjects(AccountPrice.class).queryBuilder().where().eq("unit_id", ux).queryForFirst() != null;
-                }
-
+                return getHelper().fetchObjects(AccountPrice.class).queryBuilder().where().eq("product_id", px).queryForFirst() != null;
             }
             case DAILY_SALES: {
                 DailySales dailySales = (DailySales) o;
