@@ -2993,7 +2993,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     if (product_id != 0) {
                                         Product px = Product.fetchById(getHelper(), Product.class, product_id);
-
+                                        accountPrice.setProduct(px);
                                         if (px != null) {
                                             Log.e(TAG, "Product with id " + product_id + " found.");
                                         } else {
@@ -3004,6 +3004,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     if (unit_id != 0) {
                                         Unit u = Unit.fetchById(getHelper(), Unit.class, unit_id);
+                                        accountPrice.setUnit(u);
                                         if (u != null) {
                                             Log.e(TAG, "Unit with id " + unit_id + " found.");
                                         } else {
