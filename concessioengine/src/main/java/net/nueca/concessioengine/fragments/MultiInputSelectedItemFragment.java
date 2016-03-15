@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -117,6 +118,8 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
             }
         });
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(rvProducts);
 
         rvProducts.setAdapter(simpleMultiInputAdapter);
 
@@ -130,13 +133,44 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
         return view;
     }
 
+
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            if(target != null)
+                Log.e("target", "Not null");
+
+            if(viewHolder != null)
+                Log.e("viewHolder", "Not null");
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            Log.e("onSwiped", "Index=" + viewHolder.getAdapterPosition());
+            selectedProductItem.remove(viewHolder.getAdapterPosition());
+
+//            simpleMultiInputAdapter.remove(viewHolder.getAdapterPosition());
+            simpleMultiInputAdapter.notifyItemChanged(0);
+
+            tvTotalQuantity.setText(selectedProductItem.getActualQuantity()+" "+product.getBase_unit_name());
+            simpleMultiInputAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            Log.e("getSwipeDirs", "Yeah");
+            return super.getSwipeDirs(recyclerView, viewHolder);
+        }
+    };
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.simple_multiinput_menu, menu);
 
         tvTotalQuantity = (AutofitTextView) menu.findItem(R.id.mQuantity).getActionView().findViewById(R.id.tvQuantity);
-        tvTotalQuantity.setText(selectedProductItem.getQuantity());
+        tvTotalQuantity.setText(selectedProductItem.getActualQuantity()+" "+product.getBase_unit_name());
     }
 
     @Override
@@ -155,10 +189,11 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
     private void showQuantityDialog(final SelectedProductItem selectedProductItem, final int position) {
         SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
-        simpleSalesQuantityDialog.setListPosition(position);
+        simpleSalesQuantityDialog.setValuePosition(position);
         simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
         simpleSalesQuantityDialog.setHelper(getHelper());
+        simpleSalesQuantityDialog.setIsMultiValue(true);
 
 //        if(productRecyclerViewAdapter instanceof BaseSalesProductRecyclerAdapter) {
 //            BaseSalesProductRecyclerAdapter salesAdapter = (BaseSalesProductRecyclerAdapter) productRecyclerViewAdapter;
@@ -198,28 +233,43 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
-        simpleSalesQuantityDialog.setQuantityDialogListener(new BaseQuantityDialog.QuantityDialogListener() {
-            @Override
-            public void onSave(SelectedProductItem selectedProductItem, int position) {
-                simpleMultiInputAdapter.updateList(selectedProductItem.getValues());
-                simpleMultiInputAdapter.notifyDataSetChanged();
-                Log.e("items", simpleMultiInputAdapter.getItemCount()+" size");
-//                        if (values == null)
-//                            selectedProductItem.remove(position);
-//                        else {
-//                            int index = selectedProductItem.addValues(values);
-//                            if (index > -1)
-//                                simpleMultiInputAdapter.getItem(index).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
-//                        }
-//
-//                        tvTotalQuantity.setText(selectedProductItem.getQuantity());
-//                        simpleMultiInputAdapter.notifyDataSetChanged();
+        simpleSalesQuantityDialog.setHasBrand(true);
 
+        try {
+            List<ProductTag> tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
+            List<String> brands = new ArrayList<>();
+
+            for (ProductTag productTag : tags)
+                if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
+                    brands.add(productTag.getTag().replaceAll("##", ""));
+            brands.add("Sample 1"); // TODO Remove this
+            brands.add("Sample 2");
+            simpleSalesQuantityDialog.setBrandList(brands, true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
+        simpleSalesQuantityDialog.setMultiQuantityDialogListener(new BaseQuantityDialog.MultiQuantityDialogListener() {
+            @Override
+            public void onSave(Values values) {
+                if (values == null)
+                    selectedProductItem.remove(position);
+                else {
+                    values.setAllow_decimal(product.isAllow_decimal_quantities());
+                    int index = selectedProductItem.addValues(values);
+                    if (index > -1)
+                        simpleMultiInputAdapter.set(position, values);
+//                        simpleMultiInputAdapter.getItem(index).setValue(values.getQuantity(), values.getUnit(), values.getExtendedAttributes());
+                }
+
+                tvTotalQuantity.setText(selectedProductItem.getActualQuantity()+" "+product.getBase_unit_name());
+                simpleMultiInputAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onDismiss() { }
+            public void onDismiss() {
+
+            }
         });
         simpleSalesQuantityDialog.show();
 

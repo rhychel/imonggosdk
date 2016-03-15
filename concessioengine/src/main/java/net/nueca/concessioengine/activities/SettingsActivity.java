@@ -26,7 +26,7 @@ import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.printer.epson.listener.DiscoveryListener;
 import net.nueca.concessioengine.printer.epson.listener.DiscoverySettingsListener;
 import net.nueca.concessioengine.printer.epson.listener.PrintListener;
-import net.nueca.concessioengine.printer.epson.tools.EPSONPrinterTools;
+import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 //import net.nueca.concessioengine.printer.tools.PrinterTools;
 import net.nueca.concessioengine.tools.appsettings.AppSettings;
 import net.nueca.concessioengine.tools.appsettings.AppTools;
@@ -223,19 +223,19 @@ public class SettingsActivity extends ModuleActivity {
         epsonPrinter.setConcessioModule(ConcessioModule.PRINTER);
         epsonPrinter.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_EPSON_PRINTER);
 
-        EPSONPrinterTools.updateTargetPrinter(this, new HashMap<String, String>(){{
-            put(EPSONPrinterTools.PRINTER_NAME, "");
-            put(EPSONPrinterTools.TARGET_PRINTER, "");
+        EpsonPrinterTools.updateTargetPrinter(this, new HashMap<String, String>(){{
+            put(EpsonPrinterTools.PRINTER_NAME, "");
+            put(EpsonPrinterTools.TARGET_PRINTER, "");
         }});
 
-        if(EPSONPrinterTools.targetPrinterName(this).equals(""))
+        if(EpsonPrinterTools.targetPrinterName(this).equals(""))
             epsonPrinter.setValue("Not Connected!");
         else
-            epsonPrinter.setValue(EPSONPrinterTools.targetPrinterName(this));
+            epsonPrinter.setValue(EpsonPrinterTools.targetPrinterName(this));
         epsonPrinter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                EPSONPrinterTools.showDiscoveryDialog(SettingsActivity.this, new DiscoverySettingsListener() {
+                EpsonPrinterTools.showDiscoveryDialog(SettingsActivity.this, new DiscoverySettingsListener() {
                     @Override
                     public void onPortTypeSelected(int portType) { }
 
@@ -265,15 +265,15 @@ public class SettingsActivity extends ModuleActivity {
                         AppSettings printer = new AppSettings();
                         printer.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_EPSON_PRINTER);
                         int index = settingsAdapter.getList().indexOf(printer);
-                        settingsAdapter.getItem(index).setValue(EPSONPrinterTools.targetPrinterName(SettingsActivity.this));
+                        settingsAdapter.getItem(index).setValue(EpsonPrinterTools.targetPrinterName(SettingsActivity.this));
                         settingsAdapter.notifyDataSetChanged();
 
-                        EPSONPrinterTools.print(targetPrinter, new PrintListener() {
+                        EpsonPrinterTools.print(targetPrinter, new PrintListener() {
                             @Override
                             public Printer initializePrinter() {
                                 try {
-                                    return new Printer(EPSONPrinterTools.getPrinterProperties(SettingsActivity.this, EPSONPrinterTools.PRINTER_SERIES),
-                                            EPSONPrinterTools.getPrinterProperties(SettingsActivity.this, EPSONPrinterTools.PRINTER_LANGUAGE), SettingsActivity.this);
+                                    return new Printer(EpsonPrinterTools.getPrinterProperties(SettingsActivity.this, EpsonPrinterTools.PRINTER_SERIES),
+                                            EpsonPrinterTools.getPrinterProperties(SettingsActivity.this, EpsonPrinterTools.PRINTER_LANGUAGE), SettingsActivity.this);
                                 } catch (Epos2Exception e) {
                                     e.printStackTrace();
                                 }
@@ -320,7 +320,7 @@ public class SettingsActivity extends ModuleActivity {
     protected void onDestroy() {
         super.onDestroy();
         try {
-            EPSONPrinterTools.stopDiscovery();
+            EpsonPrinterTools.stopDiscovery();
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }

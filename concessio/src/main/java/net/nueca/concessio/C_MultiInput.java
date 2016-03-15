@@ -35,12 +35,14 @@ public class C_MultiInput extends ModuleActivity implements SetupActionBar {
     @Override
     public void onBackPressed() {
         multiInputSelectedItemFragment.updateSelectedProductItem();
+        setResult(SUCCESS);
         super.onBackPressed();
     }
 
     @Override
     public void setupActionBar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

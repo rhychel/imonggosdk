@@ -133,8 +133,12 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         }
         else { // OTHERS
             for(ModuleSetting moduleSetting : getActiveModuleSetting(null, true)) {
+                if(moduleSetting.getModuleType() == ConcessioModule.INVOICE)
+                    dashboardTiles.add(new DashboardTile(ConcessioModule.CUSTOMERS, moduleSetting.getLabel(), true, ConcessioModule.INVOICE.getLogo()));
+                else
+                    dashboardTiles.add(new DashboardTile(moduleSetting.getModuleType(), moduleSetting.getLabel()));
+
                 Log.e("ModuleSettings", moduleSetting.getModule_type()+"="+moduleSetting.getDisplay_sequence());
-                dashboardTiles.add(new DashboardTile(moduleSetting.getModuleType(), moduleSetting.getLabel()));
             }
         }
         dashboardTiles.add(new DashboardTile(ConcessioModule.HISTORY, "History"));
@@ -274,10 +278,10 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     }
 
     @Override
-    protected Bundle addExtras(ConcessioModule concessioModule) {
+    protected Bundle addExtras(DashboardTile dashboardTile) {
         Bundle bundle = new Bundle();
-        if(concessioModule == ConcessioModule.CUSTOMERS) {
-            bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, true);
+        if(dashboardTile.getConcessioModule() == ConcessioModule.CUSTOMERS) {
+            bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, !dashboardTile.isProxy());
         }
 
         bundle.putBoolean(ModuleActivity.INIT_PRODUCT_ADAPTER_HELPER, true);

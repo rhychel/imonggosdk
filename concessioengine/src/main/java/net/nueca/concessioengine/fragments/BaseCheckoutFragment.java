@@ -13,6 +13,7 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
@@ -83,40 +84,45 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
 
         /** EXTRAS **/
         Extras extras = invoice.getExtras() == null? new Extras() : invoice.getExtras();
+        if(getModuleSetting(ConcessioModule.INVOICE).isHas_partial()) {
+            Log.e("generateInvoice", "has partial");
+            int decimal = ProductsAdapterHelper.getDecimalPlace();
+            extras.setTotal_selling_price("" +
+                            (NumberTools.formatDouble(computation.getTotalPayableNoDiscount().doubleValue(), decimal) -
+                                    NumberTools.formatDouble(computation.getTotalProductDiscount().doubleValue(), decimal))
+                    //(NumberTools.formatDouble(InvoiceTools.addNoDiscountSubtotals(invoice.getInvoiceLines()),2) -
+                    //        NumberTools.formatDouble(InvoiceTools.sum(InvoiceTools.getAllProductDiscount(invoice.getInvoiceLines())),2))
+            );
+            extras.setTotal_company_discount("" +
+                    NumberTools.formatDouble(computation.getTotalCompanyDiscount().doubleValue(), decimal));
+            //NumberTools.formatDouble(InvoiceTools.sum(InvoiceTools.getAllCompanyDiscount(invoice.getInvoiceLines())),2));
+            //extras.setTotal_customer_discount("" + InvoiceTools.sum(InvoiceTools.consolidateCustomerDiscount(invoice.getInvoiceLines())));
 
-        int decimal = ProductsAdapterHelper.getDecimalPlace();
-        extras.setTotal_selling_price("" +
-                (NumberTools.formatDouble(computation.getTotalPayableNoDiscount().doubleValue(), decimal) -
-                NumberTools.formatDouble(computation.getTotalProductDiscount().doubleValue(), decimal))
-                //(NumberTools.formatDouble(InvoiceTools.addNoDiscountSubtotals(invoice.getInvoiceLines()),2) -
-                //        NumberTools.formatDouble(InvoiceTools.sum(InvoiceTools.getAllProductDiscount(invoice.getInvoiceLines())),2))
-        );
-        extras.setTotal_company_discount("" +
-                NumberTools.formatDouble(computation.getTotalCompanyDiscount().doubleValue(), decimal));
-                //NumberTools.formatDouble(InvoiceTools.sum(InvoiceTools.getAllCompanyDiscount(invoice.getInvoiceLines())),2));
-        //extras.setTotal_customer_discount("" + InvoiceTools.sum(InvoiceTools.consolidateCustomerDiscount(invoice.getInvoiceLines())));
+            //List<Double> customerDiscounts = new ArrayList<>();
+            //double subtotal = NumberTools.formatDouble(InvoiceTools.addSubtotals(invoice.getInvoiceLines()),2);
+            double totalCustomerDiscount = NumberTools.formatDouble(computation.getTotalCustomerDiscount().doubleValue(), decimal);
+            //double totalCustomerDiscount = NumberTools.formatDouble(subtotal - DiscountTools.applyMultipleDiscounts(new BigDecimal(subtotal),
+            //        BigDecimal.ONE, customerDiscounts, customer != null? customer.getDiscount_text() : "",",").doubleValue(),2);
+            extras.setTotal_customer_discount("" + totalCustomerDiscount);
+            extras.setCustomer_discount_text_summary(customer != null? customer.getDiscount_text() : "");
+            extras.setCustomer_discount_amounts_summary(
+                    //InvoiceTools.generateDiscountAmount(customerDiscounts,',')
+                    InvoiceTools.generateDiscountAmount(computation.getCustomerDiscount(),',', ProductsAdapterHelper.getDecimalPlace())
+            );
 
-        //List<Double> customerDiscounts = new ArrayList<>();
-        //double subtotal = NumberTools.formatDouble(InvoiceTools.addSubtotals(invoice.getInvoiceLines()),2);
-        double totalCustomerDiscount = NumberTools.formatDouble(computation.getTotalCustomerDiscount().doubleValue(), decimal);
-        //double totalCustomerDiscount = NumberTools.formatDouble(subtotal - DiscountTools.applyMultipleDiscounts(new BigDecimal(subtotal),
-        //        BigDecimal.ONE, customerDiscounts, customer != null? customer.getDiscount_text() : "",",").doubleValue(),2);
-        extras.setTotal_customer_discount("" + totalCustomerDiscount);
-        extras.setCustomer_discount_text_summary(customer != null? customer.getDiscount_text() : "");
-        extras.setCustomer_discount_amounts_summary(
-                //InvoiceTools.generateDiscountAmount(customerDiscounts,',')
-                InvoiceTools.generateDiscountAmount(computation.getCustomerDiscount(),',', ProductsAdapterHelper.getDecimalPlace())
-        );
-
-        extras.setTotal_unit_retail_price("" +
-                ( Double.valueOf(extras.getTotal_selling_price()) -
-                        (Double.valueOf(extras.getTotal_company_discount()) +
-                                Double.valueOf(extras.getTotal_customer_discount())) )
-        );
-        if(customer != null) {
-            extras.setPayment_term_id(customer.getPayment_terms_id());
-            extras.setPayment_term_code(customer.getPaymentTerms() == null ? null : customer.getPaymentTerms().getCode());
+            extras.setTotal_unit_retail_price("" +
+                    ( Double.valueOf(extras.getTotal_selling_price()) -
+                            (Double.valueOf(extras.getTotal_company_discount()) +
+                                    Double.valueOf(extras.getTotal_customer_discount())) )
+            );
+            if(customer != null) {
+                extras.setPayment_term_id(customer.getPayment_terms_id());
+                extras.setPayment_term_code(customer.getPaymentTerms() == null ? null : customer.getPaymentTerms().getCode());
+            }
         }
+        else
+            extras = null;
+
         invoice.setExtras(extras);
 
         return invoice;

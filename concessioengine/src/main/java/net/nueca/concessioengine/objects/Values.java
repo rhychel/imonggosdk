@@ -75,6 +75,7 @@ public class Values {
             company_discounts = new ArrayList<>(),
             customer_discounts = new ArrayList<>();
     private Price price = null;
+    private boolean allow_decimal = true;
 
     public Values() { }
 
@@ -246,8 +247,13 @@ public class Values {
     }
 
     public String getQuantity() {
-        if(isValidUnit() && unit_quantity != null)
+        if(isValidUnit() && unit_quantity != null) {
+            if(!allow_decimal)
+                return Double.valueOf(unit_quantity).intValue()+"";
             return unit_quantity;
+        }
+        if(!allow_decimal)
+            return Double.valueOf(quantity).intValue()+"";
         return quantity;
     }
 
@@ -403,6 +409,14 @@ public class Values {
 
     public void setInvoicePurpose(InvoicePurpose invoicePurpose) {
         this.invoicePurpose = invoicePurpose;
+    }
+
+    public boolean isAllow_decimal() {
+        return allow_decimal;
+    }
+
+    public void setAllow_decimal(boolean allow_decimal) {
+        this.allow_decimal = allow_decimal;
     }
 
     @Override

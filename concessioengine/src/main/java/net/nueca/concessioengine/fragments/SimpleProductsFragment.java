@@ -299,7 +299,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setSalesBranch(productRecyclerViewAdapter.getBranch());
 
                 simpleSalesQuantityDialog.setHasSubtotal(hasSubtotal);
-                simpleSalesQuantityDialog.setHasUnits(true);
+                simpleSalesQuantityDialog.setHasUnits(hasUnits);
                 simpleSalesQuantityDialog.setHasInvoicePurpose(isReturnItems);
                 simpleSalesQuantityDialog.setHasExpiryDate(isReturnItems);
                 simpleSalesQuantityDialog.setHasBadStock(isReturnItems);
@@ -311,7 +311,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
 
                 boolean addBaseProduct = true;
-                if(concessioModule == ConcessioModule.INVOICE) {
+                if(concessioModule == ConcessioModule.INVOICE && BranchProduct.fetchAll(getHelper(), BranchProduct.class).size() > 0) { // TODO CHECK IF ACCOUNT HAS BRANCH PRODUCTS
                     // Improve!
                     addBaseProduct = !getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
                         @Override
@@ -321,7 +321,20 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     }).isEmpty();
                 }
 
-                simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), addBaseProduct);
+                if(hasUnits)
+                    simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), addBaseProduct);
+                if (hasBrand) {
+                    List<ProductTag> tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
+                    List<String> brands = new ArrayList<>();
+
+                    for (ProductTag productTag : tags)
+                        if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
+                            brands.add(productTag.getTag().replaceAll("##", ""));
+                    brands.add("Sample 1");
+                    brands.add("Sample 2");
+                    simpleSalesQuantityDialog.setBrandList(brands, true);
+                    simpleSalesQuantityDialog.setHasBrand(true);
+                }
                 simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
                 simpleSalesQuantityDialog.setQuantityDialogListener(quantityDialogListener);
                 simpleSalesQuantityDialog.show();

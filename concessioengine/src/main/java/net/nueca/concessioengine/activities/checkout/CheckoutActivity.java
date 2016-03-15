@@ -12,6 +12,7 @@ import net.nueca.concessioengine.fragments.SimpleCheckoutFragment;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.tools.LocationTools;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -116,7 +117,18 @@ public abstract class CheckoutActivity extends ModuleActivity {
 
     public Invoice generateInvoice() {
         Invoice invoice = checkoutFragment.getCheckoutInvoice();
-        Extras extras = invoice.getExtras() == null? new Extras() : invoice.getExtras();
+
+        if(getModuleSetting(ConcessioModule.INVOICE).isHas_partial()) { // TODO Handle location
+            Extras extras = invoice.getExtras() == null ? new Extras() : invoice.getExtras();
+
+            /** Location **/
+            Location location = LocationTools.getCurrentLocation();
+            if(location != null) {
+                extras.setLongitude("" + location.getLongitude());
+                extras.setLatitude("" + location.getLatitude());
+            }
+            invoice.setExtras(extras);
+        }
 
         if(!isLayaway) {
             try {
@@ -127,14 +139,6 @@ public abstract class CheckoutActivity extends ModuleActivity {
             }
         }
         invoice.setInvoice_date(DateTimeTools.convertDateForUrl(DateTimeTools.getCurrentDateTimeUTCFormat().replaceAll("-","/")));
-
-        /** Location **/
-        Location location = LocationTools.getCurrentLocation();
-        if(location != null) {
-            extras.setLongitude("" + location.getLongitude());
-            extras.setLatitude("" + location.getLatitude());
-        }
-        invoice.setExtras(extras);
 
         invoice.createNewPaymentBatch();
 

@@ -20,6 +20,7 @@ public class SelectedProductItem {
     private Inventory inventory;
     private Product product;
     private String total_quantity = "0";
+    private String total_actual_quantity = "0";
     private String total_return = "0";
     private String total_discrepancy = "0";
     private Double retail_price;
@@ -58,7 +59,7 @@ public class SelectedProductItem {
         int index = valuesList.indexOf(value);
         if(value.getRetail_price() == null)
             value.setRetail_price(getRetail_price());
-        //Log.e(TAG, "index: " + index + " valuesList: " + value.toString());
+        Log.e(TAG, "Quantity="+value.getQuantity()+" |index: " + index + " valuesList: " + value.toString());
         if(index > -1) {
             setValues(index, value);
             return index;
@@ -70,6 +71,7 @@ public class SelectedProductItem {
             return -1;
         }*/
         if(!isMultiline) {
+            Log.e("SelectedProductItem", "is not multi line");
             if(valuesList.size() == 1) {
                 setValues(0, value, true);
                 //Log.e(TAG, "Index is 1 setting the value");
@@ -223,6 +225,7 @@ public class SelectedProductItem {
 
 
     private void setValues() {
+        this.total_actual_quantity = valuesList.getActualQuantity();
         this.total_quantity = valuesList.getQuantity();
         this.total_discrepancy = valuesList.getDiscrepancy();
         this.total_return = valuesList.getOutrightReturn();
@@ -242,6 +245,12 @@ public class SelectedProductItem {
 
     public boolean isReturns() {
         return isReturns;
+    }
+
+    public String getActualQuantity() {
+        if(!product.isAllow_decimal_quantities())
+            return Double.valueOf(total_actual_quantity).intValue()+"";
+        return total_actual_quantity;
     }
 
     public void setReturns(boolean returns) {

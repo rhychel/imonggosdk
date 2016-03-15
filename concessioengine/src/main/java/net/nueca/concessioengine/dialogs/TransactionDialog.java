@@ -132,6 +132,8 @@ public class TransactionDialog extends BaseAppCompatDialog {
                 return "MSO Successful";
             case INVOICE_PARTIAL:
                 return "Partial Payment Successful";
+            case PHYSICAL_COUNT:
+                return "Physical Count Successful";
             default:
                 return "Sales Items Saved";
         }
