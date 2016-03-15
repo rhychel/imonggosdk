@@ -284,8 +284,9 @@ public class C_Finalize extends ModuleActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(!isForHistoryDetail && !isLayaway)
-            getMenuInflater().inflate(R.menu.simple_review_menu, menu);
+        if(getModuleSetting(ConcessioModule.INVOICE).isHas_returns())
+            if(!isForHistoryDetail && !isLayaway)
+                getMenuInflater().inflate(R.menu.simple_review_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -414,7 +415,8 @@ public class C_Finalize extends ModuleActivity {
 
         @Override
         public int getCount() {
-            return 2;
+            Log.e("hasReturns", getModuleSetting(ConcessioModule.INVOICE).isHas_returns()+"");
+            return getModuleSetting(ConcessioModule.INVOICE).isHas_returns() ? 2 : 1;
         }
 
         @Override

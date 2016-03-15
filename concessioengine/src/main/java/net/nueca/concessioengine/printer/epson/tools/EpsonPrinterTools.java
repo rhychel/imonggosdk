@@ -46,7 +46,7 @@ import java.util.List;
 /**
  * Created by Jn on 19/01/16.
  */
-public class EPSONPrinterTools {
+public class EpsonPrinterTools {
 
     public static String TARGET_PRINTER = "_target_printer";
     public static String PRINTER_NAME = "_printer_name";
@@ -59,7 +59,7 @@ public class EPSONPrinterTools {
     static ArrayAdapter<String> mPrinterListAdapter = null;
     static List<String> mPrinterNameList = null;
     static List<String> mTargetPrinterList = null;
-    private static String TAG = "EPSONPrinterTools";
+    private static String TAG = "EpsonPrinterTools";
 
 
     public static String spacer(String text1, String text2, int maxChar) {
@@ -358,8 +358,8 @@ public class EPSONPrinterTools {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             SharedPreferences.Editor editor = preferences.edit();
 
-            Log.e(TAG, "Printer Name: " + printer.get(EPSONPrinterTools.PRINTER_NAME));
-            Log.e(TAG, "Printer Target: " + printer.get(EPSONPrinterTools.TARGET_PRINTER));
+            Log.e(TAG, "Printer Name: " + printer.get(EpsonPrinterTools.PRINTER_NAME));
+            Log.e(TAG, "Printer Target: " + printer.get(EpsonPrinterTools.TARGET_PRINTER));
 
             editor.putString(pinfo.packageName + TARGET_PRINTER, printer.get(TARGET_PRINTER));
             editor.putString(pinfo.packageName + PRINTER_NAME, printer.get(PRINTER_NAME));

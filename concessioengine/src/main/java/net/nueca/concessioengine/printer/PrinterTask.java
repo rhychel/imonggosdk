@@ -9,7 +9,7 @@ import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 
 import net.nueca.concessioengine.printer.epson.listener.PrintListener;
-import net.nueca.concessioengine.printer.epson.tools.EPSONPrinterTools;
+import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 
@@ -30,9 +30,9 @@ public class PrinterTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        String targetPrinter = EPSONPrinterTools.targetPrinter(context);
+        String targetPrinter = EpsonPrinterTools.targetPrinter(context);
         if(targetPrinter != null)
-            EPSONPrinterTools.print(targetPrinter, printListener, context);
+            EpsonPrinterTools.print(targetPrinter, printListener, context);
         return null;
     }
 

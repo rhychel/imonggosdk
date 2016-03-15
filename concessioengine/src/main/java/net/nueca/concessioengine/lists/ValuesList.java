@@ -1,5 +1,7 @@
 package net.nueca.concessioengine.lists;
 
+import android.util.Log;
+
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -23,11 +25,18 @@ public class ValuesList extends ArrayList<Values> {
         super(collection);
     }
 
+
     public String getQuantity() {
         String quantity = "0";
         BigDecimal totalQuantity = new BigDecimal(0);
         for(Values values : this) {
             String qty = values.getQuantity().replaceAll(",", "");
+            Log.e("getQuantity", "has unit = "+values.getUnit_quantity()+" | unit content quantity="+values.getUnit_content_quantity()+" | quantity ="+values.getQuantity());
+//            if(baseUnitOnly) {
+//                if(values.getUnit() != null && values.getUnit().getId() != -1) {
+//                    qty = values.getUnit_quantity().replaceAll(",", "");
+//                }
+//            }
             if(qty.length() > 0)
                 totalQuantity = totalQuantity.add(new BigDecimal(qty));
         }

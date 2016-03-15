@@ -56,6 +56,8 @@ public class LoginTools {
                 return ImonggoTools.buildAPIUrlPetrondisCOM(context, accountId);
             case PETRONDIS_NET:
                 return ImonggoTools.buildAPIUrlPetrondisNET(context, accountId);
+            case REBISCO:
+                return ImonggoTools.buildAPIUrlRebisco(context, accountId);
             default:
                 return "";
         }

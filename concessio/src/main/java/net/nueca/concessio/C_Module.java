@@ -52,7 +52,7 @@ import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.printer.PrinterTask;
 import net.nueca.concessioengine.printer.epson.listener.PrintListener;
-import net.nueca.concessioengine.printer.epson.tools.EPSONPrinterTools;
+import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.tools.AnimationTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.tools.PriceTools;
@@ -68,7 +68,6 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
-import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -82,7 +81,6 @@ import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
-import net.nueca.imonggosdk.tools.TimerTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,7 +90,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * Created by rhymart on 8/21/15.
@@ -411,16 +408,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
             break;
             case STOCK_REQUEST: { // TODO for Petron
-
                 changeToReview = true;
                 initializeProducts();
-                simpleProductsFragment.setHelper(getHelper());
                 simpleProductsFragment.setListingType(ListingType.SALES);
-                simpleProductsFragment.setHasUnits(false);
+                simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setHasBrand(false);
-                simpleProductsFragment.setProductCategories(new ArrayList<String>() {{
-                    add("All");
-                }});
+                simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting(concessioModule).getProductListing().isLock_category()));
                 simpleProductsFragment.setShowCategoryOnStart(false);
                 simpleProductsFragment.setProductsFragmentListener(this);
                 simpleProductsFragment.setHasSubtotal(false);
@@ -430,7 +423,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setListingType(ListingType.SALES);
                 finalizeFragment.setHasCategories(false);
                 finalizeFragment.setHasDeliveryDate(false);
-                finalizeFragment.setHasUnits(false);
+                finalizeFragment.setHasUnits(true);
                 finalizeFragment.setHasSubtotal(false);
                 finalizeFragment.setUseSalesProductAdapter(false);
 
@@ -481,26 +474,56 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
             break;
             case PHYSICAL_COUNT: { // TODO Revise for Petron
+
+                changeToReview = true;
+
                 initializeProducts();
-                simpleProductsFragment.setProductCategories(getProductCategories(true));
-                simpleProductsFragment.setMultipleInput(true);
-                simpleProductsFragment.setMultiInputListener(multiInputListener);
-                simpleProductsFragment.setListingType(ListingType.SALES);
                 simpleProductsFragment.setDisplayOnly(getModuleSetting(concessioModule).is_view());
                 // if there's branch product
                 simpleProductsFragment.setBranch(getBranches().get(0));
+                simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting(ConcessioModule.PHYSICAL_COUNT).getProductListing().isLock_category()));
+                simpleProductsFragment.setListingType(ListingType.SALES);
+                simpleProductsFragment.setProductsFragmentListener(this);
+
+                initializeFinalize();
+                finalizeFragment.setListingType(ListingType.SALES);
+                finalizeFragment.setHasCategories(false);
+                finalizeFragment.setUseRecyclerView(true);
+                finalizeFragment.setUseSalesProductAdapter(false);
+
+                if(getModuleSetting(ConcessioModule.PHYSICAL_COUNT).getQuantityInput().is_multiinput()) {
+                    simpleProductsFragment.setMultipleInput(true);
+                    simpleProductsFragment.setMultiInputListener(multiInputListener);
+
+                    finalizeFragment.setMultipleInput(true);
+                    finalizeFragment.setMultiInputListener(multiInputListener);
+                }
+                else {
+                    simpleProductsFragment.setHasUnits(true);
+                    simpleProductsFragment.setHasBrand(true);
+                    simpleProductsFragment.setHasSubtotal(false);
+                    simpleProductsFragment.setUseRecyclerView(true);
+
+                    finalizeFragment.setHasDeliveryDate(false);
+                    finalizeFragment.setHasUnits(true);
+                    finalizeFragment.setHasBrand(true);
+                    finalizeFragment.setHasSubtotal(false);
+                }
+                btn1.setOnClickListener(nextClickedListener);
 
                 if(getModuleSetting(concessioModule).is_view()) {
-                    llFooter.setVisibility(View.VISIBLE);
-                    btn1.setText("PRINT INVENTORY");
-                    btn1.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // ---- So let's print...
-                            printTransaction(null, "*Salesman Copy*");//, "*Office Copy*"
-                        }
-                    });
-                    tvItems.setVisibility(View.INVISIBLE);
+                    if(getAppSetting().isCan_print()) {
+                        llFooter.setVisibility(View.VISIBLE);
+                        btn1.setText("PRINT INVENTORY");
+                        btn1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // ---- So let's print...
+                                printTransaction(null, "*Salesman Copy*");//, "*Office Copy*"
+                            }
+                        });
+                        tvItems.setVisibility(View.INVISIBLE);
+                    }
                 }
                 else {
                     prepareFooter();
@@ -585,7 +608,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             break;
             case RELEASE_BRANCH: { // TODO for Petron
                 changeToReview = true;
-                simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper());
+                simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
                 simplePulloutRequestDialog.setTitle("Choose a reason");
                 if (getModuleSetting(concessioModule).isRequire_document_reason())
                     simplePulloutRequestDialog.show();
@@ -789,11 +812,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     @Override
     protected void onResume() {
         super.onResume();
-        if (concessioModule == ConcessioModule.PHYSICAL_COUNT) {
-            simpleProductsFragment.refreshList();
-            if (getSupportFragmentManager().findFragmentByTag("finalize") != null)
-                finalizeFragment.refreshList();
-        }
+//        if (concessioModule == ConcessioModule.PHYSICAL_COUNT) {
+//            simpleProductsFragment.refreshList();
+//            if (getSupportFragmentManager().findFragmentByTag("finalize") != null)
+//                finalizeFragment.refreshList();
+//        }
         if (concessioModule == ConcessioModule.CUSTOMERS)
             simpleCustomersFragment.deselectCustomers();
     }
@@ -833,6 +856,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 getSupportActionBar().setTitle("Customers");
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+                if(!getModuleSetting(ConcessioModule.CUSTOMERS).isCan_add())
+                    menu.findItem(R.id.mAddCustomer).setVisible(false);
+
                 mSearch = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
                 mSearch.setQueryHint("Search customer");
                 initializeSearchViewEx(new SearchView.OnQueryTextListener() {
@@ -851,8 +877,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 });
             }
             else if(concessioModule == ConcessioModule.CUSTOMER_DETAILS) {
-                if(isFromCustomersList)
+                if(isFromCustomersList) {
                     getMenuInflater().inflate(R.menu.simple_edit_menu, menu);
+
+                    if(!getModuleSetting(ConcessioModule.CUSTOMERS).isCan_edit())
+                        menu.findItem(R.id.mEditCustomer).setVisible(false);
+                }
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
             else if(concessioModule != ConcessioModule.ROUTE_PLAN) {
@@ -1018,6 +1048,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 OfflineData newOfflineData = OfflineData.fetchById(getHelper(), OfflineData.class, data.getIntExtra(FOR_HISTORY_DETAIL, 0));
                 simpleTransactionsFragment.addOfflineData(newOfflineData);
             }
+        } else if(requestCode == FROM_MULTIINPUT) {
+            Handler handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    if(simpleProductsFragment != null)
+                        simpleProductsFragment.refreshList();
+                    if (getSupportFragmentManager().findFragmentByTag("finalize") != null)
+                        finalizeFragment.refreshList();
+                }
+            };
+            handler.sendEmptyMessageDelayed(0, 100);
         }
     }
 
@@ -1083,7 +1125,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         public void showInputScreen(Product product) {
             Intent intent = new Intent(C_Module.this, C_MultiInput.class);
             intent.putExtra(MultiInputSelectedItemFragment.PRODUCT_ID, product.getId());
-            startActivity(intent);
+            startActivityForResult(intent, FROM_MULTIINPUT);
         }
     };
 
@@ -1145,7 +1187,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     document.setExtras(extras);
                                 }
 
-                                updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
+                                if(getAppSetting().isCan_change_inventory())
+                                    updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
 
                                 offlineData = new SwableTools.Transaction(getHelper())
                                         .toSend()
@@ -1153,8 +1196,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .object(document)
                                         .fromModule(concessioModule)
                                         .queue();
-
-                                printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                if(getAppSetting().isCan_print())
+                                    printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
                             }
 
                             TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
@@ -1207,8 +1250,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         }
                     }, "No", R.style.AppCompatDialogStyle_Light);
                 } else {
-                    DialogTools.showSelectionDialog(C_Module.this,
-                            new ArrayAdapter<>(C_Module.this, R.layout.simple_listitem_single_choice, getBranches()),
+                    ArrayAdapter<Branch> branchesAdapter = new ArrayAdapter<>(C_Module.this, R.layout.simple_listitem_single_choice, getBranches());
+                    DialogTools.showSelectionDialog(C_Module.this, branchesAdapter,
                             "Yes", new DialogTools.OnItemSelected<Branch>() {
                                 @Override
                                 public void itemChosen(final Branch branch) {
@@ -1257,16 +1300,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         e.printStackTrace();
                                                     }
 
-                                                    updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
+                                                    if(getAppSetting().isCan_change_inventory())
+                                                        updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
 
-                                                    final OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                                                    offlineData = new SwableTools.Transaction(getHelper())
                                                             .toSend()
                                                             .forBranch(branch)
                                                             .object(document)
                                                             .fromModule(concessioModule)
                                                             .queue();
 
-                                                    printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                    if(getAppSetting().isCan_print())
+                                                        printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
                                                 }
 
 
@@ -1288,7 +1333,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             return;
                                                         }
 
-                                                        if (concessioModule == ConcessioModule.STOCK_REQUEST) {
+                                                        if (concessioModule == ConcessioModule.STOCK_REQUEST || concessioModule == ConcessioModule.PHYSICAL_COUNT) {
                                                             simpleProductsFragment.refreshList();
                                                             finalizeFragment.refreshList();
                                                             onBackPressed();
@@ -1327,10 +1372,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 else if (isReturnItems)
                     onBackPressed();
                 else if (concessioModule == ConcessioModule.INVOICE) {
+                    Log.e("INVOICE", "Finalizing....");
                     Intent intent = new Intent(C_Module.this, C_Finalize.class);
                     intent.putExtra(CONCESSIO_MODULE, concessioModule.ordinal());
                     startActivityForResult(intent, REVIEW_SALES);
                 } else {
+                    Log.e("FROM PROD LIST", "Sending....");
                     btn1.setText("SEND");
                     finalizeFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
                     getSupportFragmentManager().beginTransaction()
@@ -1344,9 +1391,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     };
 
     private void printTransaction(final OfflineData offlineData, final String... labels) {
-        String targetPrinter = EPSONPrinterTools.targetPrinter(getApplicationContext());
+        String targetPrinter = EpsonPrinterTools.targetPrinter(getApplicationContext());
         if(targetPrinter != null) {
-            EPSONPrinterTools.print(targetPrinter, new PrintListener() {
+            EpsonPrinterTools.print(targetPrinter, new PrintListener() {
                 @Override
                 public Printer initializePrinter() {
                     try {
@@ -1499,7 +1546,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             printer.addTextAlign(Printer.ALIGN_LEFT);
                             printer.addText("--------------------------------");
                             printer.addText("Total Quantity: " + NumberTools.separateInCommas(totalQuantity) + "\n");
-                            printer.addText(EPSONPrinterTools.spacer("Total Order Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\n\n");
+                            printer.addText(EpsonPrinterTools.spacer("Total Order Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\n\n");
                             printer.addTextAlign(Printer.ALIGN_CENTER);
                             printer.addText(labels[i]);
                             if(i < labels.length-1) {

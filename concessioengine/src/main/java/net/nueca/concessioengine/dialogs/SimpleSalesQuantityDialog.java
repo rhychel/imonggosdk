@@ -49,8 +49,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
     private Button btnCancel, btnSave;
     private LinearLayout llSubtotal;
 
-    private LinearLayout llInvoicePurpose, llExpiryDate;
-    private Spinner spInvoicePurpose;
+    private LinearLayout llInvoicePurpose, llExpiryDate, llBrand;
+    private Spinner spInvoicePurpose, spBrands;
     private Button btnExpiryDate;
     private SwitchCompat swcBadStock;
 
@@ -110,6 +110,25 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             swcBadStock = (SwitchCompat) super.findViewById(R.id.swcBadStock);
             swcBadStock.setVisibility(View.VISIBLE);
             swcBadStock.setChecked(true);
+        }
+
+        if(hasBrand) {
+            llBrand = (LinearLayout) super.findViewById(R.id.llBrand);
+            spBrands = (Spinner) super.findViewById(R.id.spBrands);
+
+            llBrand.setVisibility(View.VISIBLE);
+
+            brandsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, brandList);
+            spBrands.setAdapter(brandsAdapter);
+
+            // Check if there are existing values
+            if (selectedProductItem.getValues().size() > 0) {
+                if (isMultiValue) {
+                    if (valuePosition > -1) // check if you are editing a value from the list
+                        spBrands.setSelection(brandList.indexOf(selectedProductItem.getValues().get(valuePosition).getExtendedAttributes().getBrand()));
+                } else
+                    spBrands.setSelection(brandList.indexOf(selectedProductItem.getValues().get(0).getExtendedAttributes().getBrand()));
+            }
         }
 
         if(hasInvoicePurpose) {
@@ -260,6 +279,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         if (isMultiValue) {
             if (valuePosition > -1)
                 etQuantity.setText(selectedProductItem.getQuantity(valuePosition));
+            else
+                etQuantity.setText("0");
         } else
             etQuantity.setText(selectedProductItem.getQuantity());
 
@@ -310,14 +331,16 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             if(quantity == null || quantity.length() == 0)
                 quantity = "0";
 
-            if (Double.valueOf(quantity) == 0 && !isMultiValue)
+            if (Double.valueOf(quantity) == 0.0 && !isMultiValue)
                 selectedProductItem.removeAll(); // TODO handle this
-            else if (quantity.equals("0") && isMultiValue) {
+            else if (Double.valueOf(quantity) == 0.0 && isMultiValue) {
                 if (multiQuantityDialogListener != null)
                     multiQuantityDialogListener.onSave(null);
                 dismiss();
                 return;
             } else {
+                Log.e("sales quantity", "has value in anyway possible");
+
                 Unit unit = hasUnits ? ((Unit) spUnits.getSelectedItem()) : null;
                 Values values;
                 if (valuePosition > -1)
@@ -331,6 +354,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 if(getHelper() == null)
                     values.setValue(quantity, unit);
                 else {
+                    Log.e("sales quantity", "Quantity is="+quantity);
                     Price price = PriceTools.identifyPrice(getHelper(), selectedProductItem.getProduct(),
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
 
@@ -348,7 +372,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                                 salesCustomer != null ? salesCustomer.getDiscount_text() : null);
                     }
                 }
-                Log.e(getClass().getSimpleName(), "VALUES QTY : " + values.getQuantity());
+                Log.e("sales quantity", "VALUES QTY : " + values.getQuantity());
                 if(hasExpiryDate) {
                     date = btnExpiryDate.getText().toString();
                 }
@@ -359,6 +383,13 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 }
                 if(hasBadStock)
                     values.setBadStock(swcBadStock.isChecked());
+
+                if(hasBrand) {
+                    ExtendedAttributes extendedAttributes = new ExtendedAttributes();
+                    extendedAttributes.setBrand(((String) spBrands.getSelectedItem()));
+
+                    values.setExtendedAttributes(extendedAttributes);
+                }
 
                 if (isMultiValue) {
                     if (multiQuantityDialogListener != null)

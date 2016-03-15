@@ -55,6 +55,18 @@ public class ModuleSetting extends DBTable {
     private boolean has_pin_code = true;
     @DatabaseField
     private int display_sequence = 1;
+    @DatabaseField
+    private boolean can_add = true;
+    @DatabaseField
+    private boolean can_edit = true;
+    @DatabaseField
+    private boolean can_print = true;
+    @DatabaseField
+    private boolean can_change_inventory = true;
+    @DatabaseField
+    private boolean has_returns = true;
+    @DatabaseField
+    private boolean has_partial = true;
     @ForeignCollectionField
     private transient ForeignCollection<Cutoff> cutoffs;
     @ForeignCollectionField(orderAscending = true, orderColumnName = "id")
@@ -341,6 +353,54 @@ public class ModuleSetting extends DBTable {
 
     public void setDisplay_sequence(int display_sequence) {
         this.display_sequence = display_sequence;
+    }
+
+    public boolean isCan_add() {
+        return can_add;
+    }
+
+    public void setCan_add(boolean can_add) {
+        this.can_add = can_add;
+    }
+
+    public boolean isCan_edit() {
+        return can_edit;
+    }
+
+    public void setCan_edit(boolean can_edit) {
+        this.can_edit = can_edit;
+    }
+
+    public boolean isCan_print() {
+        return can_print;
+    }
+
+    public void setCan_print(boolean can_print) {
+        this.can_print = can_print;
+    }
+
+    public boolean isCan_change_inventory() {
+        return can_change_inventory;
+    }
+
+    public void setCan_change_inventory(boolean can_change_inventory) {
+        this.can_change_inventory = can_change_inventory;
+    }
+
+    public boolean isHas_returns() {
+        return has_returns;
+    }
+
+    public void setHas_returns(boolean has_returns) {
+        this.has_returns = has_returns;
+    }
+
+    public boolean isHas_partial() {
+        return has_partial;
+    }
+
+    public void setHas_partial(boolean has_partial) {
+        this.has_partial = has_partial;
     }
 
     public ConcessioModule getModuleType() {
