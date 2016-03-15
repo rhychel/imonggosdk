@@ -40,6 +40,9 @@ import net.nueca.imonggosdk.tools.LoginTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -415,6 +418,22 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    String accountId = etAccountID.getText().toString().trim();
+                    JSONObject servers = new JSONObject(SettingTools.currentServer(BaseLoginActivity.this));
+
+                    Log.e("Servers", servers.toString());
+
+                    String label = "---";
+                    if(servers.has(accountId))
+                        label = servers.getString(accountId);
+                    Log.e("Servers", label);
+
+                    setServer(Server.getServer(label));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 initLogin();
             }
         });

@@ -55,7 +55,8 @@ public enum SettingsName {
     INVOICE_TR_QUANTITY("invoice_tr_quantity"),
     INVOICE_TR_PAYMENTS("invoice_tr_payments"),
     MASTER_ACCOUNT_ID("master_account_id"),
-    SYNC_FINISHED("sync_finished");
+    SYNC_FINISHED("sync_finished"),
+    SERVERS("servers");
 
     private String value;
 
