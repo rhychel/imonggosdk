@@ -33,7 +33,7 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
         setRequireObjectConcessioSettings(false);
-        setServer(Server.PETRONDIS_NET);
+        setServer(Server.REBISCO);
 
         SettingTools.updateSettings(C_Login.this,
                 SettingsName.AUTO_UPDATE, false, "");
@@ -49,7 +49,10 @@ public class C_Login extends LoginActivity {
                 Table.ROUTE_PLANS.ordinal(),
                 Table.ROUTE_PLANS_DETAILS.ordinal(),
                 Table.BRANCH_PRODUCTS.ordinal(),*/
-                Table.ACCOUNT_PRICES.ordinal()
+                Table.ACCOUNT_PRICES.ordinal(),
+                Table.DOCUMENTS.ordinal(),
+                Table.DOCUMENT_TYPES.ordinal(),
+                Table.DOCUMENT_PURPOSES.ordinal()
                /* Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
                 Table.PRICE_LISTS_DETAILS.ordinal()
                 Table.PAYMENT_TERMS.ordinal(),
@@ -72,8 +75,8 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
-        setEditTextAccountID("1034092");
-        setEditTextEmail("unitedbig3@yahoo.com.ph");
+        setEditTextAccountID("A1029");
+        setEditTextEmail("elvin29@imonggo.com");
         setEditTextPassword("password");
     }
 }

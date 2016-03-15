@@ -892,11 +892,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     Log.e(TAG, "Response: count is " + count);
                     // if table don't have data
                     if (count == 0) {
-                        if (mCurrentTableSyncing == Table.DOCUMENTS) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, branchIndex, getUserBranchesSize());
-                        } else {
+
                             mSyncModulesListener.onDownloadProgress(module, 1, 1);
-                        }
+
                         if (mCurrentTableSyncing == Table.PRICE_LISTS
                                 || mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS
                                 || mCurrentTableSyncing == Table.ROUTE_PLANS_DETAILS) {
@@ -2233,26 +2231,40 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     Log.e(TAG, documentPurpose.toString());
 
-                                    int document_id = jsonObject.getInt("document_type_id");
-                                    DocumentType documentType = getHelper().fetchIntId(DocumentType.class).queryForId(document_id);
+                                    if(jsonObject.has("document_type_id")) {
+                                        if(jsonObject.isNull("document_type_id")) {
+                                            int document_id = jsonObject.getInt("document_type_id");
+                                            DocumentType documentType = getHelper().fetchIntId(DocumentType.class).queryForId(document_id);
 
-                                    if (isExisting(documentType, Table.DOCUMENT_TYPES)) {
-                                        documentPurpose.setDocumentType(documentType);
+                                            if (isExisting(documentType, Table.DOCUMENT_TYPES)) {
+                                                documentPurpose.setDocumentType(documentType);
+                                            } else {
+                                                Log.e(TAG, "Document Type's don't have Doc Type");
+                                            }
+                                        } else {
+                                            Log.e(TAG, "API " + mCurrentTableSyncing + " 'document_type_id' field is null" );
+                                        }
+
                                     } else {
-                                        Log.e(TAG, "Document Type's don't have Doc Type");
+                                        Log.e(TAG, "API " + mCurrentTableSyncing + " dont have 'document_type_id' field." );
                                     }
+
 
                                     if (initialSync || lastUpdatedAt == null) {
                                         documentPurpose.dbOperation(getHelper(), DatabaseOperation.INSERT);
                                     } else {
-                                        if (isExisting(documentPurpose, Table.DOCUMENT_PURPOSES)) {
-                                            if (documentPurpose.getStatus().equalsIgnoreCase("D")) {
-                                                documentPurpose.dbOperation(getHelper(), DatabaseOperation.DELETE);
+                                        if(documentPurpose != null) {
+                                            if (isExisting(documentPurpose, Table.DOCUMENT_PURPOSES)) {
+                                                if (documentPurpose.getStatus().equalsIgnoreCase("D")) {
+                                                    documentPurpose.dbOperation(getHelper(), DatabaseOperation.DELETE);
+                                                } else {
+                                                    documentPurpose.dbOperation(getHelper(), DatabaseOperation.UPDATE);
+                                                }
                                             } else {
-                                                documentPurpose.dbOperation(getHelper(), DatabaseOperation.UPDATE);
+                                                documentPurpose.dbOperation(getHelper(), DatabaseOperation.INSERT);
                                             }
                                         } else {
-                                            documentPurpose.dbOperation(getHelper(), DatabaseOperation.INSERT);
+                                            Log.e(TAG, "documentPurpose is null, skipping" );
                                         }
                                     }
                                 }
