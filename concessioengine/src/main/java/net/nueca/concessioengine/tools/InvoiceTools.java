@@ -794,7 +794,7 @@ public class InvoiceTools {
                     rsSlip = rs.get(0);
 
                 where = helper.fetchObjects(PaymentType.class).queryBuilder().where();
-                List<PaymentType> p = helper.fetchObjects(PaymentType.class).query(where.like("name", "%point%").prepare());
+                List<PaymentType> p = helper.fetchObjects(PaymentType.class).query(where.like("name", "%point%").or().like("name", "%rewards%").prepare());
                 if(p != null && p.size() != 0)
                     points = p.get(0);
             //}

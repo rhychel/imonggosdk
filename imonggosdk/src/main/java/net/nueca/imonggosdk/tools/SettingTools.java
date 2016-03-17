@@ -72,7 +72,11 @@ public class SettingTools {
             //    Log.e("Key[currentBranchId]", pinfo.packageName + CURRENT_BRANCH);
                 editor.putString(pinfo.packageName + CURRENT_BRANCH, value);
                 editor.apply();
-            } else {
+            } else if (settingsName == SettingsName.SERVERS) {
+                editor.putString(pinfo.packageName + CURRENT_SERVER, value);
+                editor.apply();
+            }
+            else {
                 // OTHER SETTINGS NAME
             }
 
@@ -160,7 +164,7 @@ public class SettingTools {
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
            // Log.e("Key[currentServer]", pinfo.packageName + CURRENT_SERVER);
-            return preferences.getString(pinfo.packageName + CURRENT_SERVER, "");
+            return preferences.getString(pinfo.packageName + CURRENT_SERVER, "{}");
         } catch (PackageManager.NameNotFoundException e) {
            // Log.e("Key[currentServer]", "Not Found");
             return "";

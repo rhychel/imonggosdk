@@ -31,6 +31,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.NumberTools;
+import net.nueca.imonggosdk.tools.TimerTools;
 
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -78,6 +79,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.simple_quantity_dialog2);
+
+//        TimerTools.start("SalesQuantity");
 
         tvProductName = (AutofitTextView) super.findViewById(R.id.tvProductName);
         tvRetailPrice = (TextView) super.findViewById(R.id.tvRetailPrice);
@@ -307,6 +310,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 imm.showSoftInput(etQuantity, InputMethodManager.SHOW_IMPLICIT);
 
                 offsetSpinnerBelowv21(spUnits);
+
+//                TimerTools.duration("Sales Quantity");
             }
         });
     }

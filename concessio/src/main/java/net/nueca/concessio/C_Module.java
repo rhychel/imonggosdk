@@ -474,7 +474,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
             break;
             case PHYSICAL_COUNT: { // TODO Revise for Petron
-
                 changeToReview = true;
 
                 initializeProducts();
@@ -485,32 +484,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setListingType(ListingType.SALES);
                 simpleProductsFragment.setProductsFragmentListener(this);
 
-                initializeFinalize();
-                finalizeFragment.setListingType(ListingType.SALES);
-                finalizeFragment.setHasCategories(false);
-                finalizeFragment.setUseRecyclerView(true);
-                finalizeFragment.setUseSalesProductAdapter(false);
-
-                if(getModuleSetting(ConcessioModule.PHYSICAL_COUNT).getQuantityInput().is_multiinput()) {
-                    simpleProductsFragment.setMultipleInput(true);
-                    simpleProductsFragment.setMultiInputListener(multiInputListener);
-
-                    finalizeFragment.setMultipleInput(true);
-                    finalizeFragment.setMultiInputListener(multiInputListener);
-                }
-                else {
-                    simpleProductsFragment.setHasUnits(true);
-                    simpleProductsFragment.setHasBrand(true);
-                    simpleProductsFragment.setHasSubtotal(false);
-                    simpleProductsFragment.setUseRecyclerView(true);
-
-                    finalizeFragment.setHasDeliveryDate(false);
-                    finalizeFragment.setHasUnits(true);
-                    finalizeFragment.setHasBrand(true);
-                    finalizeFragment.setHasSubtotal(false);
-                }
-                btn1.setOnClickListener(nextClickedListener);
-
+                Log.e("PHYSICAL_COUNT", "is_view"+getModuleSetting(concessioModule).is_view());
+                Log.e("PHYSICAL_COUNT", "is_can_print"+getAppSetting().isCan_print());
                 if(getModuleSetting(concessioModule).is_view()) {
                     if(getAppSetting().isCan_print()) {
                         llFooter.setVisibility(View.VISIBLE);
@@ -526,6 +501,32 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     }
                 }
                 else {
+                    initializeFinalize();
+                    finalizeFragment.setListingType(ListingType.SALES);
+                    finalizeFragment.setHasCategories(false);
+                    finalizeFragment.setUseRecyclerView(true);
+                    finalizeFragment.setUseSalesProductAdapter(false);
+
+                    if(getModuleSetting(ConcessioModule.PHYSICAL_COUNT).getQuantityInput().is_multiinput()) {
+                        simpleProductsFragment.setMultipleInput(true);
+                        simpleProductsFragment.setMultiInputListener(multiInputListener);
+
+                        finalizeFragment.setMultipleInput(true);
+                        finalizeFragment.setMultiInputListener(multiInputListener);
+                    }
+                    else {
+                        simpleProductsFragment.setHasUnits(true);
+                        simpleProductsFragment.setHasBrand(true);
+                        simpleProductsFragment.setHasSubtotal(false);
+                        simpleProductsFragment.setUseRecyclerView(true);
+
+                        finalizeFragment.setHasDeliveryDate(false);
+                        finalizeFragment.setHasUnits(true);
+                        finalizeFragment.setHasBrand(true);
+                        finalizeFragment.setHasSubtotal(false);
+                    }
+                    btn1.setOnClickListener(nextClickedListener);
+
                     prepareFooter();
                 }
 
@@ -608,17 +609,49 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             break;
             case RELEASE_BRANCH: { // TODO for Petron
                 changeToReview = true;
-                simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
-                simplePulloutRequestDialog.setTitle("Choose a reason");
-                if (getModuleSetting(concessioModule).isRequire_document_reason())
-                    simplePulloutRequestDialog.show();
+//                simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
+//                simplePulloutRequestDialog.setTitle("Choose a reason");
+//                simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+//                    @Override
+//                    public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
+//                        ProductsAdapterHelper.setReason(reason);
+//                        ProductsAdapterHelper.setSource(source);
+//                        ProductsAdapterHelper.setDestination(destination);
+//
+//                        simplePulloutToolbarExt.renderReason();
+//                    }
+//
+//                    @Override
+//                    public void onCancel() {
+//                        if (getModuleSetting(concessioModule).isRequire_document_reason())
+//                            finish();
+//                    }
+//                });
+//                if (getModuleSetting(concessioModule).isRequire_document_reason())
+//                    simplePulloutRequestDialog.show();
 
                 simplePulloutFragment = new SimplePulloutFragment();
+                simplePulloutFragment.setListingType(ListingType.SALES);
+                simplePulloutFragment.setHasUnits(true);
+                simplePulloutFragment.setProductCategories(getProductCategories(!getModuleSetting(concessioModule).getProductListing().isLock_category()));
+                simplePulloutFragment.setShowCategoryOnStart(getModuleSetting(concessioModule).getProductListing().isShow_categories_on_start());
+                simplePulloutFragment.setProductsFragmentListener(this);
+                simplePulloutFragment.setHasSubtotal(false);
+                simplePulloutFragment.setUseRecyclerView(true);
                 simplePulloutFragment.setHelper(getHelper());
                 simplePulloutFragment.setSetupActionBar(this);
                 simplePulloutFragment.setHasUnits(true);
                 simplePulloutFragment.setProductCategories(getProductCategories(!getModuleSetting(concessioModule).getProductListing().isLock_category()));
-                simplePulloutFragment.setShowCategoryOnStart(getModuleSetting(concessioModule).getProductListing().isShow_categories_on_start());
+                simplePulloutFragment.setConcessioModule(concessioModule);
+
+                initializeFinalize();
+                finalizeFragment.setListingType(ListingType.SALES);
+                finalizeFragment.setHasCategories(false);
+                finalizeFragment.setHasUnits(true);
+                finalizeFragment.setConcessioModule(concessioModule);
+
+                prepareFooter();
+                btn1.setOnClickListener(nextClickedListener);
 
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.flContent, simplePulloutFragment)
@@ -829,17 +862,21 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             btn1.setText("REVIEW");
         if (concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER)
             simpleInventoryFragment.refreshList();
-        if (getModuleSetting(concessioModule) != null) {
-            if (getModuleSetting(concessioModule).isRequire_document_reason()) {
-                if (concessioModule == ConcessioModule.RELEASE_BRANCH) {
-                    if (simplePulloutToolbarExt != null)
-                        simplePulloutToolbarExt.attachAfter(this, toolbar);
-                } else {
-                    if (simplePulloutToolbarExt != null)
-                        simplePulloutToolbarExt.detach();
-                }
-            }
-        }
+        if (concessioModule == ConcessioModule.STOCK_REQUEST || concessioModule == ConcessioModule.PHYSICAL_COUNT)
+            simpleProductsFragment.refreshList();
+        if (concessioModule == ConcessioModule.RELEASE_BRANCH)
+            simplePulloutFragment.refreshList();
+//        if (getModuleSetting(concessioModule) != null) { TODO Remove!
+//            if (getModuleSetting(concessioModule).isRequire_document_reason()) {
+//                if (concessioModule == ConcessioModule.RELEASE_BRANCH) {
+//                    if (simplePulloutToolbarExt != null)
+//                        simplePulloutToolbarExt.attachAfter(this, toolbar);
+//                } else {
+//                    if (simplePulloutToolbarExt != null)
+//                        simplePulloutToolbarExt.detach();
+//                }
+//            }
+//        }
         if (refreshCustomerList) {
             setResult(REFRESH);
         }
@@ -1076,20 +1113,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         this.toolbar = toolbar;
         if (getModuleSetting(concessioModule) != null) {
             if (getModuleSetting(concessioModule).isRequire_document_reason()) {
-                if (concessioModule == ConcessioModule.RELEASE_BRANCH) {
-                    if (simplePulloutToolbarExt == null)
-                        simplePulloutToolbarExt = new SimplePulloutToolbarExt();
-                    simplePulloutToolbarExt.attachAfter(this, this.toolbar);
-                    simplePulloutToolbarExt.setOnClickListener(new SimplePulloutToolbarExt.OnToolbarClickedListener() {
-                        @Override
-                        public void onClick() {
-                            simplePulloutRequestDialog.show();
-                        }
-                    });
-                } else {
-                    if (simplePulloutToolbarExt != null)
-                        simplePulloutToolbarExt.detach();
-                }
+//                if (concessioModule == ConcessioModule.RELEASE_BRANCH) { TODO Remove!
+//                    if (simplePulloutToolbarExt == null)
+//                        simplePulloutToolbarExt = new SimplePulloutToolbarExt();
+//                    simplePulloutToolbarExt.attachAfter(this, this.toolbar);
+//                    simplePulloutToolbarExt.setOnClickListener(new SimplePulloutToolbarExt.OnToolbarClickedListener() {
+//                        @Override
+//                        public void onClick() {
+//                            simplePulloutRequestDialog.show();
+//                        }
+//                    });
+//                } else {
+//                    if (simplePulloutToolbarExt != null)
+//                        simplePulloutToolbarExt.detach();
+//                }
             }
         }
         if (concessioModule == ConcessioModule.ROUTE_PLAN) {
@@ -1109,6 +1146,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 getSupportActionBar().invalidateOptionsMenu();
             }
         }
+        if (concessioModule == ConcessioModule.RELEASE_BRANCH)
+            if(getModuleSetting(concessioModule).isRequire_document_reason() && getSupportFragmentManager().findFragmentByTag("finalize") == null) {
+                simplePulloutFragment.showReasonDialog(true);
+            }
         if (concessioModule == ConcessioModule.HISTORY)
             whenItemsSelectedUpdated();
         if(concessioModule == ConcessioModule.LAYAWAY) {
@@ -1134,10 +1175,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
      */
     @Override
     public void whenItemsSelectedUpdated() {
-        toggleNext(llFooter, tvItems);
+        Log.e("whenSelectedUpdated", "is called");
+        if(!getModuleSetting(concessioModule).is_view())
+            toggleNext(llFooter, tvItems);
     }
 
     private void prepareFooter() {
+        Log.e("prepareFooter", "is called");
         llFooter.setVisibility(View.VISIBLE);
         llFooter.setTranslationY(1000f);
         tvItems.setVisibility(View.VISIBLE);
@@ -1171,7 +1215,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .queue();
                             }
                             else {
-                                Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
+                                int warehouseId = 0;
+                                if(getBranches(true).size() > 0)
+                                    warehouseId = getBranches(true).get(0).getId();
+                                Document document = generateDocument(C_Module.this, warehouseId, DocumentTypeCode.identify(concessioModule));
 
                                 try {
                                     JSONObject jsonObject = new JSONObject(gson.toJson(document));
@@ -1181,7 +1228,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 }
 
                                 if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                    document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
                                     Extras extras = new Extras();
                                     extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
                                     document.setExtras(extras);
@@ -1237,6 +1283,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     } else {
                                         // TODO
                                         onBackPressed();
+
+                                        if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+                                            simplePulloutFragment.showReasonDialog(true);
                                     }
 //
 //                                    if (concessioModule == ConcessioModule.STOCK_REQUEST) {
@@ -1282,10 +1331,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .queue();
                                                 }
                                                 else {
-                                                    Document document = generateDocument(C_Module.this, branch.getId(), DocumentTypeCode.identify(concessioModule));
+                                                    int warehouseId = 0;
+                                                    if(getBranches(true).size() > 0)
+                                                        warehouseId = getBranches(true).get(0).getId();
+
+                                                    Document document = generateDocument(C_Module.this, warehouseId, DocumentTypeCode.identify(concessioModule));
 
                                                     if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                                        document.setDocument_purpose_name(ProductsAdapterHelper.getReason().getName());
 //                                                  document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
 
                                                         Extras extras = new Extras();
@@ -1355,6 +1407,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         } else {
                                                             // TODO
                                                             onBackPressed();
+
+                                                            if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+                                                                simplePulloutFragment.showReasonDialog(true);
                                                         }
                                                     }
                                                 });

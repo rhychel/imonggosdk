@@ -101,7 +101,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 toggleCheckDetails(paymentTypes.get(position).getName().trim().toLowerCase().equals("check"));
-                togglePointsDetails(paymentTypes.get(position).getName().trim().toLowerCase().equals("points"));
+                togglePointsDetails(paymentTypes.get(position).getName().trim().toLowerCase().equals("points") || paymentTypes.get(position).getName().trim().toLowerCase().equals("rewards"));
             }
 
             @Override
