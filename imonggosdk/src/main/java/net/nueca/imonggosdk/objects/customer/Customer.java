@@ -6,6 +6,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
+import com.j256.ormlite.dao.CloseableIterable;
+import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -27,6 +29,7 @@ import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 import net.nueca.imonggosdk.tools.FieldValidatorMessage;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -136,7 +139,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     private transient CustomerCategory customerCategory; // customer_type_id (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private transient RoutePlan routePlan;
-    @ForeignCollectionField(orderColumnName = "id")
+    @ForeignCollectionField(orderColumnName = "id", orderAscending = false)
     private transient ForeignCollection<Invoice> invoices;
     @ForeignCollectionField
     private transient ForeignCollection<Document> documents;
@@ -154,6 +157,10 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
      */
     @ForeignCollectionField(columnName = "offlinedata_id")
     protected transient ForeignCollection<OfflineData> offlineData;
+
+    private Invoice lastPurchase;
+    private String layawayBalance = null;
+    private List<Invoice> myInvoices = null;
 
     public Customer() { }
 
@@ -649,15 +656,51 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
 
     public String getLastPurchase() {
         try {
-            Invoice invoice = invoices.closeableIterator().first();
+            if(lastPurchase != null)
+                return lastPurchase.getInvoice_date();
+            lastPurchase = invoices.closeableIterator().first();
             invoices.closeLastIterator();
 
-            if(invoice != null)
-                return invoice.getInvoice_date();
+            if(lastPurchase != null)
+                return lastPurchase.getInvoice_date();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public Invoice getLastInvoice() {
+        getLastPurchase();
+        return lastPurchase;
+    }
+
+    public String getLastPurchaseBranch() {
+        getLastPurchase();
+        if(lastPurchase != null)
+            return lastPurchase.getBranch().getName();
+        return "";
+    }
+
+    public List<Invoice> getMyInvoices() {
+        myInvoices = new ArrayList<>();
+        CloseableIterator<Invoice> iterator = invoices.closeableIterator();
+        while (iterator.hasNext()) {
+            Invoice invc = iterator.next();
+            myInvoices.add(invc);
+        }
+        return myInvoices;
+    }
+
+    public void setMyInvoices(List<Invoice> myInvoices) {
+        this.myInvoices = myInvoices;
+    }
+
+    public String getLayawayBalance() {
+        return layawayBalance;
+    }
+
+    public void setLayawayBalance(String layawayBalance) {
+        this.layawayBalance = layawayBalance;
     }
 
     public List<CustomerGroup>  getCustomerGroups(ImonggoDBHelper2 dbHelper) throws SQLException {

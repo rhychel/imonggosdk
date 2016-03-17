@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleRoutePlanRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.Day;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
@@ -69,6 +70,8 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ProductsAdapterHelper.setDbHelper(getHelper());
 
         simpleRoutePlanRecyclerViewAdapter = new SimpleRoutePlanRecyclerViewAdapter(getActivity(), routes);
         if(canShowAllCustomers)

@@ -349,7 +349,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
 
                 boolean addBaseProduct = true;
-                if(concessioModule == ConcessioModule.INVOICE && BranchProduct.fetchAll(getHelper(), BranchProduct.class).size() > 0) { // TODO CHECK IF ACCOUNT HAS BRANCH PRODUCTS
+                if(concessioModule == ConcessioModule.INVOICE && getHelper().fetchObjects(BranchProduct.class).countOf() > 0l) { // TODO CHECK IF ACCOUNT HAS BRANCH PRODUCTS
                     // Improve!
                     addBaseProduct = !getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
                         @Override
