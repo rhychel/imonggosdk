@@ -72,7 +72,8 @@ public abstract class BaseSyncService extends ImonggoService {
     protected int count = 0;
     protected int numberOfPages = 1;
     protected int branchIndex = 0;
-    protected int mCustomIndex = 0;
+    protected int mCustomIdIndex = 0;
+    protected int mCustomPageIndex = 1;
     protected int mModulesIndex = 0;
     protected int responseCode = 200;
     protected int[] branches;

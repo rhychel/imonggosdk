@@ -83,7 +83,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                 Log.e(TAG, "CustomerCustomerGroup: " + String.valueOf(rp.getId()));
                 Log.e(TAG, "CustomerCustomerGroup Customer: " + rp.getCustomer());
                 Log.e(TAG, "CustomerCustomerGroup CustomerGroup: " + rp.getCustomerGroup());
-                //   listPriceListStorage.get(mCustomIndex) instanceof CustomerLog.e(TAG, "CustomerCustomerGroup Price: " + rp.getCustomerGroup().getPriceList());
+                //   listPriceListStorage.get(mCustomIdIndex) instanceof CustomerLog.e(TAG, "CustomerCustomerGroup Price: " + rp.getCustomerGroup().getPriceList());
 
             }
         } catch (SQLException e) {
