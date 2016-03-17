@@ -2760,7 +2760,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             if (size == 0) {
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                                 mCustomPageIndex = 1;
-                                syncNext();
+                                updateNext(requestType, listOfIds.size());
                                 return;
                             } else {
                                 RoutePlan xRoutePlan = (RoutePlan) listOfIds.get(mCustomIdIndex);
@@ -2813,129 +2813,141 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             break;
                         case PRICE_LISTS_DETAILS:
                             BatchList<Price> newPrice = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                mCustomPageIndex = 1;
+                                updateNext(requestType, listOfIds.size());
+                                return;
+                            } else {
+                                PriceList priceList = (PriceList) listOfIds.get(mCustomIdIndex);
 
-                            PriceList priceList = (PriceList) listOfIds.get(mCustomIdIndex);
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject priceListJsonObject = jsonArray.getJSONObject(i);
+                                    Price price = new Price();
+                                    price.setId(-1);
+                                    price = gson.fromJson(priceListJsonObject.toString(), Price.class);
 
-                            for (int i = 0; i < size; i++) {
-                                JSONObject priceListJsonObject = jsonArray.getJSONObject(i);
-                                Price price = new Price();
-                                price.setId(-1);
-                                price = gson.fromJson(priceListJsonObject.toString(), Price.class);
-
-                                if (price.getId() == -1) {
-                                    price.setId(priceListJsonObject.getInt("id"));
-                                }
-
-                                price.setUtc_created_at(priceListJsonObject.getString("created_at"));
-                                price.setUtc_updated_at(priceListJsonObject.getString("updated_at"));
-
-                                // PRODUCT
-                                if (priceListJsonObject.has("product_id")) {
-                                    if (priceListJsonObject.getString("product_id").equals("") || priceListJsonObject.isNull("product_id")) {
-                                        Log.e(TAG, "product_id field is null");
-                                    } else {
-                                        int product_id = priceListJsonObject.getInt("product_id");
-                                        Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product_id).queryForFirst();
-                                        if (product != null) {
-                                            Log.e(TAG, "Product: " + product.getName());
-                                            price.setProduct(product);
-                                        } else {
-                                            Log.e(TAG, "Can't find product with id " + priceListJsonObject.getInt("product_id"));
-                                        }
+                                    if (price.getId() == -1) {
+                                        price.setId(priceListJsonObject.getInt("id"));
                                     }
-                                } else {
-                                    Log.e(TAG, "PRICE_LIST API don't have 'product_id' field in price_list_items array");
-                                }
 
-                                // UNITS
-                                if (priceListJsonObject.has("unit_id")) {
-                                    if (priceListJsonObject.getString("unit_id").equals("") || priceListJsonObject.isNull("unit_id")) {
-                                        Log.e(TAG, "unit_id field is null");
-                                    } else {
-                                        int unit_id = priceListJsonObject.getInt("unit_id");
-                                        Unit unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit_id).queryForFirst();
-                                        if (unit != null) {
-                                            Log.e(TAG, "Unit: " + unit.getName());
-                                            price.setUnit(unit);
+                                    price.setUtc_created_at(priceListJsonObject.getString("created_at"));
+                                    price.setUtc_updated_at(priceListJsonObject.getString("updated_at"));
+
+                                    // PRODUCT
+                                    if (priceListJsonObject.has("product_id")) {
+                                        if (priceListJsonObject.getString("product_id").equals("") || priceListJsonObject.isNull("product_id")) {
+                                            Log.e(TAG, "product_id field is null");
                                         } else {
-                                            Log.e(TAG, "Can't find unit with id " + priceListJsonObject.getInt("unit_id"));
+                                            int product_id = priceListJsonObject.getInt("product_id");
+                                            Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product_id).queryForFirst();
+                                            if (product != null) {
+                                                Log.e(TAG, "Product: " + product.getName());
+                                                price.setProduct(product);
+                                            } else {
+                                                Log.e(TAG, "Can't find product with id " + priceListJsonObject.getInt("product_id"));
+                                            }
                                         }
+                                    } else {
+                                        Log.e(TAG, "PRICE_LIST API don't have 'product_id' field in price_list_items array");
                                     }
-                                } else {
-                                    Log.e(TAG, "PRICE_LIST API don't have 'unit_id' field in price_list_items array");
+
+                                    // UNITS
+                                    if (priceListJsonObject.has("unit_id")) {
+                                        if (priceListJsonObject.getString("unit_id").equals("") || priceListJsonObject.isNull("unit_id")) {
+                                            Log.e(TAG, "unit_id field is null");
+                                        } else {
+                                            int unit_id = priceListJsonObject.getInt("unit_id");
+                                            Unit unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit_id).queryForFirst();
+                                            if (unit != null) {
+                                                Log.e(TAG, "Unit: " + unit.getName());
+                                                price.setUnit(unit);
+                                            } else {
+                                                Log.e(TAG, "Can't find unit with id " + priceListJsonObject.getInt("unit_id"));
+                                            }
+                                        }
+                                    } else {
+                                        Log.e(TAG, "PRICE_LIST API don't have 'unit_id' field in price_list_items array");
+                                    }
+
+                                    price.setPriceList(priceList);
+
+                                    Price priceListX = getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst();
+                                    if (priceListX != null) {
+                                        priceListX.deleteTo(getHelper());
+                                    }
+
+                                    newPrice.add(price);
+
                                 }
 
-                                price.setPriceList(priceList);
 
-                                Price priceListX = getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst();
-                                if (priceListX != null) {
-                                    priceListX.deleteTo(getHelper());
-                                }
-
-                                newPrice.add(price);
-
+                                newPrice.doOperation(Price.class);
                             }
-
-
-                            newPrice.doOperation(Price.class);
-
                             Log.e(TAG, "Price List Details");
+                            mCustomPageIndex++;
                             updateNext(requestType, count);
                             break;
                         case SALES_PROMOTIONS_POINTS_DETAILS:
                         case SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS:
                             BatchList<Discount> newDiscount = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<Discount> updateDiscount = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                            if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                mCustomPageIndex = 1;
+                                updateNext(requestType, listOfIds.size());
+                                return;
+                            } else {
+                                SalesPromotion tempSalesPromotion = (SalesPromotion) listOfIds.get(mCustomIdIndex);
+                                SalesPromotion salesPromotion = getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", tempSalesPromotion.getId()).queryForFirst();
 
-                            SalesPromotion tempSalesPromotion = (SalesPromotion) listOfIds.get(mCustomIdIndex);
-                            SalesPromotion salesPromotion = getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", tempSalesPromotion.getId()).queryForFirst();
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject discountJsonObject = jsonArray.getJSONObject(i);
 
-                            for (int i = 0; i < size; i++) {
-                                JSONObject discountJsonObject = jsonArray.getJSONObject(i);
+                                    Discount discount = gson.fromJson(discountJsonObject.toString(), Discount.class);
+                                    if (salesPromotion != null) {
+                                        discount.setSalesPromotion(salesPromotion);
+                                        Log.e(TAG, "Sales Promotion is " + salesPromotion.getName() + " id: " + salesPromotion.getId());
 
-                                Discount discount = gson.fromJson(discountJsonObject.toString(), Discount.class);
-                                if (salesPromotion != null) {
-                                    discount.setSalesPromotion(salesPromotion);
-                                    Log.e(TAG, "Sales Promotion is " + salesPromotion.getName() + " id: " + salesPromotion.getId());
+                                        if (discountJsonObject.has("product_id")) {
+                                            if (!discountJsonObject.isNull("product_id")) {
+                                                int product_id = discountJsonObject.getInt("product_id");
+                                                Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product_id).queryForFirst();
 
-                                    if (discountJsonObject.has("product_id")) {
-                                        if (!discountJsonObject.isNull("product_id")) {
-                                            int product_id = discountJsonObject.getInt("product_id");
-                                            Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", product_id).queryForFirst();
-
-                                            if (product != null) {
-                                                discount.setProduct(product);
-                                                Log.e(TAG, "Product ID: " + product.getName());
+                                                if (product != null) {
+                                                    discount.setProduct(product);
+                                                    Log.e(TAG, "Product ID: " + product.getName());
+                                                } else {
+                                                    discount.setProduct(null);
+                                                    Log.e(TAG, "can't find product with id:  " + product_id);
+                                                }
                                             } else {
-                                                discount.setProduct(null);
-                                                Log.e(TAG, "can't find product with id:  " + product_id);
+                                                Log.e(TAG, "'product_id' is null");
                                             }
                                         } else {
-                                            Log.e(TAG, "'product_id' is null");
+                                            Log.e(TAG, mCurrentTableSyncing + " API don't have product id");
                                         }
-                                    } else {
-                                        Log.e(TAG, mCurrentTableSyncing + " API don't have product id");
-                                    }
 
 
-                                    if (initialSync || lastUpdatedAt == null) {
-                                        newDiscount.add(discount);
-                                    } else {
-                                        if (isExisting(discount, mCurrentTableSyncing)) {
-                                            updateDiscount.add(discount);
-                                        } else {
+                                        if (initialSync || lastUpdatedAt == null) {
                                             newDiscount.add(discount);
+                                        } else {
+                                            if (isExisting(discount, mCurrentTableSyncing)) {
+                                                updateDiscount.add(discount);
+                                            } else {
+                                                newDiscount.add(discount);
+                                            }
                                         }
+                                    } else {
+                                        Log.e(TAG, "Can't add discount Sales Promotion Does not exist in database");
                                     }
-                                } else {
-                                    Log.e(TAG, "Can't add discount Sales Promotion Does not exist in database");
                                 }
+
+                                newDiscount.doOperationBT2(Discount.class);
+                                updateDiscount.doOperationBT2(Discount.class);
                             }
-
-                            newDiscount.doOperationBT2(Discount.class);
-                            updateDiscount.doOperationBT2(Discount.class);
-
                             //Log.e(TAG, "Sales Promotions Discount");
+                            mCustomPageIndex++;
                             updateNext(requestType, count);
                             break;
                         case ROUTE_PLANS:
@@ -3071,23 +3083,25 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     mCurrentTableSyncing == Table.ROUTE_PLANS_DETAILS ||
                     mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
 
-
                 if (mSyncModulesListener != null) {
                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIdIndex, size);
                 }
 
 
-                if (mCustomIdIndex < size) {
+                Log.e(TAG, "Custom Page: " + mCustomPageIndex);
 
-                    if (mCustomPageIndex > 1) {
+                if (mCustomPageIndex > 1) {
+                    startSyncModuleContents(requestType);
+                } else {
+                    mCustomIdIndex++;
+
+                    if (mCustomIdIndex < size) {
                         startSyncModuleContents(requestType);
                     } else {
-                        mCustomIdIndex++;
                         syncNext();
                     }
-                } else {
-                    syncNext();
                 }
+
             } else {
 
                 if (mSyncModulesListener != null) {
