@@ -389,9 +389,12 @@ public class SelectedProductItem {
     }
 
     public String getValuesUnit() {
-        for(Values values : valuesList)
+        for(Values values : valuesList) {
+            if(values.getUnit_name() == null)
+                return product.getBase_unit_name();
             return values.getUnit_name();
-        return "";
+        }
+        return product.getBase_unit_name();
     }
 
     @Deprecated

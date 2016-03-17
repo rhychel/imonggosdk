@@ -106,7 +106,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             productCategoriesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
             spCategories.setAdapter(productCategoriesAdapter);
             spCategories.setOnItemSelectedListener(onCategorySelected);
-            setCategory(productCategories.get(0));
+            if(productCategories.size() > 0)
+                setCategory(productCategories.get(0));
         }
         else
             spCategories.setVisibility(View.GONE);

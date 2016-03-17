@@ -173,7 +173,7 @@ public class PriceTools {
         if(branchProduct != null)
             return branchProduct.getUnit_retail_price();
 
-        if(unit != null)
+        if(unit != null && unit.getId() != -1)
             return unit.getRetail_price();
 
         return product.getRetail_price();

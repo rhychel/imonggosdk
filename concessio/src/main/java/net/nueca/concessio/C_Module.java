@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,7 +23,6 @@ import com.epson.epos2.printer.PrinterStatusInfo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.activities.AddEditCustomerActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -49,11 +47,8 @@ import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
-import net.nueca.concessioengine.objects.SelectedProductItem;
-import net.nueca.concessioengine.printer.PrinterTask;
 import net.nueca.concessioengine.printer.epson.listener.PrintListener;
-import net.nueca.concessioengine.printer.epson.tools.EPSONPrinterTools;
-import net.nueca.concessioengine.tools.AnimationTools;
+import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
@@ -68,7 +63,6 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
-import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -92,7 +86,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * Created by rhymart on 8/21/15.
@@ -494,7 +487,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     @Override
                     public void onClick(View v) {
                         // ---- So let's print...
-                        printTransaction(null, "*Salesman Copy*");//, "*Office Copy*"
+                        //printTransaction(null, "*Salesman Copy*");//, "*Office Copy*"
                     }
                 });
                 tvItems.setVisibility(View.INVISIBLE);
@@ -1158,7 +1151,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .queue();
                                 TimerTools.duration("SwableTools.queue --- end", true);
 
-                                printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                //printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
 
                                 TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                                 transactionDialog.setTitle(concessioModule);
@@ -1248,7 +1241,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .fromModule(concessioModule)
                                                             .queue();
 
-                                                    printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                    //printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
 
                                                     TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                                                     transactionDialog.setTitle(concessioModule);
@@ -1322,9 +1315,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     };
 
     private void printTransaction(final OfflineData offlineData, final String... labels) {
-        String targetPrinter = EPSONPrinterTools.targetPrinter(getApplicationContext());
+        String targetPrinter = EpsonPrinterTools.targetPrinter(getApplicationContext());
         if(targetPrinter != null) {
-            EPSONPrinterTools.print(targetPrinter, new PrintListener() {
+            EpsonPrinterTools.print(targetPrinter, new PrintListener() {
                 @Override
                 public Printer initializePrinter() {
                     try {
@@ -1477,7 +1470,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             printer.addTextAlign(Printer.ALIGN_LEFT);
                             printer.addText("--------------------------------");
                             printer.addText("Total Quantity: " + NumberTools.separateInCommas(totalQuantity) + "\n");
-                            printer.addText(EPSONPrinterTools.spacer("Total Order Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\n\n");
+                            printer.addText(EpsonPrinterTools.spacer("Total Order Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\n\n");
                             printer.addTextAlign(Printer.ALIGN_CENTER);
                             printer.addText(labels[i]);
                             if(i < labels.length-1) {
