@@ -46,7 +46,6 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
         switch (dashboardTile.getConcessioModule()) {
             case RECEIVE_BRANCH:
             case RECEIVE_BRANCH_PULLOUT:
-            case RELEASE_BRANCH:
                 DialogTools.showDialog(this, "Coming Soon", "Willing to wait?", "Yes!", new DialogInterface.OnClickListener() {
 
                     @Override

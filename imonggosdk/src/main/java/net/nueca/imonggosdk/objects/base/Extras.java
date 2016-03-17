@@ -342,6 +342,8 @@ public class Extras extends DBTable {
     }
 
     public Boolean require_date() {
+        if(require_date == null)
+            return false;
         return require_date;
     }
 
