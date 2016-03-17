@@ -70,9 +70,6 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Purpose"
                 android:id="@+id/textView7"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
                 android:layout_gravity="center_vertical"
                 android:textSize="13sp"
                 android:layout_weight="1" />
@@ -81,9 +78,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/spInvoicePurpose"
-                android:layout_above="@+id/textView7"
-                android:layout_alignLeft="@+id/textView7"
-                android:layout_alignStart="@+id/textView7"
                 android:layout_weight="2"
                 android:layout_marginLeft="16dp" />
         </LinearLayout>

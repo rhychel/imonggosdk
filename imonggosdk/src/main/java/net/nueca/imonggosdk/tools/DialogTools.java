@@ -72,6 +72,7 @@ public class DialogTools<T> {
         dialog.setMessage(message);
         dialog.setPositiveButton(positiveText, positiveCallback);
         dialog.setNegativeButton(negativeText, negativeCallback);
+        dialog.setCancelable(false);
         dialog.show();
     }
 

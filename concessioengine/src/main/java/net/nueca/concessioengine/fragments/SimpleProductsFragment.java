@@ -51,6 +51,7 @@ import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.DialogTools;
+import net.nueca.imonggosdk.tools.TimerTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -85,6 +86,35 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         return new SimpleProductsFragment();
     }
 
+    public void showReasonDialog(boolean emptyReason) {
+        SimplePulloutRequestDialog simplePulloutRequestDialog = new SimplePulloutRequestDialog(getActivity(), getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
+        simplePulloutRequestDialog.setDTitle(getModuleSetting(concessioModule).getLabel());
+        simplePulloutRequestDialog.setShouldShowBranchSelection(false);
+        simplePulloutRequestDialog.setCurrentReason(ProductsAdapterHelper.getReason());
+        simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+            @Override
+            public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
+                ProductsAdapterHelper.setReason(reason);
+                ProductsAdapterHelper.setSource(source);
+                ProductsAdapterHelper.setDestination(destination);
+
+                tvReason.setText(reason.getName());
+            }
+
+            @Override
+            public void onCancel() {
+                if(getModuleSetting(concessioModule).isRequire_document_reason())
+                   getActivity().finish();
+            }
+        });
+
+        if(!isFinalize)
+            simplePulloutRequestDialog.show();
+
+        if(emptyReason)
+            tvReason.setText("");
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         View view = inflater.inflate(useRecyclerView ? R.layout.simple_products_fragment_rv : R.layout.simple_products_fragment_lv, container,
@@ -114,36 +144,43 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         suplProduct.setAnchorPoint(0.5f);
         offset = 0l;
 
+        Log.e("useRecyclerView", useRecyclerView+"");
         if(useRecyclerView) {
             llReason = (LinearLayout) view.findViewById(R.id.llReason);
-            if(ProductsAdapterHelper.getReason() != null) {
+            if(concessioModule == ConcessioModule.RECEIVE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH) {
                 llReason.setVisibility(View.VISIBLE);
                 tvReason = (TextView) view.findViewById(R.id.tvReason);
                 ivEdit = (ImageView) view.findViewById(R.id.ivEdit);
 
-                tvReason.setText(ProductsAdapterHelper.getReason().getName());
-                ivEdit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        SimplePulloutRequestDialog simplePulloutRequestDialog = new SimplePulloutRequestDialog(getActivity(), getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
-                        simplePulloutRequestDialog.setDTitle("MSO");
-                        simplePulloutRequestDialog.setShouldShowBranchSelection(false);
-                        simplePulloutRequestDialog.setCurrentReason(ProductsAdapterHelper.getReason());
-                        simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
-                            @Override
-                            public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
-                                ProductsAdapterHelper.setReason(reason);
-                                tvReason.setText(reason.getName());
-                            }
+                if(isFinalize)
+                    ivEdit.setVisibility(View.GONE);
+                else
+                    ivEdit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showReasonDialog(false);
+//                        SimplePulloutRequestDialog simplePulloutRequestDialog = new SimplePulloutRequestDialog(getActivity(), getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
+//                        simplePulloutRequestDialog.setDTitle("MSO");
+//                        simplePulloutRequestDialog.setShouldShowBranchSelection(false);
+//                        simplePulloutRequestDialog.setCurrentReason(ProductsAdapterHelper.getReason());
+//                        simplePulloutRequestDialog.setListener(new SimplePulloutRequestDialog.PulloutRequestDialogListener() {
+//                            @Override
+//                            public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
+//                                ProductsAdapterHelper.setReason(reason);
+//                                tvReason.setText(reason.getName());
+//                            }
+//
+//                            @Override
+//                            public void onCancel() {
+//
+//                            }
+//                        });
+//                        simplePulloutRequestDialog.show();
+                        }
+                    });
 
-                            @Override
-                            public void onCancel() {
-
-                            }
-                        });
-                        simplePulloutRequestDialog.show();
-                    }
-                });
+                if(ProductsAdapterHelper.getReason() != null)
+                    tvReason.setText(ProductsAdapterHelper.getReason().getName());
             }
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
             if(!isCustomAdapter) {
@@ -282,6 +319,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
         try {
             if(listingType == ListingType.SALES || listingType == ListingType.ADVANCED_SALES) {
+                TimerTools.start("showQuantityDialog");
                 SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
                 simpleSalesQuantityDialog.setListPosition(position);
                 simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -338,6 +376,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
                 simpleSalesQuantityDialog.setQuantityDialogListener(quantityDialogListener);
                 simpleSalesQuantityDialog.show();
+                TimerTools.duration("showQuantityDialog");
             }
             else {
                 SimpleQuantityDialog quantityDialog = new SimpleQuantityDialog(getActivity(), R.style.AppCompatDialogStyle);
@@ -384,6 +423,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 productListAdapter.getSelectedProductItems().add(selectedProductItem);
                 productListAdapter.notifyItemChanged(lvProducts, position);
             }
+            Log.e("ProductsFragListener", productsFragmentListener+"");
             if (productsFragmentListener != null)
                 productsFragmentListener.whenItemsSelectedUpdated();
         }

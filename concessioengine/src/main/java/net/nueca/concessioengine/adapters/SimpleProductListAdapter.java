@@ -64,6 +64,7 @@ public class SimpleProductListAdapter extends BaseProductsAdapter {
 
         lvh.tvProductName.setText(Html.fromHtml(product.getName()+getSelectedProductItems().getUnitName(product).toLowerCase()));
         lvh.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
+
         String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId()+"", false, false);
         lvh.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
 
