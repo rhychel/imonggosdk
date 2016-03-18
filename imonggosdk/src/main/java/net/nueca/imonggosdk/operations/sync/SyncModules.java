@@ -434,9 +434,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.ID,
                             Parameter.DETAILS,
-                            Parameter.AFTER),
+                            Parameter.AFTER,
+                            Parameter.PAGE),
                             listOfIds.get(mCustomIdIndex).getId(),
-                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()),
+                            mCustomPageIndex);
                 }
 
                 if (mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS) {
@@ -2457,6 +2459,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             } else {
                                                 Log.e(TAG, "Price Lists not found!");
                                             }
+
                                         } else {
                                             Log.e(TAG, "Price List ID don't have value");
                                         }
