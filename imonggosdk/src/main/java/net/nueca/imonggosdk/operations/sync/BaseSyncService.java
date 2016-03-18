@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
+import net.nueca.imonggosdk.objects.AccountPrice;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.BranchTag;
@@ -38,7 +39,7 @@ import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
-import net.nueca.imonggosdk.objects.invoice.Discount;
+import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
@@ -71,7 +72,8 @@ public abstract class BaseSyncService extends ImonggoService {
     protected int count = 0;
     protected int numberOfPages = 1;
     protected int branchIndex = 0;
-    protected int mCustomIndex = 0;
+    protected int mCustomIdIndex = 0;
+    protected int mCustomPageIndex = 1;
     protected int mModulesIndex = 0;
     protected int responseCode = 200;
     protected int[] branches;
@@ -291,12 +293,18 @@ public abstract class BaseSyncService extends ImonggoService {
 
             }
             case SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS: {
-                Discount discount = (Discount) o;
+                net.nueca.imonggosdk.objects.salespromotion.Discount discount = (Discount) o;
                 return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("id", discount.getId()) != null;
             }
             case PRICE_LISTS_DETAILS: {
                 Price price = (Price) o;
                 return getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst() != null;
+            }
+            case ACCOUNT_PRICES: {
+                AccountPrice accountPrice = (AccountPrice) o;
+                Product px = accountPrice.getProduct();
+
+                return getHelper().fetchObjects(AccountPrice.class).queryBuilder().where().eq("product_id", px).queryForFirst() != null;
             }
             case DAILY_SALES: {
                 DailySales dailySales = (DailySales) o;
@@ -370,21 +378,9 @@ public abstract class BaseSyncService extends ImonggoService {
         Log.e(TAG, "Sync Service has stopped");
     }
 
-    /**
-     * Class for clients to access.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with
-     * IPC.
-     */
-    public class LocalBinder extends Binder {
-        public BaseSyncService getService() {
-            return BaseSyncService.this;
-        }
-    }
-
     public Table getCurrentTableSyncing() {
         return mCurrentTableSyncing;
     }
-
 
     /**
      * removes modules from array for Re-Sync
@@ -436,5 +432,16 @@ public abstract class BaseSyncService extends ImonggoService {
 
     public VolleyRequestListener getVolleyRequestListener() {
         return this.mVolleyRequestListener;
+    }
+
+    /**
+     * Class for clients to access.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with
+     * IPC.
+     */
+    public class LocalBinder extends Binder {
+        public BaseSyncService getService() {
+            return BaseSyncService.this;
+        }
     }
 }

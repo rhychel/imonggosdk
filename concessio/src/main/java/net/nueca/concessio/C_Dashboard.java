@@ -43,6 +43,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.SalesPushSettings;
 import net.nueca.imonggosdk.objects.Settings;
+import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
@@ -76,16 +77,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     private ArrayAdapter<Branch> branchesAdapter;
     private DashboardRecyclerAdapter dashboardRecyclerAdapter;
 
-    private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>(){{
-        add(new DashboardTile(ConcessioModule.ROUTE_PLAN, "Sales", R.drawable.ic_booking));
-        add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers", R.drawable.ic_customers));
-        add(new DashboardTile(ConcessioModule.RECEIVE_SUPPLIER, "Receiving", R.drawable.ic_receiving));
-        add(new DashboardTile(ConcessioModule.RELEASE_SUPPLIER, "Pullout", R.drawable.ic_pullout));
-        add(new DashboardTile(ConcessioModule.RELEASE_ADJUSTMENT, "MSO", R.drawable.ic_mso));
-        add(new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
-        add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Physical Count", R.drawable.ic_physical_count));
-        add(new DashboardTile(ConcessioModule.HISTORY, "History", R.drawable.ic_history));
-    }};
+    private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,12 +85,12 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         setContentView(R.layout.c_dashboard);
 
         Log.e("ClassName", Customer.class.getSimpleName());
-
-        /*try {
-            getHelper().deleteAll(OfflineData.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
+//
+//        try {
+//            getHelper().deleteAll(OfflineData.class);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
         /*try {
             List<OfflineData> offlineDatas = getHelper().fetchObjectsList(OfflineData.class);
@@ -128,6 +120,28 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         rvModules.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(this, 2);
         rvModules.setLayoutManager(layoutManager);
+
+        if(getModuleSetting(ConcessioModule.CUSTOMERS).isHas_route_plan()) { // REBISCO
+            for(ModuleSetting moduleSetting : getActiveModuleSetting(null, true)) {
+                if(moduleSetting.getModuleType() == ConcessioModule.INVOICE)
+                    dashboardTiles.add(new DashboardTile(ConcessioModule.ROUTE_PLAN, moduleSetting.getLabel()));
+                else
+                    dashboardTiles.add(new DashboardTile(moduleSetting.getModuleType(), moduleSetting.getLabel()));
+
+            }
+            dashboardTiles.add(5, new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
+        }
+        else { // OTHERS
+            for(ModuleSetting moduleSetting : getActiveModuleSetting(null, true)) {
+                if(moduleSetting.getModuleType() == ConcessioModule.INVOICE)
+                    dashboardTiles.add(new DashboardTile(ConcessioModule.CUSTOMERS, moduleSetting.getLabel(), true, ConcessioModule.INVOICE.getLogo()));
+                else
+                    dashboardTiles.add(new DashboardTile(moduleSetting.getModuleType(), moduleSetting.getLabel()));
+
+                Log.e("ModuleSettings", moduleSetting.getModule_type()+"="+moduleSetting.getDisplay_sequence());
+            }
+        }
+        dashboardTiles.add(new DashboardTile(ConcessioModule.HISTORY, "History"));
 
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
@@ -264,10 +278,10 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     }
 
     @Override
-    protected Bundle addExtras(ConcessioModule concessioModule) {
+    protected Bundle addExtras(DashboardTile dashboardTile) {
         Bundle bundle = new Bundle();
-        if(concessioModule == ConcessioModule.CUSTOMERS) {
-            bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, true);
+        if(dashboardTile.getConcessioModule() == ConcessioModule.CUSTOMERS) {
+            bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, !dashboardTile.isProxy());
         }
 
         bundle.putBoolean(ModuleActivity.INIT_PRODUCT_ADAPTER_HELPER, true);

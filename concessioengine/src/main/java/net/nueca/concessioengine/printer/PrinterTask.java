@@ -2,9 +2,18 @@ package net.nueca.concessioengine.printer;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+
+import com.epson.epos2.Epos2Exception;
+import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
 
 import net.nueca.concessioengine.printer.epson.listener.PrintListener;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.Product;
+
+import java.sql.SQLException;
 
 /**
  * Created by rhymartmanchus on 22/02/2016.

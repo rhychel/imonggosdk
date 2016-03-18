@@ -35,7 +35,7 @@ public class SimpleMultiInputAdapter extends BaseRecyclerAdapter<SimpleMultiInpu
 
     @Override
     public void onBindViewHolder(SimpleMultiInputAdapter.ListViewHolder holder, int position) {
-        holder.tvQuantity.setText(getItem(position).getQuantity());
+        holder.tvQuantity.setText(getItem(position).getQuantity()+" "+getItem(position).getUnit_name());
         holder.tvBrand.setText(getItem(position).getExtendedAttributes().getBrand());
         holder.tvDeliveryDate.setText(getItem(position).getExtendedAttributes().getDelivery_date());
         holder.tvBatchNo.setText(getItem(position).getExtendedAttributes().getBatch_no());

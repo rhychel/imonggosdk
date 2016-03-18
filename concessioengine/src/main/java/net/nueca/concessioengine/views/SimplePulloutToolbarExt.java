@@ -3,8 +3,10 @@ package net.nueca.concessioengine.views;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 
 /**
  * Created by gama on 10/6/15.
@@ -13,6 +15,7 @@ public class SimplePulloutToolbarExt extends BaseToolbarExt {
 
     protected OnToolbarClickedListener onClickListener;
     private ImageButton ibtnEdit;
+    private TextView tvReason;
 
     public interface OnToolbarClickedListener {
         void onClick();
@@ -29,6 +32,8 @@ public class SimplePulloutToolbarExt extends BaseToolbarExt {
     @Override
     protected void whenInflated(View view) {
         ibtnEdit = (ImageButton)view.findViewById(R.id.ibtnEdit);
+        tvReason = (TextView)view.findViewById(R.id.tvReason);
+
         ibtnEdit.setOnClickListener(this);
     }
 
@@ -44,5 +49,9 @@ public class SimplePulloutToolbarExt extends BaseToolbarExt {
 
     public void setOnClickListener(OnToolbarClickedListener onClickListener) {
         this.onClickListener = onClickListener;
+    }
+
+    public void renderReason() {
+        tvReason.setText(ProductsAdapterHelper.getReason().getName());
     }
 }

@@ -8,7 +8,6 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 
 public class Configurations {
@@ -20,53 +19,13 @@ public class Configurations {
                                         "receive_supplier", "release_supplier", "customers", "app"};
 
     public static String API_AUTHENTICATION = "";
-
-    private static String SERVER_KEY = "mServer";
-    private static String ACCOUNT_ID_CACHE = "account_id_cache";
-    private static String EMAIL_CACHE = "email_cache";
-
-    private static SharedPreferences imonggoPreference;
-
-    public static void initializePreference(Context context) {
-        imonggoPreference = PreferenceManager.getDefaultSharedPreferences(context);
-    }
-
-    public static int getServer() {
-        return imonggoPreference.getInt(SERVER_KEY, Server.IRETAILCLOUD_NET.ordinal());
-    }
-
-    public static String getEmail() {
-        return imonggoPreference.getString(EMAIL_CACHE, "");
-    }
-
-    public static String getAccountId() {
-        return imonggoPreference.getString(ACCOUNT_ID_CACHE, "");
-    }
-
-    public static void setAccountId(String accountId) {
-        SharedPreferences.Editor editor = imonggoPreference.edit();
-        editor.putString(ACCOUNT_ID_CACHE, accountId);
-        editor.apply();
-    }
-
-    public static void setEmail(String email) {
-        SharedPreferences.Editor editor = imonggoPreference.edit();
-        editor.putString(EMAIL_CACHE, email);
-        editor.apply();
-    }
-
-    public static void setServer(int server) {
-        SharedPreferences.Editor editor = imonggoPreference.edit();
-        editor.putInt(SERVER_KEY, server);
-        editor.apply();
-    }
-
     /**
      * EnumMap for API Modules in JSON.
      */
     public static EnumMap<Table, String> API_MODULES = new EnumMap<Table, String>(Table.class) {
 
         private static final long serialVersionUID = 9136022492409598128L;
+
         {
             // ----- Main APIs
             put(Table.TOKENS, "tokens.json");
@@ -114,12 +73,15 @@ public class Configurations {
             put(Table.ROUTE_PLANS, "route_plans.json");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
 
+            // FOR PETRON
+            put(Table.ACCOUNT_PRICES, "account_prices.json");
+
         }
     };
-
     public static EnumMap<Table, String> API_MODULES_ID = new EnumMap<Table, String>(Table.class) {
 
         private static final long serialVersionUID = 9136022492409598128L;
+
         {
             // ----- Main APIs
             put(Table.TOKENS, "tokens");
@@ -173,9 +135,11 @@ public class Configurations {
             put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
             put(Table.ROUTE_PLANS, "route_plans");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
+
+            // FOR PETRON
+            put(Table.ACCOUNT_PRICES, "account_prices");
         }
     };
-
     /**
      * EnumMap for Settings' name.
      */
@@ -237,5 +201,43 @@ public class Configurations {
             put(SettingsName.MASTER_ACCOUNT_ID, "master_account_id");
         }
     };
+    private static String SERVER_KEY = "mServer";
+    private static String ACCOUNT_ID_CACHE = "account_id_cache";
+    private static String EMAIL_CACHE = "email_cache";
+    private static SharedPreferences imonggoPreference;
+
+    public static void initializePreference(Context context) {
+        imonggoPreference = PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    public static int getServer() {
+        return imonggoPreference.getInt(SERVER_KEY, Server.IRETAILCLOUD_NET.ordinal());
+    }
+
+    public static void setServer(int server) {
+        SharedPreferences.Editor editor = imonggoPreference.edit();
+        editor.putInt(SERVER_KEY, server);
+        editor.apply();
+    }
+
+    public static String getEmail() {
+        return imonggoPreference.getString(EMAIL_CACHE, "");
+    }
+
+    public static void setEmail(String email) {
+        SharedPreferences.Editor editor = imonggoPreference.edit();
+        editor.putString(EMAIL_CACHE, email);
+        editor.apply();
+    }
+
+    public static String getAccountId() {
+        return imonggoPreference.getString(ACCOUNT_ID_CACHE, "");
+    }
+
+    public static void setAccountId(String accountId) {
+        SharedPreferences.Editor editor = imonggoPreference.edit();
+        editor.putString(ACCOUNT_ID_CACHE, accountId);
+        editor.apply();
+    }
 
 }

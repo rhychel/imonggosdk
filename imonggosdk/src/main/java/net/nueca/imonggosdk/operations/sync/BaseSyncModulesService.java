@@ -18,7 +18,6 @@ import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Session;
-import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 
 import java.sql.SQLException;
@@ -30,6 +29,7 @@ import java.util.TimeZone;
  * Created by rhymart on 5/13/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 public abstract class BaseSyncModulesService extends ImonggoService {
 
     public static final String PARAMS_SYNC_ALL_MODULES = "sync_all_modules";
@@ -40,33 +40,26 @@ public abstract class BaseSyncModulesService extends ImonggoService {
     public static final String PARAMS_SERVER = "server";
 
     public static boolean isRequesting = true;
-    private User user;
     protected Server server;
-
     protected int page = 1, responseCode = 200, count = 0, numberOfPages = 1;
-
     protected boolean syncAllModules = true,
             isSecured = false,
             initialSync = false,
             isActiveOnly = true;
-
     protected Table[] tablesToSync;
     protected int tablesIndex = 0;
     protected int[] branches;
     protected int branchIndex = 0;
-
     protected Table tableSyncing;
-
     protected ImonggoDBHelper2 dbHelper;
-    private RequestQueue queue;
-    private Session session;
     protected LastUpdatedAt lastUpdatedAt, newLastUpdatedAt;
     protected String from = "", to = "";
-
     protected Gson gson = new GsonBuilder().serializeNulls().create();
-
     protected IBinder syncModulesLocalBinder = new SyncModulesLocalBinder();
     protected SyncModulesListener syncModulesListener = null;
+    private User user;
+    private RequestQueue queue;
+    private Session session;
 
     public abstract void startSync();
 
@@ -220,13 +213,13 @@ public abstract class BaseSyncModulesService extends ImonggoService {
         to = convertStringToDate.format(now.getTime());
     }
 
+    public void setSyncModulesListener(SyncModulesListener syncModulesListener) {
+        this.syncModulesListener = syncModulesListener;
+    }
+
     public class SyncModulesLocalBinder extends Binder {
         public BaseSyncModulesService getSyncModulesInstance() {
             return BaseSyncModulesService.this;
         }
-    }
-
-    public void setSyncModulesListener(SyncModulesListener syncModulesListener) {
-        this.syncModulesListener = syncModulesListener;
     }
 }

@@ -53,6 +53,7 @@ public class ProductsAdapterHelper {
     private static Customer selectedCustomer;
     private static CustomerGroup selectedCustomerGroup;
     private static Branch selectedBranch;
+    private static Branch source, destination;
 
     private static int decimalPlace = 2;
 
@@ -243,5 +244,21 @@ public class ProductsAdapterHelper {
 
     public static int getDecimalPlace() {
         return decimalPlace;
+    }
+
+    public static Branch getDestination() {
+        return destination;
+    }
+
+    public static void setDestination(Branch destination) {
+        ProductsAdapterHelper.destination = destination;
+    }
+
+    public static Branch getSource() {
+        return source;
+    }
+
+    public static void setSource(Branch source) {
+        ProductsAdapterHelper.source = source;
     }
 }

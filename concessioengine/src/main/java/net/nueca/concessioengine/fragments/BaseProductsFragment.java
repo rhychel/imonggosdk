@@ -167,8 +167,14 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
                 List<Discount> discounts = getHelper().fetchForeignCollection(salesPromotion.getDiscounts_fc().closeableIterator());
                 Log.e("Discounts", discounts.size()+"");
                 for(Discount discount : discounts) {
-                    promotionalProducts.add(discount.getProduct());
-                    Log.e("Sales Promotion", discount.getProduct().getName());
+                    Log.e("Discounts", "iterating---");
+                    if(discount.getProduct() != null) {
+                        promotionalProducts.add(discount.getProduct());
+                        Log.e("Discounts", discount.getProduct().getName()+"--");
+                    }
+                    else {
+                        Log.e("Discounts", "no product is tagged = "+discount.getProduct_id());
+                    }
                 }
             }
         } catch (SQLException e) {
