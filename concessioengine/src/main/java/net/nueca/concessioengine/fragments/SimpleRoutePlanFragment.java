@@ -22,6 +22,7 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.Day;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
@@ -140,6 +141,10 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
         tvNoRoutes.setText(msg);
     }
 
+    public void refresh() {
+        simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void whenListEndReached(List<Customer> customers) {
 
@@ -150,11 +155,17 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
         Day day = days.get(days.indexOf(new Day(dayOfWeek)));
         try {
             RoutePlan routePlan = getHelper().fetchIntId(RoutePlan.class).queryBuilder().where().isNull("status").and().eq("user_id", getSession().getUser()).queryForFirst();
+            Log.e("RoutePlan", "has route plan?");
             if(routePlan == null)
                 return routes;
+            Log.e("RoutePlan", "has route plan");
 
+            List<RoutePlanDetail> details = getHelper().fetchObjectsList(RoutePlanDetail.class);
+            Log.e("RoutePlan", details.size()+"----");
             List<RoutePlanDetail> routePlanDetails = getHelper().fetchForeignCollection(routePlan.getRoutePlanDetails().closeableIterator());
+            Log.e("RoutePlan", "has route plan details?"+routePlanDetails.size()+" --- "+routePlan.getRoutePlanDetails().size());
             for(RoutePlanDetail routePlanDetail : routePlanDetails) {
+                Log.e("RoutePlan", "route plan details="+routePlanDetail.getFrequency()+"---");
                 if(!day.getShortname().equals(routePlanDetail.getRoute_day()))
                     continue;
                 if(searchKey != null && (!searchKey.trim().isEmpty() && !routePlanDetail.getCustomer().generateFullName().contains(searchKey))) {
@@ -165,6 +176,7 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
                 Log.e("frequency", routePlanDetail.getFrequency());
                 Log.e("route day", routePlanDetail.getRoute_day());
                 Log.e("sequence", routePlanDetail.getSequence()+"");
+                Log.e("RoutePlan", "route plan details="+routePlanDetail.getFrequency()+"---");
                 if(routePlanDetail.getCustomer() == null)
                     Log.e("Customer", "is null");
                 else {

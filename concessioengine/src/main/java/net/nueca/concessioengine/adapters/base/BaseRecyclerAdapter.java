@@ -86,7 +86,7 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
 
     public void addAll(List<Obj> objList) {
         this.objectList.addAll(objList);
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
     public void remove(Obj obj) {

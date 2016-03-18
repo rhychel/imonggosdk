@@ -66,6 +66,7 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
             holder.tvTransactionBranch.setText(customer.getLastPurchaseBranch());
             holder.tvSubtotal.setText("P 0.00");
             holder.ivStatus.setImageResource(R.drawable.ic_check_round_teal);
+            holder.tvSubtotal.setTextColor(ContextCompat.getColor(getContext(), R.color.payment_color));
 
             List<Invoice> myInvoices = customer.getMyInvoices();
             if(myInvoices.size() > 0) {
