@@ -36,13 +36,44 @@ public class HTTPRequests {
 
     public static String TAG = "HTTPRequests";
 
+    public static JsonObjectRequest sendGETServers(Context context,
+                                                   final VolleyRequestListener volleyRequestListener) {
+        if (volleyRequestListener != null)
+            volleyRequestListener.onStart(null, RequestType.API_CONTENT);
+
+        Log.e(TAG, "=+" + "http://www.nueca.net/servers.json");
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET, "http://www.nueca.net/servers.json",
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (volleyRequestListener != null)
+                            volleyRequestListener.onSuccess(null, RequestType.API_CONTENT, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (volleyRequestListener != null) {
+                            if (error.networkResponse != null)
+                                volleyRequestListener.onError(null, true, new String(error.networkResponse.data), error.networkResponse.statusCode);
+                            else
+                                volleyRequestListener.onError(null, false, null, 0);
+                        }
+                    }
+                });
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(TIMEDOUT_POLICY, RETRY_POLICY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjectRequest.setTag(ImonggoOperations.IMONGGO_OPERATIONS_TAG);
+        return jsonObjectRequest;
+    }
+
     public static JsonObjectRequest sendGETJsonObjectRequest(Context context, final Session session,
                                                              final VolleyRequestListener volleyRequestListener, Server server,
                                                              final Table table, final RequestType requestType, String id, String parameter) {
         if (volleyRequestListener != null)
             volleyRequestListener.onStart(table, requestType);
 
-        Log.e(TAG, "-" + ImonggoOperations.getAPIModuleURL(context, session, table, server, parameter));
+        Log.e(TAG, "-" + ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(JsonObjectRequest.Method.GET,
                 ImonggoOperations.getAPIModuleIDURL(context, session, table, server, id, parameter),

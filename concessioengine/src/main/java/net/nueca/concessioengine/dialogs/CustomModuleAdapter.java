@@ -53,6 +53,34 @@ public class CustomModuleAdapter extends CustomDialogRecyclerAdapter<CustomModul
         holder.itemView.setTag(getModuleAt(position));
     }
 
+    /**
+     * Update the RecyclerView Rows by passing the integer progress
+     *
+     * @param progress List of Progress
+     */
+    public void updateProgressBar(int position, int progress) {
+        setDownloadProgress(position, progress);
+    }
+
+    public void hideCircularProgressBar(int position) {
+        updateCircularProgressBar(position, true);
+    }
+
+    public void showCircularProgressBar(int position) {
+        if (!getCircularProgressBar(position)) {
+            updateCircularProgressBar(position, false);
+        }
+    }
+
+    public void hideRetryButton(int position) {
+        updateRetryButton(position, false);
+    }
+
+    public void showRetryButton(int position) {
+        if (!getRetryButtonStatus(position)) {
+            updateRetryButton(position, true);
+        }
+    }
 
     public class ViewHolder extends CustomDialogRecyclerAdapter.VH {
         private TextView tvModuleName;
@@ -77,7 +105,6 @@ public class CustomModuleAdapter extends CustomDialogRecyclerAdapter<CustomModul
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-
         }
 
         @Override
@@ -162,34 +189,9 @@ public class CustomModuleAdapter extends CustomDialogRecyclerAdapter<CustomModul
             }
             return true;
         }
-    }
 
-    /**
-     * Update the RecyclerView Rows by passing the integer progress
-     *
-     * @param progress List of Progress
-     */
-    public void updateProgressBar(int position, int progress) {
-            setDownloadProgress(position, progress);
-    }
+        public void helpMe() {
 
-    public void hideCircularProgressBar(int position) {
-            updateCircularProgressBar(position, true);
-    }
-
-    public void showCircularProgressBar(int position) {
-        if(!getCircularProgressBar(position)) {
-            updateCircularProgressBar(position, false);
-        }
-    }
-
-    public void hideRetryButton(int position) {
-        updateRetryButton(position, false);
-    }
-
-    public void showRetryButton(int position) {
-        if(!getRetryButtonStatus(position)) {
-            updateRetryButton(position, true);
         }
     }
 }

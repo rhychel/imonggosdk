@@ -12,6 +12,7 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleCustomerDetailsRecyclerViewAdapter;
 import net.nueca.concessioengine.enums.CustomerDetail;
 import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
@@ -68,10 +69,11 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
-        customerDetails.add(CustomerDetail.SALES_ROUTE);
-        customerDetails.add(CustomerDetail.DISCOUNT);
+        if(getModuleSetting(ConcessioModule.CUSTOMERS).isHas_route_plan())
+            customerDetails.add(CustomerDetail.SALES_ROUTE);
+        customerDetails.add(CustomerDetail.DISCOUNT.setValue(customer.getDiscount_text()));
         customerDetails.add(CustomerDetail.AVAILABLE_POINTS.setValue(customer.getAvailable_points()));
-        customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS);
+        customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS.setValue(customer.getLastPurchase()));
         if(refreshList) {
             if(setupActionBar != null)
                 setupActionBar.setupActionBar(tbActionBar);

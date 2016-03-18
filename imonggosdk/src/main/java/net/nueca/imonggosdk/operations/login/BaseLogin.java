@@ -216,6 +216,7 @@ public class BaseLogin {
      * @param server
      */
     private void requestForAccountUrl(final Server server) {
+        Log.e("Jn-BaseLogin", LoginTools.getAPIUrl(mContext, server, mAccountId));
         final StringRequest stringRequestURL = new StringRequest(Request.Method.GET,
                 LoginTools.getAPIUrl(mContext, server, mAccountId), new Response.Listener<String>() {
             @Override
@@ -402,7 +403,8 @@ public class BaseLogin {
                         // set the response token
                         getSession().setApiToken(response.getString("api_token"));
                         getSession().setApiAuthentication(ImonggoTools.buildAPIAuthentication(response.getString("api_token")));
-                        getSession().setUser_id(response.getString("user_id"));
+                        if(response.has("user_id"))
+                            getSession().setUser_id(response.getString("user_id"));
 
                         // update the session in the database
                         mSession.updateTo(mDBHelper);
@@ -517,7 +519,7 @@ public class BaseLogin {
                                     @Override
                                     public void onStart(Table table, RequestType requestType) {
                                         Log.e("Rhy-BaseLogin", "Getting the account-settings now...");
-                                        DialogTools.updateMessage("Downloading settings...");
+                                        DialogTools.updateMessage("Configuring your app...");
                                     }
 
                                     @Override

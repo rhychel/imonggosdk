@@ -52,10 +52,12 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
         simpleProductRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
         rvProducts.setAdapter(simpleProductRecyclerViewAdapter);
 
-        if(offlineData.getObjectFromData(Document.class).getCustomer() == null)
-            Log.e("TransactionsDetails", "customer is null");
-        else
-            Log.e("TransactionDetails", offlineData.getObjectFromData(Document.class).getCustomer().generateFullName());
+        if(offlineData.getType() == OfflineData.DOCUMENT) {
+            if(offlineData.getObjectFromData(Document.class).getCustomer() == null)
+                Log.e("TransactionsDetails", "customer is null");
+            else
+                Log.e("TransactionDetails", offlineData.getObjectFromData(Document.class).getCustomer().generateFullName());
+        }
 
         return view;
     }

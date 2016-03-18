@@ -19,6 +19,7 @@ import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.tools.AnimationTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
+import net.nueca.concessioengine.tools.appsettings.Constants;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -182,7 +183,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         if(includeAll)
             transactionTypes.add(ConcessioModule.ALL);
 
-        List<ModuleSetting> moduleSettings = getActiveModuleSetting(HISTORY_ITEM_FILTERS);
+        List<ModuleSetting> moduleSettings = getActiveModuleSetting(HISTORY_ITEM_FILTERS, false);
 
         for(ModuleSetting moduleSetting : moduleSettings) {
             if(moduleSetting.is_enabled())
@@ -192,15 +193,27 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return transactionTypes;
     }
 
+    public List<Branch> getBranches() {
+        return getBranches(Constants.WAREHOUSE_ONLY);
+    }
+
+
     /**
      * Generate the user's branches.
      * @return
      */
-    public List<Branch> getBranches() {
+    public List<Branch> getBranches(boolean warehouseOnly) {
         List<Branch> assignedBranches = new ArrayList<>();
         try {
             List<BranchUserAssoc> branchUserAssocs = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
             for(BranchUserAssoc branchUser : branchUserAssocs) {
+                Log.e("Branches", branchUser.getBranch().getName());
+                if(warehouseOnly) {
+                    if (branchUser.getBranch().getSite_type() == null || branchUser.getBranch().getSite_type().equals("null"))
+                        continue;
+                }
+                else if(branchUser.getBranch().getSite_type() != null && branchUser.getBranch().getSite_type().equals("warehouse"))
+                    continue;
                 if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
                     assignedBranches.add(0, branchUser.getBranch());
                 else
@@ -368,6 +381,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 //        TimerTools.duration("generateDocument -- first loop, end", true);
         pcount.customer(ProductsAdapterHelper.getSelectedCustomer()); // can be null
         pcount.document_type_code(documentTypeCode);
+        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH)
+            pcount.document_purpose_name(ProductsAdapterHelper.getReason().getName());
         if(targetBranchId > -1)
             pcount.target_branch_id(targetBranchId);
         try {

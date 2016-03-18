@@ -150,8 +150,7 @@ public class EpsonPrinterTools {
                 // send data
                 try {
                     printer.sendData(30000);
-                    if(printListener != null)
-                        printListener.onPrintSuccess();
+                    printListener.onPrintSuccess();
                 } catch (Epos2Exception e) {
                     onPrintError(printListener, "cannot send data to printer. ", e);
                     disconnectPrinter(printer);

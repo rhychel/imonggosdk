@@ -11,6 +11,7 @@ public class DashboardTile {
     private ConcessioModule concessioModule;
     private String label;
     private int imageResource;
+    private boolean isProxy = false;
 
     public DashboardTile(ModuleSetting moduleSetting, int imageResource) {
         this.concessioModule = moduleSetting.getModuleType();
@@ -18,9 +19,26 @@ public class DashboardTile {
         this.imageResource = imageResource;
     }
 
+    public DashboardTile(ConcessioModule concessioModule, String label, boolean isProxy, int logo) {
+        this.concessioModule = concessioModule;
+        this.isProxy = isProxy;
+        if(concessioModule == ConcessioModule.CUSTOMERS && !isProxy)
+            this.label = "Customers";
+        else
+            this.label = label;
+        if(logo == -1)
+            this.imageResource = concessioModule.getLogo();
+        else
+            this.imageResource = logo;
+    }
+
     public DashboardTile(ConcessioModule concessioModule, String label) {
         this.concessioModule = concessioModule;
-        this.label = label;
+        if(concessioModule == ConcessioModule.CUSTOMERS)
+            this.label = "Customers";
+        else
+            this.label = label;
+        this.imageResource = concessioModule.getLogo();
     }
 
     public DashboardTile(ConcessioModule concessioModule, String label, int imageResource) {
@@ -51,6 +69,14 @@ public class DashboardTile {
 
     public void setImageResource(int imageResource) {
         this.imageResource = imageResource;
+    }
+
+    public boolean isProxy() {
+        return isProxy;
+    }
+
+    public void setProxy(boolean proxy) {
+        isProxy = proxy;
     }
 
     @Override

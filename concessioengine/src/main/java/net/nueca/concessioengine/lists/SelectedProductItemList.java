@@ -99,6 +99,8 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
         SelectedProductItem selectedProductItem = getSelectedProductItem(product);
         if(selectedProductItem == null)
             return "0";
+        if(selectedProductItem.isMultiline())
+            return selectedProductItem.getActualQuantity();
         return selectedProductItem.getQuantity();
     }
 
@@ -109,6 +111,8 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
     public String getUnitName(Product product, boolean withFormat) {
         SelectedProductItem selectedProductItem = getSelectedProductItem(product);
         if(selectedProductItem == null)
+            return product.getBase_unit_name();
+        if(selectedProductItem.isMultiline())
             return product.getBase_unit_name();
         if(selectedProductItem.getValues().get(0).getUnit() != null) {
             if (withFormat)

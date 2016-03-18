@@ -75,6 +75,7 @@ public class Values {
             company_discounts = new ArrayList<>(),
             customer_discounts = new ArrayList<>();
     private Price price = null;
+    private boolean allow_decimal = true;
 
     public Values() { }
 
@@ -160,7 +161,7 @@ public class Values {
             if(isValidUnit()) {
                 this.no_discount_subtotal = this.unit_retail_price;
                 this.subtotal = this.unit_retail_price;
-            } else {
+            } else if(this.retail_price != null) {
                 this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
                 this.subtotal = this.retail_price * Double.valueOf(this.quantity);
             }
@@ -204,7 +205,10 @@ public class Values {
         }
 
         /** DECIMAL FORMATTING **/
-        this.subtotal = NumberTools.formatDouble(this.subtotal, ProductsAdapterHelper.getDecimalPlace());
+        if(this.subtotal != null)
+            this.subtotal = NumberTools.formatDouble(this.subtotal, ProductsAdapterHelper.getDecimalPlace());
+        else
+            this.subtotal = 0.0;
 
 
         Log.e("QTY", this.quantity + " ~ " + quantity);
@@ -243,8 +247,13 @@ public class Values {
     }
 
     public String getQuantity() {
-        if(isValidUnit() && unit_quantity != null)
+        if(isValidUnit() && unit_quantity != null) {
+            if(!allow_decimal)
+                return Double.valueOf(unit_quantity).intValue()+"";
             return unit_quantity;
+        }
+        if(!allow_decimal)
+            return Double.valueOf(quantity).intValue()+"";
         return quantity;
     }
 
@@ -400,6 +409,14 @@ public class Values {
 
     public void setInvoicePurpose(InvoicePurpose invoicePurpose) {
         this.invoicePurpose = invoicePurpose;
+    }
+
+    public boolean isAllow_decimal() {
+        return allow_decimal;
+    }
+
+    public void setAllow_decimal(boolean allow_decimal) {
+        this.allow_decimal = allow_decimal;
     }
 
     @Override

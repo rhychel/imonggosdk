@@ -28,7 +28,6 @@ import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.base.Extras;
-import net.nueca.imonggosdk.objects.deprecated.DocumentLineExtras;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.document.RemarkBuilder;
@@ -43,11 +42,9 @@ import java.util.List;
  */
 public class SimpleReceiveReviewFragment extends BaseReviewFragment {
 
-    private TextView tvNoProducts;
-
     protected SimpleReceiveListAdapter simpleReceiveListAdapter;
     protected SimpleReceiveRecyclerViewAdapter simpleReceiveRecyclerViewAdapter;
-
+    private TextView tvNoProducts;
     private SimpleReceiveDialog simpleReceiveDialog;
 
     private Branch targetBranch;
@@ -61,6 +58,8 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
     private Integer parentID;
 
     private int fragmentContainer;
+    private View tvQuantityLabel, tvDiscrepancyLabel;
+    private boolean isManual = false;
 
     public int getFragmentContainer() {
         return fragmentContainer;
@@ -194,7 +193,7 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
                 R.layout.simple_review_fragment_rv : R.layout.simple_review_fragment_lv, container, false);
 
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
-        tbActionBar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        //tbActionBar.setNavigationIcon(R.drawable.a);
         tbActionBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -246,10 +245,6 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
         return view;
     }
 
-    public interface FloatingActionButtonListener {
-        void onClick(Document document);
-    }
-
     public void setFABListener(FloatingActionButtonListener fabListener) {
         this.fabListener = fabListener;
     }
@@ -284,7 +279,6 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
         }
     }
 
-    private View tvQuantityLabel, tvDiscrepancyLabel;
     public void showQtyDscLabel(boolean show) {
         if(tvQuantityLabel != null && tvDiscrepancyLabel != null) {
             tvQuantityLabel.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -363,8 +357,6 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
     protected int getRecyclerAdapterFirstVisibleItemPosition() {
         return simpleReceiveRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
     }
-
-    private boolean isManual = false;
 
     public boolean isManual() {
         return isManual;
@@ -467,5 +459,9 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
         });
 
         simpleReceiveDialog.show();
+    }
+
+    public interface FloatingActionButtonListener {
+        void onClick(Document document);
     }
 }

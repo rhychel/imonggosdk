@@ -105,6 +105,11 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         notifyDataSetChanged();
     }
 
+    public void set(int position, Obj object) {
+        this.objectList.set(position, object);
+        notifyDataSetChanged();
+    }
+
     public List<Obj> getList() {
         return objectList;
     }

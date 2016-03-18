@@ -8,11 +8,11 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.objects.AccountPrice;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.BranchTag;
@@ -31,12 +31,12 @@ import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.accountsettings.Cutoff;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
-import net.nueca.imonggosdk.objects.accountsettings.Sequence;
 import net.nueca.imonggosdk.objects.accountsettings.Manual;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.accountsettings.ProductListing;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.accountsettings.QuantityInput;
+import net.nueca.imonggosdk.objects.accountsettings.Sequence;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductSalesPromotionAssoc;
@@ -62,13 +62,13 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
-import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
-import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
-import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 71;
+    private static final int DATABASE_VERSION = 84;
 
     private static final Class<?> tables[] = {
             Branch.class, BranchTag.class, Customer.class,
@@ -95,7 +95,7 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
             Extras.class, CustomerCategory.class, CustomerGroup.class, InvoicePurpose.class,
             PaymentTerms.class, PaymentType.class, SalesPromotion.class, net.nueca.imonggosdk.objects.salespromotion.Discount.class, Price.class,
             PriceList.class, RoutePlan.class, RoutePlanDetail.class, CustomerCustomerGroupAssoc.class,
-            ProductSalesPromotionAssoc.class, ModuleSetting.class, Sequence.class, DebugMode.class, ProductSorting.class,
+            ProductSalesPromotionAssoc.class, AccountPrice.class, ModuleSetting.class, Sequence.class, DebugMode.class, ProductSorting.class,
             Cutoff.class, ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};
 
     public ImonggoDBHelper2(Context context) { super(context, DATABASE_NAME, null, DATABASE_VERSION); }

@@ -120,6 +120,16 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     @Expose
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "inventory_id")
     private Inventory inventory;
+    @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "account_price_id")
+    private AccountPrice accountPrice;
+
+    public AccountPrice getAccountPrice() {
+        return accountPrice;
+    }
+
+    public void setAccountPrice(AccountPrice accountPrice) {
+        this.accountPrice = accountPrice;
+    }
 
     public double getCost() {
         return cost;
@@ -130,6 +140,8 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     }
 
     public double getRetail_price() {
+        if(accountPrice != null)
+            return accountPrice.getRetail_price();
         return retail_price;
     }
 

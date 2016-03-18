@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.android.volley.toolbox.Volley;
+import com.j256.ormlite.dao.ForeignCollection;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
@@ -22,6 +23,10 @@ import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -30,6 +35,7 @@ import net.nueca.imonggosdk.tools.LoggingTools;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -116,7 +122,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
             }
         });
 
-
+/*
         List<Product> products = Product.fetchAll(getHelper(), Product.class);
 
         if(products != null) {
@@ -146,7 +152,23 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
             }
         } else {
             Log.e(TAG, "Branch Products is null");
+        }*/
+
+        //List<RoutePlanDetail> routePlanDetails = RoutePlanDetail.fetchAll(getHelper(), RoutePlanDetail.class);
+        List<PriceList> routePlan = PriceList.fetchAll(getHelper(), PriceList.class);
+
+        for(PriceList rp : routePlan) {
+            Log.e(TAG, "ID: " + rp.getId() + "PRICELIST Status: " + rp.getStatus() );
+            ForeignCollection<Price> rpd = rp.getPrices();
+
+            for(Price r : rpd) {
+                Log.e(TAG, "price: " + r.getId());
+            }
         }
+/*
+        for(RoutePlanDetail rpd : routePlanDetails) {
+            Log.e(TAG, "route: " + rpd.getId() + " plan: " + rpd.getRoutePlan().getId() );
+        }*/
 
     }
 

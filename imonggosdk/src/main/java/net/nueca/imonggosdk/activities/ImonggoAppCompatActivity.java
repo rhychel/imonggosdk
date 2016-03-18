@@ -42,6 +42,7 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
     protected static final int HISTORY_DETAILS_SALES = 106;
     protected static final int IS_DUPLICATING = 107;
     protected static final int HISTORY_DETAILS = 108;
+    protected static final int FROM_MULTIINPUT = 109;
 
     private ImonggoDBHelper2 dbHelper2;
 
@@ -97,20 +98,34 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
         return null;
     }
 
-    protected List<ModuleSetting> getActiveModuleSetting(String intentKey) {
+    protected List<ModuleSetting> getActiveModuleSetting(String intentKey, boolean includeCustomers) {
         try {
-            if(getIntent().hasExtra(intentKey))
+            if(intentKey != null && getIntent().hasExtra(intentKey))
                 return getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
                         .where()
                         .in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.convertToConcessioModules(getIntent().getIntArrayExtra(intentKey))))
                         .query();
+            if(includeCustomers)
+                return getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
+                        .orderBy("display_sequence", true)
+                        .where()
+                        .in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST, ConcessioModule.PHYSICAL_COUNT,
+                                ConcessioModule.RECEIVE_BRANCH, ConcessioModule.RECEIVE_BRANCH_PULLOUT, ConcessioModule.RELEASE_BRANCH,
+                                ConcessioModule.RECEIVE_SUPPLIER, ConcessioModule.RELEASE_SUPPLIER,
+                                ConcessioModule.RECEIVE_ADJUSTMENT, ConcessioModule.RELEASE_ADJUSTMENT,
+                                ConcessioModule.INVOICE,
+                                ConcessioModule.CUSTOMERS))
+                        .and().eq("is_enabled", true)
+                        .query();
             return getHelper().fetchObjects(ModuleSetting.class).queryBuilder()
+                    .orderBy("display_sequence", true)
                     .where()
                     .in("module_type", ModuleSettingTools.getModulesToString(ConcessioModule.STOCK_REQUEST, ConcessioModule.PHYSICAL_COUNT,
                             ConcessioModule.RECEIVE_BRANCH, ConcessioModule.RECEIVE_BRANCH_PULLOUT, ConcessioModule.RELEASE_BRANCH,
                             ConcessioModule.RECEIVE_SUPPLIER, ConcessioModule.RELEASE_SUPPLIER,
                             ConcessioModule.RECEIVE_ADJUSTMENT, ConcessioModule.RELEASE_ADJUSTMENT,
                             ConcessioModule.INVOICE))
+                    .and().eq("is_enabled", true)
                     .query();
         } catch (SQLException e) {
             e.printStackTrace();
