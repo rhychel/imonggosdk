@@ -72,6 +72,7 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
     public Invoice getCheckoutInvoice() {
         if(this.invoice == null)
             invoice = new Invoice();
+        invoice.setBranch(ProductsAdapterHelper.getSelectedBranch());
         invoice.setInvoiceLines(getInvoiceLines());
         invoice.setPayments(getPayments());
         Gson gson = new Gson();

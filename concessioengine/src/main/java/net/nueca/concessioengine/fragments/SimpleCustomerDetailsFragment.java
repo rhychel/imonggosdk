@@ -71,9 +71,9 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
 //        }
         if(getModuleSetting(ConcessioModule.CUSTOMERS).isHas_route_plan())
             customerDetails.add(CustomerDetail.SALES_ROUTE);
-        customerDetails.add(CustomerDetail.DISCOUNT);
+        customerDetails.add(CustomerDetail.DISCOUNT.setValue(customer.getDiscount_text()));
         customerDetails.add(CustomerDetail.AVAILABLE_POINTS.setValue(customer.getAvailable_points()));
-        customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS);
+        customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS.setValue(customer.getLastPurchase()));
         if(refreshList) {
             if(setupActionBar != null)
                 setupActionBar.setupActionBar(tbActionBar);
