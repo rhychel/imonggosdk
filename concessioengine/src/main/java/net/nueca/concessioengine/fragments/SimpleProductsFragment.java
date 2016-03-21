@@ -147,7 +147,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         Log.e("useRecyclerView", useRecyclerView+"");
         if(useRecyclerView) {
             llReason = (LinearLayout) view.findViewById(R.id.llReason);
-            if(concessioModule == ConcessioModule.RECEIVE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH) {
+            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH) {
                 llReason.setVisibility(View.VISIBLE);
                 tvReason = (TextView) view.findViewById(R.id.tvReason);
                 ivEdit = (ImageView) view.findViewById(R.id.ivEdit);

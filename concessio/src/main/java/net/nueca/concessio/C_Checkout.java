@@ -181,7 +181,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     transactionDialog.show();
 
-                    invoice.setStatus("S");
+//                    invoice.setStatus("S"); TODO Status
                     if(!isLayaway) {
                         offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()

@@ -323,7 +323,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         intent.putExtra(ModuleActivity.INIT_PRODUCT_ADAPTER_HELPER, true);
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, customer.getId());
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, ConcessioModule.CUSTOMER_DETAILS.ordinal());
-                        startActivity(intent);
+                        startActivityForResult(intent, ROUTE_PLAN);
                     }
                 });
 
@@ -691,6 +691,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 simpleProductsFragment.setProductsFragmentListener(C_Module.this);
                                 // if there's branch product
                                 simpleProductsFragment.setBranch(getBranches().get(0));
+                                simpleProductsFragment.setConcessioModule(concessioModule);
 
                                 initializeFinalize();
                                 finalizeFragment.setHasCategories(false);
@@ -700,6 +701,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 finalizeFragment.setListingType(ListingType.SALES);
                                 // if there's branch product
                                 finalizeFragment.setBranch(getBranches().get(0));
+                                finalizeFragment.setConcessioModule(concessioModule);
 
                                 prepareFooter();
 
@@ -1067,7 +1069,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
         } else if (requestCode == SALES) {
             if (resultCode == SUCCESS) {
+                setResult(SUCCESS);
                 finish();
+            }
+        } else if(requestCode == ROUTE_PLAN) {
+            if (resultCode == SUCCESS) {
+                Handler handler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        simpleRoutePlanFragment.refresh();
+                    }
+                };
+                handler.sendEmptyMessageDelayed(0, 50);
             }
         } else if(requestCode == IS_DUPLICATING) {
             if (resultCode == SUCCESS) {

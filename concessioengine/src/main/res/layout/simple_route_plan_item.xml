@@ -82,7 +82,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="November 10, 2015, Tuesday 2:10pm"
                 android:id="@+id/tvLastTransaction"
                 android:ellipsize="end"
                 android:textSize="13sp"
