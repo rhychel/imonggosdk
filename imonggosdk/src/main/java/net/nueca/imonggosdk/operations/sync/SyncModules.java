@@ -668,6 +668,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 startSyncModuleContents(RequestType.API_CONTENT);
             } else {
                 Log.e(TAG, "There's no Route Plan... Downloading Next Module");
+                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                 syncNext();
             }
 
@@ -683,12 +684,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         listOfIds = getHelper().fetchObjectsList(PriceList.class);
                         count = listOfIds.size();
                         mCustomIdIndex = 0;
-
                         Log.e(TAG, "Size of Price List: " + listOfIds.size());
-
                         startSyncModuleContents(RequestType.API_CONTENT);
                     } else {
                         Log.e(TAG, "There's no Price List... Downloading Next Modulec");
+                        mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                         syncNext();
                     }
                 } else {
@@ -699,8 +699,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 Log.e(TAG, "There's no Price List... Downloading Next Modulei");
                 syncNext();
             }
-
-
         } else if (mCurrentTableSyncing == Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS ||
                 mCurrentTableSyncing == Table.SALES_PROMOTIONS_POINTS_DETAILS) {
             listOfIds = new ArrayList<>();
@@ -832,8 +830,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         mCurrentTableSyncing == Table.PRICE_LISTS ||
                                         mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
                                     mSkipNextModule = true;
-                                }
 
+                                }
+                                mSyncModulesListener.onDownloadProgress(module, 1, 1);
                                 syncNext();
                                 return;
                             } else {
@@ -888,9 +887,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             mCurrentTableSyncing == Table.ROUTE_PLANS ||
                             mCurrentTableSyncing == Table.PRICE_LISTS ||
                             mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
-
                         startSyncModuleContents(RequestType.API_CONTENT);
-
                     } else {
                         startSyncModuleContents(RequestType.COUNT);
                     }
@@ -908,8 +905,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             mModulesIndex++;
                         }
                         syncNext();
-
-
                     } else {
                         numberOfPages = ((int) Math.ceil(count / 50.0));
                         Log.e(TAG, "number of pages: " + numberOfPages);
@@ -1278,7 +1273,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     }
                                 }
-
                                 newUsers.doOperationBT(User.class);
                                 updateUsers.doOperationBT(User.class);
                                 deleteUsers.doOperationBT(User.class);
@@ -1319,7 +1313,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
@@ -2256,7 +2249,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         Log.e(TAG, "API " + mCurrentTableSyncing + " dont have 'document_type_id' field.");
                                     }
 
-
                                     if (initialSync || lastUpdatedAt == null) {
                                         documentPurpose.dbOperation(getHelper(), DatabaseOperation.INSERT);
                                     } else {
@@ -2644,7 +2636,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     SalesPushSettings salesPushSettings = null;
                                     if (jsonObject.has("settings")) {
                                         JSONObject settingsJSONObject = jsonObject.getJSONObject("settings");
-                                        Log.e("ABCDEFG", settingsJSONObject.toString());
+
                                         if (settingsJSONObject != null) {
                                             salesPushSettings = gson.fromJson(settingsJSONObject.toString(), SalesPushSettings.class);
                                             salesPushSettings.insertTo(getHelper());
@@ -3078,7 +3070,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
     private void updateNext(RequestType requestType, int size) {
         Log.e(TAG, requestType + " next table");
-
         try {
             if (mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS ||
                     mCurrentTableSyncing == Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS ||
@@ -3089,7 +3080,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 if (mSyncModulesListener != null) {
                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIdIndex, size);
                 }
-
 
                 Log.e(TAG, "Custom Page: " + mCustomPageIndex);
 
@@ -3106,7 +3096,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
 
             } else {
-
                 if (mSyncModulesListener != null) {
                     if (size != 0) {
                         if (mCurrentTableSyncing == Table.DOCUMENTS) {
@@ -3131,7 +3120,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     syncNext();
                 }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -3199,6 +3187,4 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         prepareModulesToReSync();
         startSyncModuleContents(mCurrentRequestType);
     }
-
-
 }

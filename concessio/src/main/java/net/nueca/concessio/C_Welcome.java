@@ -64,11 +64,11 @@ public class C_Welcome extends WelcomeActivity {
             }
         });
 
-        try {
+      /*  try {
             tvAgentName.setText("Hello, "+getSession().getUser().getName());
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
 
         btnBegin.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -353,7 +353,6 @@ public abstract class BaseSyncService extends ImonggoService {
         return false;
     }
 
-
     @Override
     public IBinder onBind(Intent intent) {
         Log.i("onBind", "is called");
@@ -389,7 +388,6 @@ public abstract class BaseSyncService extends ImonggoService {
 
         int length = mModulesToSync.length;
         int newlength;
-
 
         newlength = length - mModulesIndex;
         Table[] temp = new Table[newlength];
