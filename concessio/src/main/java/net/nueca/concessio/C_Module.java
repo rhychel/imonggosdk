@@ -691,6 +691,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 simpleProductsFragment.setProductsFragmentListener(C_Module.this);
                                 // if there's branch product
                                 simpleProductsFragment.setBranch(getBranches().get(0));
+                                simpleProductsFragment.setConcessioModule(concessioModule);
 
                                 initializeFinalize();
                                 finalizeFragment.setHasCategories(false);
@@ -700,6 +701,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 finalizeFragment.setListingType(ListingType.SALES);
                                 // if there's branch product
                                 finalizeFragment.setBranch(getBranches().get(0));
+                                finalizeFragment.setConcessioModule(concessioModule);
 
                                 prepareFooter();
 
