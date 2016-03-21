@@ -39,11 +39,10 @@ public class C_Login extends LoginActivity {
     protected void initLoginEquipments() {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
-//        setServer(Server.REBISCO);
+        //setServer(Server.REBISCO);
 
         /**
-         *
-         "payment_types"
+         *"payment_types"
          */
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
@@ -95,10 +94,9 @@ public class C_Login extends LoginActivity {
             Log.e("App", app.getSequences().size()+"---");
 
         return app.modulesToDownload(getHelper(), app.isShow_only_sellable_products());
-/*        return new int[]{Table.USERS_ME.ordinal(),
+                /*return new int[]{Table.USERS_ME.ordinal(),
                 Table.BRANCH_USERS.ordinal(), Table.SETTINGS.ordinal(),
                 Table.UNITS.ordinal(), Table.BRANCH_PRODUCTS.ordinal()};*/
-
     }
 
     @Override
@@ -116,7 +114,9 @@ public class C_Login extends LoginActivity {
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
 
-
+        setEditTextAccountID("A1029");
+        setEditTextEmail("A1072A_OSS-1@imonggo.com");
+        setEditTextPassword("password");
     }
 
     private void initializeApp() {

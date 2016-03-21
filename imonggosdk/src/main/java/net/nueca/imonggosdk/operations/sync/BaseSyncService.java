@@ -39,7 +39,7 @@ import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
-import net.nueca.imonggosdk.objects.invoice.Discount;
+import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
@@ -293,7 +293,7 @@ public abstract class BaseSyncService extends ImonggoService {
 
             }
             case SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS: {
-                Discount discount = (Discount) o;
+                net.nueca.imonggosdk.objects.salespromotion.Discount discount = (Discount) o;
                 return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("id", discount.getId()) != null;
             }
             case PRICE_LISTS_DETAILS: {
@@ -353,7 +353,6 @@ public abstract class BaseSyncService extends ImonggoService {
         return false;
     }
 
-
     @Override
     public IBinder onBind(Intent intent) {
         Log.i("onBind", "is called");
@@ -389,7 +388,6 @@ public abstract class BaseSyncService extends ImonggoService {
 
         int length = mModulesToSync.length;
         int newlength;
-
 
         newlength = length - mModulesIndex;
         Table[] temp = new Table[newlength];
