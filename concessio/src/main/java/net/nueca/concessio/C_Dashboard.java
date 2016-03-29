@@ -121,24 +121,23 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         layoutManager = new GridLayoutManager(this, 2);
         rvModules.setLayoutManager(layoutManager);
 
-        if(getModuleSetting(ConcessioModule.CUSTOMERS).isHas_route_plan()) { // REBISCO
-            for(ModuleSetting moduleSetting : getActiveModuleSetting(null, true)) {
-                if(moduleSetting.getModuleType() == ConcessioModule.INVOICE)
+        if (getModuleSetting(ConcessioModule.CUSTOMERS).isHas_route_plan()) { // REBISCO
+            for (ModuleSetting moduleSetting : getActiveModuleSetting(null, true)) {
+                if (moduleSetting.getModuleType() == ConcessioModule.INVOICE)
                     dashboardTiles.add(new DashboardTile(ConcessioModule.ROUTE_PLAN, moduleSetting.getLabel()));
                 else
                     dashboardTiles.add(new DashboardTile(moduleSetting.getModuleType(), moduleSetting.getLabel()));
 
             }
             dashboardTiles.add(5, new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
-        }
-        else { // OTHERS
-            for(ModuleSetting moduleSetting : getActiveModuleSetting(null, true)) {
-                if(moduleSetting.getModuleType() == ConcessioModule.INVOICE)
+        } else { // OTHERS
+            for (ModuleSetting moduleSetting : getActiveModuleSetting(null, true)) {
+                if (moduleSetting.getModuleType() == ConcessioModule.INVOICE)
                     dashboardTiles.add(new DashboardTile(ConcessioModule.CUSTOMERS, moduleSetting.getLabel(), true, ConcessioModule.INVOICE.getLogo()));
                 else
                     dashboardTiles.add(new DashboardTile(moduleSetting.getModuleType(), moduleSetting.getLabel()));
 
-                Log.e("ModuleSettings", moduleSetting.getModule_type()+"="+moduleSetting.getDisplay_sequence());
+                Log.e("ModuleSettings", moduleSetting.getModule_type() + "=" + moduleSetting.getDisplay_sequence());
             }
         }
         dashboardTiles.add(new DashboardTile(ConcessioModule.HISTORY, "History"));
@@ -157,7 +156,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 //            e.printStackTrace();
 //        }
         //if(!SwableTools.isImonggoSwableRunning(this))
-            SwableTools.startSwable(this);
+        SwableTools.startSwable(this);
         Log.e("SWABLE", "START");
     }
 
@@ -184,19 +183,20 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         apiDownloader.setSyncModulesListener(new SyncModulesListener() {
                             @Override
                             public void onStartDownload(Table table) {
-                                Log.e("apiDownloader", "starting"+table.getStringName());
+                                Log.e("apiDownloader", "starting" + table.getStringName());
                                 progressListDialog.initDownload(table);
                             }
 
                             @Override
                             public void onDownloadProgress(Table table, int page, int max) {
-                                Log.e("apiDownloader", "progressing"+table.getStringName()+" page="+page+" | max="+max);
+                                Log.e("apiDownloader", "progressing" + table + " page=" + page + " | max=" + max);
+                                progressListDialog.initDownload(table);
                                 progressListDialog.updateProgress(page, max);
                             }
 
                             @Override
                             public void onEndDownload(Table table) {
-                                Log.e("apiDownloader", "end"+table.getStringName());
+                                Log.e("apiDownloader", "end" + table.getStringName());
                                 progressListDialog.finishedDownload();
                             }
 
@@ -209,7 +209,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
                             @Override
                             public void onErrorDownload(Table table, String message) {
-                                Log.e("apiDownloader", "error"+table.getStringName());
+                                Log.e("apiDownloader", "error" + table.getStringName());
                                 progressListDialog.errorDownload();
                             }
 
@@ -249,8 +249,9 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 });
                 updaterChooserDialog.show();
                 Log.e("updateApp", "tapped");
-            } break;
-            case R.id.mUnlink:{
+            }
+            break;
+            case R.id.mUnlink: {
                 try {
                     AccountTools.unlinkAccount(this, getHelper(), new AccountListener() {
                         @Override
@@ -268,11 +269,13 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            } break;
+            }
+            break;
             case R.id.mSettings: {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
-            } break;
+            }
+            break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -280,7 +283,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     @Override
     protected Bundle addExtras(DashboardTile dashboardTile) {
         Bundle bundle = new Bundle();
-        if(dashboardTile.getConcessioModule() == ConcessioModule.CUSTOMERS) {
+        if (dashboardTile.getConcessioModule() == ConcessioModule.CUSTOMERS) {
             bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, !dashboardTile.isProxy());
         }
 
@@ -295,10 +298,10 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
     @Override
     protected void onDestroy() {
-        if(!SwableTools.isImonggoSwableRunning(this))
+        if (!SwableTools.isImonggoSwableRunning(this))
             SwableTools.stopSwable(this);
 
-        if(apiDownloader != null) {
+        if (apiDownloader != null) {
             apiDownloader.onUnbindSyncService();
         }
         super.onDestroy();

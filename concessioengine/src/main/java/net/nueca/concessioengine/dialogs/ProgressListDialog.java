@@ -24,6 +24,7 @@ import java.util.List;
 /**
  * Created by rhymartmanchus on 25/01/2016.
  */
+
 public class ProgressListDialog extends BaseAppCompatDialog {
 
     public interface ProgressListener {
@@ -92,6 +93,9 @@ public class ProgressListDialog extends BaseAppCompatDialog {
 
     public void updateProgress(int progress, int max) {
         btnCancel.setEnabled(false);
+
+        Log.e("ProgressListDialog", progressAdapter.getItem(currentDownloading).getTable() + " progressing");
+
         progressAdapter.getItem(currentDownloading).setMax(max);
         progressAdapter.getItem(currentDownloading).updateProgress(progress);
         progressAdapter.notifyItemChanged(lvModules, currentDownloading);

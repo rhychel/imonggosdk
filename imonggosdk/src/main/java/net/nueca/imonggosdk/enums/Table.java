@@ -14,6 +14,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.invoice.Discount;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.Settings;
@@ -111,7 +112,7 @@ public enum Table {
     PRICE_LISTS_FROM_CUSTOMERS(API_TYPE.API, "Price Lists", PriceList.class, "price_lists_from_customers"),
     PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class, "price_lists"),
     BRANCH_PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class, "branch_price_lists"),
-    PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", PriceList.class, "price_lists_details"),
+    PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", Price.class, "price_lists_details"),
     SALES_PROMOTIONS(API_TYPE.API, "Sales Promotions", SalesPromotion.class, "sales_promotions"),
     SALES_PROMOTIONS_SALES_PUSH(API_TYPE.API, "Sales Push", SalesPromotion.class, "sales_promotions_sales_push"),
     SALES_PROMOTIONS_POINTS(API_TYPE.API, "Points", SalesPromotion.class, "sales_promotions_points"),
@@ -178,6 +179,7 @@ public enum Table {
 
         if(this == BRANCH_PRODUCTS)
             prerequisites = new Table[]{PRODUCTS, UNITS};
+
         return prerequisites;
     }
 

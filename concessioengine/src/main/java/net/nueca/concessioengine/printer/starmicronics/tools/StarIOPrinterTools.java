@@ -23,7 +23,7 @@ public class StarIOPrinterTools {
      * @param portName
      *     Port name to use for communication. This should be (TCP:<IPAddress> or BT:<Device pair name>)
      * @param portSettings
-     *     Should be portable;escpos, the port settings portable;escpos is used for portable(ESC/POS) printers
+     *     Should be portable; escpos, the port settings portable; escpos is used for portable(ESC/POS) printers
      */
     public static boolean print(Context context, String portName, String portSettings, StarIOPaperSize mPaperSize, String toPrintData) {
         ArrayList<byte[]> list = new ArrayList<>();
