@@ -44,9 +44,11 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.SalesPushSettings;
 import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -68,7 +70,7 @@ import java.util.List;
  */
 public class C_Dashboard extends DashboardActivity implements OnItemClickListener {
 
-    private static String TAG = "C_Dashboard";
+    private static String TAG = "C_Dashboardx";
     private Toolbar tbActionBar;
     private Spinner spBranches;
     private RecyclerView rvModules;
@@ -85,6 +87,29 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         setContentView(R.layout.c_dashboard);
 
         Log.e("ClassName", Customer.class.getSimpleName());
+
+        List<CustomerCustomerGroupAssoc> customerCustomerGroupAssoc = CustomerCustomerGroupAssoc.fetchAll(getHelper(), CustomerCustomerGroupAssoc.class);
+
+
+        Log.e(TAG, "CustomerCustomerGroup Size: " + customerCustomerGroupAssoc.size());
+
+        for(CustomerCustomerGroupAssoc cg : customerCustomerGroupAssoc) {
+            Log.e(TAG, "customerssss: " + cg.getCustomer().getId());
+            try {
+                Log.e(TAG, "customergroupxx: " + cg.getCustomer().getCustomerGroups(getHelper()));
+                List<CustomerGroup> customerGroups = cg.getCustomer().getCustomerGroups(getHelper());
+
+                Log.e(TAG, "Customer Group Size: " + customerGroups.size());
+
+                for (CustomerGroup c : customerGroups) {
+                    Log.e(TAG, "customerGroupxx: " + c.getId());
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
 //
 //        try {
 //            getHelper().deleteAll(OfflineData.class);

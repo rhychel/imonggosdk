@@ -2022,6 +2022,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             BatchList<Customer> newCustomer = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<Customer> updateCustomer = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
                             BatchList<Customer> deleteCustomer = new BatchList<>(DatabaseOperation.DELETE, getHelper());
+
+                            BatchList<CustomerCustomerGroupAssoc>  newCustomerCustomerGroup = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            //BatchList<CustomerCustomerGroupAssoc>  updateCustomerCustomerGroup = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+
                             if (size == 0) {
                                 syncNext();
                                 return;
@@ -2129,18 +2133,22 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     // Customer Group
                                     if (jsonObject.has("customer_groups")) {
+                                       // Log.e(TAG, "has CustomerGroups");
                                         if (!jsonObject.isNull("customer_groups")) {
+                                           // Log.e(TAG, "not null CustomerGroups");
                                             JSONArray customerGroupJSONArray = jsonObject.getJSONArray("customer_groups");
                                             for (int l = 0; l < customerGroupJSONArray.length(); l++) {
                                                 JSONObject customerGroupJSONObject = customerGroupJSONArray.getJSONObject(l);
 
                                                 if (customerGroupJSONObject.has("id")) {
+                                                    //Log.e(TAG, "has id CustomerGroups");
                                                     if (!customerGroupJSONObject.isNull("id")) {
+                                                      //  Log.e(TAG, "id is not null CustomerGroups");
                                                         CustomerCustomerGroupAssoc customerCustomerGroupAssoc;
                                                         CustomerGroup xcustomerGroup = getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", customerGroupJSONObject.getInt("id")).queryForFirst();
                                                         CustomerGroup customerGroupNet = gson.fromJson(customerGroupJSONObject.toString(), CustomerGroup.class);
 
-                                                        //Log.e(TAG, customerGroupJSONObject.toString());
+                                                            Log.e(TAG, customerGroupJSONObject.toString());
 
                                                         if (customerGroupJSONObject.has("price_list_id")) {
                                                             if (!customerGroupJSONObject.isNull("price_list_id")) {
@@ -2159,13 +2167,17 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                         }
 
                                                         if (xcustomerGroup == null) {
+                                                            Log.e(TAG, "adding customerCustomerGroup... ");
                                                             customerGroupNet.insertTo(getHelper());
                                                             customerCustomerGroupAssoc = new CustomerCustomerGroupAssoc(customer, customerGroupNet);
+                                                            newCustomerCustomerGroup.add(customerCustomerGroupAssoc);
                                                         } else {
+                                                            Log.e(TAG, "adding customerCustomerGroup... ");
                                                             customerCustomerGroupAssoc = new CustomerCustomerGroupAssoc(customer, xcustomerGroup);
+                                                            newCustomerCustomerGroup.add(customerCustomerGroupAssoc);
                                                         }
 
-                                                        customerCustomerGroupAssoc.insertTo(getHelper());
+                                                        //customerCustomerGroupAssoc.insertTo(getHelper());
                                                     } else {
                                                         Log.e(TAG, "'customer_groups' field don't have value.");
                                                     }
@@ -2200,7 +2212,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 newCustomer.doOperationBT3(Customer.class);
                                 updateCustomer.doOperationBT3(Customer.class);
                                 deleteCustomer.doOperationBT3(Customer.class);
-
+                                newCustomerCustomerGroup.doOperation(CustomerCustomerGroupAssoc.class);
                                 updateNext(requestType, size);
                             }
                             break;

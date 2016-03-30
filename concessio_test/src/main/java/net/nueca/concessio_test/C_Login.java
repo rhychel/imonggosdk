@@ -46,10 +46,10 @@ public class C_Login extends LoginActivity {
                 Table.PRODUCTS.ordinal(),
                 Table.UNITS.ordinal(),
                 */Table.CUSTOMER_CATEGORIES.ordinal(),
-                Table.CUSTOMER_BY_SALESMAN.ordinal(),
+                Table.CUSTOMER_BY_SALESMAN.ordinal()/*
                 Table.ROUTE_PLANS.ordinal(),
                 Table.ROUTE_PLANS_DETAILS.ordinal(),
-                Table.BRANCH_PRODUCTS.ordinal(),/*
+                Table.BRANCH_PRODUCTS.ordinal(),*//**/
                 /*Table.ACCOUNT_PRICES.ordinal(),
                 Table.DOCUMENTS.ordinal(),
                 Table.DOCUMENT_TYPES.ordinal(),
@@ -60,10 +60,10 @@ public class C_Login extends LoginActivity {
                 Table.PAYMENT_TYPES.ordinal(),
                 Table.INVOICES.ordinal(),
                 Table.INVOICE_PURPOSES.ordinal(),*/
-                Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
+            /*    Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS.ordinal(),
                 Table.SALES_PROMOTIONS_POINTS.ordinal(),
-                Table.SALES_PROMOTIONS_POINTS_DETAILS.ordinal());
+                Table.SALES_PROMOTIONS_POINTS_DETAILS.ordinal()*/);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class C_Login extends LoginActivity {
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
         setEditTextAccountID("A1029");
-        setEditTextEmail("A1072A_OSS-1@imonggo.com");
+        setEditTextEmail("A1072A_OSS-1@A1029.com");
         setEditTextPassword("password");
     }
 }
