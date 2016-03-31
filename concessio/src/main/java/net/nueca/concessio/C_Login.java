@@ -107,16 +107,12 @@ public class C_Login extends LoginActivity {
         Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
         initializeApp();
 
-//        BaseLoginActivity.TEST_ACCOUNT = true;
+        BaseLoginActivity.TEST_ACCOUNT = true;
 
         setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
                 (EditText)findViewById(R.id.etEmail),
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
-
-        setEditTextAccountID("A1029");
-            setEditTextEmail("A1072A_OSS-1@A1029.com");
-        setEditTextPassword("password");
     }
 
     private void initializeApp() {
