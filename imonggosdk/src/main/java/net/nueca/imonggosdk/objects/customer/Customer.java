@@ -212,6 +212,8 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     }
 
     public String getCode() {
+        if(code == null || code.equals("null"))
+            return "";
         return code;
     }
 
@@ -703,7 +705,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         this.layawayBalance = layawayBalance;
     }
 
-    public List<CustomerGroup>  getCustomerGroups(ImonggoDBHelper2 dbHelper) throws SQLException {
+    public List<CustomerGroup> getCustomerGroups(ImonggoDBHelper2 dbHelper) throws SQLException {
         List<CustomerCustomerGroupAssoc> assocs = dbHelper.fetchObjects(CustomerCustomerGroupAssoc.class).queryBuilder().where().eq
                 (CustomerCustomerGroupAssoc.CUSTOMER_ID_FIELD_NAME, this).query();
 

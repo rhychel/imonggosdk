@@ -53,6 +53,8 @@ import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.printer.PrinterTask;
 import net.nueca.concessioengine.printer.epson.listener.PrintListener;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
+import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
+import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.AnimationTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.tools.PriceTools;
@@ -137,7 +139,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         setContentView(R.layout.c_module);
 
         if (clearTransactions) {
-            ProductsAdapterHelper.clearSelectedProductItemList(initSelectedCustomer);
+            ProductsAdapterHelper.clearSelectedProductItemList(initSelectedCustomer, initSelectedCustomer);
             ProductsAdapterHelper.clearSelectedReturnProductItemList();
         }
 
@@ -494,7 +496,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             @Override
                             public void onClick(View v) {
                                 // ---- So let's print...
-                                printTransaction(null, "*Salesman Copy*");//, "*Office Copy*"
+                                if(EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
+                                    printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
+                                else
+                                    printTransaction(null, "*Salesman Copy*", "*Office Copy*");
                             }
                         });
                         tvItems.setVisibility(View.INVISIBLE);
@@ -1255,8 +1260,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .object(document)
                                         .fromModule(concessioModule)
                                         .queue();
-                                if(getAppSetting().isCan_print())
-                                    printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                if(getAppSetting().isCan_print()) {
+                                    if(EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
+                                        printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                    else
+                                        printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                }
                             }
 
                             TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
@@ -1375,8 +1384,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .fromModule(concessioModule)
                                                             .queue();
 
-                                                    if(getAppSetting().isCan_print())
-                                                        printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                    if(getAppSetting().isCan_print()) {
+                                                        if(EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
+                                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                        else
+                                                            printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                    }
                                                 }
 
 
@@ -1458,6 +1471,167 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
     };
 
+    private void printTransactionStar(final OfflineData offlineData, final String... labels) {
+        Branch branch = getBranches().get(0);
+        ArrayList<byte[]> data = new ArrayList<>();
+
+        try {
+            for(int i = 0;i < labels.length;i++) {
+                data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center Justification <ESC> a n (0 Left, 1 Center, 2 Right)0,
+                data.add((branch.getName()+"\r\n").getBytes());
+                data.add((branch.generateAddress()+"\r\n\r\n").getBytes());
+
+                if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                    data.add(("MISCELLANEOUS STOCK OUT SLIP\r\n\r\n").getBytes());
+                else
+                    data.add(("INVENTORY SLIP\r\n\r\n").getBytes());
+//                data.add(("Salesman: "+getSession().getUser().getName()+"\r\n").getBytes());
+                data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
+                data.add((EpsonPrinterTools.tabber("Salesman: ", getSession().getUser().getName(), 32)+"\r\n").getBytes());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+                if(offlineData != null) {
+                    data.add(("Ref #: "+offlineData.getReference_no()+"\r\n").getBytes());
+                    data.add(("Date: " + simpleDateFormat.format(offlineData.getDateCreated())+"\r\n").getBytes());
+                    if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                        data.add(("Company: " + simpleProductsFragment.getCategory().toUpperCase()+"\r\n").getBytes());
+                        data.add((EpsonPrinterTools.tabber("Reason: ", ProductsAdapterHelper.getReason().getName(), 32)+"\r\n").getBytes());
+                    }
+                }
+                else
+                    data.add(("Date: " + simpleDateFormat.format(Calendar.getInstance().getTime())+"\r\n").getBytes());
+
+
+                double totalQuantity = 0.0;
+                double totalAmount = 0.0;
+                data.add("================================".getBytes());
+                data.add("Quantity                  Amount".getBytes());
+                data.add("================================".getBytes());
+
+                if (offlineData != null && offlineData.getType() == OfflineData.DOCUMENT &&
+                        (concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)) {
+                    for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
+                        Double retail_price = 0.0;
+                        try {
+                            final BranchProduct branchProduct = getHelper().fetchForeignCollection(documentLine.getProduct().getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+                                @Override
+                                public boolean validate(BranchProduct obj) {
+                                    if(documentLine.getUnit_id() == null) {
+                                        if(obj.getUnit() == null)
+                                            return true;
+                                    }
+                                    else if(obj.getUnit() != null && documentLine.getUnit_id() == obj.getUnit().getId())
+                                        return true;
+                                    return false;
+                                }
+                            }, 0);
+
+                            Unit unit = null;
+                            if(branchProduct != null)
+                                unit = branchProduct.getUnit();
+                            retail_price = PriceTools.identifyRetailPrice(getHelper(), documentLine.getProduct(), branch, null, null, unit);
+
+                            if(retail_price == null)
+                                retail_price = documentLine.getRetail_price();
+                            Log.e("identified retail_price", retail_price.toString());
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
+                        data.add((documentLine.getProduct().getName() + "\r\n").getBytes());
+                        if (documentLine.getUnit_id() != null) {
+                            totalQuantity += documentLine.getUnit_quantity();
+                            data.add(("  " + documentLine.getUnit_quantity() + "   " + documentLine.getUnit_name() + " x " + NumberTools.separateInCommas(retail_price)+"\r\n").getBytes());
+                            Double subtotal = documentLine.getUnit_quantity() * retail_price;
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
+                            data.add((NumberTools.separateInCommas(subtotal)+"\r\n").getBytes());
+                            totalAmount += subtotal;
+                        } else {
+                            totalQuantity += documentLine.getQuantity();
+                            data.add(("  " + documentLine.getQuantity() + "   " + documentLine.getProduct().getBase_unit_name() + " x " + NumberTools.separateInCommas(retail_price) + "\r\n").getBytes());
+                            Double subtotal = documentLine.getQuantity() * retail_price;
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
+                            data.add((NumberTools.separateInCommas(subtotal)+"\r\n").getBytes());
+                            totalAmount += subtotal;
+                        }
+                    }
+                }
+                else {
+                    QueryBuilder<Inventory, Integer> currentInventories = getHelper().fetchObjectsInt(Inventory.class).queryBuilder();
+                    currentInventories.selectColumns("id");
+                    currentInventories.where().gt("quantity", 0.0);
+
+                    ProductSorting productSorting = getHelper().fetchForeignCollection(getAppSetting().getProductSortings().closeableIterator(), new ImonggoDBHelper2.Conditional<ProductSorting>() {
+                        @Override
+                        public boolean validate(ProductSorting obj) {
+                            if(obj.is_default())
+                                return true;
+                            return false;
+                        }
+                    }, 0);
+                    List<Product> products = getHelper().fetchObjects(Product.class).queryBuilder()
+                            .orderBy(productSorting.getColumn(), true)
+                            .where()
+                            .isNotNull("inventory_id").and()
+                            .in("inventory_id", currentInventories)
+                            .query();
+                    for(Product product : products) {
+                        Double retail_price = 0.0;
+                        final Unit unit = Unit.fetchById(getHelper(), Unit.class, product.getExtras().getDefault_selling_unit());
+                        try {
+                            final BranchProduct branchProduct = getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+                                @Override
+                                public boolean validate(BranchProduct obj) {
+                                    if(unit == null) {
+                                        if(obj.getUnit() == null)
+                                            return true;
+                                    }
+                                    else if(obj.getUnit() != null && unit.getId() == obj.getUnit().getId())
+                                        return true;
+                                    return false;
+                                }
+                            }, 0);
+
+                            retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, null, null, unit);
+
+                            if(retail_price == null)
+                                retail_price = branchProduct.getUnit_retail_price();
+                            Log.e("identified retail_price", retail_price.toString());
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
+                        data.add((product.getName() + "\r\n").getBytes());
+                        data.add(("  " + product.getInventory().getQuantity() + "   "
+                                + (unit == null ? product.getBase_unit_name() : unit.getName()) + " x "
+                                + NumberTools.separateInCommas(retail_price)+"\r\n").getBytes());
+                        Double subtotal = product.getInventory().getQuantity() * retail_price;
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Left
+                        data.add((NumberTools.separateInCommas(subtotal)+"\r\n").getBytes());
+                    }
+                }
+
+                data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
+                data.add(("--------------------------------").getBytes());
+                data.add(("Total Quantity: " + NumberTools.separateInCommas(totalQuantity) + "\r\n").getBytes());
+                data.add((EpsonPrinterTools.spacer("Total Order Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\r\n\r\n").getBytes());
+                data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Left
+                data.add(labels[i].getBytes());
+                if(i < labels.length-1) {
+                    data.add(("\r\n\r\n\r\n").getBytes());
+                    data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                }
+                else
+                    data.add(("\r\n\r\n").getBytes());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
+    }
+
     private void printTransaction(final OfflineData offlineData, final String... labels) {
         String targetPrinter = EpsonPrinterTools.targetPrinter(getApplicationContext());
         if(targetPrinter != null) {
@@ -1488,15 +1662,23 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             printer.addFeedLine(2);
                             printer.addText(printText.toString());
                             printer.addFeedLine(2);
-                            printer.addText("INVENTORY SLIP");
+                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                printer.addText("MISCELLANEOUS STOCK OUT SLIP");
+                            else
+                                printer.addText("INVENTORY SLIP");
                             printer.addFeedLine(2);
-                            printer.addText("Salesman: " + getSession().getUser().getName() + "\n");
+//                            printer.addText("Salesman: " + getSession().getUser().getName() + "\n");
                             printText.delete(0, printText.length());
                             printer.addTextAlign(Printer.ALIGN_LEFT);
+                            printer.addText(EpsonPrinterTools.tabber("Salesman: ", getSession().getUser().getName(), 32) + "\n");
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
                             if(offlineData != null) {
                                 printer.addText("Ref #: " + offlineData.getReference_no() + "\n");
                                 printer.addText("Date: " + simpleDateFormat.format(offlineData.getDateCreated()) + "\n");
+                                if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                    printer.addText("Company: " + simpleProductsFragment.getCategory().toUpperCase() + "\n");
+                                    printer.addText(EpsonPrinterTools.tabber("Reason: ", ProductsAdapterHelper.getReason().getName(), 32) + "\n");
+                                }
                             }
                             else
                                 printer.addText("Date: " + simpleDateFormat.format(Calendar.getInstance().getTime()) + "\n");
@@ -1507,7 +1689,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             printer.addText("================================");
                             printer.addText("Quantity                  Amount");
                             printer.addText("================================");
-                            if (offlineData != null && offlineData.getType() == OfflineData.DOCUMENT && concessioModule == ConcessioModule.RECEIVE_SUPPLIER) {
+                            if (offlineData != null && offlineData.getType() == OfflineData.DOCUMENT &&
+                                    (concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)) {
                                 for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
                                     Double retail_price = 0.0;
                                     try {

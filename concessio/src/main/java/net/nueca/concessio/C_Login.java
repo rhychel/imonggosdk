@@ -117,7 +117,6 @@ public class C_Login extends LoginActivity {
 
     private void initializeApp() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-
         requestQueue.add(HTTPRequests.sendGETServers(this, new VolleyRequestListener() {
             @Override
             public void onStart(Table table, RequestType requestType) {
