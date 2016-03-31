@@ -30,7 +30,9 @@ public class AppSettings {
         CHANGE_PIN_CODE("Change PIN code"),
 
         // Printer
-        CONFIGURE_EPSON_PRINTER("Epson Printer:");
+        CONFIGURE_EPSON_PRINTER("Epson Printer:"),
+        CONFIGURE_STAR_PRINTER("Star Printer:"),
+        CONFIGURE_STAR_PRINTER_SIZE("Star Paper Size:");
 
         // -- Module dependent label
         // --
@@ -65,7 +67,7 @@ public class AppSettings {
         DROPDOWN
     }
 
-    private boolean isHeader = false;
+    private boolean isHeader = false, isEnabled = true;
     private ConcessioModule concessioModule;
     private AppSettingEntry appSettingEntry;
     private ValueType valueType = ValueType.LABEL;
@@ -161,5 +163,13 @@ public class AppSettings {
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 }

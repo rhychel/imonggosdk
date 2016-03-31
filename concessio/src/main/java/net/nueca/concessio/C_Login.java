@@ -107,21 +107,16 @@ public class C_Login extends LoginActivity {
         Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
         initializeApp();
 
-//        BaseLoginActivity.TEST_ACCOUNT = true;
+        BaseLoginActivity.TEST_ACCOUNT = true;
 
         setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
                 (EditText)findViewById(R.id.etEmail),
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
-
-        setEditTextAccountID("A1029");
-        setEditTextEmail("A1072A_OSS-1@imonggo.com");
-        setEditTextPassword("password");
     }
 
     private void initializeApp() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-
         requestQueue.add(HTTPRequests.sendGETServers(this, new VolleyRequestListener() {
             @Override
             public void onStart(Table table, RequestType requestType) {

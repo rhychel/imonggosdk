@@ -2,6 +2,11 @@ package net.nueca.concessioengine.printer.starmicronics.tools;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.starmicronics.stario.StarIOPort;
 import com.starmicronics.stario.StarIOPortException;
@@ -16,6 +21,61 @@ import java.util.List;
  * Created by Jn on 16/02/16.
  */
 public class StarIOPrinterTools {
+    private static String TAG = "StarIOPrinterTools";
+
+    public static String TARGET_PRINTER = "_star_target_printer";
+    public static String PAPER_TYPE = "_star_paper_type";
+
+    public static void updateTargetPrinter(Context context, String targetPrinter) {
+        Log.e(TAG, "Updating Target Printer: " + targetPrinter);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            SharedPreferences.Editor editor = preferences.edit();
+
+            editor.putString(pinfo.packageName + TARGET_PRINTER, targetPrinter);
+            editor.apply();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getTargetPrinter(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return preferences.getString(pinfo.packageName + TARGET_PRINTER, "");
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, "Target printer not found");
+            return "";
+        }
+    }
+
+    public static void updatePaperType(Context context, StarIOPaperSize paperType) {
+        Log.e(TAG, "Updating Target Printer: " + paperType);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            SharedPreferences.Editor editor = preferences.edit();
+
+            editor.putInt(pinfo.packageName + PAPER_TYPE, paperType.ordinal());
+            editor.apply();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static StarIOPaperSize getPaperType(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return StarIOPaperSize.values()[preferences.getInt(pinfo.packageName + PAPER_TYPE, 0)];
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, "Paper type not found");
+            return StarIOPaperSize.p2INCH;
+        }
+    }
+
     /**
      * This function shows how to read the MSR data(credit card) of a portable(ESC/POS) printer. The function first puts the printer into MSR read mode, then asks the user to swipe a credit card The function waits for a response from the user. The user can cancel MSR mode or have the printer read the card.
      *  @param context
@@ -28,21 +88,38 @@ public class StarIOPrinterTools {
     public static boolean print(Context context, String portName, String portSettings, StarIOPaperSize mPaperSize, String toPrintData) {
         ArrayList<byte[]> list = new ArrayList<>();
         if(mPaperSize == StarIOPaperSize.p2INCH) {
-            //list.add(new byte[] { 0x1d, 0x57, (byte) 0x80, 0x31 }); // Page Area Setting <GS> <W> nL nH (nL = 128, nH = 1)
-            list.add(toPrintData.getBytes());
-
-            return sendCommand(context, portName, portSettings, list);
+//            list.add(new byte[] { 0x1d, 0x57, 0x40, 0x32 }); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
+            list.add(new byte[] { 0x1d, 0x57, (byte) 0x80, 0x31 }); // Page Area Setting <GS> <W> nL nH (nL = 128, nH = 1)
         } else if(mPaperSize == StarIOPaperSize.p3INCH) {
             list.add(new byte[] { 0x1d, 0x57, 0x40, 0x32 }); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
 
         } else if(mPaperSize == StarIOPaperSize.p4INCH) {
             list.add(new byte[] { 0x1d, 0x57, 0x40, 0x32 }); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
-            list.add(new byte[] { 0x1b, 0x61, 0x01 }); // Center Justification <ESC> a n (0 Left, 1 Center, 2 Right)
+//            list.add(new byte[] { 0x1b, 0x61, 0x01 }); // Center Justification <ESC> a n (0 Left, 1 Center, 2 Right)
         }
 
         list.add(toPrintData.getBytes());
         list.add(new byte[] { 0x1b, 0x64, 0x02 }); // Cut
         return sendCommand(context, portName, portSettings, list);
+    }
+
+    public static boolean print(Context context, String portName, String portSettings, StarIOPaperSize mPaperSize, ArrayList<byte[]> toPrintData) {
+//        ArrayList<byte[]> list = new ArrayList<>();
+//        if(mPaperSize == StarIOPaperSize.p2INCH) {
+//            toPrintData.add(0, new byte[] { 0x1d, 0x57, (byte) 0x80, 0x31 }); // Page Area Setting <GS> <W> nL nH (nL = 128, nH = 1)
+//        } else if(mPaperSize == StarIOPaperSize.p3INCH) {
+//            toPrintData.add(0, new byte[] { 0x1d, 0x57, 0x40, 0x32 }); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
+//
+//        } else if(mPaperSize == StarIOPaperSize.p4INCH) {
+//            toPrintData.add(0, new byte[] { 0x1d, 0x57, 0x40, 0x32 }); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
+////            list.add(new byte[] { 0x1b, 0x61, 0x01 }); // Center Justification <ESC> a n (0 Left, 1 Center, 2 Right)
+//        }
+
+//        list.addAll(1, toPrintData);
+//        list.add(toPrintData.getBytes());
+        toPrintData.add(new byte[] { 0x1b, 0x64, 0x02 }); // Cut
+        toPrintData.add(new byte[] { 0x07 }); // Kick cash drawer
+        return sendCommand(context, portName, portSettings, toPrintData);
     }
 
     private static byte[] convertFromListByteArrayTobyteArray(List<byte[]> ByteArray) {

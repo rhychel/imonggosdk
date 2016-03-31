@@ -18,6 +18,9 @@ import com.epson.epos2.discovery.FilterOption;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.j256.ormlite.stmt.Where;
+import com.starmicronics.stario.PortInfo;
+import com.starmicronics.stario.StarIOPort;
+import com.starmicronics.stario.StarIOPortException;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -28,6 +31,8 @@ import net.nueca.concessioengine.printer.epson.listener.DiscoverySettingsListene
 import net.nueca.concessioengine.printer.epson.listener.PrintListener;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 //import net.nueca.concessioengine.printer.tools.PrinterTools;
+import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
+import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.appsettings.AppSettings;
 import net.nueca.concessioengine.tools.appsettings.AppTools;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
@@ -217,6 +222,66 @@ public class SettingsActivity extends ModuleActivity {
         printerHeader.setConcessioModule(ConcessioModule.PRINTER);
         appSettings.add(printerHeader);
 
+        // Epson Printer
+        appSettings.add(generateEpsonPrinter(sectionFirstPosition));
+
+        // Star Printer
+        appSettings.add(generateStarPrinter(sectionFirstPosition));
+
+
+        ArrayAdapter<StarIOPaperSize> paperSizeAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, StarIOPaperSize.values());
+        paperSizeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
+        AppSettings starPrinter = new AppSettings();
+        starPrinter.setHeader(false);
+        starPrinter.setSectionFirstPosition(sectionFirstPosition);
+        starPrinter.setConcessioModule(ConcessioModule.PRINTER);
+        starPrinter.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_STAR_PRINTER_SIZE);
+        starPrinter.setValueType(AppSettings.ValueType.DROPDOWN);
+        starPrinter.setAdapter(paperSizeAdapter);
+        starPrinter.setSelectedItem(StarIOPrinterTools.getPaperType(this).ordinal());
+        starPrinter.setEnabled(!StarIOPrinterTools.getTargetPrinter(this).equals(""));
+
+        appSettings.add(starPrinter);
+
+        return appSettings;
+    }
+
+    private AppSettings generateStarPrinter(int sectionFirstPosition) {
+        AppSettings starPrinter = new AppSettings();
+        starPrinter.setHeader(false);
+        starPrinter.setSectionFirstPosition(sectionFirstPosition);
+        starPrinter.setConcessioModule(ConcessioModule.PRINTER);
+        starPrinter.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_STAR_PRINTER);
+        if(StarIOPrinterTools.getTargetPrinter(this).equals(""))
+            starPrinter.setValue("Not Connected!");
+        else
+            starPrinter.setValue(EpsonPrinterTools.targetPrinterName(this));
+
+        starPrinter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClicked(View view, int position) {
+                List<PortInfo> btPortList = new ArrayList<PortInfo>();
+                try {
+                    btPortList = StarIOPort.searchPrinter("BT:");
+
+                    for(PortInfo pi : btPortList) {
+                        Log.e("BTs", "Model Name: "+pi.getModelName()+" || Mac:"+pi.getMacAddress()
+                                +" || Port:"+pi.getPortName());
+
+                        StarIOPrinterTools.updateTargetPrinter(SettingsActivity.this, pi.getPortName());
+                    }
+
+                    StarIOPrinterTools.updatePaperType(SettingsActivity.this, StarIOPaperSize.p2INCH);
+                } catch (StarIOPortException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        return starPrinter;
+    }
+
+    private AppSettings generateEpsonPrinter(int sectionFirstPosition) {
         AppSettings epsonPrinter = new AppSettings();
         epsonPrinter.setHeader(false);
         epsonPrinter.setSectionFirstPosition(sectionFirstPosition);
@@ -311,9 +376,8 @@ public class SettingsActivity extends ModuleActivity {
                 });
             }
         });
-        appSettings.add(epsonPrinter);
 
-        return appSettings;
+        return epsonPrinter;
     }
 
     @Override

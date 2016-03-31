@@ -238,10 +238,12 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             orderBy += (productSorting == null ? "name" : productSorting.getColumn()) + " COLLATE NOCASE ASC";
 
             QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder().orderByRaw(orderBy)
-                    .limit(LIMIT).offset(offset);
+                    .limit(LIMIT)
+                    .offset(offset)
+                    ;
             resultProducts.setWhere(whereProducts);
 
-            Log.e(">>", resultProducts.prepareStatementString());
+            Log.e("BaseProduct>>", resultProducts.prepareStatementString());
 
             products = resultProducts.query();
         } catch (SQLException e) {
@@ -302,9 +304,13 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
             int lastItem = firstVisibleItem + visibleItemCount;
 
+            Log.e("BaseProducts", "lastItem ="+lastItem+" | totalItemCount = "+totalItemCount);
             if(lastItem == totalItemCount) {
                 if(prevLast != lastItem) {
+                    Log.e("BaseProducts", "prevLast ="+prevLast+" | " +"lastItem ="+lastItem+" | totalItemCount = "+totalItemCount);
+                    Log.e("BaseProducts", "offset ="+offset+" | LIMIT = "+LIMIT);
                     offset += LIMIT;
+                    Log.e("BaseProducts", "offset ="+offset+" | LIMIT = "+LIMIT);
                     whenListEndReached(getProducts());
                     prevLast = lastItem;
                 }

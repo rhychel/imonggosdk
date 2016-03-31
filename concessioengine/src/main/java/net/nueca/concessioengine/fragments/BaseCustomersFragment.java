@@ -226,11 +226,17 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
 //                totalItemCount = simpleCustomerRecyclerViewAdapter2.getLayoutManager().getItemCount();
 //                firstVisibleItem = simpleCustomerRecyclerViewAdapter2.getLayoutManager().findFirstVisibleItemPosition();
             }
-            else {
+            else if(simpleCustomerRecyclerViewAdapter != null) {
                 totalItemCount = simpleCustomerRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
-                firstVisibleItem = simpleCustomerRecyclerViewAdapter.getLinearLayoutManager()
-                        .findFirstVisibleItemPosition();
+                firstVisibleItem = simpleCustomerRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
             }
+            else if(listScrollListener != null) {
+                totalItemCount = listScrollListener.getTotalItemCount();
+                firstVisibleItem = listScrollListener.getFirstVisibleItem();
+            }
+            Log.e("RoutePlan", "*totalItemCount="+totalItemCount);
+            Log.e("RoutePlan", "*firstVisibleItem="+firstVisibleItem);
+
             int lastItem = firstVisibleItem + visibleItemCount;
 
             if(lastItem == totalItemCount) {

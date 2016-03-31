@@ -19,6 +19,7 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleRoutePlanRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.Day;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
@@ -44,7 +45,6 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
 
     private RoutePlanListener routePlanListener;
 
-    private RecyclerView rvRoutePlan;
     private Toolbar tbActionBar;
     private Spinner spDays;
     private TextView tvNoRoutes;
@@ -86,12 +86,12 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.simple_route_plan_fragment_rv, container, false);
 
-        rvRoutePlan = (RecyclerView) view.findViewById(R.id.rvRoutePlan);
+        rvCustomers = (RecyclerView) view.findViewById(R.id.rvRoutePlan);
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         spDays = (Spinner) view.findViewById(R.id.spDays);
         tvNoRoutes = (TextView) view.findViewById(R.id.tvNoRoutes);
 
-        simpleRoutePlanRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvRoutePlan);
+        simpleRoutePlanRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvCustomers);
         simpleRoutePlanRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
@@ -101,7 +101,26 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
                     routePlanListener.itemClicked(simpleRoutePlanRecyclerViewAdapter.getItem(position)); // pass the customer
             }
         });
-        rvRoutePlan.setAdapter(simpleRoutePlanRecyclerViewAdapter);
+        rvCustomers.setAdapter(simpleRoutePlanRecyclerViewAdapter);
+        rvCustomers.addOnScrollListener(rvScrollListener);
+        setListScrollListener(new ListScrollListener() {
+            @Override
+            public void onScrolling() { }
+
+            @Override
+            public void onScrollStopped() { }
+
+            @Override
+            public int getTotalItemCount() {
+                return simpleRoutePlanRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
+            }
+
+            @Override
+            public int getFirstVisibleItem() {
+                return simpleRoutePlanRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
+            }
+        });
+
         spDays.setAdapter(daysAdapter);
         spDays.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -136,7 +155,7 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
 
 
     protected void toggleNoItems(String msg, boolean show) {
-        rvRoutePlan.setVisibility(show ? View.VISIBLE : View.GONE);
+        rvCustomers.setVisibility(show ? View.VISIBLE : View.GONE);
         tvNoRoutes.setVisibility(show ? View.GONE : View.VISIBLE);
         tvNoRoutes.setText(msg);
     }
@@ -147,7 +166,8 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
 
     @Override
     protected void whenListEndReached(List<Customer> customers) {
-
+        simpleRoutePlanRecyclerViewAdapter.addAll(customers);
+        simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     private List<Customer> renderRoutePlan(int dayOfWeek) {

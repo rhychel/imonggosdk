@@ -64,7 +64,19 @@ public class SwableSendModule extends BaseSwableModule {
             }
 
             Gson gson = new Gson();
-            Log.e("SwableSendModule", "sendTransaction : non-paging : "+gson.toJson(offlineData.getObjectFromData()));
+            String jsonStr = gson.toJson(offlineData.getObjectFromData());
+            Log.e("SwableSendModule", "sendTransaction : non-paging : "+jsonStr);
+            if(jsonStr.length() > 1000) {
+                int chunkCount = jsonStr.length() / 1000;
+                for (int i = 0; i <= chunkCount; i++) {
+                    int max = 1000 * (i + 1);
+                    if (max >= jsonStr.length()) {
+                        Log.e("SwableSendModule", jsonStr.substring(1000 * i));
+                    } else {
+                        Log.e("SwableSendModule", jsonStr.substring(1000 * i, max));
+                    }
+                }
+            }
             JSONObject jsonObject;
             if(offlineData.getType() == OfflineData.INVOICE) {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
