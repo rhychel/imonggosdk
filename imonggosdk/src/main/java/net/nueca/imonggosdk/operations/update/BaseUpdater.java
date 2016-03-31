@@ -61,6 +61,7 @@ public abstract class BaseUpdater implements SyncModulesListener {
     @Override
     public void onDownloadProgress(Table table, int page, int max) {
         if (mSyncModulesListener != null) {
+            Log.e(TAG, "updating progress: " + table);
             mSyncModulesListener.onDownloadProgress(table, page, max);
         }
     }
