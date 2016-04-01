@@ -2751,6 +2751,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     } else {
                                         if (isExisting(salesPromotion, Table.SALES_PROMOTIONS)) {
                                             if (jsonObject.get("status").equals("A")) {
+                                                Log.e(TAG, "status is A");
                                                 salesPromotion.updateTo(getHelper());
                                                 if (salesPushSettings != null) {
                                                     salesPushSettings.setSalesPromotion(salesPromotion); // connection
@@ -2758,6 +2759,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 }
                                             } else {
                                                 List<Discount> discountList = getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("sales_promotion_id", salesPromotion).query();
+                                                Log.e(TAG, "status is either I or D");
+
                                                 //delete discount connected
                                                 for (Discount discount : discountList) {
                                                     discount.deleteTo(getHelper());
@@ -3232,7 +3235,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         }
                     }
                 }
-
             } else {
                 if (mSyncModulesListener != null) {
                     if (size != 0) {
