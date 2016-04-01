@@ -87,48 +87,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
 
-        Log.e("ClassName", Customer.class.getSimpleName());
-
-        List<CustomerCustomerGroupAssoc> customerCustomerGroupAssoc = CustomerCustomerGroupAssoc.fetchAll(getHelper(), CustomerCustomerGroupAssoc.class);
-
-
-        Log.e(TAG, "CustomerCustomerGroup Size: " + customerCustomerGroupAssoc.size());
-
-        for(CustomerCustomerGroupAssoc cg : customerCustomerGroupAssoc) {
-            Log.e(TAG, "customerssss: " + cg.getCustomer().getId());
-            try {
-                Log.e(TAG, "customergroupxx: " + cg.getCustomer().getCustomerGroups(getHelper()));
-                List<CustomerGroup> customerGroups = cg.getCustomer().getCustomerGroups(getHelper());
-
-                Log.e(TAG, "Customer Group Size: " + customerGroups.size());
-
-                for (CustomerGroup c : customerGroups) {
-                    Log.e(TAG, "customerGroupxx: " + c.getId());
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-//
-//        try {
-//            getHelper().deleteAll(OfflineData.class);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-
-        /*try {
-            List<OfflineData> offlineDatas = getHelper().fetchObjectsList(OfflineData.class);
-            for(OfflineData offlineData : offlineDatas) {
-                if(offlineData.getOfflineDataTransactionType().equals(OfflineDataType.UPDATE_CUSTOMER))
-                    offlineData.deleteTo(getHelper());
-            }
-            getHelper().deleteAll(OfflineData.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
-
         setNextActivityClass(C_Module.class);
 
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
