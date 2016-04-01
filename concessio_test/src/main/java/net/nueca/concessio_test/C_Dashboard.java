@@ -132,7 +132,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
             e.printStackTrace();
         }
 
-
+/*
 
         Log.e(TAG, "CustomerCustomerGroup Size: " + customerCustomerGroupAssoc.size());
 
@@ -151,7 +151,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
 
 /*
