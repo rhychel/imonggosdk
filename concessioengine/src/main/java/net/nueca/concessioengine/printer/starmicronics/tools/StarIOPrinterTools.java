@@ -204,7 +204,7 @@ public class StarIOPrinterTools {
             alert.setTitle("Failure");
             alert.setMessage(e.getMessage());
             alert.setCancelable(false);
-            alert.show();
+//            alert.show();
         } finally {
             if (port != null) {
                 try {
