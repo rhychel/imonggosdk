@@ -1,6 +1,8 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -63,6 +65,20 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
             lp.headerStartMarginIsAuto = !marginsFixed;
         }
         else {
+            holder.spOptions.setEnabled(appSettings.isEnabled());
+            holder.swcSetting.setEnabled(appSettings.isEnabled());
+            holder.itemView.setEnabled(appSettings.isEnabled());
+            if(appSettings.isEnabled()) {
+                int[] attrs = new int[]{R.attr.selectableItemBackground};
+                TypedArray typedArray = getContext().obtainStyledAttributes(attrs);
+                int backgroundResource = typedArray.getResourceId(0, 0);
+                holder.itemView.setBackgroundResource(backgroundResource);
+                typedArray.recycle();
+//                holder.itemView.setBackground(ContextCompat.getDrawable(getContext(), android.R.attr.selectableItemBackground));
+            }
+            else
+                holder.itemView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.disabled_color));
+
             holder.swcSetting.setVisibility(View.INVISIBLE);
             holder.llLabel.setVisibility(View.INVISIBLE);
             holder.spOptions.setVisibility(View.GONE);

@@ -27,6 +27,7 @@ import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.dialogs.ProgressListDialog;
 import net.nueca.concessioengine.dialogs.UpdaterChooserDialog;
 import net.nueca.concessioengine.objects.DashboardTile;
+import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Server;

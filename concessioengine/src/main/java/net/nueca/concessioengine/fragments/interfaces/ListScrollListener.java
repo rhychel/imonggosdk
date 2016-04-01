@@ -7,4 +7,6 @@ package net.nueca.concessioengine.fragments.interfaces;
 public interface ListScrollListener {
     void onScrolling();
     void onScrollStopped();
+    int getTotalItemCount();
+    int getFirstVisibleItem();
 }

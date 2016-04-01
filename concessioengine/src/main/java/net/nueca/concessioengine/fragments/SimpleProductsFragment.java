@@ -448,8 +448,16 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
     @Override
     protected void whenListEndReached(List<Product> productList) {
-        if(useRecyclerView)
+        if(useRecyclerView) {
             productRecyclerViewAdapter.addAll(productList);
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    productRecyclerViewAdapter.notifyDataSetChanged();
+                }
+            };
+            handler.sendEmptyMessageDelayed(0, 200);
+        }
         else
             productListAdapter.addAll(productList);
     }
@@ -484,7 +492,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                             "Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    ProductsAdapterHelper.clearSelectedProductItemList(false);
+                                    ProductsAdapterHelper.clearSelectedProductItemList(false, false);
                                     changeCategory(category, position);
                                     productsFragmentListener.whenItemsSelectedUpdated();
                                 }
