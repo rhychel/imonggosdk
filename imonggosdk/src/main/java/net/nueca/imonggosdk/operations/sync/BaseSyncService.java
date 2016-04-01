@@ -83,6 +83,7 @@ public abstract class BaseSyncService extends ImonggoService {
     protected Server mServer;
     protected List<BranchUserAssoc> branchUserAssoc;
     protected List<Integer> listOfPricelistIds;
+    protected List<Integer> listOfIdsPriceListSorted;
     protected List<Object> listPriceListStorage;
     protected List<? extends BaseTable> listOfIds;
     protected String from = "", to = "";
