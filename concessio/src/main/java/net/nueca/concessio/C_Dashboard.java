@@ -86,6 +86,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
+/*
 
         Log.e("ClassName", Customer.class.getSimpleName());
 
@@ -110,6 +111,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 e.printStackTrace();
             }
         }
+*/
 
 //
 //        try {

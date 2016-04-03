@@ -21,11 +21,14 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
+import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
 import org.json.JSONObject;
+
+import java.sql.SQLException;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -34,12 +37,13 @@ import io.fabric.sdk.android.Fabric;
  * imonggosdk2 (c)2015
  */
 public class C_Login extends LoginActivity {
-
+    public static String TAG = "C_Login";
     @Override
     protected void initLoginEquipments() {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
         setServer(Server.REBISCO);
+        setAutoUpdateApp(true);
 
         /**
          *"payment_types"
@@ -49,10 +53,21 @@ public class C_Login extends LoginActivity {
     }
 
     @Override
+    protected void updateAppData(SyncModules syncmodules) {
+        super.updateAppData(syncmodules);
+        int[] modulesToDownload = generateModules();
+        setModulesToSync(modulesToDownload);
+        syncmodules.initializeTablesToSync(modulesToDownload);
+        updateApp();
+
+        Log.e(TAG, "updateAppData called");
+    }
+
+    @Override
     protected void successLogin() {
         super.successLogin();
-        int []modulesToDownload = generateModules();
-        if(modulesToDownload.length == 0) {
+        int[] modulesToDownload = generateModules();
+        if (modulesToDownload.length == 0) {
             DialogTools.showDialog(this, "Ooops!", "Kindly contact admin to setup your Concessio.", "Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -66,15 +81,6 @@ public class C_Login extends LoginActivity {
     }
 
     @Override
-    protected void updateAppData() {
-        super.updateAppData();
-        int []modulesToDownload = generateModules();
-        setModulesToSync(modulesToDownload);
-
-        getSyncModules().initializeTablesToSync(modulesToDownload);
-    }
-
-    @Override
     protected void showNextActivityAfterLogin() {
         finish();
         Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? C_Welcome.class : C_Dashboard.class));//C_Dashboard
@@ -83,15 +89,15 @@ public class C_Login extends LoginActivity {
 
     private int[] generateModules() {
         Log.e("generateModules", "here");
-        getSyncModules().setSyncAllModules(false);
+        if (getSyncModules() != null)
+            getSyncModules().setSyncAllModules(false);
 
         ModuleSetting app = ModuleSetting.fetchById(getHelper(), ModuleSetting.class, "app");
-        if(app == null) {
+        if (app == null) {
             Log.e("App", "nothing is defined");
             return new int[0];
-        }
-        else
-            Log.e("App", app.getSequences().size()+"---");
+        } else
+            Log.e("App", app.getSequences().size() + "---");
 
         return app.modulesToDownload(getHelper(), app.isShow_only_sellable_products());
                 /*return new int[]{Table.USERS_ME.ordinal(),
@@ -100,21 +106,20 @@ public class C_Login extends LoginActivity {
     }
 
 
-
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
         setContentView(R.layout.c_login);
 
-        Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
+        Log.e("Unlinked", AccountTools.isUnlinked(this) + "---");
         initializeApp();
 
         BaseLoginActivity.TEST_ACCOUNT = true;
 
-        setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
-                (EditText)findViewById(R.id.etEmail),
-                (EditText)findViewById(R.id.etPassword),
-                (Button)findViewById(R.id.btnLogin));
+        setupLayoutEquipments((EditText) findViewById(R.id.etAccountId),
+                (EditText) findViewById(R.id.etEmail),
+                (EditText) findViewById(R.id.etPassword),
+                (Button) findViewById(R.id.btnLogin));
 
         setEditTextAccountID("A1029");
         setEditTextEmail("A1072A_OSS-1@A1029.com");
