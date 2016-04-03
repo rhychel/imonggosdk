@@ -159,7 +159,7 @@ public abstract class BaseSyncService extends ImonggoService {
 
     public void initializeTablesToSync(int[] forSyncing) {
         if (forSyncing != null) {
-            Log.e("initializeTablesToSync", "--" + forSyncing.length);
+            //`Log.e("initializeTablesToSync", "--" + forSyncing.length);
 
             mModulesIndex = 0;
             mModulesToSync = new Table[forSyncing.length];

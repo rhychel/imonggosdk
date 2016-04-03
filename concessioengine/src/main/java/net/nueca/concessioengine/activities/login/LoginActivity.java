@@ -72,8 +72,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
         // Account is Linked User is logged in
         if (!isUnlinked() && isLoggedIn()) {
             if (isAutoUpdate() && NetworkTools.isInternetAvailable(LoginActivity.this)) {
-                updateAppData();
-                new StartSyncServiceAsyncTask().execute();
+                startSyncService();
             } else {
                 showNextActivityAfterLogin();
             }
@@ -174,7 +173,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     }
 
     @Override
-    protected void updateAppData() {
+    protected void updateAppData(SyncModules syncmodules) {
 
     }
 
@@ -215,7 +214,10 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             //createNewCustomDialogFrameLayout(LoginActivity.this, getModulesToSync());
             createNewCustomDialogFrameLayout(getTableToSync(), LoginActivity.this);
             createNewCustomDialog(LoginActivity.this, R.style.LoginTheme_DialogFrameLayout);
-            setCustomDialogTitle(getString(R.string.FETCHING_MODULE_TITLE));
+            if(isAutoUpdate())
+                setCustomDialogTitle(getString(R.string.FETCHING_MODULE_TITLE));
+            else
+                setCustomDialogTitle(getString(R.string.UPDATING_MODULE_TITLE));
             setCustomDialogContentView(getCustomDialogFrameLayout());
             setCustomDialogCancelable(false);
             showCustomDialog();

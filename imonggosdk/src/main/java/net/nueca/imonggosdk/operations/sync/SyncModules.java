@@ -2130,23 +2130,36 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             listOfPricelistIds.add(price_list_id);
                                             listPriceListStorage.add(customer);
 
+                                            if(listOfIdsPriceListSorted == null) {
+                                                Log.e(TAG, "sorted is null, creating instance");
+                                                listOfIdsPriceListSorted = new ArrayList<>();
+                                            } else {
+                                                Log.e(TAG, "sorted is no null");
+                                            }
+
                                             if (listOfIdsPriceListSorted.size() == 0) {
-                                                Log.e(TAG, "existing.. pricelists..");
+                                                Log.e(TAG, "existing.. pricelists.. adding to sorted");
                                                 listOfIdsPriceListSorted.add(price_list_id);
                                             } else {
+                                                Log.e(TAG, "existing.. pricelists..");
                                                 boolean existing = false;
-                                                for (int idx : listOfIdsPriceListSorted) {
-                                                    if (price_list_id == idx) {
-                                                        existing = true;
+
+                                                if (listOfIdsPriceListSorted != null)
+
+                                                    for (int g = 0; g < listOfIdsPriceListSorted.size(); g++) {
+                                                        int idx = listOfIdsPriceListSorted.get(g);
+
+                                                        if (price_list_id == idx) {
+                                                            existing = true;
+                                                        }
+                                                        if (!existing) {
+                                                            listOfIdsPriceListSorted.add(price_list_id);
+                                                            Log.e(TAG, "existing.. adding..");
+                                                        } else {
+                                                            Log.e(TAG, "already existing.. skipping");
+                                                        }
                                                     }
 
-                                                    if (!existing) {
-                                                        listOfIdsPriceListSorted.add(price_list_id);
-                                                        Log.e(TAG, "existing.. adding..");
-                                                    } else {
-                                                        Log.e(TAG, "already existing.. skipping");
-                                                    }
-                                                }
                                             }
 
 
@@ -3167,10 +3180,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             if (mCustomIdIndex > 70)
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIdIndex, 100);
                             else {
-                                if(mCustomIdIndex > 95) {
+                                if (mCustomIdIndex > 95) {
                                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                                 } else {
-                                    mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIdIndex + 20, 100);
+                                    if(mCustomIdIndex == 0) {
+                                        mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                                    } else {
+                                        mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIdIndex + 20, 100);
+                                    }
                                 }
                             }
                         } else {
@@ -3184,11 +3201,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             Log.e(TAG, "Progress is " + mCurrentTableSyncing + " : page " + mCustomIdIndex + " : size of details to download " + listOfPricelistIds.size());
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIdIndex, listOfPricelistIds.size());
                         } else {
-                            Log.e(TAG, "Progress is " + mCurrentTableSyncing + " : page " + mCustomIdIndex   + " : size of details to download " + size);
+                            Log.e(TAG, "Progress is " + mCurrentTableSyncing + " : page " + mCustomIdIndex + " : size of details to download " + size);
                             if (mCustomIdIndex > 70)
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIdIndex + 20, 100);
                             else {
-                                if(mCustomIdIndex > 95) {
+                                if (mCustomIdIndex > 95) {
                                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 100, 100);
                                 } else {
                                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIdIndex + 20, 100);
