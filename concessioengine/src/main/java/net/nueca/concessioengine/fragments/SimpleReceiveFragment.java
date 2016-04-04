@@ -103,7 +103,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         }
 
         try {
-            searchDRDialog = new SearchDRDialog(getActivity(), getHelper(), getUser());
+            searchDRDialog = new SearchDRDialog(getActivity(), getHelper(), getUser(), R.style.AppCompatDialogStyle_Light);
 
             searchDRDialog.setDialogListener(new SearchDRDialog.SearchDRDialogListener() {
                 @Override

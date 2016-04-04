@@ -87,6 +87,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     }
 
     public void showReasonDialog(boolean emptyReason) {
+        showReasonDialog(emptyReason, true);
+    }
+
+    public void showReasonDialog(boolean emptyReason, boolean autoShow) {
         SimplePulloutRequestDialog simplePulloutRequestDialog = new SimplePulloutRequestDialog(getActivity(), getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
         simplePulloutRequestDialog.setDTitle(getModuleSetting(concessioModule).getLabel());
         simplePulloutRequestDialog.setShouldShowBranchSelection(false);
@@ -98,7 +102,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 ProductsAdapterHelper.setSource(source);
                 ProductsAdapterHelper.setDestination(destination);
 
-                tvReason.setText(reason.getName());
+                if(reason != null)
+                    tvReason.setText(reason.getName());
             }
 
             @Override
@@ -108,7 +113,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             }
         });
 
-        if(!isFinalize)
+        if(!isFinalize && autoShow)
             simplePulloutRequestDialog.show();
 
         if(emptyReason)

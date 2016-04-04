@@ -22,6 +22,7 @@ import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.widgets.ModifiedNumpad;
 
 import org.json.JSONException;
@@ -44,33 +45,36 @@ public class SearchDRDialog extends BaseAppCompatDialog {
     private List<Branch> branchList;
     private ImonggoDBHelper2 dbHelper;
     private User user;
-    private boolean isNotFound = false;
+    private boolean isNotFound = false, hasKeypad = false;
 
     private Animation animation;
-
     public SearchDRDialog(Context context, ImonggoDBHelper2 dbHelper, User user) {
-        super(context);
+        this(context, dbHelper, user, DialogTools.NO_THEME);
+    }
+
+    public SearchDRDialog(Context context, ImonggoDBHelper2 dbHelper, User user, int theme) {
+        super(context, theme);
         this.dbHelper = dbHelper;
         this.user = user;
 
         branchList = new ArrayList<>();
-        try {
-            List<BranchUserAssoc> branchUserAssocs = dbHelper.fetchObjects(BranchUserAssoc.class).queryBuilder().where()
-                    .eq("user_id", this.user).query();
-
-            for(BranchUserAssoc branchUser : branchUserAssocs) {
-                if(branchUser.getBranch().getSite_type() != null &&
-                        branchUser.getBranch().getSite_type().toLowerCase().equals("warehouse"))
-                    continue;
-
-                if(branchUser.getBranch().getId() == this.user.getHome_branch_id())
-                    branchList.add(0, branchUser.getBranch());
-                else
-                    branchList.add(branchUser.getBranch());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            List<BranchUserAssoc> branchUserAssocs = dbHelper.fetchObjects(BranchUserAssoc.class).queryBuilder().where()
+//                    .eq("user_id", this.user).query();
+//
+//            for(BranchUserAssoc branchUser : branchUserAssocs) {
+//                if(branchUser.getBranch().getSite_type() != null &&
+//                        branchUser.getBranch().getSite_type().toLowerCase().equals("warehouse"))
+//                    continue;
+//
+//                if(branchUser.getBranch().getId() == this.user.getHome_branch_id())
+//                    branchList.add(0, branchUser.getBranch());
+//                else
+//                    branchList.add(branchUser.getBranch());
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -90,6 +94,7 @@ public class SearchDRDialog extends BaseAppCompatDialog {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 isNotFound = false;
+
                 tvNotFound.setVisibility(View.INVISIBLE);
             }
 
@@ -105,13 +110,17 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         btnSearch = (Button) super.findViewById(R.id.btnSearch);
 
         ArrayAdapter<Branch> branchArrayAdapter = new ArrayAdapter<Branch>(getContext(),
-                R.layout.simple_spinner_item, branchList);
-
+                R.layout.spinner_dropdown_item_list_light, branchList);
         spnBranch.setAdapter(branchArrayAdapter);
 
         npInput = (ModifiedNumpad) super.findViewById(R.id.npInput);
-        npInput.addTextHolder(etDeliveryReceipt, "etDeliveryReceipt", false, false, null);
-        npInput.getTextHolderWithTag("etDeliveryReceipt").setEnableDot(false);
+
+        if(hasKeypad) {
+            npInput.addTextHolder(etDeliveryReceipt, "etDeliveryReceipt", false, false, null);
+            npInput.getTextHolderWithTag("etDeliveryReceipt").setEnableDot(false);
+        }
+        else
+            npInput.setVisibility(View.GONE);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,7 +205,10 @@ public class SearchDRDialog extends BaseAppCompatDialog {
     @Override
     public void show() {
         super.show();
-        npInput.setIsFirstErase(true);
+        if(hasKeypad)
+            npInput.setIsFirstErase(true);
+        else
+            etDeliveryReceipt.requestFocus();
     }
 
     public SearchDRDialogListener getDialogListener() {
@@ -205,6 +217,14 @@ public class SearchDRDialog extends BaseAppCompatDialog {
 
     public void setDialogListener(SearchDRDialogListener dialogListener) {
         this.dialogListener = dialogListener;
+    }
+
+    public void setHasKeypad(boolean hasKeypad) {
+        this.hasKeypad = hasKeypad;
+    }
+
+    public void setBranchList(List<Branch> branchList) {
+        this.branchList = branchList;
     }
 
     public interface SearchDRDialogListener {

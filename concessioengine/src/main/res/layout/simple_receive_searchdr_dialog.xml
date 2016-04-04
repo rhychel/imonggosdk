@@ -74,7 +74,8 @@
         android:layout_marginBottom="8dp"
         android:minWidth="64dp"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/npInput"/>
+        android:layout_below="@+id/npInput"
+        android:textColor="?attr/colorPrimary"/>
 
     <Button
         style="?android:attr/borderlessButtonStyle"
@@ -85,7 +86,8 @@
         android:layout_toLeftOf="@+id/btnSearch"
         android:layout_toStartOf="@+id/btnSave"
         android:minWidth="64dp"
-        android:layout_alignTop="@+id/btnSearch"/>
+        android:layout_alignTop="@+id/btnSearch"
+        android:textColor="?attr/colorPrimary"/>
 
     <Button
         style="?android:attr/borderlessButtonStyle"
@@ -96,5 +98,6 @@
         android:minWidth="64dp"
         android:layout_alignTop="@+id/btnSearch"
         android:layout_alignParentLeft="true"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:textColor="?attr/colorPrimary"/>
 </RelativeLayout>

@@ -214,6 +214,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 }
                 else if(branchUser.getBranch().getSite_type() != null && branchUser.getBranch().getSite_type().equals("warehouse"))
                     continue;
+                if(branchUser.getBranch().getStatus().equals("D"))
+                    continue;
                 if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
                     assignedBranches.add(0, branchUser.getBranch());
                 else
@@ -382,7 +384,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         pcount.customer(ProductsAdapterHelper.getSelectedCustomer()); // can be null
         pcount.document_type_code(documentTypeCode);
         if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH)
-            pcount.document_purpose_name(ProductsAdapterHelper.getReason().getName());
+            if(ProductsAdapterHelper.getReason() != null)
+                pcount.document_purpose_name(ProductsAdapterHelper.getReason().getName());
+        if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+            pcount.intransit_status(true);
         if(targetBranchId > -1)
             pcount.target_branch_id(targetBranchId);
         try {

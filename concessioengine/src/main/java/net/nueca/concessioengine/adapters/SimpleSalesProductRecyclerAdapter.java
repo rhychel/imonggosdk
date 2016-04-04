@@ -158,7 +158,7 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             }
         }
 
-        Log.e("Thumbnails", product.getThumbnail_url()+" <----");
+//        Log.e("Thumbnails", product.getThumbnail_url()+" <----");
         if(product.getThumbnail_url() != null && !product.getThumbnail_url().trim().equals("")) {
             String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
                     ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
