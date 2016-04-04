@@ -874,7 +874,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Log.e(TAG, "Updating Price Lists daa..");
                                     mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_FROM_CUSTOMERS, 1, 1);
                                     mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_DETAILS, 1, 1);
-                                    mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS, 1, 1);
+
                                 } else {
                                     mSyncModulesListener.onDownloadProgress(module, 1, 1);
                                 }
@@ -1994,7 +1994,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         newBranchUserAssocs.add(branchUserAssoc);
                                     } else {
                                         if (isExisting(branch, Table.BRANCHES)) {
-                                            if(branch.getStatus().equals("D")) {
+                                            if (branch.getStatus().equals("D")) {
                                                 deleteBranches.add(branch);
                                                 deleteBranchUserAssocs.add(branchUserAssoc);
                                             } else {
@@ -2138,38 +2138,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             listOfPricelistIds.add(price_list_id);
                                             listPriceListStorage.add(customer);
 
-                                            if(listOfIdsPriceListSorted == null) {
+                                            if (listOfIdsPriceListSorted == null) {
                                                 Log.e(TAG, "sorted is null, creating instance");
                                                 listOfIdsPriceListSorted = new ArrayList<>();
                                             } else {
                                                 Log.e(TAG, "sorted is no null");
                                             }
 
-                                            if (listOfIdsPriceListSorted.size() == 0) {
-                                                Log.e(TAG, "existing.. pricelists.. adding to sorted");
+                                            if (listOfIdsPriceListSorted.indexOf(price_list_id) < 0)
                                                 listOfIdsPriceListSorted.add(price_list_id);
-                                            } else {
-                                                Log.e(TAG, "existing.. pricelists..");
-                                                boolean existing = false;
-
-                                                if (listOfIdsPriceListSorted != null)
-
-                                                    for (int g = 0; g < listOfIdsPriceListSorted.size(); g++) {
-                                                        int idx = listOfIdsPriceListSorted.get(g);
-
-                                                        if (price_list_id == idx) {
-                                                            existing = true;
-                                                        }
-                                                        if (!existing) {
-                                                            listOfIdsPriceListSorted.add(price_list_id);
-                                                            Log.e(TAG, "existing.. adding..");
-                                                        } else {
-                                                            Log.e(TAG, "already existing.. skipping");
-                                                        }
-                                                    }
-
-                                            }
-
 
                                             priceList = getHelper().fetchObjects(PriceList.class).queryBuilder().where().eq("id", price_list_id).queryForFirst();
 
@@ -3191,11 +3168,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 if (mCustomIdIndex > 95) {
                                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                                 } else {
-                                    if(mCustomIdIndex == 0) {
-                                        mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-                                    } else {
-                                        mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIdIndex + 20, 100);
-                                    }
+
+                                    mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mCustomIdIndex + 20, 100);
+
                                 }
                             }
                         } else {
