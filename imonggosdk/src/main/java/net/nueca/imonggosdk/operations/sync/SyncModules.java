@@ -1967,12 +1967,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                 BatchList<Branch> newBranches = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                                 BatchList<Branch> updateBranches = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                                BatchList<Branch> deleteBranches = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
                                 BatchList<BranchTag> newBranchTags = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                                 BatchList<BranchTag> updateBranchTags = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                                BatchList<BranchTag> deleteBranchTags = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
                                 BatchList<BranchUserAssoc> newBranchUserAssocs = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                                 BatchList<BranchUserAssoc> updateBranchUserAssocs = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                                BatchList<BranchUserAssoc> deleteBranchUserAssocs = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -1991,14 +1994,19 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         newBranchUserAssocs.add(branchUserAssoc);
                                     } else {
                                         if (isExisting(branch, Table.BRANCHES)) {
-                                            updateBranches.add(branch);
-                                            updateBranchUserAssocs.add(branchUserAssoc);
+                                            if(branch.getStatus().equals("D")) {
+                                                deleteBranches.add(branch);
+                                                deleteBranchUserAssocs.add(branchUserAssoc);
+                                            } else {
+                                                updateBranches.add(branch);
+                                                updateBranchUserAssocs.add(branchUserAssoc);
+                                            }
                                         } else {
                                             newBranches.add(branch);
                                             newBranchUserAssocs.add(branchUserAssoc);
                                         }
                                     }
-                                    // }
+
 
                                     if (jsonObject.has("tag_list")) {
                                         JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");

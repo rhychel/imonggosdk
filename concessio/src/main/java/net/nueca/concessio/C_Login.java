@@ -21,6 +21,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
+import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.SettingTools;
@@ -49,6 +50,17 @@ public class C_Login extends LoginActivity {
     }
 
     @Override
+    protected void updateAppData(SyncModules syncmodules) {
+        super.updateAppData(syncmodules);
+        int[] modulesToDownload = generateModules();
+        setModulesToSync(modulesToDownload);
+        syncmodules.initializeTablesToSync(modulesToDownload);
+        updateApp();
+
+        Log.e(TAG, "updateAppData called");
+    }
+
+    @Override
     protected void successLogin() {
         super.successLogin();
         int []modulesToDownload = generateModules();
@@ -62,15 +74,6 @@ public class C_Login extends LoginActivity {
             return;
         }
         setModulesToSync(modulesToDownload);
-        getSyncModules().initializeTablesToSync(modulesToDownload);
-    }
-
-    @Override
-    protected void updateAppData() {
-        super.updateAppData();
-        int []modulesToDownload = generateModules();
-        setModulesToSync(modulesToDownload);
-
         getSyncModules().initializeTablesToSync(modulesToDownload);
     }
 
