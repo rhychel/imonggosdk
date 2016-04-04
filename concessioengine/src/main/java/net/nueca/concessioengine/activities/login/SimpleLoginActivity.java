@@ -2,6 +2,7 @@ package net.nueca.concessioengine.activities.login;
 
 import net.nueca.imonggosdk.enums.DialogType;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.operations.sync.SyncModules;
 
 /**
  * Created by Jn on 7/10/2015.
@@ -19,7 +20,7 @@ public class SimpleLoginActivity extends BaseLoginActivity {
     }
 
     @Override
-    protected void updateAppData() {
+    protected void updateAppData(SyncModules syncmodules) {
 
     }
 

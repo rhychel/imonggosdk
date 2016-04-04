@@ -21,6 +21,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
+import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.SettingTools;
@@ -39,13 +40,24 @@ public class C_Login extends LoginActivity {
     protected void initLoginEquipments() {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
-        //setServer(Server.REBISCO);
-
+        setServer(Server.REBISCO);
+        //setAutoUpdateApp(true);
         /**
          *"payment_types"
          */
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
+    }
+
+    @Override
+    protected void updateAppData(SyncModules syncmodules) {
+        super.updateAppData(syncmodules);
+        int[] modulesToDownload = generateModules();
+        setModulesToSync(modulesToDownload);
+        syncmodules.initializeTablesToSync(modulesToDownload);
+        updateApp();
+
+        Log.e(TAG, "updateAppData called");
     }
 
     @Override
@@ -62,15 +74,6 @@ public class C_Login extends LoginActivity {
             return;
         }
         setModulesToSync(modulesToDownload);
-        getSyncModules().initializeTablesToSync(modulesToDownload);
-    }
-
-    @Override
-    protected void updateAppData() {
-        super.updateAppData();
-        int []modulesToDownload = generateModules();
-        setModulesToSync(modulesToDownload);
-
         getSyncModules().initializeTablesToSync(modulesToDownload);
     }
 
@@ -99,6 +102,8 @@ public class C_Login extends LoginActivity {
                 Table.UNITS.ordinal(), Table.BRANCH_PRODUCTS.ordinal()};*/
     }
 
+
+
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
@@ -113,6 +118,10 @@ public class C_Login extends LoginActivity {
                 (EditText)findViewById(R.id.etEmail),
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
+
+        setEditTextAccountID("A1029");
+        setEditTextEmail("A1072A_OSS-1@A1029.com");
+        setEditTextPassword("password");
     }
 
     private void initializeApp() {
