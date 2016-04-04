@@ -18,8 +18,12 @@ import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by rhymart on 12/2/15.
@@ -73,7 +77,22 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
             customerDetails.add(CustomerDetail.SALES_ROUTE);
         customerDetails.add(CustomerDetail.DISCOUNT.setValue(customer.getDiscount_text()));
         customerDetails.add(CustomerDetail.AVAILABLE_POINTS.setValue(customer.getAvailable_points()));
-        customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS.setValue(customer.getLastPurchase()));
+
+        if(!customer.getLastPurchase().isEmpty()) {
+            SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            fromDate.setTimeZone(TimeZone.getTimeZone("UTC"));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM dd, yyyy, cccc h:mma");
+            simpleDateFormat.setTimeZone(TimeZone.getDefault());
+            try {
+                Date date = fromDate.parse(customer.getLastPurchase().split("T")[0] + " " + customer.getLastPurchase().split("T")[1].replace("Z", ""));
+
+                customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS.setValue(simpleDateFormat.format(date)));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+            customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS.setValue(customer.getLastPurchase()));
         if(refreshList) {
             if(setupActionBar != null)
                 setupActionBar.setupActionBar(tbActionBar);

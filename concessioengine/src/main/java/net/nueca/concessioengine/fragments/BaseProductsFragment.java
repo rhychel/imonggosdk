@@ -241,7 +241,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
                     .limit(LIMIT).offset(offset);
             resultProducts.setWhere(whereProducts);
 
-            Log.e(">>", resultProducts.prepareStatementString());
+            Log.e("BaseProduct>>", resultProducts.prepareStatementString());
 
             products = resultProducts.query();
         } catch (SQLException e) {

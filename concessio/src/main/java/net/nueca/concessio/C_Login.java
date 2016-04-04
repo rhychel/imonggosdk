@@ -21,6 +21,7 @@ import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
+import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.SettingTools;
@@ -39,14 +40,24 @@ public class C_Login extends LoginActivity {
     protected void initLoginEquipments() {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
-//        setServer(Server.REBISCO);
-
+        setServer(Server.REBISCO);
+        //setAutoUpdateApp(true);
         /**
-         *
-         "payment_types"
+         *"payment_types"
          */
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
+    }
+
+    @Override
+    protected void updateAppData(SyncModules syncmodules) {
+        super.updateAppData(syncmodules);
+        int[] modulesToDownload = generateModules();
+        setModulesToSync(modulesToDownload);
+        syncmodules.initializeTablesToSync(modulesToDownload);
+        updateApp();
+
+        Log.e(TAG, "updateAppData called");
     }
 
     @Override
@@ -63,15 +74,6 @@ public class C_Login extends LoginActivity {
             return;
         }
         setModulesToSync(modulesToDownload);
-        getSyncModules().initializeTablesToSync(modulesToDownload);
-    }
-
-    @Override
-    protected void updateAppData() {
-        super.updateAppData();
-        int []modulesToDownload = generateModules();
-        setModulesToSync(modulesToDownload);
-
         getSyncModules().initializeTablesToSync(modulesToDownload);
     }
 
@@ -95,11 +97,12 @@ public class C_Login extends LoginActivity {
             Log.e("App", app.getSequences().size()+"---");
 
         return app.modulesToDownload(getHelper(), app.isShow_only_sellable_products());
-/*        return new int[]{Table.USERS_ME.ordinal(),
+                /*return new int[]{Table.USERS_ME.ordinal(),
                 Table.BRANCH_USERS.ordinal(), Table.SETTINGS.ordinal(),
                 Table.UNITS.ordinal(), Table.BRANCH_PRODUCTS.ordinal()};*/
-
     }
+
+
 
     @Override
     protected void onCreateLoginLayout() {
@@ -109,7 +112,7 @@ public class C_Login extends LoginActivity {
         Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
         initializeApp();
 
-//        BaseLoginActivity.TEST_ACCOUNT = true;
+        BaseLoginActivity.TEST_ACCOUNT = true;
 
         setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
                 (EditText)findViewById(R.id.etEmail),
@@ -117,15 +120,12 @@ public class C_Login extends LoginActivity {
                 (Button)findViewById(R.id.btnLogin));
 
         setEditTextAccountID("A1029");
-        setEditTextEmail("A1072A_OSS-1@imonggo.com");
+        setEditTextEmail("A1072A_OSS-1@A1029.com");
         setEditTextPassword("password");
-
-
     }
 
     private void initializeApp() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-
         requestQueue.add(HTTPRequests.sendGETServers(this, new VolleyRequestListener() {
             @Override
             public void onStart(Table table, RequestType requestType) {

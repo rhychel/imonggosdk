@@ -158,6 +158,9 @@ public class ProductsAdapterHelper {
     }
 
     public static void clearSelectedProductItemList(boolean includeCustomer) {
+        clearSelectedProductItemList(includeCustomer, true);
+    }
+    public static void clearSelectedProductItemList(boolean includeCustomer, boolean includeReason) {
         if(isDuplicating)
             return;
         if(selectedProductItems != null)
@@ -167,7 +170,8 @@ public class ProductsAdapterHelper {
             selectedCustomerGroup = null;
         }
         selectedBranch = null;
-        reason = null;
+        if(includeReason)
+            reason = null;
         ProductListTools.restartLineNo();
         Log.e("ProductAdapterHelper", "clearSelectedProductItemList");
     }

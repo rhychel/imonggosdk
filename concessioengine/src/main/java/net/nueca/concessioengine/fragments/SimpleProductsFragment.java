@@ -152,7 +152,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         Log.e("useRecyclerView", useRecyclerView+"");
         if(useRecyclerView) {
             llReason = (LinearLayout) view.findViewById(R.id.llReason);
-            if(concessioModule == ConcessioModule.RECEIVE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH) {
+            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH) {
                 llReason.setVisibility(View.VISIBLE);
                 tvReason = (TextView) view.findViewById(R.id.tvReason);
                 ivEdit = (ImageView) view.findViewById(R.id.ivEdit);
@@ -460,8 +460,16 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
     @Override
     protected void whenListEndReached(List<Product> productList) {
-        if(useRecyclerView)
+        if(useRecyclerView) {
             productRecyclerViewAdapter.addAll(productList);
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    productRecyclerViewAdapter.notifyDataSetChanged();
+                }
+            };
+            handler.sendEmptyMessageDelayed(0, 200);
+        }
         else
             productListAdapter.addAll(productList);
     }
@@ -496,7 +504,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                             "Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    ProductsAdapterHelper.clearSelectedProductItemList(false);
+                                    ProductsAdapterHelper.clearSelectedProductItemList(false, false);
                                     changeCategory(category, position);
                                     productsFragmentListener.whenItemsSelectedUpdated();
                                 }

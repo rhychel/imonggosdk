@@ -18,4 +18,9 @@ public enum StarIOPaperSize {
     public String getStringName() {
         return this.stringName;
     }
+
+    @Override
+    public String toString() {
+        return stringName;
+    }
 }
