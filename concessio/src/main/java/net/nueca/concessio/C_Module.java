@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
@@ -28,6 +30,7 @@ import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.activities.AddEditCustomerActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
+import net.nueca.concessioengine.dialogs.SearchDRDialog;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
@@ -409,7 +412,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .commit();
             }
             break;
-            case STOCK_REQUEST: { // TODO for Petron
+            case STOCK_REQUEST:
+            case RECEIVE_BRANCH_PULLOUT: { // TODO for Petron
+
+                if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
+                    try {
+                        SearchDRDialog searchDRDialog = new SearchDRDialog(this, getHelper(), getUser(), R.style.AppCompatDialogStyle_Light);
+                        searchDRDialog.setTitle("Confirm Pullout");
+                        searchDRDialog.setBranchList(getBranches());
+                        searchDRDialog.show();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 changeToReview = true;
                 initializeProducts();
                 simpleProductsFragment.setListingType(ListingType.SALES);
@@ -437,8 +453,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.flContent, simpleProductsFragment)
                         .commit();
-
-
             }
             break;
             case INVOICE: {
@@ -612,6 +626,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .commit();
             }
             break;
+//            case RECEIVE_BRANCH_PULLOUT: {
+//
+//            }
+//            break;
             case RELEASE_BRANCH: { // TODO for Petron
                 changeToReview = true;
 //                simplePulloutRequestDialog = new SimplePulloutRequestDialog(this, getHelper(), R.style.AppCompatDialogStyle_Light_NoTitle);
@@ -1166,7 +1184,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
         if (concessioModule == ConcessioModule.RELEASE_BRANCH)
             if(getModuleSetting(concessioModule).isRequire_document_reason() && getSupportFragmentManager().findFragmentByTag("finalize") == null) {
-                simplePulloutFragment.showReasonDialog(true);
+                simplePulloutFragment.showReasonDialog(true, getModuleSetting(concessioModule).isRequire_document_reason());
             }
         if (concessioModule == ConcessioModule.HISTORY)
             whenItemsSelectedUpdated();
@@ -1307,13 +1325,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         onBackPressed();
 
                                         if(concessioModule == ConcessioModule.RELEASE_BRANCH)
-                                            simplePulloutFragment.showReasonDialog(true);
+                                            simplePulloutFragment.showReasonDialog(true, getModuleSetting(concessioModule).isRequire_document_reason()); // add settings
                                     }
-//
-//                                    if (concessioModule == ConcessioModule.STOCK_REQUEST) {
-//                                        simpleProductsFragment.refreshList();
-//                                        finalizeFragment.refreshList();
-//                                    }
                                 }
                             });
                             transactionDialog.show();
@@ -1321,11 +1334,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         }
                     }, "No", R.style.AppCompatDialogStyle_Light);
                 } else {
-                    ArrayAdapter<Branch> branchesAdapter = new ArrayAdapter<>(C_Module.this, R.layout.simple_listitem_single_choice, getBranches());
-                    DialogTools.showSelectionDialog(C_Module.this, branchesAdapter,
-                            "Yes", new DialogTools.OnItemSelected<Branch>() {
+                    new MaterialDialog.Builder(C_Module.this)
+                            .title("Choose branch")
+                            .items(getBranches())
+                            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                                 @Override
-                                public void itemChosen(final Branch branch) {
+                                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                    final Branch branch = getBranches().get(which);
+
                                     final Branch warehouse = getWarehouse();
                                     if (warehouse == null && getModuleSetting(concessioModule).isRequire_warehouse())
                                         DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.", R.style.AppCompatDialogStyle_Light);
@@ -1435,7 +1451,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             onBackPressed();
 
                                                             if(concessioModule == ConcessioModule.RELEASE_BRANCH)
-                                                                simplePulloutFragment.showReasonDialog(true);
+                                                                simplePulloutFragment.showReasonDialog(true, getModuleSetting(concessioModule).isRequire_document_reason()); // add settings
                                                         }
                                                     }
                                                 });
@@ -1444,8 +1460,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                             }
                                         }, "No", R.style.AppCompatDialogStyle_Light);
                                     }
+                                    return true;
                                 }
-                            }, "No", R.style.AppCompatDialogStyle_Light);
+                            })
+                            .positiveText("YES")
+                            .positiveColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
+                            .negativeText("NO")
+                            .negativeColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
+                            .widgetColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
+                            .show();
                 }
             } else {
                 if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
