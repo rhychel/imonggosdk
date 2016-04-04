@@ -11,4 +11,6 @@ import java.util.List;
 public class SimpleInventoryFragment extends SimpleProductsFragment {
 
     public SimpleInventoryFragment() { }
+
+
 }

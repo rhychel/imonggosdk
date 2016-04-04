@@ -1,18 +1,22 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.tonicartos.superslim.LayoutManager;
 
+import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.interfaces.OnItemLongClickListener;
 import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.widgets.AutofitRecyclerView;
 
 import java.util.List;
 
@@ -146,11 +150,31 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         initializeRecyclerView(context, rvProducts, true);
     }
 
-    public void initializeGridRecyclerView(Context context, RecyclerView rvProducts, int span) {
+    public void initializeGridRecyclerView(Context context, RecyclerView rvProducts, int span, boolean hasFixedSize) {
         gridLayoutManager = new GridLayoutManager(context, span);
 
         rvProducts.setLayoutManager(gridLayoutManager);
-        rvProducts.setHasFixedSize(true);
+        rvProducts.setHasFixedSize(hasFixedSize);
+    }
+
+    public void initializeGridRecyclerView(final RecyclerView rvProducts, boolean hasFixedSize) {
+        rvProducts.setHasFixedSize(hasFixedSize);
+        gridLayoutManager = (GridLayoutManager) rvProducts.getLayoutManager();
+        rvProducts.addItemDecoration(new RecyclerView.ItemDecoration() {
+            private Integer padding;
+
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                if(padding == null) {
+                    int totalWidth = parent.getWidth();
+                    int column = ((GridLayoutManager) rvProducts.getLayoutManager()).getSpanCount();
+                    int itemWidth = ((AutofitRecyclerView)rvProducts).getColumnWidth();
+                    padding = ((totalWidth / column) - itemWidth) / 2;
+                    padding = Math.max(0, padding);
+                }
+                outRect.set(padding, 0, padding * -1, 0);
+            }
+        });
     }
 
     public GridLayoutManager getGridLayoutManager() {

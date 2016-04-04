@@ -31,6 +31,7 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
     }
 
     public void moduleSelected(View view) {
+        Log.e("moduleSelected", "here");
         DashboardTile dashboardTile = new DashboardTile(ConcessioModule.STOCK_REQUEST, "Orders");
         if(view.getTag() != null) {
             dashboardTile = (DashboardTile) view.getTag();

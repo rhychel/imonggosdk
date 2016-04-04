@@ -58,6 +58,8 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
         View v;
         if(listingType == ListingType.BASIC)
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_sales_product_item, parent, false);
+        else if(listingType == ListingType.SALES_GRID)
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_tile, parent, false);
         else
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem2, parent, false);
 
@@ -84,6 +86,12 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                 if(hasSubtotal)
                     holder.tvSubtotal.setText(String.format("P%s", NumberTools.separateInCommas(subtotal)));
             }
+        }
+        else if(listingType == ListingType.SALES_GRID) {
+            holder.tvInventoryCount.setText(String.format("%1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+            holder.tvProductName.setText(Html.fromHtml(product.getName() + getSelectedProductItems().getUnitName(product).toLowerCase()));
+
+            holder.ivOverlay.setVisibility(getSelectedProductItems().hasSelectedProductItem(product)? View.VISIBLE : View.INVISIBLE);
         }
         else if(listingType == ListingType.ADVANCED_SALES) {
             Log.e("Product", product.getId()+"---");
@@ -181,7 +189,7 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
         public TextView tvSubtotal2;
         public LinearLayout llQuantity;
 
-        public ImageView ivStar;
+        public ImageView ivStar, ivOverlay;
 
         public View root;
         public ListViewHolder(View itemView) {
@@ -191,7 +199,8 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             ivProductImage = (NetworkImageView) itemView.findViewById(R.id.ivProductImage);
             tvProductName = (AutofitTextView) itemView.findViewById(R.id.tvProductName);
 
-            tvRetailPrice = (TextView) itemView.findViewById(R.id.tvRetailPrice);
+            if(listingType != ListingType.SALES_GRID)
+                tvRetailPrice = (TextView) itemView.findViewById(R.id.tvRetailPrice);
 
             if(listingType == ListingType.BASIC) {
                 tvSubtotal = (AutofitTextView) itemView.findViewById(R.id.tvSubtotal);
@@ -200,6 +209,12 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
 
                 ivProductImage.setDefaultImageResId(R.drawable.no_image);
                 ivProductImage.setErrorImageResId(R.drawable.no_image);
+            }
+            else if(listingType == ListingType.SALES_GRID) {
+                ivOverlay = (ImageView) itemView.findViewById(R.id.ivOverlay);
+                tvInventoryCount = (TextView) itemView.findViewById(R.id.tvInventoryCount);
+                ivProductImage.setDefaultImageResId(R.drawable.ic_tag_grey);
+                ivProductImage.setErrorImageResId(R.drawable.ic_tag_grey);
             }
             else {
                 ivStar = (ImageView) itemView.findViewById(R.id.ivStar);

@@ -9,9 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.crashlytics.android.Crashlytics;
+import com.j256.ormlite.stmt.UpdateBuilder;
 
 import net.nueca.concessioengine.activities.login.BaseLoginActivity;
 import net.nueca.concessioengine.activities.login.LoginActivity;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
@@ -19,16 +21,23 @@ import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
+import java.sql.SQLException;
+
 import io.fabric.sdk.android.Fabric;
 
+/**
+ * Created by gama on 21/03/2016.
+ * dizonwarehouse (c)2016
+ */
 public class WH_Login extends LoginActivity {
 
     @Override
     protected void initLoginEquipments() {
-        Fabric.with(this, new Crashlytics());
+        setAutoUpdateApp(false);
+        //Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
-        //setServer(Server.IRETAILCLOUD_NET);
-        //SettingTools.updateSettings(this, SettingsName.SERVERS, "{\"A1029\":\"rebisco\"}");
+        setServer(Server.IRETAILCLOUD_NET);
+        SettingTools.updateSettings(this, SettingsName.SERVERS, "{\"A1029\":\"rebisco\"}");
 
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
@@ -54,17 +63,35 @@ public class WH_Login extends LoginActivity {
     @Override
     protected void updateAppData() {
         super.updateAppData();
-        int []modulesToDownload = generateModules();
-        setModulesToSync(modulesToDownload);
 
-        getSyncModules().initializeTablesToSync(modulesToDownload);
+//        try {
+//            startSyncingImonggoModules();
+            int []modulesToDownload = generateModules();
+            setModulesToSync(modulesToDownload);
+
+            getSyncModules().initializeTablesToSync(modulesToDownload);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
     protected void showNextActivityAfterLogin() {
+        try {
+            UpdateBuilder<ModuleSetting, Integer> updater = getHelper().fetchObjectsInt(ModuleSetting.class).updateBuilder();
+            updater.updateColumnValue("is_enabled", false);
+
+            updater.update();
+
+            updater.updateColumnValue("is_enabled", true);
+            updater.where().in("module_type", ConcessioModule.RELEASE_BRANCH.toString(), ConcessioModule.RECEIVE_SUPPLIER.toString());
+            updater.update();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         finish();
-        Intent intent = new Intent(this, WH_Welcome.class/*(SettingTools.defaultBranch(this).equals("") ? WH_Welcome.class : WH_Dashboard.class)*/);
-        //C_Dashboard
+        Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? WH_Welcome.class : WH_Dashboard.class));
         startActivity(intent);
     }
 

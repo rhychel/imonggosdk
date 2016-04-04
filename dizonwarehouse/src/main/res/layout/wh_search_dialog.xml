@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:autofit="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              style="@style/WarehouseTheme.InputDialog"
+    >
+    <!--<me.grantland.widget.AutofitTextView
+        android:padding="3dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:text="Enter Search"
+        android:textSize="20sp"
+        android:singleLine="false"
+        android:maxLines="2"
+        android:ellipsize="end"
+        autofit:minTextSize="12sp"
+        android:id="@+id/atvTitle"
+        style="@style/TextView.ProductItem.Name"
+        android:textStyle="bold"
+        />-->
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:id="@+id/etSearch"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_alignBottom="@+id/textView3"
+        android:layout_toRightOf="@+id/textView3"
+        android:layout_toEndOf="@+id/textView3"
+        android:textSize="18sp"
+        android:gravity="left"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Not Found"
+        android:id="@+id/tvNotFound"
+        android:gravity="center"
+        android:textColor="#bfff0000"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:measureWithLargestChild="true"
+        android:gravity="right"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp">
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="Cancel"
+            android:id="@+id/btnCancel"
+            android:layout_gravity="right"
+            android:textSize="16sp"
+            android:textColor="?attr/colorAccent"/>
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="Search"
+            android:id="@+id/btnSearch"
+            android:textSize="16sp"
+            android:textColor="?attr/colorAccent"/>
+    </LinearLayout>
+</LinearLayout>

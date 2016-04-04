@@ -3,7 +3,14 @@ package net.nueca.imonggosdk.tools;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+
+import net.nueca.imonggosdk.R;
 
 /**
  * Created by rhymart on 8/22/15.
@@ -105,5 +112,56 @@ public class DialogTools<T> {
             public void onClick(DialogInterface dialogInterface, int selected) { }
         });
         dialog.show();
+    }
+
+    public static void showInputDialog(Context context, String title, String message,
+                                       String positiveText, final OnInputConfirmListener positiveCallback,
+                                       String negativeText, DialogInterface.OnClickListener negativeCallback) {
+        showInputDialog(context, title, message, null, positiveText, positiveCallback, negativeText, negativeCallback, NO_THEME);
+    }
+    public static void showInputDialog(Context context, String title,
+                                       String positiveText, final OnInputConfirmListener positiveCallback,
+                                       String negativeText, DialogInterface.OnClickListener negativeCallback) {
+        showInputDialog(context, title, null, null, positiveText, positiveCallback, negativeText, negativeCallback, NO_THEME);
+    }
+
+    public static void showInputDialog(Context context, String title,
+                                       String positiveText, final OnInputConfirmListener positiveCallback,
+                                       String negativeText, DialogInterface.OnClickListener negativeCallback, int theme) {
+        showInputDialog(context, title, null, null, positiveText, positiveCallback, negativeText, negativeCallback, theme);
+    }
+
+    public static void showInputDialog(Context context, String title, String message, String hint,
+                                       String positiveText, final OnInputConfirmListener positiveCallback,
+                                       String negativeText, DialogInterface.OnClickListener negativeCallback,
+                                       int theme) {
+        AlertDialog.Builder dialog = (theme == NO_THEME) ? new AlertDialog.Builder(context) : new AlertDialog.Builder(context, theme);
+        dialog.setTitle(title);
+        if(message != null)
+            dialog.setMessage(message);
+
+        View viewInflated = LayoutInflater.from(context).inflate(R.layout.imonggosdk_dialog_edittext, null, false);
+        // Set up the input
+        final EditText input = (EditText) viewInflated.findViewById(R.id.etInput);
+        if(hint != null)
+            input.setHint(hint);
+        dialog.setView(viewInflated);
+
+        dialog.setPositiveButton(positiveText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(positiveCallback != null)
+                    positiveCallback.onConfirm(input.getText().toString());
+            }
+        });
+        dialog.setNegativeButton(negativeText, negativeCallback);
+        dialog.setCancelable(false);
+        // Set up the input
+
+        dialog.show();
+    }
+
+    public interface OnInputConfirmListener {
+        void onConfirm(String text);
     }
 }

@@ -1,76 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical" android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@android:color/white">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@color/warehouse_background">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:src="@drawable/concessio_logo"
-        android:adjustViewBounds="true"
-        android:layout_marginLeft="88dp"
-        android:layout_marginTop="88dp"
-        android:layout_marginRight="88dp" />
-
-    <LinearLayout
-        android:orientation="vertical"
+    <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="36dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginRight="36dp">
+        android:layout_height="@dimen/action_bar_size_x2"
+        android:elevation="8dp"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:id="@+id/toolbar"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Hello, Bonnie Balingit!"
-            android:id="@+id/tvAgentName"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp"
-            android:textSize="20sp" />
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="400dp"
+                  android:layout_height="wrap_content"
+                  android:background="@android:color/white"
+                  android:layout_gravity="center"
+                  android:elevation="24dp"
+                  android:gravity="center">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:src="@drawable/concessio_logo"
+            android:adjustViewBounds="true"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginRight="100dp" />
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:layout_gravity="center_horizontal">
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="36dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginRight="36dp"
+            android:layout_marginBottom="36dp">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Choose a Branch"
-                android:id="@+id/textView23"
-                android:textColor="@color/secondary_text"
+                android:layout_height="64dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Hello, Bonnie Balingit!"
+                android:id="@+id/tvAgentName"
                 android:layout_gravity="center_horizontal"
-                android:textSize="13sp" />
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp"
+                android:textSize="20sp" />
 
-            <Spinner
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Choose a Branch"
+                    android:id="@+id/textView23"
+                    android:textColor="@color/secondary_text"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="13sp" />
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spBranch" />
+            </LinearLayout>
+
+            <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spBranch" />
+                android:text="BEGIN"
+                android:id="@+id/btnBegin"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="NOT YOU? LOGOUT"
+                android:id="@+id/btnNotYou"
+                android:layout_gravity="center_horizontal" />
         </LinearLayout>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="BEGIN"
-            android:id="@+id/btnBegin"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="18dp" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="NOT YOU? LOGOUT"
-            android:id="@+id/btnNotYou"
-            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>

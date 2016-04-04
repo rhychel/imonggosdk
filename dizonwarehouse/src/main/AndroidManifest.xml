@@ -2,17 +2,24 @@
 <manifest package="net.nueca.dizonwarehouse"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/LoginTheme">
+        android:theme="@style/WarehouseTheme">
         <activity
             android:name=".WH_Login"
+            android:theme="@style/LoginTheme"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -20,7 +27,18 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".WH_Welcome">
+        <activity android:name=".WH_Welcome"
+                  android:theme="@style/WelcomeTheme"
+                  android:screenOrientation="landscape">
+        </activity>
+        <activity android:name=".WH_Dashboard"
+                  android:screenOrientation="landscape">
+        </activity>
+        <activity android:name=".WH_Module"
+                  android:screenOrientation="landscape">
+        </activity>
+        <activity android:name=".WH_Finalize"
+                  android:screenOrientation="landscape">
         </activity>
     </application>
 

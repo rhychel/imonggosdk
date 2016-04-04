@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TabLayout.TextSize" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="WarehouseTheme" parent="AppTheme.Concessio.Light.NoActionBar">
+
+    </style>
+
+    <style name="WarehouseTheme.InputDialog" parent="AppCompatDialogStyle">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowMinWidthMajor">50%</item>
+        <item name="android:windowMinWidthMinor">50%</item>
+
+        <item name="android:textColorPrimary">@color/primary_textL</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorAccent">@color/primary</item>
+
+        <!--<item name="android:textColorPrimary">@color/primary_textL</item>-->
+        <item name="android:textColorSecondary">@color/primary</item>
+        <item name="android:textColorHint">@color/primary</item>
+        <item name="colorControlNormal">@color/primary_textL</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <!---->
+        <!--<item name="colorControlNormal">@color/primary</item>-->
+        <!--<item name="colorControlActivated">@color/primary</item>-->
+        <!--<item name="colorControlHighlight">@color/primary</item>-->
+    </style>
+</resources>

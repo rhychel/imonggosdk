@@ -1,6 +1,8 @@
 package net.nueca.concessioengine.fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -8,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +55,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.TimerTools;
+import net.nueca.imonggosdk.widgets.AutofitRecyclerView;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -232,7 +236,14 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 }
             });
 
-            productRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
+            if(listingType == ListingType.SALES_GRID) {
+                if(rvProducts instanceof AutofitRecyclerView)
+                    productRecyclerViewAdapter.initializeGridRecyclerView(rvProducts, true);
+                else
+                    productRecyclerViewAdapter.initializeGridRecyclerView(getActivity(), rvProducts, 4, false);
+            }
+            else
+                productRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
 
             rvProducts.setAdapter(productRecyclerViewAdapter);
             rvProducts.addOnScrollListener(rvScrollListener);
@@ -319,7 +330,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     @Override
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
         try {
-            if(listingType == ListingType.SALES || listingType == ListingType.ADVANCED_SALES) {
+            if(listingType == ListingType.SALES || listingType == ListingType.ADVANCED_SALES || listingType == ListingType.SALES_GRID) {
                 TimerTools.start("showQuantityDialog");
                 SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
                 simpleSalesQuantityDialog.setListPosition(position);
@@ -537,6 +548,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     }
 
     public void forceUpdateProductList(List<Product> productList) {
+        offset = 0l;
+        prevLast = 0;
+
         if(useRecyclerView)
             productRecyclerViewAdapter.updateList(productList);
         else
@@ -613,4 +627,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         }
     };
 
+    public void setSelectedCategory(int position) {
+        spCategories.setSelection(position);
+    }
 }

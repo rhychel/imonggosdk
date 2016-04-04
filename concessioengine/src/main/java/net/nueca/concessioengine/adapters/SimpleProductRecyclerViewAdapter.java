@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -53,6 +54,8 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         View v;
         if(listingType == ListingType.BASIC)
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem, parent, false);
+        else if(listingType == ListingType.SALES_GRID)
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_tile, parent, false);
         else
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_product_listitem2, parent, false);
 
@@ -71,6 +74,11 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         if(listingType == ListingType.BASIC) {
             viewHolder.tvProductName.setText(Html.fromHtml(product.getName() + getSelectedProductItems().getUnitName(product).toLowerCase()));
             viewHolder.tvQuantity.setText(getSelectedProductItems().getQuantity(product));
+        }
+        else if(listingType == ListingType.SALES_GRID) {
+            viewHolder.tvProductName.setText(product.getName());
+            viewHolder.ivOverlay.setVisibility(getSelectedProductItems().hasSelectedProductItem(product)? View.VISIBLE : View.INVISIBLE);
+            viewHolder.tvInventoryCount.setText(String.format("%1$s %2$s", product.getInStock(), product.getBase_unit_name()));
         }
         else {
             if(!hasSubtotal)
@@ -132,8 +140,10 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
         public AutofitTextView tvProductName, tvQuantity;
 
         public AutofitTextView tvInStock;
-        public TextView tvRetailPrice, tvSubtotal;
+        public TextView tvRetailPrice, tvSubtotal, tvInventoryCount;
         public LinearLayout llQuantity;
+
+        public ImageView ivOverlay;
 
         public View root;
 
@@ -142,7 +152,16 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
             root = itemView;
             ivProductImage = (NetworkImageView) itemView.findViewById(R.id.ivProductImage);
             tvProductName = (AutofitTextView) itemView.findViewById(R.id.tvProductName);
-            tvQuantity = (AutofitTextView) itemView.findViewById(R.id.tvQuantity);
+
+            if(listingType != ListingType.SALES_GRID) {
+                tvQuantity = (AutofitTextView) itemView.findViewById(R.id.tvQuantity);
+                ivProductImage.setDefaultImageResId(R.drawable.ic_tag_grey);
+                ivProductImage.setErrorImageResId(R.drawable.ic_tag_grey);
+            }
+            else {
+                ivProductImage.setDefaultImageResId(R.drawable.ic_image_photo_gray);
+                ivProductImage.setErrorImageResId(R.drawable.ic_image_photo_gray);
+            }
 
             if(listingType == ListingType.SALES) {
                 tvInStock = (AutofitTextView) itemView.findViewById(R.id.tvInStock);
@@ -150,9 +169,11 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
                 tvSubtotal = (TextView) itemView.findViewById(R.id.tvSubtotal);
                 llQuantity = (LinearLayout) itemView.findViewById(R.id.llQuantity);
             }
+            else if(listingType == ListingType.SALES_GRID) {
+                ivOverlay = (ImageView) itemView.findViewById(R.id.ivOverlay);
+                tvInventoryCount = (TextView) itemView.findViewById(R.id.tvInventoryCount);
+            }
 
-            ivProductImage.setDefaultImageResId(R.drawable.ic_tag_grey);
-            ivProductImage.setErrorImageResId(R.drawable.ic_tag_grey);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

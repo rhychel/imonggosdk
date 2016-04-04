@@ -5,4 +5,6 @@
     <dimen name="dropdownOffset">-56dp</dimen>
     <dimen name="dialogPadding">8dp</dimen>
     <dimen name="grid_column_width">96dp</dimen>
+
+    <dimen name="product_tile_dimens">144dp</dimen>
 </resources>

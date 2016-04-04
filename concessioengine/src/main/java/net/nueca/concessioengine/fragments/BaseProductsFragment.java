@@ -271,8 +271,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             if (lastItem == totalItemCount) {
                 if (prevLast != lastItem) {
                     offset += LIMIT;
-                    whenListEndReached(getProducts());
+                    //whenListEndReached(getProducts());
                     prevLast = lastItem;
+                    if(offset <= prevLast)
+                        whenListEndReached(getProducts());
                 }
             }
         }
@@ -297,16 +299,27 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             super.onScrolled(recyclerView, dx, dy);
 
             int visibleItemCount = rvProducts.getChildCount();
-            int totalItemCount = productRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
-            int firstVisibleItem = productRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
+            int totalItemCount;
+            int firstVisibleItem;
+
+            if(listingType == ListingType.SALES_GRID) {
+                totalItemCount = productRecyclerViewAdapter.getGridLayoutManager().getItemCount();
+                firstVisibleItem = productRecyclerViewAdapter.getGridLayoutManager().findFirstVisibleItemPosition();
+            }
+            else {
+                totalItemCount = productRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
+                firstVisibleItem = productRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
+            }
 
             int lastItem = firstVisibleItem + visibleItemCount;
 
             if(lastItem == totalItemCount) {
                 if(prevLast != lastItem) {
                     offset += LIMIT;
-                    whenListEndReached(getProducts());
+                    //whenListEndReached(getProducts());
                     prevLast = lastItem;
+                    if(offset <= prevLast)
+                        whenListEndReached(getProducts());
                 }
             }
         }
