@@ -1,6 +1,8 @@
 package net.nueca.concessioengine.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -127,10 +129,14 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 boolean shouldShow = false;
                 currentDayOfWeek = days.get(position).getDayOfWeek();
-                if(currentDayOfWeek == 0)
+                if(currentDayOfWeek == 0) {
                     shouldShow = simpleRoutePlanRecyclerViewAdapter.updateList(getCustomers());
-                else
+                    rvCustomers.addOnScrollListener(rvScrollListener);
+                }
+                else {
                     shouldShow = simpleRoutePlanRecyclerViewAdapter.updateList(renderRoutePlan(currentDayOfWeek));
+                    rvCustomers.removeOnScrollListener(rvScrollListener);
+                }
                 Log.e("shouldShow", shouldShow+"");
                 toggleNoItems(todayPosition == position ? "No customers today." : "No customers this "+days.get(position).getFullname()+".", shouldShow);
 
@@ -167,7 +173,13 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
     @Override
     protected void whenListEndReached(List<Customer> customers) {
         simpleRoutePlanRecyclerViewAdapter.addAll(customers);
-        simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
+        Handler handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
+            }
+        };
+        handler.sendEmptyMessageDelayed(0, 200);
     }
 
     private List<Customer> renderRoutePlan(int dayOfWeek) {
