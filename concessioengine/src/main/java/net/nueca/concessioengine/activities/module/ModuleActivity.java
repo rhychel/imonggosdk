@@ -454,6 +454,44 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return updated;
     }
 
+    private void processDocument(Document document, List<Product> productList) throws SQLException {
+        List<DocumentLine> documentLines = document.getDocument_lines();
+        for(DocumentLine documentLine : documentLines) {
+            Product product = getHelper().fetchIntId(Product.class).queryForId(documentLine.getProduct_id());
+            if(productList.indexOf(product) == -1)
+                productList.add(product);
+
+            SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+            String quantity = "0";
+            Unit unit = null;
+            if(documentLine.getUnit_id() != null)
+                unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
+            if(unit != null)
+                quantity = documentLine.getUnit_quantity().toString();
+            else {
+                unit = new Unit();
+                unit.setId(-1);
+                unit.setName(product.getBase_unit_name());
+                quantity = String.valueOf(documentLine.getQuantity());
+            }
+            Values values = new Values(unit, quantity);
+            values.setLine_no(documentLine.getLine_no());
+            selectedProductItem.addValues(values);
+            ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+        }
+    }
+
+    protected List<Product> processObject(Object object) throws SQLException {
+        List<Product> productList = new ArrayList<>();
+
+        if(object instanceof Document) {
+            Document document = (Document) object;
+            processDocument(document, productList);
+        }
+
+        return productList;
+    }
+
     protected List<Product> processOfflineData(OfflineData offlineData) throws SQLException {
         List<Product> productList = new ArrayList<>();
         if(offlineData.getType() == OfflineData.ORDER) {
@@ -486,30 +524,31 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         }
         else if(offlineData.getType() == OfflineData.DOCUMENT) {
             Document document = offlineData.getObjectFromData(Document.class);
-            List<DocumentLine> documentLines = document.getDocument_lines();
-            for(DocumentLine documentLine : documentLines) {
-                Product product = getHelper().fetchIntId(Product.class).queryForId(documentLine.getProduct_id());
-                if(productList.indexOf(product) == -1)
-                    productList.add(product);
-
-                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
-                String quantity = "0";
-                Unit unit = null;
-                if(documentLine.getUnit_id() != null)
-                    unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
-                if(unit != null)
-                    quantity = documentLine.getUnit_quantity().toString();
-                else {
-                    unit = new Unit();
-                    unit.setId(-1);
-                    unit.setName(product.getBase_unit_name());
-                    quantity = String.valueOf(documentLine.getQuantity());
-                }
-                Values values = new Values(unit, quantity);
-                values.setLine_no(documentLine.getLine_no());
-                selectedProductItem.addValues(values);
-                ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
-            }
+            processDocument(document, productList);
+//            List<DocumentLine> documentLines = document.getDocument_lines();
+//            for(DocumentLine documentLine : documentLines) {
+//                Product product = getHelper().fetchIntId(Product.class).queryForId(documentLine.getProduct_id());
+//                if(productList.indexOf(product) == -1)
+//                    productList.add(product);
+//
+//                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+//                String quantity = "0";
+//                Unit unit = null;
+//                if(documentLine.getUnit_id() != null)
+//                    unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
+//                if(unit != null)
+//                    quantity = documentLine.getUnit_quantity().toString();
+//                else {
+//                    unit = new Unit();
+//                    unit.setId(-1);
+//                    unit.setName(product.getBase_unit_name());
+//                    quantity = String.valueOf(documentLine.getQuantity());
+//                }
+//                Values values = new Values(unit, quantity);
+//                values.setLine_no(documentLine.getLine_no());
+//                selectedProductItem.addValues(values);
+//                ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+//            }
             Log.e("SelectedProductItems", ProductsAdapterHelper.getSelectedProductItems().size()+"");
             return productList;
         }

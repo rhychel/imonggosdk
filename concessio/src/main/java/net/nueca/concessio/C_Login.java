@@ -41,7 +41,7 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
         setServer(Server.REBISCO);
-        setAutoUpdateApp(true);
+        setAutoUpdateApp(false);
         /**
          *"payment_types"
          */
@@ -118,10 +118,6 @@ public class C_Login extends LoginActivity {
                 (EditText)findViewById(R.id.etEmail),
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
-
-        setEditTextAccountID("A1029");
-        setEditTextEmail("A1072A_OSS-1@A1029.com");
-        setEditTextPassword("password");
     }
 
     private void initializeApp() {

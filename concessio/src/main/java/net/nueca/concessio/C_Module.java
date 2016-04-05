@@ -419,7 +419,33 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     try {
                         SearchDRDialog searchDRDialog = new SearchDRDialog(this, getHelper(), getUser(), R.style.AppCompatDialogStyle_Light);
                         searchDRDialog.setTitle("Confirm Pullout");
-                        searchDRDialog.setBranchList(getBranches());
+                        searchDRDialog.setHasBranch(false);
+                        searchDRDialog.setConcessioModule(concessioModule);
+                        searchDRDialog.setDialogListener(new SearchDRDialog.SearchDRDialogListener() {
+                            @Override
+                            public boolean onCancel() {
+                                finish();
+                                return true;
+                            }
+
+                            @Override
+                            public void onSearch(String deliveryReceiptNo, Branch target_branch, Document document) {
+                                if(target_branch == null)
+                                    Log.e("target_branch", "is null");
+                                try {
+                                    simpleProductsFragment.setFilterProductsBy(processObject(document));
+                                    simpleProductsFragment.forceUpdateProductList(simpleProductsFragment.getFilterProductsBy());
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                                whenItemsSelectedUpdated();
+                            }
+
+                            @Override
+                            public void onManualReceive(String deliveryReceiptNo, Branch target_branch) {
+
+                            }
+                        });
                         searchDRDialog.show();
                     } catch (SQLException e) {
                         e.printStackTrace();

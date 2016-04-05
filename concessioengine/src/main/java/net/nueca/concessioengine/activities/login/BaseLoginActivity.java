@@ -96,15 +96,18 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 Log.e(TAG, "Successfully bindLoginModule Service and Activity");
                 mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
 
+                //isAutoUpdate()
                 if (isAutoUpdate() && isLoggedIn && !isUnlinked)
                     updateAppData(mSyncModules);
             } else {
                 Log.e(TAG, "Cannot bindLoginModule Service and Activity");
+                // isAutoUpdate()
                 if (isAutoUpdate() && isLoggedIn && !isUnlinked) {
                     showNextActivityAfterLogin();
                 }
             }
 
+            // isAutoUpdate()
             if (isAutoUpdate() && isLoggedIn && !isUnlinked)
                 updateAppData(mSyncModules);
         }
@@ -270,6 +273,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                 if (btnSignIn != null)
                                     btnSignIn.setEnabled(true);
 
+                                // isAutoUpdate()
                                 if (isAutoUpdate()) {
                                     if (mSyncModules == null) {
                                         Log.e(TAG, "syncModule is null ");
