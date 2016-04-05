@@ -2,6 +2,7 @@ package net.nueca.concessio_test;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -19,9 +20,11 @@ import io.fabric.sdk.android.Fabric;
  */
 public class C_Login extends LoginActivity {
 
+    private static String TAG = "C_Login";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e(TAG, "isLoggedIn: " + isLoggedIn() + " isUnlinked: " + isUnlinked() + " isAutoUpdate: " + isAutoUpdate());
         Fabric.with(this, new Crashlytics());
     }
 
@@ -32,7 +35,7 @@ public class C_Login extends LoginActivity {
         //setIsUsingDefaultLoginLayout(true);
         Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
-        setRequireObjectConcessioSettings(false                                              );
+        setRequireObjectConcessioSettings(false);
         SettingTools.updateSettings(this, SettingsName.SERVERS, "{\"A1029\":\"rebisco\"}");
 //        setServer(Server.REBISCO);
 
@@ -40,30 +43,29 @@ public class C_Login extends LoginActivity {
                 SettingsName.AUTO_UPDATE, false, "");
 
         setModulesToSync(
-                Table.USERS.ordinal(),
-/*                Table.BRANCH_USERS.ordinal(),
+                Table.USERS_ME.ordinal(),
+                /*Table.BRANCH_USERS.ordinal(),
                 Table.SETTINGS.ordinal(),
                 Table.PRODUCTS.ordinal(),
-                Table.UNITS.ordinal(),
+                Table.UNITS.ordinal(),*/
                 Table.CUSTOMER_CATEGORIES.ordinal(),
-                */Table.CUSTOMER_BY_SALESMAN.ordinal(),
+                Table.CUSTOMER_BY_SALESMAN.ordinal(),
                 Table.ROUTE_PLANS.ordinal(),
-                Table.ROUTE_PLANS_DETAILS.ordinal(),/*
-                Table.BRANCH_PRODUCTS.ordinal(),
+                Table.ROUTE_PLANS_DETAILS.ordinal()
+                /*Table.BRANCH_PRODUCTS.ordinal(),
                 Table.ACCOUNT_PRICES.ordinal(),
                 Table.DOCUMENTS.ordinal(),
                 Table.DOCUMENT_TYPES.ordinal(),
-                Table.DOCUMENT_PURPOSES.ordinal(),*/
-                /*Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
-                Table.PRICE_LISTS_DETAILS.ordinal()*/
-/*                Table.PAYMENT_TERMS.ordinal(),
+                Table.DOCUMENT_PURPOSES.ordinal(),
+                Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
+                Table.PRICE_LISTS_DETAILS.ordinal()
+                /*Table.PAYMENT_TERMS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
-*//*                Table.INVOICES.ordinal(),
                 Table.INVOICE_PURPOSES.ordinal(),*/
-                Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
+                /*Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS.ordinal(),
                 Table.SALES_PROMOTIONS_POINTS.ordinal(),
-                Table.SALES_PROMOTIONS_POINTS_DETAILS.ordinal());
+                Table.SALES_PROMOTIONS_POINTS_DETAILS.ordinal()*/);
     }
 
     @Override

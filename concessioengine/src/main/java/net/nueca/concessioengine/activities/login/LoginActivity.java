@@ -10,6 +10,7 @@ import android.widget.EditText;
 import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.DialogType;
+import net.nueca.imonggosdk.enums.LoginState;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.LoginListener;
@@ -30,14 +31,12 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     public static String TAG = "LoginActivity";
     private boolean isUsingDefaultLoginLayout = true;
 
-    public static boolean IS_AUTOUPDATE = false;
-
     /**
      * Shows login layout if the user is logged out
      * <p/>
      * if you want to customize login layout
      * you should extend this class and
-     * override this method and call this
+     * override this method and call this2
      * functions inside:
      * <p/>
      * 1. setContentView( your custom layout)
@@ -73,8 +72,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     protected void autoUpdateChecker() {
         // Account is Linked User is logged in
         if (!isUnlinked() && isLoggedIn()) {
-            // isAutoUpdate()
-            if (LoginActivity.IS_AUTOUPDATE && NetworkTools.isInternetAvailable(LoginActivity.this)) {
+            if (isAutoUpdate() && NetworkTools.isInternetAvailable(LoginActivity.this)) {
                 startSyncService();
             } else {
                 showNextActivityAfterLogin();
@@ -116,7 +114,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             setUnlinked(AccountTools.isUnlinked(this));
             setLoggedIn(AccountTools.isLoggedIn(getHelper()));
             setIsUsingDefaultLoginLayout(true);
-            if(getSession() == null) {
+            if (getSession() == null) {
                 setUnlinked(true);
             }
         } catch (SQLException e) {
@@ -182,7 +180,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
     @Override
     protected void showNextActivityAfterLogin() {
-
+        hideCustomDialog();
     }
 
     @Override
@@ -211,17 +209,16 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     }
 
     @Override
-    protected void showCustomDownloadDialog() {
+    protected void showCustomDownloadDialog(String title) {
         if (isUsingDefaultCustomDialogForSync()) {
             setIsUsingDefaultLoginLayout(true);
             //createNewCustomDialogFrameLayout(LoginActivity.this, getModulesToSync());
             createNewCustomDialogFrameLayout(getTableToSync(), LoginActivity.this);
             createNewCustomDialog(LoginActivity.this, R.style.LoginTheme_DialogFrameLayout);
-//            isAutoUpdate()
-            if(IS_AUTOUPDATE && isLoggedIn() && !isUnlinked())
-                setCustomDialogTitle(getString(R.string.FETCHING_MODULE_TITLE));
-            else
-                setCustomDialogTitle(getString(R.string.UPDATING_MODULE_TITLE));
+
+            setCustomDialogTitle(title);
+
+
             setCustomDialogContentView(getCustomDialogFrameLayout());
             setCustomDialogCancelable(false);
             showCustomDialog();

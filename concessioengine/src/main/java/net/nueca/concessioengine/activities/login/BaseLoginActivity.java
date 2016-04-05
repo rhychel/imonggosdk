@@ -167,18 +167,18 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * this is where you will builds the custom downloading
      * progress dialogs and etc.
      */
-    protected abstract void showCustomDownloadDialog();
+    protected abstract void showCustomDownloadDialog(String title);
 
     /**
      * This is where you will create your login layout
      * setContentView and align the ids in your layout
      * to this class.
-     * <p/>
+     * <p>
      * if you want to customize login layout
      * you should extend this class and
      * override this method and call this
      * functions inside:
-     * <p/>
+     * <p>
      * 1. setContentView( your custom layout)
      * 2. setLayoutEquipments( fill in the ids in your layout)
      */
@@ -223,6 +223,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setAutoUpdateApp(false);
+        try {
+            isLoggedIn = AccountTools.isLoggedIn(getHelper());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         super.onCreate(savedInstanceState);
         initLoginEquipments();
         loginChecker();
@@ -245,7 +251,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     public void startSyncingImonggoModules() throws SQLException {
         if (isSyncServiceBinded()) {
             setUpTableNamesForCustomDialog();
-            showCustomDownloadDialog();
+            showCustomDownloadDialog("Downloading");
 
             Log.e(TAG, "Starting Module Download");
             if (mSyncModules != null) {
@@ -395,11 +401,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     private void showOrHideCustomDialog(boolean choice) {
-        if (choice) {
-            customDialog.show();
-        } else {
-            customDialog.hide();
-        }
+        if (customDialog != null)
+            if (choice) {
+                customDialog.show();
+            } else {
+                customDialog.hide();
+            }
     }
 
     public void setIsUsingDefaultCustomDialogForSync(boolean choice) {
@@ -702,9 +709,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             if (!isUnlinked()) {
                 AccountTools.unlinkAccount(this, getHelper(), this);
                 setUnlinked(true);
-                setLoggedIn(false);
+                setLoggedIn(!isUnlinked());
+                setAutoUpdateApp(isAutoUpdate());
                 setDefaultBranch(BaseLoginActivity.this, "");
                 startSyncService();
+                deleteUserSessionData();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -843,6 +852,14 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
+    public LoginState getmLoginState() {
+        return mLoginState;
+    }
+
+    public void setmLoginState(LoginState mLoginState) {
+        this.mLoginState = mLoginState;
+    }
+
     protected Boolean isLoggedIn() {
         return isLoggedIn;
     }
@@ -893,6 +910,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     protected void setLoggedIn(Boolean isLoggedIn) {
+
         this.isLoggedIn = isLoggedIn;
     }
 
@@ -964,7 +982,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             } else {
                 try {
                     setUpTableNamesForCustomDialog();
-                    showCustomDownloadDialog();
+                    showCustomDownloadDialog("Updating");
 
                     mSyncModules.startFetchingModules();
                 } catch (SQLException e) {

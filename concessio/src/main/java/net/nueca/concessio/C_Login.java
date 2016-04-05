@@ -41,7 +41,7 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
         setServer(Server.REBISCO);
-        //setAutoUpdateApp(true);
+        setAutoUpdateApp(true);
         /**
          *"payment_types"
          */
@@ -133,7 +133,7 @@ public class C_Login extends LoginActivity {
             public void onSuccess(Table table, RequestType requestType, Object response) {
                 Toast.makeText(C_Login.this, "Success!", Toast.LENGTH_SHORT).show();
                 net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
-                Log.e("JSON", ((JSONObject) response).toString());
+                Log.e("JSON", response.toString());
                 SettingTools.updateSettings(C_Login.this, SettingsName.SERVERS, ((JSONObject) response).toString());
             }
 
