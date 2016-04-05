@@ -47,6 +47,7 @@ public class C_Login extends LoginActivity {
          */
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
+        setAutoUpdateApp(true);
     }
 
     @Override
@@ -118,10 +119,6 @@ public class C_Login extends LoginActivity {
                 (EditText)findViewById(R.id.etEmail),
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
-
-        setEditTextAccountID("A1029");
-        setEditTextEmail("A1072A_OSS-1@A1029.com");
-        setEditTextPassword("password");
     }
 
     private void initializeApp() {

@@ -30,6 +30,8 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     public static String TAG = "LoginActivity";
     private boolean isUsingDefaultLoginLayout = true;
 
+    public static boolean IS_AUTOUPDATE = false;
+
     /**
      * Shows login layout if the user is logged out
      * <p/>
@@ -71,7 +73,8 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     protected void autoUpdateChecker() {
         // Account is Linked User is logged in
         if (!isUnlinked() && isLoggedIn()) {
-            if (isAutoUpdate() && NetworkTools.isInternetAvailable(LoginActivity.this)) {
+            // isAutoUpdate()
+            if (LoginActivity.IS_AUTOUPDATE && NetworkTools.isInternetAvailable(LoginActivity.this)) {
                 startSyncService();
             } else {
                 showNextActivityAfterLogin();
@@ -214,7 +217,8 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             //createNewCustomDialogFrameLayout(LoginActivity.this, getModulesToSync());
             createNewCustomDialogFrameLayout(getTableToSync(), LoginActivity.this);
             createNewCustomDialog(LoginActivity.this, R.style.LoginTheme_DialogFrameLayout);
-            if(isAutoUpdate())
+//            isAutoUpdate()
+            if(IS_AUTOUPDATE && isLoggedIn() && !isUnlinked())
                 setCustomDialogTitle(getString(R.string.FETCHING_MODULE_TITLE));
             else
                 setCustomDialogTitle(getString(R.string.UPDATING_MODULE_TITLE));
