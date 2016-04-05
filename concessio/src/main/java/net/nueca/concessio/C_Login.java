@@ -41,13 +41,12 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
         setServer(Server.REBISCO);
-        setAutoUpdateApp(true);
+        setAutoUpdateApp(false);
         /**
          *"payment_types"
          */
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
-        setAutoUpdateApp(true);
     }
 
     @Override
