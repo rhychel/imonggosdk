@@ -78,6 +78,7 @@ public class SettingsActivity extends ModuleActivity {
 
         rvCustomers.setBackgroundResource(android.R.color.white);
 
+        assert getSupportActionBar() != null;
         setSupportActionBar(tbActionBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -252,6 +253,7 @@ public class SettingsActivity extends ModuleActivity {
         starPrinter.setSectionFirstPosition(sectionFirstPosition);
         starPrinter.setConcessioModule(ConcessioModule.PRINTER);
         starPrinter.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_STAR_PRINTER);
+
         if(StarIOPrinterTools.getTargetPrinter(this).equals(""))
             starPrinter.setValue("Not Connected!");
         else
@@ -260,7 +262,7 @@ public class SettingsActivity extends ModuleActivity {
         starPrinter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                List<PortInfo> btPortList = new ArrayList<PortInfo>();
+                List<PortInfo> btPortList;
                 try {
                     btPortList = StarIOPort.searchPrinter("BT:");
 
