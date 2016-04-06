@@ -21,6 +21,8 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.price.Price;
@@ -121,6 +123,36 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
                 }
             }
         });
+
+
+        List<CustomerCustomerGroupAssoc> customerCustomerGroupAssoc = null;
+        try {
+            customerCustomerGroupAssoc = getHelper().fetchObjects(CustomerCustomerGroupAssoc.class).queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+/*
+
+        Log.e(TAG, "CustomerCustomerGroup Size: " + customerCustomerGroupAssoc.size());
+
+        for(CustomerCustomerGroupAssoc cg : customerCustomerGroupAssoc) {
+            Log.e(TAG, "customerssss: " + cg.getCustomer().getId());
+            try {
+                Log.e(TAG, "customergroupxx: " + cg.getCustomer().getCustomerGroups(getHelper()));
+                List<CustomerGroup> customerGroups = cg.getCustomer().getCustomerGroups(getHelper());
+
+                Log.e(TAG, "Customer Group Size: " + customerGroups.size());
+
+                for (CustomerGroup c : customerGroups) {
+                    Log.e(TAG, "customerGroupxx: " + c.getId());
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }*/
+
 
 /*
         List<Product> products = Product.fetchAll(getHelper(), Product.class);

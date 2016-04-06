@@ -39,6 +39,7 @@ import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
+import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
@@ -48,6 +49,7 @@ import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -83,6 +85,7 @@ public abstract class BaseSyncService extends ImonggoService {
     protected Server mServer;
     protected List<BranchUserAssoc> branchUserAssoc;
     protected List<Integer> listOfPricelistIds;
+    protected List<Integer> listOfIdsPriceListSorted;
     protected List<Object> listPriceListStorage;
     protected List<? extends BaseTable> listOfIds;
     protected String from = "", to = "";
@@ -157,7 +160,7 @@ public abstract class BaseSyncService extends ImonggoService {
 
     public void initializeTablesToSync(int[] forSyncing) {
         if (forSyncing != null) {
-            Log.e("initializeTablesToSync", "--" + forSyncing.length);
+            //`Log.e("initializeTablesToSync", "--" + forSyncing.length);
 
             mModulesIndex = 0;
             mModulesToSync = new Table[forSyncing.length];
@@ -195,6 +198,11 @@ public abstract class BaseSyncService extends ImonggoService {
                 Extras extras = (Extras) o;
                 return getHelper().fetchObjects(Extras.class).queryBuilder().where().eq("id", extras.getId()).queryForFirst() != null;
             }
+            case ORDERS: {
+                Order order = (Order) o;
+                return getHelper().fetchObjects(Order.class).queryBuilder().where().eq("id", order.getId()).queryForFirst() != null;
+            }
+
             case USERS: {
                 User user = (User) o;
                 return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
@@ -292,6 +300,10 @@ public abstract class BaseSyncService extends ImonggoService {
                 return getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("id", branchProduct.getId()).queryForFirst() != null;
 
             }
+            case SALES_PROMOTIONS: {
+                net.nueca.imonggosdk.objects.salespromotion.SalesPromotion discount = (SalesPromotion) o;
+                return getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", discount.getId()) != null;
+            }
             case SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS: {
                 net.nueca.imonggosdk.objects.salespromotion.Discount discount = (Discount) o;
                 return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("id", discount.getId()) != null;
@@ -353,7 +365,6 @@ public abstract class BaseSyncService extends ImonggoService {
         return false;
     }
 
-
     @Override
     public IBinder onBind(Intent intent) {
         Log.i("onBind", "is called");
@@ -389,7 +400,6 @@ public abstract class BaseSyncService extends ImonggoService {
 
         int length = mModulesToSync.length;
         int newlength;
-
 
         newlength = length - mModulesIndex;
         Table[] temp = new Table[newlength];

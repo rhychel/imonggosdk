@@ -2,6 +2,8 @@ package net.nueca.concessioengine.dialogs;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,14 +16,19 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
+
 import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.widgets.ModifiedNumpad;
 
 import org.json.JSONException;
@@ -38,39 +45,25 @@ public class SearchDRDialog extends BaseAppCompatDialog {
     private Spinner spnBranch;
     private Button btnSearch, btnCancel, btnManual;
     private ModifiedNumpad npInput;
-    private TextView tvNotFound;
+    private TextView tvNotFound, tvBranchLabel;
 
     private SearchDRDialogListener dialogListener;
     private List<Branch> branchList;
     private ImonggoDBHelper2 dbHelper;
     private User user;
-    private boolean isNotFound = false;
+    private boolean isNotFound = false, hasKeypad = false, hasBranch = true;
 
     private Animation animation;
-
     public SearchDRDialog(Context context, ImonggoDBHelper2 dbHelper, User user) {
-        super(context);
+        this(context, dbHelper, user, DialogTools.NO_THEME);
+    }
+
+    public SearchDRDialog(Context context, ImonggoDBHelper2 dbHelper, User user, int theme) {
+        super(context, theme);
         this.dbHelper = dbHelper;
         this.user = user;
 
         branchList = new ArrayList<>();
-        try {
-            List<BranchUserAssoc> branchUserAssocs = dbHelper.fetchObjects(BranchUserAssoc.class).queryBuilder().where()
-                    .eq("user_id", this.user).query();
-
-            for(BranchUserAssoc branchUser : branchUserAssocs) {
-                if(branchUser.getBranch().getSite_type() != null &&
-                        branchUser.getBranch().getSite_type().toLowerCase().equals("warehouse"))
-                    continue;
-
-                if(branchUser.getBranch().getId() == this.user.getHome_branch_id())
-                    branchList.add(0, branchUser.getBranch());
-                else
-                    branchList.add(branchUser.getBranch());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -80,6 +73,9 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         super.setCancelable(false);
 
         tvNotFound = (TextView) super.findViewById(R.id.tvNotFound);
+        tvBranchLabel = (TextView) super.findViewById(R.id.tvBranchLabel);
+
+        // AutoCompleteEditView
         etDeliveryReceipt = (EditText) super.findViewById(R.id.etDeliveryReceipt);
         etDeliveryReceipt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -90,7 +86,8 @@ public class SearchDRDialog extends BaseAppCompatDialog {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 isNotFound = false;
-                tvNotFound.setVisibility(View.INVISIBLE);
+
+//                tvNotFound.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -104,14 +101,31 @@ public class SearchDRDialog extends BaseAppCompatDialog {
         btnCancel = (Button) super.findViewById(R.id.btnCancel);
         btnSearch = (Button) super.findViewById(R.id.btnSearch);
 
-        ArrayAdapter<Branch> branchArrayAdapter = new ArrayAdapter<Branch>(getContext(),
-                R.layout.simple_spinner_item, branchList);
+        if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT)
+            ((TextInputLayout) super.findViewById(R.id.tilDeliveryReceipt)).setHint("Pullout Reference Number");
+//            etDeliveryReceipt.setHint("Pullout Reference Number");
 
-        spnBranch.setAdapter(branchArrayAdapter);
+
+        tvNotFound.setText("Type the reference...");
+
+        if(hasBranch) {
+            ArrayAdapter<Branch> branchArrayAdapter = new ArrayAdapter<Branch>(getContext(),
+                    R.layout.spinner_dropdown_item_list_light, branchList);
+            spnBranch.setAdapter(branchArrayAdapter);
+        }
+        else {
+            spnBranch.setVisibility(View.GONE);
+            tvBranchLabel.setVisibility(View.GONE);
+        }
 
         npInput = (ModifiedNumpad) super.findViewById(R.id.npInput);
-        npInput.addTextHolder(etDeliveryReceipt, "etDeliveryReceipt", false, false, null);
-        npInput.getTextHolderWithTag("etDeliveryReceipt").setEnableDot(false);
+
+        if(hasKeypad) {
+            npInput.addTextHolder(etDeliveryReceipt, "etDeliveryReceipt", false, false, null);
+            npInput.getTextHolderWithTag("etDeliveryReceipt").setEnableDot(false);
+        }
+        else
+            npInput.setVisibility(View.GONE);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +151,18 @@ public class SearchDRDialog extends BaseAppCompatDialog {
                     e.printStackTrace();
                 }
 
+                if(document != null) {
+                    if(document.getIntransit_status().equals("Received")) {
+                        btnManual.setVisibility(View.GONE);
+                        tvNotFound.startAnimation(animation);
+                        tvNotFound.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_light));
+                        if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT)
+                            tvNotFound.setText("Document already confirmed.");
+                        else
+                            tvNotFound.setText("Document already received.");
+                    }
+                }
+
                 btnManual.setVisibility(isNotFound && etDeliveryReceipt.getText().length() > 0 ?
                         View.VISIBLE : View.INVISIBLE);
                 tvNotFound.setVisibility(isNotFound ? View.VISIBLE : View.INVISIBLE);
@@ -144,6 +170,8 @@ public class SearchDRDialog extends BaseAppCompatDialog {
                 Log.e("isNotFound", "" + isNotFound);
                 if (isNotFound) {
                     tvNotFound.startAnimation(animation);
+                    tvNotFound.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_light));
+                    tvNotFound.setText("Document not found.");
                     return;
                 }
 
@@ -172,17 +200,23 @@ public class SearchDRDialog extends BaseAppCompatDialog {
 
     public Document search(String drNo, Branch branch) throws SQLException {
         Log.e("search", drNo + " from " + dbHelper.fetchObjectsList(Document.class).size() + " document(s) for branch '"
-                + branch.getName() + "'");
+                + (branch != null ? branch.getName() : "no branch") + "'");
 
-        Document document = dbHelper.fetchObjects(Document.class).queryBuilder()
-                .where()
-                .eq("target_branch_id", branch.getId()).and()
-                .eq("reference", drNo).and()
-                .eq("intransit_status", "Intransit")
-                .queryForFirst();
+        QueryBuilder<Document, Integer> queryBuilder = dbHelper.fetchObjectsInt(Document.class).queryBuilder();
+
+        Where<Document, Integer> whereDoc = queryBuilder.where();
+        if(hasBranch)
+            whereDoc.eq("target_branch_id", branch.getId()).and();
+        whereDoc.eq("reference", drNo);//.and();
+//        whereDoc.eq("intransit_status", "Intransit");
+
+        queryBuilder.setWhere(whereDoc);
+
+        Document document = queryBuilder.queryForFirst();
+
 
         if(document != null)
-            Log.e("Reference " + drNo, document.getTarget_branch_id() + " -- " + branch.getId());
+            Log.e("Reference " + drNo, document.getTarget_branch_id() + " -- " + (branch != null ? branch.getId() : "branch is null"));
 
         isNotFound = document == null;
         return document;
@@ -196,7 +230,10 @@ public class SearchDRDialog extends BaseAppCompatDialog {
     @Override
     public void show() {
         super.show();
-        npInput.setIsFirstErase(true);
+        if(hasKeypad)
+            npInput.setIsFirstErase(true);
+        else
+            etDeliveryReceipt.requestFocus();
     }
 
     public SearchDRDialogListener getDialogListener() {
@@ -205,6 +242,18 @@ public class SearchDRDialog extends BaseAppCompatDialog {
 
     public void setDialogListener(SearchDRDialogListener dialogListener) {
         this.dialogListener = dialogListener;
+    }
+
+    public void setHasKeypad(boolean hasKeypad) {
+        this.hasKeypad = hasKeypad;
+    }
+
+    public void setHasBranch(boolean hasBranch) {
+        this.hasBranch = hasBranch;
+    }
+
+    public void setBranchList(List<Branch> branchList) {
+        this.branchList = branchList;
     }
 
     public interface SearchDRDialogListener {

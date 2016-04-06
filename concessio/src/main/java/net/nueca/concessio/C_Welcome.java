@@ -65,7 +65,7 @@ public class C_Welcome extends WelcomeActivity {
         });
 
         try {
-            tvAgentName.setText("Hello, "+getSession().getUser().getName());
+            tvAgentName.setText("Hello, "+getSession().getUser().getName()+"!");
         } catch (SQLException e) {
             e.printStackTrace();
         }

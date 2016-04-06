@@ -65,8 +65,16 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
     public void onBindViewHolder(SimpleProductRecyclerViewAdapter.ListViewHolder viewHolder, int position) {
         final Product product = getItem(position);
 
-        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
-        viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
+
+//        Log.e("Thumbnails", product.getThumbnail_url()+" <----");
+        if(product.getThumbnail_url() != null && !product.getThumbnail_url().trim().equals("")) {
+            String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
+                    ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
+            viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
+        }
+
+//        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(), ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
+//        viewHolder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
 
         if(listingType == ListingType.BASIC) {
             viewHolder.tvProductName.setText(Html.fromHtml(product.getName() + getSelectedProductItems().getUnitName(product).toLowerCase()));

@@ -1,6 +1,8 @@
 package net.nueca.concessioengine.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,9 +21,11 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleRoutePlanRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.Day;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
@@ -43,7 +47,6 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
 
     private RoutePlanListener routePlanListener;
 
-    private RecyclerView rvRoutePlan;
     private Toolbar tbActionBar;
     private Spinner spDays;
     private TextView tvNoRoutes;
@@ -85,12 +88,12 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.simple_route_plan_fragment_rv, container, false);
 
-        rvRoutePlan = (RecyclerView) view.findViewById(R.id.rvRoutePlan);
+        rvCustomers = (RecyclerView) view.findViewById(R.id.rvRoutePlan);
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         spDays = (Spinner) view.findViewById(R.id.spDays);
         tvNoRoutes = (TextView) view.findViewById(R.id.tvNoRoutes);
 
-        simpleRoutePlanRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvRoutePlan);
+        simpleRoutePlanRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvCustomers);
         simpleRoutePlanRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
@@ -100,17 +103,40 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
                     routePlanListener.itemClicked(simpleRoutePlanRecyclerViewAdapter.getItem(position)); // pass the customer
             }
         });
-        rvRoutePlan.setAdapter(simpleRoutePlanRecyclerViewAdapter);
+        rvCustomers.setAdapter(simpleRoutePlanRecyclerViewAdapter);
+        rvCustomers.addOnScrollListener(rvScrollListener);
+        setListScrollListener(new ListScrollListener() {
+            @Override
+            public void onScrolling() { }
+
+            @Override
+            public void onScrollStopped() { }
+
+            @Override
+            public int getTotalItemCount() {
+                return simpleRoutePlanRecyclerViewAdapter.getLinearLayoutManager().getItemCount();
+            }
+
+            @Override
+            public int getFirstVisibleItem() {
+                return simpleRoutePlanRecyclerViewAdapter.getLinearLayoutManager().findFirstVisibleItemPosition();
+            }
+        });
+
         spDays.setAdapter(daysAdapter);
         spDays.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 boolean shouldShow = false;
                 currentDayOfWeek = days.get(position).getDayOfWeek();
-                if(currentDayOfWeek == 0)
+                if(currentDayOfWeek == 0) {
                     shouldShow = simpleRoutePlanRecyclerViewAdapter.updateList(getCustomers());
-                else
+                    rvCustomers.addOnScrollListener(rvScrollListener);
+                }
+                else {
                     shouldShow = simpleRoutePlanRecyclerViewAdapter.updateList(renderRoutePlan(currentDayOfWeek));
+                    rvCustomers.removeOnScrollListener(rvScrollListener);
+                }
                 Log.e("shouldShow", shouldShow+"");
                 toggleNoItems(todayPosition == position ? "No customers today." : "No customers this "+days.get(position).getFullname()+".", shouldShow);
 
@@ -135,14 +161,25 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
 
 
     protected void toggleNoItems(String msg, boolean show) {
-        rvRoutePlan.setVisibility(show ? View.VISIBLE : View.GONE);
+        rvCustomers.setVisibility(show ? View.VISIBLE : View.GONE);
         tvNoRoutes.setVisibility(show ? View.GONE : View.VISIBLE);
         tvNoRoutes.setText(msg);
     }
 
+    public void refresh() {
+        simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void whenListEndReached(List<Customer> customers) {
-
+        simpleRoutePlanRecyclerViewAdapter.addAll(customers);
+        Handler handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
+            }
+        };
+        handler.sendEmptyMessageDelayed(0, 200);
     }
 
     private List<Customer> renderRoutePlan(int dayOfWeek) {
@@ -150,21 +187,33 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
         Day day = days.get(days.indexOf(new Day(dayOfWeek)));
         try {
             RoutePlan routePlan = getHelper().fetchIntId(RoutePlan.class).queryBuilder().where().isNull("status").and().eq("user_id", getSession().getUser()).queryForFirst();
+//            Log.e("RoutePlan", "has route plan?");
             if(routePlan == null)
                 return routes;
+//            Log.e("RoutePlan", "has route plan");
 
             List<RoutePlanDetail> routePlanDetails = getHelper().fetchForeignCollection(routePlan.getRoutePlanDetails().closeableIterator());
+//            Log.e("RoutePlan", "has route plan details?"+routePlanDetails.size()+" --- "+routePlan.getRoutePlanDetails().size());
+
+            Log.e("Week of the Year", Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+" day");
+//            Log.e("Week", Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)+" wk");
+            boolean isOdd = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) % 2 == 1;
             for(RoutePlanDetail routePlanDetail : routePlanDetails) {
+                Log.e("RoutePlan", "route plan details="+routePlanDetail.getFrequency()+"---");
                 if(!day.getShortname().equals(routePlanDetail.getRoute_day()))
                     continue;
-                if(searchKey != null && (!searchKey.trim().isEmpty() && !routePlanDetail.getCustomer().generateFullName().contains(searchKey))) {
+                if(searchKey != null && (!searchKey.trim().isEmpty() && !routePlanDetail.getCustomer().getSearchKey().toLowerCase().contains(searchKey))) {
                     Log.e("searchKey", searchKey+"----");
                     continue;
                 }
+
+                if(routePlanDetail.getFrequency().equals("BM2") && isOdd)
+                    continue;
                 routes.add(routePlanDetail.getCustomer());
                 Log.e("frequency", routePlanDetail.getFrequency());
                 Log.e("route day", routePlanDetail.getRoute_day());
                 Log.e("sequence", routePlanDetail.getSequence()+"");
+                Log.e("RoutePlan", "route plan details="+routePlanDetail.getFrequency()+"---");
                 if(routePlanDetail.getCustomer() == null)
                     Log.e("Customer", "is null");
                 else {

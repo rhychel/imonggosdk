@@ -14,6 +14,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.invoice.Discount;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.Settings;
@@ -62,6 +63,8 @@ public enum Table {
     SETTINGS(API_TYPE.API, "Settings", Settings.class, "settings"),
     APPLICATION_SETTINGS(API_TYPE.API, "Application Settings", ApplicationSettings.class, "application_settings"),
     ORDERS(API_TYPE.API, "Orders", Order.class, "orders"),
+    ORDERS_PURCHASES(API_TYPE.API, "Purchase Orders", Order.class, "orders_purchase_orders"),
+    ORDERS_STOCK_REQUEST(API_TYPE.API, "Stock Requests", Order.class, "orders_stock_requests"),
     POS_DEVICES(API_TYPE.API, "Pos Devices", null),
     DAILY_SALES(API_TYPE.API, "Daily Sales", DailySales.class, "daily_sales"),
     DOCUMENTS(API_TYPE.API, "Documents", Document.class, "documents"),
@@ -111,7 +114,7 @@ public enum Table {
     PRICE_LISTS_FROM_CUSTOMERS(API_TYPE.API, "Price Lists", PriceList.class, "price_lists_from_customers"),
     PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class, "price_lists"),
     BRANCH_PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class, "branch_price_lists"),
-    PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", PriceList.class, "price_lists_details"),
+    PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", Price.class, "price_lists_details"),
     SALES_PROMOTIONS(API_TYPE.API, "Sales Promotions", SalesPromotion.class, "sales_promotions"),
     SALES_PROMOTIONS_SALES_PUSH(API_TYPE.API, "Sales Push", SalesPromotion.class, "sales_promotions_sales_push"),
     SALES_PROMOTIONS_POINTS(API_TYPE.API, "Points", SalesPromotion.class, "sales_promotions_points"),
@@ -178,6 +181,9 @@ public enum Table {
 
         if(this == BRANCH_PRODUCTS)
             prerequisites = new Table[]{PRODUCTS, UNITS};
+        if(this == PRICE_LISTS || this == PRICE_LISTS_FROM_CUSTOMERS)
+            prerequisites = new Table[]{CUSTOMER_BY_SALESMAN};
+
         return prerequisites;
     }
 

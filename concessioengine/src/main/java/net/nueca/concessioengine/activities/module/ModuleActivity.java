@@ -214,6 +214,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 }
                 else if(branchUser.getBranch().getSite_type() != null && branchUser.getBranch().getSite_type().equals("warehouse"))
                     continue;
+                if(branchUser.getBranch().getStatus().equals("D"))
+                    continue;
                 if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
                     assignedBranches.add(0, branchUser.getBranch());
                 else
@@ -382,7 +384,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         pcount.customer(ProductsAdapterHelper.getSelectedCustomer()); // can be null
         pcount.document_type_code(documentTypeCode);
         if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH)
-            pcount.document_purpose_name(ProductsAdapterHelper.getReason().getName());
+            if(ProductsAdapterHelper.getReason() != null)
+                pcount.document_purpose_name(ProductsAdapterHelper.getReason().getName());
+        if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+            pcount.intransit_status(true);
         if(targetBranchId > -1)
             pcount.target_branch_id(targetBranchId);
         try {
@@ -449,6 +454,44 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return updated;
     }
 
+    private void processDocument(Document document, List<Product> productList) throws SQLException {
+        List<DocumentLine> documentLines = document.getDocument_lines();
+        for(DocumentLine documentLine : documentLines) {
+            Product product = getHelper().fetchIntId(Product.class).queryForId(documentLine.getProduct_id());
+            if(productList.indexOf(product) == -1)
+                productList.add(product);
+
+            SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+            String quantity = "0";
+            Unit unit = null;
+            if(documentLine.getUnit_id() != null)
+                unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
+            if(unit != null)
+                quantity = documentLine.getUnit_quantity().toString();
+            else {
+                unit = new Unit();
+                unit.setId(-1);
+                unit.setName(product.getBase_unit_name());
+                quantity = String.valueOf(documentLine.getQuantity());
+            }
+            Values values = new Values(unit, quantity);
+            values.setLine_no(documentLine.getLine_no());
+            selectedProductItem.addValues(values);
+            ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+        }
+    }
+
+    protected List<Product> processObject(Object object) throws SQLException {
+        List<Product> productList = new ArrayList<>();
+
+        if(object instanceof Document) {
+            Document document = (Document) object;
+            processDocument(document, productList);
+        }
+
+        return productList;
+    }
+
     protected List<Product> processOfflineData(OfflineData offlineData) throws SQLException {
         List<Product> productList = new ArrayList<>();
         if(offlineData.getType() == OfflineData.ORDER) {
@@ -481,30 +524,31 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         }
         else if(offlineData.getType() == OfflineData.DOCUMENT) {
             Document document = offlineData.getObjectFromData(Document.class);
-            List<DocumentLine> documentLines = document.getDocument_lines();
-            for(DocumentLine documentLine : documentLines) {
-                Product product = getHelper().fetchIntId(Product.class).queryForId(documentLine.getProduct_id());
-                if(productList.indexOf(product) == -1)
-                    productList.add(product);
-
-                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
-                String quantity = "0";
-                Unit unit = null;
-                if(documentLine.getUnit_id() != null)
-                    unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
-                if(unit != null)
-                    quantity = documentLine.getUnit_quantity().toString();
-                else {
-                    unit = new Unit();
-                    unit.setId(-1);
-                    unit.setName(product.getBase_unit_name());
-                    quantity = String.valueOf(documentLine.getQuantity());
-                }
-                Values values = new Values(unit, quantity);
-                values.setLine_no(documentLine.getLine_no());
-                selectedProductItem.addValues(values);
-                ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
-            }
+            processDocument(document, productList);
+//            List<DocumentLine> documentLines = document.getDocument_lines();
+//            for(DocumentLine documentLine : documentLines) {
+//                Product product = getHelper().fetchIntId(Product.class).queryForId(documentLine.getProduct_id());
+//                if(productList.indexOf(product) == -1)
+//                    productList.add(product);
+//
+//                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+//                String quantity = "0";
+//                Unit unit = null;
+//                if(documentLine.getUnit_id() != null)
+//                    unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
+//                if(unit != null)
+//                    quantity = documentLine.getUnit_quantity().toString();
+//                else {
+//                    unit = new Unit();
+//                    unit.setId(-1);
+//                    unit.setName(product.getBase_unit_name());
+//                    quantity = String.valueOf(documentLine.getQuantity());
+//                }
+//                Values values = new Values(unit, quantity);
+//                values.setLine_no(documentLine.getLine_no());
+//                selectedProductItem.addValues(values);
+//                ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+//            }
             Log.e("SelectedProductItems", ProductsAdapterHelper.getSelectedProductItems().size()+"");
             return productList;
         }

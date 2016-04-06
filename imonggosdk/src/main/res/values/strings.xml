@@ -5,7 +5,7 @@
     <!-- Requesting URLs -->
     <string name="API_URL_PLDTRETAILCLOUD">http://www.pldtretailcloud.com/system/api_url?account_id=%s</string>
     <string name="API_URL_IRETAILCLOUD_COM">http://www.iretailcloud.com/system/api_url?account_id=%s</string>
-    <string name="API_URL_IRETAILCLOUD_NET">http://www.iretailcloud.net/system/api_url?account_id=%s</string>
+    <string name="API_URL_IRETAILCLOUD_NET">http://www.iretailcloud.net:9000/system/api_url?account_id=%s</string>
     <string name="API_URL_IMONGGO">http://www.imonggo.com/system/api_url?account_id=%s</string>
     <string name="API_URL_IMONGGO_NET">http://www.imonggo.net:8888/system/api_url?account_id=%s</string>
     <string name="API_URL_PETRONDIS_COM">http://www.petrondis.com/system/api_url?account_id=%s</string>
@@ -51,6 +51,7 @@
     <string name="LOGIN_PROGRESS_DIALOG_CONTENT">Please wait...</string>
 
     <string name="FETCHING_MODULE_TITLE">Downloading...</string>
+    <string name="UPDATING_MODULE_TITLE">Updating...</string>
     <string name="FETCH_NO_MODULE_SELECTED_TITLE">Download Failed</string>
     <string name="FETCH_NO_MODULE_SELECTED">Modules to download is not set.</string>
     <string name="FETCH_NO_MODULE_POSTIVE_BUTTON">Alright</string>
