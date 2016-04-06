@@ -39,6 +39,7 @@ public class C_Login extends LoginActivity {
         SettingTools.updateSettings(this, SettingsName.SERVERS, "{\"A1029\":\"rebisco\"}");
 //        setServer(Server.REBISCO);
 
+
         SettingTools.updateSettings(C_Login.this,
                 SettingsName.AUTO_UPDATE, false, "");
 
