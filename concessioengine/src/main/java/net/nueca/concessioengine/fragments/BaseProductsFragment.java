@@ -398,6 +398,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         this.useSalesProductAdapter = useSalesProductAdapter;
     }
 
+    public List<Product> getFilterProductsBy() {
+        return filterProductsBy;
+    }
+
     public void setBranch(Branch branch) {
         this.branch = branch;
         ProductsAdapterHelper.setSelectedBranch(branch);
