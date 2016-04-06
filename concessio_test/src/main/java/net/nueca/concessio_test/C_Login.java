@@ -44,25 +44,28 @@ public class C_Login extends LoginActivity {
 
         setModulesToSync(
                 Table.USERS_ME.ordinal(),
+                Table.ORDERS.ordinal(),
+                Table.ORDERS_PURCHASES.ordinal(),
+                Table.ORDERS_STOCK_REQUEST.ordinal()
                 /*Table.BRANCH_USERS.ordinal(),
                 Table.SETTINGS.ordinal(),
                 Table.PRODUCTS.ordinal(),
-                Table.UNITS.ordinal(),*/
+                Table.UNITS.ordinal(),
                 Table.CUSTOMER_CATEGORIES.ordinal(),
                 Table.CUSTOMER_BY_SALESMAN.ordinal(),
                 Table.ROUTE_PLANS.ordinal(),
-                Table.ROUTE_PLANS_DETAILS.ordinal()
-                /*Table.BRANCH_PRODUCTS.ordinal(),
+                Table.ROUTE_PLANS_DETAILS.ordinal(),
+                Table.BRANCH_PRODUCTS.ordinal(),
                 Table.ACCOUNT_PRICES.ordinal(),
                 Table.DOCUMENTS.ordinal(),
                 Table.DOCUMENT_TYPES.ordinal(),
                 Table.DOCUMENT_PURPOSES.ordinal(),
                 Table.PRICE_LISTS_FROM_CUSTOMERS.ordinal(),
-                Table.PRICE_LISTS_DETAILS.ordinal()
-                /*Table.PAYMENT_TERMS.ordinal(),
+                Table.PRICE_LISTS_DETAILS.ordinal(),
+                Table.PAYMENT_TERMS.ordinal(),
                 Table.PAYMENT_TYPES.ordinal(),
-                Table.INVOICE_PURPOSES.ordinal(),*/
-                /*Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
+                Table.INVOICE_PURPOSES.ordinal(),
+                Table.SALES_PROMOTIONS_SALES_DISCOUNT.ordinal(),
                 Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS.ordinal(),
                 Table.SALES_PROMOTIONS_POINTS.ordinal(),
                 Table.SALES_PROMOTIONS_POINTS_DETAILS.ordinal()*/);

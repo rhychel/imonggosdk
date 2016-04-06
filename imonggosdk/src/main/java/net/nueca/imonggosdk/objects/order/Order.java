@@ -30,6 +30,8 @@ import java.util.List;
  */
 public class Order extends BaseTransactionTable3 {
     public static transient final int MAX_ORDERLINES_PER_PAGE = 50;
+    public static String ORDERTYPE_PURCHASE_ORDER = "PURCHASE_ORDER";
+    public static String ORDERTYPE_STOCK_REQUEST = "STOCK_REQUEST";
 
     @Expose
     @DatabaseField
