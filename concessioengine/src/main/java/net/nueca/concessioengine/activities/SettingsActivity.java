@@ -229,7 +229,6 @@ public class SettingsActivity extends ModuleActivity {
         // Star Printer
         appSettings.add(generateStarPrinter(sectionFirstPosition));
 
-
         ArrayAdapter<StarIOPaperSize> paperSizeAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, StarIOPaperSize.values());
         paperSizeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
         AppSettings starPrinter = new AppSettings();
@@ -246,9 +245,9 @@ public class SettingsActivity extends ModuleActivity {
 
         return appSettings;
     }
-
+    AppSettings starPrinter = new AppSettings();
     private AppSettings generateStarPrinter(int sectionFirstPosition) {
-        AppSettings starPrinter = new AppSettings();
+
         starPrinter.setHeader(false);
         starPrinter.setSectionFirstPosition(sectionFirstPosition);
         starPrinter.setConcessioModule(ConcessioModule.PRINTER);
@@ -257,26 +256,21 @@ public class SettingsActivity extends ModuleActivity {
         if(StarIOPrinterTools.getTargetPrinter(this).equals(""))
             starPrinter.setValue("Not Connected!");
         else
-            starPrinter.setValue(EpsonPrinterTools.targetPrinterName(this));
+            starPrinter.setValue(StarIOPrinterTools.getTargetPrinter(this));
 
         starPrinter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                List<PortInfo> btPortList;
-                try {
-                    btPortList = StarIOPort.searchPrinter("BT:");
 
-                    for(PortInfo pi : btPortList) {
-                        Log.e("BTs", "Model Name: "+pi.getModelName()+" || Mac:"+pi.getMacAddress()
-                                +" || Port:"+pi.getPortName());
-
-                        StarIOPrinterTools.updateTargetPrinter(SettingsActivity.this, pi.getPortName());
+                StarIOPrinterTools.showDiscoverDialog(SettingsActivity.this, new StarIOPrinterTools.StarIOPrinterListener() {
+                    @Override
+                    public void onPrinterSelected(PortInfo printer) {
+                        if(StarIOPrinterTools.getTargetPrinter(SettingsActivity.this).equals(""))
+                            starPrinter.setValue("Not Connected!");
+                        else
+                            starPrinter.setValue(StarIOPrinterTools.getTargetPrinter(SettingsActivity.this));
                     }
-
-                    StarIOPrinterTools.updatePaperType(SettingsActivity.this, StarIOPaperSize.p2INCH);
-                } catch (StarIOPortException e) {
-                    e.printStackTrace();
-                }
+                });
             }
         });
 

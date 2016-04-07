@@ -45,11 +45,15 @@ public class StarIOPrinterTools {
     public static String TARGET_PRINTER = "_star_target_printer";
     public static String PAPER_TYPE = "_star_paper_type";
 
-    public static void showDiscoverDialog(final Context context) {
-        showDiscoveryOptions(context);
+    public interface StarIOPrinterListener {
+        void onPrinterSelected(PortInfo printer);
     }
 
-    private static void showDiscoveryOptions(final Context context) {
+    public static void showDiscoverDialog(final Context context, @NonNull StarIOPrinterListener listener) {
+        showDiscoveryOptions(context, listener);
+    }
+
+    private static void showDiscoveryOptions(final Context context, final StarIOPrinterListener listener) {
 
         View viewSettings;
         AppCompatRadioButton rbAll, rbBluetooth, rbUSB;
@@ -70,7 +74,7 @@ public class StarIOPrinterTools {
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         if (printerType[0] == StarIOPrinterType.BLUETOOTH) {
                             if (BluetoothTools.isEnabled()) {
-                                new PortDiscovery(context).execute(printerType);
+                                new PortDiscovery(context, listener).execute(printerType);
                                 dialog.dismiss();
                             } else {
                                 new MaterialDialog.Builder(context)
@@ -95,7 +99,7 @@ public class StarIOPrinterTools {
 
                             }
                         } else {
-                            new PortDiscovery(context).execute(printerType);
+                            new PortDiscovery(context, listener).execute(printerType);
                             dialog.dismiss();
                         }
                     }
@@ -146,9 +150,11 @@ public class StarIOPrinterTools {
 
     public static class PortDiscovery extends AsyncTask<StarIOPrinterType, Void, ArrayList<PortInfo>> {
         private Context mContext;
+        private StarIOPrinterListener listener;
 
-        public PortDiscovery(Context mContext) {
+        public PortDiscovery(Context mContext, StarIOPrinterListener listener) {
             this.mContext = mContext;
+            this.listener = listener;
         }
 
         @Override
@@ -259,6 +265,7 @@ public class StarIOPrinterTools {
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             Log.e(TAG, "onClick: ");
 
+
                         }
                     }).build();
 
@@ -284,6 +291,8 @@ public class StarIOPrinterTools {
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    if (listener != null)
+                                        listener.onPrinterSelected(name);
                                     updateTargetPrinter(mContext, name.getPortName());
                                     discoveryDialog.dismiss();
                                 }
@@ -317,6 +326,7 @@ public class StarIOPrinterTools {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            Log.e(TAG, "Target printer is " + preferences.getString(pinfo.packageName + TARGET_PRINTER, ""));
             return preferences.getString(pinfo.packageName + TARGET_PRINTER, "");
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Target printer not found");
@@ -426,7 +436,7 @@ public class StarIOPrinterTools {
             }
 
 			/*
-			 * portable(ESC/POS) Printer Firmware Version 2.4 later, SM-S220i(Firmware Version 2.0 later)
+             * portable(ESC/POS) Printer Firmware Version 2.4 later, SM-S220i(Firmware Version 2.0 later)
 			 * Using Begin / End Checked Block method for preventing "data detective".
 			 * When sending large amounts of raster data, use Begin / End Checked Block method and adjust the value in the timeout in the "StarIOPort.getPort" in order to prevent "timeout" of the "endCheckedBlock method" while a printing.
 			 * If receipt print is success but timeout error occurs(Show message which is "There was no response of the printer within the timeout period."), need to change value of timeout more longer in "StarIOPort.getPort" method. (e.g.) 10000 -> 30000When use "Begin / End Checked Block Sample Code", do comment out "query commands Sample code".
