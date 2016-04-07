@@ -2071,6 +2071,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Extras customer_extras = null;
                                     PriceList priceList;
 
+                                    // --- ADDED by RHY
+                                    if(jsonObject.has("payment_terms_id")) {
+                                        String paymentTermsId = jsonObject.getString("payment_terms_id");
+                                        if(paymentTermsId != null && !paymentTermsId.equals("null")) {
+                                            PaymentTerms paymentTerms = PaymentTerms.fetchById(getHelper(), PaymentTerms.class, Integer.valueOf(paymentTermsId));
+                                            if(paymentTerms != null)
+                                                customer.setPaymentTerms(paymentTerms);
+                                        }
+                                    }
 
                                     // EXTRAS
                                     if (jsonObject.has(name_extras)) {

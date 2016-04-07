@@ -16,12 +16,14 @@ import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -59,26 +61,55 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
 
     public void renderCustomerDetails(boolean refreshList) {
         customerDetails.clear();
+        customerDetails.add(CustomerDetail.CODE.setValue(customer.getCode()));
         customerDetails.add(CustomerDetail.MOBILE_NO.setValue(customer.getMobile()));
         customerDetails.add(CustomerDetail.TEL_NO.setValue(customer.getTelephone()));
         customerDetails.add(CustomerDetail.COMPANY_NAME.setValue(customer.getCompany_name()));
         customerDetails.add(CustomerDetail.ADDRESS.setValue(customer.generateAddress()));
-        if(customer.getCustomerCategory() != null)
-            customerDetails.add(CustomerDetail.CUSTOMER_TYPE.setValue(customer.getCustomerCategory().getName()));
+        if(customer.getExtras().getCustomerCategory() != null)
+            customerDetails.add(CustomerDetail.CUSTOMER_TYPE.setValue(customer.getExtras().getCustomerCategory().getName()));
+        else
+            customerDetails.add(CustomerDetail.CUSTOMER_TYPE.setValue("None"));
+
         if(customer.getPaymentTerms() != null)
             customerDetails.add(CustomerDetail.TERMS.setValue(customer.getPaymentTerms().getName()));
+        else
+            customerDetails.add(CustomerDetail.TERMS.setValue("None"));
+
 //        try {
 ////            CustomerCategory customerCategory = getHelper().fetchIntId(CustomerCategory.class).queryBuilder().where().eq("id", customer.getCustomerCategory()).queryForFirst();
 //
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
-        if(getModuleSetting(ConcessioModule.CUSTOMERS).isHas_route_plan())
-            customerDetails.add(CustomerDetail.SALES_ROUTE);
+        if(getModuleSetting(ConcessioModule.CUSTOMERS).isHas_route_plan()) {
+            try {
+                List<RoutePlanDetail> routePlanDetails = getHelper().fetchForeignCollection(customer.getRoutePlanDetails().closeableIterator());
+                String route = "None";
+                HashMap<String, String> days = new HashMap<String, String>(){{
+                    put("SU", "Sunday");
+                    put("M", "Monday");
+                    put("TU", "Tuesday");
+                    put("W", "Wednesday");
+                    put("TH", "Thursday");
+                    put("F", "Friday");
+                    put("SA", "Saturday");
+                }};
+                for(RoutePlanDetail routePlanDetail : routePlanDetails) {
+                    if(routePlanDetail.getRoutePlan().getStatus() == null) {
+                        route = days.get(routePlanDetail.getRoute_day())+", "+routePlanDetail.getFrequency();
+                        break;
+                    }
+                }
+                customerDetails.add(CustomerDetail.SALES_ROUTE.setValue(route));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         customerDetails.add(CustomerDetail.DISCOUNT.setValue(customer.getDiscount_text()));
         customerDetails.add(CustomerDetail.AVAILABLE_POINTS.setValue(customer.getAvailable_points()));
 
-        if(!customer.getLastPurchase().isEmpty()) {
+        if(!customer.getLastPurchase().equals("None") && !customer.getLastPurchase().isEmpty()) {
             SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             fromDate.setTimeZone(TimeZone.getTimeZone("UTC"));
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM dd, yyyy, cccc h:mma");

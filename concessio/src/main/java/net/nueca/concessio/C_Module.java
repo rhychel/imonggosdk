@@ -111,6 +111,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     private boolean hasMenu = true, showsCustomer = false, // -- for the search
             changeToReview = false, refreshCustomerList = false;
 
+    private SearchDRDialog searchDRDialog;
+
     // for transaction details
     private String referenceNumber = "";
 
@@ -415,43 +417,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             case STOCK_REQUEST:
             case RECEIVE_BRANCH_PULLOUT: { // TODO for Petron
 
-                if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
-                    try {
-                        SearchDRDialog searchDRDialog = new SearchDRDialog(this, getHelper(), getUser(), R.style.AppCompatDialogStyle_Light);
-                        searchDRDialog.setTitle("Confirm Pullout");
-                        searchDRDialog.setHasBranch(false);
-                        searchDRDialog.setConcessioModule(concessioModule);
-                        searchDRDialog.setDialogListener(new SearchDRDialog.SearchDRDialogListener() {
-                            @Override
-                            public boolean onCancel() {
-                                finish();
-                                return true;
-                            }
-
-                            @Override
-                            public void onSearch(String deliveryReceiptNo, Branch target_branch, Document document) {
-                                if(target_branch == null)
-                                    Log.e("target_branch", "is null");
-                                try {
-                                    simpleProductsFragment.setFilterProductsBy(processObject(document));
-                                    simpleProductsFragment.forceUpdateProductList(simpleProductsFragment.getFilterProductsBy());
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                }
-                                whenItemsSelectedUpdated();
-                            }
-
-                            @Override
-                            public void onManualReceive(String deliveryReceiptNo, Branch target_branch) {
-
-                            }
-                        });
-                        searchDRDialog.show();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-
                 changeToReview = true;
                 initializeProducts();
                 simpleProductsFragment.setListingType(ListingType.SALES);
@@ -479,6 +444,49 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.flContent, simpleProductsFragment)
                         .commit();
+
+                if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
+                    simpleProductsFragment.setConcessioModule(concessioModule);
+                    finalizeFragment.setConcessioModule(concessioModule);
+                    try {
+                        searchDRDialog = new SearchDRDialog(this, getHelper(), getUser(), R.style.AppCompatDialogStyle_Light);
+                        searchDRDialog.setTitle("Confirm Pullout");
+                        searchDRDialog.setHasBranch(false);
+                        searchDRDialog.setConcessioModule(concessioModule);
+                        searchDRDialog.setDialogListener(new SearchDRDialog.SearchDRDialogListener() {
+                            @Override
+                            public boolean onCancel() {
+                                finish();
+                                return true;
+                            }
+
+                            @Override
+                            public void onSearch(String deliveryReceiptNo, Branch target_branch, Document document) {
+                                if(target_branch == null)
+                                    Log.e("target_branch", "is null");
+
+                                ProductsAdapterHelper.setWarehouse_id(document.getTarget_branch_id());
+                                ProductsAdapterHelper.setParent_document_id(document.getReturnId());
+
+                                try {
+                                    simpleProductsFragment.setFilterProductsBy(processObject(document));
+                                    simpleProductsFragment.forceUpdateProductList(simpleProductsFragment.getFilterProductsBy());
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                                whenItemsSelectedUpdated();
+                            }
+
+                            @Override
+                            public void onManualReceive(String deliveryReceiptNo, Branch target_branch) {
+
+                            }
+                        });
+                        searchDRDialog.show();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             break;
             case INVOICE: {
@@ -1253,6 +1261,56 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         @Override
         public void onClick(View v) {
             if (btn1.getText().toString().equals("SEND")) {
+                if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
+                    if(getWarehouse() != null) {
+                        DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Gson gson = new GsonBuilder().serializeNulls().create();
+
+                                Branch warehouse = Branch.fetchById(getHelper(), Branch.class, ProductsAdapterHelper.getWarehouse_id());
+                                Document document = generateDocument(C_Module.this, ProductsAdapterHelper.getWarehouse_id(), DocumentTypeCode.identify(concessioModule));
+
+                                try {
+                                    JSONObject jsonObject = new JSONObject(gson.toJson(document));
+                                    Log.e("jsonObject", jsonObject.toString());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                offlineData = new SwableTools.Transaction(getHelper())
+                                        .toSend()
+                                        .forBranch(warehouse)
+                                        .object(document)
+                                        .fromModule(concessioModule)
+                                        .queue();
+
+                                TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                transactionDialog.setTitle(concessioModule);
+                                String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
+                                transactionDialog.setInStock(dateTime);
+                                transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
+                                    @Override
+                                    public void whenDismissed() {
+                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
+                                        simpleProductsFragment.refreshList();
+                                        finalizeFragment.refreshList();
+                                        onBackPressed();
+
+                                        searchDRDialog.show();
+                                    }
+                                });
+                                transactionDialog.show();
+
+                            }
+                        }, "No", R.style.AppCompatDialogStyle_Light);
+                    }
+                    else
+                        DialogTools.showDialog(C_Module.this, "Ooops!", "You have no assigned warehouse on your account. Please contact admin.");
+                    return;
+                }
                 if (getBranches().size() == 1) {
                     final Branch branch = getBranches().get(0);
                     DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {

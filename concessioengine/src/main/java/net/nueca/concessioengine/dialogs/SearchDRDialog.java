@@ -160,6 +160,11 @@ public class SearchDRDialog extends BaseAppCompatDialog {
                             tvNotFound.setText("Document already confirmed.");
                         else
                             tvNotFound.setText("Document already received.");
+                        return;
+                    }
+                    if(document.getReturnId() < 0) {
+                        tvNotFound.setText("Document is not yet sent.");
+                        return;
                     }
                 }
 

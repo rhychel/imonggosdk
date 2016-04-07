@@ -264,7 +264,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         return !isManual || getReceivedProductItemList().size() > 0;
     }
 
-    protected void addProductOf(DocumentLine documentLine) {
+    protected void  addProductOf(DocumentLine documentLine) {
         Product product = documentLine.getProduct();
         SelectedProductItem selectedProductItem = getDisplayProductItemList()
                 .getSelectedProductItem(product);
