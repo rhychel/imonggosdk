@@ -216,7 +216,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
 
     public String getCode() {
         if(code == null || code.equals("null"))
-            return "None";
+            return "";
         return code;
     }
 
@@ -317,7 +317,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     public String getTelephone() {
         if(telephone != null)
             return telephone;
-        return "None";
+        return "";
     }
 
     public void setTelephone(String telephone) {
@@ -376,7 +376,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
 
     public String getDiscount_text() {
         if(discount_text.equals(""))
-            return "None";
+            return "";
         return discount_text;
     }
 
@@ -687,7 +687,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return "None";
+        return "";
     }
 
     public Invoice getLastInvoice() {

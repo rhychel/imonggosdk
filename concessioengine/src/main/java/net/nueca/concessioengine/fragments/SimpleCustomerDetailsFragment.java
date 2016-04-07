@@ -61,9 +61,9 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
 
     public void renderCustomerDetails(boolean refreshList) {
         customerDetails.clear();
-        customerDetails.add(CustomerDetail.CODE.setValue(customer.getCode()));
-        customerDetails.add(CustomerDetail.MOBILE_NO.setValue(customer.getMobile()));
-        customerDetails.add(CustomerDetail.TEL_NO.setValue(customer.getTelephone()));
+        customerDetails.add(CustomerDetail.CODE.setValue(customer.getCode().isEmpty() ? "None" : customer.getCode()));
+        customerDetails.add(CustomerDetail.MOBILE_NO.setValue(customer.getMobile().isEmpty() ? "None" : customer.getMobile()));
+        customerDetails.add(CustomerDetail.TEL_NO.setValue(customer.getTelephone().isEmpty() ? "None" : customer.getTelephone()));
         customerDetails.add(CustomerDetail.COMPANY_NAME.setValue(customer.getCompany_name()));
         customerDetails.add(CustomerDetail.ADDRESS.setValue(customer.generateAddress()));
         if(customer.getExtras().getCustomerCategory() != null)
@@ -106,10 +106,10 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
                 e.printStackTrace();
             }
         }
-        customerDetails.add(CustomerDetail.DISCOUNT.setValue(customer.getDiscount_text()));
+        customerDetails.add(CustomerDetail.DISCOUNT.setValue(customer.getDiscount_text().isEmpty() ? "None" : customer.getDiscount_text()));
         customerDetails.add(CustomerDetail.AVAILABLE_POINTS.setValue(customer.getAvailable_points()));
 
-        if(!customer.getLastPurchase().equals("None") && !customer.getLastPurchase().isEmpty()) {
+        if(!customer.getLastPurchase().isEmpty()) {
             SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             fromDate.setTimeZone(TimeZone.getTimeZone("UTC"));
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM dd, yyyy, cccc h:mma");
@@ -123,7 +123,7 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
             }
         }
         else
-            customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS.setValue(customer.getLastPurchase()));
+            customerDetails.add(CustomerDetail.LAST_PURCHASE_DETAILS.setValue("None"));
         if(refreshList) {
             if(setupActionBar != null)
                 setupActionBar.setupActionBar(tbActionBar);

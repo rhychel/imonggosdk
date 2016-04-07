@@ -551,8 +551,8 @@ public class InvoiceTools {
         }
 
         public void addPayment(InvoicePayment payment) {
-            double balance = getRemaining().doubleValue();
-            double tender = payment.getTender();
+            double balance = NumberTools.formatDouble(getRemaining().doubleValue(), decimalPlace);
+            double tender = NumberTools.formatDouble(payment.getTender(), decimalPlace);
 
             if(tender <= balance)
                 payment.setAmount(tender);
@@ -665,7 +665,7 @@ public class InvoiceTools {
                 Double total = 0d;
                 for(InvoicePayment payment : cmPayments)
                     if(payment != null)
-                        total += payment.getAmount();
+                        total += Math.abs(payment.getAmount());
                 cmPayment.setAmount(total);
                 cmPayment.setTender(total);
                 if(total == 0d)
@@ -677,7 +677,7 @@ public class InvoiceTools {
                 Double total = 0d;
                 for(InvoicePayment payment : rsPayments)
                     if(payment != null)
-                        total += payment.getAmount();
+                        total += Math.abs(payment.getAmount());
                 rspPayment.setAmount(total);
                 rspPayment.setTender(total);
                 if(total == 0d)
@@ -685,10 +685,20 @@ public class InvoiceTools {
             }
 
             List<InvoicePayment> returnsPayments = new ArrayList<>();
-            if(cmPayment != null)
+            if(cmPayment != null) {
                 returnsPayments.add(cmPayment);
-            if(rspPayment != null)
+                InvoicePayment clone = new InvoicePayment.Builder().payment_type_id(creditMemo.getId()).build();
+                clone.setTender(cmPayment.getTender() * -1);
+                clone.setAmount(cmPayment.getAmount() * -1);
+                returnsPayments.add(clone);
+            }
+            if(rspPayment != null) {
                 returnsPayments.add(rspPayment);
+                InvoicePayment clone = new InvoicePayment.Builder().payment_type_id(rsSlip.getId()).build();
+                clone.setTender(rspPayment.getTender() * -1);
+                clone.setAmount(rspPayment.getAmount() * -1);
+                returnsPayments.add(clone);
+            }
             Log.e("RETURNS PAYMENTS", "size "+(returnsPayments.size()));
             return returnsPayments;
         }
