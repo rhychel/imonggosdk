@@ -166,6 +166,11 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                         Toast.makeText(getContext(), "Tender payment cannot be empty.", Toast.LENGTH_LONG).show();
                         return;
                     }
+                    PaymentType paymentType = (PaymentType) spnPaymentType.getSelectedItem();
+                    if(paymentType.getName().equals("Rewards") && availablePoints <= 0d) {
+                        Toast.makeText(getContext(), "You have no available points to use a payment.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
                     if(listener != null)
                         listener.onAddPayment((PaymentType) spnPaymentType.getSelectedItem(), etPayment.getText().toString(), generateExtrasForCheck());
                     dismiss();

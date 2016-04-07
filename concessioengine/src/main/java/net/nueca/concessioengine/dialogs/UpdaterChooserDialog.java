@@ -141,16 +141,26 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
             holder.cbSelected.setEnabled(getItem(position).isEnabled());
         }
 
-        private void renderPrerequisites(Table table, boolean isChecked) {
+        private List<Integer> renderPrerequisites(Table table, boolean isChecked) {
+            List<Integer> indeces = new ArrayList<>();
+
+            Log.e("renderPrerequisites", isChecked+"");
+            UpdateTable parent = new UpdateTable(table);
+            int indexOf = getList().indexOf(parent);
+            getItem(indexOf).setSelected(isChecked);
+
             for(Table preq : table.getPrerequisites()) {
                 UpdateTable comp = new UpdateTable(preq);
-                int indexOf = getList().indexOf(comp);
+                indexOf = getList().indexOf(comp);
+                indeces.add(indexOf);
                 if(indexOf > -1) {
-                    getItem(indexOf).setForcedSelected(true);
+//                    getItem(indexOf).setForcedSelected(true);
                     getItem(indexOf).setSelected(isChecked);
                     getItem(indexOf).setEnabled(!isChecked);
                 }
             }
+
+            return indeces;
         }
 
         @Override
@@ -171,12 +181,10 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         int position = (int)buttonView.getTag();
-                        if(getItem(position).isForcedSelected()) {
-                            getItem(position).setForcedSelected(false);
-                            return;
-                        }
+
                         getItem(position).setSelected(isChecked);
                         if(getItem(position).getTable() == Table.ALL) {
+                            Log.e("all is selected", "true");
                             for(int i = 1;i < getList().size();i++) {
                                 getItem(i).setSelected(isChecked);
                                 getItem(i).setEnabled(!isChecked);
@@ -185,19 +193,22 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
                                 @Override
                                 public void handleMessage(Message msg) {
                                     super.handleMessage(msg);
-                                    notifyDataSetChanged();
+                                    for(int i = 1;i < getList().size();i++)
+                                        notifyItemChanged(i);
                                 }
                             };
                             handler.sendEmptyMessageDelayed(0, 100);
                         }
                         else if(getItem(position).getTable().getPrerequisites() != null) {
-                            renderPrerequisites(getItem(position).getTable(), isChecked);
-                            getItem(position).setForcedSelected(true);
+                            Log.e(getItem(position).getTable().getStringName(), "true + "+getItem(position).getTable().getPrerequisites().length);
+                            final List<Integer> preqs = renderPrerequisites(getItem(position).getTable(), isChecked);
+//                            getItem(position).setForcedSelected(true);
                             Handler handler = new Handler(){
                                 @Override
                                 public void handleMessage(Message msg) {
                                     super.handleMessage(msg);
-                                    notifyDataSetChanged();
+                                    for(Integer index : preqs)
+                                        notifyItemChanged(index);
                                 }
                             };
                             handler.sendEmptyMessageDelayed(0, 100);

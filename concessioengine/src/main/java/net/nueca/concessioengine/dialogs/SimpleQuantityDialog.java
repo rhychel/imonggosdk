@@ -29,6 +29,7 @@ import java.util.Calendar;
  * Created by rhymart on 7/16/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 public class SimpleQuantityDialog extends BaseQuantityDialog {
 
     private Spinner spUnits, spBrands;

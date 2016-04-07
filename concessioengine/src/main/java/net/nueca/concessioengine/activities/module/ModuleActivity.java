@@ -388,6 +388,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 pcount.document_purpose_name(ProductsAdapterHelper.getReason().getName());
         if(concessioModule == ConcessioModule.RELEASE_BRANCH)
             pcount.intransit_status(true);
+        if(ProductsAdapterHelper.getParent_document_id() > -1)
+            pcount.parent_document_id(ProductsAdapterHelper.getParent_document_id());
         if(targetBranchId > -1)
             pcount.target_branch_id(targetBranchId);
         try {
@@ -474,7 +476,29 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 unit.setName(product.getBase_unit_name());
                 quantity = String.valueOf(documentLine.getQuantity());
             }
-            Values values = new Values(unit, quantity);
+            Values values = null;
+            if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
+                ExtendedAttributes extendedAttributes = new ExtendedAttributes(0d, Double.valueOf(quantity));
+                values = new Values();
+                Log.e("Unit", unit.getName()+" == "+unit.getId());
+                if(documentLine.getUnit_name() != null)
+                    values.setUnit_name(documentLine.getUnit_name());
+                if(documentLine.getUnit_content_quantity() != null)
+                    values.setUnit_content_quantity(documentLine.getUnit_content_quantity());
+                if(documentLine.getUnit_retail_price() != null)
+                    values.setUnit_retail_price(documentLine.getUnit_retail_price());
+                if(documentLine.getUnit_quantity() != null)
+                    values.setUnit_quantity(""+documentLine.getUnit_quantity());
+
+                if(unit.getId() == -1)
+                    values.setRetail_price(product.getRetail_price());
+                else
+                    values.setRetail_price(unit.getRetail_price());
+
+                values.setValue("0.0", unit, extendedAttributes);
+            }
+            else
+                values = new Values(unit, quantity);
             values.setLine_no(documentLine.getLine_no());
             selectedProductItem.addValues(values);
             ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
