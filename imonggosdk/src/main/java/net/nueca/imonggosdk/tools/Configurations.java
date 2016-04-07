@@ -41,6 +41,8 @@ public class Configurations {
             put(Table.SETTINGS, "settings.json");
             put(Table.APPLICATION_SETTINGS, "application_settings");
             put(Table.ORDERS, "orders.json");
+            put(Table.ORDERS_PURCHASES, "orders.json");
+            put(Table.ORDERS_STOCK_REQUEST, "orders.json");
             put(Table.POS_DEVICES, "pos_devices.json");
             put(Table.DAILY_SALES, "daily_sales.json");
             put(Table.DOCUMENTS, "documents.json");
@@ -97,6 +99,8 @@ public class Configurations {
             put(Table.SETTINGS, "settings");
             put(Table.APPLICATION_SETTINGS, "application_settings");
             put(Table.ORDERS, "orders");
+            put(Table.ORDERS_PURCHASES, "orders_purchases");
+            put(Table.ORDERS_STOCK_REQUEST, "orders_stock_request");
             put(Table.POS_DEVICES, "pos_devices");
             put(Table.DAILY_SALES, "daily_sales");
             put(Table.DOCUMENTS, "documents");

@@ -521,9 +521,7 @@ public class EpsonPrinterTools {
                 language.add(e.getName());
             }
         }
-
         return language;
-
     }
 
     public static List<String> getFilterTypes() {
@@ -587,7 +585,7 @@ public class EpsonPrinterTools {
                         mPrinterNameList = new ArrayList<>();
                         mPrinterListAdapter = new ArrayAdapter<>(context, R.layout.textview_printername, mPrinterNameList);
                         mPrinterListAdapter.setDropDownViewResource(R.layout.textview_printername);
-                        mTargetPrinterList = new ArrayList<String>();
+                        mTargetPrinterList = new ArrayList<>();
 
                         final MaterialDialog discoverDialog = new MaterialDialog.Builder(context)
                                 .customView(R.layout.discovered_printer_customview, false)

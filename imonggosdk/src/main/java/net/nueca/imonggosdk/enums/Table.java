@@ -63,6 +63,8 @@ public enum Table {
     SETTINGS(API_TYPE.API, "Settings", Settings.class, "settings"),
     APPLICATION_SETTINGS(API_TYPE.API, "Application Settings", ApplicationSettings.class, "application_settings"),
     ORDERS(API_TYPE.API, "Orders", Order.class, "orders"),
+    ORDERS_PURCHASES(API_TYPE.API, "Purchase Orders", Order.class, "orders_purchase_orders"),
+    ORDERS_STOCK_REQUEST(API_TYPE.API, "Stock Requests", Order.class, "orders_stock_requests"),
     POS_DEVICES(API_TYPE.API, "Pos Devices", null),
     DAILY_SALES(API_TYPE.API, "Daily Sales", DailySales.class, "daily_sales"),
     DOCUMENTS(API_TYPE.API, "Documents", Document.class, "documents"),
