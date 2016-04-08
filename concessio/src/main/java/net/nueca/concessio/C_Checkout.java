@@ -162,6 +162,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     Invoice invoice = generateInvoice();
 
+                    Log.e("INVOICE 1 ~ >>", invoice.toJSONString());
+
                     // Print
                     if(getAppSetting().isCan_print()) {
                         if(EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
@@ -189,7 +191,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     transactionDialog.show();
 
-//                    invoice.setStatus("S"); TODO Status
+                    Log.e("INVOICE 2 ~ >>", invoice.toJSONString());
+
+                    invoice.setStatus("S"); // TODO Status
                     if(!isLayaway) {
                         offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()
@@ -199,6 +203,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                 .queue();
                     } else {
                         Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
+                        invoice.setBranch(branch);
                         invoice.updateTo(getHelper());
                         offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()
@@ -222,7 +227,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             ProductsAdapterHelper.getDecimalPlace())));
                     customer.updateTo(getHelper());
 
-                    Log.e("INVOICE", invoice.toJSONString());
+                    Log.e("INVOICE ~ Full", invoice.toJSONString());
                 }
             }
             else if(v.getId() == R.id.btn2) { /** PARTIAL **/
@@ -277,6 +282,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                     .queue();
                         } else {
                             Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
+                            invoice.setBranch(branch);
                             invoice.updateTo(getHelper());
                             offlineData = new SwableTools.Transaction(getHelper())
                                     .toSend()
@@ -301,7 +307,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         customer.updateTo(getHelper());
 
                         Gson gson = new Gson();
-                        Log.e("INVOICE", gson.toJson(invoice));
+                        Log.e("INVOICE ~ Partial", gson.toJson(invoice));
                     }
                 }, "No", R.style.AppCompatDialogStyle_Light);
             }
@@ -505,9 +511,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add("--------------------------------".getBytes());
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
 
-                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.PaymentsComputation();
-                paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
-                paymentsComputation.addAllPayments(invoice.getPayments());
+                InvoiceTools.PaymentsComputation paymentsComputation = checkoutFragment.getComputation();
+                //paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
+                //paymentsComputation.addAllPayments(invoice.getPayments());
 
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
                 data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\r\n").getBytes());
@@ -724,9 +730,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             printer.addText("--------------------------------");
                             printer.addTextAlign(Printer.ALIGN_LEFT);
 
-                            InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.PaymentsComputation();
-                            paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
-                            paymentsComputation.addAllPayments(invoice.getPayments());
+                            InvoiceTools.PaymentsComputation paymentsComputation = checkoutFragment.getComputation();
+                            //paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
+                            //paymentsComputation.addAllPayments(invoice.getPayments());
 
                             printer.addText(EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\n");
                             printer.addText(EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\n");

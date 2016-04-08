@@ -346,6 +346,14 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setHasInvoicePurpose(isReturnItems);
                 simpleSalesQuantityDialog.setHasExpiryDate(isReturnItems);
                 simpleSalesQuantityDialog.setHasBadStock(isReturnItems);
+
+                if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
+                    simpleSalesQuantityDialog.setHasStock(false);
+                    simpleSalesQuantityDialog.setHasPrice(false);
+                    simpleSalesQuantityDialog.setUnitDisplay(true);
+                    simpleSalesQuantityDialog.setHasExpectedQty(true);
+                }
+
                 simpleSalesQuantityDialog.setInvoicePurposeList(InvoicePurpose.fetchAll(getHelper(), InvoicePurpose.class));
 
                 double subtotal = product.getRetail_price() * Double.valueOf(productRecyclerViewAdapter.getSelectedProductItems().getQuantity

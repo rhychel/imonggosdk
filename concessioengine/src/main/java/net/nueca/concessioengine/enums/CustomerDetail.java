@@ -10,7 +10,7 @@ public enum CustomerDetail {
     LAST_NAME("Last name"),
     CODE("Code"),
     MOBILE_NO("Mobile"),
-    TEL_NO("Work"),
+    TEL_NO("Telephone"),
     COMPANY_NAME("Company"),
     ADDRESS("Address"),
     STREET("Street"),

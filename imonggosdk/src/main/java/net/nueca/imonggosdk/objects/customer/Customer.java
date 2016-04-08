@@ -54,6 +54,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         COMPANY_NAME("company_name"),
         TIN("tin", InputType.TYPE_CLASS_PHONE),
         STREET("street", InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES),
+        TOWN("town", InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES),
         CITY("city"),
         STATE("state"),
         ZIPCODE("zipcode", InputType.TYPE_CLASS_PHONE),
@@ -116,7 +117,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     @Expose
     @DatabaseField
     private String code, alternate_code, first_name, middle_name, last_name, name, company_name,
-            tin, street = "", city, state, zipcode, country, telephone, fax,
+            tin, street = "", city, town, state, zipcode, country, telephone, fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
             birthdate, status, birthday,
             membership_expired_at, membership_start_at, biometric_signature, gender;
@@ -166,7 +167,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
 
     public Customer(String first_name, String last_name, String name, String company_name,
                     String telephone, String mobile, String fax, String email, String street,
-                    String city, String zipcode, String country, String state, String tin, String gender) {
+                    String city, String town, String zipcode, String country, String state, String tin, String gender) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.name = name;
@@ -177,6 +178,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         this.email = email;
         this.street = street;
         this.city = city;
+        this.town = town;
         this.zipcode = zipcode;
         this.country = country;
         this.state = state;
@@ -196,6 +198,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         this.email = builder.email;
         this.street = builder.street;
         this.city = builder.city;
+        this.town = builder.town;
         this.zipcode = builder.zipcode;
         this.country = builder.country;
         this.state = builder.state;
@@ -372,6 +375,10 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     }
 
     public String getDiscount_text() {
+        if(discount_text == null)
+            return "";
+        if(discount_text.equals(""))
+            return "";
         return discount_text;
     }
 
@@ -573,6 +580,14 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         this.routePlanDetails = routePlanDetails;
     }
 
+    public String getTown() {
+        return town;
+    }
+
+    public void setTown(String town) {
+        this.town = town;
+    }
+
     @Override
     public boolean equals(Object o) {
         return (o instanceof Customer) && ((Customer)o).getId() == id;
@@ -641,6 +656,12 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
             address += city;
         }
 
+        if(town != null && !town.isEmpty()) {
+            if(!address.isEmpty())
+                address += ", ";
+            address += town;
+        }
+
         if(zipcode != null && !zipcode.isEmpty()) {
             if(!address.isEmpty())
                 address += " ";
@@ -678,8 +699,11 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
 
     public String getLastPurchaseBranch() {
         getLastPurchase();
-        if(lastPurchase != null)
-            return lastPurchase.getBranch().getName();
+        if(lastPurchase != null) {
+            if(lastPurchase.getBranch() != null)
+                return lastPurchase.getBranch().getName();
+            return "Branch is null";
+        }
         return "";
     }
 
@@ -784,7 +808,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         protected Extras extras;
         protected String utc_created_at, utc_updated_at,
                 code, alternate_code, first_name, last_name, name, company_name,
-                tin, street, city, state, zipcode, country, telephone, fax,
+                tin, street, city, town, state, zipcode, country, telephone, fax,
                 mobile, email, remark, customer_type_id, customer_type_name,
                 discount_text, available_points, birthdate, status, birthday,
                 membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
@@ -860,6 +884,10 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         }
         public Builder zipcode(String zipcode) {
             this.zipcode = zipcode;
+            return this;
+        }
+        public Builder town(String town) {
+            this.town = town;
             return this;
         }
         public Builder country(String country) {

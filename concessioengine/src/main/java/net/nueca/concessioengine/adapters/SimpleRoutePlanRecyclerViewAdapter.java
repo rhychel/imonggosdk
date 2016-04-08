@@ -51,7 +51,7 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
             holder.tvCustomerName.setText(customer.getName());
             holder.tvCompany.setText(customer.getCompany_name());
 
-            if(!customer.getLastPurchase().isEmpty()) {
+            if(!customer.getLastPurchase().equals("None") && !customer.getLastPurchase().isEmpty()) {
                 SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 fromDate.setTimeZone(TimeZone.getTimeZone("UTC"));
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM dd, yyyy, cccc h:mma");
