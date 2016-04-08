@@ -728,10 +728,11 @@ public class OfflineData extends BaseTable2 {
                 invoiceData.createNewPaymentBatch();
                 invoiceData.setOfflineData(this);
                 typeStr = "INVOICE";
+                if(invoiceData.getReturnId() > 0)
+                    invoiceData.setLayaway_id(invoiceData.getReturnId());
                 if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
                         && (invoiceData.getReturnId() != Integer.parseInt(getReturnIdList().get(0))) ) {
                     //invoiceData.deleteTo(dbHelper);
-                    invoiceData.setLayaway_id(invoiceData.getReturnId());
                     invoiceData.setReturnId(Integer.parseInt(getReturnIdList().get(0)));
                 }
                 invoiceData.updateTo(dbHelper);

@@ -51,8 +51,8 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 							Log.d("SwableService", "---syncing data set ~ "+isSyncing());
 							if (!isSyncing()) {
 								Log.d("SwableService", "---syncing data called");
-								runSyncModule.sendEmptyMessage(0);
-								//syncModule();
+								//runSyncModule.sendEmptyMessage(0);
+								syncModule();
 							}
 							updateSyncingStatus();
 							Thread.sleep(INTERNET_DELAY); // 30 seconds
@@ -68,12 +68,12 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 		return START_STICKY;
 	}
 
-	public Handler runSyncModule = new Handler() {
+	/*public Handler runSyncModule = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			syncModule();
 		}
-	};
+	};*/
 	
 	@Override
 	public void onDestroy() {
