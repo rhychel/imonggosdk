@@ -454,21 +454,22 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    String accountId = etAccountID.getText().toString().trim();
+                String accountId = etAccountID.getText().toString().trim();
+               /* try {
+
                     JSONObject servers = new JSONObject(SettingTools.currentServer(BaseLoginActivity.this));
 
                     Log.e("Servers", servers.toString());
 
                     String label = "---";
-                    if (servers.has(accountId))
+                    if(servers.has(accountId))
                         label = servers.getString(accountId);
                     Log.e("Servers", label);
 
                     setServer(Server.getServer(label));
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
+                }*/
 
                 initLogin();
             }
