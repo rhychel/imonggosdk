@@ -631,18 +631,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 changeToReview = true;
                 simpleInventoryFragment = new SimpleInventoryFragment();
                 simpleInventoryFragment.setHelper(getHelper());
-                simpleInventoryFragment.setListingType(ListingType.SALES);
-                simpleInventoryFragment.setSetupActionBar(this);
+                simpleInventoryFragment.setListingType(ListingType.ADVANCED_SALES); //changed to show the individual price of every unit-- Sales
+                simpleInventoryFragment.setUseSalesProductAdapter(true);//added to show the individual price of every unit
                 simpleInventoryFragment.setHasUnits(true);
                 simpleInventoryFragment.setProductCategories(getProductCategories(!getModuleSetting(concessioModule).getProductListing().isLock_category()));
                 simpleInventoryFragment.setShowCategoryOnStart(getModuleSetting(concessioModule).getProductListing().isShow_categories_on_start());
+                simpleInventoryFragment.setSetupActionBar(this);
                 simpleInventoryFragment.setHasSubtotal(false);
                 simpleInventoryFragment.setProductsFragmentListener(this);
                 // if there's branch product
                 simpleInventoryFragment.setBranch(getBranches().get(0));
 
                 initializeFinalize();
-                finalizeFragment.setListingType(ListingType.SALES);
+                finalizeFragment.setListingType(ListingType.ADVANCED_SALES); //changed to show the individual price of every unit-- Sales
+                finalizeFragment.setUseSalesProductAdapter(true);//added to show the individual price of every unit
                 finalizeFragment.setHasSubtotal(false);
                 finalizeFragment.setHasCategories(false);
                 finalizeFragment.setHasBrand(false);
@@ -740,7 +742,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 initializeProducts();
                                 simpleProductsFragment.setLockCategory(true);
                                 simpleProductsFragment.setHasSubtotal(false);
-                                simpleProductsFragment.setListingType(ListingType.SALES);
+                                simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES); //changed to show the individual price of every unit-- Sales
+                                simpleProductsFragment.setUseSalesProductAdapter(true);//added to show the individual price of every unit
+//                                simpleProductsFragment.setListingType(ListingType.SALES);
                                 simpleProductsFragment.setHasUnits(true);
                                 // !getModuleSetting().getProductListing().isLock_category()
                                 simpleProductsFragment.setProductCategories(getProductCategories(false));
@@ -755,7 +759,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 finalizeFragment.setHasBrand(false);
                                 finalizeFragment.setHasDeliveryDate(false);
                                 finalizeFragment.setHasUnits(true);
-                                finalizeFragment.setListingType(ListingType.SALES);
+                                finalizeFragment.setListingType(ListingType.ADVANCED_SALES); //changed to show the individual price of every unit-- Sales
+                                finalizeFragment.setUseSalesProductAdapter(true);//added to show the individual price of every unit
+//                                finalizeFragment.setListingType(ListingType.SALES);
                                 // if there's branch product
                                 finalizeFragment.setBranch(getBranches().get(0));
                                 finalizeFragment.setConcessioModule(concessioModule);
@@ -979,7 +985,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 if(isFromCustomersList) {
                     getMenuInflater().inflate(R.menu.simple_edit_menu, menu);
 
-                    if(!getModuleSetting(ConcessioModule.CUSTOMERS).isCan_edit())
+                    if (!getModuleSetting(ConcessioModule.CUSTOMERS).isCan_edit())
                         menu.findItem(R.id.mEditCustomer).setVisible(false);
                 }
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);

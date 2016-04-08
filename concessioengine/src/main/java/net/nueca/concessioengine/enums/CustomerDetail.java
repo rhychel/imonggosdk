@@ -16,7 +16,7 @@ public enum CustomerDetail {
     STREET("Street"),
     TOWN("Town"),
     PROVINCE("Province"),
-    CUSTOMER_TYPE("Business"), // customer category
+    CUSTOMER_TYPE("Customer Type"), // customer category
     TERMS("Terms"),
     SALES_ROUTE("Sales route"),
     DISCOUNT("Discount"),
