@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/mPrint"
+        android:icon="@drawable/ic_print"
         android:title="PRINT"
         app:showAsAction="always"
         android:orderInCategory="100"/>

@@ -161,7 +161,9 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mSaveCustomer) {
             final Customer customer = customerFieldsAdapter.generateCustomer();
-            FieldValidatorMessage fieldValidatorMessage = customer.doesRequiredSatisfied(Customer.CustomerFields.FIRST_NAME, Customer.CustomerFields.LAST_NAME);
+            FieldValidatorMessage fieldValidatorMessage = customer.doesRequiredSatisfied(Customer.CustomerFields.FIRST_NAME, Customer.CustomerFields.LAST_NAME,
+                    Customer.CustomerFields.MOBILE, Customer.CustomerFields.TELEPHONE, Customer.CustomerFields.EXTRAS_CATEGORY_ID, Customer.CustomerFields.PAYMENT_TERMS_ID);
+
             if(fieldValidatorMessage.isPassed()) {
                 DialogTools.showConfirmationDialog(this, "Save Customer",
                         updateCustomer != null ? "Update customer details?" : "Create this customer?",
@@ -452,7 +454,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                 customer.setPaymentTerms(paymentTerm);
                 if(customerCategory == null)
                     Log.e("customerCategory", "null");
-                customer.setCustomerCategory(customerCategory);
+                customer.getExtras().setCustomerCategory(customerCategory);
                 customer.generateFullName();
             } catch (SQLException | JSONException e) {
                 e.printStackTrace();

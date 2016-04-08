@@ -932,28 +932,54 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         FieldValidatorMessage fieldValidatorMessage = new FieldValidatorMessage();
         fieldValidatorMessage.setMessage("Please enter a valid ");
         String lastField = "";
+        boolean numberIsPast = false;
         for(CustomerFields field : fields) {
             switch (field) {
                 case CODE:
                     if(code != null && !code.isEmpty())
-                        break;
+                        continue;
                     fieldValidatorMessage.appendMessage(lastField, false);
                     fieldValidatorMessage.setPassed(false);
                     lastField = "customer code";
                     break;
                 case FIRST_NAME:
                     if(first_name != null && !first_name.isEmpty())
-                        break;
+                        continue;
                     fieldValidatorMessage.appendMessage(lastField, false);
                     fieldValidatorMessage.setPassed(false);
                     lastField = "first name";
                     break;
                 case LAST_NAME:
                     if(last_name != null && !last_name.isEmpty())
-                        break;
+                        continue;
                     fieldValidatorMessage.appendMessage(lastField, false);
                     fieldValidatorMessage.setPassed(false);
                     lastField = "last name";
+                    break;
+                case TELEPHONE:
+                case MOBILE:
+                    if(numberIsPast)
+                        continue;
+                    numberIsPast = true;
+                    if((telephone!= null && !telephone.isEmpty()) || (mobile != null && !mobile.isEmpty()))
+                        continue;
+                    fieldValidatorMessage.appendMessage(lastField, false);
+                    fieldValidatorMessage.setPassed(false);
+                    lastField = "telephone or mobile";
+                    break;
+                case EXTRAS_CATEGORY_ID:
+                    if(extras != null && extras.getCustomerCategory() != null && extras.getCustomerCategory().getId() != -1)
+                        continue;
+                    fieldValidatorMessage.appendMessage(lastField, false);
+                    fieldValidatorMessage.setPassed(false);
+                    lastField = "outlet type";
+                    break;
+                case PAYMENT_TERMS_ID:
+                    if(paymentTerms != null && paymentTerms.getId() != -1)
+                        continue;
+                    fieldValidatorMessage.appendMessage(lastField, false);
+                    fieldValidatorMessage.setPassed(false);
+                    lastField = "payment terms";
                     break;
             }
         }

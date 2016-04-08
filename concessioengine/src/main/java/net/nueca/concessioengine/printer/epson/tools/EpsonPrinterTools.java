@@ -408,6 +408,23 @@ public class EpsonPrinterTools {
         }
     }
 
+    public static void clearTargetPrinter(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            SharedPreferences.Editor editor = preferences.edit();
+
+            editor.putString(pinfo.packageName + TARGET_PRINTER, "");
+            editor.putString(pinfo.packageName + PRINTER_NAME, "");
+            editor.apply();
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, "Target printer not found.");
+            e.printStackTrace();
+
+        }
+
+    }
+
 
     /**
      * Printer that saved in sharedPreferences
