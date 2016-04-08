@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -16,7 +18,6 @@ import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.ListingType;
-import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
@@ -71,6 +72,12 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
         super.onViewCreated(view, savedInstanceState);
         if(setupActionBar != null)
             setupActionBar.setupActionBar(tbActionBar);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.others_menu, menu);
     }
 
     public OfflineData getOfflineData() {

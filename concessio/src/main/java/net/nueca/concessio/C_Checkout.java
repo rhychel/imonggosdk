@@ -166,11 +166,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     // Print
                     if(getAppSetting().isCan_print()) {
-                        if(EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                        else
+                        if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
                             printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-
+                        if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                     }
                     // Print
 
@@ -249,10 +248,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         Invoice invoice = generateInvoice();
 
                         if(getAppSetting().isCan_print()) {
-                            if(EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                            else
+                            if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
                                 printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                         }
 
                         transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
@@ -690,6 +689,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             printText.delete(0, printText.length());
                             printer.addTextAlign(Printer.ALIGN_LEFT);
                             printer.addText(EpsonPrinterTools.tabber("Salesman: ", getSession().getUser().getName(), 32) + "\n");
+
+                            // --------------- CHECK THIS LATER
                             printer.addText("Ref #: " + invoice.getReference() + "\n");
                             String invoiceDate = invoice.getInvoice_date();
                             SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

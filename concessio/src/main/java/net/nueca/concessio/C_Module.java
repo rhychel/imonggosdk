@@ -544,10 +544,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             @Override
                             public void onClick(View v) {
                                 // ---- So let's print...
-                                if(EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                                    printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
-                                else
+                                if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                     printTransaction(null, "*Salesman Copy*", "*Office Copy*");
+                                if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
+                                    printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
                             }
                         });
                         tvItems.setVisibility(View.INVISIBLE);
@@ -835,6 +835,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         }
                     }
                     if (concessioModule == ConcessioModule.HISTORY) {
+                        hasMenu = true;
                         tvItems.setVisibility(View.VISIBLE);
                         int size = simpleTransactionDetailsFragment.numberOfItems();
                         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
@@ -946,7 +947,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.e("onCreateOptionsMenu", hasMenu+" || "+concessioModule.toString());
         if (hasMenu) {
-            if(concessioModule == ConcessioModule.CUSTOMERS) {
+            if(concessioModule == ConcessioModule.HISTORY && getSupportFragmentManager().getBackStackEntryCount() == 1)
+                getMenuInflater().inflate(R.menu.others_menu, menu);
+            else if(concessioModule == ConcessioModule.CUSTOMERS) {
                 getMenuInflater().inflate(R.menu.simple_customers_menu, menu);
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
                 getSupportActionBar().setTitle("Customers");
@@ -1056,6 +1059,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             Intent intent = new Intent(this, AddEditCustomerActivity.class);
             intent.putExtra(CUSTOMER_ID, customer.getId());
             startActivityForResult(intent, EDIT_CUSTOMER);
+        }
+        else if(item.getItemId() == R.id.mPrint) {
+            if(getAppSetting().isCan_print()) {
+                if(!EpsonPrinterTools.targetPrinter(this).equals(""))
+                    printTransaction(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                if(!StarIOPrinterTools.getTargetPrinter(this).equals(""))
+                    printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -1363,10 +1374,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .fromModule(concessioModule)
                                         .queue();
                                 if(getAppSetting().isCan_print()) {
-                                    if(EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                                        printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                    else
+                                    if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                         printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                    if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
+                                        printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
                                 }
                             }
 
@@ -1485,10 +1496,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .queue();
 
                                                     if(getAppSetting().isCan_print()) {
-                                                        if(EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                                        else
+                                                        if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                                             printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                        if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
+                                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
                                                     }
                                                 }
 
