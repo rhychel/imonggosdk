@@ -368,16 +368,16 @@ public class StarIOPrinterTools {
      */
     public static boolean print(Context context, String portName, String portSettings, StarIOPaperSize mPaperSize, String toPrintData) {
         ArrayList<byte[]> list = new ArrayList<>();
-        if (mPaperSize == StarIOPaperSize.p2INCH) {
-//            list.add(new byte[] { 0x1d, 0x57, 0x40, 0x32 }); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
-            list.add(new byte[]{0x1d, 0x57, (byte) 0x80, 0x31}); // Page Area Setting <GS> <W> nL nH (nL = 128, nH = 1)
-        } else if (mPaperSize == StarIOPaperSize.p3INCH) {
-            list.add(new byte[]{0x1d, 0x57, 0x40, 0x32}); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
-
-        } else if (mPaperSize == StarIOPaperSize.p4INCH) {
-            list.add(new byte[]{0x1d, 0x57, 0x40, 0x32}); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
-//            list.add(new byte[] { 0x1b, 0x61, 0x01 }); // Center Justification <ESC> a n (0 Left, 1 Center, 2 Right)
-        }
+//        if (mPaperSize == StarIOPaperSize.p2INCH) {
+////            list.add(new byte[] { 0x1d, 0x57, 0x40, 0x32 }); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
+//            list.add(new byte[]{0x1d, 0x57, (byte) 0x80, 0x31}); // Page Area Setting <GS> <W> nL nH (nL = 128, nH = 1)
+//        } else if (mPaperSize == StarIOPaperSize.p3INCH) {
+//            list.add(new byte[]{0x1d, 0x57, 0x40, 0x32}); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
+//
+//        } else if (mPaperSize == StarIOPaperSize.p4INCH) {
+//            list.add(new byte[]{0x1d, 0x57, 0x40, 0x32}); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
+////            list.add(new byte[] { 0x1b, 0x61, 0x01 }); // Center Justification <ESC> a n (0 Left, 1 Center, 2 Right)
+//        }
 
         list.add(toPrintData.getBytes());
         list.add(new byte[]{0x1b, 0x64, 0x02}); // Cut

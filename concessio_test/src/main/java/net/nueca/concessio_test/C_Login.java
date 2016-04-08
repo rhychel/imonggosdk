@@ -36,8 +36,7 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
         setRequireObjectConcessioSettings(false);
-        SettingTools.updateSettings(this, SettingsName.SERVERS, "{\"A1029\":\"rebisco\"}");
-//        setServer(Server.REBISCO);
+        setServer(Server.IRETAILCLOUD_COM);
 
 
         SettingTools.updateSettings(C_Login.this,
@@ -75,7 +74,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void showNextActivityAfterLogin() {
         finish();
-        Intent intent = new Intent(this, TestPrinterActivity.class);
+        Intent intent = new Intent(this, C_Dashboard.class);
         startActivity(intent);
     }
 

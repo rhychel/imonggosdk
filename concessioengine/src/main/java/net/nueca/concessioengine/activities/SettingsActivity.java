@@ -255,20 +255,25 @@ public class SettingsActivity extends ModuleActivity {
 
         if(StarIOPrinterTools.getTargetPrinter(this).equals(""))
             starPrinter.setValue("Not Connected!");
-        else
+        else {
             starPrinter.setValue(StarIOPrinterTools.getTargetPrinter(this));
+        }
 
         starPrinter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-
                 StarIOPrinterTools.showDiscoverDialog(SettingsActivity.this, new StarIOPrinterTools.StarIOPrinterListener() {
                     @Override
                     public void onPrinterSelected(PortInfo printer) {
                         if(StarIOPrinterTools.getTargetPrinter(SettingsActivity.this).equals(""))
                             starPrinter.setValue("Not Connected!");
-                        else
+                        else {
                             starPrinter.setValue(StarIOPrinterTools.getTargetPrinter(SettingsActivity.this));
+                            String printData = "TEST PRINT\n";
+                            printData += Build.MODEL+" is connected!\n";
+
+                            StarIOPrinterTools.print(SettingsActivity.this,StarIOPrinterTools.getTargetPrinter(SettingsActivity.this), "portable", StarIOPaperSize.p2INCH, printData );
+                        }
                     }
                 });
             }
