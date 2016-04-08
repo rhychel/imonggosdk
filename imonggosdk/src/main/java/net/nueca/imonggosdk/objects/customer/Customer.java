@@ -375,6 +375,8 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     }
 
     public String getDiscount_text() {
+        if(discount_text == null)
+            return "";
         if(discount_text.equals(""))
             return "";
         return discount_text;
@@ -697,8 +699,11 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
 
     public String getLastPurchaseBranch() {
         getLastPurchase();
-        if(lastPurchase != null)
-            return lastPurchase.getBranch().getName();
+        if(lastPurchase != null) {
+            if(lastPurchase.getBranch() != null)
+                return lastPurchase.getBranch().getName();
+            return "Branch is null";
+        }
         return "";
     }
 
