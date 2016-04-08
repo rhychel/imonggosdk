@@ -193,7 +193,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     Log.e("INVOICE 2 ~ >>", invoice.toJSONString());
 
-//                    invoice.setStatus("S"); TODO Status
+                    invoice.setStatus("S"); // TODO Status
                     if(!isLayaway) {
                         offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()
@@ -203,6 +203,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                 .queue();
                     } else {
                         Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
+                        invoice.setBranch(branch);
                         invoice.updateTo(getHelper());
                         offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()
@@ -281,6 +282,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                     .queue();
                         } else {
                             Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
+                            invoice.setBranch(branch);
                             invoice.updateTo(getHelper());
                             offlineData = new SwableTools.Transaction(getHelper())
                                     .toSend()

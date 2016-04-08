@@ -64,8 +64,8 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
         customerDetails.add(CustomerDetail.CODE.setValue(customer.getCode().isEmpty() ? "None" : customer.getCode()));
         customerDetails.add(CustomerDetail.MOBILE_NO.setValue(customer.getMobile().isEmpty() ? "None" : customer.getMobile()));
         customerDetails.add(CustomerDetail.TEL_NO.setValue(customer.getTelephone().isEmpty() ? "None" : customer.getTelephone()));
-        customerDetails.add(CustomerDetail.COMPANY_NAME.setValue(customer.getCompany_name()));
-        customerDetails.add(CustomerDetail.ADDRESS.setValue(customer.generateAddress()));
+        customerDetails.add(CustomerDetail.COMPANY_NAME.setValue(customer.getCompany_name().isEmpty() ? "None" : customer.getCompany_name()));
+        customerDetails.add(CustomerDetail.ADDRESS.setValue(customer.generateAddress().isEmpty() ? "None" : customer.generateAddress()));
         if(customer.getExtras().getCustomerCategory() != null)
             customerDetails.add(CustomerDetail.CUSTOMER_TYPE.setValue(customer.getExtras().getCustomerCategory().getName()));
         else
