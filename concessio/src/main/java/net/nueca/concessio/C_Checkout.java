@@ -162,8 +162,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     Invoice invoice = generateInvoice();
 
-                    Log.e("INVOICE 1 ~ >>", invoice.toJSONString());
-
                     // Print
                     if(getAppSetting().isCan_print()) {
                         if(EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
@@ -191,9 +189,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     transactionDialog.show();
 
-                    Log.e("INVOICE 2 ~ >>", invoice.toJSONString());
-
-//                    invoice.setStatus("S"); TODO Status
+                    invoice.setStatus("S");
                     if(!isLayaway) {
                         offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()
@@ -203,6 +199,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                 .queue();
                     } else {
                         Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
+                        invoice.setBranch(branch);
                         invoice.updateTo(getHelper());
                         offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()
@@ -281,6 +278,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                     .queue();
                         } else {
                             Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
+                            invoice.setBranch(branch);
                             invoice.updateTo(getHelper());
                             offlineData = new SwableTools.Transaction(getHelper())
                                     .toSend()

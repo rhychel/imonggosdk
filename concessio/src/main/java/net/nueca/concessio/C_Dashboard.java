@@ -87,12 +87,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
 
-        try {
-            getHelper().deleteAll(OfflineData.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         setNextActivityClass(C_Module.class);
 
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
