@@ -1314,6 +1314,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                         simpleProductsFragment.refreshList();
                                         finalizeFragment.refreshList();
+                                        if(!mSearch.isIconified())
+                                            closeSearchField(mSearch);
                                         onBackPressed();
 
                                         searchDRDialog.show();
@@ -1422,7 +1424,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         previousFragmentCount = 0;
                                         Log.e("simple", "called customer fragment");
                                     } else {
+                                        Log.e("whenDismissed", " should backpressed");
                                         // TODO
+                                        if(!mSearch.isIconified())
+                                            closeSearchField(mSearch);
                                         onBackPressed();
 
                                         if(concessioModule == ConcessioModule.RELEASE_BRANCH)
@@ -1549,6 +1554,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             previousFragmentCount = 0;
                                                         } else {
                                                             // TODO
+                                                            if(!mSearch.isIconified())
+                                                                closeSearchField(mSearch);
                                                             onBackPressed();
 
                                                             if(concessioModule == ConcessioModule.RELEASE_BRANCH)
