@@ -13,8 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
-import com.epson.epos2.discovery.Discovery;
-import com.epson.epos2.discovery.FilterOption;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.j256.ormlite.stmt.Where;
@@ -26,7 +24,6 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SettingsAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
-import net.nueca.concessioengine.printer.epson.listener.DiscoveryListener;
 import net.nueca.concessioengine.printer.epson.listener.DiscoverySettingsListener;
 import net.nueca.concessioengine.printer.epson.listener.PrintListener;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
@@ -35,10 +32,8 @@ import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.appsettings.AppSettings;
 import net.nueca.concessioengine.tools.appsettings.AppTools;
-import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.OfflineData;
-import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.base.DBTable;
@@ -54,7 +49,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by rhymartmanchus on 12/01/2016.

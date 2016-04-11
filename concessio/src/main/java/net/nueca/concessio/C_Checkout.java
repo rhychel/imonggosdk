@@ -162,15 +162,12 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     Invoice invoice = generateInvoice();
 
-                    Log.e("INVOICE 1 ~ >>", invoice.toJSONString());
-
                     // Print
                     if(getAppSetting().isCan_print()) {
-                        if(EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                        else
+                        if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
                             printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-
+                        if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                     }
                     // Print
 
@@ -191,9 +188,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     transactionDialog.show();
 
-                    Log.e("INVOICE 2 ~ >>", invoice.toJSONString());
-
-                    invoice.setStatus("S"); // TODO Status
+                    invoice.setStatus("S");
                     if(!isLayaway) {
                         offlineData = new SwableTools.Transaction(getHelper())
                                 .toSend()
@@ -249,10 +244,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         Invoice invoice = generateInvoice();
 
                         if(getAppSetting().isCan_print()) {
-                            if(EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                            else
+                            if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
                                 printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                         }
 
                         transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
@@ -690,6 +685,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             printText.delete(0, printText.length());
                             printer.addTextAlign(Printer.ALIGN_LEFT);
                             printer.addText(EpsonPrinterTools.tabber("Salesman: ", getSession().getUser().getName(), 32) + "\n");
+
+                            // --------------- CHECK THIS LATER
                             printer.addText("Ref #: " + invoice.getReference() + "\n");
                             String invoiceDate = invoice.getInvoice_date();
                             SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -28,6 +28,7 @@ import net.nueca.concessioengine.dialogs.ProgressListDialog;
 import net.nueca.concessioengine.dialogs.UpdaterChooserDialog;
 import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
+import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Server;
@@ -256,6 +257,9 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
                         @Override
                         public void onUnlinkAccount() {
+                            EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+                            StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+
                             finish();
                             Intent intent = new Intent(C_Dashboard.this, C_Login.class);
                             startActivity(intent);
@@ -264,6 +268,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+            break;
+            case R.id.mLogout: {
+                EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+                StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
             }
             break;
             case R.id.mSettings: {
