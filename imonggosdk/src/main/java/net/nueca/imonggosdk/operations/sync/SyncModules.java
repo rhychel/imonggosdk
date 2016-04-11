@@ -1069,29 +1069,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         newLastUpdatedAt.insertTo(getHelper());
                     }
 
-                    if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS) {
-                        // if not initial sync delete all branch prices hehehe base on last update at
-                        List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
-                        SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-                        for (BranchProduct bp : branchProducts) {
-                            try {
-                                Date date1 = dateFormat1.parse(newLastUpdatedAt.getLast_updated_at());
-                                Date date2 = dateFormat1.parse(DateTimeTools.convertToDate(bp.getUtc_updated_at(), "yyyy/MM/dd HH:mm:ss"));
-
-                                Log.e(TAG, "Checking: " + date1.toString() + " > " + date2.toString());
-                                if (date1.after(date2)) {
-                                    Log.e(TAG, "Deleting this BranchProduct");
-                                    bp.deleteTo(getHelper());
-                                } else {
-                                    Log.e(TAG, "not");
-                                }
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
                     // USERS and  TAX SETTINGS DON'T SUPPORT COUNT
                     if (mCurrentTableSyncing == Table.USERS ||
                             mCurrentTableSyncing == Table.TAX_SETTINGS ||
@@ -1534,10 +1511,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     int BRANCH_PRICE_ID = 0;
                                     Branch BRANCH = null;
                                     Product PRODUCT = null;
-                                    Unit UNIT = null;
-                                    BranchProduct BRANCH_PRODUCT = null;
+                                    Unit UNIT;
+                                    BranchProduct BRANCH_PRODUCT;
 
-                                    Boolean show_only_sellable_products = false;
+                                    Boolean show_only_sellable_products;
 
                                     Log.e(TAG, "---");
                                     Log.e(TAG, "Branch Product:");
@@ -1814,7 +1791,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 int unit_id = jsonObject.getInt("unit_id");
                                                 UNIT = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("id", unit_id).queryForFirst();
                                                 if (UNIT != null) {
-                                                    Log.e(TAG, "Unit: " + UNIT.getName());
+                                                    Log.e(TAG, "ID: " + PRODUCT.getId() + " Product: " + PRODUCT.getName() + " Unit: " + UNIT.getName() + " ID: " + UNIT.getId());
                                                     UNIT.setProduct(PRODUCT);
                                                     UNIT.updateTo(getHelper());
                                                     BRANCH_PRODUCT.setUnit(UNIT);
@@ -1839,17 +1816,27 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
 
                                         if (initialSync) {
-                                            BRANCH_PRODUCT.insertTo(getHelper());
+                                            if(jsonObject.getString("status").equals("A")) {
+                                                BRANCH_PRODUCT.insertTo(getHelper());
+                                            } else {
+                                                Log.e(TAG, "skippings");
+                                            }
                                         } else {
 
                                             // if branch product is not existing
                                             if (!isExisting(BRANCH_PRODUCT, Table.BRANCH_PRODUCTS)) {
                                                 // insert to database
-                                                BRANCH_PRODUCT.insertTo(getHelper());
+                                                if(jsonObject.getString("status").equals("A"))
+                                                    BRANCH_PRODUCT.insertTo(getHelper());
                                             } else {
-                                                // no code here
-                                                Log.e(TAG, "This branch product should be deleted, because I deleted all the outdated branch products " +
-                                                        "before this line of code giving way not update this branch product");
+                                                if(jsonObject.getString("status").equals("A")) {
+                                                    // no code here
+                                                    Log.e(TAG, "updating... Branch Prices. " + jsonObject.getString("name"));
+                                                    BRANCH_PRODUCT.updateTo(getHelper());
+                                                } else {
+                                                    Log.e(TAG, "deleting... Branch Prices" + jsonObject.getString("name"));
+                                                    BRANCH_PRODUCT.deleteTo(getHelper());
+                                                }
                                             }
                                         }
 
