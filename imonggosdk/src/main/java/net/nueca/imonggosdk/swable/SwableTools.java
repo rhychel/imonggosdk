@@ -491,6 +491,8 @@ public class SwableTools {
             private Integer branchId;
             private String branchName;
             private String parameter = "";
+            private String category = "";
+            private String documentReason = "";
             private ConcessioModule concessioModule = ConcessioModule.NONE;
 
             private boolean isLayaway = false;
@@ -509,6 +511,16 @@ public class SwableTools {
             @Deprecated
             public SendTransaction forBranch(int branchId) {
                 this.branchId = branchId;
+                return this;
+            }
+
+            public SendTransaction category(String category) {
+                this.category = category;
+                return this;
+            }
+
+            public SendTransaction documentReason(String documentReason) {
+                this.documentReason = documentReason;
                 return this;
             }
 
@@ -563,6 +575,8 @@ public class SwableTools {
                     offlineData.setBranchName(branchName);
                 if(concessioModule != ConcessioModule.NONE)
                     offlineData.setConcessioModule(concessioModule);
+                offlineData.setCategory(category);
+                offlineData.setDocumentReason(documentReason);
 
                 if(!isLayaway) {
                     switch (offlineData.getType()) {

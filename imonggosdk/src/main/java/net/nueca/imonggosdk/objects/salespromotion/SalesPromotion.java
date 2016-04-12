@@ -212,7 +212,17 @@ public class SalesPromotion extends BaseTable {
 
     @Override
     public String toString() {
-        return toJSONString();
+        return "SalesPromotion{" +
+                ", status='" + status + '\'' +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+
+                ", to_date='" + to_date + '\'' +
+                ", from_date='" + from_date + '\'' +
+                ", salesPromotionType='" + salesPromotionType + '\'' +
+                ", discounts=" + discounts +
+                ", discounts_fc=" + discounts_fc +
+                '}';
     }
 
     @Override
@@ -278,6 +288,7 @@ public class SalesPromotion extends BaseTable {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                Log.e(TAG, "updateTing discount");
                 discount.updateTo(dbHelper);
             }
         }

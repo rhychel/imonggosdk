@@ -291,9 +291,9 @@ public class StarIOPrinterTools {
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    updateTargetPrinter(mContext, name.getPortName());
                                     if (listener != null)
                                         listener.onPrinterSelected(name);
-                                    updateTargetPrinter(mContext, name.getPortName());
                                     discoveryDialog.dismiss();
                                 }
                             })
@@ -426,7 +426,7 @@ public class StarIOPrinterTools {
             /*
              * using StarIOPort3.1.jar (support USB Port) Android OS Version: upper 2.2
 			 */
-            port = StarIOPort.getPort(portName, portSettings, 20000, context);
+            port = StarIOPort.getPort(portName, portSettings, 1000, context);
             /*
              * using StarIOPort.jar Android OS Version: under 2.1 port = StarIOPort.getPort(portName, portSettings, 10000);
 			 */
@@ -434,6 +434,8 @@ public class StarIOPrinterTools {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
             }
+
+//            StarPrinterStatus status = port.retreiveStatus();
 
 			/*
              * portable(ESC/POS) Printer Firmware Version 2.4 later, SM-S220i(Firmware Version 2.0 later)
@@ -445,14 +447,16 @@ public class StarIOPrinterTools {
 			/* Start of Begin / End Checked Block Sample code */
             StarPrinterStatus status = port.beginCheckedBlock();
 
-            if (true == status.offline) {
+            if (status.offline) {
+                Log.e("Printer", "is offline");
                 throw new StarIOPortException("A printer is offline");
             }
 
             byte[] commandToSendToPrinter = convertFromListByteArrayTobyteArray(byteList);
             port.writePort(commandToSendToPrinter, 0, commandToSendToPrinter.length);
 
-            port.setEndCheckedBlockTimeoutMillis(30000);// Change the timeout time of endCheckedBlock method.
+            // --- 30000
+            port.setEndCheckedBlockTimeoutMillis(120000);// Change the timeout time of endCheckedBlock method.
             status = port.endCheckedBlock();
 
             if (true == status.coverOpen) {

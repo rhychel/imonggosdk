@@ -217,8 +217,8 @@ public class SettingsActivity extends ModuleActivity {
         printerHeader.setConcessioModule(ConcessioModule.PRINTER);
         appSettings.add(printerHeader);
 
-        // Epson Printer
-        appSettings.add(generateEpsonPrinter(sectionFirstPosition));
+//        // Epson Printer ----- TURNED off for Rebisco
+//        appSettings.add(generateEpsonPrinter(sectionFirstPosition));
 
         // Star Printer
         appSettings.add(generateStarPrinter(sectionFirstPosition));
@@ -239,9 +239,9 @@ public class SettingsActivity extends ModuleActivity {
 
         return appSettings;
     }
-    AppSettings starPrinter = new AppSettings();
-    private AppSettings generateStarPrinter(int sectionFirstPosition) {
 
+    private AppSettings generateStarPrinter(int sectionFirstPosition) {
+        final AppSettings starPrinter = new AppSettings();
         starPrinter.setHeader(false);
         starPrinter.setSectionFirstPosition(sectionFirstPosition);
         starPrinter.setConcessioModule(ConcessioModule.PRINTER);
@@ -262,6 +262,14 @@ public class SettingsActivity extends ModuleActivity {
                         if(StarIOPrinterTools.getTargetPrinter(SettingsActivity.this).equals(""))
                             starPrinter.setValue("Not Connected!");
                         else {
+                            AppSettings temp = new AppSettings();
+                            temp.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_STAR_PRINTER);
+                            int index = settingsAdapter.getList().indexOf(temp);
+                            settingsAdapter.getItem(index).setValue(StarIOPrinterTools.getTargetPrinter(SettingsActivity.this));
+                            settingsAdapter.getItem(index+1).setEnabled(true);
+                            settingsAdapter.notifyItemChanged(index);
+                            settingsAdapter.notifyItemChanged(index+1);
+
                             starPrinter.setValue(StarIOPrinterTools.getTargetPrinter(SettingsActivity.this));
                             String printData = "TEST PRINT\n";
                             printData += Build.MODEL+" is connected!\n";

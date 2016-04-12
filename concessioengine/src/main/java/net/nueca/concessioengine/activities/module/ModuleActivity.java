@@ -88,6 +88,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected String reference;
     protected boolean isLayaway = false;
     protected boolean isDuplicating = false;
+    protected boolean isButtonTapped = false;
 
     protected int previousFragmentCount = 0;
     protected HistoryDetailsListener historyDetailsListener;

@@ -87,7 +87,9 @@ public abstract class BaseSyncService extends ImonggoService {
     protected List<Integer> listOfPricelistIds;
     protected List<Integer> listOfIdsPriceListSorted;
     protected List<Object> listPriceListStorage;
+    protected List<Object> listOfSalesPromotionStorage;
     protected List<? extends BaseTable> listOfIds;
+    protected List<Integer> listOfSalesPromotionIds;
     protected String from = "", to = "";
     protected String document_type;
     protected String intransit_status;
@@ -301,12 +303,14 @@ public abstract class BaseSyncService extends ImonggoService {
 
             }
             case SALES_PROMOTIONS: {
-                net.nueca.imonggosdk.objects.salespromotion.SalesPromotion discount = (SalesPromotion) o;
-                return getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", discount.getId()) != null;
+
+                net.nueca.imonggosdk.objects.salespromotion.SalesPromotion salesPromotion = (net.nueca.imonggosdk.objects.salespromotion.SalesPromotion) o;
+                Log.e(TAG, "checking sales promotions... " + getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", salesPromotion.getId()));
+                return getHelper().fetchObjects(net.nueca.imonggosdk.objects.salespromotion.SalesPromotion.class).queryBuilder().where().eq("id", salesPromotion.getId()) != null;
             }
             case SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS: {
                 net.nueca.imonggosdk.objects.salespromotion.Discount discount = (Discount) o;
-                return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("id", discount.getId()) != null;
+                return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("product_id", discount.getProduct()) != null;
             }
             case PRICE_LISTS_DETAILS: {
                 Price price = (Price) o;

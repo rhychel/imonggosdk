@@ -229,6 +229,8 @@ public class BaseLogin {
                 mSession.setAccountUrl(response);
                 mSession.setServer(server);
 
+                Log.e(LOGIN_TAG, "session created inserting to database");
+
                 // Insert Session to Database
                 mSession.insertTo(mDBHelper);
 
@@ -397,12 +399,11 @@ public class BaseLogin {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } else { // if Account is linked
+                } else { // if Account is Unlinked
                     try {
-
                         // set the response token
-                        getSession().setApiToken(response.getString("api_token"));
-                        getSession().setApiAuthentication(ImonggoTools.buildAPIAuthentication(response.getString("api_token")));
+                        mSession.setApiToken(response.getString("api_token"));
+                        mSession.setApiAuthentication(ImonggoTools.buildAPIAuthentication(response.getString("api_token")));
                         if(response.has("user_id"))
                             getSession().setUser_id(response.getString("user_id"));
 

@@ -151,6 +151,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     dialog.show();
                 }
                 else { /** SEND **/
+
+                    if(isButtonTapped)
+                        return;
+                    isButtonTapped = true;
+
                     TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                     transactionDialog.setTitle(ConcessioModule.INVOICE);
                     transactionDialog.setAmount("P"+NumberTools.separateInCommas(checkoutFragment.getTotalPaymentMade()));
@@ -163,7 +168,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     Invoice invoice = generateInvoice();
 
                     // Print
-                    if(getAppSetting().isCan_print()) {
+                    if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                         if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
                             printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                         if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
@@ -185,7 +190,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         e.printStackTrace();
                     }
                     // Transaction Date
-
                     transactionDialog.show();
 
                     invoice.setStatus("S");
@@ -226,15 +230,22 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 }
             }
             else if(v.getId() == R.id.btn2) { /** PARTIAL **/
+                if(isButtonTapped)
+                    return;
+                isButtonTapped = true;
+
                 DialogTools.showConfirmationDialog(C_Checkout.this, "Partial Payment", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // TODO Render layaway invoice
+                        if(isButtonTapped)
+                            return;
+                        isButtonTapped = true;
 
                         TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                         transactionDialog.setTitle(ConcessioModule.INVOICE_PARTIAL);
                         transactionDialog.setStatusResource(R.drawable.ic_alert_red);
-                        transactionDialog.setAmount("P"+NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
+                        transactionDialog.setAmount("P" + NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
                         transactionDialog.setAmountLabel("Remaining Balance");
                         transactionDialog.setCustomerName(ProductsAdapterHelper.getSelectedCustomer().getName());
                         transactionDialog.setTransactionDialogListener(transactionDialogListener);
@@ -243,10 +254,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                         Invoice invoice = generateInvoice();
 
-                        if(getAppSetting().isCan_print()) {
-                            if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
+                        if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
+                            if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
                                 printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                            if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+                            if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
                                 printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                         }
 
@@ -258,7 +269,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("cccc, MMM. dd, yyyy, h:mma");
                         simpleDateFormat.setTimeZone(TimeZone.getDefault());
                         try {
-                            Date date = fromDate.parse(invoice.getInvoice_date().split("T")[0]+" "+invoice.getInvoice_date().split("T")[1].replace("Z", ""));
+                            Date date = fromDate.parse(invoice.getInvoice_date().split("T")[0] + " " + invoice.getInvoice_date().split("T")[1].replace("Z", ""));
                             transactionDialog.setDatetime(simpleDateFormat.format(date));
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -268,7 +279,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         transactionDialog.show();
 
                         invoice.setStatus("L");
-                        if(!isLayaway) {
+                        if (!isLayaway) {
                             offlineData = new SwableTools.Transaction(getHelper())
                                     .toSend()
                                     .forBranch(ProductsAdapterHelper.getSelectedBranch())
@@ -291,7 +302,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         Double availablePoints = Double.parseDouble(customer.getAvailable_points());
                         Double pointsUsed = 0d;
 
-                        if(salesPromotion != null && salesPromotion.getSettings() != null)
+                        if (salesPromotion != null && salesPromotion.getSettings() != null)
                             pointsUsed = PointsTools.amountToPoints(salesPromotion.getSettings(),
                                     getNewPointsInAmountUsed(invoice, checkoutFragment.getComputation().getPoints()));
 
@@ -304,7 +315,17 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         Gson gson = new Gson();
                         Log.e("INVOICE ~ Partial", gson.toJson(invoice));
                     }
-                }, "No", R.style.AppCompatDialogStyle_Light);
+                }, "No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        isButtonTapped = false;
+                    }
+                }, new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        isButtonTapped = false;
+                    }
+                }, R.style.AppCompatDialogStyle_Light);
             }
 
         }
@@ -477,8 +498,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     data.add(("Ref #: "+offlineData.getReference_no()+"\r\n").getBytes());
                     data.add(("Date: " + simpleDateFormat.format(offlineData.getDateCreated())+"\r\n").getBytes());
                 }
-                else
-                    data.add(("Date: " + simpleDateFormat.format(Calendar.getInstance().getTime())+"\r\n").getBytes());
+                else {
+                    data.add(("Ref #: "+invoice.getReference()+"\r\n").getBytes());
+                    data.add(("Date: " + simpleDateFormat.format(Calendar.getInstance().getTime()) + "\r\n").getBytes());
+                }
                 // ---------- HEADER
 
                 double totalQuantity = 0.0;
@@ -561,7 +584,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(totalQuantity), 2)), 32)+"\r\n").getBytes());
-                    data.add((EpsonPrinterTools.spacer("Net BO Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()),2)), 32)+"\r\n\r\n").getBytes());
+                    data.add((EpsonPrinterTools.spacer("LESS Net BO Amount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()),2)), 32)+")\r\n\r\n").getBytes());
                 }
                 if(invoice.getRgsInvoiceLines().size() > 0) {
                     totalQuantity = 0.0;
@@ -592,10 +615,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(Math.abs(totalQuantity)), 32)+"\r\n").getBytes());
-                    if(paymentsComputation.getReturnsPayments().size() > 1)
-                        data.add((EpsonPrinterTools.spacer("Net RGS Amount: ", NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(1).getAmount())), 32)+"\r\n\r\n").getBytes());
+                    Log.e("InvoicePayment", paymentsComputation.getReturnsPayments().size()+" returns payment");
+                    if(paymentsComputation.getReturnsPayments().size() > 2)
+                        data.add((EpsonPrinterTools.spacer("LESS Net RGS Amount: ", "("+NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(2).getAmount())), 32)+")\r\n\r\n").getBytes());
                     else
-                        data.add((EpsonPrinterTools.spacer("Net RGS Amount: ", NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount())), 32)+"\r\n\r\n").getBytes());
+                        data.add((EpsonPrinterTools.spacer("LESS Net RGS Amount: ", "("+NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount())), 32)+")\r\n\r\n").getBytes());
                 }
 
                 data.add((EpsonPrinterTools.spacer("Amount Due: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(true).doubleValue(), 2)), 32)+"\r\n\r\n").getBytes());
@@ -605,7 +629,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add("Payments                  Amount".getBytes());
                 for(InvoicePayment invoicePayment : invoice.getPayments()) {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
-                    data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
+                    if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip"))
+                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
                 }
                 data.add((EpsonPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\r\n").getBytes());
                 data.add("--------------------------------".getBytes());
@@ -626,7 +651,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add(("Address: "+ProductsAdapterHelper.getSelectedCustomer().generateAddress()+"\r\n").getBytes());
                 data.add("Signature:______________________\r\n".getBytes());
                 if(ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms() != null)
-                    data.add(("Terms: "+ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms().getName()+"\r\n\r\n").getBytes());
+                    data.add(("Terms: "+(ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms().getName() == null
+                            ? "None"
+                            : ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms().getName())+"\r\n\r\n").getBytes());
                 else
                     data.add("\r\n".getBytes());
 

@@ -21,11 +21,14 @@ import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.widgets.Numpad;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -114,6 +117,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                 cancel();
             }
         });
+        btnCheckDate.setText(DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd"));
 
         if(invoicePayment != null) {
             etPayment.setText(String.valueOf(invoicePayment.getTender()));
@@ -203,6 +207,10 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                             return;
                         }
                     }
+                    if(isButtonTapped)
+                        return;
+                    isButtonTapped = true;
+
                     if(listener != null)
                         listener.onAddPayment((PaymentType) spnPaymentType.getSelectedItem(), etPayment.getText().toString(), extrasForCheck);
                     dismiss();

@@ -156,7 +156,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
             updatePromotion.update();
 
-            SalesPromotion salesPromotion = getHelper().fetchObjects(SalesPromotion.class).queryBuilder().orderBy("id", true)//.query();
+            SalesPromotion salesPromotion = getHelper().fetchObjects(SalesPromotion.class).queryBuilder().orderBy("id", false)//.query();
                     .where().le("fromDate", now)
                             .and().ge("toDate", now).and().eq("status", "A")
                             .and().eq("promotion_type_name", SalesPromotion.DISCOUNT)

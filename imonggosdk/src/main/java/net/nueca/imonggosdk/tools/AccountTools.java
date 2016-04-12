@@ -122,9 +122,12 @@ public class AccountTools {
     public static void unlinkAccount(Context context, ImonggoDBHelper2 dbHelper, AccountListener accountListener) throws SQLException {
 
         updateUnlinked(context, true);
+        updateUserActiveStatus(context,false);
+
         dbHelper.deleteAllDatabaseValues();
         SettingTools.updateSettings(context, SettingsName.SYNC_FINISHED, false);
         SettingTools.updateSettings(context, SettingsName.DEFAULT_BRANCH, "");
+        SettingTools.updateSettings(context, SettingsName.CURRENT_BRANCH, "");
 
         // update the account listener
         if (accountListener != null) {

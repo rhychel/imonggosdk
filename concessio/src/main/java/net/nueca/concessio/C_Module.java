@@ -2,9 +2,11 @@ package net.nueca.concessio;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +21,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
@@ -543,7 +546,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 Log.e("PHYSICAL_COUNT", "is_view"+getModuleSetting(concessioModule).is_view());
                 Log.e("PHYSICAL_COUNT", "is_can_print"+getAppSetting().isCan_print());
                 if(getModuleSetting(concessioModule).is_view()) {
-                    if(getAppSetting().isCan_print()) {
+                    if(getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
                         llFooter.setVisibility(View.VISIBLE);
                         btn1.setText("PRINT INVENTORY");
                         btn1.setOnClickListener(new View.OnClickListener() {
@@ -553,7 +556,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                     printTransaction(null, "*Salesman Copy*", "*Office Copy*");
                                 if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                                    printTransactionStar(null, "*Salesman Copy*");//, "*Office Copy*");
+                                    printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
                             }
                         });
                         tvItems.setVisibility(View.INVISIBLE);
@@ -821,8 +824,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         hasMenu = true;
                         if (previousFragmentCount == 0) {
                             llFooter.setVisibility(View.GONE);
-                            simpleCustomersFragment.setHasSelected(false);
-                            simpleCustomersFragment.onViewCreated(null, null);
+                            if(simpleCustomersFragment != null) {
+                                simpleCustomersFragment.setHasSelected(false);
+                                simpleCustomersFragment.onViewCreated(null, null);
+                            }
                             showsCustomer = true;
                         }
                     }
@@ -959,8 +964,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.e("onCreateOptionsMenu", hasMenu+" || "+concessioModule.toString());
         if (hasMenu) {
-            if(concessioModule == ConcessioModule.HISTORY && getSupportFragmentManager().getBackStackEntryCount() == 1)
-                getMenuInflater().inflate(R.menu.others_menu, menu);
+            if(concessioModule == ConcessioModule.HISTORY && getSupportFragmentManager().getBackStackEntryCount() == 1) {
+                if(getModuleSetting(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule()).isCan_print())
+                    getMenuInflater().inflate(R.menu.others_menu, menu);
+            }
             else if(concessioModule == ConcessioModule.CUSTOMERS) {
                 getMenuInflater().inflate(R.menu.simple_customers_menu, menu);
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -1074,10 +1081,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
         else if(item.getItemId() == R.id.mPrint) {
             if(getAppSetting().isCan_print()) {
-                if(!EpsonPrinterTools.targetPrinter(this).equals(""))
+                if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                     printTransaction(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
-                if(!StarIOPrinterTools.getTargetPrinter(this).equals(""))
+                if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
                     printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+
+//                AsyncTask<Void, Void, Void> startPrint = new AsyncTask<Void, Void, Void>() {
+//                    @Override
+//                    protected Void doInBackground(Void... params) {
+//
+//                        return null;
+//                    }
+//                };
+//                startPrint.execute();
+
             }
         }
         return super.onOptionsItemSelected(item);
@@ -1284,11 +1301,19 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         @Override
         public void onClick(View v) {
             if (btn1.getText().toString().equals("SEND")) {
+                if(isButtonTapped)
+                    return;
+                isButtonTapped = true;
                 if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
                     if(getWarehouse() != null) {
                         DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                if(isButtonTapped)
+                                    return;
+
+                                isButtonTapped = true;
+
                                 Gson gson = new GsonBuilder().serializeNulls().create();
 
                                 Branch warehouse = Branch.fetchById(getHelper(), Branch.class, ProductsAdapterHelper.getWarehouse_id());
@@ -1315,12 +1340,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
                                     @Override
                                     public void whenDismissed() {
+                                        isButtonTapped = false;
                                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
 
                                         simpleProductsFragment.refreshList();
                                         finalizeFragment.refreshList();
-                                        if(!mSearch.isIconified())
+                                        if (!mSearch.isIconified())
                                             closeSearchField(mSearch);
                                         onBackPressed();
 
@@ -1330,7 +1356,17 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 transactionDialog.show();
 
                             }
-                        }, "No", R.style.AppCompatDialogStyle_Light);
+                        }, "No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                isButtonTapped = false;
+                            }
+                        }, new DialogInterface.OnShowListener() {
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+                                isButtonTapped = false;
+                            }
+                        }, R.style.AppCompatDialogStyle_Light);
                     }
                     else
                         DialogTools.showDialog(C_Module.this, "Ooops!", "You have no assigned warehouse on your account. Please contact admin.");
@@ -1341,8 +1377,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            if (isButtonTapped)
+                                return;
+
+                            isButtonTapped = true;
+
                             Gson gson = new GsonBuilder().serializeNulls().create();
-                            if(concessioModule == ConcessioModule.STOCK_REQUEST) {
+                            if (concessioModule == ConcessioModule.STOCK_REQUEST) {
                                 Order order = generateOrder(getApplicationContext(), branch.getId());
 
                                 try {
@@ -1358,10 +1399,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .fromModule(ConcessioModule.STOCK_REQUEST)
                                         .object(order)
                                         .queue();
-                            }
-                            else {
+                            } else {
                                 int warehouseId = 0;
-                                if(getBranches(true).size() > 0)
+                                if (getBranches(true).size() > 0)
                                     warehouseId = getBranches(true).get(0).getId();
                                 Document document = generateDocument(C_Module.this, warehouseId, DocumentTypeCode.identify(concessioModule));
 
@@ -1378,7 +1418,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     document.setExtras(extras);
                                 }
 
-                                if(getAppSetting().isCan_change_inventory())
+                                if (getAppSetting().isCan_change_inventory())
                                     updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
 
                                 offlineData = new SwableTools.Transaction(getHelper())
@@ -1386,11 +1426,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .forBranch(branch)
                                         .object(document)
                                         .fromModule(concessioModule)
+                                        .category(simpleProductsFragment != null ? simpleProductsFragment.getCategory() : "")
+                                        .documentReason(ProductsAdapterHelper.getReason() != null ? ProductsAdapterHelper.getReason().getName() : "")
                                         .queue();
-                                if(getAppSetting().isCan_print()) {
-                                    if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
+                                if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
+                                    if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                         printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                    if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
+                                    if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
                                         printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
                                 }
                             }
@@ -1402,10 +1444,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
                                 @Override
                                 public void whenDismissed() {
+                                    isButtonTapped = false;
+
                                     ProductsAdapterHelper.clearSelectedProductItemList(true);
                                     ProductsAdapterHelper.clearSelectedReturnProductItemList();
 
-                                    if(ProductsAdapterHelper.isDuplicating) {
+                                    if (ProductsAdapterHelper.isDuplicating) {
                                         Intent intent = new Intent();
                                         intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
                                         setResult(SUCCESS, intent);
@@ -1417,8 +1461,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         simpleProductsFragment.refreshList();
                                         finalizeFragment.refreshList();
                                         onBackPressed();
-                                    }
-                                    else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                    } else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                         llFooter.setVisibility(View.GONE);
                                         simpleCustomersFragment.setHasSelected(false);
                                         simpleCustomersFragment.onViewCreated(null, null);
@@ -1432,11 +1475,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     } else {
                                         Log.e("whenDismissed", " should backpressed");
                                         // TODO
-                                        if(!mSearch.isIconified())
+                                        if (!mSearch.isIconified())
                                             closeSearchField(mSearch);
                                         onBackPressed();
 
-                                        if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+                                        if (concessioModule == ConcessioModule.RELEASE_BRANCH)
                                             simplePulloutFragment.showReasonDialog(true, getModuleSetting(concessioModule).isRequire_document_reason()); // add settings
                                     }
                                 }
@@ -1444,7 +1487,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             transactionDialog.show();
 
                         }
-                    }, "No", R.style.AppCompatDialogStyle_Light);
+                    }, "No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            isButtonTapped = false;
+                        }
+                    }, new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface dialog) {
+                            Log.e("onShow", isButtonTapped+"<---");
+                            isButtonTapped = false;
+                        }
+                    }, R.style.AppCompatDialogStyle_Light);
                 } else {
                     new MaterialDialog.Builder(C_Module.this)
                             .title("Choose branch")
@@ -1461,9 +1515,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
+                                                if (isButtonTapped)
+                                                    return;
+
+                                                isButtonTapped = true;
+
                                                 Gson gson = new GsonBuilder().serializeNulls().create();
 
-                                                if(concessioModule == ConcessioModule.STOCK_REQUEST) {
+                                                if (concessioModule == ConcessioModule.STOCK_REQUEST) {
                                                     Order order = generateOrder(getApplicationContext(), branch.getId());
 
                                                     try {
@@ -1479,10 +1538,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .fromModule(ConcessioModule.STOCK_REQUEST)
                                                             .object(order)
                                                             .queue();
-                                                }
-                                                else {
+                                                } else {
                                                     int warehouseId = 0;
-                                                    if(getBranches(true).size() > 0)
+                                                    if (getBranches(true).size() > 0)
                                                         warehouseId = getBranches(true).get(0).getId();
 
                                                     Document document = generateDocument(C_Module.this, warehouseId, DocumentTypeCode.identify(concessioModule));
@@ -1502,7 +1560,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         e.printStackTrace();
                                                     }
 
-                                                    if(getAppSetting().isCan_change_inventory())
+                                                    if (getAppSetting().isCan_change_inventory())
                                                         updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
 
                                                     offlineData = new SwableTools.Transaction(getHelper())
@@ -1510,12 +1568,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .forBranch(branch)
                                                             .object(document)
                                                             .fromModule(concessioModule)
+                                                            .category(simpleProductsFragment != null ? simpleProductsFragment.getCategory() : "")
+                                                            .documentReason(ProductsAdapterHelper.getReason() != null ? ProductsAdapterHelper.getReason().getName() : "")
                                                             .queue();
 
-                                                    if(getAppSetting().isCan_print()) {
-                                                        if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
+                                                    if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
+                                                        if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                                             printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                                        if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
+                                                        if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
                                                             printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
                                                     }
                                                 }
@@ -1528,10 +1588,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                 transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
                                                     @Override
                                                     public void whenDismissed() {
+                                                        isButtonTapped = false;
+
                                                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                                                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
 
-                                                        if(ProductsAdapterHelper.isDuplicating) {
+                                                        if (ProductsAdapterHelper.isDuplicating) {
                                                             Intent intent = new Intent();
                                                             intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
                                                             setResult(SUCCESS, intent);
@@ -1543,8 +1605,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             simpleProductsFragment.refreshList();
                                                             finalizeFragment.refreshList();
                                                             onBackPressed();
-                                                        }
-                                                        else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                                        } else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                                             llFooter.setVisibility(View.GONE);
                                                             simpleCustomersFragment.setHasSelected(false);
                                                             simpleCustomersFragment.onViewCreated(null, null);
@@ -1560,11 +1621,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             previousFragmentCount = 0;
                                                         } else {
                                                             // TODO
-                                                            if(!mSearch.isIconified())
+                                                            if (!mSearch.isIconified())
                                                                 closeSearchField(mSearch);
                                                             onBackPressed();
 
-                                                            if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+                                                            if (concessioModule == ConcessioModule.RELEASE_BRANCH)
                                                                 simplePulloutFragment.showReasonDialog(true, getModuleSetting(concessioModule).isRequire_document_reason()); // add settings
                                                         }
                                                     }
@@ -1572,14 +1633,31 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                 transactionDialog.show();
 
                                             }
-                                        }, "No", R.style.AppCompatDialogStyle_Light);
+                                        }, "No", R.style.AppCompatDialogStyle_Light, new DialogInterface.OnShowListener() {
+                                            @Override
+                                            public void onShow(DialogInterface dialog) {
+                                                isButtonTapped = false;
+                                            }
+                                        });
                                     }
                                     return true;
                                 }
                             })
                             .positiveText("YES")
                             .positiveColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    isButtonTapped = false;
+                                }
+                            })
                             .negativeText("NO")
+                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    isButtonTapped = false;
+                                }
+                            })
                             .negativeColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
                             .widgetColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
                             .show();
@@ -1618,7 +1696,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add((branch.getName()+"\r\n").getBytes());
                 data.add((branch.generateAddress()+"\r\n\r\n").getBytes());
 
-                if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
                     data.add(("MISCELLANEOUS STOCK OUT SLIP\r\n\r\n").getBytes());
                 else
                     data.add(("INVENTORY SLIP\r\n\r\n").getBytes());
@@ -1629,9 +1707,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 if(offlineData != null) {
                     data.add(("Ref #: "+offlineData.getReference_no()+"\r\n").getBytes());
                     data.add(("Date: " + simpleDateFormat.format(offlineData.getDateCreated())+"\r\n").getBytes());
-                    if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                        data.add(("Company: " + simpleProductsFragment.getCategory().toUpperCase()+"\r\n").getBytes());
-                        data.add((EpsonPrinterTools.tabber("Reason: ", ProductsAdapterHelper.getReason().getName(), 32)+"\r\n").getBytes());
+                    if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
+                        data.add(("Company: " + offlineData.getCategory().toUpperCase()+"\r\n").getBytes()); // TODO,
+                        data.add((EpsonPrinterTools.tabber("Reason: ", offlineData.getDocumentReason(), 32)+"\r\n").getBytes()); //ProductsAdapterHelper.getReason().getName()
                     }
                 }
                 else
@@ -1645,7 +1723,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add("================================".getBytes());
 
                 if (offlineData != null && offlineData.getType() == OfflineData.DOCUMENT &&
-                        (concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)) {
+                        (concessioModule == ConcessioModule.RECEIVE_SUPPLIER
+                                || concessioModule == ConcessioModule.RELEASE_SUPPLIER
+                                || concessioModule == ConcessioModule.RELEASE_ADJUSTMENT
+                                || concessioModule == ConcessioModule.HISTORY)) {
                     for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
                         Double retail_price = 0.0;
                         try {
@@ -1676,6 +1757,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                         data.add((documentLine.getProduct().getName() + "\r\n").getBytes());
+                        Log.e("documentLine.unit_id", documentLine.getUnit_id()+" --- ");
                         if (documentLine.getUnit_id() != null) {
                             totalQuantity += documentLine.getUnit_quantity();
                             data.add(("  " + documentLine.getUnit_quantity() + "   " + documentLine.getUnit_name() + " x " + NumberTools.separateInCommas(retail_price)+"\r\n").getBytes());
@@ -1740,10 +1822,16 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                         data.add((product.getName() + "\r\n").getBytes());
+
+                        totalQuantity += product.getInventory().getQuantity();
+
                         data.add(("  " + product.getInventory().getQuantity() + "   "
                                 + (unit == null ? product.getBase_unit_name() : unit.getName()) + " x "
                                 + NumberTools.separateInCommas(retail_price)+"\r\n").getBytes());
                         Double subtotal = product.getInventory().getQuantity() * retail_price;
+
+                        totalAmount += subtotal;
+
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Left
                         data.add((NumberTools.separateInCommas(subtotal)+"\r\n").getBytes());
                     }
@@ -1755,6 +1843,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add((EpsonPrinterTools.spacer("Total Order Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\r\n\r\n").getBytes());
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Left
                 data.add(labels[i].getBytes());
+                if(simpleTransactionDetailsFragment != null) {
+                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                    data.add("\r\n** This is a reprint **\r\n".getBytes());
+                }
                 if(i < labels.length-1) {
                     data.add(("\r\n\r\n\r\n").getBytes());
                     data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
