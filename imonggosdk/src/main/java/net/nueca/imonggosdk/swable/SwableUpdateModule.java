@@ -66,15 +66,15 @@ public class SwableUpdateModule extends BaseSwableModule {
             JSONObject jsonObject;
             if(offlineData.getType() == OfflineData.INVOICE) {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
-                boolean hasNewPayment = invoice.createNewPaymentBatch();
+                /*boolean hasNewPayment = invoice.createNewPaymentBatch();
                 invoice.updateTo(dbHelper);
 
                 if(!hasNewPayment) {
                     QUEUED_TRANSACTIONS--;
                     return;
-                }
+                }*/
 
-                invoice.setPayments(invoice.getNewBatchPayment());
+                invoice.setPayments(invoice.getUnmarkedPayments());
                 jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         invoice.toJSONObject());
             }
@@ -116,6 +116,12 @@ public class SwableUpdateModule extends BaseSwableModule {
                                         Log.d("ImonggoSwable", "updating success : return ID : " +
                                                 responseJson.getString("id"));
                                         offlineData.setReturnId(responseJson.getString("id"));
+
+                                        if(offlineData.getType() == OfflineData.INVOICE) {
+                                            Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                            invoice.markSentPayment(Integer.parseInt(responseJson.getString("id")));
+                                            invoice.updateTo(dbHelper);
+                                        }
                                     }
                                 }
 

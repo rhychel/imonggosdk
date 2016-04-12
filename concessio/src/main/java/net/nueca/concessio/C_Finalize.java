@@ -34,6 +34,7 @@ import net.nueca.concessioengine.printer.epson.listener.PrintListener;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
+import net.nueca.concessioengine.tools.BluetoothTools;
 import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -462,8 +463,10 @@ public class C_Finalize extends ModuleActivity {
     // ----------------------- PRINTING
 
     private void printTransactionStar(final OfflineData offlineData, final Invoice invoice, final InvoiceTools.PaymentsComputation paymentsComputation, final String... labels) {
-        Branch branch = getBranches().get(0);
+        if(!BluetoothTools.isEnabled())
+            return;
 
+        Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
 
         for(int i = 0;i < labels.length;i++) {
@@ -637,6 +640,10 @@ public class C_Finalize extends ModuleActivity {
 
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
                 data.add(labels[i].getBytes());
+                if(isForHistoryDetail) {
+                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                    data.add("\r\n** This is a reprint **\r\n".getBytes());
+                }
                 if(i < labels.length-1) {
                     data.add("\r\n\r\n\r\n".getBytes());
                     data.add("- - - - - - CUT HERE - - - - - -\r\n\r\n".getBytes());
@@ -644,15 +651,18 @@ public class C_Finalize extends ModuleActivity {
                 else
                     data.add("\r\n\r\n\r\n".getBytes());
 
+                StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
+                data.clear();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-
-        StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
     }
 
     private void printTransaction(final Invoice invoice, final InvoiceTools.PaymentsComputation paymentsComputation, final String... labels) {
+        if(!BluetoothTools.isEnabled())
+            return;
+
         String targetPrinter = EpsonPrinterTools.targetPrinter(getApplicationContext());
         if(targetPrinter != null) {
 

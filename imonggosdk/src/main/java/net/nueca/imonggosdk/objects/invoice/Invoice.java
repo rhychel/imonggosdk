@@ -83,11 +83,16 @@ public class Invoice extends BaseTransactionTable3 {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_id")
     protected transient Branch branch;
 
+    @Deprecated
     @DatabaseField
     protected Integer currentPaymentBatchNo = 0;
 
+    //@DatabaseField
+    //protected Integer paymentBatch;
+
     @Expose
-    @DatabaseField
+    //@DatabaseField
+    //protected Integer paymentBatch;
     protected Integer layaway_id;
 
     public Invoice() {}
@@ -308,6 +313,10 @@ public class Invoice extends BaseTransactionTable3 {
     public boolean shouldPageRequest() {
         refresh();
         return false;
+    }
+
+    public Invoice createClone() throws JSONException {
+        return fromJSONObject(toJSONObject());
     }
 
     @Override
@@ -581,14 +590,17 @@ public class Invoice extends BaseTransactionTable3 {
         }
     }
 
+    @Deprecated
     public Integer getCurrentPaymentBatchNo() {
         return currentPaymentBatchNo;
     }
 
+    @Deprecated
     public void setCurrentPaymentBatchNo(Integer currentPaymentBatchNo) {
         this.currentPaymentBatchNo = currentPaymentBatchNo;
     }
 
+    @Deprecated
     public boolean updateCurrentPaymentBatch() {
         refresh();
         boolean hasNewPaymentBatch = false;
@@ -604,6 +616,7 @@ public class Invoice extends BaseTransactionTable3 {
         return hasNewPaymentBatch;
     }
 
+    @Deprecated
     public boolean createNewPaymentBatch() {
         if(!updateCurrentPaymentBatch())
             return false;
@@ -616,6 +629,7 @@ public class Invoice extends BaseTransactionTable3 {
         return updateCurrentPaymentBatch();
     }
 
+    @Deprecated
     public void joinAllNewToCurrentPaymentBatch() {
         for(InvoicePayment payment : payments) {
             if(payment.getPaymentBatchNo() == null) {
@@ -624,6 +638,7 @@ public class Invoice extends BaseTransactionTable3 {
         }
     }
 
+    @Deprecated
     public List<InvoicePayment> getNewBatchPayment() {
         refresh();
         List<InvoicePayment> payments = new ArrayList<>();
@@ -635,6 +650,23 @@ public class Invoice extends BaseTransactionTable3 {
                 payments.add(payment);
         }
         return payments;
+    }
+
+    public List<InvoicePayment> getUnmarkedPayments() {
+        refresh();
+        List<InvoicePayment> payments = new ArrayList<>();
+        for(InvoicePayment payment : this.payments) {
+            if (payment.getPaymentBatchNo() == null)
+                payments.add(payment);
+        }
+        return payments;
+    }
+
+    public void markSentPayment(Integer invoiceId) {
+        for(InvoicePayment payment : this.payments) {
+            if (payment.getPaymentBatchNo() == null)
+                payment.setPaymentBatchNo(invoiceId);
+        }
     }
 
     public Integer getLayaway_id() {

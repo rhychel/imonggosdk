@@ -1002,6 +1002,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     // When the request is successful
                     mSyncModulesListener.onEndDownload(mCurrentTableSyncing);
                     mSyncModulesListener.onFinishDownload();
+                    stopSelf();
                 }
             }
         }, 1000);
@@ -1013,6 +1014,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         if (mSyncModulesListener != null) {
             mSyncModulesListener.onStartDownload(mCurrentTableSyncing);
         }
+
     }
 
     @Override
@@ -1242,7 +1244,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     if (mCurrentTableSyncing == Table.USERS_ME) {
                         if (!jsonObject.isNull("id")) {
                             User user = gson.fromJson(jsonObject.toString(), User.class);
-                            Extras extras = new Extras();
+                            Extras extras = new Extras(User.class.getName().toUpperCase(), user.getId());
 
                             if (jsonObject.has("extras")) {
                                 JSONObject json_extras = jsonObject.getJSONObject("extras");
@@ -1250,7 +1252,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     if (!json_extras.getString("is_salesman").isEmpty()) {
                                         extras.setIs_salesman(json_extras.getInt("is_salesman"));
                                         extras.insertTo(getHelper());
+
                                         user.setExtras(extras);
+                                        Log.e(TAG, "User.extras");
                                     } else {
                                         Log.e(TAG, "User's Extras' 'is_salesman' field don't have value");
                                     }
@@ -1263,6 +1267,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             }
 
                             if (initialSync || lastUpdatedAt == null) {
+                                Log.e(TAG, "User.insertTo");
                                 user.insertTo(getHelper());
                             } else {
                                 // check if the user tables exist in the database
@@ -1286,6 +1291,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             getSession().setUser(user);
                             getSession().setCurrent_branch_id(user.getHome_branch_id());
                             getSession().updateTo(getHelper());
+
+                            // TESTING?
+                            user.setSession(getSession());
+                            user.updateTo(getHelper());
 
                             Log.e(TAG, "User: " + getSession().getUser().getName() + "User Home Branch ID: " + getSession().getUser().getHome_branch_id());
 

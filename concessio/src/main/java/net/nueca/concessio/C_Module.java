@@ -2,6 +2,7 @@ package net.nueca.concessio;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -61,6 +62,7 @@ import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.AnimationTools;
+import net.nueca.concessioengine.tools.BluetoothTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
@@ -1080,12 +1082,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
         else if(item.getItemId() == R.id.mPrint) {
             if(getAppSetting().isCan_print()) {
-                concessioModule = simpleTransactionDetailsFragment.getOfflineData().getConcessioModule();
-
-                if(!EpsonPrinterTools.targetPrinter(this).equals(""))
+                if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                     printTransaction(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
-                if(!StarIOPrinterTools.getTargetPrinter(this).equals(""))
+                if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
                     printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+
+//                AsyncTask<Void, Void, Void> startPrint = new AsyncTask<Void, Void, Void>() {
+//                    @Override
+//                    protected Void doInBackground(Void... params) {
+//
+//                        return null;
+//                    }
+//                };
+//                startPrint.execute();
+
             }
         }
         return super.onOptionsItemSelected(item);
@@ -1417,8 +1427,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .forBranch(branch)
                                         .object(document)
                                         .fromModule(concessioModule)
-                                        .category(simpleProductsFragment.getCategory())
-                                        .documentReason(ProductsAdapterHelper.getReason().getName())
+                                        .category(simpleProductsFragment != null ? simpleProductsFragment.getCategory() : "")
+                                        .documentReason(ProductsAdapterHelper.getReason() != null ? ProductsAdapterHelper.getReason().getName() : "")
                                         .queue();
                                 if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
                                     if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
@@ -1559,8 +1569,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .forBranch(branch)
                                                             .object(document)
                                                             .fromModule(concessioModule)
-                                                            .category(simpleProductsFragment.getCategory())
-                                                            .documentReason(ProductsAdapterHelper.getReason().getName())
+                                                            .category(simpleProductsFragment != null ? simpleProductsFragment.getCategory() : "")
+                                                            .documentReason(ProductsAdapterHelper.getReason() != null ? ProductsAdapterHelper.getReason().getName() : "")
                                                             .queue();
 
                                                     if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
@@ -1678,6 +1688,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     };
 
     private void printTransactionStar(final OfflineData offlineData, final String... labels) {
+        if(!BluetoothTools.isEnabled())
+            return;
         Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
 
@@ -1687,7 +1699,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add((branch.getName()+"\r\n").getBytes());
                 data.add((branch.generateAddress()+"\r\n\r\n").getBytes());
 
-                if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
                     data.add(("MISCELLANEOUS STOCK OUT SLIP\r\n\r\n").getBytes());
                 else
                     data.add(("INVENTORY SLIP\r\n\r\n").getBytes());
@@ -1698,7 +1710,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 if(offlineData != null) {
                     data.add(("Ref #: "+offlineData.getReference_no()+"\r\n").getBytes());
                     data.add(("Date: " + simpleDateFormat.format(offlineData.getDateCreated())+"\r\n").getBytes());
-                    if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                    if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
                         data.add(("Company: " + offlineData.getCategory().toUpperCase()+"\r\n").getBytes()); // TODO,
                         data.add((EpsonPrinterTools.tabber("Reason: ", offlineData.getDocumentReason(), 32)+"\r\n").getBytes()); //ProductsAdapterHelper.getReason().getName()
                     }
@@ -1834,21 +1846,29 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add((EpsonPrinterTools.spacer("Total Order Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\r\n\r\n").getBytes());
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Left
                 data.add(labels[i].getBytes());
+                if(simpleTransactionDetailsFragment != null) {
+                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                    data.add("\r\n** This is a reprint **\r\n".getBytes());
+                }
                 if(i < labels.length-1) {
                     data.add(("\r\n\r\n\r\n").getBytes());
                     data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
                 }
                 else
                     data.add(("\r\n\r\n").getBytes());
+
+                StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
+
+                data.clear();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
     }
 
     private void printTransaction(final OfflineData offlineData, final String... labels) {
+        if(!BluetoothTools.isEnabled())
+            return;
         String targetPrinter = EpsonPrinterTools.targetPrinter(getApplicationContext());
         if(targetPrinter != null) {
             EpsonPrinterTools.print(targetPrinter, new PrintListener() {
