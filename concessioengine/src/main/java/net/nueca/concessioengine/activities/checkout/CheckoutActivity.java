@@ -106,7 +106,7 @@ public abstract class CheckoutActivity extends ModuleActivity {
         if(pointsPaymentType == null)
             return 0d;
 
-        List<InvoicePayment> payments = invoice.getNewBatchPayment();
+        List<InvoicePayment> payments = invoice.getUnmarkedPayments();
         BigDecimal newPointsPayment = BigDecimal.ZERO;
         for(InvoicePayment payment : payments) {
             if(payment.getPayment_type_id() == pointsPaymentType.getId())
@@ -140,7 +140,7 @@ public abstract class CheckoutActivity extends ModuleActivity {
         }
         invoice.setInvoice_date(DateTimeTools.convertDateForUrl(DateTimeTools.getCurrentDateTimeUTCFormat().replaceAll("-","/")));
 
-        invoice.createNewPaymentBatch();
+        //invoice.createNewPaymentBatch();
 
         return invoice;
     }

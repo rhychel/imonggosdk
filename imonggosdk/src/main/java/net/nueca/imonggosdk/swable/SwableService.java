@@ -31,6 +31,7 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 	
 	public abstract void syncModule();
 	public abstract void updateSyncingStatus();
+	public abstract void restartSyncingAndQueued();
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -58,6 +59,7 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 							updateSyncingStatus();
 							Log.d("SwableService", "---syncing data");
 						}
+						restartSyncingAndQueued();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

@@ -621,7 +621,7 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
 
     @Override
     public String toString() {
-        return name;
+        return "name: " + name + " company name: " + company_name + " address: " + generateAddress();
     }
 
     public String generateFullName() {
