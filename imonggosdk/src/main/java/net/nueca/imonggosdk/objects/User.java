@@ -169,11 +169,14 @@ public class User extends BaseTable implements Extras.DoOperationsForExtras {
 
     @Override
     public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.setId(User.class.getName().toUpperCase(), id);
         extras.deleteTo(dbHelper);
     }
 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.setUser(this);
+        extras.setId(User.class.getName().toUpperCase(), id);
         extras.updateTo(dbHelper);
     }
 }
