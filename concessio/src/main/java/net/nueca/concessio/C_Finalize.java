@@ -344,7 +344,7 @@ public class C_Finalize extends ModuleActivity {
                     if(!EpsonPrinterTools.targetPrinter(this).equals(""))
                         printTransaction(offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                     if(!StarIOPrinterTools.getTargetPrinter(this).equals(""))
-                        printTransactionStar(offlineData, offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*");//, "*Customer Copy*", "*Office Copy*");
+                        printTransactionStar(offlineData, offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                 }
             } break;
         }

@@ -549,7 +549,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                     printTransaction(null, "*Salesman Copy*", "*Office Copy*");
                                 if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                                    printTransactionStar(null, "*Salesman Copy*");//, "*Office Copy*");
+                                    printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
                             }
                         });
                         tvItems.setVisibility(View.INVISIBLE);
@@ -1079,7 +1079,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 if(!EpsonPrinterTools.targetPrinter(this).equals(""))
                     printTransaction(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
                 if(!StarIOPrinterTools.getTargetPrinter(this).equals(""))
-                    printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*");//, "*Office Copy*");
+                    printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
             }
         }
         return super.onOptionsItemSelected(item);
@@ -1418,7 +1418,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                         printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
                                     if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                                        printTransactionStar(offlineData, "*Salesman Copy*");//, "*Office Copy*");
+                                        printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
                                 }
                             }
 
@@ -1561,7 +1561,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                                             printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
                                                         if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                                                            printTransactionStar(offlineData, "*Salesman Copy*");//, "*Office Copy*");
+                                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
                                                     }
                                                 }
 
