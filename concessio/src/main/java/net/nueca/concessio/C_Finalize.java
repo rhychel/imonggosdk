@@ -637,6 +637,10 @@ public class C_Finalize extends ModuleActivity {
 
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
                 data.add(labels[i].getBytes());
+                if(isForHistoryDetail) {
+                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                    data.add("\r\n** This is a reprint **\r\n".getBytes());
+                }
                 if(i < labels.length-1) {
                     data.add("\r\n\r\n\r\n".getBytes());
                     data.add("- - - - - - CUT HERE - - - - - -\r\n\r\n".getBytes());
