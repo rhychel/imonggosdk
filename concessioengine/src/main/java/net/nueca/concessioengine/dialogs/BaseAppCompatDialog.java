@@ -19,6 +19,7 @@ import net.nueca.imonggosdk.tools.DateTimeTools;
  */
 public class BaseAppCompatDialog extends AppCompatDialog {
 
+    protected boolean isButtonTapped = false;
     protected static int NO_THEME = -1;
     protected String date;
     protected FragmentManager fragmentManager;

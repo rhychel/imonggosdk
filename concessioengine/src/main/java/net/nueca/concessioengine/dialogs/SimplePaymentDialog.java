@@ -207,6 +207,10 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                             return;
                         }
                     }
+                    if(isButtonTapped)
+                        return;
+                    isButtonTapped = true;
+
                     if(listener != null)
                         listener.onAddPayment((PaymentType) spnPaymentType.getSelectedItem(), etPayment.getText().toString(), extrasForCheck);
                     dismiss();
