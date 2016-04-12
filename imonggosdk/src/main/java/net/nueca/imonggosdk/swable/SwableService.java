@@ -12,7 +12,7 @@ import net.nueca.imonggosdk.operations.sync.ImonggoService;
 
 public abstract class SwableService extends ImonggoService implements SwableConnectionHandler.OnConnectionChangedListener {
 
-	public static final int NO_INTERNET_DELAY = 3000;
+	public static final int NO_INTERNET_DELAY = 4000;
 	public static final int INTERNET_DELAY = 10000;
 
 	public interface OnConnectionChangedListener {
@@ -44,7 +44,7 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 			public void run() {
 				while(!isShouldStop()) {
 					try {
-						Thread.sleep(NO_INTERNET_DELAY); // 3 seconds
+						Thread.sleep(NO_INTERNET_DELAY); // 4 seconds
 						Log.d("SwableService", "---syncing started");
 						Log.d("SwableService", "---should sync? " + isShouldSync());
 						while(isShouldSync()) {
@@ -54,8 +54,8 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 								//runSyncModule.sendEmptyMessage(0);
 								syncModule();
 							}
-							updateSyncingStatus();
 							Thread.sleep(INTERNET_DELAY); // 30 seconds
+							updateSyncingStatus();
 							Log.d("SwableService", "---syncing data");
 						}
 					} catch (InterruptedException e) {

@@ -255,6 +255,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
             Log.e(TAG, "Starting Module Download");
             if (mSyncModules != null) {
+                mSyncModules.resetSession();
                 mSyncModules.startFetchingModules();
             } else {
                 Log.e(TAG, "Service Modules is null cannot start sync");
@@ -280,6 +281,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                                     } else {
                                         Log.e(TAG, "syncModule is not null ");
                                         try {
+                                            mSyncModules.resetSession();
                                             mSyncModules.startFetchingModules();
                                         } catch (SQLException e) {
                                             e.printStackTrace();
@@ -985,6 +987,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     setUpTableNamesForCustomDialog();
                     showCustomDownloadDialog("Updating");
 
+                    mSyncModules.resetSession();
                     mSyncModules.startFetchingModules();
                 } catch (SQLException e) {
                     e.printStackTrace();

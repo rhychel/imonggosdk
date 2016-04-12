@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects;
 
+import android.util.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -227,7 +229,8 @@ public class Session extends DBTable {
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.update(Session.class, this);
+            int updated = dbHelper.update(Session.class, this);
+            Log.e("Session", updated+" rows affected!");
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -87,7 +87,8 @@ public class Invoice extends BaseTransactionTable3 {
     protected Integer currentPaymentBatchNo = 0;
 
     @Expose
-    @DatabaseField
+    //@DatabaseField
+    //protected Integer paymentBatch;
     protected Integer layaway_id;
 
     public Invoice() {}
