@@ -139,7 +139,8 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
 
     public List<InvoicePayment> getPayments() {
         List<InvoicePayment> payments = computation.getPayments();
-        payments.addAll(computation.getReturnsPayments());
+        if(!isLayaway)
+            payments.addAll(computation.getReturnsPayments());
         return payments;
     }
     

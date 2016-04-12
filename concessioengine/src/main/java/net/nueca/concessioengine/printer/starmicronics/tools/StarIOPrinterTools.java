@@ -459,11 +459,11 @@ public class StarIOPrinterTools {
             port.setEndCheckedBlockTimeoutMillis(120000);// Change the timeout time of endCheckedBlock method.
             status = port.endCheckedBlock();
 
-            if (true == status.coverOpen) {
+            if (status.coverOpen) {
                 throw new StarIOPortException("Printer cover is open");
-            } else if (true == status.receiptPaperEmpty) {
+            } else if (status.receiptPaperEmpty) {
                 throw new StarIOPortException("Receipt paper is empty");
-            } else if (true == status.offline) {
+            } else if (status.offline) {
                 throw new StarIOPortException("Printer is offline");
             }
 			/* End of Begin / End Checked Block Sample code */

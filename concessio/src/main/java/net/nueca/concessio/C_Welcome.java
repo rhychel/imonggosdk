@@ -13,6 +13,8 @@ import net.nueca.concessioengine.activities.welcome.WelcomeActivity;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
@@ -65,7 +67,14 @@ public class C_Welcome extends WelcomeActivity {
         });
 
         try {
-            Log.e(TAG, "session: " + getSession() + " user: " + getSession().getUser());
+//            if(getSession().getUser() == null) {
+//                Session session = getSession();
+//                User user = getHelper().fetchIntId(User.class).queryBuilder().where().eq("email", session.getEmail()).queryForFirst();
+//
+//                session.setUser(user);
+//                session.updateTo(getHelper());
+//            }
+            Log.e(TAG, "session: " + getSession() + " user: " + getSession().getUser() + " email: "+getSession().getEmail());
             tvAgentName.setText("Hello, "+getSession().getUser().getName()+"!");
         } catch (SQLException e) {
             e.printStackTrace();

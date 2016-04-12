@@ -62,6 +62,7 @@ import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.AnimationTools;
+import net.nueca.concessioengine.tools.BluetoothTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
@@ -181,6 +182,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
                                 SelectedProductItemList returns =
                                         InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
+
+                                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
+                                ProductsAdapterHelper.setSelectedCustomer(customer);
+                                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+                                if(customerGroups.size() > 0)
+                                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
 
                                 ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
                                 ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
@@ -1681,6 +1688,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     };
 
     private void printTransactionStar(final OfflineData offlineData, final String... labels) {
+        if(!BluetoothTools.isEnabled())
+            return;
         Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
 
@@ -1847,15 +1856,19 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 }
                 else
                     data.add(("\r\n\r\n").getBytes());
+
+                StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
+
+                data.clear();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
     }
 
     private void printTransaction(final OfflineData offlineData, final String... labels) {
+        if(!BluetoothTools.isEnabled())
+            return;
         String targetPrinter = EpsonPrinterTools.targetPrinter(getApplicationContext());
         if(targetPrinter != null) {
             EpsonPrinterTools.print(targetPrinter, new PrintListener() {
