@@ -55,16 +55,20 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
+import net.nueca.imonggosdk.objects.salespromotion.Discount;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.Configurations;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.LastUpdateAtTools;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -130,6 +134,23 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
+
+        List<SalesPromotion> salesPromotions =  SalesPromotion.fetchAll(getHelper(), SalesPromotion.class);
+        Log.e(TAG, "sales promotions size: " + salesPromotions.size());
+        for(SalesPromotion salesPromotion : salesPromotions) {
+            Log.e(TAG, "salesPromotions: " + salesPromotion.toString() );
+        }
+/*
+        List<BranchProduct> list = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+
+        Log.e(TAG, "ALIBABA G.PEAS 12 list size: " + list.size());
+
+        for(BranchProduct bp : list) {
+            if(bp.getUnit() != null)
+            Log.e(TAG,  "ID: " + bp.getProduct().getId() + " Product: " + bp.getProduct().getName() + " Unit: " + bp.getUnit().getName() + " id: " + bp.getUnit().getId());
+            else
+                Log.e(TAG,  "ID: " + bp.getProduct().getId() + " Product: " + bp.getProduct().getName() +  " product don't have unit");
+        }*/
     }
 
     @Override
@@ -294,9 +315,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         if (!SwableTools.isImonggoSwableRunning(this))
             SwableTools.stopSwable(this);
 
-        if (apiDownloader != null) {
-            apiDownloader.onUnbindSyncService();
-        }
+        apiDownloader.onUnbindSyncService();
         super.onDestroy();
     }
 }

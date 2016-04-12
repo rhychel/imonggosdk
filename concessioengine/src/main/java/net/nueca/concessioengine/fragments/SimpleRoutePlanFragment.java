@@ -202,7 +202,8 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
                 Log.e("RoutePlan", "route plan details="+routePlanDetail.getFrequency()+"---");
                 if(!day.getShortname().equals(routePlanDetail.getRoute_day()))
                     continue;
-                if(searchKey != null && (!searchKey.trim().isEmpty() && !routePlanDetail.getCustomer().getSearchKey().toLowerCase().contains(searchKey))) {
+                Log.e("RoutePlanSearch", routePlanDetail.getCustomer()+"");
+                if(searchKey != null && (!searchKey.trim().isEmpty() && routePlanDetail.getCustomer()!= null && !routePlanDetail.getCustomer().getSearchKey().toLowerCase().contains(searchKey))) {
                     Log.e("searchKey", searchKey+"----");
                     continue;
                 }
