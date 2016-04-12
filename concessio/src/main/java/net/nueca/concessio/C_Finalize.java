@@ -340,7 +340,7 @@ public class C_Finalize extends ModuleActivity {
                 addAndReturnDialog.show();
             } break;
             case R.id.mPrint: {
-                if(getAppSetting().isCan_print()) {
+                if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                     if(!EpsonPrinterTools.targetPrinter(this).equals(""))
                         printTransaction(offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                     if(!StarIOPrinterTools.getTargetPrinter(this).equals(""))
