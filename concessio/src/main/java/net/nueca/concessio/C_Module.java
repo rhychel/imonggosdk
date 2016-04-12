@@ -537,7 +537,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 Log.e("PHYSICAL_COUNT", "is_view"+getModuleSetting(concessioModule).is_view());
                 Log.e("PHYSICAL_COUNT", "is_can_print"+getAppSetting().isCan_print());
                 if(getModuleSetting(concessioModule).is_view()) {
-                    if(getAppSetting().isCan_print()) {
+                    if(getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
                         llFooter.setVisibility(View.VISIBLE);
                         btn1.setText("PRINT INVENTORY");
                         btn1.setOnClickListener(new View.OnClickListener() {
@@ -547,7 +547,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                     printTransaction(null, "*Salesman Copy*", "*Office Copy*");
                                 if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                                    printTransactionStar(null, "*Salesman Copy*");//, "*Office Copy*");
+                                    printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
                             }
                         });
                         tvItems.setVisibility(View.INVISIBLE);
@@ -953,8 +953,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.e("onCreateOptionsMenu", hasMenu+" || "+concessioModule.toString());
         if (hasMenu) {
-            if(concessioModule == ConcessioModule.HISTORY && getSupportFragmentManager().getBackStackEntryCount() == 1)
-                getMenuInflater().inflate(R.menu.others_menu, menu);
+            if(concessioModule == ConcessioModule.HISTORY && getSupportFragmentManager().getBackStackEntryCount() == 1) {
+                if(getModuleSetting(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule()).isCan_print())
+                    getMenuInflater().inflate(R.menu.others_menu, menu);
+            }
             else if(concessioModule == ConcessioModule.CUSTOMERS) {
                 getMenuInflater().inflate(R.menu.simple_customers_menu, menu);
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -1381,10 +1383,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .object(document)
                                         .fromModule(concessioModule)
                                         .queue();
-                                if(getAppSetting().isCan_print()) {
-                                    if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
+                                if(getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
+                                    if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                         printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                    if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
+                                    if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
                                         printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
                                 }
                             }
@@ -1506,7 +1508,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .fromModule(concessioModule)
                                                             .queue();
 
-                                                    if(getAppSetting().isCan_print()) {
+                                                    if(getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
                                                         if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                                             printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
                                                         if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
@@ -1639,7 +1641,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add("================================".getBytes());
 
                 if (offlineData != null && offlineData.getType() == OfflineData.DOCUMENT &&
-                        (concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)) {
+                        (concessioModule == ConcessioModule.RECEIVE_SUPPLIER
+                                || concessioModule == ConcessioModule.RELEASE_SUPPLIER
+                                || concessioModule == ConcessioModule.RELEASE_ADJUSTMENT
+                                || concessioModule == ConcessioModule.HISTORY)) {
                     for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
                         Double retail_price = 0.0;
                         try {
@@ -1670,6 +1675,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                         data.add((documentLine.getProduct().getName() + "\r\n").getBytes());
+                        Log.e("documentLine.unit_id", documentLine.getUnit_id()+" --- ");
                         if (documentLine.getUnit_id() != null) {
                             totalQuantity += documentLine.getUnit_quantity();
                             data.add(("  " + documentLine.getUnit_quantity() + "   " + documentLine.getUnit_name() + " x " + NumberTools.separateInCommas(retail_price)+"\r\n").getBytes());

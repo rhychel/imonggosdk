@@ -163,11 +163,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     Invoice invoice = generateInvoice();
 
                     // Print
-                    if(getAppSetting().isCan_print()) {
+                    if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                         if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
                             printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                         if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            printTransactionStar(invoice, "*Salesman Copy*");//, "*Customer Copy*", "*Office Copy*");
                     }
                     // Print
 
@@ -185,7 +185,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         e.printStackTrace();
                     }
                     // Transaction Date
-
                     transactionDialog.show();
 
                     invoice.setStatus("S");
@@ -243,11 +242,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                         Invoice invoice = generateInvoice();
 
-                        if(getAppSetting().isCan_print()) {
+                        if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                             if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
                                 printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                             if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                printTransactionStar(invoice, "*Salesman Copy*");//, "*Customer Copy*", "*Office Copy*");
                         }
 
                         transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
@@ -477,8 +476,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     data.add(("Ref #: "+offlineData.getReference_no()+"\r\n").getBytes());
                     data.add(("Date: " + simpleDateFormat.format(offlineData.getDateCreated())+"\r\n").getBytes());
                 }
-                else
-                    data.add(("Date: " + simpleDateFormat.format(Calendar.getInstance().getTime())+"\r\n").getBytes());
+                else {
+                    data.add(("Ref #: "+invoice.getReference()+"\r\n").getBytes());
+                    data.add(("Date: " + simpleDateFormat.format(Calendar.getInstance().getTime()) + "\r\n").getBytes());
+                }
                 // ---------- HEADER
 
                 double totalQuantity = 0.0;
@@ -561,7 +562,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(totalQuantity), 2)), 32)+"\r\n").getBytes());
-                    data.add((EpsonPrinterTools.spacer("Net BO Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()),2)), 32)+"\r\n\r\n").getBytes());
+                    data.add((EpsonPrinterTools.spacer("LESS Net BO Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()),2)), 32)+"\r\n\r\n").getBytes());
                 }
                 if(invoice.getRgsInvoiceLines().size() > 0) {
                     totalQuantity = 0.0;
@@ -592,10 +593,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(Math.abs(totalQuantity)), 32)+"\r\n").getBytes());
-                    if(paymentsComputation.getReturnsPayments().size() > 1)
-                        data.add((EpsonPrinterTools.spacer("Net RGS Amount: ", NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(1).getAmount())), 32)+"\r\n\r\n").getBytes());
+                    Log.e("InvoicePayment", paymentsComputation.getReturnsPayments().size()+" returns payment");
+                    if(paymentsComputation.getReturnsPayments().size() > 2)
+                        data.add((EpsonPrinterTools.spacer("LESS Net RGS Amount: ", NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(2).getAmount())), 32)+"\r\n\r\n").getBytes());
                     else
-                        data.add((EpsonPrinterTools.spacer("Net RGS Amount: ", NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount())), 32)+"\r\n\r\n").getBytes());
+                        data.add((EpsonPrinterTools.spacer("LESS Net RGS Amount: ", NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount())), 32)+"\r\n\r\n").getBytes());
                 }
 
                 data.add((EpsonPrinterTools.spacer("Amount Due: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(true).doubleValue(), 2)), 32)+"\r\n\r\n").getBytes());
@@ -605,7 +607,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add("Payments                  Amount".getBytes());
                 for(InvoicePayment invoicePayment : invoice.getPayments()) {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
-                    data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
+                    if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip"))
+                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
                 }
                 data.add((EpsonPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\r\n").getBytes());
                 data.add("--------------------------------".getBytes());
@@ -626,7 +629,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add(("Address: "+ProductsAdapterHelper.getSelectedCustomer().generateAddress()+"\r\n").getBytes());
                 data.add("Signature:______________________\r\n".getBytes());
                 if(ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms() != null)
-                    data.add(("Terms: "+ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms().getName()+"\r\n\r\n").getBytes());
+                    data.add(("Terms: "+(ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms().getName() == null
+                            ? "None"
+                            : ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms().getName())+"\r\n\r\n").getBytes());
                 else
                     data.add("\r\n".getBytes());
 
