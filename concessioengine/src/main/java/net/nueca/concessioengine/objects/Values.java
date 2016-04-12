@@ -6,6 +6,7 @@ import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.tools.DiscountTools;
+import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.Unit;
@@ -231,8 +232,12 @@ public class Values {
         if(price != null) {
             if (price.getRetail_price() != null)
                 this.retail_price = price.getRetail_price();
-            else
-                this.retail_price = price.getProduct().getRetail_price();
+            else {
+                this.retail_price = PriceTools.identifyRetailPrice(ProductsAdapterHelper.getDbHelper(),
+                        price.getProduct(),ProductsAdapterHelper.getSelectedBranch(),ProductsAdapterHelper.getSelectedCustomerGroup(),
+                        ProductsAdapterHelper.getSelectedCustomer(), price.getUnit());
+                //this.retail_price = price.getProduct().getRetail_price();
+            }
             this.discount_text = price.getDiscount_text();
         }
         setValue(quantity, price == null? null : price.getUnit(), extendedAttributes);

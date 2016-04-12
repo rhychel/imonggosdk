@@ -181,6 +181,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 SelectedProductItemList returns =
                                         InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
 
+                                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
+                                ProductsAdapterHelper.setSelectedCustomer(customer);
+                                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+                                if(customerGroups.size() > 0)
+                                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
+
                                 ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
                                 ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
                             } catch (SQLException e) {
