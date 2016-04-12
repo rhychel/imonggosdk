@@ -3021,6 +3021,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     PriceList priceList = gson.fromJson(jsonObject.toString(), PriceList.class);
+                                    /*if (isExisting(priceList, Table.PRICE_LISTS))
+                                        continue;*/
 
                                     if (jsonObject.has("branch_id")) {
                                         // Get The Branch ID
@@ -3119,10 +3121,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 return;
                             } else {
                                 listOfIds = getHelper().fetchObjectsList(PriceList.class);
-                                PriceList priceList = (PriceList) listOfIds.get(mCustomIdIndex);
+                                PriceList priceList /*= (PriceList) listOfIds.get(mCustomIdIndex)*/;
 
                                 for (int i = 0; i < size; i++) {
                                     JSONObject priceListJsonObject = jsonArray.getJSONObject(i);
+
+                                    priceList = getHelper().fetchObjects(PriceList.class).queryBuilder().where().eq("id", priceListJsonObject
+                                            .getInt("price_list_id")).queryForFirst();
+
                                     Price price = new Price();
                                     price.setId(-1);
                                     price = gson.fromJson(priceListJsonObject.toString(), Price.class);
