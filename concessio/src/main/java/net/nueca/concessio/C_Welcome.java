@@ -24,7 +24,7 @@ import java.util.Calendar;
  * imonggosdk2 (c)2015
  */
 public class C_Welcome extends WelcomeActivity {
-
+    private static String TAG = "C_WELCOME";
     private TextView tvAgentName;
     private Spinner spBranch;
     private Button btnBegin, btnNotYou;
@@ -65,6 +65,7 @@ public class C_Welcome extends WelcomeActivity {
         });
 
         try {
+            Log.e(TAG, "session: " + getSession() + " user: " + getSession().getUser());
             tvAgentName.setText("Hello, "+getSession().getUser().getName()+"!");
         } catch (SQLException e) {
             e.printStackTrace();
