@@ -291,9 +291,9 @@ public class StarIOPrinterTools {
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    updateTargetPrinter(mContext, name.getPortName());
                                     if (listener != null)
                                         listener.onPrinterSelected(name);
-                                    updateTargetPrinter(mContext, name.getPortName());
                                     discoveryDialog.dismiss();
                                 }
                             })
