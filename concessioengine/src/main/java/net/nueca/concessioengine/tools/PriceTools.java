@@ -2,6 +2,7 @@ package net.nueca.concessioengine.tools;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
@@ -144,8 +145,10 @@ public class PriceTools {
             //Log.e("identifyRetailPrice", "type="+type);
 
             Log.e("Price-" + type, selectedPrice == null? "null" : "retail_price:" + selectedPrice.getRetail_price() + " for " + product.getName());
-            //if(selectedPrice != null)
-            //    Log.e("Price ("+selectedPrice.getId()+") ~ " + selectedPrice.getPriceList().getId(), selectedPrice.toJSONString());
+//
+//            if(selectedPrice != null)
+//                Log.e("Price ("+selectedPrice.getId()+") ~ " + selectedPrice.getPriceList().getId(), selectedPrice.toJSONString());
+            Log.e("PriceList", new Gson().toJson(selectedPrice));
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
