@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.base.BaseTable3;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
@@ -181,7 +182,7 @@ public class ImonggoSwable extends SwableService {
                                 swableStateListener.onAlreadyCancelled(offlineData);
                             continue;
                         }
-                        if(offlineData.isQueued()) {
+                        if(offlineData.isQueued() || offlineData.isSyncing()) {
                             continue;
                         }
                         /*
@@ -252,7 +253,7 @@ public class ImonggoSwable extends SwableService {
                     Log.e("ImonggoSwable", "starting sync : " + offlineDataList.size() + " queued transactions");
                     if(swableStateListener != null)
                         swableStateListener.onSwableStarted();
-                    getQueue().start();
+                    //getQueue().start();
                     //setSyncing(false);
                     Log.e("ImonggoSwable", "isSyncing? " + isSyncing());
                 }
@@ -290,22 +291,22 @@ public class ImonggoSwable extends SwableService {
         try {
             List<OfflineData> offlineDataList =
                     getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
-                            .eq("isSynced", false).and()
-                            .eq("isCancelled", false).and()
-                            .eq("isBeingModified", false).and()
-                            .eq("isPastCutoff", false).and()
+                            //.eq("isSynced", false).and()
+                            //.eq("isCancelled", false).and()
+                            //.eq("isBeingModified", false).and()
+                            //.eq("isPastCutoff", false).and()
                             .eq("isSyncing", true).or()
                             .eq("isQueued", true).query();
             for(OfflineData offlineData : offlineDataList) {
-                swableSendModule.requestQueue.cancelAll(offlineData.getReference_no());
+                swableSendModule.requestQueue.cancelAll(offlineData.getObjectFromData(BaseTable3.class).getId());
                 offlineData.setSyncing(false);
                 offlineData.setQueued(false);
                 offlineData.updateTo(getHelper());
-
-                swableSendModule.QUEUED_TRANSACTIONS = 0;
-                swableUpdateModule.QUEUED_TRANSACTIONS = 0;
-                swableVoidModule.QUEUED_TRANSACTIONS = 0;
             }
+
+            swableSendModule.QUEUED_TRANSACTIONS = 0;
+            swableUpdateModule.QUEUED_TRANSACTIONS = 0;
+            swableVoidModule.QUEUED_TRANSACTIONS = 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }

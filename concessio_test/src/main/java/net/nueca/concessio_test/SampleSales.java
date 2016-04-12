@@ -377,7 +377,7 @@ public class SampleSales extends ModuleActivity implements SetupActionBar, View.
             if(location != null)
                 Log.e("ACCURACY", location.getAccuracy() + " " + Criteria.ACCURACY_HIGH);
             Log.e(">>>", new Invoice.Builder()
-                    .payments(simpleCheckoutFragment.getPayments())
+                    //.payments(simpleCheckoutFragment.getPayments())
                     .invoice_lines(simpleCheckoutFragment.getInvoiceLines())
                     /*.extras(new Extras.Builder()
                             .latitude("" + LocationTools.limitDecimal(location.getLatitude(), 5))
