@@ -88,6 +88,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected String reference;
     protected boolean isLayaway = false;
     protected boolean isDuplicating = false;
+    protected boolean isButtonTapped = false;
 
     protected int previousFragmentCount = 0;
     protected HistoryDetailsListener historyDetailsListener;
@@ -156,13 +157,16 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     @Override
     public void onBackPressed() {
         if(mSearch != null) {
-            if(!mSearch.isIconified())
+            if(!mSearch.isIconified()) {
                 closeSearchField(mSearch);
+                Log.e("onBackPressed", "closed the search field");
+            }
             else
                 super.onBackPressed();
         }
         else
             super.onBackPressed();
+        Log.e("onBackPressed", "is backed :)");
     }
 
     // TODO Search the document
