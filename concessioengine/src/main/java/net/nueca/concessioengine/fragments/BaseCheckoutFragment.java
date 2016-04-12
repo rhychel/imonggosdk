@@ -74,7 +74,7 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
             invoice = new Invoice();
         invoice.setBranch(ProductsAdapterHelper.getSelectedBranch());
         invoice.setInvoiceLines(getInvoiceLines());
-        invoice.setPayments(getPayments());
+        invoice.setPayments(getPayments( !isLayaway && invoice.getReturnId() == -1) );
         Gson gson = new Gson();
         Log.e(">>>>>>>>>>>>>>>>>>>>", gson.toJson(invoice.getPayments()));
         //invoice.joinAllNewToCurrentPaymentBatch();
@@ -137,9 +137,9 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         return computation.getInvoiceLines();
     }
 
-    public List<InvoicePayment> getPayments() {
+    public List<InvoicePayment> getPayments(boolean includeReturns) {
         List<InvoicePayment> payments = computation.getPayments();
-        if(!isLayaway)
+        if(includeReturns)
             payments.addAll(computation.getReturnsPayments());
         return payments;
     }
