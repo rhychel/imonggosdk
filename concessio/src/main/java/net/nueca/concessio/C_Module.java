@@ -547,7 +547,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                     printTransaction(null, "*Salesman Copy*", "*Office Copy*");
                                 if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                                    printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
+                                    printTransactionStar(null, "*Salesman Copy*");//, "*Office Copy*");
                             }
                         });
                         tvItems.setVisibility(View.INVISIBLE);
