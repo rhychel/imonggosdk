@@ -159,6 +159,9 @@ public class OfflineData extends BaseTable2 {
     @DatabaseField
     private String statusLog;
 
+    @DatabaseField
+    private String sentPaymentBatch = "";
+
     public OfflineData() {}
 
     public OfflineData(Invoice invoice, OfflineDataType offlineDataType) {
@@ -623,7 +626,7 @@ public class OfflineData extends BaseTable2 {
         switch (type) {
             case INVOICE:
                 typeStr = "INVOICE";
-                invoiceData.createNewPaymentBatch();
+                //invoiceData.createNewPaymentBatch();
                 invoiceData.insertTo(dbHelper);
                 break;
             case ORDER:
@@ -725,7 +728,7 @@ public class OfflineData extends BaseTable2 {
         String typeStr;
         switch (type) {
             case INVOICE:
-                invoiceData.createNewPaymentBatch();
+                //invoiceData.createNewPaymentBatch();
                 invoiceData.setOfflineData(this);
                 typeStr = "INVOICE";
                 if(invoiceData.getReturnId() > 0)
@@ -851,4 +854,16 @@ public class OfflineData extends BaseTable2 {
                 getReturnId().length() > 0 && !getReturnId().contains("@");
     }
 
+    public List<Integer> getSentPaymentBatch() {
+        List<String> paymentBatchStrs = Arrays.asList(sentPaymentBatch.split(","));
+        List<Integer> paymentBatches = new ArrayList<>();
+        for(String str : paymentBatchStrs)
+            if(!str.isEmpty() && !paymentBatches.contains(Integer.parseInt(str)))
+                paymentBatches.add(Integer.parseInt(str));
+        return paymentBatches;
+    }
+
+    public void addSentPaymentBatch(Integer batchNo) {
+        sentPaymentBatch += ("," + batchNo);
+    }
 }

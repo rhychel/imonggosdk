@@ -78,14 +78,23 @@ public class SwableSendModule extends BaseSwableModule {
                 }
             }
             JSONObject jsonObject;
+
+            //final List<Integer> forSendingBatch = new ArrayList<>();
+
             if(offlineData.getType() == OfflineData.INVOICE) {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
                 //invoice.createNewPaymentBatch();
                 //invoice.updateTo(dbHelper);
-                invoice.joinAllNewToCurrentPaymentBatch();
+                //invoice.joinAllNewToCurrentPaymentBatch();
                 Log.e("Customer", invoice.getCustomer() == null? "null" : invoice.getCustomer().getId() + " "
                         + invoice.getCustomer().getReturnId());
-                invoice.setPayments(invoice.getNewBatchPayment());
+                //invoice.setPayments(invoice.getUnsentBatchPayment(offlineData.getSentPaymentBatch()));
+                //invoice.setPayments(invoice.getNewBatchPayment());
+                invoice.setPayments(invoice.getUnmarkedPayments());
+
+                //for(InvoicePayment payment : invoice.getPayments())
+                //    forSendingBatch.add(payment.getPaymentBatchNo());
+
                 jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         invoice.toJSONObject());
             }
@@ -123,12 +132,27 @@ public class SwableSendModule extends BaseSwableModule {
                                 offlineData.setQueued(false);
                                 offlineData.setStatusLog("sending success");
 
+                                /*if(offlineData.getType() == OfflineData.INVOICE) {
+                                    Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                    //invoice.joinAllNewToCurrentPaymentBatch();
+                                    invoice.updateTo(dbHelper);
+                                    //for (Integer newSentPaymentBatch : forSendingBatch)
+                                    //    offlineData.addSentPaymentBatch(newSentPaymentBatch);
+                                    //offlineData.addSentPaymentBatch(invoice.getCurrentPaymentBatchNo());
+                                }*/
+
                                 if (response instanceof JSONObject) {
                                     JSONObject responseJson = ((JSONObject) response);
                                     if (responseJson.has("id")) {
                                         Log.d("ImonggoSwable", "sending success : return ID : " +
                                                 responseJson.getString("id"));
                                         offlineData.setReturnId(responseJson.getString("id"));
+
+                                        if(offlineData.getType() == OfflineData.INVOICE) {
+                                            Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                            invoice.markSentPayment(Integer.parseInt(responseJson.getString("id")));
+                                            invoice.updateTo(dbHelper);
+                                        }
                                     }
                                     if (offlineData.getType() == OfflineData.INVOICE && responseJson.has("customer_points")) {
                                         Invoice invoice = offlineData.getObjectFromData(Invoice.class);
