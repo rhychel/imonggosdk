@@ -31,7 +31,7 @@ import java.util.List;
          "unit_id": 9088,
          "unit_quantity": 28, --- INPUTTED QUANTITY
          "unit_content_quantity": 11.2, -- quantity from the UNIT OBJECT
-         "unit_retail_price": 98219.52, -- RETAIL PRICE from UNIT OBJECT * UNIT QUANTITY
+         "unit_retail_price": 98219.52, -- RETAIL PRICE from UNIT OBJECT * UNIT QUANTITY ||-> REVISED(04-11-2106 by Mikee) RETAIL PRICE from UNIT OBJECT
          "unit_name": "CUPS",
          "line_no": 1
      },
@@ -131,13 +131,16 @@ public class Values {
             if(quantity.length() > 0)
                 this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_name = unit.getName();
-            this.unit_retail_price = this.retail_price * Double.valueOf(this.unit_quantity);
+//            this.unit_retail_price = this.retail_price * Double.valueOf(this.unit_quantity);
+            this.unit_retail_price = unit.getRetail_price();
+            this.subtotal = this.retail_price * Double.valueOf(this.unit_quantity);
         }
         else {
             this.quantity = quantity;
             this.unit_quantity = null;
             this.unit_content_quantity = 0d;
             this.unit_retail_price = 0d;
+            this.subtotal = 0d;
             if(unit != null)
                 this.unit_name = unit.getName();
         }
@@ -159,8 +162,8 @@ public class Values {
         Log.e("PRICE OBJ", "isNull? " + (price == null));
         if(this.price == null) {
             if(isValidUnit()) {
-                this.no_discount_subtotal = this.unit_retail_price;
-                this.subtotal = this.unit_retail_price;
+                this.no_discount_subtotal = this.subtotal; // this.unit_retail_price
+//                this.subtotal = this.unit_retail_price;
             } else if(this.retail_price != null) {
                 this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
                 this.subtotal = this.retail_price * Double.valueOf(this.quantity);
@@ -177,7 +180,7 @@ public class Values {
         }
         else {
             if(isValidUnit()) {
-                this.no_discount_subtotal = this.unit_retail_price;
+                this.no_discount_subtotal = this.subtotal; // this.unit_retail_price
                 this.subtotal = DiscountTools.applyMultipleDiscounts(
                         new BigDecimal(this.retail_price), new BigDecimal(this.unit_quantity),
                         product_discounts, company_discounts, discount_text, ";", ","

@@ -53,7 +53,9 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 //    protected FragmentManager fragmentManager;
 //    protected String deliveryDate;
 
-    protected boolean hasSubtotal = false, hasInvoicePurpose = false, hasExpiryDate = false, hasBadStock = false;
+    protected boolean hasSubtotal = false, hasInvoicePurpose = false,
+            hasExpiryDate = false, hasBadStock = false, hasStock = true, hasPrice = true,
+            hasExpectedQty = false, hasOutright =false, hasDiscrepancy = false;
 
     protected ArrayAdapter<InvoicePurpose> invoicePurposesAdapter;
     protected ArrayAdapter<Unit> unitsAdapter;
@@ -64,7 +66,8 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
     protected CustomerGroup salesCustomerGroup;
     protected Branch salesBranch;
 
-    protected boolean hasUnits = false, hasBrand = false, hasDeliveryDate = false, hasBatchNo = false, isMultiValue = false;
+    protected boolean isUnitDisplay = false, hasUnits = false, hasBrand = false, hasDeliveryDate = false,
+            hasBatchNo = false, isMultiValue = false;
     protected int valuePosition = -1;
     protected int listPosition = -1;
 
@@ -237,5 +240,29 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setHasBadStock(boolean hasBadStock) {
         this.hasBadStock = hasBadStock;
+    }
+
+    public void setHasDiscrepancy(boolean hasDiscrepancy) {
+        this.hasDiscrepancy = hasDiscrepancy;
+    }
+
+    public void setHasStock(boolean hasStock) {
+        this.hasStock = hasStock;
+    }
+
+    public void setHasExpectedQty(boolean hasExpectedQty) {
+        this.hasExpectedQty = hasExpectedQty;
+    }
+
+    public void setHasOutright(boolean hasOutright) {
+        this.hasOutright = hasOutright;
+    }
+
+    public void setHasPrice(boolean hasPrice) {
+        this.hasPrice = hasPrice;
+    }
+
+    public void setUnitDisplay(boolean unitDisplay) {
+        isUnitDisplay = unitDisplay;
     }
 }

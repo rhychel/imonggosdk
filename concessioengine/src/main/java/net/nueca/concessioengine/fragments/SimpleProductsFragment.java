@@ -349,6 +349,14 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setHasInvoicePurpose(isReturnItems);
                 simpleSalesQuantityDialog.setHasExpiryDate(isReturnItems);
                 simpleSalesQuantityDialog.setHasBadStock(isReturnItems);
+
+                if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
+                    simpleSalesQuantityDialog.setHasStock(false);
+                    simpleSalesQuantityDialog.setHasPrice(false);
+                    simpleSalesQuantityDialog.setUnitDisplay(true);
+                    simpleSalesQuantityDialog.setHasExpectedQty(true);
+                }
+
                 simpleSalesQuantityDialog.setInvoicePurposeList(InvoicePurpose.fetchAll(getHelper(), InvoicePurpose.class));
 
                 double subtotal = product.getRetail_price() * Double.valueOf(productRecyclerViewAdapter.getSelectedProductItems().getQuantity
@@ -356,19 +364,49 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.setRetailPrice(String.format("P%.2f", product.getRetail_price()));
                 simpleSalesQuantityDialog.setSubtotal(String.format("P%.2f", subtotal));
 
-                boolean addBaseProduct = true;
-                if(concessioModule == ConcessioModule.INVOICE && getHelper().fetchObjects(BranchProduct.class).countOf() > 0l) { // TODO CHECK IF ACCOUNT HAS BRANCH PRODUCTS
+                List<Unit> unitList = new ArrayList<>();
+//                boolean addBaseProduct = true;
+                //concessioModule == ConcessioModule.INVOICE && ---- ALL MODULES should inherit branch pricing for units
+                if(getHelper().fetchObjects(BranchProduct.class).countOf() > 0l) { // TODO CHECK IF ACCOUNT HAS BRANCH PRODUCTS
                     // Improve!
-                    addBaseProduct = !getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
-                        @Override
-                        public boolean validate(BranchProduct obj) {
-                            return obj.getUnit() == null;
+//                    addBaseProduct = !getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+//                        @Override
+//                        public boolean validate(BranchProduct obj) {
+//                            return obj.getUnit() == null;
+//                        }
+//                    }).isEmpty();
+
+                    List<BranchProduct> branchProducts = getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator());
+
+                    for(BranchProduct branchProduct : branchProducts) {
+                        Unit unit = branchProduct.getUnit();
+                        if(unit == null) {
+                            unit = new Unit();
+                            unit.setId(-1);
+                            unit.setName(product.getBase_unit_name());
+                            unit.setRetail_price(branchProduct.getUnit_retail_price());
+                            if(unitList.size() > 0 && (product.getExtras().getDefault_selling_unit() == null || product.getExtras().getDefault_selling_unit().equals("")))
+                                unitList.add(0, unit);
+                            else
+                                unitList.add(unit);
+                            Log.e("Unit", "is null --> " + product.getExtras().getDefault_selling_unit());
                         }
-                    }).isEmpty();
+                        else {
+                            unit.setRetail_price(branchProduct.getUnit_retail_price());
+                            if(product.getExtras().getDefault_selling_unit().equals(unit.getId()+"") && unitList.size() > 0)
+                                unitList.add(0, unit);
+                            else
+                                unitList.add(unit);
+                        }
+
+                        Log.e("Unit", "default selling unit id --> "+product.getExtras().getDefault_selling_unit());
+                    }
                 }
+                else
+                    unitList = getHelper().fetchForeignCollection(product.getUnits().closeableIterator());
 
                 if(hasUnits)
-                    simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), addBaseProduct);
+                    simpleSalesQuantityDialog.setUnitList(unitList); //, addBaseProduct
                 if (hasBrand) {
                     List<ProductTag> tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
                     List<String> brands = new ArrayList<>();

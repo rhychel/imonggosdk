@@ -25,6 +25,7 @@ import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.widgets.Numpad;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -166,8 +167,44 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                         Toast.makeText(getContext(), "Tender payment cannot be empty.", Toast.LENGTH_LONG).show();
                         return;
                     }
+                    PaymentType paymentType = (PaymentType) spnPaymentType.getSelectedItem();
+                    if(paymentType.getName().equals("Rewards") && availablePoints <= 0d) {
+                        Toast.makeText(getContext(), "You have no available points to use a payment.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    Extras extrasForCheck = generateExtrasForCheck();
+                    if(paymentType.getName().equals("Check")) {
+                        String checkDetails = "";
+                        List<String> details = new ArrayList<>();
+
+                        if(extrasForCheck.getBank_branch().equals(""))
+                            details.add("Bank branch");
+                        if(extrasForCheck.getCheck_name().equals(""))
+                            details.add("Check name");
+                        if(extrasForCheck.getCheck_number().equals(""))
+                            details.add("Check number");
+
+                        if(details.size() > 0) {
+                            int i = 0;
+                            for(String reason : details) {
+                                if(details.size() > 1 && i == details.size()-1)
+                                    checkDetails += " and ";
+                                if(i == 0)
+                                    checkDetails += reason;
+                                else
+                                    checkDetails += reason.toLowerCase();
+
+                                if(i < details.size()-1)
+                                    checkDetails += ", ";
+
+                                i++;
+                            }
+                            Toast.makeText(getContext(), checkDetails+(details.size() > 1 ? " are" : " is")+" required.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
                     if(listener != null)
-                        listener.onAddPayment((PaymentType) spnPaymentType.getSelectedItem(), etPayment.getText().toString(), generateExtrasForCheck());
+                        listener.onAddPayment((PaymentType) spnPaymentType.getSelectedItem(), etPayment.getText().toString(), extrasForCheck);
                     dismiss();
                 }
             });

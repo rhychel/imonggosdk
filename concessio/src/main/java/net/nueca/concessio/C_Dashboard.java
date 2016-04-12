@@ -28,6 +28,7 @@ import net.nueca.concessioengine.dialogs.ProgressListDialog;
 import net.nueca.concessioengine.dialogs.UpdaterChooserDialog;
 import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
+import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Server;
@@ -129,6 +130,17 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
+
+        List<BranchProduct> list = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+
+        Log.e(TAG, "ALIBABA G.PEAS 12 list size: " + list.size());
+
+        for(BranchProduct bp : list) {
+            if(bp.getUnit() != null)
+            Log.e(TAG,  "ID: " + bp.getProduct().getId() + " Product: " + bp.getProduct().getName() + " Unit: " + bp.getUnit().getName() + " id: " + bp.getUnit().getId());
+            else
+                Log.e(TAG,  "ID: " + bp.getProduct().getId() + " Product: " + bp.getProduct().getName() +  " product don't have unit");
+        }
     }
 
     @Override
@@ -245,6 +257,9 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
                         @Override
                         public void onUnlinkAccount() {
+                            EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+                            StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+
                             finish();
                             Intent intent = new Intent(C_Dashboard.this, C_Login.class);
                             startActivity(intent);
@@ -253,6 +268,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+            break;
+            case R.id.mLogout: {
+                EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+                StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
             }
             break;
             case R.id.mSettings: {

@@ -30,7 +30,7 @@ public class AddCustomersFragment extends BaseCustomersFragment {
     private Customer current_customer;
 
     private EditText mFirstName, mLastName, mCompanyName, mTelephone, mMobile, mFax, mEmail,
-            mCity, mZipCode, mCountry, mState, mTIN, mStreet;
+            mCity, mTown, mZipCode, mCountry, mState, mTIN, mStreet;
 
     private Spinner mGender, mCivilStatus;
     private Switch mExcemptFromTax;
@@ -147,6 +147,7 @@ public class AddCustomersFragment extends BaseCustomersFragment {
                 mEmail.getText().toString(),
                 mStreet.getText().toString(),
                 mCity.getText().toString(),
+                mTown.getText().toString(),
                 mZipCode.getText().toString(),
                 mCountry.getText().toString(),
                 mState.getText().toString(),
