@@ -145,6 +145,9 @@ public class Values {
                 this.unit_name = unit.getName();
                 this.retail_price = unit.getRetail_price();
                 this.unit_retail_price = unit.getRetail_price();
+            } else {
+                this.retail_price = 0d;
+                this.unit_retail_price = 0d;
             }
         }
 
