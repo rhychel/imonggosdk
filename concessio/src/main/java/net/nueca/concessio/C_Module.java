@@ -953,13 +953,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        if(imonggoSwableServiceConnection != null)
-            SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
-    }
-
-    @Override
     public void onBackPressed() {
         if (concessioModule == ConcessioModule.HISTORY)
             llFooter.setVisibility(View.GONE);
