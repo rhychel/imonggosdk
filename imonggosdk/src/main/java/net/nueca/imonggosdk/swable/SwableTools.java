@@ -185,7 +185,7 @@ public class SwableTools {
         }
         forVoid.setOfflineDataTransactionType(type);
         forVoid.setSynced(false);
-        forVoid.setDocumentReason(reason);
+        forVoid.setVoidReason(reason);
         forVoid.updateTo(helper);
     }
 
@@ -439,7 +439,7 @@ public class SwableTools {
                     Log.e("SwableTools", "offlineData isQueued:" + offlineData.isQueued() + " isSyncing:"+offlineData.isSyncing());
                 } else {
 
-                    offlineData.setDocumentReason(reason);
+                    offlineData.setVoidReason(reason);
                     offlineData.setSynced(false);
 
                     switch (offlineData.getType()) {
@@ -469,7 +469,7 @@ public class SwableTools {
                 if(reason == null || reason.isEmpty())
                     throw new NullPointerException("SwableTools : SendTransaction : Reason is required");
 
-                offlineData.setDocumentReason(reason);
+                offlineData.setVoidReason(reason);
 
                 switch (offlineData.getType()) {
                     case OfflineData.ORDER:
@@ -1025,7 +1025,7 @@ public class SwableTools {
                                         (offlineData.getType() != OfflineData.CUSTOMER?
                                                 "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() : offlineData
                                                 .getParametersAsFirstParameter())
-                                                + "&reason=" + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8") )
+                                                + "&reason=" + URLEncoder.encode(offlineData.getVoidReason(), "UTF-8") )
                             );
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
@@ -1277,7 +1277,7 @@ public class SwableTools {
                                 }, server, table, id, (offlineData.getType() != OfflineData.CUSTOMER?
                                         "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() :
                                         offlineData.getParametersAsFirstParameter()) +
-                                        "&reason=" + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8"))
+                                        "&reason=" + URLEncoder.encode(offlineData.getVoidReason(), "UTF-8"))
                         );
                     }
                 } catch (UnsupportedEncodingException e) {

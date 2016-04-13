@@ -134,16 +134,16 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
-
-        try {
-            Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId", 6960).queryForFirst();
-            if(customer == null)
-                Log.e("Customer", "404");
-            else
-                Log.e("Customer", customer.getCompany_name());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//
+//        try {
+//            Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId", 6960).queryForFirst();
+//            if(customer == null)
+//                Log.e("Customer", "404");
+//            else
+//                Log.e("Customer", customer.getCompany_name());
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
 //        List<SalesPromotion> salesPromotions =  SalesPromotion.fetchAll(getHelper(), SalesPromotion.class);
 //        Log.e(TAG, "sales promotions size: " + salesPromotions.size());
