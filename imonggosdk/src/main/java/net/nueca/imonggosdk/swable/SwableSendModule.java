@@ -139,15 +139,6 @@ public class SwableSendModule extends BaseSwableModule {
                                         offlineData.setQueued(false);
                                         offlineData.setStatusLog("sending success");
 
-                            /*if(offlineData.getType() == OfflineData.INVOICE) {
-                                Invoice invoice = offlineData.getObjectFromData(Invoice.class);
-                                //invoice.joinAllNewToCurrentPaymentBatch();
-                                invoice.updateTo(dbHelper);
-                                //for (Integer newSentPaymentBatch : forSendingBatch)
-                                //    offlineData.addSentPaymentBatch(newSentPaymentBatch);
-                                //offlineData.addSentPaymentBatch(invoice.getCurrentPaymentBatchNo());
-                            }*/
-
                                         if (response instanceof JSONObject) {
                                             JSONObject responseJson = ((JSONObject) response);
                                             if (responseJson.has("id")) {
@@ -224,23 +215,28 @@ public class SwableSendModule extends BaseSwableModule {
                                                     offlineData.setSynced(true);
                                                     offlineData.setForConfirmation(true);
 
-                                                    if (errorMsg.contains("order id")) {
-                                                        String orderId = errorMsg.substring(
+                                                    if (errorMsg.contains("order id") || errorMsg.contains("document id")) {
+                                                        String id = errorMsg.substring(
                                                                 errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
                                                         );
-                                                        Log.e("STR : SEND_ORDER ID", orderId);
-                                                        offlineData.setReturnId(orderId);
-                                                    } else if (errorMsg.contains("document id")) {
-                                                        String documentId = errorMsg.substring(
-                                                                errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
-                                                        );
-                                                        Log.e("STR : SEND_DOCUMENT ID", documentId);
-                                                        offlineData.setReturnId(documentId);
+                                                        offlineData.setReturnId(id);
                                                     }
                                                 }
                                                 if (errorMsg.contains("not a valid writable field")) {
                                                     offlineData.setSynced(false);
                                                     offlineData.setCancelled(true);
+                                                }
+                                                if (errorMsg.contains("already posted for this layaway")) {
+                                                    offlineData.setSynced(true);
+                                                    offlineData.setForConfirmation(true);
+
+                                                    String layawayId = errorMsg.substring(
+                                                            errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
+                                                    );
+                                                    offlineData.setReturnId(layawayId);
+                                                    Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                                    invoice.markSentPayment(Integer.parseInt(layawayId));
+                                                    invoice.updateTo(dbHelper);
                                                 }
                                             } else if (response instanceof JSONObject) {
                                                 JSONObject responseJson = (JSONObject) response;
@@ -251,23 +247,28 @@ public class SwableSendModule extends BaseSwableModule {
                                                         offlineData.setSynced(true);
                                                         offlineData.setForConfirmation(true);
 
-                                                        if (errorMsg.contains("order id")) {
-                                                            String orderId = errorMsg.substring(
+                                                        if (errorMsg.contains("order id") || errorMsg.contains("document id")) {
+                                                            String id = errorMsg.substring(
                                                                     errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
                                                             );
-                                                            Log.e("JSON : SEND_ORDER ID", orderId);
-                                                            offlineData.setReturnId(orderId);
-                                                        } else if (errorMsg.contains("document id")) {
-                                                            String documentId = errorMsg.substring(
-                                                                    errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
-                                                            );
-                                                            Log.e("STR : SEND_DOCUMENT ID", documentId);
-                                                            offlineData.setReturnId(documentId);
+                                                            offlineData.setReturnId(id);
                                                         }
                                                     }
                                                     if (errorMsg.contains("not a valid writable field")) {
                                                         offlineData.setSynced(false);
                                                         offlineData.setCancelled(true);
+                                                    }
+                                                    if (errorMsg.contains("already posted for this layaway")) {
+                                                        offlineData.setSynced(true);
+                                                        offlineData.setForConfirmation(true);
+
+                                                        String layawayId = errorMsg.substring(
+                                                                errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
+                                                        );
+                                                        offlineData.setReturnId(layawayId);
+                                                        Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                                        invoice.markSentPayment(Integer.parseInt(layawayId));
+                                                        invoice.updateTo(dbHelper);
                                                     }
                                                 }
                                             }

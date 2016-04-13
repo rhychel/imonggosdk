@@ -197,19 +197,21 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Handler delay = new Handler(){
-                            @Override
-                            public void handleMessage(Message msg) {
-                                super.handleMessage(msg);
-                                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
-                            }
-                        };
-                        delay.sendEmptyMessageDelayed(0, 100);
-                    }
-                });
+                if(getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Handler delay = new Handler() {
+                                @Override
+                                public void handleMessage(Message msg) {
+                                    super.handleMessage(msg);
+                                    simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                                }
+                            };
+                            delay.sendEmptyMessageDelayed(0, 100);
+                        }
+                    });
+                }
             }
         }
         else {
