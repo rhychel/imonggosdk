@@ -228,7 +228,7 @@ public class SwableSendModule extends BaseSwableModule {
                                                 }
                                                 if (errorMsg.contains("already posted for this layaway")) {
                                                     offlineData.setSynced(true);
-                                                    offlineData.setForConfirmation(true);
+                                                    //offlineData.setForConfirmation(true);
 
                                                     String layawayId = errorMsg.substring(
                                                             errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
@@ -260,7 +260,7 @@ public class SwableSendModule extends BaseSwableModule {
                                                     }
                                                     if (errorMsg.contains("already posted for this layaway")) {
                                                         offlineData.setSynced(true);
-                                                        offlineData.setForConfirmation(true);
+                                                        //offlineData.setForConfirmation(true);
 
                                                         String layawayId = errorMsg.substring(
                                                                 errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
