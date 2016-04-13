@@ -111,8 +111,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             Log.e(TAG, "API CONTENT: " + mCurrentTableSyncing);
 
             //updating
-            if(!initialSync) {
-                if(mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS ||
+            if (!initialSync) {
+                if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS ||
                         mCurrentTableSyncing == Table.PRICE_LISTS) {
                     if (listOfIdsPriceListSorted == null)
                         listOfIdsPriceListSorted = new ArrayList<>();
@@ -1297,7 +1297,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             user.setSession(getSession());
                             user.updateTo(getHelper());
 
-                            if(user.getStatus() == null)
+                            if (user.getStatus() == null)
                                 AccountTools.updateUserActiveStatus(getApplicationContext(), true);
 
                             Log.e(TAG, "User: " + getSession().getUser().getName() + "User Home Branch ID: " + getSession().getUser().getHome_branch_id());
@@ -1602,7 +1602,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         if (!jsonObject.getString("id").isEmpty()) {
                                             if (show_only_sellable_products) {
                                                 PRODUCT = gson.fromJson(jsonObject.toString(), Product.class);
-                                                PRODUCT.setStatus(null);
+//                                                PRODUCT.setStatus(null);
 
                                                 if (PRODUCT != null) {
 
@@ -1735,9 +1735,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     PRODUCT.setSearchKey(PRODUCT.getName() + PRODUCT.getStock_no());
 
                                                     if (!isExisting(PRODUCT, Table.PRODUCTS)) {
-                                                        PRODUCT.insertTo(getHelper());
+                                                        if (jsonObject.getString("status").equals("A"))
+                                                            PRODUCT.insertTo(getHelper());
+                                                        else
+                                                            Log.e(TAG, "skipping save of product..");
                                                     } else {
-                                                        PRODUCT.updateTo(getHelper());
+                                                        if (jsonObject.getString("status").equals("A"))
+                                                            PRODUCT.updateTo(getHelper());
+                                                        else
+                                                            PRODUCT.deleteTo(getHelper());
                                                     }
                                                 } else {
                                                     Log.e(TAG, "Product from gson is null. skipping");
@@ -1855,7 +1861,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         //    2.2 last updated at after > BP.utc_updated_at <-local
                                         //    2.3 delete all branchproducts
 
-
+                                        Log.e(BRANCH_PRODUCT.getName()+"status", jsonObject.getString("status")+"---");
                                         if (initialSync) {
                                             if (jsonObject.getString("status").equals("A")) {
                                                 BRANCH_PRODUCT.insertTo(getHelper());
