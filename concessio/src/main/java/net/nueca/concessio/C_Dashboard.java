@@ -179,8 +179,8 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
-        //if(!SwableTools.isImonggoSwableRunning(this))
-        SwableTools.startSwable(this);
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.startSwable(this);
         Log.e("SWABLE", "START");
     }
 
@@ -287,6 +287,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         public void onUnlinkAccount() {
                             EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
                             StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+                            SwableTools.stopSwable(C_Dashboard.this);
 
                             finish();
                             Intent intent = new Intent(C_Dashboard.this, C_Login.class);
@@ -299,8 +300,27 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             }
             break;
             case R.id.mLogout: {
-                EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
-                StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+                try {
+                    AccountTools.logoutUser(this, getHelper(), new AccountListener() {
+                        @Override
+                        public void onLogoutAccount() {
+                            SwableTools.stopSwable(C_Dashboard.this);
+
+                            finish();
+                            Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onUnlinkAccount() {
+
+                        }
+                    });
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+//                EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+//                StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
             }
             break;
             case R.id.mSettings: {
@@ -330,10 +350,12 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
     @Override
     protected void onDestroy() {
+        Log.e("onDestroy", "---- unbind");
         if (!SwableTools.isImonggoSwableRunning(this))
             SwableTools.stopSwable(this);
 
         apiDownloader.onUnbindSyncService();
+        Log.e("onDestroy", "---- nothing to unbind");
         super.onDestroy();
     }
 }

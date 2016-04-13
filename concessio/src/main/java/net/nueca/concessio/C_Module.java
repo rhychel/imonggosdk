@@ -918,13 +918,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         simpleProductsFragment.setReturnItems(isReturnItems);
         Log.e("IS_RETURN_ITEMS", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + isReturnItems);
     }
-
-    @Override
-    protected void onPause() {
-        SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
-        super.onPause();
-    }
-
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -933,6 +927,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     @Override
     protected void onResume() {
         super.onResume();
+        if(imonggoSwableServiceConnection != null)
+            SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
+
 //        if (concessioModule == ConcessioModule.PHYSICAL_COUNT) {
 //            simpleProductsFragment.refreshList();
 //            if (getSupportFragmentManager().findFragmentByTag("finalize") != null)
