@@ -65,7 +65,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SwableTools.startSwable(this);
+        if(!SwableTools.isImonggoSwableRunning(this))
+            SwableTools.startSwable(this);
 
         setContentView(R.layout.c_module);
 

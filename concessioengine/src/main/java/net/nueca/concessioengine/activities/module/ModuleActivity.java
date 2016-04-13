@@ -379,6 +379,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     documentLine.setUnit_quantity(Double.valueOf(value.getUnit_quantity()));
                     documentLine.setUnit_retail_price(value.getUnit_retail_price());
                 }
+                else {
+                    documentLine.setRetail_price(value.getRetail_price());
+                    documentLine.setUnit_retail_price(value.getUnit_retail_price());
+                }
 
                 pcount.addDocumentLine(documentLine);
             }
@@ -472,12 +476,15 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             Unit unit = null;
             if(documentLine.getUnit_id() != null)
                 unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
-            if(unit != null)
+            if(unit != null) {
                 quantity = documentLine.getUnit_quantity().toString();
+                unit.setRetail_price(documentLine.getUnit_retail_price());
+            }
             else {
                 unit = new Unit();
                 unit.setId(-1);
                 unit.setName(product.getBase_unit_name());
+                unit.setRetail_price(documentLine.getUnit_retail_price());
                 quantity = String.valueOf(documentLine.getQuantity());
             }
             Values values = null;
@@ -495,7 +502,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     values.setUnit_quantity(""+documentLine.getUnit_quantity());
 
                 if(unit.getId() == -1)
-                    values.setRetail_price(product.getRetail_price());
+                    values.setRetail_price(documentLine.getRetail_price());
                 else
                     values.setRetail_price(unit.getRetail_price());
 
