@@ -203,8 +203,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         }
                     }
                 });
-                imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
-                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
 
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -290,8 +288,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                     }
                 });
-                imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
-                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
 
                 historyDetailsListener = new HistoryDetailsListener() {
                     @Override
@@ -928,17 +924,27 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 //            if (getSupportFragmentManager().findFragmentByTag("finalize") != null)
 //                finalizeFragment.refreshList();
 //        }
+        if(concessioModule == ConcessioModule.HISTORY || concessioModule == ConcessioModule.LAYAWAY) {
+            if(imonggoSwableServiceConnection == null) {
+                imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
+                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
+            }
+        }
         if (concessioModule == ConcessioModule.CUSTOMERS)
             simpleCustomersFragment.deselectCustomers();
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if(imonggoSwableServiceConnection != null)
+            SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
+    }
+
+    @Override
     public void onBackPressed() {
-        if (concessioModule == ConcessioModule.HISTORY) {
+        if (concessioModule == ConcessioModule.HISTORY)
             llFooter.setVisibility(View.GONE);
-            if(imonggoSwableServiceConnection != null)
-                SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
-        }
         if (changeToReview)
             btn1.setText("REVIEW");
         if (concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER)
