@@ -315,6 +315,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Module.this, C_Module.class);
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
+                            intent.putExtra(ModuleActivity.CATEGORY, simpleTransactionDetailsFragment.getOfflineData().getCategory());
                         startActivityForResult(intent, IS_DUPLICATING);
                     }
                 };
@@ -760,6 +762,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 // if there's branch product
                                 simpleProductsFragment.setBranch(getBranches().get(0));
                                 simpleProductsFragment.setConcessioModule(concessioModule);
+                                if(ProductsAdapterHelper.isDuplicating)
+                                    simpleProductsFragment.setCategory(getIntent().getStringExtra(ModuleActivity.CATEGORY));
 
                                 initializeFinalize();
                                 finalizeFragment.setHasCategories(false);
