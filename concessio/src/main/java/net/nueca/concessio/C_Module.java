@@ -203,11 +203,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         }
                     }
                 });
-                imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
-                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
 
                 imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
-                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
 
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -293,8 +290,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                     }
                 });
+
                 imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
-                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
 
                 historyDetailsListener = new HistoryDetailsListener() {
                     @Override
@@ -925,10 +922,17 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if(imonggoSwableServiceConnection != null)
+            SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if(imonggoSwableServiceConnection != null)
-            SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
+            SwableTools.bindSwable(this, imonggoSwableServiceConnection);
 
 //        if (concessioModule == ConcessioModule.PHYSICAL_COUNT) {
 //            simpleProductsFragment.refreshList();
