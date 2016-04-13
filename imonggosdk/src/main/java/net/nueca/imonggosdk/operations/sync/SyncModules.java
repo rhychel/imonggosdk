@@ -54,6 +54,7 @@ import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
+import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.LastUpdateAtTools;
 import net.nueca.imonggosdk.tools.LoggingTools;
@@ -1295,6 +1296,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             // TESTING?
                             user.setSession(getSession());
                             user.updateTo(getHelper());
+
+                            if(user.getStatus() == null)
+                                AccountTools.updateUserActiveStatus(getApplicationContext(), true);
 
                             Log.e(TAG, "User: " + getSession().getUser().getName() + "User Home Branch ID: " + getSession().getUser().getHome_branch_id());
 

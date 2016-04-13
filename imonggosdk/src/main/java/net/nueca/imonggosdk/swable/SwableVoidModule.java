@@ -141,7 +141,7 @@ public class SwableVoidModule extends BaseSwableModule {
                             offlineData.updateTo(dbHelper);
                         }
                     }, session.getServer(), table, offlineData.getReturnIdListAt(0), "branch_id=" +
-                            offlineData.getBranch_id() + "&reason=" + URLEncoder.encode(offlineData.getDocumentReason(),
+                            offlineData.getBranch_id() + "&reason=" + URLEncoder.encode(offlineData.getVoidReason(),
                             "UTF-8") + offlineData.getParameters())
             );
         } catch (UnsupportedEncodingException e) {
@@ -260,7 +260,7 @@ public class SwableVoidModule extends BaseSwableModule {
                                 offlineData.updateTo(dbHelper);
                             }
                         }, session.getServer(), table, id, "branch_id=" + offlineData.getBranch_id() + "&reason="
-                                + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8") + offlineData.getParameters())
+                                + URLEncoder.encode(offlineData.getVoidReason(), "UTF-8") + offlineData.getParameters())
                 );
             }
         } catch (UnsupportedEncodingException e) {

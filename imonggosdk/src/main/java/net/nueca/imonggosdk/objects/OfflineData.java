@@ -138,10 +138,13 @@ public class OfflineData extends BaseTable2 {
     private String targetBranchTransfer = ""; // unused
 
     @DatabaseField
-    private String category = ""; // unused
+    private String category = "";
 
     @DatabaseField
     private String documentReason = "";
+
+    @DatabaseField
+    private String voidReason = "";
 
     private SparseArray<String> childrenArray = new SparseArray<String>(); // unused
 
@@ -384,6 +387,14 @@ public class OfflineData extends BaseTable2 {
 
     public void setSyncing(boolean isSyncing) {
         this.isSyncing = isSyncing;
+    }
+
+    public String getVoidReason() {
+        return voidReason;
+    }
+
+    public void setVoidReason(String voidReason) {
+        this.voidReason = voidReason;
     }
 
     public String getParameters() {
