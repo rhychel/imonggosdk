@@ -206,9 +206,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
                 SwableTools.bindSwable(this, imonggoSwableServiceConnection);
 
-                imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
-                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
-
                 getSupportFragmentManager()
                         .beginTransaction()
                         .add(R.id.flContent, simpleTransactionsFragment)
@@ -452,7 +449,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setUseSalesProductAdapter(false);
 
                 prepareFooter();
-
 
                 btn1.setOnClickListener(nextClickedListener);
 
@@ -927,9 +923,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     @Override
     protected void onResume() {
         super.onResume();
-        if(imonggoSwableServiceConnection != null)
-            SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
-
 //        if (concessioModule == ConcessioModule.PHYSICAL_COUNT) {
 //            simpleProductsFragment.refreshList();
 //            if (getSupportFragmentManager().findFragmentByTag("finalize") != null)
@@ -941,8 +934,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
     @Override
     public void onBackPressed() {
-        if (concessioModule == ConcessioModule.HISTORY)
+        if (concessioModule == ConcessioModule.HISTORY) {
             llFooter.setVisibility(View.GONE);
+            if(imonggoSwableServiceConnection != null)
+                SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
+        }
         if (changeToReview)
             btn1.setText("REVIEW");
         if (concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER)
