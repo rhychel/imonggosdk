@@ -140,7 +140,8 @@ public class Values {
             this.quantity = quantity;
             this.unit_quantity = null;
             this.unit_content_quantity = 0d;
-            this.unit_retail_price = 0d;
+            this.retail_price = unit.getRetail_price();
+            this.unit_retail_price = unit.getRetail_price();
             this.subtotal = 0d;
             if(unit != null)
                 this.unit_name = unit.getName();

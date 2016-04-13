@@ -35,6 +35,7 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.e("SwableService", "binding.....");
 		swableConnectionhandler = new SwableConnectionHandler();
 		swableConnectionhandler.setOnConnectionChangedListener(this);
 		registerReceiver(swableConnectionhandler, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
@@ -82,6 +83,7 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 		Log.d("onDestroy", "Service is about to be destroyed!");
         if(isReceiverRegistered) {
             unregisterReceiver(swableConnectionhandler);
+			swableConnectionhandler = null;
             isReceiverRegistered = false;
         }
 		setShouldSync(false);
