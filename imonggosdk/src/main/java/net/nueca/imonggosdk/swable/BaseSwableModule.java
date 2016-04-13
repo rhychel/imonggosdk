@@ -6,7 +6,10 @@ import com.android.volley.RequestQueue;
 
 import net.nueca.imonggosdk.R;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
+
+import java.util.HashMap;
 
 /**
  * Created by gama on 02/02/2016.
@@ -19,6 +22,8 @@ public abstract class BaseSwableModule {
 
     protected int QUEUED_TRANSACTIONS = 0;
     protected int SUCCESS_TRANSACTIONS = 0;
+
+    protected HashMap<Integer, OfflineData> queuedTransactions = new HashMap<>();
 
     protected @DrawableRes int APP_ICON_DRAWABLE = R.drawable.ic_check_circle;
     public BaseSwableModule(ImonggoSwable imonggoSwable, ImonggoDBHelper2 helper, Session session, RequestQueue

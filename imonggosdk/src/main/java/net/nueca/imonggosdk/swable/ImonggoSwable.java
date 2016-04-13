@@ -275,11 +275,11 @@ public class ImonggoSwable extends SwableService {
 
     @Override
     public void updateSyncingStatus() {
-        Log.d("ImonggoSwable", "updateSyncingStatus : sending ~ " + swableSendModule.QUEUED_TRANSACTIONS);
+        Log.d("ImonggoSwable", "updateSyncingStatus : sending ~ " + swableSendModule.queuedTransactions.size());
         Log.d("ImonggoSwable", "updateSyncingStatus : updating ~ " + swableUpdateModule.QUEUED_TRANSACTIONS);
         Log.d("ImonggoSwable", "updateSyncingStatus : voiding ~ " + swableVoidModule.QUEUED_TRANSACTIONS);
 
-        setSyncing(swableSendModule.QUEUED_TRANSACTIONS > 0 ||
+        setSyncing(!swableSendModule.queuedTransactions.isEmpty() ||
                 swableUpdateModule.QUEUED_TRANSACTIONS > 0 ||
                 swableVoidModule.QUEUED_TRANSACTIONS > 0);
         Log.e("ImonggoSwable", "update ~ isSyncing : " + isSyncing());
@@ -304,7 +304,7 @@ public class ImonggoSwable extends SwableService {
                 offlineData.updateTo(getHelper());
             }
 
-            swableSendModule.QUEUED_TRANSACTIONS = 0;
+            swableSendModule.queuedTransactions.clear();
             swableUpdateModule.QUEUED_TRANSACTIONS = 0;
             swableVoidModule.QUEUED_TRANSACTIONS = 0;
         } catch (SQLException e) {
