@@ -77,7 +77,7 @@ public class InvoiceTools {
                     else
                         discount_text = itemValue.getCustomer_discount_text();
                 }
-                if(itemValue.getSubtotal() >= 0d) {
+                if(Double.parseDouble(itemValue.getQuantity()) >= 0d && Double.parseDouble(itemValue.getUnit_quantity()) >= 0d) {
                     builder.discount_text(discount_text);
 
                     Extras.Builder extrasBuilder = new Extras.Builder();
@@ -192,6 +192,12 @@ public class InvoiceTools {
             if(invoiceLine.getUnit_id() != null)
                 unit = helper.fetchObjects(Unit.class).queryBuilder().where()
                         .eq("id", invoiceLine.getUnit_id()).queryForFirst();
+            else {
+                unit = new Unit();
+                unit.setId(-1);
+                unit.setName(product.getBase_unit_name());
+                unit.setRetail_price(invoiceLine.getRetail_price());
+            }
 
             SelectedProductItem selectedProductItem = selectedProductItemList.getSelectedProductItem(product);
             if(selectedProductItem == null)

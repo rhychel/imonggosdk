@@ -319,6 +319,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Module.this, C_Module.class);
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
+                            intent.putExtra(ModuleActivity.CATEGORY, simpleTransactionDetailsFragment.getOfflineData().getCategory());
                         startActivityForResult(intent, IS_DUPLICATING);
                     }
                 };
@@ -449,7 +451,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setUseSalesProductAdapter(false);
 
                 prepareFooter();
-
 
                 btn1.setOnClickListener(nextClickedListener);
 
@@ -765,6 +766,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 // if there's branch product
                                 simpleProductsFragment.setBranch(getBranches().get(0));
                                 simpleProductsFragment.setConcessioModule(concessioModule);
+                                if(ProductsAdapterHelper.isDuplicating)
+                                    simpleProductsFragment.setCategory(getIntent().getStringExtra(ModuleActivity.CATEGORY));
 
                                 initializeFinalize();
                                 finalizeFragment.setHasCategories(false);
@@ -832,6 +835,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 simpleCustomersFragment.onViewCreated(null, null);
                             }
                             showsCustomer = true;
+                        }
+                        else if(previousFragmentCount == 1) {
+                            simpleProductsFragment.refreshList();
                         }
                     }
                 } else {
@@ -931,14 +937,17 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     @Override
     protected void onResume() {
         super.onResume();
-        if(imonggoSwableServiceConnection != null)
-            SwableTools.bindSwable(this, imonggoSwableServiceConnection);
-
 //        if (concessioModule == ConcessioModule.PHYSICAL_COUNT) {
 //            simpleProductsFragment.refreshList();
 //            if (getSupportFragmentManager().findFragmentByTag("finalize") != null)
 //                finalizeFragment.refreshList();
 //        }
+        if(concessioModule == ConcessioModule.HISTORY || concessioModule == ConcessioModule.LAYAWAY) {
+            if(imonggoSwableServiceConnection == null) {
+                imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
+                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
+            }
+        }
         if (concessioModule == ConcessioModule.CUSTOMERS)
             simpleCustomersFragment.deselectCustomers();
     }
@@ -1710,7 +1719,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add((branch.getName()+"\r\n").getBytes());
                 data.add((branch.generateAddress()+"\r\n\r\n").getBytes());
 
-                if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
+                if(offlineData != null && offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
                     data.add(("MISCELLANEOUS STOCK OUT SLIP\r\n\r\n").getBytes());
                 else
                     data.add(("INVENTORY SLIP\r\n\r\n").getBytes());

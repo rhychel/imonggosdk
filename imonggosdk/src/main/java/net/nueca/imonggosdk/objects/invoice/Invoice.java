@@ -196,7 +196,10 @@ public class Invoice extends BaseTransactionTable3 {
             rgs_invoice_lines = new ArrayList<>();
             return_invoice_lines = new ArrayList<>();
             for(InvoiceLine invoiceLine : getInvoiceLines()) {
+                Log.e("INvoice line", invoiceLine.getLine_no()+"<--");
                 if(invoiceLine.getUnit_quantity() != null && invoiceLine.getUnit_quantity() < 0) {
+                    Log.e("Invoice line with unit", invoiceLine.getExtras()+"<--"+invoiceLine.getProduct_id());
+
                     return_invoice_lines.add(invoiceLine);
                     if(invoiceLine.getExtras().getIs_bad_stock())
                         bo_invoice_lines.add(invoiceLine);
@@ -204,6 +207,8 @@ public class Invoice extends BaseTransactionTable3 {
                         rgs_invoice_lines.add(invoiceLine);
                 }
                 else if(invoiceLine.getQuantity() < 0) {
+                    Log.e("Invoice line without unit", invoiceLine.getExtras()+"<--");
+
                     return_invoice_lines.add(invoiceLine);
                     if(invoiceLine.getExtras().getIs_bad_stock())
                         bo_invoice_lines.add(invoiceLine);
