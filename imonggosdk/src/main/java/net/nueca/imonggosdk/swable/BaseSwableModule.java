@@ -11,7 +11,7 @@ import net.nueca.imonggosdk.objects.Session;
 /**
  * Created by gama on 02/02/2016.
  */
-public class BaseSwableModule {
+public abstract class BaseSwableModule {
     protected ImonggoDBHelper2 dbHelper;
     protected ImonggoSwable imonggoSwable;
     protected RequestQueue requestQueue;

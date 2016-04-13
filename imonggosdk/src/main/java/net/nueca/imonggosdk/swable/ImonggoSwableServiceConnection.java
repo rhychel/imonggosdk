@@ -17,7 +17,7 @@ public class ImonggoSwableServiceConnection implements ServiceConnection {
     public ImonggoSwableServiceConnection(ImonggoSwable.SwableStateListener
                                                   swableStateListener) {
         this.swableStateListener = swableStateListener;
-        this.notificationIcon = notificationIcon;
+        //this.notificationIcon = notificationIcon;
     }
     public ImonggoSwableServiceConnection(int notificationIcon, ImonggoSwable.SwableStateListener swableStateListener) {
         this.swableStateListener = swableStateListener;

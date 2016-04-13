@@ -159,9 +159,6 @@ public class OfflineData extends BaseTable2 {
     @DatabaseField
     private String statusLog;
 
-    @DatabaseField
-    private String sentPaymentBatch = "";
-
     public OfflineData() {}
 
     public OfflineData(Invoice invoice, OfflineDataType offlineDataType) {
@@ -852,18 +849,5 @@ public class OfflineData extends BaseTable2 {
     public boolean isAllPageSynced() {
         return getReturnIdList().size() == getPagedRequestCount() &&
                 getReturnId().length() > 0 && !getReturnId().contains("@");
-    }
-
-    public List<Integer> getSentPaymentBatch() {
-        List<String> paymentBatchStrs = Arrays.asList(sentPaymentBatch.split(","));
-        List<Integer> paymentBatches = new ArrayList<>();
-        for(String str : paymentBatchStrs)
-            if(!str.isEmpty() && !paymentBatches.contains(Integer.parseInt(str)))
-                paymentBatches.add(Integer.parseInt(str));
-        return paymentBatches;
-    }
-
-    public void addSentPaymentBatch(Integer batchNo) {
-        sentPaymentBatch += ("," + batchNo);
     }
 }

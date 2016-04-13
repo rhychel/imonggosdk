@@ -203,6 +203,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         }
                     }
                 });
+                imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
+                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
 
                 getSupportFragmentManager()
                         .beginTransaction()

@@ -112,9 +112,9 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
             );
 
             extras.setTotal_unit_retail_price("" +
-                    ( Double.valueOf(extras.getTotal_selling_price()) -
+                    NumberTools.formatDouble( Double.valueOf(extras.getTotal_selling_price()) -
                             (Double.valueOf(extras.getTotal_company_discount()) +
-                                    Double.valueOf(extras.getTotal_customer_discount())) )
+                                    Double.valueOf(extras.getTotal_customer_discount())), decimal )
             );
             if(customer != null) {
                 extras.setPayment_term_id(customer.getPayment_terms_id());
