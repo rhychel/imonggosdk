@@ -16,8 +16,6 @@ import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NotificationTools;
 
-import org.json.JSONObject;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
@@ -34,7 +32,10 @@ public class SwableVoidModule extends BaseSwableModule {
     }
 
     public void voidTransaction(Table table, final OfflineData offlineData) {
-        QUEUED_TRANSACTIONS++;
+        if(queueTracker.containsKey(offlineData.getId()))
+            return;
+        queueTracker.put(offlineData.getId(), offlineData);
+        //QUEUED_TRANSACTIONS++;
         try {
             Branch branch = dbHelper.fetchObjects(Branch.class).queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
@@ -65,7 +66,8 @@ public class SwableVoidModule extends BaseSwableModule {
 
                         @Override
                         public void onSuccess(Table table, RequestType requestType, Object response) {
-                            QUEUED_TRANSACTIONS--;
+                            queueTracker.remove(offlineData.getId());
+                            //QUEUED_TRANSACTIONS--;
                             AccountTools.updateUserActiveStatus(imonggoSwable, true);
 
                             Log.e("ImonggoSwable", "deleting success : " + response);
@@ -85,7 +87,7 @@ public class SwableVoidModule extends BaseSwableModule {
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                             }
 
-                            if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
+                            if (offlineData.isSynced() && getQueueTrackerCount() == 0)
                                 NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID,
                                         APP_ICON_DRAWABLE,
 //                                        imonggoSwable.getNotificationIcon(),
@@ -95,7 +97,8 @@ public class SwableVoidModule extends BaseSwableModule {
 
                         @Override
                         public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                            QUEUED_TRANSACTIONS--;
+                            queueTracker.remove(offlineData.getId());
+                            //QUEUED_TRANSACTIONS--;
                             Log.e("ImonggoSwable", "deleting failed : isConnected? " + hasInternet + " : error [" +
                                     responseCode + "] : " + response);
                             offlineData.setSyncing(false);
@@ -132,7 +135,8 @@ public class SwableVoidModule extends BaseSwableModule {
 
                         @Override
                         public void onRequestError() {
-                            QUEUED_TRANSACTIONS--;
+                            queueTracker.remove(offlineData.getId());
+                            //QUEUED_TRANSACTIONS--;
                             Log.e("ImonggoSwable", "deleting failed : request error");
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);
@@ -195,7 +199,7 @@ public class SwableVoidModule extends BaseSwableModule {
                                         imonggoSwable.getSwableStateListener().onSynced(offlineData);
                                 }
 
-                                if (offlineData.isSynced() && QUEUED_TRANSACTIONS == SUCCESS_TRANSACTIONS)
+                                if (offlineData.isSynced() && getQueueTrackerCount() == SUCCESS_TRANSACTIONS)
                                     NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID,
                                             APP_ICON_DRAWABLE,
 //                                            imonggoSwable.getNotificationIcon(),
@@ -241,7 +245,7 @@ public class SwableVoidModule extends BaseSwableModule {
                                         imonggoSwable.getSwableStateListener().onSynced(offlineData);
                                 }
 
-                                if (offlineData.isSynced() && QUEUED_TRANSACTIONS == SUCCESS_TRANSACTIONS)
+                                if (offlineData.isSynced() && getQueueTrackerCount() == SUCCESS_TRANSACTIONS)
                                     NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID,
                                             APP_ICON_DRAWABLE,
 //                                            imonggoSwable.getNotificationIcon(),

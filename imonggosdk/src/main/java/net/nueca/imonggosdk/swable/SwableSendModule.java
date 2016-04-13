@@ -38,8 +38,10 @@ public class SwableSendModule extends BaseSwableModule {
     }
 
     public void sendTransaction(Table table, final OfflineData offlineData) {
-        queuedTransactions.put(offlineData.getId(), offlineData);
-        QUEUED_TRANSACTIONS++;
+        if(queueTracker.containsKey(offlineData.getId()))
+            return;
+        queueTracker.put(offlineData.getId(), offlineData);
+        //QUEUED_TRANSACTIONS++;
         Log.e("SwableSendModule", "sendTransaction " + table.getStringName() + " " + offlineData.getType());
         //Log.e("SwableSendModule", "sendTransaction " + offlineData.getObjectFromData().toString());
         try {
@@ -56,8 +58,8 @@ public class SwableSendModule extends BaseSwableModule {
                     if (offlineData.getObjectFromData() == null) {
                         Log.e("ImonggoSwable", "sending error : object is null ~ deleting offlinedata");
                         offlineData.deleteTo(dbHelper);
-                        queuedTransactions.remove(offlineData.getId());
-                        QUEUED_TRANSACTIONS--;
+                        queueTracker.remove(offlineData.getId());
+                        //QUEUED_TRANSACTIONS--;
                         return;
                     }
                     sendFirstPage(table, offlineData);
@@ -127,8 +129,8 @@ public class SwableSendModule extends BaseSwableModule {
 
                                 @Override
                                 public void onSuccess(Table table, RequestType requestType, Object response) {
-                                    queuedTransactions.remove(offlineData.getId());
-                                    QUEUED_TRANSACTIONS--;
+                                    queueTracker.remove(offlineData.getId());
+                                    //QUEUED_TRANSACTIONS--;
                                     AccountTools.updateUserActiveStatus(imonggoSwable, true);
 
                                     Log.e("ImonggoSwable", "sending success : " + response);
@@ -189,8 +191,8 @@ public class SwableSendModule extends BaseSwableModule {
                                             offlineData.updateTo(dbHelper);
                                         }
                                     }
-                                    Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
-                                    if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
+                                    Log.e("REQUEST", getQueueTrackerCount() + " " + SUCCESS_TRANSACTIONS);
+                                    if (offlineData.isSynced() && getQueueTrackerCount() == 0)
                                         NotificationTools.postNotification(imonggoSwable,
                                                 ImonggoSwable.NOTIFICATION_ID,
                                                 APP_ICON_DRAWABLE,
@@ -204,8 +206,8 @@ public class SwableSendModule extends BaseSwableModule {
 
                                 @Override
                                 public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                                    queuedTransactions.remove(offlineData.getId());
-                                    QUEUED_TRANSACTIONS--;
+                                    queueTracker.remove(offlineData.getId());
+                                    //QUEUED_TRANSACTIONS--;
                                     Log.e("ImonggoSwable", "sending failed : isConnected? " + hasInternet + " : error [" +
                                             responseCode + "] : " + response);
 
@@ -299,8 +301,8 @@ public class SwableSendModule extends BaseSwableModule {
 
                                 @Override
                                 public void onRequestError() {
-                                    queuedTransactions.remove(offlineData.getId());
-                                    QUEUED_TRANSACTIONS--;
+                                    queueTracker.remove(offlineData.getId());
+                                    //QUEUED_TRANSACTIONS--;
                                     Log.e("ImonggoSwable", "sending failed : request error");
                                     offlineData.setSyncing(false);
                                     offlineData.setQueued(false);
@@ -436,7 +438,7 @@ public class SwableSendModule extends BaseSwableModule {
                                 SUCCESS_TRANSACTIONS++;
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
 
-                                if (parent.isSynced() && QUEUED_TRANSACTIONS == 0)
+                                if (parent.isSynced() && getQueueTrackerCount() == 0)
                                     NotificationTools.postNotification(imonggoSwable,
                                             ImonggoSwable.NOTIFICATION_ID,
                                             APP_ICON_DRAWABLE,
@@ -608,8 +610,8 @@ public class SwableSendModule extends BaseSwableModule {
 
                     @Override
                     public void onSuccess(Table table, RequestType requestType, Object response) {
-                        queuedTransactions.remove(offlineData.getId());
-                        QUEUED_TRANSACTIONS--;
+                        queueTracker.remove(offlineData.getId());
+                        //QUEUED_TRANSACTIONS--;
                         AccountTools.updateUserActiveStatus(imonggoSwable, true);
 
                         Log.e("ImonggoSwable", "sending success [" + page + "] : " + response);
@@ -640,8 +642,8 @@ public class SwableSendModule extends BaseSwableModule {
 
                     @Override
                     public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                        queuedTransactions.remove(offlineData.getId());
-                        QUEUED_TRANSACTIONS--;
+                        queueTracker.remove(offlineData.getId());
+                        //QUEUED_TRANSACTIONS--;
                         Log.e("ImonggoSwable", "sending failed [" + page + "] : isConnected? " + hasInternet + " : error [" +
                                 responseCode + "] : " + response);
 
@@ -723,8 +725,8 @@ public class SwableSendModule extends BaseSwableModule {
 
                     @Override
                     public void onRequestError() {
-                        queuedTransactions.remove(offlineData.getId());
-                        QUEUED_TRANSACTIONS--;
+                        queueTracker.remove(offlineData.getId());
+                        //QUEUED_TRANSACTIONS--;
                         Log.e("ImonggoSwable", "sending failed [" + page + "] : request error");
                         offlineData.setSyncing(false);
                         offlineData.setQueued(false);
@@ -852,8 +854,8 @@ public class SwableSendModule extends BaseSwableModule {
                                     offlineData.updateTo(dbHelper);
                                 }
                             }
-                            Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
-                            if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
+                            Log.e("REQUEST", getQueueTrackerCount() + " " + SUCCESS_TRANSACTIONS);
+                            if (offlineData.isSynced() && getQueueTrackerCount() == 0)
                                 NotificationTools.postNotification(imonggoSwable,
                                         ImonggoSwable.NOTIFICATION_ID,
                                         APP_ICON_DRAWABLE,

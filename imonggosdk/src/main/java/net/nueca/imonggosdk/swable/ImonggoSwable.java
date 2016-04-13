@@ -5,32 +5,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.annotation.DrawableRes;
 import android.util.Log;
 
-import net.nueca.imonggosdk.R;
-import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
-import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.base.BaseTable3;
-import net.nueca.imonggosdk.objects.document.Document;
-import net.nueca.imonggosdk.objects.order.Order;
-import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
-import net.nueca.imonggosdk.tools.NotificationTools;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -152,7 +136,7 @@ public class ImonggoSwable extends SwableService {
                                     .eq("isPastCutoff", false).and()
                                     .eq("type", OfflineData.CUSTOMER).query();
 
-                    if((offlineDataList == null || offlineDataList.size() == 0) && swableSendModule.QUEUED_TRANSACTIONS == 0) {
+                    if((offlineDataList == null || offlineDataList.size() == 0) && swableSendModule.getQueueTrackerCount() == 0) {
                         offlineDataList =
                             getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
                                     .eq("isSynced", false).and()
@@ -275,13 +259,13 @@ public class ImonggoSwable extends SwableService {
 
     @Override
     public void updateSyncingStatus() {
-        Log.d("ImonggoSwable", "updateSyncingStatus : sending ~ " + swableSendModule.queuedTransactions.size());
-        Log.d("ImonggoSwable", "updateSyncingStatus : updating ~ " + swableUpdateModule.QUEUED_TRANSACTIONS);
-        Log.d("ImonggoSwable", "updateSyncingStatus : voiding ~ " + swableVoidModule.QUEUED_TRANSACTIONS);
+        Log.d("ImonggoSwable", "updateSyncingStatus : sending ~ " + swableSendModule.getQueueTrackerCount());
+        Log.d("ImonggoSwable", "updateSyncingStatus : updating ~ " + swableUpdateModule.getQueueTrackerCount());
+        Log.d("ImonggoSwable", "updateSyncingStatus : voiding ~ " + swableVoidModule.getQueueTrackerCount());
 
-        setSyncing(!swableSendModule.queuedTransactions.isEmpty() ||
-                swableUpdateModule.QUEUED_TRANSACTIONS > 0 ||
-                swableVoidModule.QUEUED_TRANSACTIONS > 0);
+        setSyncing(swableSendModule.isSyncing() ||
+                swableUpdateModule.isSyncing() ||
+                swableVoidModule.isSyncing());
         Log.e("ImonggoSwable", "update ~ isSyncing : " + isSyncing());
     }
 
@@ -304,9 +288,9 @@ public class ImonggoSwable extends SwableService {
                 offlineData.updateTo(getHelper());
             }
 
-            swableSendModule.queuedTransactions.clear();
-            swableUpdateModule.QUEUED_TRANSACTIONS = 0;
-            swableVoidModule.QUEUED_TRANSACTIONS = 0;
+            swableSendModule.clearQueueTracker();
+            swableUpdateModule.clearQueueTracker();
+            swableVoidModule.clearQueueTracker();
         } catch (SQLException e) {
             e.printStackTrace();
         }
