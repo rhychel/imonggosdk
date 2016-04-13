@@ -1,6 +1,8 @@
 package net.nueca.concessioengine.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -189,7 +191,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     public void onQueued(OfflineData offlineData) {
         Log.e("onQueued", "yeah");
         if(useRecyclerView) {
-            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            final int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if(position > -1) {
                 simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
@@ -211,7 +213,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     public void onSyncing(OfflineData offlineData) {
         Log.e("onSyncing", "yeah");
         if(useRecyclerView) {
-            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            final int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if(position > -1) {
                 simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
@@ -233,13 +235,21 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     public void onSynced(OfflineData offlineData) {
         Log.e("onSynced", "yeah");
         if(useRecyclerView) {
-            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            final int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if (position > -1) {
                 simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
-                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                Handler delay = new Handler(){
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                    }
+                };
+                delay.sendEmptyMessageDelayed(0, 100);
+//                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
             }
         }
         else {
@@ -256,14 +266,22 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     public void onSyncProblem(OfflineData offlineData, boolean hasInternet, Object response, int responseCode) {
         Log.e("onSyncProblem", "yeah");
         if(useRecyclerView) {
-            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            final int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if (position > -1) {
                 simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
+                Handler delay = new Handler(){
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                    }
+                };
+                delay.sendEmptyMessageDelayed(0, 100);
 
-                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+//                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
             }
         }
     }
