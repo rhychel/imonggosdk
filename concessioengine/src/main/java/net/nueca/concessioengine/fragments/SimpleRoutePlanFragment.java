@@ -187,16 +187,12 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
         Day day = days.get(days.indexOf(new Day(dayOfWeek)));
         try {
             RoutePlan routePlan = getHelper().fetchIntId(RoutePlan.class).queryBuilder().where().isNull("status").and().eq("user_id", getSession().getUser()).queryForFirst();
-//            Log.e("RoutePlan", "has route plan?");
             if(routePlan == null)
                 return routes;
-//            Log.e("RoutePlan", "has route plan");
 
             List<RoutePlanDetail> routePlanDetails = getHelper().fetchForeignCollection(routePlan.getRoutePlanDetails().closeableIterator());
-//            Log.e("RoutePlan", "has route plan details?"+routePlanDetails.size()+" --- "+routePlan.getRoutePlanDetails().size());
 
             Log.e("Week of the Year", Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+" day");
-//            Log.e("Week", Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)+" wk");
             boolean isOdd = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) % 2 == 1;
             for(RoutePlanDetail routePlanDetail : routePlanDetails) {
                 Log.e("RoutePlan", "route plan details="+routePlanDetail.getFrequency()+"---");
