@@ -918,8 +918,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onPause() {
         SwableTools.unbindSwable(this, imonggoSwableServiceConnection);
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
     }
 

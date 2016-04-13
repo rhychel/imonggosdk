@@ -197,7 +197,19 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
-                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler delay = new Handler(){
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                            }
+                        };
+                        delay.sendEmptyMessageDelayed(0, 100);
+                    }
+                });
             }
         }
         else {
@@ -219,7 +231,19 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
-                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler delay = new Handler(){
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                            }
+                        };
+                        delay.sendEmptyMessageDelayed(0, 100);
+                    }
+                });
             }
         }
         else {
@@ -241,14 +265,19 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
-                Handler delay = new Handler(){
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
-                    public void handleMessage(Message msg) {
-                        super.handleMessage(msg);
-                        simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                    public void run() {
+                        Handler delay = new Handler(){
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                            }
+                        };
+                        delay.sendEmptyMessageDelayed(0, 100);
                     }
-                };
-                delay.sendEmptyMessageDelayed(0, 100);
+                });
 //                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
             }
         }
@@ -272,14 +301,19 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
-                Handler delay = new Handler(){
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
-                    public void handleMessage(Message msg) {
-                        super.handleMessage(msg);
-                        simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                    public void run() {
+                        Handler delay = new Handler(){
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                            }
+                        };
+                        delay.sendEmptyMessageDelayed(0, 100);
                     }
-                };
-                delay.sendEmptyMessageDelayed(0, 100);
+                });
 
 //                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
             }
