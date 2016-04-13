@@ -98,6 +98,7 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 			swableConnectionhandler = null;
             isReceiverRegistered = false;
         }
+		isStarted = false;
 		setShouldSync(false);
 		setShouldStop(true);
 		super.onDestroy();
