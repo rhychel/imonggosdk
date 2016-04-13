@@ -820,6 +820,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     }
                     if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                         hasMenu = true;
+                        Log.e("previousFragmentCount", previousFragmentCount+"---");
                         if (previousFragmentCount == 0) {
                             llFooter.setVisibility(View.GONE);
                             if(simpleCustomersFragment != null) {
@@ -827,6 +828,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 simpleCustomersFragment.onViewCreated(null, null);
                             }
                             showsCustomer = true;
+                        }
+                        else if(previousFragmentCount == 1) {
+                            simpleProductsFragment.refreshList();
                         }
                     }
                 } else {
@@ -1708,7 +1712,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add((branch.getName()+"\r\n").getBytes());
                 data.add((branch.generateAddress()+"\r\n\r\n").getBytes());
 
-                if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
+                if(offlineData != null && offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
                     data.add(("MISCELLANEOUS STOCK OUT SLIP\r\n\r\n").getBytes());
                 else
                     data.add(("INVENTORY SLIP\r\n\r\n").getBytes());
