@@ -74,6 +74,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public static final String REFERENCE = "reference";
     public static final String IS_LAYAWAY = "is_layaway";
     public static final String FOR_DUPLICATING = "is_duplicating";
+    public static final String CATEGORY = "category";
 
     protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
@@ -276,7 +277,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 Log.e("ProductTag", productTag.getTag());
                 if(productTag.getTag().matches("^#[\\w\\-\\'\\+ ]*")) {
                     String category = StringUtilsEx.ucwords(productTag.getTag().replace("#", ""));
-                    categories.add(category);
+                    categories.add(category.toUpperCase());
                 }
             }
         } catch (SQLException e) {

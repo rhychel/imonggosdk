@@ -323,6 +323,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     }
 
     public void setCategory(String category) {
+        Log.e("BaseProductsFragment", category+" is set");
         this.category = category;
     }
 
