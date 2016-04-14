@@ -651,7 +651,9 @@ public class C_Finalize extends ModuleActivity {
                 else
                     data.add("\r\n\r\n\r\n".getBytes());
 
-                StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
+                if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                    break;
+
                 data.clear();
             } catch (SQLException e) {
                 e.printStackTrace();
