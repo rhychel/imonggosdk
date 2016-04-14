@@ -77,7 +77,10 @@ public class InvoiceTools {
                     else
                         discount_text = itemValue.getCustomer_discount_text();
                 }
-                if(Double.parseDouble(itemValue.getQuantity()) >= 0d && Double.parseDouble(itemValue.getUnit_quantity()) >= 0d) {
+                double quantity = itemValue.getQuantity() == null? 0d : Double.parseDouble(itemValue.getQuantity());
+                double unit_quantity = itemValue.getUnit_quantity() == null? 0d : Double.parseDouble(itemValue.getUnit_quantity());
+
+                if(quantity >= 0d && unit_quantity >= 0d) {
                     builder.discount_text(discount_text);
 
                     Extras.Builder extrasBuilder = new Extras.Builder();
