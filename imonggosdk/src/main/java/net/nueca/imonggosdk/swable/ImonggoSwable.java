@@ -286,6 +286,9 @@ public class ImonggoSwable extends SwableService {
                 offlineData.setSyncing(false);
                 offlineData.setQueued(false);
                 offlineData.updateTo(getHelper());
+
+                if(swableStateListener != null)
+                    swableStateListener.onSyncProblem(offlineData, false, "", 0);
             }
 
             swableSendModule.clearQueueTracker();

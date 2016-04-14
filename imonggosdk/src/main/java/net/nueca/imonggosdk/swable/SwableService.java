@@ -92,6 +92,7 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 	
 	@Override
 	public void onDestroy() {
+		restartSyncingAndQueued();
 		Log.d("onDestroy", "Service is about to be destroyed!");
         if(isReceiverRegistered) {
             unregisterReceiver(swableConnectionhandler);
