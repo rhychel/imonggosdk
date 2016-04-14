@@ -134,16 +134,33 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
-//
-//        try {
-//            Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId", 6960).queryForFirst();
-//            if(customer == null)
-//                Log.e("Customer", "404");
-//            else
-//                Log.e("Customer", customer.getCompany_name());
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+       /* try {
+            BranchProduct branchProduct = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("id", 663).queryForFirst();
+            if(branchProduct == null)
+                Log.e("branchProduct", "404");
+            else
+                Log.e(TAG, ">> branchProduct: " + branchProduct.getProduct().getName() + " status: " + branchProduct.getProduct().getStatus());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+
+        try {
+            List<Customer> customer = Customer.fetchAll(getHelper(), Customer.class);
+            if (customer == null)
+                Log.e("Customer", "404");
+            else
+                for (Customer c : customer) {
+                    List<CustomerGroup> cg = c.getCustomerGroups(getHelper());
+
+                    for (CustomerGroup ccg : cg) {
+                        Log.e(TAG, "CustomerGroup of " + c.getName() + " is " + ccg.getName());
+                    }
+
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
 //        List<SalesPromotion> salesPromotions =  SalesPromotion.fetchAll(getHelper(), SalesPromotion.class);
 //        Log.e(TAG, "sales promotions size: " + salesPromotions.size());
@@ -179,10 +196,9 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
-        if(!SwableTools.isImonggoSwableRunning(this)) {
+        if (!SwableTools.isImonggoSwableRunning(this))
             SwableTools.startSwable(this);
-            Log.e("SWABLE", "START");
-        }
+        Log.e("SWABLE", "START");
     }
 
     @Override

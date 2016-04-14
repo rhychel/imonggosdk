@@ -74,6 +74,7 @@ public class Configurations {
             put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
             put(Table.ROUTE_PLANS, "route_plans.json");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
+            put(Table.LAYAWAYS, "invoices.json");
 
             // FOR PETRON
             put(Table.ACCOUNT_PRICES, "account_prices.json");
@@ -139,6 +140,7 @@ public class Configurations {
             put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
             put(Table.ROUTE_PLANS, "route_plans");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
+            put(Table.LAYAWAYS, "layaways");
 
             // FOR PETRON
             put(Table.ACCOUNT_PRICES, "account_prices");
