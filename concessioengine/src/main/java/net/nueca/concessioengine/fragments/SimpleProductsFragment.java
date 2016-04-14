@@ -199,6 +199,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     tvReason.setText(ProductsAdapterHelper.getReason().getName());
             }
             rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
+
+            if(isOnSalesFinalize)
+                rvProducts.setPadding(0, 0, 0, 400);
+
             if(!isCustomAdapter) {
                 if (useSalesProductAdapter) {
                     productRecyclerViewAdapter = new SimpleSalesProductRecyclerAdapter(getActivity(), getHelper(), getProducts());//, customer, customerGroup, branch

@@ -1877,8 +1877,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 else
                     data.add(("\r\n\r\n").getBytes());
 
-                StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
-
+                if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                    break;
                 data.clear();
             }
         } catch (SQLException e) {
