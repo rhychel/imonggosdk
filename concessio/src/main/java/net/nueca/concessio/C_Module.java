@@ -1057,7 +1057,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             simpleInventoryFragment.updateListWhenSearch(newText);
                         else if(concessioModule == ConcessioModule.CUSTOMERS || showsCustomer)
                             simpleCustomersFragment.updateListWhenSearch(newText);
-                        else if(concessioModule == ConcessioModule.HISTORY)
+                        else if(concessioModule == ConcessioModule.HISTORY || concessioModule == ConcessioModule.LAYAWAY)
                             simpleTransactionsFragment.updateListWhenSearch(newText);
                         else
                             simpleProductsFragment.updateListWhenSearch(newText);

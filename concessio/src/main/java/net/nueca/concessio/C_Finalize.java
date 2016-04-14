@@ -56,6 +56,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -208,8 +209,18 @@ public class C_Finalize extends ModuleActivity {
                 InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
                         .PaymentsComputation();
 
-                paymentsComputation.addAllInvoiceLines(offlineData.getObjectFromData(Invoice.class).getInvoiceLines());
-                paymentsComputation.addAllPayments(offlineData.getObjectFromData(Invoice.class).getPayments());
+                int device_id = getSession().getDevice_id();
+                Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                if(Integer.parseInt(invoice.getReference().substring(0,invoice.getReference().indexOf('-'))) != device_id) {
+                    List<InvoiceLine> invoiceLines = InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList(getHelper(),
+                            offlineData, false, false));
+                    invoiceLines.addAll(InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList(getHelper(),
+                            offlineData, true, false)));
+                    invoice.setInvoiceLines(invoiceLines);
+                }
+
+                paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
+                paymentsComputation.addAllPayments(invoice.getPayments());
 
                 //paymentsComputation.getTotalPayable(); // Total Amount
                 //paymentsComputation.getRemaining(); // Total Balance

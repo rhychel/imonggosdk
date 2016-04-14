@@ -679,11 +679,13 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
 
     public String getLastPurchase() {
         try {
+            Log.e(TAG,"getLastPurchase " + (lastPurchase==null? "NULL" : lastPurchase.getInvoice_date()));
             if(lastPurchase != null)
                 return lastPurchase.getInvoice_date();
             lastPurchase = invoices.closeableIterator().first();
             invoices.closeLastIterator();
 
+            Log.e(TAG,"getLastPurchase " + (lastPurchase==null? "NULL" : lastPurchase.getInvoice_date()));
             if(lastPurchase != null)
                 return lastPurchase.getInvoice_date();
         } catch (SQLException e) {
