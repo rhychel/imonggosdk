@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DailySalesEnums;
@@ -37,6 +38,7 @@ import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BaseTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
@@ -120,6 +122,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         mCurrentTableSyncing == Table.PRICE_LISTS) {
                     if (listOfIdsPriceListSorted == null)
                         listOfIdsPriceListSorted = new ArrayList<>();
+
+                    if (listOfPricelistIds == null)
+                        listOfPricelistIds = new ArrayList<>();
                 }
             }
 
@@ -1003,6 +1008,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     // When the request is successful
                     mSyncModulesListener.onEndDownload(mCurrentTableSyncing);
                     mSyncModulesListener.onFinishDownload();
+                    listOfIdsPriceListSorted = null;
+                    listOfPricelistIds = null;
+                    listOfSalesPromotionIds = null;
+                    listOfSalesPromotionStorage = null;
+                    listPriceListStorage = null;
                     stopSelf();
                 }
             }
@@ -2679,14 +2689,25 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Invoice invoice = gson.fromJson(jsonObject.toString(), Invoice.class);
 
                                     if (mCurrentTableSyncing == Table.LAYAWAYS) {
-                                        //LOGIN
+                                        //LOGINr
 
                                         if (isExisting(invoice, Table.INVOICES)) {
+                                            int customer_id = jsonObject.getInt("customer_id");
+
+                                            Customer layawayCustomer = Customer.fetchById(getHelper(), Customer.class, customer_id);
+
                                             OfflineData offlineData = getHelper().fetchObjects(OfflineData.class).queryBuilder().where().eq("reference_no", invoice.getReference()).queryForFirst();
                                             offlineData.setReturnId(jsonObject.getString("id"));
                                             Invoice existing_invoice = offlineData.getObjectFromData(Invoice.class);
                                             existing_invoice.setPayments(invoice.getPayments());
                                             existing_invoice.markSentPayment(jsonObject.getInt("id"));
+
+                                            if (layawayCustomer != null) {
+                                                existing_invoice.setCustomer(layawayCustomer);
+                                            } else {
+                                                Log.e(TAG, "customer is null!");
+                                            }
+
                                             existing_invoice.updateTo(getHelper());
                                             offlineData.updateTo(getHelper());
                                         } else {
@@ -3080,19 +3101,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 return;
                             } else {
 
-                                if (listOfIdsPriceListSorted == null) {
-                                    Log.e(TAG, "price list sorted is null, creating instance");
-                                    listOfIdsPriceListSorted = new ArrayList<>();
-                                } else {
-                                    Log.e(TAG, "price list sorted is not null");
-                                }
-
-                                if (listOfPricelistIds == null) {
-                                    Log.e(TAG, "price list ids is null, creating instance");
-                                    listOfPricelistIds = new ArrayList<>();
-                                } else {
-                                    Log.e(TAG, "price list ids is not null");
-                                }
 
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -3134,7 +3142,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             newPriceList.add(priceList);
                                         }
                                     } else { // UPDATING
-                                        // check if customer or customer group is existing
 
                                         Log.e(TAG, "executing updating of price_lists ");
 
@@ -3233,8 +3240,25 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             Log.e(TAG, "API " + mCurrentTableSyncing + " don't have 'customer_groups' field");
                                         }
                                     }
-
                                 }
+
+                                // for updating delete all details for the updated Price List Header
+
+                                List<Price> price = Price.fetchWithConditionInt(getHelper(), Price.class, new DBTable.ConditionsWindow<Price, Integer>() {
+                                    @Override
+                                    public Where<Price, Integer> renderConditions(Where<Price, Integer> where) throws SQLException {
+                                        where.in("price_list_id", listOfIdsPriceListSorted);
+                                        return where;
+                                    }
+                                });
+
+                                Log.e(TAG, "Size of price list to delete: " + price.size());
+
+                                BatchList<Price> deletePrice = new BatchList<>(DatabaseOperation.DELETE, getHelper());
+
+                                deletePrice.addAll(price);
+                                Log.e(TAG, "Deleting Price List... ");
+                                deletePrice.doOperationBT(Price.class);
 
                                 newPriceList.doOperationBT(PriceList.class);
                                 updatePriceList.doOperationBT(PriceList.class);
