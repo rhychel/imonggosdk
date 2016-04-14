@@ -167,8 +167,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     Invoice invoice = generateInvoice();
 
-                    invoice.getReturnInvoiceLines();
-
                     // Print
                     if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                         if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
