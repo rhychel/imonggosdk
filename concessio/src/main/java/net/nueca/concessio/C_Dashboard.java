@@ -134,58 +134,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
-       /* try {
-            BranchProduct branchProduct = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("id", 663).queryForFirst();
-            if(branchProduct == null)
-                Log.e("branchProduct", "404");
-            else
-                Log.e(TAG, ">> branchProduct: " + branchProduct.getProduct().getName() + " status: " + branchProduct.getProduct().getStatus());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
 
-
-        try {
-            List<Customer> customer = Customer.fetchAll(getHelper(), Customer.class);
-            if (customer == null)
-                Log.e("Customer", "404");
-            else
-                for (Customer c : customer) {
-                    List<CustomerGroup> cg = c.getCustomerGroups(getHelper());
-
-                    for (CustomerGroup ccg : cg) {
-                        Log.e(TAG, "CustomerGroup of " + c.getName() + " is " + ccg.getName());
-                    }
-
-                }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-//        List<SalesPromotion> salesPromotions =  SalesPromotion.fetchAll(getHelper(), SalesPromotion.class);
-//        Log.e(TAG, "sales promotions size: " + salesPromotions.size());
-//        for(SalesPromotion salesPromotion : salesPromotions) {
-//            Log.e(TAG, "salesPromotions: " + salesPromotion.toString() );
-//        }
-
-//       List< Customer> customer =  Customer.fetchAll(getHelper(), Customer.class);
-//
-//        Log.e(TAG, ">> Customer: " + customer.toString());
-//
-//        for(Customer customer1 :  customer) {
-//            Log.e(TAG, "Customer: " + customer1.toString() );
-//        }
-/*
-        List<BranchProduct> list = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
-
-        Log.e(TAG, "ALIBABA G.PEAS 12 list size: " + list.size());
-
-        for(BranchProduct bp : list) {
-            if(bp.getUnit() != null)
-            Log.e(TAG,  "ID: " + bp.getProduct().getId() + " Product: " + bp.getProduct().getName() + " Unit: " + bp.getUnit().getName() + " id: " + bp.getUnit().getId());
-            else
-                Log.e(TAG,  "ID: " + bp.getProduct().getId() + " Product: " + bp.getProduct().getName() +  " product don't have unit");
-        }*/
     }
 
     @Override

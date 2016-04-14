@@ -666,12 +666,15 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 else
                     data.add("\r\n\r\n\r\n".getBytes());
 
+                if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                    break;
+
+                data.clear();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
 
-        StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
     }
 
     private void printTransaction(final Invoice invoice, final String... labels) {
