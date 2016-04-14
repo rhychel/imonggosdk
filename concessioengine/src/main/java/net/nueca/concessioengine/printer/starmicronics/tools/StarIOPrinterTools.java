@@ -449,7 +449,7 @@ public class StarIOPrinterTools {
 
             if (status.offline) {
                 Log.e("Printer", "is offline");
-                throw new StarIOPortException("A printer is offline");
+                throw new StarIOPortException("Printer is offline");
             }
 
             byte[] commandToSendToPrinter = convertFromListByteArrayTobyteArray(byteList);
@@ -483,13 +483,15 @@ public class StarIOPrinterTools {
 			/* End of query commands Sample code */
         } catch (StarIOPortException e) {
             result = false;
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AppCompatDialogStyle_Light);
             dialog.setNegativeButton("Ok", null);
             AlertDialog alert = dialog.create();
-            alert.setTitle("Failure");
-            alert.setMessage(e.getMessage());
-            alert.setCancelable(false);
-//            alert.show();
+            alert.setTitle("Oopss!");
+            if(e.getMessage().contains("socket might closed"))
+                alert.setMessage("Printer might be connected on another device or is turned off. Kindly check.");
+            else
+                alert.setMessage(e.getMessage());
+            alert.show();
         } finally {
             if (port != null) {
                 try {

@@ -113,7 +113,6 @@ public class C_Finalize extends ModuleActivity {
                     public void onVoidTransaction() {
                         // TODO for double checking..
 
-
                         new SwableTools.Transaction(getHelper())
                                 .toCancel()
                                 .withReason("VOID")
@@ -407,6 +406,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setHasSubtotal(true);
             simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
             simpleProductsFragment.setConcessioModule(concessioModule);
+            simpleProductsFragment.setOnSalesFinalize(true);
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                 @Override
                 public void whenItemsSelectedUpdated() {
@@ -651,7 +651,9 @@ public class C_Finalize extends ModuleActivity {
                 else
                     data.add("\r\n\r\n\r\n".getBytes());
 
-                StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data);
+                if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                    break;
+
                 data.clear();
             } catch (SQLException e) {
                 e.printStackTrace();

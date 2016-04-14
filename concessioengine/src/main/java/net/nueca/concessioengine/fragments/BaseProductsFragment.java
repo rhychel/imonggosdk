@@ -66,7 +66,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             displayOnly = false,
             useSalesProductAdapter = false,
             hasPromotionalProducts = false,
-            isReturnItems = false;
+            isReturnItems = false,
+            isOnSalesFinalize = false;
     private int prevLast = -1;
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
@@ -432,5 +433,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setConcessioModule(ConcessioModule concessioModule) {
         this.concessioModule = concessioModule;
+    }
+
+    public void setOnSalesFinalize(boolean onSalesFinalize) {
+        isOnSalesFinalize = onSalesFinalize;
     }
 }
