@@ -123,6 +123,7 @@ public enum Table {
     SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS(API_TYPE.API, "Discount Details", Discount.class, "sales_promotions_sales_discount_details"),
     ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class, "route_plans"),
     ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlanDetail.class, "route_plans_details"),
+    LAYAWAYS(API_TYPE.API, "Layaways", Invoice.class, "layaways"),
 
     NONE(API_TYPE.NON_API, "none"),
     ALL(API_TYPE.NON_API, "All");

@@ -262,7 +262,7 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case INVOICES: {
                 Invoice invoice = (Invoice) o;
-                return getHelper().fetchObjects(Invoice.class).queryBuilder().where().eq("id", invoice.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Invoice.class).queryBuilder().where().eq("returnId", invoice.getId()).queryForFirst() != null;
             }
             case INVOICE_PURPOSES: {
                 InvoicePurpose invoicePurpose = (InvoicePurpose) o;

@@ -104,6 +104,10 @@ public class ImonggoTools {
 					parameterStr += "order_type=%"+stringInputCount+"$s&";
 					stringInputCount++;
 					break;
+				case LAYAWAYS:
+					parameterStr += "type=layaways&";
+					stringInputCount++;
+					break;
             }
         }
         if(!parameterStr.equals("?"))

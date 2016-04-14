@@ -300,6 +300,7 @@ public class ImonggoSwable extends SwableService {
     }
 
     public void setSwableStateListener(SwableStateListener swableStateListener) {
+        Log.e("SwableState", "listener is set");
         this.swableStateListener = swableStateListener;
     }
 

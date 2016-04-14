@@ -139,12 +139,20 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         tvNoProducts = (TextView) view.findViewById(R.id.tvNoProducts);
 
         if(hasCategories) {
+            if(!getCategory().equals("")) {
+                prevSelectedCategory = productCategories.indexOf(getCategory().toUpperCase());
+                Log.e("prevSelectedCategory", prevSelectedCategory+" -- "+getCategory());
+            }
+            else if(productCategories.size() > 0)
+                setCategory(productCategories.get(0));
+
+            Log.e("prevSelectedCategory", prevSelectedCategory+" -- "+getCategory());
+
             productCategoriesAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_dark, productCategories);
             productCategoriesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
             spCategories.setAdapter(productCategoriesAdapter);
+            spCategories.setSelection(prevSelectedCategory);
             spCategories.setOnItemSelectedListener(onCategorySelected);
-            if(productCategories.size() > 0)
-                setCategory(productCategories.get(0));
         }
         else
             spCategories.setVisibility(View.GONE);
