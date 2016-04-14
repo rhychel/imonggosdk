@@ -2540,7 +2540,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-
+                                //TODO
                                 getHelper().deleteAll(DocumentType.class);
 
                                 for (int i = 0; i < size; i++) {
@@ -2749,6 +2749,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         case INVOICE_PURPOSES:
                             BatchList<InvoicePurpose> newInvoicePurpose = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<InvoicePurpose> updateInvoicePurpose = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                            BatchList<InvoicePurpose> deleteInvoicePurpose = new BatchList<>(DatabaseOperation.DELETE, getHelper());
+
 
                             if (size == 0) {
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
@@ -2763,8 +2765,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         JSONObject json_extras = jsonObject.getJSONObject("extras");
                                         if (json_extras.has("require_date")) {
                                             if (!json_extras.getString("require_date").isEmpty()) {
+                                                extras.setId(InvoicePurpose.class.getName().toUpperCase(), invoicePurpose.getId());
                                                 extras.setRequire_date(json_extras.getBoolean("require_date"));
-                                                extras.insertTo(getHelper());
+
+                                                if (isExisting(extras, Table.EXTRAS)) {
+                                                    extras.updateTo(getHelper());
+                                                } else {
+                                                    extras.insertTo(getHelper());
+                                                }
 
                                                 invoicePurpose.setExtras(extras);
                                                 Log.e(TAG, "Invoice Purposes Extras: " + json_extras.getString("require_date"));
@@ -2780,18 +2788,51 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     }
 
                                     if (initialSync || lastUpdatedAt == null) {
-                                        newInvoicePurpose.add(invoicePurpose);
+                                        // status A  I D
+                                        if (!jsonObject.get("status").equals("D")) {
+                                            newInvoicePurpose.add(invoicePurpose);
+                                        } else {
+                                            Log.e(TAG, "skipping saving of invoice purposes");
+                                        }
                                     } else {
                                         if (isExisting(invoicePurpose, Table.INVOICE_PURPOSES)) {
-                                            updateInvoicePurpose.add(invoicePurpose);
+                                            Log.e(TAG, "invoice purposes is existing.. processing...");
+                                            if (jsonObject.get("status").equals("A")) {
+                                                Log.e(TAG, "invoice purposes is Active.. updating...");
+                                                updateInvoicePurpose.add(invoicePurpose);
+                                            }
+
+                                            if (jsonObject.get("status").equals("I")) {
+                                                Log.e(TAG, "invoice purposes is Inactive.. updating...");
+
+                                                updateInvoicePurpose.add(invoicePurpose);
+                                            }
+
+                                            if (jsonObject.get("status").equals("D")) {
+                                                Log.e(TAG, "invoice purposes is D.. deleting...");
+
+                                                deleteInvoicePurpose.add(invoicePurpose);
+                                            }
+
+
                                         } else {
-                                            newInvoicePurpose.add(invoicePurpose);
+                                            if (jsonObject.getString("status").equals("A")) {
+                                                Log.e(TAG, "invoice purposes is Active.. inserting...");
+                                                newInvoicePurpose.add(invoicePurpose);
+
+                                            } else if (jsonObject.getString("status").equals("I")) {
+                                                Log.e(TAG, "invoice purposes is Inactive.. inserting...");
+                                                newInvoicePurpose.add(invoicePurpose);
+                                            } else {
+                                                Log.e(TAG, "skipping saving of invoice purpose list ");
+                                            }
                                         }
                                     }
                                 }
 
                                 newInvoicePurpose.doOperationBT(InvoicePurpose.class);
                                 updateInvoicePurpose.doOperationBT(InvoicePurpose.class);
+                                deleteInvoicePurpose.doOperationBT(InvoicePurpose.class);
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
                             }
                             updateNext(requestType, size);

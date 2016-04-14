@@ -13,12 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
-
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -30,45 +24,23 @@ import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
-import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.Server;
-import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchProduct;
-import net.nueca.imonggosdk.objects.Inventory;
-import net.nueca.imonggosdk.objects.LastUpdatedAt;
-import net.nueca.imonggosdk.objects.OfflineData;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.SalesPushSettings;
-import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
-import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
-import net.nueca.imonggosdk.objects.base.DBTable;
-import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
-import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
-import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
-import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
-import net.nueca.imonggosdk.objects.salespromotion.Discount;
-import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
+import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
-import net.nueca.imonggosdk.tools.Configurations;
-import net.nueca.imonggosdk.tools.DateTimeTools;
-import net.nueca.imonggosdk.tools.LastUpdateAtTools;
 
 import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -145,22 +117,13 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         }*/
 
 
-        try {
-            List<Customer> customer = Customer.fetchAll(getHelper(), Customer.class);
-            if (customer == null)
-                Log.e("Customer", "404");
-            else
-                for (Customer c : customer) {
-                    List<CustomerGroup> cg = c.getCustomerGroups(getHelper());
-
-                    for (CustomerGroup ccg : cg) {
-                        Log.e(TAG, "CustomerGroup of " + c.getName() + " is " + ccg.getName());
-                    }
-
-                }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        List<InvoicePurpose> invoice = InvoicePurpose.fetchAll(getHelper(),InvoicePurpose.class);
+        if (invoice == null)
+            Log.e("Customer", "404");
+        else
+            for (InvoicePurpose c : invoice) {
+                    Log.e(TAG, "InvoicePurpose: " + c.toString());
+            }
 
 //        List<SalesPromotion> salesPromotions =  SalesPromotion.fetchAll(getHelper(), SalesPromotion.class);
 //        Log.e(TAG, "sales promotions size: " + salesPromotions.size());

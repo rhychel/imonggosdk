@@ -70,6 +70,7 @@ public abstract class BaseTable extends DBTable {
     }
 
     public void setExtras(Extras extras) {
+        Log.e(TAG, "setting extras..");
         this.extras = extras;
     }
 
