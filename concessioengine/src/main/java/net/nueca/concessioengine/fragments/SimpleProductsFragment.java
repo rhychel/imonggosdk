@@ -49,6 +49,7 @@ import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.operations.ImonggoTools;
@@ -373,7 +374,12 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     simpleSalesQuantityDialog.setHasExpectedQty(true);
                 }
 
-                simpleSalesQuantityDialog.setInvoicePurposeList(InvoicePurpose.fetchAll(getHelper(), InvoicePurpose.class));
+                simpleSalesQuantityDialog.setInvoicePurposeList(InvoicePurpose.fetchWithConditionInt(getHelper(), InvoicePurpose.class, new DBTable.ConditionsWindow<InvoicePurpose, Integer>() {
+                    @Override
+                    public Where<InvoicePurpose, Integer> renderConditions(Where<InvoicePurpose, Integer> where) throws SQLException {
+                        return where.eq("status", "A");
+                    }
+                }));
 
                 double subtotal = product.getRetail_price() * Double.valueOf(productRecyclerViewAdapter.getSelectedProductItems().getQuantity
                         (product));
