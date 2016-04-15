@@ -65,6 +65,21 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         Log.e("INVOICE RECEIVED", invoice.toJSONString());
         computation.clearAll();
 
+        /*int device_id = ProductsAdapterHelper.getSession().getDevice_id();
+        if(Integer.parseInt(invoice.getReference().substring(0,invoice.getReference().indexOf('-'))) != device_id) {
+            try {
+                List<InvoiceLine> invoiceLines = InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList
+                            (ProductsAdapterHelper.getDbHelper(),invoice,invoice.getCustomer(),ProductsAdapterHelper.getSelectedBranch(),false,
+                                    false));
+                    invoiceLines.addAll(InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList
+                            (ProductsAdapterHelper.getDbHelper(),invoice,invoice.getCustomer(),ProductsAdapterHelper.getSelectedBranch(),true,false)));
+
+                invoice.setInvoiceLines(invoiceLines);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }*/
+
         computation.addAllInvoiceLines(invoice.getInvoiceLines());
         computation.addAllPayments(invoice.getPayments());
     }
