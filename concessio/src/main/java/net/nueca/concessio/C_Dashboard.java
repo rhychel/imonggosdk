@@ -32,7 +32,10 @@ import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
+import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
@@ -117,13 +120,14 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         }*/
 
 
-        List<InvoicePurpose> invoice = InvoicePurpose.fetchAll(getHelper(),InvoicePurpose.class);
+        List<CustomerCategory> invoice = CustomerCategory.fetchAll(getHelper(),CustomerCategory.class);
         if (invoice == null)
-            Log.e("Customer", "404");
+            Log.e("DocumentPurpose", "404");
         else
-            for (InvoicePurpose c : invoice) {
-                    Log.e(TAG, "InvoicePurpose: " + c.toString());
+            for (CustomerCategory c : invoice) {
+                    Log.e(TAG, "CustomerCategory name:" + c.getName() + " status: " + c.getStatus());
             }
+
 
 //        List<SalesPromotion> salesPromotions =  SalesPromotion.fetchAll(getHelper(), SalesPromotion.class);
 //        Log.e(TAG, "sales promotions size: " + salesPromotions.size());
