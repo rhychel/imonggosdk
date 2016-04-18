@@ -141,9 +141,12 @@ public class Values {
             this.unit_quantity = null;
             this.unit_content_quantity = 0d;
             this.subtotal = 0d;
-            this.retail_price = unit.getRetail_price();
-            this.unit_retail_price = unit.getRetail_price();
-            this.unit_name = unit.getName();
+            if(unit != null) {
+                if(this.retail_price == null)
+                    this.retail_price = unit.getRetail_price();
+                this.unit_retail_price = unit.getRetail_price();
+                this.unit_name = unit.getName();
+            }
         }
 
         Log.e("QTY", this.quantity + " ~ " + quantity);
@@ -233,6 +236,7 @@ public class Values {
             if (price.getRetail_price() != null)
                 this.retail_price = price.getRetail_price();
             else {
+                Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
                 this.retail_price = PriceTools.identifyRetailPrice(ProductsAdapterHelper.getDbHelper(),
                         price.getProduct(),ProductsAdapterHelper.getSelectedBranch(),ProductsAdapterHelper.getSelectedCustomerGroup(),
                         ProductsAdapterHelper.getSelectedCustomer(), price.getUnit());

@@ -134,12 +134,14 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                     Log.e("values["+selectedProductItem.getValues().indexOf(values)+"] retail_price", retail_price.toString());
                 }
                 Log.e(getClass().getSimpleName(), "Subtotal : " + subtotal);*/
+                Log.e("SSPRA", "subtotal:" + selectedProductItem.getValuesSubtotal() + "  retailprice:" +
+                        selectedProductItem.getValuesRetailPrices(';'));
                 holder.tvSubtotal2.setText(String.format("P%s", NumberTools.separateInCommas(selectedProductItem.getValuesSubtotal())));
                 holder.tvRetailPrice.setText(String.format("P%s/%s", selectedProductItem.getValuesRetailPrices(';'), selectedProductItem.getValuesUnit()));
             }
             // set Retail price
             else {
-                Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice 1");
+                Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
                 Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer, unit);
 
                 if(retail_price == null)

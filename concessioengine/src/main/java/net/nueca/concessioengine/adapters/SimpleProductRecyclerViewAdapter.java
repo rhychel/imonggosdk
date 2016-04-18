@@ -103,6 +103,8 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
                     Unit unit = null;
                     if(branchProduct != null)
                         unit = branchProduct.getUnit();
+
+                    Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
                     Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, null, null, unit);
 
                     if(retail_price == null)

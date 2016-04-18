@@ -178,28 +178,30 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
                             try {
-                                SelectedProductItemList selecteds =
-                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
-                                SelectedProductItemList returns =
-                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
-
                                 Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
                                 ProductsAdapterHelper.setSelectedCustomer(customer);
                                 List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
                                 if(customerGroups.size() > 0)
                                     ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
+                                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
+
+                                SelectedProductItemList selecteds =
+                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
+                                SelectedProductItemList returns =
+                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
 
                                 ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
                                 ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+
+                                Intent intent = new Intent(C_Module.this, C_Finalize.class);
+                                intent.putExtra(REFERENCE, offlineData.getReference_no());
+                                intent.putExtra(FOR_CUSTOMER_DETAIL, customer.getId());
+                                Log.e("C_Module ~ INVOICE SEND", offlineData.getObjectFromData(Invoice.class).toJSONString());
+                                intent.putExtra(IS_LAYAWAY, true);
+                                startActivityForResult(intent, REVIEW_SALES);
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
-
-                            Intent intent = new Intent(C_Module.this, C_Finalize.class);
-                            intent.putExtra(REFERENCE, offlineData.getReference_no());
-                            Log.e("INOVOICE SEND", offlineData.getObjectFromData(Invoice.class).toJSONString());
-                            intent.putExtra(IS_LAYAWAY, true);
-                            startActivityForResult(intent, REVIEW_SALES);
                         }
                     }
                 });
@@ -242,16 +244,17 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
                             try {
-                                SelectedProductItemList selecteds =
-                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
-                                SelectedProductItemList returns =
-                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
-
                                 Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
                                 ProductsAdapterHelper.setSelectedCustomer(customer);
                                 List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
                                 if(customerGroups.size() > 0)
                                     ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
+                                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
+
+                                SelectedProductItemList selecteds =
+                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
+                                SelectedProductItemList returns =
+                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
 
                                 ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
                                 ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
@@ -262,6 +265,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             Intent intent = new Intent(C_Module.this, C_Finalize.class);
                             intent.putExtra(REFERENCE, offlineData.getReference_no());
                             intent.putExtra(FOR_HISTORY_DETAIL, true);
+                            intent.putExtra(FOR_CUSTOMER_DETAIL, customer.getId());
                             startActivityForResult(intent, HISTORY_DETAILS);
                         }
                         else if(offlineData.getType() == OfflineData.CUSTOMER) {
