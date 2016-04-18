@@ -192,16 +192,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                 ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
                                 ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
-
-                                Intent intent = new Intent(C_Module.this, C_Finalize.class);
-                                intent.putExtra(REFERENCE, offlineData.getReference_no());
-                                intent.putExtra(FOR_CUSTOMER_DETAIL, customer.getId());
-                                Log.e("C_Module ~ INVOICE SEND", offlineData.getObjectFromData(Invoice.class).toJSONString());
-                                intent.putExtra(IS_LAYAWAY, true);
-                                startActivityForResult(intent, REVIEW_SALES);
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
+                            Intent intent = new Intent(C_Module.this, C_Finalize.class);
+                            intent.putExtra(REFERENCE, offlineData.getReference_no());
+                            intent.putExtra(FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
+                            Log.e("C_Module ~ INVOICE SEND", offlineData.getObjectFromData(Invoice.class).toJSONString());
+                            intent.putExtra(IS_LAYAWAY, true);
+                            startActivityForResult(intent, REVIEW_SALES);
                         }
                     }
                 });
@@ -261,11 +260,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
-
                             Intent intent = new Intent(C_Module.this, C_Finalize.class);
                             intent.putExtra(REFERENCE, offlineData.getReference_no());
                             intent.putExtra(FOR_HISTORY_DETAIL, true);
-                            intent.putExtra(FOR_CUSTOMER_DETAIL, customer.getId());
+                            intent.putExtra(FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
                             startActivityForResult(intent, HISTORY_DETAILS);
                         }
                         else if(offlineData.getType() == OfflineData.CUSTOMER) {
@@ -325,6 +323,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
                             intent.putExtra(ModuleActivity.CATEGORY, simpleTransactionDetailsFragment.getOfflineData().getCategory());
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.INVOICE) {
+                            Invoice invoice = simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Invoice.class);
+                            intent.putExtra(FOR_CUSTOMER_DETAIL, invoice.getCustomer().getId());
+                        }
                         startActivityForResult(intent, IS_DUPLICATING);
                     }
                 };
@@ -1695,6 +1697,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 else if (concessioModule == ConcessioModule.INVOICE) {
                     Log.e("INVOICE", "Finalizing....");
                     Intent intent = new Intent(C_Module.this, C_Finalize.class);
+                    intent.putExtra(FOR_CUSTOMER_DETAIL, customer.getId());
                     intent.putExtra(CONCESSIO_MODULE, concessioModule.ordinal());
                     startActivityForResult(intent, REVIEW_SALES);
                 } else {

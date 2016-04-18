@@ -87,6 +87,8 @@ public class C_Finalize extends ModuleActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_review_activity);
 
+        Log.e("C_Finalize >>> CUSTOMER", customer.getName());
+
         clearTransactions = false;
 
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
@@ -422,7 +424,7 @@ public class C_Finalize extends ModuleActivity {
 
             CustomerGroup customerGroup = null;
             try {
-                if (customer.getCustomerGroups(getHelper()).size() > 0)
+                if (/*customer != null && */customer.getCustomerGroups(getHelper()).size() > 0)
                     customerGroup = customer.getCustomerGroups(getHelper()).get(0);
             } catch (SQLException e) {
                 e.printStackTrace();
