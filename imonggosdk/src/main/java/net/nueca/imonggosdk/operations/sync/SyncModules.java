@@ -800,6 +800,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 }
 
+                if(mCurrentTableSyncing == Table.DOCUMENT_PURPOSES) {
+                    return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.AFTER),
+                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                }
+
                 return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.AFTER),
                         DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
             }
@@ -977,7 +982,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
         } else if (mCurrentTableSyncing == Table.TAX_SETTINGS ||
                 mCurrentTableSyncing == Table.DOCUMENT_TYPES ||
-                mCurrentTableSyncing == Table.DOCUMENT_PURPOSES ||
                 mCurrentTableSyncing == Table.SETTINGS ||
                 mCurrentTableSyncing == Table.ROUTE_PLANS ||
                 mCurrentTableSyncing == Table.LAYAWAYS) {
@@ -2799,12 +2803,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 extras.setId(InvoicePurpose.class.getName().toUpperCase(), invoicePurpose.getId());
                                                 extras.setRequire_date(json_extras.getBoolean("require_date"));
 
-                                                if (isExisting(extras, Table.EXTRAS)) {
-                                                    extras.updateTo(getHelper());
-                                                } else {
-                                                    extras.insertTo(getHelper());
-                                                }
-
                                                 invoicePurpose.setExtras(extras);
                                                 Log.e(TAG, "Invoice Purposes Extras: " + json_extras.getString("require_date"));
                                             } else {
@@ -2927,6 +2925,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         case CUSTOMER_CATEGORIES:
                             BatchList<CustomerCategory> newCustomerCategory = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                             BatchList<CustomerCategory> updateCustomerCategory = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                            BatchList<CustomerCategory> deleteCustomerCategory = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
                             if (size == 0) {
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
@@ -2938,12 +2937,39 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     CustomerCategory customerCategory = gson.fromJson(jsonObject.toString(), CustomerCategory.class);
 
                                     if (initialSync || lastUpdatedAt == null) {
-                                        newCustomerCategory.add(customerCategory);
+
+                                        //status A, I, D,
+                                        if(jsonObject.getString("status").equals("A")) {
+                                            newCustomerCategory.add(customerCategory);
+                                        }
+
+                                        if(jsonObject.getString("status").equals("I")) {
+                                            newCustomerCategory.add(customerCategory);
+                                        }
+
                                     } else {
                                         if (isExisting(customerCategory, Table.CUSTOMER_CATEGORIES)) {
-                                            updateCustomerCategory.add(customerCategory);
+                                            if(jsonObject.getString("status").equals("A")) {
+                                                updateCustomerCategory.add(customerCategory);
+                                            }
+
+                                            if(jsonObject.getString("status").equals("I")) {
+                                                updateCustomerCategory.add(customerCategory);
+                                            }
+
+                                            if(jsonObject.getString("status").equals("D")) {
+                                                deleteCustomerCategory.add(customerCategory);
+                                            }
+
                                         } else {
-                                            newCustomerCategory.add(customerCategory);
+
+                                            if(jsonObject.getString("status").equals("A")) {
+                                                newCustomerCategory.add(customerCategory);
+                                            }
+
+                                            if(jsonObject.getString("status").equals("I")) {
+                                                newCustomerCategory.add(customerCategory);
+                                            }
                                         }
                                     }
                                 }
@@ -2951,6 +2977,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                             newCustomerCategory.doOperationBT(CustomerCategory.class);
                             updateCustomerCategory.doOperationBT(CustomerCategory.class);
+                            deleteCustomerCategory.doOperationBT(CustomerCategory.class);
+
                             updateNext(requestType, size);
                             break;
                         case PAYMENT_TERMS:
@@ -3828,7 +3856,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         if (mCurrentTableSyncing == Table.USERS_ME ||
                 mCurrentTableSyncing == Table.TAX_SETTINGS ||
                 mCurrentTableSyncing == Table.DOCUMENT_TYPES ||
-                mCurrentTableSyncing == Table.DOCUMENT_PURPOSES ||
                 mCurrentTableSyncing == Table.SETTINGS ||
                 mCurrentTableSyncing == Table.ROUTE_PLANS) {
 

@@ -29,8 +29,6 @@ public class PaymentTerms extends BaseTable {
     @DatabaseField
     protected String status = "";
 
-    public PaymentTerms() {
-    }
 
     public String getCode() {
         return code;
