@@ -56,6 +56,26 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             setIsUsingDefaultLoginLayout(true);
         }
 
+        Log.e(TAG, "isUnlinked: " + isUnlinked() + "\nisLoggedIn: " + isLoggedIn() + "\nisLogout: " + isLogout());
+
+        // LOGOUT
+        if(isUnlinked() && isLogout()) {
+            getAccountIDEditText().setEnabled(false);
+
+            // log AccountID
+/*
+            try {
+                Log.e(TAG, "App is Linked. Account ID: " + getSession().getAccount_id());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+*/
+        }
+
+        if(isUnlinked() && !isLoggedIn()) {
+            Log.e(TAG, "App is Unlinked.. ");
+        }
+
         try {
             getHelper().deleteAllDatabaseValues();
         } catch (SQLException e) {
@@ -112,7 +132,6 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             setRequireConcessioSettings(false);
             setUnlinked(AccountTools.isUnlinked(this));
-            setLoggedIn(AccountTools.isLoggedIn(getHelper()));
             setIsUsingDefaultLoginLayout(true);
             if (getSession() == null) {
                 setUnlinked(true);
@@ -132,20 +151,17 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             // Account is unlinked and user is logout
             if (AccountTools.isUnlinked(this) && !AccountTools.isLoggedIn(getHelper())) {
                 setUnlinked(true);
-                setLoggedIn(false);
             }
             // Account is Linked
             if (!AccountTools.isUnlinked(this)) {
                 // if user is logout
                 if (!AccountTools.isLoggedIn(getHelper())) {
                     setUnlinked(false);
-                    setLoggedIn(false);
                 }
                 // if User is Logged In
                 if (AccountTools.isLoggedIn(getHelper())) {
                     if (!isSyncFinished()) { // Sync is not finished, unlinking account
                         getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, true);
-                        setLoggedIn(false);
                         setUnlinked(true);
                         unlinkAccount();
                     } else {
@@ -154,11 +170,9 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
                         setLoginSession(getSession()); // user is logged in set up data
 
                         if (!getLoginSession().getApiAuthentication().equals("")) { // User is authenticated
-                            setLoggedIn(true);
                             // check if sessions email exist in user's database
                             if (getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
                                 //LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
-                                setLoggedIn(false);
                                 setUnlinked(true);
                                 unlinkAccount();
                             } else {
