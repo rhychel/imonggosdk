@@ -41,6 +41,7 @@ import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -85,6 +86,8 @@ public class C_Finalize extends ModuleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_review_activity);
+
+        Log.e("C_Finalize >>> CUSTOMER", customer.getName());
 
         clearTransactions = false;
 
@@ -208,15 +211,15 @@ public class C_Finalize extends ModuleActivity {
                 InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
                         .PaymentsComputation();
 
-                int device_id = getSession().getDevice_id();
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                /*int device_id = getSession().getDevice_id();
                 if(Integer.parseInt(invoice.getReference().substring(0,invoice.getReference().indexOf('-'))) != device_id) {
                     List<InvoiceLine> invoiceLines = InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList(getHelper(),
                             offlineData, false, false));
                     invoiceLines.addAll(InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList(getHelper(),
                             offlineData, true, false)));
                     invoice.setInvoiceLines(invoiceLines);
-                }
+                }*/
 
                 paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
                 paymentsComputation.addAllPayments(invoice.getPayments());
@@ -417,6 +420,18 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setHasSubtotal(true);
             simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
             simpleProductsFragment.setConcessioModule(concessioModule);
+            simpleProductsFragment.setCustomer(customer);
+
+            CustomerGroup customerGroup = null;
+            try {
+                if (/*customer != null && */customer.getCustomerGroups(getHelper()).size() > 0)
+                    customerGroup = customer.getCustomerGroups(getHelper()).get(0);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            simpleProductsFragment.setCustomerGroup(customerGroup);
+            simpleProductsFragment.setBranch(getBranches().get(0));
+
             simpleProductsFragment.setOnSalesFinalize(true);
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                 @Override

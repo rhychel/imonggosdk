@@ -419,6 +419,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         ProductsAdapterHelper.setSelectedCustomer(customer);
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
     public void setHasPromotionalProducts(boolean hasPromotionalProducts) {
         this.hasPromotionalProducts = hasPromotionalProducts;
     }

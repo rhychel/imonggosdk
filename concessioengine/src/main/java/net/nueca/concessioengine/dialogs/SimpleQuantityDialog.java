@@ -207,10 +207,12 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
                     if(price != null)
                         values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
-                    else
+                    else {
+                        Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
                         values.setValue(quantity, unit, PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
                                 salesBranch, salesCustomerGroup, salesCustomer, unit),
-                                salesCustomer != null? salesCustomer.getDiscount_text() : null);
+                                salesCustomer != null ? salesCustomer.getDiscount_text() : null);
+                    }
                 }
 
                     selectedProductItem.getValues().set(valuePosition, values);
