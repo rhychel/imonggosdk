@@ -1021,6 +1021,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                     if (!getModuleSetting(ConcessioModule.CUSTOMERS).isCan_edit())
                         menu.findItem(R.id.mEditCustomer).setVisible(false);
+
+                    if(customer.getReturnId() == -1)
+                        menu.findItem(R.id.mEditCustomer).setVisible(true);
                 }
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
