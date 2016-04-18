@@ -749,8 +749,10 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            insertExtrasTo(dbHelper);
+            Log.e("insertTo", id+"before ---");
             dbHelper.insert(Customer.class, this);
+            Log.e("insertTo", id+"after ---");
+            insertExtrasTo(dbHelper);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -782,6 +784,11 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
             extras.setCustomer(this);
             extras.setId(getClass().getName().toUpperCase(), id);
             extras.insertTo(dbHelper);
+            try {
+                dbHelper.update(Customer.class, this);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

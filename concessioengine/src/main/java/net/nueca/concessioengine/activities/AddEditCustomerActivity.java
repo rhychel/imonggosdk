@@ -152,6 +152,16 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
         }
         if(getCurrentValue) {
             int ptIndex = paymentTerms.indexOf(updateCustomer.getPaymentTerms());
+            if(updateCustomer.getExtras() != null)
+                Log.e("Update Customer", updateCustomer.getExtras()+" <-- ");
+            else
+                Log.e("Update Customer", "extras is null");
+
+            if(updateCustomer.getExtras().getCustomerCategory() != null)
+                Log.e("Update Customer", updateCustomer.getExtras().getCustomerCategory()+" <-- ");
+            else
+                Log.e("Update Customer", "extras.customer_category is null");
+
             int ccIndex = customerCategories.indexOf(updateCustomer.getExtras().getCustomerCategory());
 
             customerFieldArrayList.add(new CustomerField<>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID, ccIndex));
@@ -453,10 +463,14 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                     jsonObject.put(customerField.getFieldName().getLabel(), customerField.getEditTextValue());
                 }
                 customer = gson.fromJson(jsonObject.toString(), Customer.class);
-                if(updateCustomer == null) {
+                /*
+                 {
                     customer.setId(TempIdGenerator.generateTempId(getContext(), Customer.class));
+                    extras.setId(Customer.class.getName().toUpperCase()+"_"+customer.getId());
                 }
-                else {
+                else
+                 */
+                if(updateCustomer != null) {
                     extras.setId(Customer.class.getName().toUpperCase()+"_"+updateCustomer.getId());
 
                     customer.setId(updateCustomer.getId());
