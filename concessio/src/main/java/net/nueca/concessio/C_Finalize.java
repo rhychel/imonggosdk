@@ -141,6 +141,8 @@ public class C_Finalize extends ModuleActivity {
                     }
                 };
 
+                Log.e("OfflineDate", "isCancelled="+offlineData.isCancelled()+" || isVoiding="+offlineData.getOfflineDataTransactionType().isVoiding());
+
                 if(offlineData == null) {
                     DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History", new DialogInterface.OnClickListener() {
                         @Override
@@ -150,7 +152,7 @@ public class C_Finalize extends ModuleActivity {
                     }, R.style.AppCompatDialogStyle_Light_NoTitle);
                     return;
                 }
-                else if(!offlineData.isSynced() && !offlineData.isSyncing()) {
+                else if(!offlineData.isSynced() && !offlineData.isSyncing() && !offlineData.getOfflineDataTransactionType().isVoiding()) {
                     btn2 = (Button) findViewById(R.id.btn2);
                     initializeVoidButton(btn1, getIntent().getStringExtra(REFERENCE));
                     initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));

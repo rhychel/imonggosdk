@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.nueca.concessioengine.R;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -172,10 +174,23 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                         return;
                     }
                     PaymentType paymentType = (PaymentType) spnPaymentType.getSelectedItem();
-                    if(paymentType.getName().equals("Rewards") && availablePoints <= 0d) {
-                        Toast.makeText(getContext(), "You have no available points to use a payment.", Toast.LENGTH_LONG).show();
-                        return;
+                    if(paymentType.getName().equals("Rewards")) {
+                        if(availablePoints <= 0d) {
+                            Toast.makeText(getContext(), "You have no available points to use a payment.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        BigDecimal bdPIP = new BigDecimal(NumberTools.formatDouble(pointsInPeso, ProductsAdapterHelper.getDecimalPlace()));
+                        BigDecimal bdPayment = new BigDecimal(NumberTools.formatDouble(Double.valueOf(etPayment.getText().toString().trim()), ProductsAdapterHelper.getDecimalPlace()));
+                        int compare = bdPIP.compareTo(bdPayment);
+
+                        Log.e("PaymentDialog", compare+"");
+                        if(compare == -1 || bdPayment.compareTo(BigDecimal.ZERO) == 0) {
+                            Toast.makeText(getContext(), "Invalid payment. Payment cannot be zero or greater than the available points.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
                     }
+
                     Extras extrasForCheck = generateExtrasForCheck();
                     if(paymentType.getName().equals("Check")) {
                         String checkDetails = "";

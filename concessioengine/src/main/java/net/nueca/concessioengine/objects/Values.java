@@ -244,6 +244,9 @@ public class Values {
             }
             this.discount_text = price.getDiscount_text();
         }
+
+        Log.e(">>>>>>", "UNIT: " + (price == null? null : price.getUnit()) );
+
         setValue(quantity, price == null? null : price.getUnit(), extendedAttributes);
     }
 

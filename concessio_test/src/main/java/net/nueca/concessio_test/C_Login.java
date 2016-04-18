@@ -44,8 +44,8 @@ public class C_Login extends LoginActivity {
 
         setModulesToSync(
                 Table.USERS_ME.ordinal(),
-                Table.CUSTOMER_BY_SALESMAN.ordinal(),
-                Table.LAYAWAYS.ordinal()
+                Table.INVOICE_PURPOSES.ordinal()
+
                 /*Table.ORDERS.ordinal(),
                 Table.ORDERS_PURCHASES.ordinal(),
                 Table.ORDERS_STOCK_REQUEST.ordinal()*/
