@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -48,6 +49,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     private Spinner spTransactionType;
     private Spinner spBranches;
     private TextView tvNoTransactions;
+    private FragmentActivity mActivity;
 
     private SimpleTransactionListAdapter simpleTransactionListAdapter;
     private SimpleTransactionRecyclerViewAdapter simpleTransactionRecyclerViewAdapter;
@@ -213,21 +215,20 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setOfflineDataTransactionType(offlineData.getOfflineDataTransactionType());
-                if(getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Handler delay = new Handler() {
-                                @Override
-                                public void handleMessage(Message msg) {
-                                    super.handleMessage(msg);
-                                    simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
-                                }
-                            };
-                            delay.sendEmptyMessageDelayed(0, 100);
-                        }
-                    });
-                }
+
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler delay = new Handler() {
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                            }
+                        };
+                        delay.sendEmptyMessageDelayed(0, 100);
+                    }
+                });
             }
         }
         else {
@@ -250,7 +251,8 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setOfflineDataTransactionType(offlineData.getOfflineDataTransactionType());
-                getActivity().runOnUiThread(new Runnable() {
+
+                mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Handler delay = new Handler(){
@@ -285,7 +287,8 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setOfflineDataTransactionType(offlineData.getOfflineDataTransactionType());
-                getActivity().runOnUiThread(new Runnable() {
+
+                mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Handler delay = new Handler(){
@@ -322,7 +325,8 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setOfflineDataTransactionType(offlineData.getOfflineDataTransactionType());
-                getActivity().runOnUiThread(new Runnable() {
+
+                mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Handler delay = new Handler(){
@@ -367,4 +371,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
             toggleNoItems("No results for \"" + searchKey + "\".", simpleTransactionListAdapter.updateList(getTransactions()));
     }
 
+    public void setmActivity(FragmentActivity mActivity) {
+        this.mActivity = mActivity;
+    }
 }

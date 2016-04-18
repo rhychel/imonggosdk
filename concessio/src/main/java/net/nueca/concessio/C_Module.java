@@ -168,6 +168,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionsFragment.onlyInvoices(true);
                 simpleTransactionsFragment.setTransactionTypes(getTransactionTypes());
                 simpleTransactionsFragment.setListingType(ListingType.DETAILED_HISTORY);
+                simpleTransactionsFragment.setmActivity(this);
                 simpleTransactionsFragment.setTransactionsListener(new BaseTransactionsFragment.TransactionsListener() {
                     @Override
                     public void showTransactionDetails(OfflineData offlineData) {
@@ -226,6 +227,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionsFragment.setSetupActionBar(this);
                 simpleTransactionsFragment.setHasFilterByTransactionType(true);
                 simpleTransactionsFragment.setTransactionTypes(getTransactionTypes());
+                simpleTransactionsFragment.setmActivity(this);
                 if(getIntent().hasExtra(HISTORY_ITEM_FILTERS))
                     simpleTransactionsFragment.setFilterModules(ConcessioModule.convertToConcessioModules(getIntent().getIntArrayExtra(HISTORY_ITEM_FILTERS)));
                 simpleTransactionsFragment.setListingType(ListingType.DETAILED_HISTORY);
@@ -953,6 +955,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 imonggoSwableServiceConnection = new ImonggoSwableServiceConnection(simpleTransactionsFragment);
                 SwableTools.bindSwable(this, imonggoSwableServiceConnection);
             }
+            else
+                SwableTools.bindSwable(this, imonggoSwableServiceConnection);
         }
         if (concessioModule == ConcessioModule.CUSTOMERS)
             simpleCustomersFragment.deselectCustomers();
