@@ -2803,12 +2803,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 extras.setId(InvoicePurpose.class.getName().toUpperCase(), invoicePurpose.getId());
                                                 extras.setRequire_date(json_extras.getBoolean("require_date"));
 
-                                                if (isExisting(extras, Table.EXTRAS)) {
-                                                    extras.updateTo(getHelper());
-                                                } else {
-                                                    extras.insertTo(getHelper());
-                                                }
-
                                                 invoicePurpose.setExtras(extras);
                                                 Log.e(TAG, "Invoice Purposes Extras: " + json_extras.getString("require_date"));
                                             } else {
