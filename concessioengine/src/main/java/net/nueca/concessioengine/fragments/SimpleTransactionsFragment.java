@@ -24,6 +24,8 @@ import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.swable.ImonggoSwable;
 import net.nueca.imonggosdk.swable.SwableSendModule;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -88,6 +90,19 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
 
         if(useRecyclerView) {
             rvTransactions = (RecyclerView) view.findViewById(R.id.rvTransactions);
+
+            for(OfflineData offlineData : getTransactions()) {
+                if(offlineData.getType() == OfflineData.INVOICE) {
+                    Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                    try {
+                        Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId", invoice.getCustomer().getReturnId()).queryForFirst();
+                        Log.e("OfflineData", "Customer from Invoice=" + invoice.getCustomer().getReturnId()+" || "+invoice.getCustomer().getId());
+                        Log.e("OfflineData", "Customer from DB=" + customer.getReturnId()+" || "+customer.getId());
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             simpleTransactionRecyclerViewAdapter = new SimpleTransactionRecyclerViewAdapter(getActivity(), getTransactions(), listingType);
             simpleTransactionRecyclerViewAdapter.setDbHelper(getHelper());
             simpleTransactionRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
