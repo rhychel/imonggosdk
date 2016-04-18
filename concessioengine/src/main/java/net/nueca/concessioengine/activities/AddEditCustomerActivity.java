@@ -24,11 +24,13 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
@@ -124,8 +126,18 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
     }
 
     public void initSpinnerValues(boolean includeBlank, boolean getCurrentValue) throws SQLException {
-        List<PaymentTerms> paymentTerms = getHelper().fetchObjectsList(PaymentTerms.class);
-        List<CustomerCategory> customerCategories = getHelper().fetchObjectsList(CustomerCategory.class);
+        List<PaymentTerms> paymentTerms = PaymentTerms.fetchWithConditionInt(getHelper(), PaymentTerms.class, new DBTable.ConditionsWindow<PaymentTerms, Integer>() {
+            @Override
+            public Where<PaymentTerms, Integer> renderConditions(Where<PaymentTerms, Integer> where) throws SQLException {
+                return where.eq("status", "A");
+            }
+        });
+        List<CustomerCategory> customerCategories = CustomerCategory.fetchWithConditionInt(getHelper(), CustomerCategory.class, new DBTable.ConditionsWindow<CustomerCategory, Integer>() {
+            @Override
+            public Where<CustomerCategory, Integer> renderConditions(Where<CustomerCategory, Integer> where) throws SQLException {
+                return where.eq("status", "A");
+            }
+        });
         if(includeBlank) {
             PaymentTerms paymentTerm = new PaymentTerms();
             paymentTerm.setId(-1);
@@ -140,14 +152,14 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
         }
         if(getCurrentValue) {
             int ptIndex = paymentTerms.indexOf(updateCustomer.getPaymentTerms());
-            int ccIndex = customerCategories.indexOf(updateCustomer.getCustomerCategory());
+            int ccIndex = customerCategories.indexOf(updateCustomer.getExtras().getCustomerCategory());
 
-            customerFieldArrayList.add(new CustomerField<CustomerCategory>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID, ccIndex));
-            customerFieldArrayList.add(new CustomerField<PaymentTerms>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID, ptIndex));
+            customerFieldArrayList.add(new CustomerField<>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID, ccIndex));
+            customerFieldArrayList.add(new CustomerField<>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID, ptIndex));
         }
         else {
-            customerFieldArrayList.add(new CustomerField<CustomerCategory>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID));
-            customerFieldArrayList.add(new CustomerField<PaymentTerms>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID));
+            customerFieldArrayList.add(new CustomerField<>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID));
+            customerFieldArrayList.add(new CustomerField<>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID));
         }
     }
 
@@ -417,7 +429,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                 PaymentTerms paymentTerm = null;
                 CustomerCategory customerCategory = null;
                 for(CustomerField customerField : getList()) {
-                    if(customerField.getFieldName() == Customer.CustomerFields.EXTRAS_CATEGORY_ID) {
+                    if(customerField.getFieldName().equals(Customer.CustomerFields.EXTRAS_CATEGORY_ID)) {
                         CustomerField<CustomerCategory> category = (CustomerField<CustomerCategory>)customerField;
                         if(category.getSelectedIndex() == -1)
                             continue;
@@ -445,6 +457,8 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                     customer.setId(TempIdGenerator.generateTempId(getContext(), Customer.class));
                 }
                 else {
+                    extras.setId(Customer.class.getName().toUpperCase()+"_"+updateCustomer.getId());
+
                     customer.setId(updateCustomer.getId());
                     customer.setReturnId(updateCustomer.getReturnId());
                 }
@@ -452,9 +466,12 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                 if(paymentTerm == null)
                     Log.e("paymentTerm", "null");
                 customer.setPaymentTerms(paymentTerm);
+
+                customer.getExtras().setCustomerCategory(customerCategory);
                 if(customerCategory == null)
                     Log.e("customerCategory", "null");
-                customer.getExtras().setCustomerCategory(customerCategory);
+                else
+                    Log.e("customerCategory", "Customer Category="+customerCategory.getName()+" EXTRAS = "+extras.getCustomerCategory().getName());
                 customer.generateFullName();
             } catch (SQLException | JSONException e) {
                 e.printStackTrace();

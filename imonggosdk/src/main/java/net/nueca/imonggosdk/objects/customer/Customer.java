@@ -795,9 +795,13 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
         if(extras != null) {
             String idstr = getClass().getName().toUpperCase() +"_"+ id;
-            if (idstr.equals(extras.getId()))
+            Log.e("Extras", idstr+" -- "+extras.getId());
+            if (idstr.equals(extras.getId())) {
                 extras.updateTo(dbHelper);
+                Log.e("EXTRAS", "update");
+            }
             else {
+                Log.e("EXTRAS", "insert");
                 extras.deleteTo(dbHelper);
                 extras.setId(getClass().getName().toUpperCase(), id);
                 try {

@@ -1,5 +1,6 @@
 package net.nueca.imonggosdk.objects.invoice;
 
+import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -24,6 +25,9 @@ public class PaymentTerms extends BaseTable {
     private String code, name;
     @ForeignCollectionField
     private ForeignCollection<Customer> customers;
+    @Expose
+    @DatabaseField
+    protected String status = "";
 
     public PaymentTerms() {
     }
@@ -50,6 +54,14 @@ public class PaymentTerms extends BaseTable {
 
     public void setCustomers(ForeignCollection<Customer> customers) {
         this.customers = customers;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
