@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -637,6 +638,7 @@ public class SwableTools {
             private String branchName;
             private String parameter = "";
             private ConcessioModule concessioModule = ConcessioModule.NONE;
+            private boolean isNewOfflineData = false;
 
             UpdateTransaction(ImonggoDBHelper2 helper) {
                 this.helper = helper;
@@ -678,7 +680,17 @@ public class SwableTools {
                 return this;
             }*/
             public UpdateTransaction object(Customer customer) {
-                offlineData = new OfflineData(customer, OfflineDataType.UNKNOWN);
+                try {
+                    List<OfflineData> offlineDataList = helper.fetchForeignCollection(customer.getOfflineData().closeableIterator());
+                    if(offlineDataList != null && offlineDataList.size() > 0)
+                        offlineData = offlineDataList.get(0);
+                    else {
+                        offlineData = new OfflineData(customer, OfflineDataType.UNKNOWN);
+                        isNewOfflineData = true;
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 return this;
             }
             public OfflineData queue() {
@@ -706,7 +718,10 @@ public class SwableTools {
                         offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_CUSTOMER); break;
                 }
 
-                offlineData.insertTo(helper);
+                if(isNewOfflineData)
+                    offlineData.insertTo(helper);
+                else
+                    offlineData.updateTo(helper);
                 return offlineData;
             }
             @Deprecated
