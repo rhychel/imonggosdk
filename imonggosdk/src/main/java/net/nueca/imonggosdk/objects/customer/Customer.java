@@ -588,6 +588,10 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         this.town = town;
     }
 
+    public ForeignCollection<OfflineData> getOfflineData() {
+        return offlineData;
+    }
+
     @Override
     public boolean equals(Object o) {
         return (o instanceof Customer) && ((Customer)o).getId() == id;

@@ -74,6 +74,10 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
             Log.e("CUSTOMER_ID", getIntent().getIntExtra(CUSTOMER_ID, -1)+"<----");
             try {
                 updateCustomer = getHelper().fetchIntId(Customer.class).queryForId(getIntent().getIntExtra(CUSTOMER_ID, -1));
+
+                OfflineData offlineData = getHelper().fetchForeignCollection(updateCustomer.getOfflineData().closeableIterator()).get(0);
+                offlineData.setBeingModified(true);
+                offlineData.updateTo(getHelper());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -204,6 +208,9 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                                     .toUpdate()
                                     .object(customer)
                                     .queue();
+
+                            offlineData.setBeingModified(false);
+                            offlineData.updateTo(getHelper());
                         }
 
                         Intent intent = new Intent();
