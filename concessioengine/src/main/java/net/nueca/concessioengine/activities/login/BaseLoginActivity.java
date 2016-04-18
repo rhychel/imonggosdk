@@ -1,5 +1,6 @@
 package net.nueca.concessioengine.activities.login;
 
+import android.accounts.Account;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -55,8 +56,6 @@ import java.util.List;
 public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
     public static boolean TEST_ACCOUNT = false;
     private BaseLogin mBaseLogin = null;
-    private Boolean isUnlinked = true;
-    private Boolean isLoggedIn = false;
     private Boolean requireConcessioSettings = false;
     private Boolean requireObjectConcessioSettings = false;
     private Session mSession = null;
@@ -97,18 +96,18 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
 
                 //isAutoUpdate()
-                if (isAutoUpdate() && isLoggedIn && !isUnlinked)
+                if (isAutoUpdate() && isLoggedIn() && !isUnlinked())
                     updateAppData(mSyncModules);
             } else {
                 Log.e(TAG, "Cannot bindLoginModule Service and Activity");
                 // isAutoUpdate()
-                if (isAutoUpdate() && isLoggedIn && !isUnlinked) {
+                if (isAutoUpdate() && isLoggedIn() && !isUnlinked()) {
                     showNextActivityAfterLogin();
                 }
             }
 
             // isAutoUpdate()
-            if (isAutoUpdate() && isLoggedIn && !isUnlinked)
+            if (isAutoUpdate() && isLoggedIn() && !isUnlinked())
                 updateAppData(mSyncModules);
         }
 
@@ -173,12 +172,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * This is where you will create your login layout
      * setContentView and align the ids in your layout
      * to this class.
-     * <p>
+     * <p/>
      * if you want to customize login layout
      * you should extend this class and
      * override this method and call this
      * functions inside:
-     * <p>
+     * <p/>
      * 1. setContentView( your custom layout)
      * 2. setLayoutEquipments( fill in the ids in your layout)
      */
@@ -224,11 +223,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setAutoUpdateApp(false);
-        try {
-            isLoggedIn = AccountTools.isLoggedIn(getHelper());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         super.onCreate(savedInstanceState);
         initLoginEquipments();
         loginChecker();
@@ -561,10 +555,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mLoginState = LoginState.LOGIN_SUCCESS;
                 successLogin();
                 mSession = session;
-                setLoggedIn(true);
                 setUnlinked(false);
                 mSession.setHas_logged_in(true);
                 mSession.updateTo(getHelper());
+                AccountTools.updateLogout(getApplicationContext(), false);
                 try {
                     startSyncingImonggoModules();
                 } catch (SQLException e) {
@@ -626,8 +620,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 DialogTools.hideIndeterminateProgressDialog();
                 // delete session data
                 deleteUserSessionData();
-
-                setLoggedIn(false);
                 setUnlinked(true);
             }
         });
@@ -700,7 +692,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     protected void startLogout() {
         setUnlinked(false);
-        setLoggedIn(false);
         LogOutUser();
     }
 
@@ -712,7 +703,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             if (!isUnlinked()) {
                 AccountTools.unlinkAccount(this, getHelper(), this);
                 setUnlinked(true);
-                setLoggedIn(!isUnlinked());
                 setAutoUpdateApp(isAutoUpdate());
                 setDefaultBranch(BaseLoginActivity.this, "");
                 startSyncService();
@@ -864,11 +854,20 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     protected Boolean isLoggedIn() {
-        return isLoggedIn;
+        try {
+            return AccountTools.isLoggedIn(getHelper());
+        } catch (SQLException e) {
+            return false;
+        }
+
+    }
+
+    protected Boolean isLogout() {
+        return AccountTools.isLogout(getApplicationContext());
     }
 
     protected Boolean isUnlinked() {
-        return isUnlinked;
+        return AccountTools.isUnlinked(getApplicationContext());
     }
 
     protected Boolean isAutoUpdate() {
@@ -912,13 +911,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
-    protected void setLoggedIn(Boolean isLoggedIn) {
-
-        this.isLoggedIn = isLoggedIn;
-    }
 
     protected void setUnlinked(Boolean isUnlinked) {
-        this.isUnlinked = isUnlinked;
         AccountTools.updateUnlinked(this, isUnlinked);
     }
 
@@ -930,6 +924,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.mBounded = bind;
     }
 
+    public EditText getAccountIDEditText() {
+        return etAccountID;
+    }
 
     protected void setSyncAllModules(boolean choice) {
         this.mServiceIntent.putExtra(SyncModules.PARAMS_SYNC_ALL_MODULES, choice);
@@ -978,7 +975,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     protected void updateApp() {
-        if (isLoggedIn && !isUnlinked)
+        if (isLoggedIn() && !isUnlinked())
             if (mSyncModules == null) {
                 Log.e(TAG, "Sync is null");
                 startSyncService();
