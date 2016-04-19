@@ -141,8 +141,6 @@ public class C_Finalize extends ModuleActivity {
                     }
                 };
 
-                Log.e("OfflineDate", "isCancelled="+offlineData.isCancelled()+" || isVoiding="+offlineData.getOfflineDataTransactionType().isVoiding());
-
                 if(offlineData == null) {
                     DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History", new DialogInterface.OnClickListener() {
                         @Override
