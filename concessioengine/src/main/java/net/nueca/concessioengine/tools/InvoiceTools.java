@@ -121,10 +121,13 @@ public class InvoiceTools {
                 builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).doubleValue());
 
                 /** Retail Price **/
-                double retail_price = itemValue.isValidUnit() ?
-                        itemValue.getRetail_price() : itemValue.getPrice() != null?
-                        itemValue.getRetail_price() : product.getRetail_price();
+                double retail_price = itemValue.getRetail_price();
                 builder.retail_price(retail_price);
+                /*Log.e("InvoiceTools", ">>>>>>>>>>>>>>>>>>>>>>");
+                Log.e("itemValue UNIT", itemValue.getUnit_name());
+                Log.e("itemValue RetailPrice", (itemValue != null && itemValue.getRetail_price() != null? ""+itemValue.getRetail_price() : "null"));
+                Log.e("product RetailPrice", ""+product.getRetail_price());
+                Log.e("InvoiceTools", "<<<<<<<<<<<<<<<<<<<<<<");*/
 
                 /** Subtotal **/
                 BigDecimal t_subtotal = new BigDecimal(itemValue.getQuantity())
@@ -141,7 +144,9 @@ public class InvoiceTools {
 
                 /** Add InvoiceLine **/
                 invoiceLines.add(builder.build());
-                Log.e("INVOICE", product.getName() + " " + t_subtotal.doubleValue() + " " + subtotal.doubleValue() + " ~ " + retail_price + " * " +
+                Log.e("INVOICE", product.getName() + " tsub=" + t_subtotal.doubleValue() + " sub=" + subtotal.doubleValue() + " ~ ret=" +
+                        retail_price +
+                        " * qty=" +
                         itemValue.getQuantity() + " -- discount: " + discount_text + " | discounted price: " +
                         DiscountTools.applyMultipleDiscounts(new BigDecimal(retail_price), NumberTools.toBigDecimal(itemValue.getQuantity()),
                                 discount_text, ",").doubleValue());

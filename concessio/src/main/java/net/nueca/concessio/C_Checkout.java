@@ -33,7 +33,7 @@ import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
-import net.nueca.concessioengine.tools.PointsTools;
+import net.nueca.imonggosdk.tools.PointsTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
@@ -192,6 +192,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     // Transaction Date
                     transactionDialog.show();
 
+                    customer = ProductsAdapterHelper.getSelectedCustomer();
+
                     invoice.setStatus("S");
                     if(!isLayaway) {
                         offlineData = new SwableTools.Transaction(getHelper())
@@ -212,7 +214,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                 .queue();
                     }
 
-                    customer = ProductsAdapterHelper.getSelectedCustomer();
                     Double availablePoints = Double.parseDouble(customer.getAvailable_points());
                     Double pointsUsed = 0d;
 
@@ -278,6 +279,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                         transactionDialog.show();
 
+                        customer = ProductsAdapterHelper.getSelectedCustomer();
                         invoice.setStatus("L");
                         if (!isLayaway) {
                             offlineData = new SwableTools.Transaction(getHelper())
@@ -298,7 +300,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                     .queue();
                         }
 
-                        customer = ProductsAdapterHelper.getSelectedCustomer();
                         Double availablePoints = Double.parseDouble(customer.getAvailable_points());
                         Double pointsUsed = 0d;
 

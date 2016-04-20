@@ -12,9 +12,14 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NotificationTools;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -78,6 +83,20 @@ public class SwableVoidModule extends BaseSwableModule {
                             offlineData.setCancelled(true);
                             Log.e("SwableVoidModule " + 77, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
+
+                            try {
+                                if (response instanceof JSONObject) {
+                                    JSONObject responseJson = ((JSONObject) response);
+                                    if (offlineData.getType() == OfflineData.INVOICE && responseJson.has("customer_points")) {
+                                        Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                        Customer customer = invoice.getCustomer();
+                                        customer.setAvailable_points(responseJson.getString("customer_points"));
+                                        customer.updateTo(dbHelper);
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
                             if (imonggoSwable.getSwableStateListener() != null && offlineData.isSynced())
                                 imonggoSwable.getSwableStateListener().onSynced(offlineData);

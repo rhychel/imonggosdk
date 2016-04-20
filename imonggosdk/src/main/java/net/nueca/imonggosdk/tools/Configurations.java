@@ -75,6 +75,7 @@ public class Configurations {
             put(Table.ROUTE_PLANS, "route_plans.json");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
             put(Table.LAYAWAYS, "invoices.json");
+            put(Table.REWARDS_POINTS, "rewards.json");
 
             // FOR PETRON
             put(Table.ACCOUNT_PRICES, "account_prices.json");
