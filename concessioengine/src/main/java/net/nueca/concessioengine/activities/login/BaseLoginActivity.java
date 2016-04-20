@@ -948,6 +948,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return mSyncModules;
     }
 
+
     protected void setSyncModules(SyncModules syncModules) {
         mSyncModules = syncModules;
     }

@@ -88,6 +88,7 @@ public abstract class BaseSyncService extends ImonggoService {
     protected List<Integer> listOfIdsPriceListSorted;
     protected List<Object> listPriceListStorage;
     protected List<Object> listOfSalesPromotionStorage;
+    protected List<BranchUserAssoc> listOfBranchIds;
     protected List<? extends BaseTable> listOfIds;
     protected List<Integer> listOfSalesPromotionIds;
     protected String from = "", to = "";
@@ -128,7 +129,7 @@ public abstract class BaseSyncService extends ImonggoService {
         Bundle bundle = intent.getExtras();
         syncAllModules = bundle.getBoolean(PARAMS_SYNC_ALL_MODULES, true);
         mServer = Server.values()[bundle.getInt(PARAMS_SERVER, Server.IMONGGO.ordinal())];
-        initialSync = bundle.getBoolean(PARAMS_INITIAL_SYNC, false);
+        initialSync = bundle.getBoolean(PARAMS_INITIAL_SYNC, true);
 
         if (!syncAllModules) { // if custom modules where selected to be download
             initializeTablesToSync(bundle.getIntArray(PARAMS_TABLES_TO_SYNC));
@@ -457,5 +458,9 @@ public abstract class BaseSyncService extends ImonggoService {
         public BaseSyncService getService() {
             return BaseSyncService.this;
         }
+    }
+
+    public void setInitialSync() {
+        this.initialSync = true;
     }
 }
