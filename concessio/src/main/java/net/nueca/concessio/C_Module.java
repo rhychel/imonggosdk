@@ -147,6 +147,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_module);
 
+        ProductsAdapterHelper.setDbHelper(getHelper());
+
         if (clearTransactions) {
             ProductsAdapterHelper.clearSelectedProductItemList(initSelectedCustomer, initSelectedCustomer);
             ProductsAdapterHelper.clearSelectedReturnProductItemList();
@@ -552,8 +554,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 // if there's branch product
                 simpleProductsFragment.setBranch(getBranches().get(0));
                 simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting(ConcessioModule.PHYSICAL_COUNT).getProductListing().isLock_category()));
-                simpleProductsFragment.setListingType(ListingType.SALES);
                 simpleProductsFragment.setProductsFragmentListener(this);
+
+                simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES); //changed to show the individual price of every unit-- Sales
+                simpleProductsFragment.setUseSalesProductAdapter(true);//added to show the individual price of every unit
 
                 Log.e("PHYSICAL_COUNT", "is_view"+getModuleSetting(concessioModule).is_view());
                 Log.e("PHYSICAL_COUNT", "is_can_print"+getAppSetting().isCan_print());
@@ -739,6 +743,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
             break;
             case RELEASE_ADJUSTMENT: { // ----> MSO of Rebisco
+                /*
+                 -- TODO ||-> add customer when printing MSO
+                 */
                 changeToReview = true;
                 showsCustomer = true;
                 simpleCustomersFragment = new SimpleCustomersFragment();
@@ -1466,8 +1473,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
                                     if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                         printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                    if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                                        printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                    if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals("")) {
+                                        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                        else
+                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                    }
                                 }
                             }
 
@@ -1609,8 +1620,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                     if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
                                                         if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                                             printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                                        if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                        if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals("")) {
+                                                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                                                printTransactionStar(offlineData, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                                            else
+                                                                printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                        }
                                                     }
                                                 }
 
@@ -1860,12 +1875,21 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                         data.add((product.getName() + "\r\n").getBytes());
 
-                        totalQuantity += product.getInventory().getQuantity();
+                        double invQuantity = Double.valueOf(product.getInStock());;
+                        String unitName = product.getBase_unit_name();
+                        if(product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && !product.getExtras().getDefault_selling_unit().isEmpty()) {
+                            if(unit != null) {
+                                invQuantity = Double.valueOf(product.getInStock(unit.getQuantity(), ProductsAdapterHelper.getDecimalPlace()));
+                                unitName = unit.getName();
+                            }
+                        }
 
-                        data.add(("  " + product.getInventory().getQuantity() + "   "
-                                + (unit == null ? product.getBase_unit_name() : unit.getName()) + " x "
+                        totalQuantity += invQuantity; //product.getInventory().getQuantity();
+
+                        data.add(("  " + invQuantity + "   " //product.getInventory().getQuantity()
+                                + unitName + " x " //(unit == null ? product.getBase_unit_name() : unit.getName())
                                 + NumberTools.separateInCommas(retail_price)+"\r\n").getBytes());
-                        Double subtotal = product.getInventory().getQuantity() * retail_price;
+                        Double subtotal = invQuantity * retail_price; //product.getInventory().getQuantity()
 
                         totalAmount += subtotal;
 
@@ -1877,8 +1901,24 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                 data.add(("--------------------------------").getBytes());
                 data.add(("Total Quantity: " + NumberTools.separateInCommas(totalQuantity) + "\r\n").getBytes());
-                data.add((EpsonPrinterTools.spacer("Total Order Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\r\n\r\n").getBytes());
+                if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                    data.add((EpsonPrinterTools.spacer("Total MSO Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\r\n\r\n").getBytes());
+                else
+                    data.add((EpsonPrinterTools.spacer("Total Order Amount: ", NumberTools.separateInCommas(totalAmount), 32)+"\r\n\r\n").getBytes());
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Left
+
+                if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                    Document document = offlineData.getObjectFromData(Document.class);
+                    Customer customer = ProductsAdapterHelper.getSelectedCustomer();
+                    if(customer == null)
+                        customer = document.getCustomer();
+
+                    data.add(("\r\n\r\nCustomer Name: "+customer.generateFullName()+"\r\n").getBytes());
+                    data.add(("Customer Code: "+customer.getCode()+"\r\n").getBytes());
+                    data.add(("Address: "+customer.generateAddress()+"\r\n").getBytes());
+                    data.add("Signature:______________________\r\n".getBytes());
+                }
+
                 data.add(labels[i].getBytes());
                 if(simpleTransactionDetailsFragment != null) {
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center

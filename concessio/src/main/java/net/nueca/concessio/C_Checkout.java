@@ -138,6 +138,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                 builder.payment_type_id(paymentType.getId());
                             }
 
+                            Double points = PointsTools.amountToPoints(salesPromotion.getSettings(), NumberTools.toDouble(paymentValue));
+
+                            Log.e("Points", points+" <-- ");
+
                             InvoicePayment invoicePayment = builder.build();
                             invoicePayment.setExtras(extras);
 
@@ -167,6 +171,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     Invoice invoice = generateInvoice();
 
+//                    printSimulator(invoice);
                     // Print
                     if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                         if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
@@ -462,6 +467,13 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
         try {
             salesPromotion = PointsTools.getPointSalesPromotion(getHelper());
+
+            availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
+            pointsInPeso = 0d;
+
+            if(salesPromotion != null && salesPromotion.getSettings() != null)
+                pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -475,6 +487,189 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         this.tbActionBar = toolbar;
 
         setupNavigationListener(tbActionBar);
+    }
+
+    private void printSimulator(final Invoice invoice) {
+        Branch branch = getBranches().get(0);
+
+        StringBuilder printText = new StringBuilder();
+
+        try {
+            // ---------- HEADER
+            printText.append(branch.getName()+"\n");
+            printText.append(branch.generateAddress()+"\n\n");
+
+            printText.append("ORDER SLIP\n\n");
+            printText.append("Salesman: "+getSession().getUser().getName()+"\n");
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+            if(offlineData != null) {
+                printText.append("Ref #: "+offlineData.getReference_no()+"\n");
+                printText.append("Date: " + simpleDateFormat.format(offlineData.getDateCreated())+"\n");
+            }
+            else {
+                printText.append("Ref #: "+invoice.getReference()+"\n");
+                printText.append("Date: " + simpleDateFormat.format(Calendar.getInstance().getTime())+"\n");
+            }
+            // ---------- HEADER
+
+            double totalQuantity = 0.0;
+            printText.append("ORDERS\n");
+            printText.append("================================\n");
+            printText.append("Quantity                  Amount\n");
+            printText.append("================================\n");
+
+            for (InvoiceLine invoiceLine : invoice.getSalesInvoiceLines()) {
+                Product product = Product.fetchById(getHelper(), Product.class, invoiceLine.getProduct_id());
+                printText.append(product.getName()+"\n");
+
+                if(invoiceLine.getUnit_id() != null) {
+                    totalQuantity += invoiceLine.getUnit_quantity();
+                    printText.append("  " + invoiceLine.getUnit_quantity() + "   *" + invoiceLine.getUnit_name() + " x " + NumberTools.separateInCommas(invoiceLine.getRetail_price())+"\n");
+                    printText.append(NumberTools.separateInCommas(invoiceLine.getSubtotal())+"\n");
+                }
+                else {
+                    totalQuantity += invoiceLine.getQuantity();
+
+                    printText.append("  " + invoiceLine.getQuantity() + "   ~" + product.getBase_unit_name() + " x " + NumberTools.separateInCommas(invoiceLine.getRetail_price())+"\n");
+                    printText.append(NumberTools.separateInCommas(invoiceLine.getSubtotal())+"\n");
+                }
+            }
+            printText.append("--------------------------------\n");
+
+            InvoiceTools.PaymentsComputation paymentsComputation = checkoutFragment.getComputation();
+            //paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
+            //paymentsComputation.addAllPayments(invoice.getPayments());
+
+            printText.append(EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\n");
+            printText.append(EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\n");
+
+            if(invoice.getExtras().getCustomer_discount_text_summary() != null) {
+
+                printText.append(EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\n");
+
+                for (Double cusDisc : paymentsComputation.getCustomerDiscount())
+                    printText.append("(" + NumberTools.separateInCommas(cusDisc) + ")\n");
+            }
+            if(invoice.getExtras().getTotal_company_discount() != null) {
+                printText.append(EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\n");
+            }
+            if(paymentsComputation.getTotalProductDiscount() != BigDecimal.ZERO) {
+                printText.append(EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\n");
+            }
+
+            printText.append(EpsonPrinterTools.spacer("Net Order Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(true).doubleValue(), 2)), 32)+"\n\n");
+
+            invoice.getReturnInvoiceLines();
+            if(invoice.getBoInvoiceLines().size() > 0) {
+                totalQuantity = 0.0;
+
+                printText.append("BAD ORDERS\n");
+                printText.append("================================\n");
+                printText.append("Quantity                  Amount\n");
+                printText.append("================================\n");
+
+                for (InvoiceLine invoiceLine : invoice.getBoInvoiceLines()) {
+                    Product product = Product.fetchById(getHelper(), Product.class, invoiceLine.getProduct_id());
+                    printText.append(product.getName() + "\n");
+
+                    if (invoiceLine.getUnit_id() != null) {
+                        totalQuantity += invoiceLine.getUnit_quantity();
+                        printText.append("  " + Math.abs(invoiceLine.getUnit_quantity()) + "   " + invoiceLine.getUnit_name() + " x " + NumberTools.separateInCommas(Math.abs(invoiceLine.getRetail_price())) + "\n");
+                        printText.append(NumberTools.separateInCommas(Math.abs(Double.valueOf(invoiceLine.getSubtotal()))) + "\n");
+                        printText.append("Reason: " + invoiceLine.getExtras().getInvoice_purpose_name() + "\n");
+                    }
+                    else {
+                        totalQuantity += invoiceLine.getQuantity();
+                        printText.append("  " + Math.abs(invoiceLine.getQuantity()) + "   " + product.getBase_unit_name() + " x " + NumberTools.separateInCommas(Math.abs(invoiceLine.getRetail_price())) + "\n");
+                        printText.append(NumberTools.separateInCommas(Math.abs(Double.valueOf(invoiceLine.getSubtotal()))) + "\n");
+                        printText.append("Reason: " + invoiceLine.getExtras().getInvoice_purpose_name() + "\n");
+                    }
+                }
+
+                printText.append("--------------------------------\n");
+                printText.append(EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(totalQuantity), 2)), 32)+"\n");
+                printText.append(EpsonPrinterTools.spacer("LESS Net BO Amount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()),2)), 32)+")\n\n");
+            }
+            if(invoice.getRgsInvoiceLines().size() > 0) {
+                totalQuantity = 0.0;
+
+                printText.append("RGS\n");
+                printText.append("================================\n");
+                printText.append("Quantity                  Amount\n");
+                printText.append("================================\n");
+
+                for (InvoiceLine invoiceLine : invoice.getRgsInvoiceLines()) {
+                    Product product = Product.fetchById(getHelper(), Product.class, invoiceLine.getProduct_id());
+                    printText.append(product.getName() + "\n");
+
+                    if (invoiceLine.getUnit_id() != null) {
+                        totalQuantity += invoiceLine.getUnit_quantity();
+
+                        printText.append("  " + Math.abs(invoiceLine.getUnit_quantity()) + "   " + invoiceLine.getUnit_name() + " x " + NumberTools.separateInCommas(Math.abs(invoiceLine.getRetail_price())) + "\n");
+                        printText.append(NumberTools.separateInCommas(Math.abs(Double.valueOf(invoiceLine.getSubtotal()))) + "\n");
+                        printText.append("Reason: " + invoiceLine.getExtras().getInvoice_purpose_name() + "\n");
+                    }
+                    else {
+                        totalQuantity += invoiceLine.getQuantity();
+
+                        printText.append("  " + Math.abs(invoiceLine.getQuantity()) + "   " + product.getBase_unit_name() + " x " + NumberTools.separateInCommas(Math.abs(invoiceLine.getRetail_price())) + "\n");
+                        printText.append(NumberTools.separateInCommas(Math.abs(Double.valueOf(invoiceLine.getSubtotal()))) + "\n");
+                        printText.append("Reason: " + invoiceLine.getExtras().getInvoice_purpose_name() + "\n");
+                    }
+                }
+
+                printText.append("--------------------------------\n");
+                printText.append(EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(Math.abs(totalQuantity)), 32)+"\n");
+
+                if(paymentsComputation.getReturnsPayments().size() > 2)
+                    printText.append(EpsonPrinterTools.spacer("LESS Net RGS Amount: ", "("+NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(2).getAmount())), 32)+")\n\n");
+                else
+                    printText.append(EpsonPrinterTools.spacer("LESS Net RGS Amount: ", "("+NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount())), 32)+")\n\n");
+            }
+
+            printText.append(EpsonPrinterTools.spacer("Amount Due: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(true).doubleValue(), 2)), 32)+"\n\n");
+            printText.append("PAYMENTS\n");
+            printText.append("================================\n");
+            printText.append("Payments                  Amount\n");
+
+            for(InvoicePayment invoicePayment : invoice.getPayments()) {
+                PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
+                if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip"))
+                    printText.append(EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\n");
+            }
+
+            printText.append(EpsonPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\n");
+            printText.append("--------------------------------\n");
+
+            if(paymentsComputation.getRemaining().doubleValue() < 0) {
+                printText.append(EpsonPrinterTools.spacer("Balance: ", "0.00", 32) + "\n\n");
+                printText.append(EpsonPrinterTools.spacer("Change: ", NumberTools.separateInCommas(Math.abs(NumberTools.formatDouble(paymentsComputation.getRemaining().doubleValue(), 2))), 32) + "\n\n");
+            }
+            else
+                printText.append(EpsonPrinterTools.spacer("Balance: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getRemaining().doubleValue(), 2)), 32) + "\n\n");
+
+            SimpleDateFormat nowFormat = new SimpleDateFormat("yyyy-MM-dd");
+            printText.append("Available Points("+nowFormat.format(Calendar.getInstance().getTime())+"):\n");
+            printText.append(NumberTools.separateInCommas(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points())+"\n");
+
+            printText.append("\n\nCustomer Name: "+ProductsAdapterHelper.getSelectedCustomer().generateFullName()+"\n");
+            printText.append("Customer Code: "+ProductsAdapterHelper.getSelectedCustomer().getCode()+"\n");
+            printText.append("Address: "+ProductsAdapterHelper.getSelectedCustomer().generateAddress()+"\n");
+            printText.append("Signature:______________________\n");
+
+            if(ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms() != null)
+                printText.append("Terms: "+(ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms().getName() == null
+                        ? "None"
+                        : ProductsAdapterHelper.getSelectedCustomer().getPaymentTerms().getName())+"\n\n");
+            else
+                printText.append("\n");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        Log.e("Print", printText.toString()+"<<<");
     }
 
     private void printTransactionStar(final Invoice invoice, final String... labels) {

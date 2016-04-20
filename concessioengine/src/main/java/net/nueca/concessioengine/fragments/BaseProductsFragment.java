@@ -240,8 +240,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
             QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder().orderByRaw(orderBy)
                     .limit(LIMIT)
-                    .offset(offset)
-                    ;
+                    .offset(offset);
             resultProducts.setWhere(whereProducts);
 
             Log.e("BaseProduct>>", resultProducts.prepareStatementString());

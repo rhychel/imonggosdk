@@ -67,13 +67,6 @@ public class C_Welcome extends WelcomeActivity {
         });
 
         try {
-//            if(getSession().getUser() == null) {
-//                Session session = getSession();
-//                User user = getHelper().fetchIntId(User.class).queryBuilder().where().eq("email", session.getEmail()).queryForFirst();
-//
-//                session.setUser(user);
-//                session.updateTo(getHelper());
-//            }
             Log.e(TAG, "session: " + getSession() + " user: " + getSession().getUser() + " email: "+getSession().getEmail());
             tvAgentName.setText("Hello, "+getSession().getUser().getName()+"!");
         } catch (SQLException e) {

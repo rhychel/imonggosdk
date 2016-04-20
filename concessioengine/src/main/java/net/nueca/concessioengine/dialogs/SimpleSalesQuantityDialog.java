@@ -317,8 +317,18 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         } else
             etQuantity.setText(selectedProductItem.getQuantity());
 
-        if(hasStock)
-            tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+        if(hasStock) {
+            Unit unit = Unit.fetchById(getHelper(), Unit.class, product.getExtras().getDefault_selling_unit());
+            double invQuantity = Double.valueOf(product.getInStock());;
+            String unitName = product.getBase_unit_name();
+            if(product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && !product.getExtras().getDefault_selling_unit().isEmpty()) {
+                if(unit != null) {
+                    invQuantity = Double.valueOf(product.getInStock(unit.getQuantity(), ProductsAdapterHelper.getDecimalPlace()));
+                    unitName = unit.getName();
+                }
+            }
+            tvInStock.setText(String.format("In Stock: %.2f %s", invQuantity, unitName));
+        }
         else
             tvInStock.setVisibility(View.GONE);
 

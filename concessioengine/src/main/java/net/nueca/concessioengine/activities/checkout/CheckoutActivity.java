@@ -45,6 +45,10 @@ public abstract class CheckoutActivity extends ModuleActivity {
     protected OfflineData offlineData = null;
     protected Invoice invoice = null;
 
+    protected Double availablePoints = 0.0;
+    protected Double pointsInPeso = 0.0;
+    protected Double consumedPoints = 0.0;
+
     protected abstract void initializeFragment();
 
     @Override
