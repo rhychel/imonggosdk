@@ -618,6 +618,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     }
 
     public void forceUpdateProductList() {
+        offset = 0l;
         forceUpdateProductList(getProducts());
     }
 

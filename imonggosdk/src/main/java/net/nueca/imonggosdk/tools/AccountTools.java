@@ -186,6 +186,8 @@ public class AccountTools {
 
         updateLogout(context, true);
 
+        SettingTools.updateSettings(context, SettingsName.DEFAULT_BRANCH, ""); // TODO Added by RHY
+
         // DELETE EXCEPT USERS, CUSTOMERS, OFFLINE, DOCUMENTS - LINES, ORDER - LINES, INVOICE - LINES, CONCESSIO_MODULE
         dbHelper.deleteAll(
                 Branch.class,
