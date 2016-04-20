@@ -199,7 +199,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
     @Override
     public void onLogoutAccount() {
-
+     getSyncModules().setInitialSync();
     }
 
     @Override

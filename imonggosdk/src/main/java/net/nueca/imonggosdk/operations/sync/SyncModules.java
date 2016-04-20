@@ -148,11 +148,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
             Table t = mCurrentTableSyncing;
 
-            if (!initialSync) {
+            if (!initialSync && AccountTools.isLogout(getApplicationContext())) {
                 if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
                     t = Table.PRICE_LISTS;
                     Log.e(TAG, "changing to price list ");
                 }
+            }
+
+            if(mCurrentTableSyncing == Table.BRANCH_PRODUCTS) {
+                listOfBranchIds = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query();
             }
 
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
