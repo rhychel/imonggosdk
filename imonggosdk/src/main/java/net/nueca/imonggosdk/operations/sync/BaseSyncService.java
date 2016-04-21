@@ -82,6 +82,7 @@ public abstract class BaseSyncService extends ImonggoService {
     protected Table[] mModulesToSync;
     protected Table mCurrentTableSyncing;
     protected Boolean mSkipNextModule = false;
+    protected Boolean mUpdatingPriceListFromCustomer = false;
     protected Server mServer;
     protected List<BranchUserAssoc> branchUserAssoc;
     protected List<Integer> listOfPricelistIds;
