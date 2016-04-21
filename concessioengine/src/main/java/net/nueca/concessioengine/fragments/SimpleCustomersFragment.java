@@ -204,6 +204,7 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
     public void updateListWhenSearch(String searchKey) {
         setSearchKey(searchKey);
         offset = 0l;
+        headerCount = 0;
 
         if(useRecyclerView) {
             if(listingType == ListingType.BASIC)
