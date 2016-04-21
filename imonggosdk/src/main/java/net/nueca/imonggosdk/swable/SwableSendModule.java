@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 
 import net.nueca.imonggosdk.R;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
@@ -1033,6 +1034,11 @@ public class SwableSendModule extends BaseSwableModule {
     /** return FALSE if no points deduction request was made **/
     private boolean sendPointsDeduction(final OfflineData offlineData) {
         try {
+            if(offlineData.getOfflineDataTransactionType() == OfflineDataType.CANCEL_INVOICE) {
+                Log.e("SwableSendModule", "sendPointsDeduction ~ INVOICE will be voided after send");
+                return false;
+            }
+
             if(offlineData.getType() != OfflineData.INVOICE) {
                 Log.e("SwableSendModule", "sendPointsDeduction ~ not an INVOICE");
                 return false;

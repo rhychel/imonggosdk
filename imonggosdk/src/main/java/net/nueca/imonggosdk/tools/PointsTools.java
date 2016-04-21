@@ -6,11 +6,15 @@ import com.j256.ormlite.stmt.Where;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.SalesPushSettings;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,5 +57,14 @@ public class PointsTools {
         }
 
         return points;
+    }
+
+    public static double getTotalPointsInAmount(Invoice invoice, PaymentType rewardsPaymentType) {
+        double totalPointsInAmount = 0d;
+        for(InvoicePayment payment : invoice.getPayments()) {
+            if(payment.getPayment_type_id() == rewardsPaymentType.getId())
+                totalPointsInAmount += payment.getAmount();
+        }
+        return totalPointsInAmount;
     }
 }

@@ -47,6 +47,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -526,6 +527,12 @@ public class C_Finalize extends ModuleActivity {
                 data.add("================================".getBytes());
                 data.add("Quantity                  Amount".getBytes());
                 data.add("================================".getBytes());
+
+                int totalInvoiceLines = invoice.getSalesInvoiceLines().size()+invoice.getRgsInvoiceLines().size()+invoice.getBoInvoiceLines().size()+invoice.getPayments().size();
+
+                double numberOfPages = Math.ceil((double)totalInvoiceLines/ Configurations.MAX_ITEMS_FOR_PRINTING), items = 0;
+                int page = 1;
+
                 for (InvoiceLine invoiceLine : invoice.getSalesInvoiceLines()) {
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                     Product product = Product.fetchById(getHelper(), Product.class, invoiceLine.getProduct_id());
@@ -541,6 +548,20 @@ public class C_Finalize extends ModuleActivity {
                         data.add(("  " + invoiceLine.getQuantity() + "   " + product.getBase_unit_name() + " x " + NumberTools.separateInCommas(invoiceLine.getRetail_price())+"\r\n").getBytes());
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                         data.add((NumberTools.separateInCommas(invoiceLine.getSubtotal())+"\r\n").getBytes());
+                    }
+                    items++;
+
+                    if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                        data.add(("\r\n\r\n\r\n").getBytes());
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                        data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                        data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                        page++;
+                        items = 0;
+
+                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            break;
+                        data.clear();
                     }
                 }
                 data.add("--------------------------------".getBytes());
@@ -598,6 +619,20 @@ public class C_Finalize extends ModuleActivity {
                             data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                             data.add(("Reason: " + invoiceLine.getExtras().getInvoice_purpose_name() + "\r\n").getBytes());
                         }
+                        items++;
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                            data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
+
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(totalQuantity), 2)), 32)+"\r\n").getBytes());
@@ -629,6 +664,20 @@ public class C_Finalize extends ModuleActivity {
                             data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                             data.add(("Reason: " + invoiceLine.getExtras().getInvoice_purpose_name() + "\r\n").getBytes());
                         }
+                        items++;
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                            data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
+
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(Math.abs(totalQuantity)), 32)+"\r\n").getBytes());
@@ -645,7 +694,23 @@ public class C_Finalize extends ModuleActivity {
                 data.add("Payments                  Amount".getBytes());
                 for(InvoicePayment invoicePayment : invoice.getPayments()) {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
-                    data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
+                    if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip"))
+                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
+
+                    items++;
+
+                    if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                        data.add(("\r\n\r\n\r\n").getBytes());
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                        data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                        data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                        page++;
+                        items = 0;
+
+                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            break;
+                        data.clear();
+                    }
                 }
                 data.add((EpsonPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\r\n").getBytes());
                 data.add("--------------------------------".getBytes());

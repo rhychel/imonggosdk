@@ -87,6 +87,7 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -1743,7 +1744,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
 
-        double numberOfPages = 1.0;
+        double numberOfPages = 1.0, items = 0;
         int page = 1;
 
         try {
@@ -1784,8 +1785,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 || concessioModule == ConcessioModule.RELEASE_ADJUSTMENT
                                 || concessioModule == ConcessioModule.HISTORY)) {
 
-                    numberOfPages = Math.ceil((double)offlineData.getObjectFromData(Document.class).getDocument_lines().size()/50.0);
+                    numberOfPages = Math.ceil((double)offlineData.getObjectFromData(Document.class).getDocument_lines().size()/Configurations.MAX_ITEMS_FOR_PRINTING);
                     page = 1;
+                    items = 0;
+
                     for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
                         Double retail_price = 0.0;
                         try {
@@ -1833,12 +1836,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             totalAmount += subtotal;
                         }
 
-                        if(numberOfPages > 1.0 && page < (int)numberOfPages) {
+                        items++;
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
                             data.add(("\r\n\r\n\r\n").getBytes());
                             data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
                             data.add(("*Page "+page+"*\r\n\r\n").getBytes());
                             data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
                             page++;
+                            items = 0;
                             // print
                             if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
                                 break;
@@ -1866,8 +1872,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             .in("inventory_id", currentInventories)
                             .query();
 
-                    numberOfPages = Math.ceil((double)products.size()/50.0);
+                    numberOfPages = Math.ceil((double)products.size()/Configurations.MAX_ITEMS_FOR_PRINTING);
                     page = 1;
+                    items = 0;
+
                     for(Product product : products) {
                         Double retail_price = 0.0;
                         final Unit unit = Unit.fetchById(getHelper(), Unit.class, product.getExtras().getDefault_selling_unit());
@@ -1918,12 +1926,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Left
                         data.add((NumberTools.separateInCommas(subtotal)+"\r\n").getBytes());
 
-                        if(numberOfPages > 1.0 && page < (int)numberOfPages) {
+                        items++;
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
                             data.add(("\r\n\r\n\r\n").getBytes());
                             data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
                             data.add(("*Page "+page+"*\r\n\r\n").getBytes());
                             data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
                             page++;
+                            items = 0;
 
                             if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
                                 break;
