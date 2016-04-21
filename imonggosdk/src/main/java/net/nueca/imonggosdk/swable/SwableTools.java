@@ -27,10 +27,14 @@ import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.ListTools;
+import net.nueca.imonggosdk.tools.NumberTools;
+import net.nueca.imonggosdk.tools.PointsTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -305,6 +309,9 @@ public class SwableTools {
             case CUSTOMERS:
                 transaction.put("customer", jsonObject);
                 break;
+            default:
+                transaction = jsonObject;
+                break;
         }
         return transaction;
     }
@@ -324,6 +331,9 @@ public class SwableTools {
                 break;
             case OfflineData.CUSTOMER:
                 transaction.put("customer", jsonObject);
+                break;
+            default:
+                transaction = jsonObject;
                 break;
         }
         return transaction;
@@ -448,6 +458,24 @@ public class SwableTools {
                             offlineData.setOfflineDataTransactionType(OfflineDataType.CANCEL_ORDER);
                             break;
                         case OfflineData.INVOICE:
+                            try {
+                                Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                SalesPromotion salesPromotion = PointsTools.getPointSalesPromotion(helper);
+                                PaymentType rewardsPaymentType = PointsTools.getRewardsPointsPaymentType(helper);
+
+                                if(rewardsPaymentType != null && salesPromotion != null && salesPromotion.getSettings() != null) {
+                                    double pointsInAmount = PointsTools.getTotalPointsInAmount(invoice,rewardsPaymentType);
+                                    Customer customer = invoice.getCustomer();
+                                    pointsInAmount += PointsTools.pointsToAmount(salesPromotion.getSettings(), NumberTools.toDouble(customer
+                                            .getAvailable_points()));
+
+                                    customer.setAvailable_points(String.valueOf(PointsTools.amountToPoints(salesPromotion.getSettings(),
+                                            pointsInAmount)));
+                                    customer.updateTo(helper);
+                                }
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
                             offlineData.setOfflineDataTransactionType(OfflineDataType.CANCEL_INVOICE);
                             break;
                         case OfflineData.DOCUMENT:

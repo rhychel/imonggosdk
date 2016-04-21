@@ -24,8 +24,10 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -251,7 +253,6 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         }
 
         Log.e(getClass().getSimpleName(), "getProducts = "+products.size());
-
         return products;
     }
 

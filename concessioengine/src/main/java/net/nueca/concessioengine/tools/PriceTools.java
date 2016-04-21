@@ -54,8 +54,11 @@ public class PriceTools {
             //Log.e("PriceTools", "identifyRetailPrice >>>>>>>>>>> retail_price: " + retail_price);
         } catch (SQLException e) {
             e.printStackTrace();
+            Log.e("PriceTools", "identifyRetailPrice ~ product.Retail_price " +  product.getRetail_price());
             return product.getRetail_price();
         }
+
+        Log.e("PriceTools", "identifyRetailPrice ~ return " +  retail_price);
         return retail_price;
     }
 
@@ -63,13 +66,13 @@ public class PriceTools {
                                              CustomerGroup customerGroup, Customer customer, final Unit unit) {
         //Log.e("PriceTools", "identifyPrice <<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         if(branch == null)
-            Log.e("identifyRetailPrice", "branch is null");
+            Log.e("identifyPrice", "branch is NULL");
         if(customerGroup == null)
-            Log.e("identifyRetailPrice", "customerGroup is null");
+            Log.e("identifyPrice", "customerGroup is NULL");
         if(customer == null)
-            Log.e("identifyRetailPrice", "customer is null");
+            Log.e("identifyPrice", "customer is NULL");
         if(unit == null)
-            Log.e("identifyRetailPrice", "unit is null");
+            Log.e("identifyPrice", "unit is NULL");
 
         /*Log.e("CustomerGroup", customerGroup == null? "null" : customerGroup.toJSONString());
         Log.e("Customer", customer == null? "null" : customer.toJSONString());
@@ -185,12 +188,17 @@ public class PriceTools {
             }
         }
 
-        if(branchProduct != null)
+        if(branchProduct != null) {
+            Log.e("PriceTools", "getBranchPrice ~ returning branchProduct.Unit_retail_price " +  branchProduct.getUnit_retail_price());
             return branchProduct.getUnit_retail_price();
+        }
 
-        if(unit != null && unit.getId() != -1)
+        if(unit != null && unit.getId() != -1) {
+            Log.e("PriceTools", "getBranchPrice ~ returning unit.Retail_price " +  unit.getRetail_price());
             return unit.getRetail_price();
+        }
 
+        Log.e("PriceTools", "getBranchPrice ~ returning product.Retail_price " +  product.getRetail_price());
         return product.getRetail_price();
     }
 }
