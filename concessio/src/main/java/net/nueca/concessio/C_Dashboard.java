@@ -132,35 +132,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
 
-        List<PriceList> priceLists = PriceList.fetchAll(getHelper(), PriceList.class);
-
-        Log.e(TAG, "priceList size: " + priceLists.size());
-
-
-        for(PriceList p : priceLists) {
-
-
-            try {
-                List<Price> px = getHelper().fetchForeignCollection(p.getPrices().closeableIterator());
-                for(Price pp : px) {
-                    Log.e(TAG, "Price:: " +pp.toString());
-                }
-
-                List<Customer> cv = getHelper().fetchForeignCollection(p.getCustomers().closeableIterator());
-
-                for(Customer cc : cv) {
-                    Log.e(TAG, "Customer: " + cc.toString());
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            Log.e(TAG, "onCreate: ");
-        }
-
-
-
     }
 
     @Override
