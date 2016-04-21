@@ -1,6 +1,8 @@
 package net.nueca.concessioengine.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -172,6 +174,14 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
     protected void whenListEndReached(List<Customer> customers) {
         if(useRecyclerView) {
             simpleCustomerRecyclerViewAdapter.addAll(customers);
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    simpleCustomerRecyclerViewAdapter.notifyDataSetChanged();
+                }
+            };
+            handler.sendEmptyMessageDelayed(0, 100);
         }
         else
             simpleCustomerListAdapter.addAll(customers);

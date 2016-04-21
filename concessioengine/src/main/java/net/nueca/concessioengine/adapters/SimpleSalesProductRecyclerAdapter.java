@@ -95,7 +95,6 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                 holder.ivStar.setVisibility(View.VISIBLE);
             holder.llQuantity.setVisibility(View.GONE);
             holder.tvProductName.setText(product.getName());
-            holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
 
             SelectedProductItem selectedProductItem = getSelectedProductItems().getSelectedProductItem(product);
             Unit unit = null;
@@ -121,8 +120,23 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                         unit = t_unit;
                 } catch (SQLException e) { e.printStackTrace(); }
             }
-            Log.e(getClass().getSimpleName(), "unit : " + (unit == null? "null" : unit.getName()) );
-            Log.e(getClass().getSimpleName(), "selectedProductItem isNull? " + (selectedProductItem == null) );
+            Log.e("UNITS", product.getName()+" --> "+product.getExtras().getDefault_selling_unit());
+
+            // -------- GET THE DEFAULT SELLING UNIT FOR INVENTORY
+            if(product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && !product.getExtras().getDefault_selling_unit().isEmpty()) {
+                Unit defaultSellingUnit = Unit.fetchById(getHelper(), Unit.class, Integer.valueOf(product.getExtras().getDefault_selling_unit()));
+                if(defaultSellingUnit != null)
+                    holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(defaultSellingUnit.getQuantity(),
+                            ProductsAdapterHelper.getDecimalPlace()), defaultSellingUnit.getName()));
+                else
+                    holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+            }
+            else
+                holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+            // -------- GET THE DEFAULT SELLING UNIT FOR INVENTORY
+
+//            Log.e(getClass().getSimpleName(), "unit : " + (unit == null? "null" : unit.getName()) );
+//            Log.e(getClass().getSimpleName(), "selectedProductItem isNull? " + (selectedProductItem == null) );
 
             // Set subtotal
             holder.tvSubtotal2.setText("");

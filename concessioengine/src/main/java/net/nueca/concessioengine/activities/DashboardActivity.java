@@ -14,6 +14,7 @@ import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.tools.DialogTools;
+import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -88,7 +89,8 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
                     continue;
                 if(branchUser.getBranch().getStatus().equals("D"))
                     continue;
-                if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
+
+                if(branchUser.getBranch().getId() == Integer.valueOf(SettingTools.defaultBranch(this))) //getUser().getHome_branch_id())
                     assignedBranches.add(0, branchUser.getBranch());
                 else
                     assignedBranches.add(branchUser.getBranch());

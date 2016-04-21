@@ -36,7 +36,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
      * <p/>
      * if you want to customize login layout
      * you should extend this class and
-     * override this method and call this2
+     * override this method and call this
      * functions inside:
      * <p/>
      * 1. setContentView( your custom layout)
@@ -199,7 +199,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
     @Override
     public void onLogoutAccount() {
-
+     getSyncModules().setInitialSync();
     }
 
     @Override

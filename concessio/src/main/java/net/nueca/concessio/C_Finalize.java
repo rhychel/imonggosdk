@@ -132,7 +132,8 @@ public class C_Finalize extends ModuleActivity {
                         // TODO for double checking..
                         //DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
                         //return;
-                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
+//                        ProductsAdapterHelper.clearSelectedReturnProductItemList(); -- REMOVED BEFORE 1.2.7-BETA
+
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Finalize.this, C_Module.class);
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
@@ -140,8 +141,6 @@ public class C_Finalize extends ModuleActivity {
                         startActivityForResult(intent, IS_DUPLICATING);
                     }
                 };
-
-                Log.e("OfflineDate", "isCancelled="+offlineData.isCancelled()+" || isVoiding="+offlineData.getOfflineDataTransactionType().isVoiding());
 
                 if(offlineData == null) {
                     DialogTools.showDialog(this, "Ooops!", "This data is not found in your local database.", "Go to History", new DialogInterface.OnClickListener() {
@@ -466,10 +465,13 @@ public class C_Finalize extends ModuleActivity {
                 simpleProductsFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedReturnProductItems().getSelectedProducts());
                 simpleProductsFragment.setReturnItems(true);
             }
+
+            Log.e("SelectedReturnsPI", "getItem is called");
             return simpleProductsFragment;
         }
 
         public void updateReturns() {
+            Log.e("SelectedReturnsPI", ProductsAdapterHelper.getSelectedReturnProductItems().getSelectedProducts().size()+" size");
             returnsProductFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedReturnProductItems().getSelectedProducts());
             returnsProductFragment.forceUpdateProductList();
         }

@@ -90,6 +90,7 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
 
     @Override
     public boolean updateList(List<Product> products) {
+        Log.e("SelectedReturnsPI", products.size()+" updateList.size");
         return super.updateList(products);
     }
 

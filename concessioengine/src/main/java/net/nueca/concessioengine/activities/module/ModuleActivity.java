@@ -43,6 +43,7 @@ import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.ModuleSettingTools;
+import net.nueca.imonggosdk.tools.SettingTools;
 import net.nueca.imonggosdk.tools.StringUtilsEx;
 import net.nueca.imonggosdk.tools.TimerTools;
 
@@ -221,7 +222,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     continue;
                 if(branchUser.getBranch().getStatus().equals("D"))
                     continue;
-                if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
+                if(branchUser.getBranch().getId() == (SettingTools.defaultBranch(this).isEmpty() ? getUser().getHome_branch_id() : Integer.valueOf(SettingTools.defaultBranch(this))))
                     assignedBranches.add(0, branchUser.getBranch());
                 else
                     assignedBranches.add(branchUser.getBranch());
