@@ -137,11 +137,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     @Override
     protected void onResume() {
         super.onResume();
-//        try {
-//            Log.e("SESSION", "isNULL? " + (getSession() == null));
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
         if (!SwableTools.isImonggoSwableRunning(this))
             SwableTools.startSwable(this);
         Log.e("SWABLE", "START");
