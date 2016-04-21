@@ -14,6 +14,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.invoice.Discount;
+import net.nueca.imonggosdk.objects.invoice.RewardPayment;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.Session;
@@ -124,6 +125,8 @@ public enum Table {
     ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class, "route_plans"),
     ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlanDetail.class, "route_plans_details"),
     LAYAWAYS(API_TYPE.API, "Layaways", Invoice.class, "layaways"),
+
+    REWARDS_POINTS(API_TYPE.API, "Rewards Points", RewardPayment.class, "rewards"),
 
     NONE(API_TYPE.NON_API, "none"),
     ALL(API_TYPE.NON_API, "All");

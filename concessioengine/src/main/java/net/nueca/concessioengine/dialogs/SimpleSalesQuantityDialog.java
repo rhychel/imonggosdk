@@ -406,11 +406,11 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 if(getHelper() == null)
                     values.setValue(quantity, unit);
                 else {
-                    Log.e("sales quantity", "Quantity is="+quantity);
+                    Log.e("sales quantity", "Quantity is = "+quantity);
                     Price price = PriceTools.identifyPrice(getHelper(), selectedProductItem.getProduct(),
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
 
-                    Log.e(getClass().getSimpleName(), "VALUES PRICE : isNull? " + (price == null));
+                    Log.e("Simple Sales QTY Dialog", "VALUES PRICE : isNull? " + (price == null));
                     if(price != null)
                         values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
                     else {

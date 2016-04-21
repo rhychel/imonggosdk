@@ -207,7 +207,7 @@ public class Invoice extends BaseTransactionTable3 {
                         rgs_invoice_lines.add(invoiceLine);
                 }
                 else if(invoiceLine.getQuantity() < 0) {
-                    Log.e("Invoice line without unit", invoiceLine.getExtras()+"<--");
+                    Log.e("Invoice line w/o unit", invoiceLine.getExtras()+"<--");
 
                     return_invoice_lines.add(invoiceLine);
                     if(invoiceLine.getExtras().getIs_bad_stock())
@@ -682,4 +682,11 @@ public class Invoice extends BaseTransactionTable3 {
         this.layaway_id = layaway_id;
     }
 
+    public boolean hasPaymentType(PaymentType paymentType) {
+        refresh();
+        for(InvoicePayment payment : payments)
+            if(payment.getPayment_type_id() == paymentType.getId())
+                return true;
+        return false;
+    }
 }

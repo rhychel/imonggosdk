@@ -305,6 +305,9 @@ public class SwableTools {
             case CUSTOMERS:
                 transaction.put("customer", jsonObject);
                 break;
+            default:
+                transaction = jsonObject;
+                break;
         }
         return transaction;
     }
@@ -324,6 +327,9 @@ public class SwableTools {
                 break;
             case OfflineData.CUSTOMER:
                 transaction.put("customer", jsonObject);
+                break;
+            default:
+                transaction = jsonObject;
                 break;
         }
         return transaction;

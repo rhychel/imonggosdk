@@ -1,9 +1,12 @@
-package net.nueca.concessioengine.tools;
+package net.nueca.imonggosdk.tools;
 
 import android.util.Log;
 
+import com.j256.ormlite.stmt.Where;
+
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.SalesPushSettings;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
@@ -35,5 +38,20 @@ public class PointsTools {
     public static double pointsToAmount(SalesPushSettings salesPushSettings, double points) {
         Log.e("Points To Peso", points + " * " + salesPushSettings.getConversion_to_currency());
         return points * salesPushSettings.getConversion_to_currency();
+    }
+
+    public static PaymentType getRewardsPointsPaymentType(ImonggoDBHelper2 helper) {
+        PaymentType points = null;
+        try {
+            Where<PaymentType, ?> where = helper.fetchObjects(PaymentType.class).queryBuilder().where();
+            List<PaymentType> p = helper.fetchObjects(PaymentType.class).query(where.like("name", "%point%").or()
+                    .like("name", "%rewards%").prepare());
+            if(p != null && p.size() != 0)
+                points = p.get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return points;
     }
 }
