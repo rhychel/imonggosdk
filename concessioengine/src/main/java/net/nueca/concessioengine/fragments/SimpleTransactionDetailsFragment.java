@@ -18,6 +18,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
+import net.nueca.concessioengine.adapters.SimpleSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.objects.SelectedProductItem;
@@ -39,7 +40,7 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
     private Toolbar tbActionBar;
 
     private RecyclerView rvProducts;
-    private SimpleProductRecyclerViewAdapter simpleProductRecyclerViewAdapter;
+    private SimpleSalesProductRecyclerAdapter simpleProductRecyclerViewAdapter;
     private OfflineData offlineData;
 
     @Override
@@ -50,8 +51,8 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         ((Spinner) view.findViewById(R.id.spCategories)).setVisibility(View.GONE);
 
-        simpleProductRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
-        simpleProductRecyclerViewAdapter.setListingType(ListingType.SALES);
+        simpleProductRecyclerViewAdapter = new SimpleSalesProductRecyclerAdapter(getActivity(), getHelper(), getProducts());
+        simpleProductRecyclerViewAdapter.setListingType(ListingType.ADVANCED_SALES);
         simpleProductRecyclerViewAdapter.setBranch(branch);
         simpleProductRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
         rvProducts.setAdapter(simpleProductRecyclerViewAdapter);

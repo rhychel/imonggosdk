@@ -466,6 +466,27 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return updated;
     }
 
+    protected int revertInventoryFromInvoice() {
+        int updated = 0;
+        BatchList<Inventory> inventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+        for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
+            try {
+                Inventory inventory = getHelper().fetchObjectsInt(Inventory.class).queryBuilder().where().eq("product_id", selectedProductItem.getProduct()).queryForFirst();
+                Values values = selectedProductItem.getValues().get(0);
+                Log.e("revertInventoryFromInv", "Qty="+values.getActualQuantity()+" -- "+values.getUnit_quantity());
+                inventory.operationQuantity(Double.valueOf(values.getActualQuantity()), true);
+//                inventory.updateTo(getHelper());
+                inventories.add(inventory);
+                updated++;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.e("revertInventoryFromInv", inventories.size()+" size");
+        inventories.doOperation(Inventory.class);
+        return updated;
+    }
+
     private void processDocument(Document document, List<Product> productList) throws SQLException {
         List<DocumentLine> documentLines = document.getDocument_lines();
         for(DocumentLine documentLine : documentLines) {
@@ -514,6 +535,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 values = new Values(unit, quantity);
             values.setLine_no(documentLine.getLine_no());
             selectedProductItem.addValues(values);
+            selectedProductItem.setInventory(product.getInventory());
             ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
         }
     }

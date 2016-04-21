@@ -123,6 +123,8 @@ public class C_Finalize extends ModuleActivity {
                                 .object(offlineData)
                                 .queue();
 
+                        revertInventoryFromInvoice();
+
                         onBackPressed();
                     }
 
