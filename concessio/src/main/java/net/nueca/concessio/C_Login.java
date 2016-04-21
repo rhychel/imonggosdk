@@ -107,6 +107,7 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
+        setIsUsingDefaultLoginLayout(false);
         setContentView(R.layout.c_login);
 
         Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
