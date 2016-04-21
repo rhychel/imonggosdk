@@ -19,6 +19,7 @@ public class Configurations {
                                         "receive_supplier", "release_supplier", "customers", "app"};
 
     public static String API_AUTHENTICATION = "";
+    public static double MAX_ITEMS_FOR_PRINTING = 25.0;
     /**
      * EnumMap for API Modules in JSON.
      */

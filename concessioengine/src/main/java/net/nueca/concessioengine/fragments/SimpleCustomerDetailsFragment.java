@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleCustomerDetailsRecyclerViewAdapter;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.CustomerDetail;
 import net.nueca.concessioengine.adapters.tools.DividerItemDecoration;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -18,6 +19,7 @@ import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -108,7 +110,7 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
             }
         }
         customerDetails.add(CustomerDetail.DISCOUNT.setValue(customer.getDiscount_text().isEmpty() ? "None" : customer.getDiscount_text()));
-        customerDetails.add(CustomerDetail.AVAILABLE_POINTS.setValue(customer.getAvailable_points()));
+        customerDetails.add(CustomerDetail.AVAILABLE_POINTS.setValue(NumberTools.formatDouble(Double.valueOf(customer.getAvailable_points()), ProductsAdapterHelper.getDecimalPlace())+""));
 
         if(!customer.getLastPurchase().isEmpty()) {
             SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -87,6 +87,7 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -1784,7 +1785,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 || concessioModule == ConcessioModule.RELEASE_ADJUSTMENT
                                 || concessioModule == ConcessioModule.HISTORY)) {
 
-                    numberOfPages = Math.ceil((double)offlineData.getObjectFromData(Document.class).getDocument_lines().size()/50.0);
+                    numberOfPages = Math.ceil((double)offlineData.getObjectFromData(Document.class).getDocument_lines().size()/Configurations.MAX_ITEMS_FOR_PRINTING);
                     page = 1;
                     for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
                         Double retail_price = 0.0;
@@ -1866,7 +1867,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             .in("inventory_id", currentInventories)
                             .query();
 
-                    numberOfPages = Math.ceil((double)products.size()/50.0);
+                    numberOfPages = Math.ceil((double)products.size()/Configurations.MAX_ITEMS_FOR_PRINTING);
                     page = 1;
                     for(Product product : products) {
                         Double retail_price = 0.0;
