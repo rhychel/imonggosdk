@@ -45,6 +45,8 @@ public class StarIOPrinterTools {
     public static String TARGET_PRINTER = "_star_target_printer";
     public static String PAPER_TYPE = "_star_paper_type";
 
+    private static int PRINTER_TIMEOUT = 600000;
+
     public interface StarIOPrinterListener {
         void onPrinterSelected(PortInfo printer);
     }
@@ -456,7 +458,7 @@ public class StarIOPrinterTools {
             port.writePort(commandToSendToPrinter, 0, commandToSendToPrinter.length);
 
             // --- 30000
-            port.setEndCheckedBlockTimeoutMillis(120000);// Change the timeout time of endCheckedBlock method.
+            port.setEndCheckedBlockTimeoutMillis(PRINTER_TIMEOUT);// Change the timeout time of endCheckedBlock method.
             status = port.endCheckedBlock();
 
             if (status.coverOpen) {

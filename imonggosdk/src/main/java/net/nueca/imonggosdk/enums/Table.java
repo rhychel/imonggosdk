@@ -182,6 +182,8 @@ public enum Table {
 
         if(this == BRANCH_PRODUCTS)
             prerequisites = new Table[]{PRODUCTS, UNITS};
+        if(this == CUSTOMER_BY_SALESMAN)
+            prerequisites = new Table[]{PRICE_LISTS_FROM_CUSTOMERS};
 
         return prerequisites;
     }

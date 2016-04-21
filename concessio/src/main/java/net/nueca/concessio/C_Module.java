@@ -311,7 +311,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         // <-- Voiding issue when the transaction is voided for Receive and Pullout -->
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER) // Receive
                             revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), false);
-                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) // Pullout
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER
+                                || simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) // Pullout || MSO
                             revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), true);
 
                         onBackPressed();
@@ -1742,6 +1743,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
 
+        double numberOfPages = 1.0;
+        int page = 1;
+
         try {
             for(int i = 0;i < labels.length;i++) {
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center Justification <ESC> a n (0 Left, 1 Center, 2 Right)0,
@@ -1779,6 +1783,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 || concessioModule == ConcessioModule.RELEASE_SUPPLIER
                                 || concessioModule == ConcessioModule.RELEASE_ADJUSTMENT
                                 || concessioModule == ConcessioModule.HISTORY)) {
+
+                    numberOfPages = Math.ceil((double)offlineData.getObjectFromData(Document.class).getDocument_lines().size()/50.0);
+                    page = 1;
                     for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
                         Double retail_price = 0.0;
                         try {
@@ -1825,6 +1832,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             data.add((NumberTools.separateInCommas(subtotal)+"\r\n").getBytes());
                             totalAmount += subtotal;
                         }
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                            data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            // print
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                 }
                 else {
@@ -1846,6 +1865,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             .isNotNull("inventory_id").and()
                             .in("inventory_id", currentInventories)
                             .query();
+
+                    numberOfPages = Math.ceil((double)products.size()/50.0);
+                    page = 1;
                     for(Product product : products) {
                         Double retail_price = 0.0;
                         final Unit unit = Unit.fetchById(getHelper(), Unit.class, product.getExtras().getDefault_selling_unit());
@@ -1895,6 +1917,18 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Left
                         data.add((NumberTools.separateInCommas(subtotal)+"\r\n").getBytes());
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                            data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                 }
 
