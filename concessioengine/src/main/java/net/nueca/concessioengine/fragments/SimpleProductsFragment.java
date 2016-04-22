@@ -493,8 +493,11 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         public void onSave(SelectedProductItem selectedProductItem, int position) {
             if (useRecyclerView) {
                 boolean isRemoved = productRecyclerViewAdapter.getSelectedProductItems().add(selectedProductItem);
-                if(isRemoved && isFinalize)
+                Log.e("DIALOG", isRemoved+" && "+isFinalize);
+                if(!isRemoved && isFinalize) {
+                    productRecyclerViewAdapter.remove(position);
                     productRecyclerViewAdapter.notifyDataSetChanged();
+                }
                 else
                     productRecyclerViewAdapter.notifyItemChanged(position);
             } else {
