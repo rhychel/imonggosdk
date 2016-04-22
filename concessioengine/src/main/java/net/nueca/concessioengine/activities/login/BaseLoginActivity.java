@@ -451,8 +451,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             @Override
             public void onClick(View v) {
                 String accountId = etAccountID.getText().toString().trim();
-               /* try {
-
+                try {
                     JSONObject servers = new JSONObject(SettingTools.currentServer(BaseLoginActivity.this));
 
                     Log.e("Servers", servers.toString());
@@ -465,7 +464,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     setServer(Server.getServer(label));
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }*/
+                }
 
                 initLogin();
             }
