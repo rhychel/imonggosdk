@@ -654,7 +654,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             mCustomPageIndex);
                 }
 
-                if (mCurrentTableSyncing == Table.ROUTE_PLANS) {
+                if (mCurrentTableSyncing == Table.ROUTE_PLANS ||
+                        mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.SALESMAN_ID),
                             getSession().getUser_id());
@@ -1120,7 +1121,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
-                        //lastUpdatedAt.setLast_updated_at("2016/04/21 09:25:40 +0000");
+                        lastUpdatedAt.setLast_updated_at("2016/04/21 01:30:00 +0000");
 
                         if (lastUpdatedAt.getLast_updated_at() != null) {
 
