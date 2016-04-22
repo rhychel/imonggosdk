@@ -47,6 +47,7 @@ public class C_Welcome extends WelcomeActivity {
 
         btnNotYou.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View view) {
                 try {
                     AccountTools.logoutUser(C_Welcome.this, getHelper(), new AccountListener() {
