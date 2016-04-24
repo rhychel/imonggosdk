@@ -1,6 +1,8 @@
 package net.nueca.concessioengine.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -39,8 +41,6 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
 
     private Toolbar tbActionBar;
 
-    private RecyclerView rvProducts;
-    private SimpleSalesProductRecyclerAdapter simpleProductRecyclerViewAdapter;
     private OfflineData offlineData;
 
     @Override
@@ -50,12 +50,15 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
         rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         ((Spinner) view.findViewById(R.id.spCategories)).setVisibility(View.GONE);
+        isFinalize = true;
 
-        simpleProductRecyclerViewAdapter = new SimpleSalesProductRecyclerAdapter(getActivity(), getHelper(), getProducts());
-        simpleProductRecyclerViewAdapter.setListingType(ListingType.ADVANCED_SALES);
-        simpleProductRecyclerViewAdapter.setBranch(branch);
-        simpleProductRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
-        rvProducts.setAdapter(simpleProductRecyclerViewAdapter);
+        productRecyclerViewAdapter = new SimpleSalesProductRecyclerAdapter(getActivity(), getHelper(), getProducts());
+        productRecyclerViewAdapter.setListingType(ListingType.ADVANCED_SALES);
+        productRecyclerViewAdapter.setBranch(branch);
+        productRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
+        productRecyclerViewAdapter.setHasInStock(hasInStock);
+        rvProducts.setAdapter(productRecyclerViewAdapter);
+        rvProducts.addOnScrollListener(rvScrollListener);
 
         if(offlineData.getType() == OfflineData.DOCUMENT) {
             if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
@@ -77,7 +80,7 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
     }
 
     public int numberOfItems() {
-        return simpleProductRecyclerViewAdapter.getItemCount();
+        return productRecyclerViewAdapter.getItemCount();
     }
 
     @Override
@@ -113,7 +116,14 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
 
     @Override
     protected void whenListEndReached(List<Product> productList) {
-
+        productRecyclerViewAdapter.addAll(productList);
+        Handler handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                productRecyclerViewAdapter.notifyDataSetChanged();
+            }
+        };
+        handler.sendEmptyMessageDelayed(0, 200);
     }
 
     @Override

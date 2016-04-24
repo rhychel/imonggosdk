@@ -234,27 +234,35 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             }
             break;
             case R.id.mUnlink: {
-                try {
-                    AccountTools.unlinkAccount(this, getHelper(), new AccountListener() {
-                        @Override
-                        public void onLogoutAccount() {
+                DialogTools.showConfirmationDialog(this, "Unlink this account", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            AccountTools.unlinkAccount(C_Dashboard.this, getHelper(), new AccountListener() {
+                                @Override
+                                public void onLogoutAccount() { }
 
+                                @Override
+                                public void onUnlinkAccount() {
+                                    EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+                                    StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+                                    SwableTools.stopSwable(C_Dashboard.this);
+
+                                    finish();
+                                    Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+                                    startActivity(intent);
+                                }
+                            });
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
+                    }
+                }, "No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                        @Override
-                        public void onUnlinkAccount() {
-                            EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
-                            StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
-                            SwableTools.stopSwable(C_Dashboard.this);
-
-                            finish();
-                            Intent intent = new Intent(C_Dashboard.this, C_Login.class);
-                            startActivity(intent);
-                        }
-                    });
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                    }
+                }, R.style.AppCompatDialogStyle_Light);
             }
             break;
             case R.id.mLogout: {
