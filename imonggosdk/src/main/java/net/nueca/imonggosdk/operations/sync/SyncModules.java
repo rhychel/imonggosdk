@@ -656,9 +656,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 if (mCurrentTableSyncing == Table.ROUTE_PLANS ||
                         mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
+
                     return String.format(ImonggoTools.generateParameter(
-                            Parameter.SALESMAN_ID),
-                            getSession().getUser_id());
+                            Parameter.SALESMAN_ID,
+                            Parameter.AFTER),
+                            getSession().getUser_id(),
+                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at())
+                            );
                 }
 
                 if (lastUpdatedAt != null) {
@@ -2149,10 +2153,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                                     }
                                                                 }
 
-                                                                Log.e(TAG, "deleting BRANCH PRODUCT..." );
+                                                                Log.e(TAG, "deleting BRANCH PRODUCT...");
                                                                 BRANCH_PRODUCT.deleteTo(getHelper());
 
-                                                                if(deleteThisProduct) {
+                                                                if (deleteThisProduct) {
                                                                     Log.e(TAG, "deleting product..");
                                                                     PRODUCT.deleteTo(getHelper());
                                                                 } else {
@@ -2686,7 +2690,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                                 //Log.e(TAG, "Price List from customer group of customer: " + price_list_id);
                                                                 listOfPricelistIds.add(price_list_id);
                                                                 listPriceListStorage.add(customerGroupNet);
-
 
                                                                 if (listOfIdsPriceListSorted == null) {
                                                                     Log.e(TAG, "price list sorted is null, creating instance");
@@ -3638,13 +3641,19 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                 BatchList<Price> deletePrice = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
-                                deletePrice.addAll(price);
+
                                 Log.e(TAG, "Deleting Price List... ");
                                 deletePrice.doOperationBT(Price.class);
 
                                 newPriceList.doOperationBT(PriceList.class);
                                 updatePriceList.doOperationBT(PriceList.class);
-                                deletePriceList.doOperationBT(PriceList.class);
+
+                                if(price.size() != 0) {
+                                    deletePrice.addAll(price);
+                                    deletePriceList.doOperationBT(PriceList.class);
+                                } else {
+                                    Log.e(TAG, "price lists size is 0 skipping download");
+                                }
                             }
                             updateNext(requestType, size);
                             break;
