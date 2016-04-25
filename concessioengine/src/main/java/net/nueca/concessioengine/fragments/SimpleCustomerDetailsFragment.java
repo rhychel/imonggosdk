@@ -59,6 +59,8 @@ public class SimpleCustomerDetailsFragment extends BaseCustomersFragment {
         simpleCustomerDetailsRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvCustomers);
         rvCustomers.setAdapter(simpleCustomerDetailsRecyclerViewAdapter);
 
+        Log.e("Customer", customer.generateFullName()+" -- "+customer.getReturnId());
+
         return view;
     }
 

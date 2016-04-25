@@ -436,6 +436,8 @@ public class OfflineData extends BaseTable2 {
         if(invoiceData != null)
             if(invoiceData.getCustomer() != null)
                 return reference_no + "/" + invoiceData.getCustomer().generateFullName();
+        if(documentData != null && documentData.getCustomer() != null)
+            return reference_no + "/" +documentData.getCustomer().generateFullName();
         return reference_no;
     }
 
