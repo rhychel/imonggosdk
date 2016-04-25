@@ -675,6 +675,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 return String.format(ImonggoTools.generateParameter(Parameter.PAGE),
                         String.valueOf(page));
             }
+
         } else if (requestType == RequestType.COUNT) {
             Log.e(TAG, "Parameters COUNT");
 
