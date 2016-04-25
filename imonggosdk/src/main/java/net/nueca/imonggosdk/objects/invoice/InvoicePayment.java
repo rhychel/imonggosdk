@@ -27,7 +27,6 @@ public class InvoicePayment extends BaseTable2 implements Extras.DoOperationsFor
     @Expose
     @DatabaseField
     protected String payment_type_code;
-    @Expose
     @DatabaseField
     protected String payment_type_name;
     @Expose

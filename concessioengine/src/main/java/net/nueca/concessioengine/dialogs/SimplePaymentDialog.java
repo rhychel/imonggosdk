@@ -38,6 +38,10 @@ import java.util.List;
  */
 public class SimplePaymentDialog extends BaseAppCompatDialog {
 
+    public interface OnPaymentDialogListener {
+        void onDismissed();
+    }
+
     private DialogType dialogType = DialogType.BASIC_PAY;
 
     private EditText etPayment;
@@ -57,6 +61,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
     private PaymentDialogListener listener;
 
     private List<PaymentType> paymentTypes;
+    private OnPaymentDialogListener onPaymentDialogListener;
 
     private String totalAmount = "";
     private double balance = 0.0;
@@ -355,6 +360,8 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
     @Override
     public void cancel() {
         super.cancel();
+        if(onPaymentDialogListener != null)
+            onPaymentDialogListener.onDismissed();
         if(npInput != null)
             npInput.setIsFirstErase(true);
     }
@@ -381,5 +388,9 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
 
     public void setInvoicePayment(InvoicePayment invoicePayment) {
         this.invoicePayment = invoicePayment;
+    }
+
+    public void setOnPaymentDialogListener(OnPaymentDialogListener onPaymentDialogListener) {
+        this.onPaymentDialogListener = onPaymentDialogListener;
     }
 }

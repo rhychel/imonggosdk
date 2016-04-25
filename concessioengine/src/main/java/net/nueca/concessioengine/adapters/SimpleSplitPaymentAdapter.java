@@ -171,8 +171,10 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                         // TODO: must set tender to be able to compute
                         builder.tender(NumberTools.toDouble(paymentValue));
 
-                        if(paymentType != null)
+                        if(paymentType != null) {
                             builder.payment_type_id(paymentType.getId());
+                            builder.payment_type_name(paymentType.getName());
+                        }
 
                         InvoicePayment invoicePayment = builder.build();
                         invoicePayment.setExtras(extras);
@@ -198,12 +200,15 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                 SimplePaymentDialog dialog = new SimplePaymentDialog(getContext(), getPaymentTypeList(),
                         R.style.AppCompatDialogStyle_Light_NoTitle);
 
-
-                Double availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
-                Double pointsInPeso = 0d;
-
-                if(salesPromotion != null && salesPromotion.getSettings() != null)
-                    pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
+//                Double availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
+//                Double pointsInPeso = 0d;
+//                if(salesPromotion != null && salesPromotion.getSettings() != null)
+//                    pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
+                final double prevValue = getItem(position).getTender();
+                if(getItem(position).getPayment_type_name().toLowerCase().equals("rewards")) {
+                    availablePoints = availablePoints+PointsTools.amountToPoints(salesPromotion.getSettings(), getItem(position).getTender());
+                    pointsInPeso = pointsInPeso+getItem(position).getTender();
+                }
 
                 dialog.setAvailablePoints(availablePoints);
                 dialog.setPointsInPesoText(pointsInPeso);
@@ -212,6 +217,15 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                 dialog.setBalanceText(balance); // should be updated
                 dialog.setTotalAmountText(totalAmount); // should be updated
                 dialog.setInvoicePayment(getItem(position));
+                dialog.setOnPaymentDialogListener(new SimplePaymentDialog.OnPaymentDialogListener() {
+                    @Override
+                    public void onDismissed() {
+                        if(getItem(position).getPayment_type_name().toLowerCase().equals("rewards")) {
+                            availablePoints = availablePoints-PointsTools.amountToPoints(salesPromotion.getSettings(), prevValue);
+                            pointsInPeso = pointsInPeso-prevValue;
+                        }
+                    }
+                });
                 dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
                     @Override
                     public void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras) {
@@ -222,8 +236,10 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                         // TODO: must set tender to be able to compute
                         builder.tender(NumberTools.toDouble(paymentValue));
 
-                        if(paymentType != null)
+                        if(paymentType != null) {
                             builder.payment_type_id(paymentType.getId());
+                            builder.payment_type_name(paymentType.getName());
+                        }
 
                         InvoicePayment invoicePayment = builder.build();
                         invoicePayment.setExtras(extras);
