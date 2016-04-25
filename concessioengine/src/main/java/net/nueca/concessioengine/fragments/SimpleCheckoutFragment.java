@@ -111,13 +111,14 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
     }
 
     @Override
-    public void onUpdatePayment(int location, InvoicePayment invoicePayment) {
+    public void onUpdatePayment(int location, double prevValue, InvoicePayment invoicePayment) {
+        Log.e("onUPdatePayment", "fragment");
         tvBalance.setText(NumberTools.separateInCommas(computation.getRemaining()));
         rvPayments.scrollToPosition(splitPaymentAdapter.getItemCount() - 1);
     }
 
     @Override
-    public void onDeletePayment(int location) {
+    public void onDeletePayment(int location, double prevValue) {
         //computation.removePayment(location);
         tvBalance.setText(NumberTools.separateInCommas(computation.getRemaining()));
 

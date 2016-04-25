@@ -117,11 +117,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     SimplePaymentDialog dialog = new SimplePaymentDialog(C_Checkout.this, simpleSplitPaymentAdapter.getPaymentTypeList(), R.style.AppCompatDialogStyle_Light_NoTitle);
                     dialog.setDialogType(DialogType.ADVANCED_PAY);
 
-                    Double availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
-                    Double pointsInPeso = 0d;
-
-                    if(salesPromotion != null && salesPromotion.getSettings() != null)
-                        pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
+//                    Double availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
+//                    Double pointsInPeso = 0d;
+//
+//                    if(salesPromotion != null && salesPromotion.getSettings() != null)
+//                        pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
 
                     dialog.setAvailablePoints(availablePoints);
                     dialog.setPointsInPesoText(pointsInPeso);
@@ -137,11 +137,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                             if (paymentType != null) {
                                 builder.payment_type_id(paymentType.getId());
+                                builder.payment_type_name(paymentType.getName());
                             }
-
-                            Double points = PointsTools.amountToPoints(salesPromotion.getSettings(), NumberTools.toDouble(paymentValue));
-
-                            Log.e("Points", points+" <-- ");
 
                             InvoicePayment invoicePayment = builder.build();
                             invoicePayment.setExtras(extras);
@@ -385,6 +382,14 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 public void onAddPayment(InvoicePayment invoicePayment) {
                     tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
 
+                    if(invoicePayment.getPayment_type_name().toLowerCase().equals("rewards")) {
+                        availablePoints = availablePoints-PointsTools.amountToPoints(salesPromotion.getSettings(), invoicePayment.getTender());
+                        pointsInPeso = pointsInPeso-invoicePayment.getTender();
+
+                        simpleSplitPaymentAdapter.setAvailablePoints(availablePoints);
+                        simpleSplitPaymentAdapter.setPointsInPeso(pointsInPeso);
+                    }
+
                     if (simpleSplitPaymentAdapter.isFullyPaid()) {
                         tvLabelBalance.setText("Change");
                         tvBalance.setTextColor(getResources().getColor(R.color.payment_color));
@@ -399,8 +404,21 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 }
 
                 @Override
-                public void onUpdatePayment(int location, InvoicePayment invoicePayment) {
+                public void onUpdatePayment(int location, double prevValue, InvoicePayment invoicePayment) {
                     tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
+
+                    Log.e("Payment", "prevValue="+prevValue + " || newValue="+invoicePayment.getTender());
+
+                    if(invoicePayment.getPayment_type_name().toLowerCase().equals("rewards")) {
+                        availablePoints = availablePoints+PointsTools.amountToPoints(salesPromotion.getSettings(), prevValue);
+                        pointsInPeso = pointsInPeso+prevValue;
+
+                        availablePoints = availablePoints-PointsTools.amountToPoints(salesPromotion.getSettings(), invoicePayment.getTender());
+                        pointsInPeso = pointsInPeso-invoicePayment.getTender();
+
+                        simpleSplitPaymentAdapter.setAvailablePoints(availablePoints);
+                        simpleSplitPaymentAdapter.setPointsInPeso(pointsInPeso);
+                    }
 
                     if (simpleSplitPaymentAdapter.isFullyPaid()) {
                         tvLabelBalance.setText("Change");
@@ -416,8 +434,16 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 }
 
                 @Override
-                public void onDeletePayment(int location) {
+                public void onDeletePayment(int location, double prevValue) {
                     tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
+
+                    if(prevValue > -1) {
+                        availablePoints = availablePoints+PointsTools.amountToPoints(salesPromotion.getSettings(), prevValue);
+                        pointsInPeso = pointsInPeso+prevValue;
+
+                        simpleSplitPaymentAdapter.setAvailablePoints(availablePoints);
+                        simpleSplitPaymentAdapter.setPointsInPeso(pointsInPeso);
+                    }
 
                     if (!simpleSplitPaymentAdapter.isFullyPaid()) {
                         tvLabelBalance.setText("Balance");
@@ -476,6 +502,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
             if(salesPromotion != null && salesPromotion.getSettings() != null)
                 pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
 
+            simpleSplitPaymentAdapter.setAvailablePoints(availablePoints);
+            simpleSplitPaymentAdapter.setPointsInPeso(pointsInPeso);
             simpleSplitPaymentAdapter.setSalesPromotion(salesPromotion);
 
         } catch (SQLException e) {

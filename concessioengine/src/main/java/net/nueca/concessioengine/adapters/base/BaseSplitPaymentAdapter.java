@@ -32,6 +32,10 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
     protected boolean isDefaultCash = false;
     protected boolean isLayaway = false;
 
+    protected Double availablePoints = 0.0;
+    protected Double pointsInPeso = 0.0;
+    protected Double consumedPoints = 0.0;
+
     protected ListingType listingType = ListingType.BASIC_PAYMENTS;
 
     protected InvoiceTools.PaymentsComputation computation;
@@ -80,8 +84,8 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
     public interface OnPaymentUpdateListener {
         void onAddPayment(InvoicePayment invoicePayment);
-        void onUpdatePayment(int location, InvoicePayment invoicePayment);
-        void onDeletePayment(int location);
+        void onUpdatePayment(int location, double prevValue, InvoicePayment invoicePayment);
+        void onDeletePayment(int location, double prevValue);
     }
 
     public OnPaymentUpdateListener getPaymentUpdateListener() {
@@ -117,6 +121,10 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
     }
 
     public void deletePayment(int position) {
+        double prevValue = -1;
+        if(getItem(position).getPayment_type_name().toLowerCase().equals("rewards"))
+            prevValue = getItem(position).getTender();
+
         remove(position);
         notifyDataSetChanged();
 
@@ -125,7 +133,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
         setIsFullyPaid(NumberTools.formatDouble(computation.getRemaining().doubleValue(),computation.getDecimalPlace()) <= 0d);
 
         if(paymentUpdateListener != null)
-            paymentUpdateListener.onDeletePayment(position);
+            paymentUpdateListener.onDeletePayment(position, prevValue);
     }
 
     public void addPayment(InvoicePayment payment) {
@@ -142,6 +150,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
     }
 
     public void updatePayment(int position, InvoicePayment payment) {
+        double prevValue = getItem(position).getTender();
         InvoicePayment thisPayment = getItem(position);
         thisPayment.setAmount(payment.getAmount());
         thisPayment.setTender(payment.getTender());
@@ -155,7 +164,7 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
         setIsFullyPaid(NumberTools.formatDouble(computation.getRemaining().doubleValue(),computation.getDecimalPlace()) <= 0d);
 
         if(paymentUpdateListener != null)
-            paymentUpdateListener.onUpdatePayment(position, thisPayment);
+            paymentUpdateListener.onUpdatePayment(position, prevValue, thisPayment);
     }
 
     public InvoiceTools.PaymentsComputation getComputation() {
@@ -176,5 +185,17 @@ public abstract class BaseSplitPaymentAdapter<CheckoutPayment extends BaseRecycl
 
     public void setLayaway(boolean layaway) {
         isLayaway = layaway;
+    }
+
+    public void setConsumedPoints(Double consumedPoints) {
+        this.consumedPoints = consumedPoints;
+    }
+
+    public void setPointsInPeso(Double pointsInPeso) {
+        this.pointsInPeso = pointsInPeso;
+    }
+
+    public void setAvailablePoints(Double availablePoints) {
+        this.availablePoints = availablePoints;
     }
 }
