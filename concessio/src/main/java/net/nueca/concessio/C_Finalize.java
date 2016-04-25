@@ -360,9 +360,29 @@ public class C_Finalize extends ModuleActivity {
             case R.id.mPrint: {
                 if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                     if(!EpsonPrinterTools.targetPrinter(this).equals(""))
-                        printTransaction(offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                        DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                printTransaction(offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            }
+                        }, "No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }, R.style.AppCompatDialogStyle_Light);
                     if(!StarIOPrinterTools.getTargetPrinter(this).equals(""))
-                        printTransactionStar(offlineData, offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                        DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                printTransactionStar(offlineData, offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            }
+                        }, "No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }, R.style.AppCompatDialogStyle_Light);
                 }
             } break;
         }
@@ -423,6 +443,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setIsFinalize(true);
             simpleProductsFragment.setHasSubtotal(true);
             simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
+            simpleProductsFragment.setHasInStock(isForHistoryDetail || isLayaway);
             simpleProductsFragment.setConcessioModule(concessioModule);
             simpleProductsFragment.setCustomer(customer);
 

@@ -225,6 +225,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             productRecyclerViewAdapter.setReturnItems(isReturnItems);
             productRecyclerViewAdapter.setHasSubtotal(hasSubtotal);
             productRecyclerViewAdapter.setListingType(listingType);
+            productRecyclerViewAdapter.setHasInStock(hasInStock);
+
             if(!displayOnly)
                 productRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
                     @Override
@@ -345,6 +347,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         try {
             if(listingType == ListingType.SALES || listingType == ListingType.ADVANCED_SALES) {
                 TimerTools.start("showQuantityDialog");
+                Log.e("showQuantityDialog", "ProductId["+product.getId()+"]"+product.getName());
                 SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
                 simpleSalesQuantityDialog.setListPosition(position);
                 simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
