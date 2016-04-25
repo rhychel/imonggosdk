@@ -15,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.j256.ormlite.stmt.Where;
+
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -33,7 +35,10 @@ import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -82,7 +87,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         spBranches.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
-                if(position != currentlySelected) {
+                if (position != currentlySelected) {
                     DialogTools.showConfirmationDialog(C_Dashboard.this, "Change Default Branch", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -100,7 +105,8 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         rvModules.setHasFixedSize(true);
@@ -132,6 +138,31 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
 
+        try {
+            Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", 1417).queryForFirst();
+
+            if(product == null) {
+                Log.e(TAG, "product is null");
+            } else {
+                Log.e(TAG, "product is " + product.toString());
+                List<BranchProduct> bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("product_id", product).query();
+
+                if(bp == null) {
+                    Log.e(TAG, "branch product is null");
+                } else {
+                    Log.e(TAG, "bp size is " + bp.size());
+
+                    for(BranchProduct b : bp) {
+                        Log.e(TAG, "branch product: " + b.getProduct().getName() + " unit: " +  b.getUnit().getName() + " product status: " + b.getProduct().getStatus());
+
+                    }
+                }
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -240,7 +271,8 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         try {
                             AccountTools.unlinkAccount(C_Dashboard.this, getHelper(), new AccountListener() {
                                 @Override
-                                public void onLogoutAccount() { }
+                                public void onLogoutAccount() {
+                                }
 
                                 @Override
                                 public void onUnlinkAccount() {
