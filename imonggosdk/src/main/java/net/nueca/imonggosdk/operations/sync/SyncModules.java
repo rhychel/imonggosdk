@@ -656,9 +656,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                 if (mCurrentTableSyncing == Table.ROUTE_PLANS ||
                         mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
+
                     return String.format(ImonggoTools.generateParameter(
-                            Parameter.SALESMAN_ID),
-                            getSession().getUser_id());
+                            Parameter.SALESMAN_ID,
+                            Parameter.AFTER),
+                            getSession().getUser_id(),
+                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at())
+                            );
                 }
 
                 if (lastUpdatedAt != null) {
@@ -1838,8 +1842,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                                 if (PRODUCT != null) {
 
-                                                    Extras product_extras = null;
+                                                    Extras product_extras;
 
+                                                    // Extras
                                                     if (jsonObject.has("extras")) {
                                                         product_extras = new Extras();
                                                         product_extras.setId(Product.class.getName().toUpperCase(), PRODUCT.getId());
@@ -1880,10 +1885,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                         Log.e(TAG, "This Product don't have extras");
                                                     }
 
+                                                    // TAX RATES
                                                     int tax_branch_id;
                                                     int tax_rate_id;
                                                     if (jsonObject.has("tax_rates")) {
-
                                                         List<ProductTaxRateAssoc> pTaxRateList = getHelper().fetchObjectsList(ProductTaxRateAssoc.class);
 
                                                         // Deleting Product's ProducTaxRate Entry
@@ -1946,6 +1951,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                         Log.e(TAG, "Product don't have tax rate");
                                                     }
 
+                                                    // TAX LISTS
                                                     if (jsonObject.has("tag_list")) {
                                                         // Save tags to the database
                                                         JSONArray tagsListArray = jsonObject.getJSONArray("tag_list");
@@ -1967,15 +1973,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     PRODUCT.setSearchKey(PRODUCT.getName() + PRODUCT.getStock_no());
 
                                                     if (!isExisting(PRODUCT, Table.PRODUCTS)) {
-                                                        if (jsonObject.getString("status").equals("A"))
+                                                        if (jsonObject.getString("status").equals("A")) {
+                                                            Log.e(TAG, "setting status to A");
+                                                            PRODUCT.setStatus("A");
                                                             PRODUCT.insertTo(getHelper());
-                                                        else
+                                                        } else
                                                             Log.e(TAG, "skipping save of product..");
                                                     } else {
-                                                        if (jsonObject.getString("status").equals("A"))
-                                                            PRODUCT.updateTo(getHelper());
-                                                        else
-                                                            PRODUCT.deleteTo(getHelper());
+                                                        Log.e(TAG, "setting status to " + jsonObject.getString("status") + " updating products");
+                                                        PRODUCT.updateTo(getHelper());
                                                     }
                                                 } else {
                                                     Log.e(TAG, "Product from gson is null. skipping");
@@ -2094,21 +2100,74 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         // if branch product is not existing
                                         if (!isExisting(BRANCH_PRODUCT, Table.BRANCH_PRODUCTS)) {
-                                            // insert to database
-                                            if (jsonObject.getString("status").equals("A"))
+                                            // check products status
+                                            if (PRODUCT.getStatus().equals("A")) {
                                                 BRANCH_PRODUCT.insertTo(getHelper());
-                                            else
+                                            } else { // insert to database
                                                 Log.e(TAG, "skipping... because status is not A ");
+                                            }
                                         } else { // if branch product is existing
-                                            if (jsonObject.getString("status").equals("A")) {
+                                            if (PRODUCT.getStatus().equals("A")) {
                                                 Log.e(TAG, "updating... Branch Prices. " + jsonObject.getString("name"));
                                                 BRANCH_PRODUCT.updateTo(getHelper());
                                             } else {
-                                                Log.e(TAG, "status is: " + jsonObject.getString("status").equals("A"));
+                                                Log.e(TAG, "status is: " + jsonObject.getString("status"));
+                                                // BRANCH PRODUCT is EXISTING
+                                                // PRODUCT STATUS is "I" -- update status
 
-                                                PRODUCT.setStatus(jsonObject.getString("status"));
-                                                Log.e(TAG, "deleting... Branch Prices" + jsonObject.getString("name"));
-                                                BRANCH_PRODUCT.deleteTo(getHelper());
+                                                if (PRODUCT.getStatus().equals("I")) {
+                                                    Log.e(TAG, "branch product status is I");
+                                                    BRANCH_PRODUCT.updateTo(getHelper());
+                                                } else if (PRODUCT.getStatus().equals("D")) {
+                                                    // BRANCH PRODUCT is "D" -- check is
+                                                    //BRANCH.deleteTo(getHelper());
+
+                                                    Log.e(TAG, "branch product status is D.. querying product...");
+                                                    //query
+                                                    Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", PRODUCT).queryForFirst();
+
+                                                    // if product is null delete na branch product
+                                                    if (product == null) {
+                                                        Log.e(TAG, "product is null deleting branch product");
+                                                        BRANCH_PRODUCT.deleteTo(getHelper());
+                                                    } else { // else
+
+                                                        // query all branch products based sa product
+                                                        List<BranchProduct> bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("product_id", product).query();
+                                                        Log.e(TAG, "branch product size is " + bp.size());
+                                                        if (bp == null) {
+                                                            BRANCH_PRODUCT.deleteTo(getHelper());
+                                                        } else {
+                                                            if (bp.size() == 1) {
+                                                                Log.e(TAG, "branch product size is 1 deleting BP and PRODUCT");
+                                                                BRANCH_PRODUCT.deleteTo(getHelper());
+                                                                PRODUCT.deleteTo(getHelper());
+                                                            } else {
+                                                                Boolean deleteThisProduct = true;
+
+                                                                for (BranchProduct b : bp) {
+                                                                    Log.e(TAG, "branch product: " + b.getProduct().getName() + " unit: " + b.getUnit().getName() + " product status: " + b.getProduct().getStatus());
+                                                                    if (b.getProduct().getStatus().equals("A")) {
+                                                                        Log.e(TAG, "other branch products exist with this product skipping delete...");
+                                                                        deleteThisProduct = false;
+                                                                    }
+                                                                }
+
+                                                                Log.e(TAG, "deleting BRANCH PRODUCT...");
+                                                                BRANCH_PRODUCT.deleteTo(getHelper());
+
+                                                                if (deleteThisProduct) {
+                                                                    Log.e(TAG, "deleting product..");
+                                                                    PRODUCT.deleteTo(getHelper());
+                                                                } else {
+                                                                    Log.e(TAG, "OOOPS! don't delete this product");
+                                                                }
+
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -2472,6 +2531,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             BatchList<Customer> deleteCustomer = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
                             BatchList<CustomerCustomerGroupAssoc> newCustomerCustomerGroup = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                            BatchList<CustomerCustomerGroupAssoc> updateCustomerCustomerGroup = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
                             if (size == 0) {
                                 syncNext();
@@ -2631,7 +2691,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                                 listOfPricelistIds.add(price_list_id);
                                                                 listPriceListStorage.add(customerGroupNet);
 
-
                                                                 if (listOfIdsPriceListSorted == null) {
                                                                     Log.e(TAG, "price list sorted is null, creating instance");
                                                                     listOfIdsPriceListSorted = new ArrayList<>();
@@ -2716,6 +2775,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 newCustomer.doOperationBT3(Customer.class, getHelper());
                                 updateCustomer.doOperationBT3(Customer.class, getHelper());
                                 deleteCustomer.doOperationBT3(Customer.class, getHelper());
+
                                 newCustomerCustomerGroup.doOperation(CustomerCustomerGroupAssoc.class, getHelper());
                                 updateNext(requestType, size);
                             }
