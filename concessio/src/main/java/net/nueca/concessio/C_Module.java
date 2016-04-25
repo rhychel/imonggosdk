@@ -99,6 +99,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -224,6 +226,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionDetailsFragment.setSetupActionBar(this);
                 // if there's branch product
                 simpleTransactionDetailsFragment.setBranch(getBranches().get(0));
+                simpleTransactionDetailsFragment.setHasInStock(false);
 
                 simpleTransactionsFragment = new SimpleTransactionsFragment();
                 simpleTransactionsFragment.setHelper(getHelper());
@@ -241,6 +244,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                     @Override
                     public void showTransactionDetails(OfflineData offlineData) {
+                        if(getSupportFragmentManager().findFragmentByTag("transaction_details") != null)
+                            return;
+
                         prepareFooter();
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
@@ -1125,9 +1131,29 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         else if(item.getItemId() == R.id.mPrint) {
             if(getAppSetting().isCan_print()) {
                 if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                    printTransaction(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                    DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            printTransaction(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                        }
+                    }, "No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }, R.style.AppCompatDialogStyle_Light);
                 if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                    printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                    DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                        }
+                    }, "No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }, R.style.AppCompatDialogStyle_Light);
 
 //                AsyncTask<Void, Void, Void> startPrint = new AsyncTask<Void, Void, Void>() {
 //                    @Override
@@ -1753,8 +1779,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add((branch.getName()+"\r\n").getBytes());
                 data.add((branch.generateAddress()+"\r\n\r\n").getBytes());
 
-                if(offlineData != null && offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
-                    data.add(("MISCELLANEOUS STOCK OUT SLIP\r\n\r\n").getBytes());
+                if(offlineData != null) {
+                    if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
+                        data.add(("MISCELLANEOUS STOCK OUT SLIP\r\n\r\n").getBytes());
+                    else
+                        data.add((getModuleSetting(offlineData.getConcessioModule()).getLabel().toUpperCase()+" SLIP\r\n\r\n").getBytes());
+                }
                 else
                     data.add(("INVENTORY SLIP\r\n\r\n").getBytes());
 //                data.add(("Salesman: "+getSession().getUser().getName()+"\r\n").getBytes());
@@ -1789,7 +1819,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     page = 1;
                     items = 0;
 
-                    for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
+                    List<DocumentLine> documentLines = offlineData.getObjectFromData(Document.class).getDocument_lines();
+                    Collections.sort(documentLines, new Comparator<DocumentLine>() {
+                        @Override
+                        public int compare(DocumentLine lhs, DocumentLine rhs) {
+                            return 0;
+                        }
+                    });
+
+                    for (final DocumentLine documentLine : documentLines) {
                         Double retail_price = 0.0;
                         try {
                             final BranchProduct branchProduct = getHelper().fetchForeignCollection(documentLine.getProduct().getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {

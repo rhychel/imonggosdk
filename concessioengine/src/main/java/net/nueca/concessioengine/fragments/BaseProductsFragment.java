@@ -59,6 +59,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             hasBrand = false,
             hasDeliveryDate = false,
             hasCategories = true,
+            hasInStock = true,
             multipleInput = false,
             showCategoryOnStart = false,
             lockCategory = false,
@@ -205,12 +206,20 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
             if(includeSearchKey)
                 whereProducts.and().like("searchKey", "%"+searchKey+"%");
+
+            String orderByFilter = "";
             if(hasProductFilter) {
+                orderByFilter = "CASE id";
+                int order = 0;
                 List<Integer> ids = new ArrayList<>();
                 for(Product product : filterProductsBy) {
                     ids.add(product.getId());
+                    orderByFilter += " WHEN "+product.getId()+" THEN "+order;
+                    order++;
+
                     //Log.e("FILTER", product.getId() + "");
                 }
+                orderByFilter += " ELSE 1000000 END, ";
                 whereProducts.and().in("id", ids);
             }
             if(includeCategory) {
@@ -221,7 +230,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             }
 
             String orderBy = "";
-            if(promotionalProducts.size() > 0) {
+            if(isFinalize) {
+                orderBy += orderByFilter;
+            }
+            else if(promotionalProducts.size() > 0) {
                 orderBy = "CASE id";
                 int order = 0;
                 for(Product product : promotionalProducts) {
@@ -305,7 +317,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
             int lastItem = firstVisibleItem + visibleItemCount;
 
-            Log.e("BaseProducts", "lastItem ="+lastItem+" | totalItemCount = "+totalItemCount);
+            Log.e("BaseProducts", "lastItem ="+lastItem+" | totalItemCount = "+totalItemCount+" | prevLast = "+prevLast);
             if(lastItem == totalItemCount) {
                 if(prevLast != lastItem) {
                     Log.e("BaseProducts", "prevLast ="+prevLast+" | " +"lastItem ="+lastItem+" | totalItemCount = "+totalItemCount);
@@ -373,6 +385,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     }
 
     public void setFilterProductsBy(List<Product> filterProductsBy) {
+        offset = 0l;
+        prevLast = -1;
         this.filterProductsBy = filterProductsBy;
     }
 
@@ -441,5 +455,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setOnSalesFinalize(boolean onSalesFinalize) {
         isOnSalesFinalize = onSalesFinalize;
+    }
+
+    public void setHasInStock(boolean hasInStock) {
+        this.hasInStock = hasInStock;
     }
 }
