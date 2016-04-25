@@ -147,14 +147,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             }
 
             if (mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
-                Log.e(TAG, "setting Updating of PricList From Customer to true: ");
+                Log.e(TAG, "setting Updating of PriceList From Customer to true: ");
                 mUpdatingPriceListFromCustomer = true;
             }
 
             Table t = mCurrentTableSyncing;
 
-            if (!initialSync) {
-                if (!mUpdatingPriceListFromCustomer) {
+            if (!initialSync) { // for updating
+                if (!mUpdatingPriceListFromCustomer) { // standalone
                     if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
                         t = Table.PRICE_LISTS;
                         Log.e(TAG, "changing to price list for updating not from customer");
@@ -172,6 +172,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             ImonggoOperations.getAPIModule(this, getQueue(), getSession(), this,
                     t, getSession().getServer(), requestType,
                     getParameters(requestType));
+
 
         } else if (requestType == RequestType.LAST_UPDATED_AT) {
             newLastUpdatedAt = null;
@@ -531,6 +532,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
 
                 if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
+                    Log.e(TAG, "mUpdatingPriceListFromCustomer: " + mUpdatingPriceListFromCustomer);
                     if (mUpdatingPriceListFromCustomer) {
                         return String.format(ImonggoTools.generateParameter(
                                 Parameter.ID),
@@ -3628,7 +3630,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
 
                                 // for updating delete all details for the updated Price List Header
-
+                                BatchList<Price> deletePrice = new BatchList<>(DatabaseOperation.DELETE, getHelper());
                                 List<Price> price = Price.fetchWithConditionInt(getHelper(), Price.class, new DBTable.ConditionsWindow<Price, Integer>() {
                                     @Override
                                     public Where<Price, Integer> renderConditions(Where<Price, Integer> where) throws SQLException {
@@ -3639,21 +3641,17 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                 Log.e(TAG, "Size of price list to delete: " + price.size());
 
-                                BatchList<Price> deletePrice = new BatchList<>(DatabaseOperation.DELETE, getHelper());
-
-
-                                Log.e(TAG, "Deleting Price List... ");
-                                deletePrice.doOperationBT(Price.class);
-
-                                newPriceList.doOperationBT(PriceList.class);
-                                updatePriceList.doOperationBT(PriceList.class);
-
                                 if(price.size() != 0) {
                                     deletePrice.addAll(price);
-                                    deletePriceList.doOperationBT(PriceList.class);
+                                    Log.e(TAG, "Deleting Price List... ");
+                                    deletePrice.doOperationBT(Price.class);
                                 } else {
                                     Log.e(TAG, "price lists size is 0 skipping download");
                                 }
+
+                                newPriceList.doOperationBT(PriceList.class);
+                                updatePriceList.doOperationBT(PriceList.class);
+                                deletePriceList.doOperationBT(PriceList.class);
                             }
                             updateNext(requestType, size);
                             break;
@@ -4037,15 +4035,15 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                             }
                         } else {
-                            if (mCustomIdIndex < listOfIdsPriceListSorted.size()) {
+                           /* if (mCustomIdIndex < listOfIdsPriceListSorted.size()) {
                                 Log.e(TAG, "Custom ID Index is less than size of details: " + listOfIdsPriceListSorted.size() + " staring request id index: " + mCustomIdIndex);
                                 startSyncModuleContents(requestType);
-                            } else {
+                            } else {*/
                                 mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_FROM_CUSTOMERS, 1, 1);
                                 Log.e(TAG, "Syncing next price list from customers");
                                 syncNext();
                             }
-                        }
+                        //}
                     } else if (mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS) {
                         if (mCustomIdIndex < listOfIdsPriceListSorted.size()) {
                             Log.e(TAG, "Custom ID Index is less than size of details: " + listOfIdsPriceListSorted.size() + " staring request id index: " + mCustomIdIndex);
