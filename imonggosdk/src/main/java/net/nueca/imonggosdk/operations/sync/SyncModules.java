@@ -913,33 +913,40 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_FROM_CUSTOMERS, 1, 1);
                 syncNext();
             } else {
-                if (listOfPricelistIds != null) {
-                    if (listOfPricelistIds.size() != 0) {
-                        count = listOfPricelistIds.size();
-                        mCustomIdIndex = 0;
+               /* if(!initialSync) {
+                    Log.e(TAG, "Price list is for updating...");
+                    mUpdatingPriceListFromCustomer = false;
+                    startSyncModuleContents(RequestType.LAST_UPDATED_AT);
+                } else {*/
 
-                        Log.e(TAG, "listOfPriceListOfIds: " + listOfPricelistIds.size());
-                        Log.e(TAG, "listOfIdsPriceListSorted: " + listOfIdsPriceListSorted.size());
-                        Log.e(TAG, "mUpdatingPriceListFromCustomer: " + mUpdatingPriceListFromCustomer);
+                    if (listOfPricelistIds != null) {
+                        if (listOfPricelistIds.size() != 0) {
+                            count = listOfPricelistIds.size();
+                            mCustomIdIndex = 0;
 
-                        if (mUpdatingPriceListFromCustomer) {
+                            Log.e(TAG, "listOfPriceListOfIds: " + listOfPricelistIds.size());
+                            Log.e(TAG, "listOfIdsPriceListSorted: " + listOfIdsPriceListSorted.size());
+                            Log.e(TAG, "mUpdatingPriceListFromCustomer: " + mUpdatingPriceListFromCustomer);
+
+                            if (mUpdatingPriceListFromCustomer) {
                            /* mModulesIndex++;
                             mCurrentTableSyncing = Table.PRICE_LISTS_DETAILS;
                             mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_FROM_CUSTOMERS, 1, 1);*/
-                            startSyncModuleContents(RequestType.API_CONTENT);
+                                startSyncModuleContents(RequestType.API_CONTENT);
+                            } else {
+                                startSyncModuleContents(RequestType.LAST_UPDATED_AT);
+                            }
                         } else {
-                            startSyncModuleContents(RequestType.LAST_UPDATED_AT);
+                            Log.e(TAG, mCurrentTableSyncing + ". There's no Price Lists... Downloading Next Modulex");
+                            mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_FROM_CUSTOMERS, 1, 1);
+                            syncNext();
                         }
                     } else {
-                        Log.e(TAG, mCurrentTableSyncing + ". There's no Price Lists... Downloading Next Modulex");
+                        Log.e(TAG, mCurrentTableSyncing + ". There's no Price Lists... Downloading Next Modulez");
                         mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_FROM_CUSTOMERS, 1, 1);
                         syncNext();
                     }
-                } else {
-                    Log.e(TAG, mCurrentTableSyncing + ". There's no Price Lists... Downloading Next Modulez");
-                    mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_FROM_CUSTOMERS, 1, 1);
-                    syncNext();
-                }
+               // }
             }
 
         } else if (mCurrentTableSyncing == Table.ROUTE_PLANS_DETAILS) {
@@ -1125,8 +1132,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
-                        /*lastUpdatedAt.setLast_updated_at("2016/04/25 11:30:00 +0000");
-                        lastUpdatedAt.updateTo(getHelper());*/
+                        lastUpdatedAt.setLast_updated_at("2016/04/25 11:30:00 +0000");
+                        lastUpdatedAt.updateTo(getHelper());
 
                         if (lastUpdatedAt.getLast_updated_at() != null) {
 
@@ -4021,9 +4028,20 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     Log.e(TAG, "Custom ID Index is: " + mCustomIdIndex);
 
                     if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
-                        Log.e(TAG, ">>> Custom ID Index is less than size of details: " + listOfIdsPriceListSorted.size() + " staring request id index: " + mCustomIdIndex);
-                        page++;
-                        startSyncModuleContents(requestType);
+                        if(mUpdatingPriceListFromCustomer) {
+                            if (mCustomIdIndex < listOfIdsPriceListSorted.size()) {
+                                Log.e(TAG, "ssCustom ID Index is less than size of details: " + listOfIdsPriceListSorted.size() + " staring request id index: " + mCustomIdIndex);
+                                startSyncModuleContents(requestType);
+                            } else {
+                                mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_DETAILS, 1, 1);
+                                Log.e(TAG, "ssSyncing next price list details");
+                                syncNext();
+                            }
+                        } else {
+                            Log.e(TAG, ">>> Custom ID Index is less than size of details: " + listOfIdsPriceListSorted.size() + " staring request id index: " + mCustomIdIndex);
+                            page++;
+                            startSyncModuleContents(requestType);
+                        }
                     } else if (mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS) {
                         if (mCustomIdIndex < listOfIdsPriceListSorted.size()) {
                             Log.e(TAG, "Custom ID Index is less than size of details: " + listOfIdsPriceListSorted.size() + " staring request id index: " + mCustomIdIndex);
