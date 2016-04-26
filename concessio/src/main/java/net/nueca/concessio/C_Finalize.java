@@ -519,7 +519,8 @@ public class C_Finalize extends ModuleActivity {
     private void printTransactionStar(final OfflineData offlineData, final Invoice invoice, final InvoiceTools.PaymentsComputation paymentsComputation, final String... labels) {
         if(!BluetoothTools.isEnabled())
             return;
-
+        if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
+            return;
         Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
 

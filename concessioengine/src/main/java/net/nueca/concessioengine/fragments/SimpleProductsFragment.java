@@ -346,6 +346,9 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         }
         try {
             if(listingType == ListingType.SALES || listingType == ListingType.ADVANCED_SALES) {
+                if(dialogIsOpened)
+                    return;
+                dialogIsOpened = true;
                 TimerTools.start("showQuantityDialog");
                 Log.e("showQuantityDialog", "ProductId["+product.getId()+"]"+product.getName());
                 SimpleSalesQuantityDialog simpleSalesQuantityDialog = new SimpleSalesQuantityDialog(getActivity(), R.style.AppCompatDialogStyle_Light_NoTitle);
@@ -510,11 +513,12 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             Log.e("ProductsFragListener", productsFragmentListener+"");
             if (productsFragmentListener != null)
                 productsFragmentListener.whenItemsSelectedUpdated();
+            dialogIsOpened = false;
         }
 
         @Override
         public void onDismiss() {
-
+            dialogIsOpened = false;
         }
     };
 

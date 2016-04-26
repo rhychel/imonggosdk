@@ -578,9 +578,29 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             public void onClick(View v) {
                                 // ---- So let's print...
                                 if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                                    printTransaction(null, "*Salesman Copy*", "*Office Copy*");
+                                    DialogTools.showConfirmationDialog(C_Module.this, "Print Inventory", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            printTransaction(null, "*Salesman Copy*", "*Office Copy*");
+                                        }
+                                    }, "No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    }, R.style.AppCompatDialogStyle_Light);
                                 if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                                    printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
+                                    DialogTools.showConfirmationDialog(C_Module.this, "Print Inventory", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
+                                        }
+                                    }, "No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    }, R.style.AppCompatDialogStyle_Light);
                             }
                         });
                         tvItems.setVisibility(View.INVISIBLE);
@@ -1146,7 +1166,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            else
+                                printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
                         }
                     }, "No", new DialogInterface.OnClickListener() {
                         @Override
@@ -1767,6 +1790,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     private void printTransactionStar(final OfflineData offlineData, final String... labels) {
         if(!BluetoothTools.isEnabled())
             return;
+
+        if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
+            return;
+
         Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
 

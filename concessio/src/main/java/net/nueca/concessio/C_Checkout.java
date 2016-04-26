@@ -32,6 +32,7 @@ import net.nueca.concessioengine.printer.epson.listener.PrintListener;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
+import net.nueca.concessioengine.tools.BluetoothTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.PointsTools;
@@ -705,6 +706,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     }
 
     private void printTransactionStar(final Invoice invoice, final String... labels) {
+        if(!BluetoothTools.isEnabled())
+            return;
+        if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
+            return;
         Branch branch = getBranches().get(0);
 
         ArrayList<byte[]> data = new ArrayList<>();
