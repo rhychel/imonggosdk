@@ -1639,13 +1639,17 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 }
                             });
 
-                            Log.e(TAG, "Size of price list to delete: " + price.size());
+                            Log.e(TAG, "Size of price to delete: " + price.size());
 
                             BatchList<Price> deletePrice = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
-                            deletePrice.addAll(price);
-                            Log.e(TAG, "Deleting Price List... ");
-                            deletePrice.doOperationBT(Price.class);
+                            if(price.size() != 0) {
+                                deletePrice.addAll(price);
+                                Log.e(TAG, "Deleting Price... ");
+                                deletePrice.doOperationBT(Price.class);
+                            } else {
+                                Log.e(TAG, "There's nothing to delete on prices" );
+                            }
 
                             newPriceList.doOperationBT(PriceList.class);
                             updatePriceList.doOperationBT(PriceList.class);
@@ -4033,7 +4037,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 Log.e(TAG, "ssCustom ID Index is less than size of details: " + listOfIdsPriceListSorted.size() + " staring request id index: " + mCustomIdIndex);
                                 startSyncModuleContents(requestType);
                             } else {
-                                mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_DETAILS, 1, 1);
+                                mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_FROM_CUSTOMERS, 1, 1);
                                 Log.e(TAG, "ssSyncing next price list details");
                                 syncNext();
                             }
