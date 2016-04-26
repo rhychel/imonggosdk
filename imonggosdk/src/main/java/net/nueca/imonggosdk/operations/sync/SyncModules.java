@@ -1991,7 +1991,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                         } else
                                                             Log.e(TAG, "skipping save of product..");
                                                     } else {
-                                                        Log.e(TAG, "setting status to " + jsonObject.getString("status") + " updating products");
+                                                        Log.e(TAG, "setting status to A. return of API is " + jsonObject.getString("status") + " updating products");
+                                                        PRODUCT.setStatus("A");
                                                         PRODUCT.updateTo(getHelper());
                                                     }
                                                 } else {
@@ -2112,13 +2113,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         // if branch product is not existing
                                         if (!isExisting(BRANCH_PRODUCT, Table.BRANCH_PRODUCTS)) {
                                             // check products status
-                                            if (PRODUCT.getStatus().equals("A")) {
+                                            if (jsonObject.getString("status").equals("A")) {
                                                 BRANCH_PRODUCT.insertTo(getHelper());
                                             } else { // insert to database
                                                 Log.e(TAG, "skipping... because status is not A ");
                                             }
                                         } else { // if branch product is existing
-                                            if (PRODUCT.getStatus().equals("A")) {
+                                            if (jsonObject.getString("status").equals("A")) {
                                                 Log.e(TAG, "updating... Branch Prices. " + jsonObject.getString("name"));
                                                 BRANCH_PRODUCT.updateTo(getHelper());
                                             } else {
@@ -2126,16 +2127,16 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 // BRANCH PRODUCT is EXISTING
                                                 // PRODUCT STATUS is "I" -- update status
 
-                                                if (PRODUCT.getStatus().equals("I")) {
+                                                if (jsonObject.getString("status").equals("I")) {
                                                     Log.e(TAG, "branch product status is I");
                                                     BRANCH_PRODUCT.updateTo(getHelper());
-                                                } else if (PRODUCT.getStatus().equals("D")) {
+                                                } else if (jsonObject.getString("status").equals("D")) {
                                                     // BRANCH PRODUCT is "D" -- check is
                                                     //BRANCH.deleteTo(getHelper());
 
                                                     Log.e(TAG, "branch product status is D.. querying product...");
                                                     //query
-                                                    Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", PRODUCT).queryForFirst();
+                                                    Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", PRODUCT.getId()).queryForFirst();
 
                                                     // if product is null delete na branch product
                                                     if (product == null) {
