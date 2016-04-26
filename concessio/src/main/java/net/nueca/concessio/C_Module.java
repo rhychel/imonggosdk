@@ -331,6 +331,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     @Override
                     public void onDuplicateTransaction() {
                         ProductsAdapterHelper.isDuplicating = true;
+                        if(!ProductsAdapterHelper.hasSelectedProductItems()) {
+                            try {
+                                processOfflineData(simpleTransactionDetailsFragment.getOfflineData());
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         Intent intent = new Intent(C_Module.this, C_Module.class);
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
@@ -790,8 +797,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             @Override
                             public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
                                 Log.e("Reason", reason.getName());
-                                ProductsAdapterHelper.clearSelectedProductItemList(true);
-                                ProductsAdapterHelper.clearSelectedReturnProductItemList();
+                                if(!ProductsAdapterHelper.isDuplicating) {
+                                    ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                    ProductsAdapterHelper.clearSelectedReturnProductItemList();
+                                }
                                 ProductsAdapterHelper.setSelectedCustomer(customer);
                                 ProductsAdapterHelper.setReason(reason);
 

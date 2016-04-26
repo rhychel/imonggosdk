@@ -162,10 +162,15 @@ public class ProductsAdapterHelper {
         clearSelectedProductItemList(includeCustomer, true);
     }
     public static void clearSelectedProductItemList(boolean includeCustomer, boolean includeReason) {
-        if(isDuplicating)
-            return;
-        if(selectedProductItems != null)
+//        if(isDuplicating)
+//            return;
+        if(selectedProductItems != null) {
+            Log.e("selectedProductItems", "is not null ["+selectedProductItems.size());
             selectedProductItems.clear();
+            Log.e("selectedProductItems", "is not null ["+selectedProductItems.size());
+        }
+        else
+            Log.e("selectedProductItems", "is null");
         if(includeCustomer) {
             selectedCustomer = null;
             selectedCustomerGroup = null;
