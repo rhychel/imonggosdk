@@ -154,6 +154,13 @@ public class UpdaterChooserDialog extends BaseAppCompatDialog {
                 indexOf = getList().indexOf(comp);
                 indeces.add(indexOf);
                 if(indexOf > -1) {
+                    if(isChecked) {
+                        if(getItem(indexOf).isSelected())
+                            continue;
+                    }
+                    else if(!getItem(indexOf).isSelected())
+                        continue;
+
 //                    getItem(indexOf).setForcedSelected(true);
                     getItem(indexOf).setSelected(isChecked);
                     getItem(indexOf).setEnabled(!isChecked);

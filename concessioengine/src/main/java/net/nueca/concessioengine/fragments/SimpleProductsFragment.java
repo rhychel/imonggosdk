@@ -580,6 +580,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                             "Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    Log.e("selectedProductItems", "count="+ProductsAdapterHelper.getSelectedProductItems().size());
                                     ProductsAdapterHelper.clearSelectedProductItemList(false, false);
                                     changeCategory(category, position);
                                     productsFragmentListener.whenItemsSelectedUpdated();
