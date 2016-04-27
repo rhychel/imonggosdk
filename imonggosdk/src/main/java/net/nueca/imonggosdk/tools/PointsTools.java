@@ -22,7 +22,8 @@ import java.util.List;
  */
 public class PointsTools {
     public static SalesPromotion getPointSalesPromotion(ImonggoDBHelper2 helper) throws SQLException {
-        List<SalesPromotion> salesPromotions = helper.fetchObjects(SalesPromotion.class).queryBuilder().where()
+        List<SalesPromotion> salesPromotions = helper.fetchObjects(SalesPromotion.class).queryBuilder()
+                .orderBy("id", false).where()
                 .like("promotion_type_name", "point").and()
                 .like("status","A").or().isNull("status").query();
         for(SalesPromotion salesPromotion : salesPromotions) {
