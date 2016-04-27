@@ -422,6 +422,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         TimerTools.duration("updateInventoryFromSelectedItemList, first loop", true);
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             if(selectedProductItem.getInventory() != null) {
+                Log.e("updateInventory", "inventory is null");
                 Inventory updateInventory = selectedProductItem.getInventory();
                 updateInventory.setProduct(selectedProductItem.getProduct());
                 updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
@@ -430,6 +431,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 updated++;
             }
             else {
+                Log.e("updateInventory", "inventory is not null");
                 Inventory newInventory = new Inventory();
                 Log.e("Product.Extras["+selectedProductItem.getProduct().getName()+"]", "updateInventory="+selectedProductItem.getProduct().getExtras().getDefault_selling_unit());
                 newInventory.setProduct(selectedProductItem.getProduct());

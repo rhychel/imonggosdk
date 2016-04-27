@@ -621,7 +621,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         prevLast = 0;
 
         if(productRecyclerViewAdapter != null)
-            Log.e("productRecyclerViewAd", "is not null");
+            Log.e("BaseProducts", "is not null || searchKey="+searchKey);
         if(useRecyclerView)
             toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", productRecyclerViewAdapter.updateList(getProducts()));
         else
