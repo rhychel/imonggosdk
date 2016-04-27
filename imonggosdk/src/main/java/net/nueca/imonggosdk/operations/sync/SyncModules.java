@@ -3851,7 +3851,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             }
                             //Log.e(TAG, "Sales Promotions Discount");
                             mCustomPageIndex++;
-                            updateNext(requestType, count);
+                            updateNext(requestType, listOfSalesPromotionIds.size());
                             break;
                         case ROUTE_PLANS:
                             if (size == 0) {
