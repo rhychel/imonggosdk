@@ -3455,7 +3455,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             Log.e(TAG, "status is either I or D deleting it all");
 
                                             //delete discount connected
-                                            for (Discount discount : discountList) {
+                                            for (Discount discount : discountList) { 
                                                 discount.deleteTo(getHelper());
                                             }
 
