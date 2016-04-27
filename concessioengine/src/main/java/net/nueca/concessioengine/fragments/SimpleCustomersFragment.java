@@ -188,6 +188,9 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
     }
 
     public void reinitializeList() {
+        offset = 0l;
+        prevLast = -1;
+
         simpleCustomerRecyclerViewAdapter.removeAll();
         simpleCustomerRecyclerViewAdapter.notifyDataSetChanged();
         simpleCustomerRecyclerViewAdapter.setList(processCustomersForLetterHeader(getCustomers()));

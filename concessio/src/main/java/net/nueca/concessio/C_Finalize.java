@@ -443,7 +443,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setIsFinalize(true);
             simpleProductsFragment.setHasSubtotal(true);
             simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
-            simpleProductsFragment.setHasInStock(isForHistoryDetail || isLayaway);
+            simpleProductsFragment.setHasInStock(!(isForHistoryDetail || isLayaway));
             simpleProductsFragment.setConcessioModule(concessioModule);
             simpleProductsFragment.setCustomer(customer);
 
