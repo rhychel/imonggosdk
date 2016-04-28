@@ -72,7 +72,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             isReturnItems = false,
             isOnSalesFinalize = false,
             dialogIsOpened = false;
-    private int prevLast = -1;
+    protected int prevLast = -1;
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
     private List<Product> filterProductsBy = new ArrayList<>();

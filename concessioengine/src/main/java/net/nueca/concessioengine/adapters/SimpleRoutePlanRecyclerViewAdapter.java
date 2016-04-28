@@ -95,7 +95,7 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
 
                 BigDecimal remaining = paymentsComputation.getRemaining();
                 holder.tvSubtotal.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
-                if (remaining.signum() > -1)
+                if (remaining.signum() == 1)
                     holder.tvSubtotal.setText("P " + NumberTools.separateInCommas(remaining));
                 else {
                     holder.tvSubtotal.setText("P " + NumberTools.separateInCommas(paymentsComputation.getTotalPayable(true)));
@@ -105,7 +105,6 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
                 double balance = 0.0;
                 for(Invoice invoice : myInvoices) {
                     InvoiceTools.PaymentsComputation temp = new InvoiceTools.PaymentsComputation();
-
                     /*device_id = ProductsAdapterHelper.getSession().getDevice_id();
                     if(Integer.parseInt(invoice.getReference().substring(0,invoice.getReference().indexOf('-'))) != device_id) {
                         List<InvoiceLine> invoiceLines = null;
@@ -119,7 +118,6 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
                         }
                         invoice.setInvoiceLines(invoiceLines);
                     }*/
-
                     temp.addAllInvoiceLines(invoice.getInvoiceLines());
                     temp.addAllPayments(invoice.getPayments());
 

@@ -81,7 +81,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     private ImageView ivEdit;
 
     private boolean useRecyclerView = true;
-    private int prevLast = -1, prevSelectedCategory = 0;
+    private int prevSelectedCategory = 0;
 
     private boolean isCustomAdapter = false;
 
@@ -607,7 +607,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         prevSelectedCategory = position;
         setCategory(category);
         offset = 0l;
-        prevLast = 0;
+        prevLast = -1;
 
         if(useRecyclerView)
             toggleNoItems("No results for \"" + category + "\".", productRecyclerViewAdapter.updateList(getProducts()));
@@ -618,10 +618,10 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     public void updateListWhenSearch(String searchKey) {
         setSearchKey(searchKey);
         offset = 0l;
-        prevLast = 0;
+        prevLast = -1;
 
         if(productRecyclerViewAdapter != null)
-            Log.e("productRecyclerViewAd", "is not null");
+            Log.e("BaseProducts", "is not null || searchKey="+searchKey);
         if(useRecyclerView)
             toggleNoItems("No results for \"" + searchKey + "\"" + messageCategory() + ".", productRecyclerViewAdapter.updateList(getProducts()));
         else

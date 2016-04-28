@@ -32,7 +32,7 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
     protected static final long LIMIT = 100l;
     protected long offset = 0l;
     protected int headerCount = 0;
-    private int prevLast = -1;
+    protected int prevLast = -1;
     protected boolean useRecyclerView = true;
     protected ListingType listingType = ListingType.BASIC;
 
