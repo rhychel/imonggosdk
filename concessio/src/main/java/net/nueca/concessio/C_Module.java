@@ -528,6 +528,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
             break;
             case INVOICE: {
+                Log.e("onCreate", "INVOICE is called");
                 CustomerGroup customerGroup = null;
 
                 try {
