@@ -138,10 +138,13 @@ public class OfflineData extends BaseTable2 {
     private String targetBranchTransfer = ""; // unused
 
     @DatabaseField
-    private String category = ""; // unused
+    private String category = "";
 
     @DatabaseField
     private String documentReason = "";
+
+    @DatabaseField
+    private String voidReason = "";
 
     private SparseArray<String> childrenArray = new SparseArray<String>(); // unused
 
@@ -386,6 +389,14 @@ public class OfflineData extends BaseTable2 {
         this.isSyncing = isSyncing;
     }
 
+    public String getVoidReason() {
+        return voidReason;
+    }
+
+    public void setVoidReason(String voidReason) {
+        this.voidReason = voidReason;
+    }
+
     public String getParameters() {
         if(parameters.length() > 0 && parameters.charAt(0) != '&')
             return "&" + parameters;
@@ -425,6 +436,8 @@ public class OfflineData extends BaseTable2 {
         if(invoiceData != null)
             if(invoiceData.getCustomer() != null)
                 return reference_no + "/" + invoiceData.getCustomer().generateFullName();
+        if(documentData != null && documentData.getCustomer() != null)
+            return reference_no + "/" +documentData.getCustomer().generateFullName();
         return reference_no;
     }
 
@@ -623,7 +636,7 @@ public class OfflineData extends BaseTable2 {
         switch (type) {
             case INVOICE:
                 typeStr = "INVOICE";
-                invoiceData.createNewPaymentBatch();
+                //invoiceData.createNewPaymentBatch();
                 invoiceData.insertTo(dbHelper);
                 break;
             case ORDER:
@@ -725,13 +738,14 @@ public class OfflineData extends BaseTable2 {
         String typeStr;
         switch (type) {
             case INVOICE:
-                invoiceData.createNewPaymentBatch();
+                //invoiceData.createNewPaymentBatch();
                 invoiceData.setOfflineData(this);
                 typeStr = "INVOICE";
+                if(invoiceData.getReturnId() > 0)
+                    invoiceData.setLayaway_id(invoiceData.getReturnId());
                 if( (getReturnIdList() != null && getReturnIdList().size() > 0 && getReturnIdList().get(0).length() > 0)
                         && (invoiceData.getReturnId() != Integer.parseInt(getReturnIdList().get(0))) ) {
                     //invoiceData.deleteTo(dbHelper);
-                    invoiceData.setLayaway_id(invoiceData.getReturnId());
                     invoiceData.setReturnId(Integer.parseInt(getReturnIdList().get(0)));
                 }
                 invoiceData.updateTo(dbHelper);
@@ -849,5 +863,4 @@ public class OfflineData extends BaseTable2 {
         return getReturnIdList().size() == getPagedRequestCount() &&
                 getReturnId().length() > 0 && !getReturnId().contains("@");
     }
-
 }

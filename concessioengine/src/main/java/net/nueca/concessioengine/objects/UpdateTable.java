@@ -10,6 +10,7 @@ public class UpdateTable {
     private boolean isSelected = false;
     private boolean isEnabled = true;
     private boolean isForcedSelected = false;
+    private boolean ignorePrerequisites = false;
 
     public UpdateTable(Table table) {
         this.table = table;
@@ -50,6 +51,14 @@ public class UpdateTable {
 
     public void setForcedSelected(boolean forcedSelected) {
         isForcedSelected = forcedSelected;
+    }
+
+    public boolean isIgnorePrerequisites() {
+        return ignorePrerequisites;
+    }
+
+    public void setIgnorePrerequisites(boolean ignorePrerequisites) {
+        this.ignorePrerequisites = ignorePrerequisites;
     }
 
     @Override

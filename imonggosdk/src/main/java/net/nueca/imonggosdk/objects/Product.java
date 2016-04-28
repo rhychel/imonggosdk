@@ -18,7 +18,9 @@ import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.salespromotion.Discount;
+import net.nueca.imonggosdk.tools.NumberTools;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -418,9 +420,15 @@ public class Product extends BaseTable implements Extras.DoOperationsForExtras {
     }
 
     public String getInStock() {
+        return getInStock(1, 2);
+    }
+
+    public String getInStock(double unit_quantity, int decimal_places) {
         if(inventory == null)
             return "0";
-        return inventory.getInventory();
+        BigDecimal baseInventory = new BigDecimal(inventory.getInventory());
+        BigDecimal unitQuantity = new BigDecimal(unit_quantity);
+        return NumberTools.formatDouble(baseInventory.divide(unitQuantity, decimal_places, BigDecimal.ROUND_HALF_UP).doubleValue(), decimal_places).toString();
     }
 
     public ForeignCollection<Price> getPrices() {

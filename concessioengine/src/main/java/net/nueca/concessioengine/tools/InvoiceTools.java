@@ -77,7 +77,10 @@ public class InvoiceTools {
                     else
                         discount_text = itemValue.getCustomer_discount_text();
                 }
-                if(itemValue.getSubtotal() >= 0d) {
+                double quantity = itemValue.getQuantity() == null? 0d : Double.parseDouble(itemValue.getQuantity());
+                double unit_quantity = itemValue.getUnit_quantity() == null? 0d : Double.parseDouble(itemValue.getUnit_quantity());
+
+                if(quantity >= 0d && unit_quantity >= 0d) {
                     builder.discount_text(discount_text);
 
                     Extras.Builder extrasBuilder = new Extras.Builder();
@@ -118,10 +121,13 @@ public class InvoiceTools {
                 builder.quantity(NumberTools.toBigDecimal(itemValue.getQuantity()).doubleValue());
 
                 /** Retail Price **/
-                double retail_price = itemValue.isValidUnit() ?
-                        itemValue.getRetail_price() : itemValue.getPrice() != null?
-                        itemValue.getRetail_price() : product.getRetail_price();
+                double retail_price = itemValue.getRetail_price();
                 builder.retail_price(retail_price);
+                /*Log.e("InvoiceTools", ">>>>>>>>>>>>>>>>>>>>>>");
+                Log.e("itemValue UNIT", itemValue.getUnit_name());
+                Log.e("itemValue RetailPrice", (itemValue != null && itemValue.getRetail_price() != null? ""+itemValue.getRetail_price() : "null"));
+                Log.e("product RetailPrice", ""+product.getRetail_price());
+                Log.e("InvoiceTools", "<<<<<<<<<<<<<<<<<<<<<<");*/
 
                 /** Subtotal **/
                 BigDecimal t_subtotal = new BigDecimal(itemValue.getQuantity())
@@ -138,7 +144,9 @@ public class InvoiceTools {
 
                 /** Add InvoiceLine **/
                 invoiceLines.add(builder.build());
-                Log.e("INVOICE", product.getName() + " " + t_subtotal.doubleValue() + " " + subtotal.doubleValue() + " ~ " + retail_price + " * " +
+                Log.e("INVOICE", product.getName() + " tsub=" + t_subtotal.doubleValue() + " sub=" + subtotal.doubleValue() + " ~ ret=" +
+                        retail_price +
+                        " * qty=" +
                         itemValue.getQuantity() + " -- discount: " + discount_text + " | discounted price: " +
                         DiscountTools.applyMultipleDiscounts(new BigDecimal(retail_price), NumberTools.toBigDecimal(itemValue.getQuantity()),
                                 discount_text, ",").doubleValue());
@@ -192,10 +200,19 @@ public class InvoiceTools {
             if(invoiceLine.getUnit_id() != null)
                 unit = helper.fetchObjects(Unit.class).queryBuilder().where()
                         .eq("id", invoiceLine.getUnit_id()).queryForFirst();
+            else {
+                unit = new Unit();
+                unit.setId(-1);
+                unit.setName(product.getBase_unit_name());
+                unit.setRetail_price(invoiceLine.getRetail_price());
+            }
 
             SelectedProductItem selectedProductItem = selectedProductItemList.getSelectedProductItem(product);
             if(selectedProductItem == null)
                 selectedProductItem = selectedProductItemList.initializeItem(product);
+
+            /** Inventory **/
+            selectedProductItem.setInventory(product.getInventory());
 
             /** Multiline **/
             selectedProductItem.setIsMultiline(isMultiline);
@@ -551,8 +568,8 @@ public class InvoiceTools {
         }
 
         public void addPayment(InvoicePayment payment) {
-            double balance = getRemaining().doubleValue();
-            double tender = payment.getTender();
+            double balance = NumberTools.formatDouble(getRemaining().doubleValue(), decimalPlace);
+            double tender = NumberTools.formatDouble(payment.getTender(), decimalPlace);
 
             if(tender <= balance)
                 payment.setAmount(tender);
@@ -665,7 +682,7 @@ public class InvoiceTools {
                 Double total = 0d;
                 for(InvoicePayment payment : cmPayments)
                     if(payment != null)
-                        total += payment.getAmount();
+                        total += Math.abs(payment.getAmount());
                 cmPayment.setAmount(total);
                 cmPayment.setTender(total);
                 if(total == 0d)
@@ -677,7 +694,7 @@ public class InvoiceTools {
                 Double total = 0d;
                 for(InvoicePayment payment : rsPayments)
                     if(payment != null)
-                        total += payment.getAmount();
+                        total += Math.abs(payment.getAmount());
                 rspPayment.setAmount(total);
                 rspPayment.setTender(total);
                 if(total == 0d)
@@ -685,10 +702,20 @@ public class InvoiceTools {
             }
 
             List<InvoicePayment> returnsPayments = new ArrayList<>();
-            if(cmPayment != null)
+            if(cmPayment != null) {
                 returnsPayments.add(cmPayment);
-            if(rspPayment != null)
+                InvoicePayment clone = new InvoicePayment.Builder().payment_type_id(creditMemo.getId()).build();
+                clone.setTender(cmPayment.getTender() * -1);
+                clone.setAmount(cmPayment.getAmount() * -1);
+                returnsPayments.add(clone);
+            }
+            if(rspPayment != null) {
                 returnsPayments.add(rspPayment);
+                InvoicePayment clone = new InvoicePayment.Builder().payment_type_id(rsSlip.getId()).build();
+                clone.setTender(rspPayment.getTender() * -1);
+                clone.setAmount(rspPayment.getAmount() * -1);
+                returnsPayments.add(clone);
+            }
             Log.e("RETURNS PAYMENTS", "size "+(returnsPayments.size()));
             return returnsPayments;
         }

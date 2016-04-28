@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -17,20 +18,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.nueca.concessioengine.R;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.widgets.Numpad;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by gama on 9/1/15.
  */
 public class SimplePaymentDialog extends BaseAppCompatDialog {
+
+    public interface OnPaymentDialogListener {
+        void onDismissed();
+    }
 
     private DialogType dialogType = DialogType.BASIC_PAY;
 
@@ -51,6 +61,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
     private PaymentDialogListener listener;
 
     private List<PaymentType> paymentTypes;
+    private OnPaymentDialogListener onPaymentDialogListener;
 
     private String totalAmount = "";
     private double balance = 0.0;
@@ -113,6 +124,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                 cancel();
             }
         });
+        btnCheckDate.setText(DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd"));
 
         if(invoicePayment != null) {
             etPayment.setText(String.valueOf(invoicePayment.getTender()));
@@ -166,8 +178,61 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                         Toast.makeText(getContext(), "Tender payment cannot be empty.", Toast.LENGTH_LONG).show();
                         return;
                     }
+                    PaymentType paymentType = (PaymentType) spnPaymentType.getSelectedItem();
+                    if(paymentType.getName().equals("Rewards")) {
+                        if(availablePoints <= 0d) {
+                            Toast.makeText(getContext(), "You have no available points to use a payment.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        BigDecimal bdPIP = new BigDecimal(NumberTools.formatDouble(pointsInPeso, ProductsAdapterHelper.getDecimalPlace()));
+                        BigDecimal bdPayment = new BigDecimal(NumberTools.formatDouble(Double.valueOf(etPayment.getText().toString().trim()), ProductsAdapterHelper.getDecimalPlace()));
+                        int compare = bdPIP.compareTo(bdPayment);
+
+                        Log.e("PaymentDialog", compare+"");
+                        if(compare == -1 || bdPayment.compareTo(BigDecimal.ZERO) == 0) {
+                            Toast.makeText(getContext(), "Invalid payment. Payment cannot be zero or greater than the available points.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+
+                    Extras extrasForCheck = generateExtrasForCheck();
+                    if(paymentType.getName().equals("Check")) {
+                        String checkDetails = "";
+                        List<String> details = new ArrayList<>();
+
+                        if(extrasForCheck.getBank_branch().equals(""))
+                            details.add("Bank branch");
+                        if(extrasForCheck.getCheck_name().equals(""))
+                            details.add("Check name");
+                        if(extrasForCheck.getCheck_number().equals(""))
+                            details.add("Check number");
+
+                        if(details.size() > 0) {
+                            int i = 0;
+                            for(String reason : details) {
+                                if(details.size() > 1 && i == details.size()-1)
+                                    checkDetails += " and ";
+                                if(i == 0)
+                                    checkDetails += reason;
+                                else
+                                    checkDetails += reason.toLowerCase();
+
+                                if(i < details.size()-1)
+                                    checkDetails += ", ";
+
+                                i++;
+                            }
+                            Toast.makeText(getContext(), checkDetails+(details.size() > 1 ? " are" : " is")+" required.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                    if(isButtonTapped)
+                        return;
+                    isButtonTapped = true;
+
                     if(listener != null)
-                        listener.onAddPayment((PaymentType) spnPaymentType.getSelectedItem(), etPayment.getText().toString(), generateExtrasForCheck());
+                        listener.onAddPayment((PaymentType) spnPaymentType.getSelectedItem(), etPayment.getText().toString(), extrasForCheck);
                     dismiss();
                 }
             });
@@ -295,6 +360,8 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
     @Override
     public void cancel() {
         super.cancel();
+        if(onPaymentDialogListener != null)
+            onPaymentDialogListener.onDismissed();
         if(npInput != null)
             npInput.setIsFirstErase(true);
     }
@@ -321,5 +388,9 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
 
     public void setInvoicePayment(InvoicePayment invoicePayment) {
         this.invoicePayment = invoicePayment;
+    }
+
+    public void setOnPaymentDialogListener(OnPaymentDialogListener onPaymentDialogListener) {
+        this.onPaymentDialogListener = onPaymentDialogListener;
     }
 }

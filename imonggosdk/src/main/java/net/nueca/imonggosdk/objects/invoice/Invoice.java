@@ -83,11 +83,17 @@ public class Invoice extends BaseTransactionTable3 {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "branch_id")
     protected transient Branch branch;
 
+    @Deprecated
     @DatabaseField
     protected Integer currentPaymentBatchNo = 0;
 
-    @DatabaseField
-    protected transient Integer layaway_id;
+    //@DatabaseField
+    //protected Integer paymentBatch;
+
+    @Expose
+    //@DatabaseField
+    //protected Integer paymentBatch;
+    protected Integer layaway_id;
 
     public Invoice() {}
 
@@ -190,7 +196,10 @@ public class Invoice extends BaseTransactionTable3 {
             rgs_invoice_lines = new ArrayList<>();
             return_invoice_lines = new ArrayList<>();
             for(InvoiceLine invoiceLine : getInvoiceLines()) {
+                Log.e("INvoice line", invoiceLine.getLine_no()+"<--");
                 if(invoiceLine.getUnit_quantity() != null && invoiceLine.getUnit_quantity() < 0) {
+                    Log.e("Invoice line with unit", invoiceLine.getExtras()+"<--"+invoiceLine.getProduct_id());
+
                     return_invoice_lines.add(invoiceLine);
                     if(invoiceLine.getExtras().getIs_bad_stock())
                         bo_invoice_lines.add(invoiceLine);
@@ -198,6 +207,8 @@ public class Invoice extends BaseTransactionTable3 {
                         rgs_invoice_lines.add(invoiceLine);
                 }
                 else if(invoiceLine.getQuantity() < 0) {
+                    Log.e("Invoice line w/o unit", invoiceLine.getExtras()+"<--");
+
                     return_invoice_lines.add(invoiceLine);
                     if(invoiceLine.getExtras().getIs_bad_stock())
                         bo_invoice_lines.add(invoiceLine);
@@ -307,6 +318,10 @@ public class Invoice extends BaseTransactionTable3 {
     public boolean shouldPageRequest() {
         refresh();
         return false;
+    }
+
+    public Invoice createClone() throws JSONException {
+        return fromJSONObject(toJSONObject());
     }
 
     @Override
@@ -580,14 +595,17 @@ public class Invoice extends BaseTransactionTable3 {
         }
     }
 
+    @Deprecated
     public Integer getCurrentPaymentBatchNo() {
         return currentPaymentBatchNo;
     }
 
+    @Deprecated
     public void setCurrentPaymentBatchNo(Integer currentPaymentBatchNo) {
         this.currentPaymentBatchNo = currentPaymentBatchNo;
     }
 
+    @Deprecated
     public boolean updateCurrentPaymentBatch() {
         refresh();
         boolean hasNewPaymentBatch = false;
@@ -603,6 +621,7 @@ public class Invoice extends BaseTransactionTable3 {
         return hasNewPaymentBatch;
     }
 
+    @Deprecated
     public boolean createNewPaymentBatch() {
         if(!updateCurrentPaymentBatch())
             return false;
@@ -615,6 +634,7 @@ public class Invoice extends BaseTransactionTable3 {
         return updateCurrentPaymentBatch();
     }
 
+    @Deprecated
     public void joinAllNewToCurrentPaymentBatch() {
         for(InvoicePayment payment : payments) {
             if(payment.getPaymentBatchNo() == null) {
@@ -623,6 +643,7 @@ public class Invoice extends BaseTransactionTable3 {
         }
     }
 
+    @Deprecated
     public List<InvoicePayment> getNewBatchPayment() {
         refresh();
         List<InvoicePayment> payments = new ArrayList<>();
@@ -636,6 +657,23 @@ public class Invoice extends BaseTransactionTable3 {
         return payments;
     }
 
+    public List<InvoicePayment> getUnmarkedPayments() {
+        refresh();
+        List<InvoicePayment> payments = new ArrayList<>();
+        for(InvoicePayment payment : this.payments) {
+            if (payment.getPaymentBatchNo() == null)
+                payments.add(payment);
+        }
+        return payments;
+    }
+
+    public void markSentPayment(Integer invoiceId) {
+        for(InvoicePayment payment : this.payments) {
+            if (payment.getPaymentBatchNo() == null)
+                payment.setPaymentBatchNo(invoiceId);
+        }
+    }
+
     public Integer getLayaway_id() {
         return layaway_id;
     }
@@ -644,4 +682,11 @@ public class Invoice extends BaseTransactionTable3 {
         this.layaway_id = layaway_id;
     }
 
+    public boolean hasPaymentType(PaymentType paymentType) {
+        refresh();
+        for(InvoicePayment payment : payments)
+            if(payment.getPayment_type_id() == paymentType.getId())
+                return true;
+        return false;
+    }
 }

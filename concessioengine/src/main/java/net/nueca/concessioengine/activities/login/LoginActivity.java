@@ -10,6 +10,7 @@ import android.widget.EditText;
 import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.DialogType;
+import net.nueca.imonggosdk.enums.LoginState;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.LoginListener;
@@ -53,6 +54,26 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
                     (Button) findViewById(R.id.btnLogin));
 
             setIsUsingDefaultLoginLayout(true);
+        }
+
+        Log.e(TAG, "isUnlinked: " + isUnlinked() + "\nisLoggedIn: " + isLoggedIn() + "\nisLogout: " + isLogout());
+
+        // LOGOUT
+        if(isUnlinked() && isLogout()) {
+            getAccountIDEditText().setEnabled(false);
+
+            // log AccountID
+/*
+            try {
+                Log.e(TAG, "App is Linked. Account ID: " + getSession().getAccount_id());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+*/
+        }
+
+        if(isUnlinked() && !isLoggedIn()) {
+            Log.e(TAG, "App is Unlinked.. ");
         }
 
         try {
@@ -111,9 +132,8 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             setRequireConcessioSettings(false);
             setUnlinked(AccountTools.isUnlinked(this));
-            setLoggedIn(AccountTools.isLoggedIn(getHelper()));
             setIsUsingDefaultLoginLayout(true);
-            if(getSession() == null) {
+            if (getSession() == null) {
                 setUnlinked(true);
             }
         } catch (SQLException e) {
@@ -131,20 +151,17 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             // Account is unlinked and user is logout
             if (AccountTools.isUnlinked(this) && !AccountTools.isLoggedIn(getHelper())) {
                 setUnlinked(true);
-                setLoggedIn(false);
             }
             // Account is Linked
             if (!AccountTools.isUnlinked(this)) {
                 // if user is logout
                 if (!AccountTools.isLoggedIn(getHelper())) {
                     setUnlinked(false);
-                    setLoggedIn(false);
                 }
                 // if User is Logged In
                 if (AccountTools.isLoggedIn(getHelper())) {
                     if (!isSyncFinished()) { // Sync is not finished, unlinking account
                         getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, true);
-                        setLoggedIn(false);
                         setUnlinked(true);
                         unlinkAccount();
                     } else {
@@ -153,11 +170,9 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
                         setLoginSession(getSession()); // user is logged in set up data
 
                         if (!getLoginSession().getApiAuthentication().equals("")) { // User is authenticated
-                            setLoggedIn(true);
                             // check if sessions email exist in user's database
                             if (getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
                                 //LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
-                                setLoggedIn(false);
                                 setUnlinked(true);
                                 unlinkAccount();
                             } else {
@@ -179,12 +194,12 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
     @Override
     protected void showNextActivityAfterLogin() {
-
+        hideCustomDialog();
     }
 
     @Override
     public void onLogoutAccount() {
-
+     getSyncModules().setInitialSync();
     }
 
     @Override
@@ -208,16 +223,16 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     }
 
     @Override
-    protected void showCustomDownloadDialog() {
+    protected void showCustomDownloadDialog(String title) {
         if (isUsingDefaultCustomDialogForSync()) {
             setIsUsingDefaultLoginLayout(true);
             //createNewCustomDialogFrameLayout(LoginActivity.this, getModulesToSync());
             createNewCustomDialogFrameLayout(getTableToSync(), LoginActivity.this);
             createNewCustomDialog(LoginActivity.this, R.style.LoginTheme_DialogFrameLayout);
-            if(isAutoUpdate())
-                setCustomDialogTitle(getString(R.string.FETCHING_MODULE_TITLE));
-            else
-                setCustomDialogTitle(getString(R.string.UPDATING_MODULE_TITLE));
+
+            setCustomDialogTitle(title);
+
+
             setCustomDialogContentView(getCustomDialogFrameLayout());
             setCustomDialogCancelable(false);
             showCustomDialog();

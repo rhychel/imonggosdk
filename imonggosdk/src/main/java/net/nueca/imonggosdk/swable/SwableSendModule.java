@@ -2,11 +2,13 @@ package net.nueca.imonggosdk.swable;
 
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 
 import net.nueca.imonggosdk.R;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.OfflineDataType;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
@@ -16,10 +18,14 @@ import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.objects.invoice.RewardPayment;
 import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NotificationTools;
+import net.nueca.imonggosdk.tools.PointsTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +43,10 @@ public class SwableSendModule extends BaseSwableModule {
     }
 
     public void sendTransaction(Table table, final OfflineData offlineData) {
-        QUEUED_TRANSACTIONS++;
+        if(queueTracker.containsKey(offlineData.getId()))
+            return;
+        queueTracker.put(offlineData.getId(), offlineData);
+        //QUEUED_TRANSACTIONS++;
         Log.e("SwableSendModule", "sendTransaction " + table.getStringName() + " " + offlineData.getType());
         //Log.e("SwableSendModule", "sendTransaction " + offlineData.getObjectFromData().toString());
         try {
@@ -54,7 +63,8 @@ public class SwableSendModule extends BaseSwableModule {
                     if (offlineData.getObjectFromData() == null) {
                         Log.e("ImonggoSwable", "sending error : object is null ~ deleting offlinedata");
                         offlineData.deleteTo(dbHelper);
-                        QUEUED_TRANSACTIONS--;
+                        queueTracker.remove(offlineData.getId());
+                        //QUEUED_TRANSACTIONS--;
                         return;
                     }
                     sendFirstPage(table, offlineData);
@@ -78,14 +88,19 @@ public class SwableSendModule extends BaseSwableModule {
                 }
             }
             JSONObject jsonObject;
+
+            //final List<Integer> forSendingBatch = new ArrayList<>();
+
             if(offlineData.getType() == OfflineData.INVOICE) {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
-                //invoice.createNewPaymentBatch();
-                //invoice.updateTo(dbHelper);
-                invoice.joinAllNewToCurrentPaymentBatch();
                 Log.e("Customer", invoice.getCustomer() == null? "null" : invoice.getCustomer().getId() + " "
                         + invoice.getCustomer().getReturnId());
-                //invoice.setPayments(invoice.getNewBatchPayment());
+                invoice.setPayments(invoice.getUnmarkedPayments());
+                if(invoice.getPayments().size() == 0) { // no more unmarked payments
+                    sendPointsDeduction(offlineData);
+                    return;
+                }
+
                 jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         invoice.toJSONObject());
             }
@@ -94,194 +109,241 @@ public class SwableSendModule extends BaseSwableModule {
                         offlineData.getData());
             }
             Log.e("SwableSendModule", "sendTransaction : non-paging : "+jsonObject.toString());
-            //Log.e("JSON", jsonObject.toString());
 
             requestQueue.cancelAll(offlineData.getId());
             requestQueue.add(
                     HTTPRequests.sendPOSTRequest(imonggoSwable, session, new VolleyRequestListener() {
-                        @Override
-                        public void onStart(Table table, RequestType requestType) {
-                            offlineData.setSyncing(true);
-                            offlineData.setStatusLog("syncing started");
+                                @Override
+                                public void onStart(Table table, RequestType requestType) {
+                                    offlineData.setSyncing(true);
+                                    offlineData.setStatusLog("syncing started");
 
-                            Log.e("ImonggoSwable", "sending : started -- Transaction Type: " +
-                                    offlineData.getObjectFromData().getClass().getSimpleName() +
-                                    " - with RefNo '" + offlineData.getReference_no() + "'");
+                                    Log.e("ImonggoSwable", "sending : started -- Transaction Type: " +
+                                            offlineData.getObjectFromData().getClass().getSimpleName() +
+                                            " - with RefNo '" + offlineData.getReference_no() + "'");
 
-                            if (imonggoSwable.getSwableStateListener() != null)
-                                imonggoSwable.getSwableStateListener().onSyncing(offlineData);
-                        }
-
-                        @Override
-                        public void onSuccess(Table table, RequestType requestType, Object response) {
-                            QUEUED_TRANSACTIONS--;
-                            AccountTools.updateUserActiveStatus(imonggoSwable, true);
-
-                            Log.e("ImonggoSwable", "sending success : " + response);
-                            try {
-                                offlineData.setSyncing(false);
-                                offlineData.setQueued(false);
-                                offlineData.setStatusLog("sending success");
-
-                                if (response instanceof JSONObject) {
-                                    JSONObject responseJson = ((JSONObject) response);
-                                    if (responseJson.has("id")) {
-                                        Log.d("ImonggoSwable", "sending success : return ID : " +
-                                                responseJson.getString("id"));
-                                        offlineData.setReturnId(responseJson.getString("id"));
-                                    }
-                                    if (offlineData.getType() == OfflineData.INVOICE && responseJson.has("customer_points")) {
-                                        Invoice invoice = offlineData.getObjectFromData(Invoice.class);
-                                        Customer customer = invoice.getCustomer();
-                                        customer.setAvailable_points(responseJson.getString("customer_points"));
-                                        customer.updateTo(dbHelper);
-                                    }
-                                }
-
-                                offlineData.setSynced(true);
-                                Log.e("SwableSendModule " + 120, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
-                                offlineData.updateTo(dbHelper);
-
-                                if (imonggoSwable.getSwableStateListener() != null && offlineData.isSynced())
-                                    imonggoSwable.getSwableStateListener().onSynced(offlineData);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }/* catch (SQLException e) {
-                            e.printStackTrace();
-                        }*/
-
-                            if (offlineData.isSynced()) {
-                                SUCCESS_TRANSACTIONS++;
-                                Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
-                                if(offlineData.getOfflineDataTransactionType().isVoiding()) {
-                                    offlineData.setSynced(false);
-                                    Log.e("SwableSendModule " + 137, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                     offlineData.updateTo(dbHelper);
+                                    if (imonggoSwable.getSwableStateListener() != null)
+                                        imonggoSwable.getSwableStateListener().onSyncing(offlineData);
                                 }
-                            }
-                            Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
-                            if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
-                                NotificationTools.postNotification(imonggoSwable,
-                                        ImonggoSwable.NOTIFICATION_ID,
-                                        APP_ICON_DRAWABLE,
-//                                        imonggoSwable.getNotificationIcon(),
-                                        imonggoSwable.getResources().getString(R.string.app_name),
-                                        SUCCESS_TRANSACTIONS +" transaction" +
-                                                (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent",
-                                        null,
-                                        imonggoSwable.getPendingIntent());
-                        }
 
-                        @Override
-                        public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                            QUEUED_TRANSACTIONS--;
-                            Log.e("ImonggoSwable", "sending failed : isConnected? " + hasInternet + " : error [" +
-                                    responseCode + "] : " + response);
+                                @Override
+                                public void onSuccess(Table table, RequestType requestType, Object response) {
+                                    queueTracker.remove(offlineData.getId());
+                                    //QUEUED_TRANSACTIONS--;
+                                    AccountTools.updateUserActiveStatus(imonggoSwable, true);
 
-                            offlineData.setSyncing(false);
-                            offlineData.setQueued(false);
-                            offlineData.setStatusLog("sending failed : isConnected? " + hasInternet + " : error [" +
-                                    responseCode + "] : " + response);
+                                    Log.e("ImonggoSwable", "sending success : " + response);
+                                    try {
+                                        offlineData.setSyncing(false);
+                                        offlineData.setQueued(false);
+                                        offlineData.setStatusLog("sending success");
 
-                            try {
-                                if (responseCode == ImonggoSwable.UNPROCESSABLE_ENTRY) {
-                                    if (response instanceof String) {
-                                        String errorMsg = ((String) response).toLowerCase();
-                                        if (errorMsg.contains("reference has already been taken")) {
-                                            offlineData.setSynced(true);
-                                            offlineData.setForConfirmation(true);
+                                        if (response instanceof JSONObject) {
+                                            JSONObject responseJson = ((JSONObject) response);
+                                            if (responseJson.has("id")) {
+                                                Log.d("ImonggoSwable", "sending success : return ID : " +
+                                                        responseJson.getString("id"));
+                                                offlineData.setReturnId(responseJson.getString("id"));
 
-                                            if (errorMsg.contains("order id")) {
-                                                String orderId = errorMsg.substring(
-                                                        errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
-                                                );
-                                                Log.e("STR : SEND_ORDER ID", orderId);
-                                                offlineData.setReturnId(orderId);
-                                            } else if (errorMsg.contains("document id")) {
-                                                String documentId = errorMsg.substring(
-                                                        errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
-                                                );
-                                                Log.e("STR : SEND_DOCUMENT ID", documentId);
-                                                offlineData.setReturnId(documentId);
-                                            }
-                                        }
-                                        if (errorMsg.contains("not a valid writable field")) {
-                                            offlineData.setSynced(false);
-                                            offlineData.setCancelled(true);
-                                        }
-                                    } else if (response instanceof JSONObject) {
-                                        JSONObject responseJson = (JSONObject) response;
-                                        if (responseJson.has("error")) {
-                                            String errorMsg = responseJson.getString("error").toLowerCase();
-
-                                            if (errorMsg.contains("reference has already been taken")) {
-                                                offlineData.setSynced(true);
-                                                offlineData.setForConfirmation(true);
-
-                                                if (errorMsg.contains("order id")) {
-                                                    String orderId = errorMsg.substring(
-                                                            errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
-                                                    );
-                                                    Log.e("JSON : SEND_ORDER ID", orderId);
-                                                    offlineData.setReturnId(orderId);
-                                                } else if (errorMsg.contains("document id")) {
-                                                    String documentId = errorMsg.substring(
-                                                            errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
-                                                    );
-                                                    Log.e("STR : SEND_DOCUMENT ID", documentId);
-                                                    offlineData.setReturnId(documentId);
+                                                if (offlineData.getType() == OfflineData.INVOICE) {
+                                                    Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                                    invoice.markSentPayment(Integer.parseInt(responseJson.getString("id")));
+                                                    invoice.updateTo(dbHelper);
                                                 }
                                             }
-                                            if (errorMsg.contains("not a valid writable field")) {
-                                                offlineData.setSynced(false);
-                                                offlineData.setCancelled(true);
+                                            if (offlineData.getType() == OfflineData.INVOICE && responseJson.has("customer_points")) {
+                                                Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                                Customer customer = invoice.getCustomer();
+                                                customer.setAvailable_points(responseJson.getString("customer_points"));
+                                                customer.updateTo(dbHelper);
                                             }
                                         }
+
+                                        offlineData.setSynced(true);
+                                        // for points deduction
+                                        if(offlineData.getType() == OfflineData.INVOICE && offlineData.isSynced()) {
+                                            offlineData.setSynced(false);
+                                            Log.e("SwableSendModule " + 174, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
+                                            offlineData.updateTo(dbHelper);
+                                            if(sendPointsDeduction(offlineData))
+                                                return;
+                                            offlineData.setSynced(true);
+                                        }
+
+                                        Log.e("SwableSendModule " + 181, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
+                                        offlineData.updateTo(dbHelper);
+
+                                        /*if (imonggoSwable.getSwableStateListener() != null && offlineData.isSynced())
+                                            imonggoSwable.getSwableStateListener().onSynced(offlineData);*/
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
-                                } else if (responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS) {
-                                    offlineData.setSynced(true);
+
+                                    if (offlineData.isSynced()) {
+                                        SUCCESS_TRANSACTIONS++;
+                                        Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
+                                        if (offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                            offlineData.setSynced(false);
+                                            Log.e("SwableSendModule " + 137, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
+                                            offlineData.updateTo(dbHelper);
+                                        } else {
+                                            if (imonggoSwable.getSwableStateListener() != null)
+                                                imonggoSwable.getSwableStateListener().onSynced(offlineData);
+                                        }
+                                    }
+                                    Log.e("REQUEST", getQueueTrackerCount() + " " + SUCCESS_TRANSACTIONS);
+                                    if (offlineData.isSynced() && getQueueTrackerCount() == 0) {
+                                        NotificationTools.postNotification(imonggoSwable,
+                                                ImonggoSwable.NOTIFICATION_ID,
+                                                APP_ICON_DRAWABLE,
+//                                        imonggoSwable.getNotificationIcon(),
+                                                imonggoSwable.getResources().getString(R.string.app_name),
+                                                SUCCESS_TRANSACTIONS + " transaction" +
+                                                        (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent",
+                                                null,
+                                                imonggoSwable.getPendingIntent());
+                                    }
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            Log.e("SwableSendModule " + 225, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
-                            offlineData.updateTo(dbHelper);
 
-                            if (imonggoSwable.getSwableStateListener() != null) {
-                                if (responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS) {
-                                    AccountTools.updateUserActiveStatus(imonggoSwable, false);
-                                    imonggoSwable.getSwableStateListener().onUnauthorizedAccess(response, responseCode);
-                                } else
-                                    imonggoSwable.getSwableStateListener().onSyncProblem(offlineData, hasInternet, response, responseCode);
-                            }
+                                @Override
+                                public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                                    queueTracker.remove(offlineData.getId());
+                                    //QUEUED_TRANSACTIONS--;
+                                    Log.e("ImonggoSwable", "sending failed : isConnected? " + hasInternet + " : error [" +
+                                            responseCode + "] : " + response);
 
-                            if (offlineData.isSynced() && responseCode != ImonggoSwable.UNAUTHORIZED_ACCESS) {
-                                SUCCESS_TRANSACTIONS++;
-                                Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
-                                if(offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                    offlineData.setSyncing(false);
+                                    offlineData.setQueued(false);
+                                    offlineData.setStatusLog("sending failed : isConnected? " + hasInternet + " : error [" +
+                                            responseCode + "] : " + response);
+
+                                    try {
+                                        if (responseCode == ImonggoSwable.UNPROCESSABLE_ENTRY) {
+                                            if (response instanceof String) {
+                                                String errorMsg = ((String) response).toLowerCase();
+
+                                                if (errorMsg.contains("reference has already been taken")) {
+                                                    offlineData.setSynced(true);
+                                                    offlineData.setForConfirmation(true);
+
+                                                    if (errorMsg.contains("order id") || errorMsg.contains("document id") || errorMsg.contains
+                                                            ("invoice id")) {
+                                                        String id = errorMsg.substring(
+                                                                errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
+                                                        );
+                                                        offlineData.setReturnId(id);
+                                                    }
+                                                }
+                                                if (errorMsg.contains("not a valid writable field")) {
+                                                    offlineData.setSynced(false);
+                                                    offlineData.setCancelled(true);
+                                                }
+                                                if (errorMsg.contains("already posted for this layaway")) {
+                                                    offlineData.setSynced(true);
+                                                    //offlineData.setForConfirmation(true);
+
+                                                    String layawayId = errorMsg.substring(
+                                                            errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
+                                                    );
+                                                    offlineData.setReturnId(layawayId);
+                                                    Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                                    invoice.markSentPayment(Integer.parseInt(layawayId));
+                                                    invoice.updateTo(dbHelper);
+                                                }
+                                            } else if (response instanceof JSONObject) {
+                                                JSONObject responseJson = (JSONObject) response;
+                                                if (responseJson.has("error")) {
+                                                    String errorMsg = responseJson.getString("error").toLowerCase();
+
+                                                    if (errorMsg.contains("reference has already been taken")) {
+                                                        offlineData.setSynced(true);
+                                                        offlineData.setForConfirmation(true);
+
+                                                        if (errorMsg.contains("order id") || errorMsg.contains("document id") || errorMsg.contains
+                                                                ("invoice id")) {
+                                                            String id = errorMsg.substring(
+                                                                    errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
+                                                            );
+                                                            offlineData.setReturnId(id);
+                                                        }
+                                                    }
+                                                    if (errorMsg.contains("not a valid writable field")) {
+                                                        offlineData.setSynced(false);
+                                                        offlineData.setCancelled(true);
+                                                    }
+                                                    if (errorMsg.contains("already posted for this layaway")) {
+                                                        offlineData.setSynced(true);
+                                                        //offlineData.setForConfirmation(true);
+
+                                                        String layawayId = errorMsg.substring(
+                                                                errorMsg.indexOf("[") + 1, errorMsg.indexOf("]")
+                                                        );
+                                                        offlineData.setReturnId(layawayId);
+                                                        Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                                        invoice.markSentPayment(Integer.parseInt(layawayId));
+                                                        invoice.updateTo(dbHelper);
+                                                    }
+                                                }
+                                            }
+                                        } else if (responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS) {
+                                            offlineData.setSynced(true);
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    // for points deduction
+                                    if(offlineData.getType() == OfflineData.INVOICE && offlineData.isSynced()) {
+                                        offlineData.setSynced(false);
+                                        Log.e("SwableSendModule " + 302, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
+                                        offlineData.updateTo(dbHelper);
+                                        if(sendPointsDeduction(offlineData))
+                                            return;
+                                        offlineData.setSynced(true);
+                                    }
+                                    Log.e("SwableSendModule " + 308, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
+                                    offlineData.updateTo(dbHelper);
+
+                                    if (imonggoSwable.getSwableStateListener() != null) {
+                                        if (responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS) {
+                                            AccountTools.updateUserActiveStatus(imonggoSwable, false);
+                                            imonggoSwable.getSwableStateListener().onUnauthorizedAccess(response, responseCode);
+                                        } else
+                                            imonggoSwable.getSwableStateListener().onSyncProblem(offlineData, hasInternet, response, responseCode);
+                                    }
+
+                                    if (offlineData.isSynced() && responseCode != ImonggoSwable.UNAUTHORIZED_ACCESS) {
+                                        SUCCESS_TRANSACTIONS++;
+                                        Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
+                                        if (offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                            offlineData.setSynced(false);
+                                            Log.e("SwableSendModule " + 241, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
+                                            offlineData.updateTo(dbHelper);
+                                        } else {
+                                            if (imonggoSwable.getSwableStateListener() != null)
+                                                imonggoSwable.getSwableStateListener().onSynced(offlineData);
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onRequestError() {
+                                    queueTracker.remove(offlineData.getId());
+                                    //QUEUED_TRANSACTIONS--;
+                                    Log.e("ImonggoSwable", "sending failed : request error");
+                                    offlineData.setSyncing(false);
+                                    offlineData.setQueued(false);
                                     offlineData.setSynced(false);
-                                    Log.e("SwableSendModule " + 241, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
+                                    offlineData.setStatusLog("request error");
+                                    Log.e("SwableSendModule " + 255, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                     offlineData.updateTo(dbHelper);
                                 }
-                            }
-                        }
-
-                        @Override
-                        public void onRequestError() {
-                            QUEUED_TRANSACTIONS--;
-                            Log.e("ImonggoSwable", "sending failed : request error");
-                            offlineData.setSyncing(false);
-                            offlineData.setQueued(false);
-                            offlineData.setSynced(false);
-                            offlineData.setStatusLog("request error");
-                            Log.e("SwableSendModule " + 255, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
-                            offlineData.updateTo(dbHelper);
-                        }
-                    }, session.getServer(), table, jsonObject, (offlineData.getType() != OfflineData.CUSTOMER?
-                            "?branch_id="+ offlineData.getBranch_id() + offlineData.getParameters() :
-                            offlineData.getParametersAsFirstParameter() )
-                    ).setTag(offlineData.getId())
+                            }, session.getServer(), table, jsonObject, (offlineData.getType() != OfflineData.CUSTOMER ?
+                                    "?branch_id=" + offlineData.getBranch_id() + offlineData.getParameters() :
+                                    offlineData.getParametersAsFirstParameter())
+                    ).setTag(offlineData.getId()).setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT))
             );
         } catch (JSONException e) {
             e.printStackTrace();
@@ -404,7 +466,7 @@ public class SwableSendModule extends BaseSwableModule {
                                 SUCCESS_TRANSACTIONS++;
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
 
-                                if (parent.isSynced() && QUEUED_TRANSACTIONS == 0)
+                                if (parent.isSynced() && getQueueTrackerCount() == 0)
                                     NotificationTools.postNotification(imonggoSwable,
                                             ImonggoSwable.NOTIFICATION_ID,
                                             APP_ICON_DRAWABLE,
@@ -576,7 +638,8 @@ public class SwableSendModule extends BaseSwableModule {
 
                     @Override
                     public void onSuccess(Table table, RequestType requestType, Object response) {
-                        QUEUED_TRANSACTIONS--;
+                        queueTracker.remove(offlineData.getId());
+                        //QUEUED_TRANSACTIONS--;
                         AccountTools.updateUserActiveStatus(imonggoSwable, true);
 
                         Log.e("ImonggoSwable", "sending success [" + page + "] : " + response);
@@ -607,7 +670,8 @@ public class SwableSendModule extends BaseSwableModule {
 
                     @Override
                     public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                        QUEUED_TRANSACTIONS--;
+                        queueTracker.remove(offlineData.getId());
+                        //QUEUED_TRANSACTIONS--;
                         Log.e("ImonggoSwable", "sending failed [" + page + "] : isConnected? " + hasInternet + " : error [" +
                                 responseCode + "] : " + response);
 
@@ -689,7 +753,8 @@ public class SwableSendModule extends BaseSwableModule {
 
                     @Override
                     public void onRequestError() {
-                        QUEUED_TRANSACTIONS--;
+                        queueTracker.remove(offlineData.getId());
+                        //QUEUED_TRANSACTIONS--;
                         Log.e("ImonggoSwable", "sending failed [" + page + "] : request error");
                         offlineData.setSyncing(false);
                         offlineData.setQueued(false);
@@ -815,10 +880,13 @@ public class SwableSendModule extends BaseSwableModule {
                                     offlineData.setSynced(false);
                                     Log.e("SwableSendModule " + 784, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                     offlineData.updateTo(dbHelper);
+                                } else {
+                                    if (imonggoSwable.getSwableStateListener() != null)
+                                        imonggoSwable.getSwableStateListener().onSynced(offlineData);
                                 }
                             }
-                            Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
-                            if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
+                            Log.e("REQUEST", getQueueTrackerCount() + " " + SUCCESS_TRANSACTIONS);
+                            if (offlineData.isSynced() && getQueueTrackerCount() == 0)
                                 NotificationTools.postNotification(imonggoSwable,
                                         ImonggoSwable.NOTIFICATION_ID,
                                         APP_ICON_DRAWABLE,
@@ -953,6 +1021,9 @@ public class SwableSendModule extends BaseSwableModule {
                                 offlineData.setSynced(false);
                                 Log.e("SwableSendModule " + 921, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                 offlineData.updateTo(dbHelper);
+                            } else {
+                                if (imonggoSwable.getSwableStateListener() != null)
+                                    imonggoSwable.getSwableStateListener().onSynced(offlineData);
                             }
                         }
                     }
@@ -970,5 +1041,176 @@ public class SwableSendModule extends BaseSwableModule {
                 }, session.getServer(), table, jsonObject, id, offlineData.getBranch_id(), page == maxpage, offlineData
                         .getParameters()).setTag(offlineData.getId()+ "-" +page)
         );
+    }
+
+    /** return FALSE if no points deduction request was made **/
+    private boolean sendPointsDeduction(final OfflineData offlineData) {
+        try {
+            if(offlineData.getOfflineDataTransactionType() == OfflineDataType.CANCEL_INVOICE) {
+                Log.e("SwableSendModule", "sendPointsDeduction ~ INVOICE will be voided after send");
+                return false;
+            }
+
+            if(offlineData.getType() != OfflineData.INVOICE) {
+                Log.e("SwableSendModule", "sendPointsDeduction ~ not an INVOICE");
+                return false;
+            }
+
+            PaymentType rewardsPaymentType = PointsTools.getRewardsPointsPaymentType(dbHelper);
+            if(rewardsPaymentType == null) {
+                Log.e("SwableSendModule", "sendPointsDeduction ~ no Rewards/Points Payment Type");
+                return false;
+            }
+
+            SalesPromotion salesPromotion = PointsTools.getPointSalesPromotion(dbHelper);
+            if(salesPromotion == null || salesPromotion.getSettings() == null) {
+                Log.e("SwableSendModule", "sendPointsDeduction ~ invalid Sales Promotion");
+                return false;
+            }
+
+            Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+            if(!invoice.hasPaymentType(rewardsPaymentType)) {
+                Log.e("SwableSendModule", "sendPointsDeduction ~ INVOICE does not have Rewards/Points Payment");
+                return false;
+            }
+
+            if(queueTracker.containsKey(offlineData.getId())) {
+                Log.e("SwableSendModule", "sendPointsDeduction ~ offlineData is already in QUEUE");
+                return false;
+            }
+            queueTracker.put(offlineData.getId(), offlineData);
+
+            final RewardPayment rewardPayment = new RewardPayment(invoice, invoice.getCustomer(),
+                    1 / salesPromotion.getSettings().getConversion_to_currency(), rewardsPaymentType);
+
+            Log.e(getClass().getSimpleName(), "JSONString ~ " + rewardPayment.toJSONString());
+            Log.e(getClass().getSimpleName(), "Raw Object ~ " + new Gson().toJson(rewardPayment));
+
+            requestQueue.cancelAll(offlineData.getId()+ "RP");
+            requestQueue.add(
+                    HTTPRequests.sendPOSTRequest(imonggoSwable, session, new VolleyRequestListener() {
+                        @Override
+                        public void onStart(Table table, RequestType requestType) {
+                            Log.e("ImonggoSwable", "sending : started -- Transaction Type: Rewards Points Deduction" +
+                                    " - with RefNo '" + rewardPayment.getParentReference() + "'");
+                        }
+
+                        @Override
+                        public void onSuccess(Table table, RequestType requestType, Object response) {
+                            queueTracker.remove(offlineData.getId());
+                            Log.e("ImonggoSwable", "sending success : " + response);
+                            try {
+                                if (response instanceof JSONObject) {
+                                    JSONObject responseJson = ((JSONObject) response);
+                                    if (responseJson.has("points_available")) {
+                                        Customer customer = rewardPayment.getCustomer();
+                                        customer.setAvailable_points(responseJson.getString("points_available"));
+                                        customer.updateTo(dbHelper);
+                                    }
+                                }
+
+                                offlineData.setSynced(true);
+                                offlineData.updateTo(dbHelper);
+
+                                if (imonggoSwable.getSwableStateListener() != null && offlineData.isSynced())
+                                    imonggoSwable.getSwableStateListener().onSynced(offlineData);
+
+                                if (offlineData.isSynced()) {
+                                    SUCCESS_TRANSACTIONS++;
+                                    Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
+                                    if (offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                        offlineData.setSynced(false);
+                                        offlineData.updateTo(dbHelper);
+                                    }
+                                }
+                                Log.e("REQUEST", getQueueTrackerCount() + " " + SUCCESS_TRANSACTIONS);
+                                if (offlineData.isSynced() && getQueueTrackerCount() == 0) {
+                                    NotificationTools.postNotification(imonggoSwable,
+                                            ImonggoSwable.NOTIFICATION_ID,
+                                            APP_ICON_DRAWABLE,
+//                                        imonggoSwable.getNotificationIcon(),
+                                            imonggoSwable.getResources().getString(R.string.app_name),
+                                            SUCCESS_TRANSACTIONS + " transaction" +
+                                                    (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent",
+                                            null,
+                                            imonggoSwable.getPendingIntent());
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                            queueTracker.remove(offlineData.getId());
+                            Log.e("ImonggoSwable", "sending failed : isConnected? " + hasInternet + " : error [" +
+                                    responseCode + "] : " + response);
+                            try {
+                                if (responseCode == ImonggoSwable.UNPROCESSABLE_ENTRY) {
+                                    if (response instanceof String) {
+                                        String errorMsg = ((String) response).toLowerCase();
+                                        JSONObject responseJson = new JSONObject(errorMsg);
+
+                                        if (responseJson.has("points_available")) {
+                                            Customer customer = rewardPayment.getCustomer();
+                                            customer.setAvailable_points(responseJson.getString("points_available"));
+                                            customer.updateTo(dbHelper);
+                                            offlineData.setSynced(true);
+                                        }
+                                    } else if (response instanceof JSONObject) {
+                                        JSONObject responseJson = (JSONObject) response;
+
+                                        if (responseJson.has("points_available")) {
+                                            Customer customer = rewardPayment.getCustomer();
+                                            customer.setAvailable_points(responseJson.getString("points_available"));
+                                            customer.updateTo(dbHelper);
+                                            offlineData.setSynced(true);
+                                        }
+                                    }
+                                }
+
+                                offlineData.updateTo(dbHelper);
+
+                                if (imonggoSwable.getSwableStateListener() != null) {
+                                    if (responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS) {
+                                        AccountTools.updateUserActiveStatus(imonggoSwable, false);
+                                        imonggoSwable.getSwableStateListener().onUnauthorizedAccess(response, responseCode);
+                                    } else
+                                        imonggoSwable.getSwableStateListener().onSyncProblem(offlineData, hasInternet, response, responseCode);
+                                }
+
+                                if (offlineData.isSynced() && responseCode != ImonggoSwable.UNAUTHORIZED_ACCESS) {
+                                    SUCCESS_TRANSACTIONS++;
+                                    Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
+                                    if (offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                        offlineData.setSynced(false);
+                                        offlineData.updateTo(dbHelper);
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onRequestError() {
+                            queueTracker.remove(offlineData.getId());
+                            //QUEUED_TRANSACTIONS--;
+                            Log.e("ImonggoSwable", "sending failed : request error");
+                            offlineData.setSyncing(false);
+                            offlineData.setQueued(false);
+                            offlineData.setSynced(false);
+                            offlineData.setStatusLog("request error");
+                            offlineData.updateTo(dbHelper);
+                        }
+                    },session.getServer(),Table.REWARDS_POINTS,rewardPayment.toJSONObject(),"?q=spend")
+                            .setTag(offlineData.getId()+ "RP")
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

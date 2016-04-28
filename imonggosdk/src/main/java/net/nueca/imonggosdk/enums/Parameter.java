@@ -29,4 +29,6 @@ public enum Parameter {
     SALESMAN_ID,
     SALES_DISCOUNT,
     SALES_POINTS,
+    ORDER_TYPE,
+    LAYAWAYS
 }

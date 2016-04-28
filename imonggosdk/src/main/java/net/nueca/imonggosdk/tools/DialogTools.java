@@ -57,30 +57,47 @@ public class DialogTools<T> {
                                               String negativeText) {
         showConfirmationDialog(context, title, message, positiveText, positiveCallback, negativeText, NO_THEME);
     }
+
     public static void showConfirmationDialog(Context context, String title, String message,
                                               String positiveText, DialogInterface.OnClickListener positiveCallback,
-                                              String negativeText, int theme) {
+                                              String negativeText,  int theme) {
+        showConfirmationDialog(context, title, message, positiveText, positiveCallback, negativeText, theme, null);
+    }
+    public static void showConfirmationDialog(Context context, String title, String message,
+                                              String positiveText, DialogInterface.OnClickListener positiveCallback,
+                                              String negativeText,
+                                              int theme, DialogInterface.OnShowListener onShowListener) {
         showConfirmationDialog(context, title, message, positiveText, positiveCallback, negativeText, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) { }
-        }, theme);
+        }, onShowListener, theme);
     }
     public static void showConfirmationDialog(Context context, String title, String message,
                                               String positiveText, DialogInterface.OnClickListener positiveCallback,
                                               String negativeText, DialogInterface.OnClickListener negativeCallback) {
         showConfirmationDialog(context, title, message, positiveText, positiveCallback, negativeText, negativeCallback, NO_THEME);
     }
+
     public static void showConfirmationDialog(Context context, String title, String message,
                                               String positiveText, DialogInterface.OnClickListener positiveCallback,
                                               String negativeText, DialogInterface.OnClickListener negativeCallback,
                                               int theme) {
+        showConfirmationDialog(context, title, message, positiveText, positiveCallback, negativeText, negativeCallback, null, theme);
+    }
+
+    public static void showConfirmationDialog(Context context, String title, String message,
+                                              String positiveText, DialogInterface.OnClickListener positiveCallback,
+                                              String negativeText, DialogInterface.OnClickListener negativeCallback,
+                                              DialogInterface.OnShowListener onShowListener, int theme) {
         AlertDialog.Builder dialog = (theme == NO_THEME) ? new AlertDialog.Builder(context) : new AlertDialog.Builder(context, theme);
         dialog.setTitle(title);
         dialog.setMessage(message);
         dialog.setPositiveButton(positiveText, positiveCallback);
         dialog.setNegativeButton(negativeText, negativeCallback);
         dialog.setCancelable(false);
-        dialog.show();
+        AlertDialog showMe = dialog.create();
+        showMe.setOnShowListener(onShowListener);
+        showMe.show();
     }
 
     public static void showSelectionDialog(Context context, final ArrayAdapter<?> objects, String positiveText,

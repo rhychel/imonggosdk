@@ -10,6 +10,7 @@ import android.widget.Button;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
 /**
@@ -18,9 +19,11 @@ import net.nueca.imonggosdk.tools.DateTimeTools;
  */
 public class BaseAppCompatDialog extends AppCompatDialog {
 
+    protected boolean isButtonTapped = false;
     protected static int NO_THEME = -1;
     protected String date;
     protected FragmentManager fragmentManager;
+    protected ConcessioModule concessioModule = ConcessioModule.NONE;
 
     public BaseAppCompatDialog(Context context) {
         super(context);
@@ -37,6 +40,11 @@ public class BaseAppCompatDialog extends AppCompatDialog {
     public void setFragmentManager(FragmentManager fragmentManager) {
         this.fragmentManager = fragmentManager;
     }
+
+    public void setConcessioModule(ConcessioModule concessioModule) {
+        this.concessioModule = concessioModule;
+    }
+
     /**
      * Configure the width of the dialog to acquire the desired width.
      */
@@ -70,4 +78,5 @@ public class BaseAppCompatDialog extends AppCompatDialog {
         }, Integer.valueOf(dateS[0]), Integer.valueOf(dateS[1]) - 1, Integer.valueOf(dateS[2]));
         deliveryDatePicker.show(fragmentManager, "delivery_date_picker");
     }
+
 }

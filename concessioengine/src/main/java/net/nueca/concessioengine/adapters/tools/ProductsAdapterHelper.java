@@ -54,6 +54,7 @@ public class ProductsAdapterHelper {
     private static CustomerGroup selectedCustomerGroup;
     private static Branch selectedBranch;
     private static Branch source, destination;
+    private static int warehouse_id = -1, parent_document_id = -1;
 
     private static int decimalPlace = 2;
 
@@ -161,10 +162,15 @@ public class ProductsAdapterHelper {
         clearSelectedProductItemList(includeCustomer, true);
     }
     public static void clearSelectedProductItemList(boolean includeCustomer, boolean includeReason) {
-        if(isDuplicating)
-            return;
-        if(selectedProductItems != null)
+//        if(isDuplicating)
+//            return;
+        if(selectedProductItems != null) {
+            Log.e("selectedProductItems", "is not null ["+selectedProductItems.size());
             selectedProductItems.clear();
+            Log.e("selectedProductItems", "is not null ["+selectedProductItems.size());
+        }
+        else
+            Log.e("selectedProductItems", "is null");
         if(includeCustomer) {
             selectedCustomer = null;
             selectedCustomerGroup = null;
@@ -172,6 +178,8 @@ public class ProductsAdapterHelper {
         selectedBranch = null;
         if(includeReason)
             reason = null;
+        warehouse_id = -1;
+        parent_document_id = -1;
         ProductListTools.restartLineNo();
         Log.e("ProductAdapterHelper", "clearSelectedProductItemList");
     }
@@ -191,6 +199,8 @@ public class ProductsAdapterHelper {
         selectedCustomerGroup = null;
         selectedBranch = null;
         reason = null;
+        warehouse_id = -1;
+        parent_document_id = -1;
         Log.e("ProductAdapterHelper", "destroySelectedProductItemList");
     }
 
@@ -211,6 +221,8 @@ public class ProductsAdapterHelper {
         selectedCustomerGroup = null;
         selectedBranch = null;
         reason = null;
+        warehouse_id = -1;
+        parent_document_id = -1;
         Log.e("ProductAdapterHelper", "destroyProductAdapterHelper");
     }
 
@@ -264,5 +276,21 @@ public class ProductsAdapterHelper {
 
     public static void setSource(Branch source) {
         ProductsAdapterHelper.source = source;
+    }
+
+    public static int getWarehouse_id() {
+        return warehouse_id;
+    }
+
+    public static void setWarehouse_id(int warehouse_id) {
+        ProductsAdapterHelper.warehouse_id = warehouse_id;
+    }
+
+    public static int getParent_document_id() {
+        return parent_document_id;
+    }
+
+    public static void setParent_document_id(int parent_document_id) {
+        ProductsAdapterHelper.parent_document_id = parent_document_id;
     }
 }

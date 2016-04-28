@@ -1,23 +1,30 @@
 package net.nueca.concessioengine.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
 import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
+import net.nueca.concessioengine.adapters.SimpleSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.ListingType;
-import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.Document;
@@ -34,8 +41,6 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
 
     private Toolbar tbActionBar;
 
-    private RecyclerView rvProducts;
-    private SimpleProductRecyclerViewAdapter simpleProductRecyclerViewAdapter;
     private OfflineData offlineData;
 
     @Override
@@ -45,25 +50,37 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
         rvProducts = (RecyclerView) view.findViewById(R.id.rvProducts);
         tbActionBar = (Toolbar) view.findViewById(R.id.tbActionBar);
         ((Spinner) view.findViewById(R.id.spCategories)).setVisibility(View.GONE);
+        isFinalize = true;
 
-        simpleProductRecyclerViewAdapter = new SimpleProductRecyclerViewAdapter(getActivity(), getHelper(), getProducts());
-        simpleProductRecyclerViewAdapter.setListingType(ListingType.SALES);
-        simpleProductRecyclerViewAdapter.setBranch(branch);
-        simpleProductRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
-        rvProducts.setAdapter(simpleProductRecyclerViewAdapter);
+        productRecyclerViewAdapter = new SimpleSalesProductRecyclerAdapter(getActivity(), getHelper(), getProducts());
+        productRecyclerViewAdapter.setListingType(ListingType.ADVANCED_SALES);
+        productRecyclerViewAdapter.setBranch(branch);
+        productRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
+        productRecyclerViewAdapter.setHasInStock(hasInStock);
+        rvProducts.setAdapter(productRecyclerViewAdapter);
+        rvProducts.addOnScrollListener(rvScrollListener);
 
         if(offlineData.getType() == OfflineData.DOCUMENT) {
-            if(offlineData.getObjectFromData(Document.class).getCustomer() == null)
-                Log.e("TransactionsDetails", "customer is null");
-            else
-                Log.e("TransactionDetails", offlineData.getObjectFromData(Document.class).getCustomer().generateFullName());
+            if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
+                LinearLayout llReason = (LinearLayout) view.findViewById(R.id.llReason);
+                ImageView ivEdit = (ImageView) view.findViewById(R.id.ivEdit);
+                TextView tvReason = (TextView) view.findViewById(R.id.tvReason);
+
+                ivEdit.setVisibility(View.GONE);
+                tvReason.setText(offlineData.getDocumentReason());
+                llReason.setVisibility(View.VISIBLE);
+            }
+//            if(offlineData.getObjectFromData(Document.class).getCustomer() == null)
+//                Log.e("TransactionsDetails", "customer is null");
+//            else
+//                Log.e("TransactionDetails", offlineData.getObjectFromData(Document.class).getCustomer().generateFullName());
         }
 
         return view;
     }
 
     public int numberOfItems() {
-        return simpleProductRecyclerViewAdapter.getItemCount();
+        return productRecyclerViewAdapter.getItemCount();
     }
 
     @Override
@@ -71,6 +88,12 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
         super.onViewCreated(view, savedInstanceState);
         if(setupActionBar != null)
             setupActionBar.setupActionBar(tbActionBar);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.others_menu, menu);
     }
 
     public OfflineData getOfflineData() {
@@ -93,7 +116,14 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
 
     @Override
     protected void whenListEndReached(List<Product> productList) {
-
+        productRecyclerViewAdapter.addAll(productList);
+        Handler handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                productRecyclerViewAdapter.notifyDataSetChanged();
+            }
+        };
+        handler.sendEmptyMessageDelayed(0, 200);
     }
 
     @Override

@@ -13,6 +13,8 @@ import net.nueca.concessioengine.activities.welcome.WelcomeActivity;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
@@ -24,7 +26,7 @@ import java.util.Calendar;
  * imonggosdk2 (c)2015
  */
 public class C_Welcome extends WelcomeActivity {
-
+    private static String TAG = "C_WELCOME";
     private TextView tvAgentName;
     private Spinner spBranch;
     private Button btnBegin, btnNotYou;
@@ -45,6 +47,7 @@ public class C_Welcome extends WelcomeActivity {
 
         btnNotYou.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View view) {
                 try {
                     AccountTools.logoutUser(C_Welcome.this, getHelper(), new AccountListener() {
@@ -65,6 +68,7 @@ public class C_Welcome extends WelcomeActivity {
         });
 
         try {
+            Log.e(TAG, "session: " + getSession() + " user: " + getSession().getUser() + " email: "+getSession().getEmail());
             tvAgentName.setText("Hello, "+getSession().getUser().getName()+"!");
         } catch (SQLException e) {
             e.printStackTrace();

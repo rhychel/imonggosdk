@@ -15,9 +15,7 @@ import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.BaseTable3;
-import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
-import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NotificationTools;
@@ -26,7 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Created by gama on 10/1/15.
@@ -38,7 +35,10 @@ public class SwableUpdateModule extends BaseSwableModule {
     }
 
     public void updateTransaction(Table table, final OfflineData offlineData) {
-        QUEUED_TRANSACTIONS++;
+        if(queueTracker.containsKey(offlineData.getId()))
+            return;
+        queueTracker.put(offlineData.getId(), offlineData);
+        //QUEUED_TRANSACTIONS++;
         Log.e("SwableUpdateModule", "updateTransaction " + table.getStringName() + " " + offlineData.getType());
         Log.e("SwableUpdateModule", "updateTransaction " + offlineData.getObjectFromData().toString());
         try {
@@ -66,15 +66,15 @@ public class SwableUpdateModule extends BaseSwableModule {
             JSONObject jsonObject;
             if(offlineData.getType() == OfflineData.INVOICE) {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
-                boolean hasNewPayment = invoice.createNewPaymentBatch();
+                /*boolean hasNewPayment = invoice.createNewPaymentBatch();
                 invoice.updateTo(dbHelper);
 
                 if(!hasNewPayment) {
                     QUEUED_TRANSACTIONS--;
                     return;
-                }
+                }*/
 
-                invoice.setPayments(invoice.getNewBatchPayment());
+                invoice.setPayments(invoice.getUnmarkedPayments());
                 jsonObject = SwableTools.prepareTransactionJSON(offlineData.getType(),
                         invoice.toJSONObject());
             }
@@ -102,7 +102,8 @@ public class SwableUpdateModule extends BaseSwableModule {
 
                         @Override
                         public void onSuccess(Table table, RequestType requestType, Object response) {
-                            QUEUED_TRANSACTIONS--;
+                            queueTracker.remove(offlineData.getId());
+                            //QUEUED_TRANSACTIONS--;
                             AccountTools.updateUserActiveStatus(imonggoSwable, true);
 
                             Log.e("ImonggoSwable", "updating success : " + response);
@@ -116,6 +117,12 @@ public class SwableUpdateModule extends BaseSwableModule {
                                         Log.d("ImonggoSwable", "updating success : return ID : " +
                                                 responseJson.getString("id"));
                                         offlineData.setReturnId(responseJson.getString("id"));
+
+                                        if(offlineData.getType() == OfflineData.INVOICE) {
+                                            Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                            invoice.markSentPayment(Integer.parseInt(responseJson.getString("id")));
+                                            invoice.updateTo(dbHelper);
+                                        }
                                     }
                                 }
 
@@ -135,8 +142,8 @@ public class SwableUpdateModule extends BaseSwableModule {
                                 SUCCESS_TRANSACTIONS++;
                                 Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                             }
-                            Log.e("REQUEST", QUEUED_TRANSACTIONS + " " + SUCCESS_TRANSACTIONS);
-                            if (offlineData.isSynced() && QUEUED_TRANSACTIONS == 0)
+                            Log.e("REQUEST", getQueueTrackerCount() + " " + SUCCESS_TRANSACTIONS);
+                            if (offlineData.isSynced() && getQueueTrackerCount() == 0)
                                 NotificationTools.postNotification(imonggoSwable,
                                         ImonggoSwable.NOTIFICATION_ID,
                                         APP_ICON_DRAWABLE,
@@ -150,7 +157,8 @@ public class SwableUpdateModule extends BaseSwableModule {
 
                         @Override
                         public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                            QUEUED_TRANSACTIONS--;
+                            queueTracker.remove(offlineData.getId());
+                            //QUEUED_TRANSACTIONS--;
                             Log.e("ImonggoSwable", "updating failed : isConnected? " + hasInternet + " : error [" +
                                     responseCode + "] : " + response);
 
@@ -228,7 +236,8 @@ public class SwableUpdateModule extends BaseSwableModule {
 
                         @Override
                         public void onRequestError() {
-                            QUEUED_TRANSACTIONS--;
+                            queueTracker.remove(offlineData.getId());
+                            //QUEUED_TRANSACTIONS--;
                             Log.e("ImonggoSwable", "updating failed : request error");
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);

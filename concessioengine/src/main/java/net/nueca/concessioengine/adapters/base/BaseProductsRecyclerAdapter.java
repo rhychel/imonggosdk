@@ -28,6 +28,7 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
 //    private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
     protected boolean hasSubtotal = false;
     protected boolean isReturnItems = false;
+    protected boolean hasInStock = true;
 
     public BaseProductsRecyclerAdapter(Context context) {
         super(context);
@@ -83,6 +84,14 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
         this.branch = branch;
     }
 
+    public boolean isHasInStock() {
+        return hasInStock;
+    }
+
+    public void setHasInStock(boolean hasInStock) {
+        this.hasInStock = hasInStock;
+    }
+
     @Override
     public Product getItem(int position) {
         return super.getItem(position);
@@ -90,6 +99,7 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
 
     @Override
     public boolean updateList(List<Product> products) {
+        Log.e("SelectedReturnsPI", products.size()+" updateList.size");
         return super.updateList(products);
     }
 

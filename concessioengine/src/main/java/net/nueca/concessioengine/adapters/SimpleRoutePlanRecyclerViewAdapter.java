@@ -16,9 +16,11 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,7 +53,7 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
             holder.tvCustomerName.setText(customer.getName());
             holder.tvCompany.setText(customer.getCompany_name());
 
-            if(!customer.getLastPurchase().isEmpty()) {
+            if(customer.getLastPurchase() != null && !customer.getLastPurchase().equals("None") && !customer.getLastPurchase().isEmpty()) {
                 SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 fromDate.setTimeZone(TimeZone.getTimeZone("UTC"));
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM dd, yyyy, cccc h:mma");
@@ -73,12 +75,27 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
                 ProductsAdapterHelper.setSelectedCustomer(customer);
 
                 InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools.PaymentsComputation();
+
+                /*int device_id = ProductsAdapterHelper.getSession().getDevice_id();
+                if(Integer.parseInt(myInvoices.get(0).getReference().substring(0,myInvoices.get(0).getReference().indexOf('-'))) != device_id) {
+                    List<InvoiceLine> invoiceLines = null;
+                    try {
+                        invoiceLines = InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList
+                                (ProductsAdapterHelper.getDbHelper(),myInvoices.get(0),customer,ProductsAdapterHelper.getSelectedBranch(),false,false));
+                        invoiceLines.addAll(InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList
+                                (ProductsAdapterHelper.getDbHelper(),myInvoices.get(0),customer,ProductsAdapterHelper.getSelectedBranch(),true,false)));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    myInvoices.get(0).setInvoiceLines(invoiceLines);
+                }*/
+
                 paymentsComputation.addAllInvoiceLines(myInvoices.get(0).getInvoiceLines());
                 paymentsComputation.addAllPayments(myInvoices.get(0).getPayments());
 
                 BigDecimal remaining = paymentsComputation.getRemaining();
                 holder.tvSubtotal.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
-                if (remaining.signum() > -1)
+                if (remaining.signum() == 1)
                     holder.tvSubtotal.setText("P " + NumberTools.separateInCommas(remaining));
                 else {
                     holder.tvSubtotal.setText("P " + NumberTools.separateInCommas(paymentsComputation.getTotalPayable(true)));
@@ -88,6 +105,19 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
                 double balance = 0.0;
                 for(Invoice invoice : myInvoices) {
                     InvoiceTools.PaymentsComputation temp = new InvoiceTools.PaymentsComputation();
+                    /*device_id = ProductsAdapterHelper.getSession().getDevice_id();
+                    if(Integer.parseInt(invoice.getReference().substring(0,invoice.getReference().indexOf('-'))) != device_id) {
+                        List<InvoiceLine> invoiceLines = null;
+                        try {
+                            invoiceLines = InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList
+                                    (ProductsAdapterHelper.getDbHelper(),invoice,customer,ProductsAdapterHelper.getSelectedBranch(),false,false));
+                            invoiceLines.addAll(InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList
+                                    (ProductsAdapterHelper.getDbHelper(),invoice,customer,ProductsAdapterHelper.getSelectedBranch(),true,false)));
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        invoice.setInvoiceLines(invoiceLines);
+                    }*/
                     temp.addAllInvoiceLines(invoice.getInvoiceLines());
                     temp.addAllPayments(invoice.getPayments());
 

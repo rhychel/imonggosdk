@@ -231,6 +231,7 @@ public class ProgressListDialog extends BaseAppCompatDialog {
             lvh.pbCircularProgressBar.setVisibility(View.VISIBLE);
             lvh.tvDownloadProgress.setVisibility(View.INVISIBLE);
             lvh.ivRetrySync.setVisibility(View.INVISIBLE);
+            lvh.pbModuleProgress.setProgress(0);
             if(progress.isError()) {
                 lvh.ivRetrySync.setVisibility(View.VISIBLE);
                 lvh.pbCircularProgressBar.setVisibility(View.INVISIBLE);

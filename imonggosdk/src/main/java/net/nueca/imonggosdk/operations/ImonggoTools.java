@@ -100,6 +100,14 @@ public class ImonggoTools {
                     parameterStr += "salesman_id=%"+stringInputCount+"$s&";
                     stringInputCount++;
                     break;
+				case ORDER_TYPE:
+					parameterStr += "order_type=%"+stringInputCount+"$s&";
+					stringInputCount++;
+					break;
+				case LAYAWAYS:
+					parameterStr += "type=layaways&";
+					stringInputCount++;
+					break;
             }
         }
         if(!parameterStr.equals("?"))

@@ -65,6 +65,21 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         Log.e("INVOICE RECEIVED", invoice.toJSONString());
         computation.clearAll();
 
+        /*int device_id = ProductsAdapterHelper.getSession().getDevice_id();
+        if(Integer.parseInt(invoice.getReference().substring(0,invoice.getReference().indexOf('-'))) != device_id) {
+            try {
+                List<InvoiceLine> invoiceLines = InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList
+                            (ProductsAdapterHelper.getDbHelper(),invoice,invoice.getCustomer(),ProductsAdapterHelper.getSelectedBranch(),false,
+                                    false));
+                    invoiceLines.addAll(InvoiceTools.generateInvoiceLines(InvoiceTools.generateSelectedProductItemList
+                            (ProductsAdapterHelper.getDbHelper(),invoice,invoice.getCustomer(),ProductsAdapterHelper.getSelectedBranch(),true,false)));
+
+                invoice.setInvoiceLines(invoiceLines);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }*/
+
         computation.addAllInvoiceLines(invoice.getInvoiceLines());
         computation.addAllPayments(invoice.getPayments());
     }
@@ -74,7 +89,7 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
             invoice = new Invoice();
         invoice.setBranch(ProductsAdapterHelper.getSelectedBranch());
         invoice.setInvoiceLines(getInvoiceLines());
-        invoice.setPayments(getPayments());
+        invoice.setPayments(getPayments( !isLayaway && invoice.getReturnId() == -1) );
         Gson gson = new Gson();
         Log.e(">>>>>>>>>>>>>>>>>>>>", gson.toJson(invoice.getPayments()));
         //invoice.joinAllNewToCurrentPaymentBatch();
@@ -112,9 +127,9 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
             );
 
             extras.setTotal_unit_retail_price("" +
-                    ( Double.valueOf(extras.getTotal_selling_price()) -
+                    NumberTools.formatDouble( Double.valueOf(extras.getTotal_selling_price()) -
                             (Double.valueOf(extras.getTotal_company_discount()) +
-                                    Double.valueOf(extras.getTotal_customer_discount())) )
+                                    Double.valueOf(extras.getTotal_customer_discount())), decimal )
             );
             if(customer != null) {
                 extras.setPayment_term_id(customer.getPayment_terms_id());
@@ -137,9 +152,10 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         return computation.getInvoiceLines();
     }
 
-    public List<InvoicePayment> getPayments() {
+    public List<InvoicePayment> getPayments(boolean includeReturns) {
         List<InvoicePayment> payments = computation.getPayments();
-        payments.addAll(computation.getReturnsPayments());
+        if(includeReturns)
+            payments.addAll(computation.getReturnsPayments());
         return payments;
     }
     

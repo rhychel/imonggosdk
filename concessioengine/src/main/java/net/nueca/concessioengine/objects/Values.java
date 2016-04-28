@@ -6,6 +6,7 @@ import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.tools.DiscountTools;
+import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.Unit;
@@ -31,7 +32,7 @@ import java.util.List;
          "unit_id": 9088,
          "unit_quantity": 28, --- INPUTTED QUANTITY
          "unit_content_quantity": 11.2, -- quantity from the UNIT OBJECT
-         "unit_retail_price": 98219.52, -- RETAIL PRICE from UNIT OBJECT * UNIT QUANTITY
+         "unit_retail_price": 98219.52, -- RETAIL PRICE from UNIT OBJECT * UNIT QUANTITY ||-> REVISED(04-11-2106 by Mikee) RETAIL PRICE from UNIT OBJECT
          "unit_name": "CUPS",
          "line_no": 1
      },
@@ -131,15 +132,21 @@ public class Values {
             if(quantity.length() > 0)
                 this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_name = unit.getName();
-            this.unit_retail_price = this.retail_price * Double.valueOf(this.unit_quantity);
+//            this.unit_retail_price = this.retail_price * Double.valueOf(this.unit_quantity);
+            this.unit_retail_price = unit.getRetail_price();
+            this.subtotal = this.retail_price * Double.valueOf(this.unit_quantity);
         }
         else {
             this.quantity = quantity;
             this.unit_quantity = null;
             this.unit_content_quantity = 0d;
-            this.unit_retail_price = 0d;
-            if(unit != null)
+            this.subtotal = 0d;
+            if(unit != null) {
+                if(this.retail_price == null)
+                    this.retail_price = unit.getRetail_price();
+                this.unit_retail_price = unit.getRetail_price();
                 this.unit_name = unit.getName();
+            }
         }
 
         Log.e("QTY", this.quantity + " ~ " + quantity);
@@ -159,8 +166,8 @@ public class Values {
         Log.e("PRICE OBJ", "isNull? " + (price == null));
         if(this.price == null) {
             if(isValidUnit()) {
-                this.no_discount_subtotal = this.unit_retail_price;
-                this.subtotal = this.unit_retail_price;
+                this.no_discount_subtotal = this.subtotal; // this.unit_retail_price
+//                this.subtotal = this.unit_retail_price;
             } else if(this.retail_price != null) {
                 this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
                 this.subtotal = this.retail_price * Double.valueOf(this.quantity);
@@ -177,7 +184,7 @@ public class Values {
         }
         else {
             if(isValidUnit()) {
-                this.no_discount_subtotal = this.unit_retail_price;
+                this.no_discount_subtotal = this.subtotal; // this.unit_retail_price
                 this.subtotal = DiscountTools.applyMultipleDiscounts(
                         new BigDecimal(this.retail_price), new BigDecimal(this.unit_quantity),
                         product_discounts, company_discounts, discount_text, ";", ","
@@ -228,10 +235,18 @@ public class Values {
         if(price != null) {
             if (price.getRetail_price() != null)
                 this.retail_price = price.getRetail_price();
-            else
-                this.retail_price = price.getProduct().getRetail_price();
+            else {
+                Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
+                this.retail_price = PriceTools.identifyRetailPrice(ProductsAdapterHelper.getDbHelper(),
+                        price.getProduct(),ProductsAdapterHelper.getSelectedBranch(),ProductsAdapterHelper.getSelectedCustomerGroup(),
+                        ProductsAdapterHelper.getSelectedCustomer(), price.getUnit());
+                //this.retail_price = price.getProduct().getRetail_price();
+            }
             this.discount_text = price.getDiscount_text();
         }
+
+        Log.e(">>>>>>", "UNIT: " + (price == null? null : price.getUnit()) );
+
         setValue(quantity, price == null? null : price.getUnit(), extendedAttributes);
     }
 

@@ -23,7 +23,6 @@ public abstract class BaseTable3 extends DBTable {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras_id")
     protected Extras extras;
 
-    @Expose
     @DatabaseField
     protected String utc_created_at, utc_updated_at;
 

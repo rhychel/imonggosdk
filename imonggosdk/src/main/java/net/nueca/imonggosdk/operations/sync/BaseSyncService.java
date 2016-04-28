@@ -39,6 +39,7 @@ import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
+import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
@@ -81,12 +82,16 @@ public abstract class BaseSyncService extends ImonggoService {
     protected Table[] mModulesToSync;
     protected Table mCurrentTableSyncing;
     protected Boolean mSkipNextModule = false;
+    protected Boolean mUpdatingPriceListFromCustomer = false;
     protected Server mServer;
     protected List<BranchUserAssoc> branchUserAssoc;
     protected List<Integer> listOfPricelistIds;
     protected List<Integer> listOfIdsPriceListSorted;
     protected List<Object> listPriceListStorage;
+    protected List<Object> listOfSalesPromotionStorage;
+    protected List<BranchUserAssoc> listOfBranchIds;
     protected List<? extends BaseTable> listOfIds;
+    protected List<Integer> listOfSalesPromotionIds;
     protected String from = "", to = "";
     protected String document_type;
     protected String intransit_status;
@@ -125,7 +130,7 @@ public abstract class BaseSyncService extends ImonggoService {
         Bundle bundle = intent.getExtras();
         syncAllModules = bundle.getBoolean(PARAMS_SYNC_ALL_MODULES, true);
         mServer = Server.values()[bundle.getInt(PARAMS_SERVER, Server.IMONGGO.ordinal())];
-        initialSync = bundle.getBoolean(PARAMS_INITIAL_SYNC, false);
+        initialSync = bundle.getBoolean(PARAMS_INITIAL_SYNC, true);
 
         if (!syncAllModules) { // if custom modules where selected to be download
             initializeTablesToSync(bundle.getIntArray(PARAMS_TABLES_TO_SYNC));
@@ -197,6 +202,11 @@ public abstract class BaseSyncService extends ImonggoService {
                 Extras extras = (Extras) o;
                 return getHelper().fetchObjects(Extras.class).queryBuilder().where().eq("id", extras.getId()).queryForFirst() != null;
             }
+            case ORDERS: {
+                Order order = (Order) o;
+                return getHelper().fetchObjects(Order.class).queryBuilder().where().eq("id", order.getId()).queryForFirst() != null;
+            }
+
             case USERS: {
                 User user = (User) o;
                 return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
@@ -254,7 +264,7 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case INVOICES: {
                 Invoice invoice = (Invoice) o;
-                return getHelper().fetchObjects(Invoice.class).queryBuilder().where().eq("id", invoice.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Invoice.class).queryBuilder().where().eq("returnId", invoice.getId()).queryForFirst() != null;
             }
             case INVOICE_PURPOSES: {
                 InvoicePurpose invoicePurpose = (InvoicePurpose) o;
@@ -295,12 +305,14 @@ public abstract class BaseSyncService extends ImonggoService {
 
             }
             case SALES_PROMOTIONS: {
-                net.nueca.imonggosdk.objects.salespromotion.SalesPromotion discount = (SalesPromotion) o;
-                return getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", discount.getId()) != null;
+
+                net.nueca.imonggosdk.objects.salespromotion.SalesPromotion salesPromotion = (net.nueca.imonggosdk.objects.salespromotion.SalesPromotion) o;
+                Log.e(TAG, "checking sales promotions... " + getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", salesPromotion.getId()));
+                return getHelper().fetchObjects(net.nueca.imonggosdk.objects.salespromotion.SalesPromotion.class).queryBuilder().where().eq("id", salesPromotion.getId()) != null;
             }
             case SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS: {
                 net.nueca.imonggosdk.objects.salespromotion.Discount discount = (Discount) o;
-                return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("id", discount.getId()) != null;
+                return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("product_id", discount.getProduct()) != null;
             }
             case PRICE_LISTS_DETAILS: {
                 Price price = (Price) o;
@@ -447,5 +459,9 @@ public abstract class BaseSyncService extends ImonggoService {
         public BaseSyncService getService() {
             return BaseSyncService.this;
         }
+    }
+
+    public void setInitialSync() {
+        this.initialSync = true;
     }
 }

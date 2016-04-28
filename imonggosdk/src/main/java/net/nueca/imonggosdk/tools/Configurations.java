@@ -19,6 +19,7 @@ public class Configurations {
                                         "receive_supplier", "release_supplier", "customers", "app"};
 
     public static String API_AUTHENTICATION = "";
+    public static double MAX_ITEMS_FOR_PRINTING = 25.0;
     /**
      * EnumMap for API Modules in JSON.
      */
@@ -41,6 +42,8 @@ public class Configurations {
             put(Table.SETTINGS, "settings.json");
             put(Table.APPLICATION_SETTINGS, "application_settings");
             put(Table.ORDERS, "orders.json");
+            put(Table.ORDERS_PURCHASES, "orders.json");
+            put(Table.ORDERS_STOCK_REQUEST, "orders.json");
             put(Table.POS_DEVICES, "pos_devices.json");
             put(Table.DAILY_SALES, "daily_sales.json");
             put(Table.DOCUMENTS, "documents.json");
@@ -72,6 +75,8 @@ public class Configurations {
             put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
             put(Table.ROUTE_PLANS, "route_plans.json");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
+            put(Table.LAYAWAYS, "invoices.json");
+            put(Table.REWARDS_POINTS, "rewards.json");
 
             // FOR PETRON
             put(Table.ACCOUNT_PRICES, "account_prices.json");
@@ -97,6 +102,8 @@ public class Configurations {
             put(Table.SETTINGS, "settings");
             put(Table.APPLICATION_SETTINGS, "application_settings");
             put(Table.ORDERS, "orders");
+            put(Table.ORDERS_PURCHASES, "orders_purchases");
+            put(Table.ORDERS_STOCK_REQUEST, "orders_stock_request");
             put(Table.POS_DEVICES, "pos_devices");
             put(Table.DAILY_SALES, "daily_sales");
             put(Table.DOCUMENTS, "documents");
@@ -135,6 +142,7 @@ public class Configurations {
             put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
             put(Table.ROUTE_PLANS, "route_plans");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
+            put(Table.LAYAWAYS, "layaways");
 
             // FOR PETRON
             put(Table.ACCOUNT_PRICES, "account_prices");

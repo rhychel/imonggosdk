@@ -62,7 +62,7 @@ public class Document extends BaseTransactionTable3 {
     @DatabaseField
     protected String document_purpose_name;
 
-    @Expose
+//    @Expose -- I'm writing here..
     @DatabaseField
     protected String intransit_status;
     @Expose

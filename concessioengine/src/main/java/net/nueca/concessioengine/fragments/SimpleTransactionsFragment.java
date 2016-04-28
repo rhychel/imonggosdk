@@ -1,7 +1,10 @@
 package net.nueca.concessioengine.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,6 +25,8 @@ import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.swable.ImonggoSwable;
 import net.nueca.imonggosdk.swable.SwableSendModule;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -44,6 +49,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     private Spinner spTransactionType;
     private Spinner spBranches;
     private TextView tvNoTransactions;
+    private FragmentActivity mActivity;
 
     private SimpleTransactionListAdapter simpleTransactionListAdapter;
     private SimpleTransactionRecyclerViewAdapter simpleTransactionRecyclerViewAdapter;
@@ -86,6 +92,19 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
 
         if(useRecyclerView) {
             rvTransactions = (RecyclerView) view.findViewById(R.id.rvTransactions);
+
+            for(OfflineData offlineData : getTransactions()) {
+                if(offlineData.getType() == OfflineData.INVOICE) {
+                    Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                    try {
+                        Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId", invoice.getCustomer().getReturnId()).queryForFirst();
+                        Log.e("OfflineData", "Customer from Invoice=" + invoice.getCustomer().getReturnId()+" || "+invoice.getCustomer().getId());
+                        Log.e("OfflineData", "Customer from DB=" + customer.getReturnId()+" || "+customer.getId());
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             simpleTransactionRecyclerViewAdapter = new SimpleTransactionRecyclerViewAdapter(getActivity(), getTransactions(), listingType);
             simpleTransactionRecyclerViewAdapter.setDbHelper(getHelper());
             simpleTransactionRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
@@ -189,13 +208,27 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     public void onQueued(OfflineData offlineData) {
         Log.e("onQueued", "yeah");
         if(useRecyclerView) {
-            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            final int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if(position > -1) {
                 simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
-                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                simpleTransactionRecyclerViewAdapter.getItem(position).setOfflineDataTransactionType(offlineData.getOfflineDataTransactionType());
+
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler delay = new Handler() {
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                            }
+                        };
+                        delay.sendEmptyMessageDelayed(0, 100);
+                    }
+                });
             }
         }
         else {
@@ -211,13 +244,27 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     public void onSyncing(OfflineData offlineData) {
         Log.e("onSyncing", "yeah");
         if(useRecyclerView) {
-            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            final int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if(position > -1) {
                 simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
-                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                simpleTransactionRecyclerViewAdapter.getItem(position).setOfflineDataTransactionType(offlineData.getOfflineDataTransactionType());
+
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler delay = new Handler(){
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                            }
+                        };
+                        delay.sendEmptyMessageDelayed(0, 100);
+                    }
+                });
             }
         }
         else {
@@ -233,13 +280,28 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     public void onSynced(OfflineData offlineData) {
         Log.e("onSynced", "yeah");
         if(useRecyclerView) {
-            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            final int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if (position > -1) {
                 simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
-                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                simpleTransactionRecyclerViewAdapter.getItem(position).setOfflineDataTransactionType(offlineData.getOfflineDataTransactionType());
+
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler delay = new Handler(){
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                            }
+                        };
+                        delay.sendEmptyMessageDelayed(0, 100);
+                    }
+                });
+//                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
             }
         }
         else {
@@ -256,14 +318,29 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
     public void onSyncProblem(OfflineData offlineData, boolean hasInternet, Object response, int responseCode) {
         Log.e("onSyncProblem", "yeah");
         if(useRecyclerView) {
-            int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
+            final int position = simpleTransactionRecyclerViewAdapter.getPosition(offlineData);
             if (position > -1) {
                 simpleTransactionRecyclerViewAdapter.getItem(position).setCancelled(offlineData.isCancelled());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setQueued(offlineData.isQueued());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSynced(offlineData.isSynced());
                 simpleTransactionRecyclerViewAdapter.getItem(position).setSyncing(offlineData.isSyncing());
+                simpleTransactionRecyclerViewAdapter.getItem(position).setOfflineDataTransactionType(offlineData.getOfflineDataTransactionType());
 
-                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler delay = new Handler(){
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
+                            }
+                        };
+                        delay.sendEmptyMessageDelayed(0, 100);
+                    }
+                });
+
+//                simpleTransactionRecyclerViewAdapter.notifyItemChanged(position);
             }
         }
     }
@@ -294,4 +371,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
             toggleNoItems("No results for \"" + searchKey + "\".", simpleTransactionListAdapter.updateList(getTransactions()));
     }
 
+    public void setmActivity(FragmentActivity mActivity) {
+        this.mActivity = mActivity;
+    }
 }

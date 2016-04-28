@@ -1,6 +1,8 @@
 package net.nueca.concessioengine.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -127,10 +129,14 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 boolean shouldShow = false;
                 currentDayOfWeek = days.get(position).getDayOfWeek();
-                if(currentDayOfWeek == 0)
+                if(currentDayOfWeek == 0) {
                     shouldShow = simpleRoutePlanRecyclerViewAdapter.updateList(getCustomers());
-                else
+                    rvCustomers.addOnScrollListener(rvScrollListener);
+                }
+                else {
                     shouldShow = simpleRoutePlanRecyclerViewAdapter.updateList(renderRoutePlan(currentDayOfWeek));
+                    rvCustomers.removeOnScrollListener(rvScrollListener);
+                }
                 Log.e("shouldShow", shouldShow+"");
                 toggleNoItems(todayPosition == position ? "No customers today." : "No customers this "+days.get(position).getFullname()+".", shouldShow);
 
@@ -167,7 +173,13 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
     @Override
     protected void whenListEndReached(List<Customer> customers) {
         simpleRoutePlanRecyclerViewAdapter.addAll(customers);
-        simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
+        Handler handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                simpleRoutePlanRecyclerViewAdapter.notifyDataSetChanged();
+            }
+        };
+        handler.sendEmptyMessageDelayed(0, 200);
     }
 
     private List<Customer> renderRoutePlan(int dayOfWeek) {
@@ -175,39 +187,37 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
         Day day = days.get(days.indexOf(new Day(dayOfWeek)));
         try {
             RoutePlan routePlan = getHelper().fetchIntId(RoutePlan.class).queryBuilder().where().isNull("status").and().eq("user_id", getSession().getUser()).queryForFirst();
-//            Log.e("RoutePlan", "has route plan?");
             if(routePlan == null)
                 return routes;
-//            Log.e("RoutePlan", "has route plan");
 
             List<RoutePlanDetail> routePlanDetails = getHelper().fetchForeignCollection(routePlan.getRoutePlanDetails().closeableIterator());
-//            Log.e("RoutePlan", "has route plan details?"+routePlanDetails.size()+" --- "+routePlan.getRoutePlanDetails().size());
 
             Log.e("Week of the Year", Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+" day");
-//            Log.e("Week", Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)+" wk");
             boolean isOdd = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) % 2 == 1;
             for(RoutePlanDetail routePlanDetail : routePlanDetails) {
                 Log.e("RoutePlan", "route plan details="+routePlanDetail.getFrequency()+"---");
                 if(!day.getShortname().equals(routePlanDetail.getRoute_day()))
                     continue;
-                if(searchKey != null && (!searchKey.trim().isEmpty() && !routePlanDetail.getCustomer().getSearchKey().toLowerCase().contains(searchKey))) {
+                Log.e("RoutePlanSearch", routePlanDetail.getCustomer()+"");
+                if(searchKey != null && (!searchKey.trim().isEmpty() && routePlanDetail.getCustomer()!= null && !routePlanDetail.getCustomer().getSearchKey().toLowerCase().contains(searchKey))) {
                     Log.e("searchKey", searchKey+"----");
                     continue;
                 }
 
                 if(routePlanDetail.getFrequency().equals("BM2") && isOdd)
                     continue;
-                routes.add(routePlanDetail.getCustomer());
+
+                if(routePlanDetail.getCustomer() != null) {
+                    Log.e("Customer", "is not null");
+                    Log.e("Customer", routePlanDetail.getCustomer().getName() + " -- " + routes.size());
+                    routes.add(routePlanDetail.getCustomer());
+                }
+                else
+                    Log.e("Customer", "is null");
                 Log.e("frequency", routePlanDetail.getFrequency());
                 Log.e("route day", routePlanDetail.getRoute_day());
                 Log.e("sequence", routePlanDetail.getSequence()+"");
                 Log.e("RoutePlan", "route plan details="+routePlanDetail.getFrequency()+"---");
-                if(routePlanDetail.getCustomer() == null)
-                    Log.e("Customer", "is null");
-                else {
-                    Log.e("Customer", "is not null");
-                    Log.e("Customer", routePlanDetail.getCustomer().getName() + " -- " + routes.size());
-                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -45,9 +45,9 @@ public class SimpleLoginActivity extends BaseLoginActivity {
     }
 
     @Override
-    protected void showCustomDownloadDialog() {
-
+    protected void showCustomDownloadDialog(String title) {
     }
+
 
     @Override
     protected void onCreateLoginLayout() {

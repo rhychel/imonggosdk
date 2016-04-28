@@ -29,6 +29,7 @@ import java.util.Calendar;
  * Created by rhymart on 7/16/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 public class SimpleQuantityDialog extends BaseQuantityDialog {
 
     private Spinner spUnits, spBrands;
@@ -206,10 +207,12 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
                     if(price != null)
                         values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
-                    else
+                    else {
+                        Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
                         values.setValue(quantity, unit, PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
                                 salesBranch, salesCustomerGroup, salesCustomer, unit),
-                                salesCustomer != null? salesCustomer.getDiscount_text() : null);
+                                salesCustomer != null ? salesCustomer.getDiscount_text() : null);
+                    }
                 }
 
                     selectedProductItem.getValues().set(valuePosition, values);

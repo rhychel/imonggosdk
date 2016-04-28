@@ -41,7 +41,7 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
         setServer(Server.REBISCO);
-        //setAutoUpdateApp(true);
+        setAutoUpdateApp(false);
         /**
          *"payment_types"
          */
@@ -107,21 +107,18 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
+        setIsUsingDefaultLoginLayout(false);
         setContentView(R.layout.c_login);
 
         Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
         initializeApp();
 
-        BaseLoginActivity.TEST_ACCOUNT = true;
+        BaseLoginActivity.TEST_ACCOUNT = false;
 
         setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
                 (EditText)findViewById(R.id.etEmail),
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
-
-        setEditTextAccountID("A1029");
-        setEditTextEmail("A1072A_OSS-1@A1029.com");
-        setEditTextPassword("password");
     }
 
     private void initializeApp() {
@@ -136,7 +133,7 @@ public class C_Login extends LoginActivity {
             public void onSuccess(Table table, RequestType requestType, Object response) {
                 Toast.makeText(C_Login.this, "Success!", Toast.LENGTH_SHORT).show();
                 net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
-                Log.e("JSON", ((JSONObject) response).toString());
+                Log.e("JSON", response.toString());
                 SettingTools.updateSettings(C_Login.this, SettingsName.SERVERS, ((JSONObject) response).toString());
             }
 

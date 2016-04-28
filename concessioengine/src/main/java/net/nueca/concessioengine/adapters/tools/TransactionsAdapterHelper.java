@@ -72,6 +72,8 @@ public class TransactionsAdapterHelper {
             return R.drawable.ic_sync_black;
 //        if(offlineData.isQueued())
 //            return R.drawable.ic_sync_black;
+        if(offlineData.getOfflineDataTransactionType().isVoiding())
+            return R.drawable.ic_readytosync_black_void;
         return R.drawable.ic_readytosync_black;
     }
 

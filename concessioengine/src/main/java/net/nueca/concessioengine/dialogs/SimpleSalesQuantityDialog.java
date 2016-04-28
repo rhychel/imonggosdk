@@ -44,13 +44,13 @@ import me.grantland.widget.AutofitTextView;
 public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
 
     private AutofitTextView tvProductName;
-    private TextView tvRetailPrice, tvInStock, tvSubtotal;
-    private EditText etQuantity;
+    private TextView tvRetailPrice, tvInStock, tvSubtotal, tvUnit, tvExpectedQty, tvOutright, tvDiscrepancy;
+    private EditText etQuantity, etExpectedQty, etOutright, etDiscrepancy;
     private Spinner spUnits;
     private Button btnCancel, btnSave;
     private LinearLayout llSubtotal;
 
-    private LinearLayout llInvoicePurpose, llExpiryDate, llBrand;
+    private LinearLayout llInvoicePurpose, llExpiryDate, llBrand, llExpectedQty, llOutright, llDiscrepancy;
     private Spinner spInvoicePurpose, spBrands;
     private Button btnExpiryDate;
     private SwitchCompat swcBadStock;
@@ -81,11 +81,11 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         super.setContentView(R.layout.simple_quantity_dialog2);
 
 //        TimerTools.start("SalesQuantity");
-
         tvProductName = (AutofitTextView) super.findViewById(R.id.tvProductName);
         tvRetailPrice = (TextView) super.findViewById(R.id.tvRetailPrice);
         tvInStock = (TextView) super.findViewById(R.id.tvInStock);
         tvSubtotal = (TextView) super.findViewById(R.id.tvSubtotal);
+        tvUnit = (TextView) super.findViewById(R.id.tvUnit);
         etQuantity = (EditText) super.findViewById(R.id.etQuantity);
         spUnits = (Spinner) super.findViewById(R.id.spUnits);
         btnCancel = (Button) super.findViewById(R.id.btnCancel);
@@ -108,6 +108,28 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         });
 
         boolean hasValues = selectedProductItem.getValues().size() > 0;
+
+        if(hasExpectedQty) {
+            llExpectedQty = (LinearLayout) super.findViewById(R.id.llExpectedQty);
+            tvExpectedQty = (TextView) super.findViewById(R.id.tvExpectedQty);
+            etExpectedQty = (EditText) super.findViewById(R.id.etExpectedQty);
+
+            llExpectedQty.setVisibility(View.VISIBLE);
+        }
+        if(hasOutright) {
+            llOutright = (LinearLayout) super.findViewById(R.id.llOutright);
+            tvOutright = (TextView) super.findViewById(R.id.tvOutright);
+            etOutright = (EditText) super.findViewById(R.id.etOutright);
+
+            llOutright.setVisibility(View.VISIBLE);
+        }
+        if(hasDiscrepancy) {
+            llDiscrepancy = (LinearLayout) super.findViewById(R.id.llDiscrepancy);
+            tvDiscrepancy = (TextView) super.findViewById(R.id.tvDiscrepancy);
+            etDiscrepancy = (EditText) super.findViewById(R.id.etDiscrepancy);
+
+            llDiscrepancy.setVisibility(View.VISIBLE);
+        }
 
         if(hasBadStock) {
             swcBadStock = (SwitchCompat) super.findViewById(R.id.swcBadStock);
@@ -153,6 +175,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 spInvoicePurpose.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        Log.e(">>>", "invoice purposes extras: " + invoicePurposeList.get(position).getExtras());
                         if(invoicePurposeList.get(position).getExtras().require_date()) {
                             llExpiryDate.setVisibility(View.VISIBLE);
                         }
@@ -198,6 +221,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
             }
         });
+
         if (hasValues) {
             if (isMultiValue) {
                 if (valuePosition > -1) {
@@ -277,6 +301,12 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
 
         }
 
+        if(isUnitDisplay) {
+            spUnits.setVisibility(View.GONE);
+            tvUnit.setText(((Unit) spUnits.getSelectedItem()).getName());
+            tvUnit.setVisibility(View.VISIBLE);
+        }
+
         tvProductName.setText(product.getName());
 
         if (isMultiValue) {
@@ -287,9 +317,26 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         } else
             etQuantity.setText(selectedProductItem.getQuantity());
 
-        tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+        if(hasStock) {
+            Unit unit = Unit.fetchById(getHelper(), Unit.class, product.getExtras().getDefault_selling_unit());
+            double invQuantity = Double.valueOf(product.getInStock());;
+            String unitName = product.getBase_unit_name();
+            if(product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && !product.getExtras().getDefault_selling_unit().isEmpty()) {
+                if(unit != null) {
+                    invQuantity = Double.valueOf(product.getInStock(unit.getQuantity(), ProductsAdapterHelper.getDecimalPlace()));
+                    unitName = unit.getName();
+                }
+            }
+            tvInStock.setText(String.format("In Stock: %.2f %s", invQuantity, unitName));
+        }
+        else
+            tvInStock.setVisibility(View.GONE);
 
-        tvRetailPrice.setText(retailPrice);
+        if(hasPrice)
+            tvRetailPrice.setText(retailPrice);
+        else
+            tvRetailPrice.setVisibility(View.GONE);
+
         subtotal = String.valueOf(NumberTools.toDouble(etQuantity.getText().toString()) * NumberTools.toDouble(retailPrice));
         tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
 
@@ -359,11 +406,11 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 if(getHelper() == null)
                     values.setValue(quantity, unit);
                 else {
-                    Log.e("sales quantity", "Quantity is="+quantity);
+                    Log.e("sales quantity", "Quantity is = "+quantity);
                     Price price = PriceTools.identifyPrice(getHelper(), selectedProductItem.getProduct(),
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
 
-                    Log.e(getClass().getSimpleName(), "VALUES PRICE : isNull? " + (price == null));
+                    Log.e("Simple Sales QTY Dialog", "VALUES PRICE : isNull? " + (price == null));
                     if(price != null)
                         values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
                     else {

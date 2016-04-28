@@ -229,6 +229,8 @@ public class BaseLogin {
                 mSession.setAccountUrl(response);
                 mSession.setServer(server);
 
+                Log.e(LOGIN_TAG, "session created inserting to database");
+
                 // Insert Session to Database
                 mSession.insertTo(mDBHelper);
 
@@ -397,12 +399,11 @@ public class BaseLogin {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } else { // if Account is linked
+                } else { // if Account is Unlinked
                     try {
-
                         // set the response token
-                        getSession().setApiToken(response.getString("api_token"));
-                        getSession().setApiAuthentication(ImonggoTools.buildAPIAuthentication(response.getString("api_token")));
+                        mSession.setApiToken(response.getString("api_token"));
+                        mSession.setApiAuthentication(ImonggoTools.buildAPIAuthentication(response.getString("api_token")));
                         if(response.has("user_id"))
                             getSession().setUser_id(response.getString("user_id"));
 
@@ -512,13 +513,13 @@ public class BaseLogin {
 
                     // if using concessio Settings
                     if (mConcessioSettings) {
-                        Log.i("Jn-BaseLogin", "Using Concession Settings");
+                        Log.i("Jn-BaseLogin", "Using Concession Settings"+mUseObjectForConcessioSettings);
                         // CODE ADDED by Rhy
                         ImonggoOperations.getConcesioAppSettings(mContext,
                                 getRequestQueue(), getSession(), new VolleyRequestListener() {
                                     @Override
                                     public void onStart(Table table, RequestType requestType) {
-                                        Log.e("Rhy-BaseLogin", "Getting the account-settings now...");
+                                        Log.e("Rhy-BaseLogin"+mUseObjectForConcessioSettings, "Getting the account-settings now...");
                                         DialogTools.updateMessage("Configuring your app...");
                                     }
 
@@ -645,7 +646,7 @@ public class BaseLogin {
                                     @Override
                                     public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
                                         DialogTools.hideIndeterminateProgressDialog();
-                                        Log.e("Rhy-BaseLogin[" + responseCode + "]", (response == null) ? "null" : ((String) response));
+                                        Log.e("Rhy-BaseLogin[" + responseCode + "]"+mUseObjectForConcessioSettings, (response == null) ? "null" : ((String) response));
                                         DialogTools.showBasicWithTitle(mContext,
                                                 mContext.getString(R.string.LOGIN_FAILED_TITLE),
                                                 mContext.getString(R.string.LOGIN_CONCESSIO_SETTINGS_ERROR),

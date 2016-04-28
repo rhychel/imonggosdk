@@ -43,6 +43,7 @@ import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.ModuleSettingTools;
+import net.nueca.imonggosdk.tools.SettingTools;
 import net.nueca.imonggosdk.tools.StringUtilsEx;
 import net.nueca.imonggosdk.tools.TimerTools;
 
@@ -74,6 +75,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     public static final String REFERENCE = "reference";
     public static final String IS_LAYAWAY = "is_layaway";
     public static final String FOR_DUPLICATING = "is_duplicating";
+    public static final String CATEGORY = "category";
 
     protected ConcessioModule concessioModule = ConcessioModule.STOCK_REQUEST;
     protected boolean isFromCustomersList = false;
@@ -88,6 +90,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected String reference;
     protected boolean isLayaway = false;
     protected boolean isDuplicating = false;
+    protected boolean isButtonTapped = false;
 
     protected int previousFragmentCount = 0;
     protected HistoryDetailsListener historyDetailsListener;
@@ -156,13 +159,16 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     @Override
     public void onBackPressed() {
         if(mSearch != null) {
-            if(!mSearch.isIconified())
+            if(!mSearch.isIconified()) {
                 closeSearchField(mSearch);
+                Log.e("onBackPressed", "closed the search field");
+            }
             else
                 super.onBackPressed();
         }
         else
             super.onBackPressed();
+        Log.e("onBackPressed", "is backed :)");
     }
 
     // TODO Search the document
@@ -214,7 +220,9 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 }
                 else if(branchUser.getBranch().getSite_type() != null && branchUser.getBranch().getSite_type().equals("warehouse"))
                     continue;
-                if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
+                if(branchUser.getBranch().getStatus().equals("D"))
+                    continue;
+                if(branchUser.getBranch().getId() == (SettingTools.defaultBranch(this).isEmpty() ? getUser().getHome_branch_id() : Integer.valueOf(SettingTools.defaultBranch(this))))
                     assignedBranches.add(0, branchUser.getBranch());
                 else
                     assignedBranches.add(branchUser.getBranch());
@@ -270,7 +278,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 Log.e("ProductTag", productTag.getTag());
                 if(productTag.getTag().matches("^#[\\w\\-\\'\\+ ]*")) {
                     String category = StringUtilsEx.ucwords(productTag.getTag().replace("#", ""));
-                    categories.add(category);
+                    categories.add(category.toUpperCase());
                 }
             }
         } catch (SQLException e) {
@@ -373,6 +381,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     documentLine.setUnit_quantity(Double.valueOf(value.getUnit_quantity()));
                     documentLine.setUnit_retail_price(value.getUnit_retail_price());
                 }
+                else {
+                    documentLine.setRetail_price(value.getRetail_price());
+                    documentLine.setUnit_retail_price(value.getUnit_retail_price());
+                }
 
                 pcount.addDocumentLine(documentLine);
             }
@@ -382,7 +394,12 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         pcount.customer(ProductsAdapterHelper.getSelectedCustomer()); // can be null
         pcount.document_type_code(documentTypeCode);
         if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH)
-            pcount.document_purpose_name(ProductsAdapterHelper.getReason().getName());
+            if(ProductsAdapterHelper.getReason() != null)
+                pcount.document_purpose_name(ProductsAdapterHelper.getReason().getName());
+        if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+            pcount.intransit_status(true);
+        if(ProductsAdapterHelper.getParent_document_id() > -1)
+            pcount.parent_document_id(ProductsAdapterHelper.getParent_document_id());
         if(targetBranchId > -1)
             pcount.target_branch_id(targetBranchId);
         try {
@@ -405,6 +422,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         TimerTools.duration("updateInventoryFromSelectedItemList, first loop", true);
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             if(selectedProductItem.getInventory() != null) {
+                Log.e("updateInventory", "inventory is null");
                 Inventory updateInventory = selectedProductItem.getInventory();
                 updateInventory.setProduct(selectedProductItem.getProduct());
                 updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
@@ -413,6 +431,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 updated++;
             }
             else {
+                Log.e("updateInventory", "inventory is not null");
                 Inventory newInventory = new Inventory();
                 Log.e("Product.Extras["+selectedProductItem.getProduct().getName()+"]", "updateInventory="+selectedProductItem.getProduct().getExtras().getDefault_selling_unit());
                 newInventory.setProduct(selectedProductItem.getProduct());
@@ -449,6 +468,91 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return updated;
     }
 
+    protected int revertInventoryFromInvoice() {
+        int updated = 0;
+        BatchList<Inventory> inventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+        for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
+            try {
+                Inventory inventory = getHelper().fetchObjectsInt(Inventory.class).queryBuilder().where().eq("product_id", selectedProductItem.getProduct()).queryForFirst();
+                Values values = selectedProductItem.getValues().get(0);
+                Log.e("revertInventoryFromInv", "Qty="+values.getActualQuantity()+" -- "+values.getUnit_quantity());
+                inventory.operationQuantity(Double.valueOf(values.getActualQuantity()), true);
+//                inventory.updateTo(getHelper());
+                inventories.add(inventory);
+                updated++;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.e("revertInventoryFromInv", inventories.size()+" size");
+        inventories.doOperation(Inventory.class);
+        return updated;
+    }
+
+    private void processDocument(Document document, List<Product> productList) throws SQLException {
+        List<DocumentLine> documentLines = document.getDocument_lines();
+        for(DocumentLine documentLine : documentLines) {
+            Product product = getHelper().fetchIntId(Product.class).queryForId(documentLine.getProduct_id());
+            if(productList.indexOf(product) == -1)
+                productList.add(product);
+
+            SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+            String quantity = "0";
+            Unit unit = null;
+            if(documentLine.getUnit_id() != null)
+                unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
+            if(unit != null) {
+                quantity = documentLine.getUnit_quantity().toString();
+                unit.setRetail_price(documentLine.getUnit_retail_price());
+            }
+            else {
+                unit = new Unit();
+                unit.setId(-1);
+                unit.setName(product.getBase_unit_name());
+                unit.setRetail_price(documentLine.getUnit_retail_price());
+                quantity = String.valueOf(documentLine.getQuantity());
+            }
+            Values values = null;
+            if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
+                ExtendedAttributes extendedAttributes = new ExtendedAttributes(0d, Double.valueOf(quantity));
+                values = new Values();
+                Log.e("Unit", unit.getName()+" == "+unit.getId());
+                if(documentLine.getUnit_name() != null)
+                    values.setUnit_name(documentLine.getUnit_name());
+                if(documentLine.getUnit_content_quantity() != null)
+                    values.setUnit_content_quantity(documentLine.getUnit_content_quantity());
+                if(documentLine.getUnit_retail_price() != null)
+                    values.setUnit_retail_price(documentLine.getUnit_retail_price());
+                if(documentLine.getUnit_quantity() != null)
+                    values.setUnit_quantity(""+documentLine.getUnit_quantity());
+
+                if(unit.getId() == -1)
+                    values.setRetail_price(documentLine.getRetail_price());
+                else
+                    values.setRetail_price(unit.getRetail_price());
+
+                values.setValue("0.0", unit, extendedAttributes);
+            }
+            else
+                values = new Values(unit, quantity);
+            values.setLine_no(documentLine.getLine_no());
+            selectedProductItem.addValues(values);
+            selectedProductItem.setInventory(product.getInventory());
+            ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+        }
+    }
+
+    protected List<Product> processObject(Object object) throws SQLException {
+        List<Product> productList = new ArrayList<>();
+
+        if(object instanceof Document) {
+            Document document = (Document) object;
+            processDocument(document, productList);
+        }
+
+        return productList;
+    }
+
     protected List<Product> processOfflineData(OfflineData offlineData) throws SQLException {
         List<Product> productList = new ArrayList<>();
         if(offlineData.getType() == OfflineData.ORDER) {
@@ -481,30 +585,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         }
         else if(offlineData.getType() == OfflineData.DOCUMENT) {
             Document document = offlineData.getObjectFromData(Document.class);
-            List<DocumentLine> documentLines = document.getDocument_lines();
-            for(DocumentLine documentLine : documentLines) {
-                Product product = getHelper().fetchIntId(Product.class).queryForId(documentLine.getProduct_id());
-                if(productList.indexOf(product) == -1)
-                    productList.add(product);
+            processDocument(document, productList);
 
-                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
-                String quantity = "0";
-                Unit unit = null;
-                if(documentLine.getUnit_id() != null)
-                    unit = getHelper().fetchIntId(Unit.class).queryForId(documentLine.getUnit_id());
-                if(unit != null)
-                    quantity = documentLine.getUnit_quantity().toString();
-                else {
-                    unit = new Unit();
-                    unit.setId(-1);
-                    unit.setName(product.getBase_unit_name());
-                    quantity = String.valueOf(documentLine.getQuantity());
-                }
-                Values values = new Values(unit, quantity);
-                values.setLine_no(documentLine.getLine_no());
-                selectedProductItem.addValues(values);
-                ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
-            }
             Log.e("SelectedProductItems", ProductsAdapterHelper.getSelectedProductItems().size()+"");
             return productList;
         }
