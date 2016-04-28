@@ -598,10 +598,6 @@ public class C_Finalize extends ModuleActivity {
                 data.add("--------------------------------".getBytes());
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
 
-                //InvoiceTools.PaymentsComputation paymentsComputation = checkoutFragment.getComputation();
-                //paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
-                //paymentsComputation.addAllPayments(invoice.getPayments());
-
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
                 data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\r\n").getBytes());
 
