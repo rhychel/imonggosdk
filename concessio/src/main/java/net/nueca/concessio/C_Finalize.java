@@ -136,7 +136,6 @@ public class C_Finalize extends ModuleActivity {
                         //DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
                         //return;
 //                        ProductsAdapterHelper.clearSelectedReturnProductItemList(); -- REMOVED BEFORE 1.2.7-BETA
-
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Finalize.this, C_Module.class);
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
@@ -301,6 +300,16 @@ public class C_Finalize extends ModuleActivity {
             Double balance = getBalance();
             tvBalance.setText("P" + NumberTools.separateInCommas(balance));
             tvBalance.setTag(balance);
+        }
+        if(isForHistoryDetail) {
+            try {
+                ProductsAdapterHelper.clearSelectedProductItemList(false);
+                ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
+                processOfflineData(offlineData);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

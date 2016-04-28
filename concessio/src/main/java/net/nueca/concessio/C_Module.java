@@ -253,21 +253,26 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         ProductsAdapterHelper.setDbHelper(getHelper());
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
+//                            try {
+//                                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
+//                                ProductsAdapterHelper.setSelectedCustomer(customer);
+//                                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+//                                if(customerGroups.size() > 0)
+//                                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
+//                                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
+//
+//                                SelectedProductItemList selecteds =
+//                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
+//                                SelectedProductItemList returns =
+//                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
+//
+//                                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
+//                                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+//                            } catch (SQLException e) {
+//                                e.printStackTrace();
+//                            }
                             try {
-                                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
-                                ProductsAdapterHelper.setSelectedCustomer(customer);
-                                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
-                                if(customerGroups.size() > 0)
-                                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
-                                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
-
-                                SelectedProductItemList selecteds =
-                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
-                                SelectedProductItemList returns =
-                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
-
-                                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
-                                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+                                processOfflineData(offlineData);
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }

@@ -99,8 +99,6 @@ public class C_Login extends LoginActivity {
         return app.modulesToDownload(getHelper(), app.isShow_only_sellable_products());
     }
 
-
-
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
