@@ -1132,8 +1132,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
-                        /*lastUpdatedAt.setLast_updated_at("2016/04/25 11:30:00 +0000");
-                        lastUpdatedAt.updateTo(getHelper());*/
+                        lastUpdatedAt.setLast_updated_at("2016/04/27 09:46:00 +0000");
+                        lastUpdatedAt.updateTo(getHelper());
 
                         if (lastUpdatedAt.getLast_updated_at() != null) {
 
