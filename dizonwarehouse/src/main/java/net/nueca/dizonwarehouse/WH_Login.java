@@ -17,6 +17,7 @@ import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.operations.sync.SyncModules;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.SettingTools;
@@ -33,11 +34,11 @@ public class WH_Login extends LoginActivity {
 
     @Override
     protected void initLoginEquipments() {
-        setAutoUpdateApp(false);
+        setAutoUpdateApp(true);
         //Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
-        setServer(Server.IRETAILCLOUD_NET);
-        SettingTools.updateSettings(this, SettingsName.SERVERS, "{\"A1029\":\"rebisco\"}");
+        setServer(Server.IRETAILCLOUD_COM);
+        //SettingTools.updateSettings(this, SettingsName.SERVERS, "{\"A1029\":\"rebisco\"}");
 
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
@@ -61,19 +62,30 @@ public class WH_Login extends LoginActivity {
     }
 
     @Override
-    protected void updateAppData() {
-        super.updateAppData();
+    protected void updateAppData(SyncModules syncmodules) {
+        super.updateAppData(syncmodules);
+        int[] modulesToDownload = generateModules();
+        setModulesToSync(modulesToDownload);
+        syncmodules.initializeTablesToSync(modulesToDownload);
+        updateApp();
 
-//        try {
-//            startSyncingImonggoModules();
-            int []modulesToDownload = generateModules();
-            setModulesToSync(modulesToDownload);
-
-            getSyncModules().initializeTablesToSync(modulesToDownload);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        Log.e(TAG, "updateAppData called");
     }
+
+//    @Override
+//    protected void updateAppData() {
+//        super.updateAppData();
+//
+////        try {
+////            startSyncingImonggoModules();
+//            int []modulesToDownload = generateModules();
+//            setModulesToSync(modulesToDownload);
+//
+//            getSyncModules().initializeTablesToSync(modulesToDownload);
+////        } catch (SQLException e) {
+////            e.printStackTrace();
+////        }
+//    }
 
     @Override
     protected void showNextActivityAfterLogin() {
@@ -121,7 +133,7 @@ public class WH_Login extends LoginActivity {
 
         Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
 
-        BaseLoginActivity.TEST_ACCOUNT = true;
+        BaseLoginActivity.TEST_ACCOUNT = false;
 
         setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
                 (EditText)findViewById(R.id.etEmail),

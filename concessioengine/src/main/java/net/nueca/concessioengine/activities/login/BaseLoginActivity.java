@@ -443,7 +443,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+                /*try {
                     String accountId = etAccountID.getText().toString().trim();
                     JSONObject servers = new JSONObject(SettingTools.currentServer(BaseLoginActivity.this));
 
@@ -457,7 +457,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     setServer(Server.getServer(label));
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
+                }*/
 
                 initLogin();
             }
