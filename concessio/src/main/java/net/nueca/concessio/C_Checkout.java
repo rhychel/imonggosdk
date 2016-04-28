@@ -103,7 +103,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         @Override
         public void whenDismissed() {
             if(getAppSetting().isCan_change_inventory())
-                updateInventoryFromSelectedItemList(false);
+                if(!isLayaway)
+                    updateInventoryFromSelectedItemList(false);
             Intent intent = new Intent();
             intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
             setResult(SUCCESS, intent);
@@ -429,6 +430,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     } else {
                         tvLabelBalance.setText("Balance");
                         tvBalance.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                        btn1.setText("PAY");
                         if(getModuleSetting(ConcessioModule.INVOICE).isHas_partial())
                             btn2.setVisibility(View.VISIBLE);
                     }
