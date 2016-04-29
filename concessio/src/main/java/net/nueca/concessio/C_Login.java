@@ -108,7 +108,7 @@ public class C_Login extends LoginActivity {
         Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
         initializeApp();
 
-        BaseLoginActivity.TEST_ACCOUNT = false;
+        BaseLoginActivity.TEST_ACCOUNT = true;
 
         setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
                 (EditText)findViewById(R.id.etEmail),
