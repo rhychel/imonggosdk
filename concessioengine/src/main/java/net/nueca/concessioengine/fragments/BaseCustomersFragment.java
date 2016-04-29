@@ -31,7 +31,8 @@ import java.util.List;
 public abstract class BaseCustomersFragment extends ImonggoFragment {
     protected static final long LIMIT = 100l;
     protected long offset = 0l;
-    private int prevLast = -1;
+    protected int headerCount = 0;
+    protected int prevLast = -1;
     protected boolean useRecyclerView = true;
     protected ListingType listingType = ListingType.BASIC;
 
@@ -89,7 +90,6 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
             lastHeader = lastCustomer.getLetterHeader();
         }
         int sectionItemCount = lastIndex;
-        int headerCtr = 0;
         for (int i = 0; i < newCustomers.size(); i++) {
             Customer customer = newCustomers.get(i);
             String name;
@@ -117,6 +117,8 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
                 customerHeader.setLetterHeader(header);
 
                 finalCustomers.add(customerHeader);
+
+                headerCount++;
                 sectionItemCount++;
             }
             customer.setIsHeader(false);
@@ -236,14 +238,16 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
             }
             Log.e("RoutePlan", "*totalItemCount="+totalItemCount);
             Log.e("RoutePlan", "*firstVisibleItem="+firstVisibleItem);
-
+            Log.e("RoutePlan", "*headerCount="+headerCount);
+            Log.e("RoutePlan", "*visibleItemCount="+visibleItemCount);
             int lastItem = firstVisibleItem + visibleItemCount;
+            Log.e("RoutePlan", "*lastItem="+lastItem);
 
-            if(lastItem == totalItemCount) {
+            if(lastItem == totalItemCount) { // Customer Items --
                 if(prevLast != lastItem) {
                     offset += LIMIT;
                     if(listingType == ListingType.LETTER_HEADER) {
-                        Customer lastCustomer = simpleCustomerRecyclerViewAdapter.getItem(lastItem-1);
+                        Customer lastCustomer = simpleCustomerRecyclerViewAdapter.getItem(lastItem - 1);
                         List<Customer> customersToBeAdded = getCustomers();
 
                         whenListEndReached(processCustomersForLetterHeader(customersToBeAdded, lastCustomer, lastItem));

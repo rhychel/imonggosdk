@@ -206,17 +206,18 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
 
                 if(routePlanDetail.getFrequency().equals("BM2") && isOdd)
                     continue;
-                routes.add(routePlanDetail.getCustomer());
+
+                if(routePlanDetail.getCustomer() != null) {
+                    Log.e("Customer", "is not null");
+                    Log.e("Customer", routePlanDetail.getCustomer().getName() + " -- " + routes.size());
+                    routes.add(routePlanDetail.getCustomer());
+                }
+                else
+                    Log.e("Customer", "is null");
                 Log.e("frequency", routePlanDetail.getFrequency());
                 Log.e("route day", routePlanDetail.getRoute_day());
                 Log.e("sequence", routePlanDetail.getSequence()+"");
                 Log.e("RoutePlan", "route plan details="+routePlanDetail.getFrequency()+"---");
-                if(routePlanDetail.getCustomer() == null)
-                    Log.e("Customer", "is null");
-                else {
-                    Log.e("Customer", "is not null");
-                    Log.e("Customer", routePlanDetail.getCustomer().getName() + " -- " + routes.size());
-                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

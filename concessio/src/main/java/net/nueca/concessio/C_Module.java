@@ -87,6 +87,7 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.swable.ImonggoSwableServiceConnection;
 import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -98,6 +99,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -223,6 +226,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionDetailsFragment.setSetupActionBar(this);
                 // if there's branch product
                 simpleTransactionDetailsFragment.setBranch(getBranches().get(0));
+                simpleTransactionDetailsFragment.setHasInStock(false);
 
                 simpleTransactionsFragment = new SimpleTransactionsFragment();
                 simpleTransactionsFragment.setHelper(getHelper());
@@ -240,27 +244,35 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                     @Override
                     public void showTransactionDetails(OfflineData offlineData) {
+                        if(getSupportFragmentManager().findFragmentByTag("transaction_details") != null)
+                            return;
+
                         prepareFooter();
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
                         ProductsAdapterHelper.setDbHelper(getHelper());
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
+//                            try {
+//                                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
+//                                ProductsAdapterHelper.setSelectedCustomer(customer);
+//                                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+//                                if(customerGroups.size() > 0)
+//                                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
+//                                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
+//
+//                                SelectedProductItemList selecteds =
+//                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
+//                                SelectedProductItemList returns =
+//                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
+//
+//                                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
+//                                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+//                            } catch (SQLException e) {
+//                                e.printStackTrace();
+//                            }
                             try {
-                                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
-                                ProductsAdapterHelper.setSelectedCustomer(customer);
-                                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
-                                if(customerGroups.size() > 0)
-                                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
-                                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
-
-                                SelectedProductItemList selecteds =
-                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
-                                SelectedProductItemList returns =
-                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
-
-                                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
-                                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+                                processOfflineData(offlineData);
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
@@ -311,7 +323,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         // <-- Voiding issue when the transaction is voided for Receive and Pullout -->
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER) // Receive
                             revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), false);
-                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) // Pullout
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER
+                                || simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) // Pullout || MSO
                             revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), true);
 
                         onBackPressed();
@@ -323,6 +336,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     @Override
                     public void onDuplicateTransaction() {
                         ProductsAdapterHelper.isDuplicating = true;
+                        if(!ProductsAdapterHelper.hasSelectedProductItems()) {
+                            try {
+                                processOfflineData(simpleTransactionDetailsFragment.getOfflineData());
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         Intent intent = new Intent(C_Module.this, C_Module.class);
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
@@ -513,6 +533,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
             break;
             case INVOICE: {
+                Log.e("onCreate", "INVOICE is called");
                 CustomerGroup customerGroup = null;
 
                 try {
@@ -570,9 +591,29 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             public void onClick(View v) {
                                 // ---- So let's print...
                                 if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                                    printTransaction(null, "*Salesman Copy*", "*Office Copy*");
+                                    DialogTools.showConfirmationDialog(C_Module.this, "Print Inventory", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            printTransaction(null, "*Salesman Copy*", "*Office Copy*");
+                                        }
+                                    }, "No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    }, R.style.AppCompatDialogStyle_Light);
                                 if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                                    printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
+                                    DialogTools.showConfirmationDialog(C_Module.this, "Print Inventory", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
+                                        }
+                                    }, "No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    }, R.style.AppCompatDialogStyle_Light);
                             }
                         });
                         tvItems.setVisibility(View.INVISIBLE);
@@ -762,8 +803,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             @Override
                             public void onSave(DocumentPurpose reason, Branch source, Branch destination) {
                                 Log.e("Reason", reason.getName());
-                                ProductsAdapterHelper.clearSelectedProductItemList(true);
-                                ProductsAdapterHelper.clearSelectedReturnProductItemList();
+                                if(!ProductsAdapterHelper.isDuplicating) {
+                                    ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                    ProductsAdapterHelper.clearSelectedReturnProductItemList();
+                                }
                                 ProductsAdapterHelper.setSelectedCustomer(customer);
                                 ProductsAdapterHelper.setReason(reason);
 
@@ -1123,9 +1166,32 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         else if(item.getItemId() == R.id.mPrint) {
             if(getAppSetting().isCan_print()) {
                 if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                    printTransaction(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                    DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            printTransaction(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                        }
+                    }, "No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }, R.style.AppCompatDialogStyle_Light);
                 if(!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals(""))
-                    printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                    DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            else
+                                printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                        }
+                    }, "No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }, R.style.AppCompatDialogStyle_Light);
 
 //                AsyncTask<Void, Void, Void> startPrint = new AsyncTask<Void, Void, Void>() {
 //                    @Override
@@ -1739,8 +1805,15 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     private void printTransactionStar(final OfflineData offlineData, final String... labels) {
         if(!BluetoothTools.isEnabled())
             return;
+
+        if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
+            return;
+
         Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
+
+        double numberOfPages = 1.0, items = 0;
+        int page = 1;
 
         try {
             for(int i = 0;i < labels.length;i++) {
@@ -1748,8 +1821,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 data.add((branch.getName()+"\r\n").getBytes());
                 data.add((branch.generateAddress()+"\r\n\r\n").getBytes());
 
-                if(offlineData != null && offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
-                    data.add(("MISCELLANEOUS STOCK OUT SLIP\r\n\r\n").getBytes());
+                if(offlineData != null) {
+                    if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
+                        data.add(("MISCELLANEOUS STOCK OUT SLIP\r\n\r\n").getBytes());
+                    else
+                        data.add((getModuleSetting(offlineData.getConcessioModule()).getLabel().toUpperCase()+" SLIP\r\n\r\n").getBytes());
+                }
                 else
                     data.add(("INVENTORY SLIP\r\n\r\n").getBytes());
 //                data.add(("Salesman: "+getSession().getUser().getName()+"\r\n").getBytes());
@@ -1779,7 +1856,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 || concessioModule == ConcessioModule.RELEASE_SUPPLIER
                                 || concessioModule == ConcessioModule.RELEASE_ADJUSTMENT
                                 || concessioModule == ConcessioModule.HISTORY)) {
-                    for (final DocumentLine documentLine : offlineData.getObjectFromData(Document.class).getDocument_lines()) {
+
+                    numberOfPages = Math.ceil((double)offlineData.getObjectFromData(Document.class).getDocument_lines().size()/Configurations.MAX_ITEMS_FOR_PRINTING);
+                    page = 1;
+                    items = 0;
+
+                    List<DocumentLine> documentLines = offlineData.getObjectFromData(Document.class).getDocument_lines();
+                    Collections.sort(documentLines, new Comparator<DocumentLine>() {
+                        @Override
+                        public int compare(DocumentLine lhs, DocumentLine rhs) {
+                            return 0;
+                        }
+                    });
+
+                    for (final DocumentLine documentLine : documentLines) {
                         Double retail_price = 0.0;
                         try {
                             final BranchProduct branchProduct = getHelper().fetchForeignCollection(documentLine.getProduct().getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
@@ -1825,6 +1915,21 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             data.add((NumberTools.separateInCommas(subtotal)+"\r\n").getBytes());
                             totalAmount += subtotal;
                         }
+
+                        items++;
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                            data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
+                            // print
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                 }
                 else {
@@ -1846,6 +1951,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             .isNotNull("inventory_id").and()
                             .in("inventory_id", currentInventories)
                             .query();
+
+                    numberOfPages = Math.ceil((double)products.size()/Configurations.MAX_ITEMS_FOR_PRINTING);
+                    page = 1;
+                    items = 0;
+
                     for(Product product : products) {
                         Double retail_price = 0.0;
                         final Unit unit = Unit.fetchById(getHelper(), Unit.class, product.getExtras().getDefault_selling_unit());
@@ -1895,6 +2005,21 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Left
                         data.add((NumberTools.separateInCommas(subtotal)+"\r\n").getBytes());
+
+                        items++;
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                            data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
+
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                 }
 

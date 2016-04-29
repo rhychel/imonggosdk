@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects.price;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -128,8 +130,21 @@ public class PriceList extends BaseTable {
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            for(Price price : prices)
-                price.deleteTo(dbHelper);
+            if(prices != null) {
+                if(prices.size() != 0) {
+                    Log.e(TAG, "deleting price details size with... " + prices.size());
+                    for (Price price : prices)
+                        price.deleteTo(dbHelper);
+                } else {
+                    Log.e(TAG, "price details is nul. skipping deleting ");
+                }
+
+            } else {
+                Log.e(TAG, "price details is nul. skipping deleting ");
+            }
+
+
+
             dbHelper.delete(PriceList.class, this);
         } catch (SQLException e) {
             e.printStackTrace();

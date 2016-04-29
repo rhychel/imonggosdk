@@ -188,6 +188,9 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
     }
 
     public void reinitializeList() {
+        offset = 0l;
+        prevLast = -1;
+
         simpleCustomerRecyclerViewAdapter.removeAll();
         simpleCustomerRecyclerViewAdapter.notifyDataSetChanged();
         simpleCustomerRecyclerViewAdapter.setList(processCustomersForLetterHeader(getCustomers()));
@@ -204,6 +207,7 @@ public class SimpleCustomersFragment extends BaseCustomersFragment {
     public void updateListWhenSearch(String searchKey) {
         setSearchKey(searchKey);
         offset = 0l;
+        headerCount = 0;
 
         if(useRecyclerView) {
             if(listingType == ListingType.BASIC)

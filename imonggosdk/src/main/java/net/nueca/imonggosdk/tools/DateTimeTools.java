@@ -223,6 +223,13 @@ public class DateTimeTools {
         return currentDate;
     }
 
+    public static String getCurrentDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date currentDateTime= new Date();
+        String currentDate = dateFormat.format(currentDateTime);
+        return currentDate;
+    }
+
     /**
      *
      * Get current date time in a UTC 0:00 format.

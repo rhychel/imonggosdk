@@ -131,6 +131,10 @@ public enum Table {
     NONE(API_TYPE.NON_API, "none"),
     ALL(API_TYPE.NON_API, "All");
 
+    // 12:00 CUSTOMER
+
+    //  12:02 PRICELIST // customer_id
+
     private final API_TYPE api_type;
     private final String name;
     private final Class aClass;
@@ -185,6 +189,10 @@ public enum Table {
 
         if(this == BRANCH_PRODUCTS)
             prerequisites = new Table[]{PRODUCTS, UNITS};
+        if(this == CUSTOMER_BY_SALESMAN)
+            prerequisites = new Table[]{PRICE_LISTS_FROM_CUSTOMERS};
+        if(this == PRICE_LISTS_FROM_CUSTOMERS)
+            prerequisites = new Table[]{CUSTOMER_BY_SALESMAN};
 
         return prerequisites;
     }

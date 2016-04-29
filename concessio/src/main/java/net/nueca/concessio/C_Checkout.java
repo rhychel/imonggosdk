@@ -32,7 +32,9 @@ import net.nueca.concessioengine.printer.epson.listener.PrintListener;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
+import net.nueca.concessioengine.tools.BluetoothTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
+import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.PointsTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
@@ -101,7 +103,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         @Override
         public void whenDismissed() {
             if(getAppSetting().isCan_change_inventory())
-                updateInventoryFromSelectedItemList(false);
+                if(!isLayaway)
+                    updateInventoryFromSelectedItemList(false);
             Intent intent = new Intent();
             intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
             setResult(SUCCESS, intent);
@@ -116,11 +119,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     SimplePaymentDialog dialog = new SimplePaymentDialog(C_Checkout.this, simpleSplitPaymentAdapter.getPaymentTypeList(), R.style.AppCompatDialogStyle_Light_NoTitle);
                     dialog.setDialogType(DialogType.ADVANCED_PAY);
 
-                    Double availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
-                    Double pointsInPeso = 0d;
-
-                    if(salesPromotion != null && salesPromotion.getSettings() != null)
-                        pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
+//                    Double availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
+//                    Double pointsInPeso = 0d;
+//
+//                    if(salesPromotion != null && salesPromotion.getSettings() != null)
+//                        pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
 
                     dialog.setAvailablePoints(availablePoints);
                     dialog.setPointsInPesoText(pointsInPeso);
@@ -136,11 +139,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                             if (paymentType != null) {
                                 builder.payment_type_id(paymentType.getId());
+                                builder.payment_type_name(paymentType.getName());
                             }
-
-                            Double points = PointsTools.amountToPoints(salesPromotion.getSettings(), NumberTools.toDouble(paymentValue));
-
-                            Log.e("Points", points+" <-- ");
 
                             InvoicePayment invoicePayment = builder.build();
                             invoicePayment.setExtras(extras);
@@ -384,6 +384,14 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 public void onAddPayment(InvoicePayment invoicePayment) {
                     tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
 
+                    if(invoicePayment.getPayment_type_name().toLowerCase().equals("rewards")) {
+                        availablePoints = availablePoints-PointsTools.amountToPoints(salesPromotion.getSettings(), invoicePayment.getTender());
+                        pointsInPeso = pointsInPeso-invoicePayment.getTender();
+
+                        simpleSplitPaymentAdapter.setAvailablePoints(availablePoints);
+                        simpleSplitPaymentAdapter.setPointsInPeso(pointsInPeso);
+                    }
+
                     if (simpleSplitPaymentAdapter.isFullyPaid()) {
                         tvLabelBalance.setText("Change");
                         tvBalance.setTextColor(getResources().getColor(R.color.payment_color));
@@ -398,8 +406,21 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 }
 
                 @Override
-                public void onUpdatePayment(int location, InvoicePayment invoicePayment) {
+                public void onUpdatePayment(int location, double prevValue, InvoicePayment invoicePayment) {
                     tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
+
+                    Log.e("Payment", "prevValue="+prevValue + " || newValue="+invoicePayment.getTender());
+
+                    if(invoicePayment.getPayment_type_name().toLowerCase().equals("rewards")) {
+                        availablePoints = availablePoints+PointsTools.amountToPoints(salesPromotion.getSettings(), prevValue);
+                        pointsInPeso = pointsInPeso+prevValue;
+
+                        availablePoints = availablePoints-PointsTools.amountToPoints(salesPromotion.getSettings(), invoicePayment.getTender());
+                        pointsInPeso = pointsInPeso-invoicePayment.getTender();
+
+                        simpleSplitPaymentAdapter.setAvailablePoints(availablePoints);
+                        simpleSplitPaymentAdapter.setPointsInPeso(pointsInPeso);
+                    }
 
                     if (simpleSplitPaymentAdapter.isFullyPaid()) {
                         tvLabelBalance.setText("Change");
@@ -409,14 +430,23 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     } else {
                         tvLabelBalance.setText("Balance");
                         tvBalance.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                        btn1.setText("PAY");
                         if(getModuleSetting(ConcessioModule.INVOICE).isHas_partial())
                             btn2.setVisibility(View.VISIBLE);
                     }
                 }
 
                 @Override
-                public void onDeletePayment(int location) {
+                public void onDeletePayment(int location, double prevValue) {
                     tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
+
+                    if(prevValue > -1) {
+                        availablePoints = availablePoints+PointsTools.amountToPoints(salesPromotion.getSettings(), prevValue);
+                        pointsInPeso = pointsInPeso+prevValue;
+
+                        simpleSplitPaymentAdapter.setAvailablePoints(availablePoints);
+                        simpleSplitPaymentAdapter.setPointsInPeso(pointsInPeso);
+                    }
 
                     if (!simpleSplitPaymentAdapter.isFullyPaid()) {
                         tvLabelBalance.setText("Balance");
@@ -474,6 +504,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
             if(salesPromotion != null && salesPromotion.getSettings() != null)
                 pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
+
+            simpleSplitPaymentAdapter.setAvailablePoints(availablePoints);
+            simpleSplitPaymentAdapter.setPointsInPeso(pointsInPeso);
+            simpleSplitPaymentAdapter.setSalesPromotion(salesPromotion);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -545,17 +579,16 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
             printText.append(EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\n");
             printText.append(EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\n");
 
-            if(invoice.getExtras().getCustomer_discount_text_summary() != null) {
-
+            if(paymentsComputation.getCustomerDiscount().size() > 0) {
                 printText.append(EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\n");
 
                 for (Double cusDisc : paymentsComputation.getCustomerDiscount())
                     printText.append("(" + NumberTools.separateInCommas(cusDisc) + ")\n");
             }
-            if(invoice.getExtras().getTotal_company_discount() != null) {
+            if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
                 printText.append(EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\n");
             }
-            if(paymentsComputation.getTotalProductDiscount() != BigDecimal.ZERO) {
+            if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
                 printText.append(EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\n");
             }
 
@@ -674,6 +707,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     }
 
     private void printTransactionStar(final Invoice invoice, final String... labels) {
+        if(!BluetoothTools.isEnabled())
+            return;
+        if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
+            return;
         Branch branch = getBranches().get(0);
 
         ArrayList<byte[]> data = new ArrayList<>();
@@ -705,6 +742,12 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add("================================".getBytes());
                 data.add("Quantity                  Amount".getBytes());
                 data.add("================================".getBytes());
+
+                int totalInvoiceLines = invoice.getSalesInvoiceLines().size()+invoice.getRgsInvoiceLines().size()+invoice.getBoInvoiceLines().size()+invoice.getPayments().size();
+
+                double numberOfPages = Math.ceil((double)totalInvoiceLines/Configurations.MAX_ITEMS_FOR_PRINTING), items = 0;
+                int page = 1;
+
                 for (InvoiceLine invoiceLine : invoice.getSalesInvoiceLines()) {
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                     Product product = Product.fetchById(getHelper(), Product.class, invoiceLine.getProduct_id());
@@ -721,6 +764,20 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                         data.add((NumberTools.separateInCommas(invoiceLine.getSubtotal())+"\r\n").getBytes());
                     }
+                    items++;
+
+                    if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                        data.add(("\r\n\r\n\r\n").getBytes());
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                        data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                        data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                        page++;
+                        items = 0;
+
+                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            break;
+                        data.clear();
+                    }
                 }
                 data.add("--------------------------------".getBytes());
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
@@ -732,17 +789,17 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
                 data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\r\n").getBytes());
 
-                if(invoice.getExtras().getCustomer_discount_text_summary() != null) {
+                if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                     for (Double cusDisc : paymentsComputation.getCustomerDiscount())
                         data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
                 }
-                if(invoice.getExtras().getTotal_company_discount() != null) {
+                if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                 }
-                if(paymentsComputation.getTotalProductDiscount() != BigDecimal.ZERO) {
+                if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                 }
@@ -777,6 +834,21 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                             data.add(("Reason: " + invoiceLine.getExtras().getInvoice_purpose_name() + "\r\n").getBytes());
                         }
+
+                        items++;
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                            data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
+
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(totalQuantity), 2)), 32)+"\r\n").getBytes());
@@ -808,6 +880,21 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                             data.add(("Reason: " + invoiceLine.getExtras().getInvoice_purpose_name() + "\r\n").getBytes());
                         }
+
+                        items++;
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                            data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
+
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(Math.abs(totalQuantity)), 32)+"\r\n").getBytes());
@@ -827,6 +914,21 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
                     if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip"))
                         data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
+
+                    items++;
+
+                    if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                        data.add(("\r\n\r\n\r\n").getBytes());
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                        data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                        data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                        page++;
+                        items = 0;
+
+                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            break;
+                        data.clear();
+                    }
                 }
                 data.add((EpsonPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\r\n").getBytes());
                 data.add("--------------------------------".getBytes());

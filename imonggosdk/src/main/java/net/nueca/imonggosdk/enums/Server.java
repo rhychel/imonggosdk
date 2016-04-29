@@ -20,6 +20,6 @@ public enum Server {
 		for(Server server : values())
 			if(server.label.equals(label))
 				return server;
-		return IRETAILCLOUD_NET;
+		return REBISCO; // TEMP, should be irc.net
 	}
 }

@@ -37,8 +37,10 @@ import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.tools.DialogTools;
@@ -422,6 +424,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         TimerTools.duration("updateInventoryFromSelectedItemList, first loop", true);
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             if(selectedProductItem.getInventory() != null) {
+                Log.e("updateInventory", "inventory is null");
                 Inventory updateInventory = selectedProductItem.getInventory();
                 updateInventory.setProduct(selectedProductItem.getProduct());
                 updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
@@ -430,6 +433,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 updated++;
             }
             else {
+                Log.e("updateInventory", "inventory is not null");
                 Inventory newInventory = new Inventory();
                 Log.e("Product.Extras["+selectedProductItem.getProduct().getName()+"]", "updateInventory="+selectedProductItem.getProduct().getExtras().getDefault_selling_unit());
                 newInventory.setProduct(selectedProductItem.getProduct());
@@ -462,6 +466,27 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             }
         }
         Log.e("revertInventoryFromDoc", inventories.size()+" size");
+        inventories.doOperation(Inventory.class);
+        return updated;
+    }
+
+    protected int revertInventoryFromInvoice() {
+        int updated = 0;
+        BatchList<Inventory> inventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+        for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
+            try {
+                Inventory inventory = getHelper().fetchObjectsInt(Inventory.class).queryBuilder().where().eq("product_id", selectedProductItem.getProduct()).queryForFirst();
+                Values values = selectedProductItem.getValues().get(0);
+                Log.e("revertInventoryFromInv", "Qty="+values.getActualQuantity()+" -- "+values.getUnit_quantity());
+                inventory.operationQuantity(Double.valueOf(values.getActualQuantity()), true);
+//                inventory.updateTo(getHelper());
+                inventories.add(inventory);
+                updated++;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.e("revertInventoryFromInv", inventories.size()+" size");
         inventories.doOperation(Inventory.class);
         return updated;
     }
@@ -514,6 +539,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 values = new Values(unit, quantity);
             values.setLine_no(documentLine.getLine_no());
             selectedProductItem.addValues(values);
+            selectedProductItem.setInventory(product.getInventory());
             ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
         }
     }
@@ -567,7 +593,24 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             return productList;
         }
         else if(offlineData.getType() == OfflineData.INVOICE) {
+            try {
+                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
+                ProductsAdapterHelper.setSelectedCustomer(customer);
+                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+                if(customerGroups.size() > 0)
+                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
+                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
 
+                SelectedProductItemList selecteds =
+                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
+                SelectedProductItemList returns =
+                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
+
+                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
+                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return productList;
     }

@@ -211,6 +211,9 @@ public class InvoiceTools {
             if(selectedProductItem == null)
                 selectedProductItem = selectedProductItemList.initializeItem(product);
 
+            /** Inventory **/
+            selectedProductItem.setInventory(product.getInventory());
+
             /** Multiline **/
             selectedProductItem.setIsMultiline(isMultiline);
 

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.dialogs.SimplePaymentDialog;
@@ -18,7 +19,9 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.tools.NumberTools;
+import net.nueca.imonggosdk.tools.PointsTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ import java.util.List;
 public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSplitPaymentAdapter.ListViewHolder> {
     private ImonggoDBHelper2 dbHelper;
     private FragmentManager fragmentManager;
+    private SalesPromotion salesPromotion;
 
     public SimpleSplitPaymentAdapter(Context context, ImonggoDBHelper2 dbHelper) {
         this(context, dbHelper, ListingType.BASIC_PAYMENTS);
@@ -55,6 +59,10 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         super(context, chooseLayout(listingType), computation, paymentTypes);
         this.dbHelper = dbHelper;
         this.listingType = listingType;
+    }
+
+    public void setSalesPromotion(SalesPromotion salesPromotion) {
+        this.salesPromotion = salesPromotion;
     }
 
     private static int chooseLayout(ListingType listingType) {
@@ -163,8 +171,10 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                         // TODO: must set tender to be able to compute
                         builder.tender(NumberTools.toDouble(paymentValue));
 
-                        if(paymentType != null)
+                        if(paymentType != null) {
                             builder.payment_type_id(paymentType.getId());
+                            builder.payment_type_name(paymentType.getName());
+                        }
 
                         InvoicePayment invoicePayment = builder.build();
                         invoicePayment.setExtras(extras);
@@ -189,10 +199,33 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
 
                 SimplePaymentDialog dialog = new SimplePaymentDialog(getContext(), getPaymentTypeList(),
                         R.style.AppCompatDialogStyle_Light_NoTitle);
+
+//                Double availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
+//                Double pointsInPeso = 0d;
+//                if(salesPromotion != null && salesPromotion.getSettings() != null)
+//                    pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
+                final double prevValue = getItem(position).getTender();
+                if(getItem(position).getPayment_type_name().toLowerCase().equals("rewards")) {
+                    availablePoints = availablePoints+PointsTools.amountToPoints(salesPromotion.getSettings(), getItem(position).getTender());
+                    pointsInPeso = pointsInPeso+getItem(position).getTender();
+                }
+
+                dialog.setAvailablePoints(availablePoints);
+                dialog.setPointsInPesoText(pointsInPeso);
+
                 dialog.setDialogType(DialogType.ADVANCED_PAY);
                 dialog.setBalanceText(balance); // should be updated
                 dialog.setTotalAmountText(totalAmount); // should be updated
                 dialog.setInvoicePayment(getItem(position));
+                dialog.setOnPaymentDialogListener(new SimplePaymentDialog.OnPaymentDialogListener() {
+                    @Override
+                    public void onDismissed() {
+                        if(getItem(position).getPayment_type_name().toLowerCase().equals("rewards")) {
+                            availablePoints = availablePoints-PointsTools.amountToPoints(salesPromotion.getSettings(), prevValue);
+                            pointsInPeso = pointsInPeso-prevValue;
+                        }
+                    }
+                });
                 dialog.setListener(new SimplePaymentDialog.PaymentDialogListener() {
                     @Override
                     public void onAddPayment(PaymentType paymentType, String paymentValue, Extras extras) {
@@ -203,8 +236,10 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                         // TODO: must set tender to be able to compute
                         builder.tender(NumberTools.toDouble(paymentValue));
 
-                        if(paymentType != null)
+                        if(paymentType != null) {
                             builder.payment_type_id(paymentType.getId());
+                            builder.payment_type_name(paymentType.getName());
+                        }
 
                         InvoicePayment invoicePayment = builder.build();
                         invoicePayment.setExtras(extras);

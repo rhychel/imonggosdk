@@ -24,8 +24,10 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -57,6 +59,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             hasBrand = false,
             hasDeliveryDate = false,
             hasCategories = true,
+            hasInStock = true,
             multipleInput = false,
             showCategoryOnStart = false,
             lockCategory = false,
@@ -67,8 +70,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             useSalesProductAdapter = false,
             hasPromotionalProducts = false,
             isReturnItems = false,
-            isOnSalesFinalize = false;
-    private int prevLast = -1;
+            isOnSalesFinalize = false,
+            dialogIsOpened = false;
+    protected int prevLast = -1;
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
     private List<Product> filterProductsBy = new ArrayList<>();
@@ -195,7 +199,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             return products;
         try {
             Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
-            whereProducts.eq("status", "A");
+            whereProducts.eq("status", "A").or().isNull("status");
 //            whereProducts.isNull("status");
             Log.e("includeSearchKey", includeSearchKey + "");
             Log.e("includeCategory", includeCategory+"");
@@ -203,12 +207,20 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
             if(includeSearchKey)
                 whereProducts.and().like("searchKey", "%"+searchKey+"%");
+
+            String orderByFilter = "";
             if(hasProductFilter) {
+                orderByFilter = "CASE id";
+                int order = 0;
                 List<Integer> ids = new ArrayList<>();
                 for(Product product : filterProductsBy) {
                     ids.add(product.getId());
+                    orderByFilter += " WHEN "+product.getId()+" THEN "+order;
+                    order++;
+
                     //Log.e("FILTER", product.getId() + "");
                 }
+                orderByFilter += " ELSE 1000000 END, ";
                 whereProducts.and().in("id", ids);
             }
             if(includeCategory) {
@@ -219,7 +231,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             }
 
             String orderBy = "";
-            if(promotionalProducts.size() > 0) {
+            if(isFinalize) {
+                orderBy += orderByFilter;
+            }
+            else if(promotionalProducts.size() > 0) {
                 orderBy = "CASE id";
                 int order = 0;
                 for(Product product : promotionalProducts) {
@@ -251,7 +266,6 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         }
 
         Log.e(getClass().getSimpleName(), "getProducts = "+products.size());
-
         return products;
     }
 
@@ -304,7 +318,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
             int lastItem = firstVisibleItem + visibleItemCount;
 
-            Log.e("BaseProducts", "lastItem ="+lastItem+" | totalItemCount = "+totalItemCount);
+            Log.e("BaseProducts", "lastItem ="+lastItem+" | totalItemCount = "+totalItemCount+" | prevLast = "+prevLast);
             if(lastItem == totalItemCount) {
                 if(prevLast != lastItem) {
                     Log.e("BaseProducts", "prevLast ="+prevLast+" | " +"lastItem ="+lastItem+" | totalItemCount = "+totalItemCount);
@@ -372,6 +386,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     }
 
     public void setFilterProductsBy(List<Product> filterProductsBy) {
+        offset = 0l;
+        prevLast = -1;
         this.filterProductsBy = filterProductsBy;
     }
 
@@ -440,5 +456,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setOnSalesFinalize(boolean onSalesFinalize) {
         isOnSalesFinalize = onSalesFinalize;
+    }
+
+    public void setHasInStock(boolean hasInStock) {
+        this.hasInStock = hasInStock;
     }
 }

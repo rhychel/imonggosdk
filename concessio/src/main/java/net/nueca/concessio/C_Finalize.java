@@ -47,6 +47,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -123,6 +124,8 @@ public class C_Finalize extends ModuleActivity {
                                 .object(offlineData)
                                 .queue();
 
+                        revertInventoryFromInvoice();
+
                         onBackPressed();
                     }
 
@@ -133,7 +136,6 @@ public class C_Finalize extends ModuleActivity {
                         //DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
                         //return;
 //                        ProductsAdapterHelper.clearSelectedReturnProductItemList(); -- REMOVED BEFORE 1.2.7-BETA
-
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Finalize.this, C_Module.class);
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
@@ -299,6 +301,16 @@ public class C_Finalize extends ModuleActivity {
             tvBalance.setText("P" + NumberTools.separateInCommas(balance));
             tvBalance.setTag(balance);
         }
+        if(isForHistoryDetail) {
+            try {
+                ProductsAdapterHelper.clearSelectedProductItemList(false);
+                ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
+                processOfflineData(offlineData);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private Double getBalance() {
@@ -357,9 +369,29 @@ public class C_Finalize extends ModuleActivity {
             case R.id.mPrint: {
                 if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                     if(!EpsonPrinterTools.targetPrinter(this).equals(""))
-                        printTransaction(offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                        DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                printTransaction(offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            }
+                        }, "No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }, R.style.AppCompatDialogStyle_Light);
                     if(!StarIOPrinterTools.getTargetPrinter(this).equals(""))
-                        printTransactionStar(offlineData, offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                        DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                printTransactionStar(offlineData, offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            }
+                        }, "No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }, R.style.AppCompatDialogStyle_Light);
                 }
             } break;
         }
@@ -420,6 +452,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setIsFinalize(true);
             simpleProductsFragment.setHasSubtotal(true);
             simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
+            simpleProductsFragment.setHasInStock(!(isForHistoryDetail || isLayaway));
             simpleProductsFragment.setConcessioModule(concessioModule);
             simpleProductsFragment.setCustomer(customer);
 
@@ -495,7 +528,8 @@ public class C_Finalize extends ModuleActivity {
     private void printTransactionStar(final OfflineData offlineData, final Invoice invoice, final InvoiceTools.PaymentsComputation paymentsComputation, final String... labels) {
         if(!BluetoothTools.isEnabled())
             return;
-
+        if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
+            return;
         Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
 
@@ -524,6 +558,12 @@ public class C_Finalize extends ModuleActivity {
                 data.add("================================".getBytes());
                 data.add("Quantity                  Amount".getBytes());
                 data.add("================================".getBytes());
+
+                int totalInvoiceLines = invoice.getSalesInvoiceLines().size()+invoice.getRgsInvoiceLines().size()+invoice.getBoInvoiceLines().size()+invoice.getPayments().size();
+
+                double numberOfPages = Math.ceil((double)totalInvoiceLines/ Configurations.MAX_ITEMS_FOR_PRINTING), items = 0;
+                int page = 1;
+
                 for (InvoiceLine invoiceLine : invoice.getSalesInvoiceLines()) {
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                     Product product = Product.fetchById(getHelper(), Product.class, invoiceLine.getProduct_id());
@@ -540,28 +580,38 @@ public class C_Finalize extends ModuleActivity {
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                         data.add((NumberTools.separateInCommas(invoiceLine.getSubtotal())+"\r\n").getBytes());
                     }
+                    items++;
+
+                    if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                        data.add(("\r\n\r\n\r\n").getBytes());
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                        data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                        data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                        page++;
+                        items = 0;
+
+                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            break;
+                        data.clear();
+                    }
                 }
                 data.add("--------------------------------".getBytes());
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
 
-                //InvoiceTools.PaymentsComputation paymentsComputation = checkoutFragment.getComputation();
-                //paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
-                //paymentsComputation.addAllPayments(invoice.getPayments());
-
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
                 data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\r\n").getBytes());
 
-                if(invoice.getExtras().getCustomer_discount_text_summary() != null) {
+                if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                     for (Double cusDisc : paymentsComputation.getCustomerDiscount())
                         data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
                 }
-                if(invoice.getExtras().getTotal_company_discount() != null) {
+                if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                 }
-                if(paymentsComputation.getTotalProductDiscount() != BigDecimal.ZERO) {
+                if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                 }
@@ -596,6 +646,20 @@ public class C_Finalize extends ModuleActivity {
                             data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                             data.add(("Reason: " + invoiceLine.getExtras().getInvoice_purpose_name() + "\r\n").getBytes());
                         }
+                        items++;
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                            data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
+
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(totalQuantity), 2)), 32)+"\r\n").getBytes());
@@ -627,6 +691,20 @@ public class C_Finalize extends ModuleActivity {
                             data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                             data.add(("Reason: " + invoiceLine.getExtras().getInvoice_purpose_name() + "\r\n").getBytes());
                         }
+                        items++;
+
+                        if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                            data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
+
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(Math.abs(totalQuantity)), 32)+"\r\n").getBytes());
@@ -643,7 +721,23 @@ public class C_Finalize extends ModuleActivity {
                 data.add("Payments                  Amount".getBytes());
                 for(InvoicePayment invoicePayment : invoice.getPayments()) {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
-                    data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
+                    if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip"))
+                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
+
+                    items++;
+
+                    if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                        data.add(("\r\n\r\n\r\n").getBytes());
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
+                        data.add(("*Page "+page+"*\r\n\r\n").getBytes());
+                        data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                        page++;
+                        items = 0;
+
+                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            break;
+                        data.clear();
+                    }
                 }
                 data.add((EpsonPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\r\n").getBytes());
                 data.add("--------------------------------".getBytes());
