@@ -2522,6 +2522,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
                                     }
                                 }
+
                                 newBranches.doOperationBT(Branch.class);
                                 updateBranches.doOperationBT(Branch.class);
 
