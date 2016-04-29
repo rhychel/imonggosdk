@@ -97,12 +97,7 @@ public class C_Login extends LoginActivity {
             Log.e("App", app.getSequences().size()+"---");
 
         return app.modulesToDownload(getHelper(), app.isShow_only_sellable_products());
-                /*return new int[]{Table.USERS_ME.ordinal(),
-                Table.BRANCH_USERS.ordinal(), Table.SETTINGS.ordinal(),
-                Table.UNITS.ordinal(), Table.BRANCH_PRODUCTS.ordinal()};*/
     }
-
-
 
     @Override
     protected void onCreateLoginLayout() {

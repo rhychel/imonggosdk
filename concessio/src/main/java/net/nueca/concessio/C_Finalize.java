@@ -136,7 +136,6 @@ public class C_Finalize extends ModuleActivity {
                         //DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
                         //return;
 //                        ProductsAdapterHelper.clearSelectedReturnProductItemList(); -- REMOVED BEFORE 1.2.7-BETA
-
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Finalize.this, C_Module.class);
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
@@ -301,6 +300,16 @@ public class C_Finalize extends ModuleActivity {
             Double balance = getBalance();
             tvBalance.setText("P" + NumberTools.separateInCommas(balance));
             tvBalance.setTag(balance);
+        }
+        if(isForHistoryDetail) {
+            try {
+                ProductsAdapterHelper.clearSelectedProductItemList(false);
+                ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
+                processOfflineData(offlineData);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -589,24 +598,20 @@ public class C_Finalize extends ModuleActivity {
                 data.add("--------------------------------".getBytes());
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
 
-                //InvoiceTools.PaymentsComputation paymentsComputation = checkoutFragment.getComputation();
-                //paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
-                //paymentsComputation.addAllPayments(invoice.getPayments());
-
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
                 data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\r\n").getBytes());
 
-                if(invoice.getExtras().getCustomer_discount_text_summary() != null) {
+                if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                     for (Double cusDisc : paymentsComputation.getCustomerDiscount())
                         data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
                 }
-                if(invoice.getExtras().getTotal_company_discount() != null) {
+                if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                 }
-                if(paymentsComputation.getTotalProductDiscount() != BigDecimal.ZERO) {
+                if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                 }

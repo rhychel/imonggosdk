@@ -76,6 +76,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private Boolean mBounded = false;
     private Boolean mUseDefaultDialog = true;
     private LoginState mLoginState = LoginState.LOGIN_DEFAULT;
+
+    protected Boolean useDynamicUrls = true;
     /**
      * For Sync Service only
      * Defines callbacks for service binding, passed to bindService()
@@ -451,20 +453,21 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             @Override
             public void onClick(View v) {
                 String accountId = etAccountID.getText().toString().trim();
-                try {
-                    JSONObject servers = new JSONObject(SettingTools.currentServer(BaseLoginActivity.this));
+                if(useDynamicUrls)
+                    try {
+                        JSONObject servers = new JSONObject(SettingTools.currentServer(BaseLoginActivity.this));
 
-                    Log.e("Servers", servers.toString());
+                        Log.e("Servers", servers.toString());
 
-                    String label = "---";
-                    if(servers.has(accountId))
-                        label = servers.getString(accountId);
-                    Log.e("Servers", label);
+                        String label = "---";
+                        if(servers.has(accountId))
+                            label = servers.getString(accountId);
+                        Log.e("Servers", label);
 
-                    setServer(Server.getServer(label));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                        setServer(Server.getServer(label));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                 initLogin();
             }
@@ -1125,6 +1128,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     public void setAutoUpdateApp(Boolean choice) {
         SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, choice, "");
+    }
+
+    public void setUseDynamicUrls(Boolean useDynamicUrls) {
+        this.useDynamicUrls = useDynamicUrls;
     }
 
     @Override
