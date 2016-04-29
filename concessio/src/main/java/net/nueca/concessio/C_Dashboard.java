@@ -140,7 +140,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         rvModules.setAdapter(dashboardRecyclerAdapter);
 
         try {
-            Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", 1417).queryForFirst();
+            /*Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", 1417).queryForFirst();
 
             if(product == null) {
                 Log.e(TAG, "product is null");
@@ -158,6 +158,14 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
                     }
                 }
+            }*/
+
+            BranchProduct bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("id", 2102).queryForFirst();
+
+            if(bp != null) {
+                Log.e(TAG, bp.toString());
+            } else {
+                Log.e(TAG, "bp is null");
             }
 
 
