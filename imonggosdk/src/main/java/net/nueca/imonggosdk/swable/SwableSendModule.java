@@ -800,11 +800,26 @@ public class SwableSendModule extends BaseSwableModule {
         final int maxpage = offlineData.getPagedRequestCount();
         JSONObject jsonObject;
         if(table == Table.ORDERS) {
-            Order.Builder orderBuilder = new Order.Builder()
+            /*Order.Builder orderBuilder = new Order.Builder()
                     .order_lines((offlineData.getObjectFromData(Order.class)).getOrderLineAt(page - 1));
             if(page == maxpage)
                 orderBuilder.reference(offlineData.getReference_no());
-            jsonObject = orderBuilder.build().toJSONObject();
+            jsonObject = orderBuilder.build().toJSONObject();*/
+            Order order = offlineData.getObjectFromData(Order.class).getChildOrderAt(page - 1);
+            order.setReference(offlineData.getReference_no());
+            if(order.getOrder_lines() == null || order.getOrder_lines().size() == 0) {
+                if(page >= maxpage) {
+                    queueTracker.remove(offlineData.getId());
+                    offlineData.setSyncing(false);
+                    offlineData.setQueued(false);
+                }
+                offlineData.insertReturnIdAt(page - 1, ImonggoSwable.NO_RETURN_ID);
+                offlineData.setSynced(false);
+                offlineData.updateTo(dbHelper);
+                return;
+            }
+
+            jsonObject = order.toJSONObject();
         }
         else if(table == Table.DOCUMENTS) {
             Document.Builder documentBuilder = new Document.Builder()
@@ -849,6 +864,7 @@ public class SwableSendModule extends BaseSwableModule {
                         Log.e("ImonggoSwable", "sending success [" + page + "] : " + response);
                         try {
                             if (page == maxpage) {
+                                queueTracker.remove(offlineData.getId());
                                 offlineData.setSyncing(false);
                                 offlineData.setQueued(false);
                                 offlineData.setStatusLog("sending success");
@@ -910,6 +926,7 @@ public class SwableSendModule extends BaseSwableModule {
                                 responseCode + "] : " + response);
 
                         if(!hasInternet) {
+                            queueTracker.remove(offlineData.getId());
                             offlineData.setSynced(false);
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);
@@ -918,7 +935,8 @@ public class SwableSendModule extends BaseSwableModule {
                             return;
                         }
 
-                        if (page == maxpage) {
+                        if (page >= maxpage) {
+                            queueTracker.remove(offlineData.getId());
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);
                         }
@@ -1030,6 +1048,7 @@ public class SwableSendModule extends BaseSwableModule {
 
                     @Override
                     public void onRequestError() {
+                        queueTracker.remove(offlineData.getId());
                         Log.e("ImonggoSwable", "sending failed [" + page + "] : request error");
                         offlineData.setSyncing(false);
                         offlineData.setQueued(false);
