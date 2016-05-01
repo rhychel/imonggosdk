@@ -164,9 +164,9 @@ public class Order extends BaseTransactionTable3 {
     }
 
     public static class Builder extends BaseTransactionTable3.Builder<Builder> {
-        private String target_delivery_date = ""; // current_date+2days
-        private String remark = "";
-        private String order_type_code = "stock_request"; // purchase order
+        private String target_delivery_date; // current_date+2days
+        private String remark;
+        private String order_type_code; // purchase order
         private int serving_branch_id = 0;
         private List<OrderLine> order_lines = new ArrayList<>();
 
@@ -214,7 +214,7 @@ public class Order extends BaseTransactionTable3 {
     public Order getChildOrderAt(int position) throws JSONException {
         Order order = Order.fromJSONString(toJSONString());
         order.setOrder_lines(getOrderLineAt(position));
-        order.setReference(reference + "-" + (position + 1));
+        //order.setReference(reference + "-" + (position + 1));
         order.setRemark("page=" + (position + 1) + "/" + getChildCount());
         return order;
     }

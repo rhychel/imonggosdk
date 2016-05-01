@@ -340,7 +340,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
     @Override
     protected void showQuantityDialog(final int position, Product product, SelectedProductItem selectedProductItem) {
-        if(product.getStatus().equals("D")) {
+        if(product.getStatus() !=null && product.getStatus().equals("D")) {
             DialogTools.showDialog(getActivity(), "Ooops!", "It seems that this product is already deleted.", R.style.AppCompatDialogStyle_Light);
             return;
         }
