@@ -39,6 +39,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -159,6 +160,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                     }
                 }
             }*/
+/*
 
             BranchProduct bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("id", 2102).queryForFirst();
 
@@ -167,7 +169,13 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             } else {
                 Log.e(TAG, "bp is null");
             }
+*/
+          List<BranchUserAssoc> listOfBranchIds = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query();
+            Log.e(TAG, "size: " + listOfBranchIds.size());
 
+            for(BranchUserAssoc ba : listOfBranchIds) {
+                Log.e(TAG, "User: " + ba.getUser().getName() + "Branch Name: " + ba.getBranch().getName());
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

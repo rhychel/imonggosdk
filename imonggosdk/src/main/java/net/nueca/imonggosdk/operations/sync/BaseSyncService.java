@@ -76,6 +76,7 @@ public abstract class BaseSyncService extends ImonggoService {
     protected int branchIndex = 0;
     protected int mCustomIdIndex = 0;
     protected int mCustomPageIndex = 1;
+    protected int mBranchIdIndex = 0;
     protected int mModulesIndex = 0;
     protected int responseCode = 200;
     protected int[] branches;
@@ -458,6 +459,14 @@ public abstract class BaseSyncService extends ImonggoService {
     public class LocalBinder extends Binder {
         public BaseSyncService getService() {
             return BaseSyncService.this;
+        }
+    }
+
+    public List<BranchUserAssoc> getListOfBranchIds() {
+        try {
+            return  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query();
+        } catch (SQLException e) {
+            return null;
         }
     }
 
