@@ -40,6 +40,7 @@ import java.util.List;
 /**
  * Created by gama on 9/1/15.
  */
+@Deprecated
 public class SearchDRDialog extends BaseAppCompatDialog {
     private EditText etDeliveryReceipt;
     private Spinner spnBranch;

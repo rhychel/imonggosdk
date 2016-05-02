@@ -33,6 +33,7 @@ import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.tools.TimerTools;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Calendar;
 
@@ -97,7 +98,17 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(hasExpectedQty) {
+
+                    BigDecimal orig_qty = NumberTools.toBigDecimal(etExpectedQty.getText().toString());
+                    BigDecimal rcv_qty = NumberTools.toBigDecimal(etQuantity.getText().toString());
+                    BigDecimal ret_qty = NumberTools.toBigDecimal(etOutright.getText().toString());
+                    BigDecimal dsc_qty = orig_qty.subtract(rcv_qty.add(ret_qty));
+
+                    etDiscrepancy.setText(NumberTools.separateInCommas(dsc_qty.doubleValue()));
+                }
+            }
             @Override
             public void afterTextChanged(Editable editable) {
                 String quantity = etQuantity.getText().toString();
@@ -113,6 +124,11 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             llExpectedQty = (LinearLayout) super.findViewById(R.id.llExpectedQty);
             tvExpectedQty = (TextView) super.findViewById(R.id.tvExpectedQty);
             etExpectedQty = (EditText) super.findViewById(R.id.etExpectedQty);
+            etOutright= (EditText) super.findViewById(R.id.etOutright);
+            etDiscrepancy = (EditText) super.findViewById(R.id.etDiscrepancy);
+
+            etExpectedQty.setText(selectedProductItem.getOriginalQuantity());
+            etDiscrepancy.setText(selectedProductItem.getDiscrepancy());
 
             llExpectedQty.setVisibility(View.VISIBLE);
         }
@@ -439,6 +455,16 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 if(hasBrand) {
                     ExtendedAttributes extendedAttributes = new ExtendedAttributes();
                     extendedAttributes.setBrand(((String) spBrands.getSelectedItem()));
+
+                    values.setExtendedAttributes(extendedAttributes);
+                }
+
+                if(hasExpectedQty) {
+                    ExtendedAttributes extendedAttributes = values.getExtendedAttributes();
+                    if (extendedAttributes == null)
+                        extendedAttributes = new ExtendedAttributes();
+                    extendedAttributes.setOutright_return(NumberTools.toBigDecimal(etOutright.getText().toString()).toString());
+                    extendedAttributes.setDiscrepancy(NumberTools.toBigDecimal(etDiscrepancy.getText().toString()).toString());
 
                     values.setExtendedAttributes(extendedAttributes);
                 }
