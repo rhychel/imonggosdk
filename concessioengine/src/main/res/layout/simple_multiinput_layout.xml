@@ -56,8 +56,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="18dp"
         android:clickable="true"
-        android:src="@drawable/ic_add_black"
+        android:src="@drawable/ic_add_white"
         android:layout_gravity="bottom|right"
+        android:background="@color/primary"
         app:fabSize="normal"
         android:id="@+id/fabAddValue"/>
 </android.support.design.widget.CoordinatorLayout>

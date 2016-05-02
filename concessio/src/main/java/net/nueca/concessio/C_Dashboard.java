@@ -39,6 +39,7 @@ import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -139,39 +140,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
 
-        try {
-            /*Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", 1417).queryForFirst();
-
-            if(product == null) {
-                Log.e(TAG, "product is null");
-            } else {
-                Log.e(TAG, "product is " + product.toString());
-                List<BranchProduct> bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("product_id", product).query();
-
-                if(bp == null) {
-                    Log.e(TAG, "branch product is null");
-                } else {
-                    Log.e(TAG, "bp size is " + bp.size());
-
-                    for(BranchProduct b : bp) {
-                        Log.e(TAG, "branch product: " + b.getProduct().getName() + " unit: " +  b.getUnit().getName() + " product status: " + b.getProduct().getStatus());
-
-                    }
-                }
-            }*/
-
-            BranchProduct bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("id", 2102).queryForFirst();
-
-            if(bp != null) {
-                Log.e(TAG, bp.toString());
-            } else {
-                Log.e(TAG, "bp is null");
-            }
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -219,6 +187,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                             @Override
                             public void onEndDownload(Table table) {
                                 Log.e("apiDownloader", "end" + table.getStringName());
+                                if(table == Table.BRANCH_USERS || table == Table.BRANCHES) {
+                                    branchesAdapter.clear();
+                                    branchesAdapter.addAll(getBranches());
+                                    branchesAdapter.notifyDataSetChanged();
+                                }
                                 progressListDialog.finishedDownload();
                             }
 

@@ -147,7 +147,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
                         +" - to="+salesPromotion.getToDate()
                         +" - now="+now
                         +" - status="+salesPromotion.getStatus()
-                        +" - promotion_type_name="+salesPromotion.getPromotion_type_name());
+                        +" - promotion_type_name="+salesPromotion.getPromotion_type_name()
+                        +" - toDate"+salesPromotion.getToDate());
             }
 
             Where<SalesPromotion, Integer> whereCondition = getHelper().fetchIntId(SalesPromotion.class).queryBuilder().where();
