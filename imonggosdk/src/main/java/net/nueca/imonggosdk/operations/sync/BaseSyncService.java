@@ -463,12 +463,12 @@ public abstract class BaseSyncService extends ImonggoService {
     }
 
     public List<BranchUserAssoc> getListOfBranchIds() {
-        Log.e(TAG, "getListOfBranchIds... ");
+        //Log.e(TAG, "getListOfBranchIds... ");
         try {
-            Log.e(TAG, "getListOfBranchIds size: " +  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query().size());
+          //  Log.e(TAG, "getListOfBranchIds size: " +  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query().size());
             return  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query();
         } catch (SQLException e) {
-            Log.e(TAG, "getListOfBranchIds: is null");
+            //Log.e(TAG, "getListOfBranchIds: is null");
             return null;
         }
     }
