@@ -60,7 +60,7 @@ public class ModuleSetting extends DBTable {
     @DatabaseField
     private boolean can_edit = true;
     @DatabaseField
-    private boolean can_print = true;
+    private boolean can_print = false;
     @DatabaseField
     private boolean can_change_inventory = true;
     @DatabaseField
