@@ -34,8 +34,6 @@ import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
-import net.nueca.imonggosdk.objects.base.BaseTable;
-import net.nueca.imonggosdk.objects.base.BaseTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
@@ -546,11 +544,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.PAGE,
-                            Parameter.BRANCH_ID,
-                            Parameter.AFTER),
+                            Parameter.BRANCH_ID),
                             String.valueOf(page),
-                            getListOfBranchIds().get(mBranchIdIndex).getBranch().getId(),
-                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                            getListOfBranchIds().get(mBranchIdIndex).getBranch().getId());
                 }
 
                 if (mCurrentTableSyncing == Table.ORDERS_PURCHASES) {
@@ -684,6 +680,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
                             mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
                             mCurrentTableSyncing == Table.ORDERS) {
+
+                        Log.e(TAG, "mBranchIdIndex: " + mBranchIdIndex);
+                        Log.e(TAG, "size: " + getListOfBranchIds().size());
+                        Log.e(TAG, "branch: " + getListOfBranchIds().get(mBranchIdIndex).getBranch());
+                        Log.e(TAG, "branch name: " + getListOfBranchIds().get(mBranchIdIndex).getBranch().getName());
+                        Log.e(TAG, "user: " + getListOfBranchIds().get(mBranchIdIndex).getUser());
+                        Log.e(TAG, "user name: " + getListOfBranchIds().get(mBranchIdIndex).getUser().getName());
                         return String.format(ImonggoTools.generateParameter(
                                 Parameter.ACTIVE_ONLY,
                                 Parameter.COUNT,
@@ -837,9 +840,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 } else {
                     endSyncNext();
                 }
-
             } else {
-                    endSyncNext();
+                endSyncNext();
             }
             return false;
         } else {
@@ -861,35 +863,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         startSyncModuleContents(RequestType.LAST_UPDATED_AT);
     }
 
-    private void syncNextLogic() throws SQLException {
-        Log.e(TAG, "syncNextLogic()... table: " + mCurrentTableSyncing + " branchIndex: " + mBranchIdIndex);
-        page = 1;
-        numberOfPages = 1;
-        count = 0;
+    private void syncNextLogicTable() throws SQLException {
         mModulesIndex++;
         mCurrentTableSyncing = mModulesToSync[mModulesIndex];
         Log.e(TAG, "there are still tables to sync table: " + mCurrentTableSyncing);
-
-        if(initialSync || lastUpdatedAt == null) {
-            Log.e(TAG, "initial sync downloading next branch of " + mCurrentTableSyncing);
-            if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
-                    mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
-                    mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
-                    mCurrentTableSyncing == Table.ORDERS) {
-                mBranchIdIndex++;
-                Log.e(TAG, "branch index incremented " + mBranchIdIndex);
-                Log.e(TAG, "checking index.. " + mBranchIdIndex + " < " + getListOfBranchIds().size());
-
-                if(mBranchIdIndex < getListOfBranchIds().size()) {
-                    Log.e(TAG, "requesting LAST_UPDATED_AT ");
-                    startSyncModuleContents(RequestType.LAST_UPDATED_AT);
-                } else {
-                    Log.e(TAG, "syncNext Table...");
-                }
-            }
-        } else {
-            Log.e(TAG, "updating sync downloading next branch of " + mCurrentTableSyncing);
-        }
 
         if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
             //check if price lists is existing
@@ -1033,15 +1010,41 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 mCurrentTableSyncing == Table.SETTINGS ||
                 mCurrentTableSyncing == Table.ROUTE_PLANS ||
                 mCurrentTableSyncing == Table.LAYAWAYS ||
-                mCurrentTableSyncing == Table.BRANCH_USERS) {
+                mCurrentTableSyncing == Table.BRANCH_USERS ||
+                    mCurrentTableSyncing == Table.USERS_ME) {
             startSyncModuleContents(RequestType.API_CONTENT);
-        } else if (mCurrentTableSyncing == Table.USERS_ME) {
-            startSyncModuleContents(RequestType.COUNT);
         } else {
             // otherwise, call the last updated at request {
             startSyncModuleContents(RequestType.LAST_UPDATED_AT);
         }
+    }
 
+    private void syncNextLogic() throws SQLException {
+        Log.e(TAG, "syncNextLogic()... table: " + mCurrentTableSyncing + " branchIndex: " + mBranchIdIndex);
+
+        page = 1;
+        numberOfPages = 1;
+        count = 0;
+
+        if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
+                mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
+                mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
+                mCurrentTableSyncing == Table.ORDERS) {
+            mBranchIdIndex++;
+            Log.e(TAG, "syncNextLogic.... this... " + mBranchIdIndex + " < " + getListOfBranchIds().size());
+            if (mBranchIdIndex < getListOfBranchIds().size()) {
+
+                startSyncModuleContents(RequestType.LAST_UPDATED_AT);
+            } else {
+                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
+                Log.e(TAG, "syncNextLogicTablexx... ");
+                syncNextLogicTable();
+            }
+
+        } else {
+            Log.e(TAG, "syncNextLogicTablexxx... ");
+            syncNextLogicTable();
+        }
     }
 
     private void endSyncNext() {
@@ -1073,6 +1076,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     listOfSalesPromotionStorage = null;
                     listPriceListStorage = null;
                     mUpdatingPriceListFromCustomer = false;
+                    mBranchIdIndex = 0;
                     stopSelf();
                 }
             }
@@ -1121,8 +1125,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
-                        /*lastUpdatedAt.setLast_updated_at("2016/04/27 09:46:00 +0000");
-                        lastUpdatedAt.updateTo(getHelper());*/
+                        lastUpdatedAt.setLast_updated_at("2016/03/28 06:39:00 +0000");
+                        lastUpdatedAt.updateTo(getHelper());
 
                         if (lastUpdatedAt.getLast_updated_at() != null) {
 
@@ -1427,7 +1431,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                     if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
 
-
                         BatchList<PriceList> newPriceList = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                         BatchList<PriceList> updatePriceList = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
                         BatchList<PriceList> deletePriceList = new BatchList<>(DatabaseOperation.DELETE, getHelper());
@@ -1553,71 +1556,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             } else {
                                 Log.e(TAG, "API " + mCurrentTableSyncing + " don't have 'customer_groups' field");
                             }
-                            /*if (listPriceListStorage.get(mCustomIdIndex) instanceof Customer) {
-                                Log.e(TAG, "PriceList came from customer ");
-                                BaseTable3 tempObject = (Customer) listPriceListStorage.get(mCustomIdIndex);
-
-                                if (tempObject != null) {
-                                    Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", tempObject.getId()).queryForFirst();
-                                    Log.e(TAG, "Querying for customer with id: " + tempObject.getId());
-
-                                    if (customer != null) {
-                                        Log.e(TAG, "Customer found: " + customer.getName());
-                                        customer.setPriceList(priceList);
-                                        customer.updateTo(getHelper());
-                                    } else {
-                                        Log.e(TAG, "Customer not found");
-                                    }
-                                } else {
-                                    Log.e(TAG, "Sum ting wong");
-                                }
-
-                            } else if (listPriceListStorage.get(mCustomIdIndex) instanceof CustomerGroup) {
-                                Log.e(TAG, "PriceList came from customer group ");
-                                BaseTable tempObject = (CustomerGroup) listPriceListStorage.get(mCustomIdIndex);
-
-                                if (tempObject != null) {
-                                    CustomerGroup customerGroup = getHelper().fetchObjects(CustomerGroup.class).queryBuilder().where().eq("id", tempObject.getId()).queryForFirst();
-                                    Log.e(TAG, "Querying for customer group with id: " + tempObject.getId());
-
-                                    if (customerGroup != null) {
-                                        Log.e(TAG, "Customer Group found: " + customerGroup.getName());
-                                        customerGroup.setPriceList(priceList);
-                                        customerGroup.updateTo(getHelper());
-                                    } else {
-                                        Log.e(TAG, "Customer Group not found");
-                                    }
-                                } else {
-                                    Log.e(TAG, "Sum ting wong");
-                                }
-                            }
-
-                            if (isExisting(priceList, Table.PRICE_LISTS)) {
-                                //TODO: Support last updated at
-                                Log.e(TAG, "pricelist is existing...");
-                                if (initialSync) {
-                                    Log.e(TAG, "initial sync updateing...");
-                                    priceList.updateTo(getHelper());
-                                } else {
-                                    Log.e(TAG, "updating sync updateing...");
-                                    if (lastUpdatedAt != null && newLastUpdatedAt != null) {
-                                        try {
-                                            if (DateTimeTools.stringToDate(lastUpdatedAt.getLast_updated_at()).before(DateTimeTools.stringToDate(newLastUpdatedAt.getLast_updated_at()))) {
-                                                priceList.updateTo(getHelper());
-                                            } else {
-                                                Log.e(TAG, "Skipping Price Lists");
-                                            }
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
-                                    } else {
-                                        priceList.updateTo(getHelper());
-                                    }
-                                }
-                            } else {
-                                Log.e(TAG, "pricelist not existing... inserting");
-                                priceList.insertTo(getHelper());
-                            }*/
 
                             List<Price> price = Price.fetchWithConditionInt(getHelper(), Price.class, new DBTable.ConditionsWindow<Price, Integer>() {
                                 @Override
@@ -1774,7 +1712,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                              */
                             if (size == 0) {
                                 Log.e(TAG, "size is zero skipping..: ");
-                                syncNext();
+                                updateNext(requestType, size);
                                 return;
                             } else {
                                 for (int i = 0; i < size; i++) {
@@ -2177,7 +2115,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     }
                                 }
 
-                                updateNext(requestType, size);
+                                updateNext(requestType, getListOfBranchIds().size());
                                 break;
                             }
                         case PRODUCTS:
@@ -2565,6 +2503,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 newBranches.doOperationBT(Branch.class);
                                 newBranchUserAssocs.doOperation(BranchUserAssoc.class);
                                 newBranchTags.doOperation(BranchTag.class);
+
+                                Log.e(TAG, "size: " + getListOfBranchIds().size());
                                 updateNext(requestType, size);
                             }
                             break;
@@ -2755,22 +2695,29 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                             } else {
                                                                 Log.e(TAG, "Price List ID don't have value");
                                                             }
-
                                                         } else {
                                                             Log.e(TAG, mCurrentTableSyncing + " API's CustomerGroup JSONObject field don't have field 'price_list_id'");
                                                         }
 
+                                                        // if the customer group is not existing in the database
                                                         if (xcustomerGroup == null) {
                                                             Log.e(TAG, "adding customerCustomerGroup... ");
                                                             customerGroupNet.insertTo(getHelper());
                                                             customerCustomerGroupAssoc = new CustomerCustomerGroupAssoc(customer, customerGroupNet);
                                                             newCustomerCustomerGroup.add(customerCustomerGroupAssoc);
                                                         } else {
-                                                            Log.e(TAG, "adding customerCustomerGroup... ");
-                                                            customerCustomerGroupAssoc = new CustomerCustomerGroupAssoc(customer, xcustomerGroup);
-                                                            newCustomerCustomerGroup.add(customerCustomerGroupAssoc);
-                                                        }
+                                                            Log.e(TAG, "adding customerCustomerGroup... checking if existing ");
 
+                                                            customerCustomerGroupAssoc = new CustomerCustomerGroupAssoc(customer, xcustomerGroup);
+
+                                                            CustomerCustomerGroupAssoc ccg = getHelper().fetchObjects(CustomerCustomerGroupAssoc.class).queryBuilder().where().eq("customer_id", customer).and().eq("customer_group_id", xcustomerGroup).queryForFirst();
+
+                                                            if (ccg == null) {
+                                                                newCustomerCustomerGroup.add(customerCustomerGroupAssoc);
+                                                            } else {
+                                                                updateCustomerCustomerGroup.add(customerCustomerGroupAssoc);
+                                                            }
+                                                        }
                                                         //customerCustomerGroupAssoc.insertTo(getHelper());
                                                     } else {
                                                         Log.e(TAG, "'customer_groups' field don't have value.");
@@ -4126,7 +4073,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 }
 
                 if (size <= max_size_per_page) {
-                    Log.e(TAG, "Syncing next table");
+                    Log.e(TAG, "Syncing next table" + " page: " + page + " numberOfPages: " + numberOfPages);
                     page++;
                     if (page <= numberOfPages) {
                         startSyncModuleContents(requestType);
@@ -4137,25 +4084,23 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 mCurrentTableSyncing == Table.ORDERS ||
                                 mCurrentTableSyncing == Table.ORDERS_STOCK_REQUEST ||
                                 mCurrentTableSyncing == Table.ORDERS_PURCHASES) {
-
-                            if (mBranchIdIndex == 0) {
-                                startSyncModuleContents(RequestType.API_CONTENT);
-                            } else {
-                                mBranchIdIndex++;
-                                Log.e(TAG, "incrementing branch index... now it's: " + mBranchIdIndex);
-                                try {
-                                    if (mBranchIdIndex < getListOfBranchIds().size()) {
-                                        Log.e(TAG, "DOWNLOADING NEXT VISITING BRANCH OF THIS USER ");
-                                        startSyncModuleContents(RequestType.API_CONTENT);
-                                    } else {
-                                        Log.e(TAG, "ENDING DOWNLOADING OF BRANCHES OF THIS USER ");
-                                        syncNextLogic();
-                                    }
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
+                            count = 0;
+                            mCustomPageIndex = 1;
+                            mCustomIdIndex = 0;
+                            page = 1;
+                            mBranchIdIndex++;
+                            Log.e(TAG, "incrementing branch index... now it's: " + mBranchIdIndex);
+                            try {
+                                if (mBranchIdIndex < getListOfBranchIds().size()) {
+                                    Log.e(TAG, "DOWNLOADING NEXT VISITING BRANCH OF THIS USER ");
+                                    startSyncModuleContents(RequestType.COUNT);
+                                } else {
+                                    Log.e(TAG, "ENDING DOWNLOADING OF BRANCHES OF THIS USER ");
+                                    syncNext();
                                 }
+                            } catch (SQLException e) {
+                                e.printStackTrace();
                             }
-
                         } else {
                             syncNext();
                         }
