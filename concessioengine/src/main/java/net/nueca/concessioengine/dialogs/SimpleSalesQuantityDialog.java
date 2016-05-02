@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -62,6 +63,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
     private Unit defaultUnit;
 
     private Product product;
+
+    private InvoicePurpose invP;
 
     protected SimpleSalesQuantityDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
@@ -147,12 +150,6 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             llDiscrepancy.setVisibility(View.VISIBLE);
         }
 
-        if(hasBadStock) {
-            swcBadStock = (SwitchCompat) super.findViewById(R.id.swcBadStock);
-            swcBadStock.setVisibility(View.VISIBLE);
-            swcBadStock.setChecked(true);
-        }
-
         if(hasBrand) {
             llBrand = (LinearLayout) super.findViewById(R.id.llBrand);
             spBrands = (Spinner) super.findViewById(R.id.spBrands);
@@ -172,6 +169,9 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             }
         }
 
+        invP = new InvoicePurpose();
+        invP.setId(-1);
+        invP.setName("--");
         if(hasInvoicePurpose) {
             llInvoicePurpose = (LinearLayout) super.findViewById(R.id.llInvoicePurpose);
             spInvoicePurpose = (Spinner) super.findViewById(R.id.spInvoicePurpose);
@@ -192,7 +192,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         Log.e(">>>", "invoice purposes extras: " + invoicePurposeList.get(position).getExtras());
-                        if(invoicePurposeList.get(position).getExtras().require_date()) {
+                        if(invoicePurposeList.get(position).getExtras() != null && invoicePurposeList.get(position).getExtras().require_date()) {
                             llExpiryDate.setVisibility(View.VISIBLE);
                         }
                         else
@@ -213,6 +213,37 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 });
             }
 
+        }
+
+        if(hasBadStock) {
+            swcBadStock = (SwitchCompat) super.findViewById(R.id.swcBadStock);
+            swcBadStock.setVisibility(View.VISIBLE);
+            swcBadStock.setChecked(true);
+            swcBadStock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.e("badStock", "onCheckedChanged-"+isChecked);
+                    if(hasInvoicePurpose) {
+                        if(isChecked) {
+//                            if(invoicePurposeList.indexOf(invoicePurpose) > 0) {
+//                                selectedIndex--;
+//                                spInvoicePurpose.setSelection(selectedIndex);
+//                            }
+                            int invpIndex = invoicePurposeList.indexOf(invP);
+                            Log.e("invpIndex", invpIndex+"");
+                            if(invpIndex > -1)
+                                invoicePurposesAdapter.remove(invP);
+                        }
+                        else {
+//                            selectedIndex++;
+                            invoicePurposeList.add(0, invP);
+                            spInvoicePurpose.setSelection(0);
+//                            invoicePurposesAdapter.add(invoicePurpose);
+                        }
+                        invoicePurposesAdapter.notifyDataSetChanged();
+                    }
+                }
+            });
         }
 
         product = selectedProductItem.getProduct();
@@ -243,22 +274,36 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 if (valuePosition > -1) {
                     Values value = selectedProductItem.getValues().get(valuePosition);
                     spUnits.setSelection(unitList.indexOf(value.getUnit() != null? value.getUnit() : defaultUnit));
-                    if(hasInvoicePurpose) {
-                        date = value.getExpiry_date();
-                        spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
-                    }
                     if(hasBadStock)
                         swcBadStock.setChecked(value.isBadStock());
+                    if(hasInvoicePurpose) {
+                        date = value.getExpiry_date();
+                        InvoicePurpose ip = value.getInvoicePurpose();
+                        if(ip != null)
+                            spInvoicePurpose.setSelection(invoicePurposeList.indexOf(ip));
+                        else {
+                            invP = new InvoicePurpose();
+                            invP.setId(-1);
+                            invP.setName("--");
+                        }
+                    }
                 }
             } else {
                 Values value = selectedProductItem.getValues().get(0);
                 spUnits.setSelection(unitList.indexOf(value.getUnit() != null? value.getUnit() : defaultUnit));
-                if(hasInvoicePurpose) {
-                    date = value.getExpiry_date();
-                    spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
-                }
                 if(hasBadStock)
                     swcBadStock.setChecked(value.isBadStock());
+                if(hasInvoicePurpose) {
+                    date = value.getExpiry_date();
+                    InvoicePurpose ip = value.getInvoicePurpose();
+                    if(ip != null)
+                        spInvoicePurpose.setSelection(invoicePurposeList.indexOf(ip));
+                    else {
+                        invP = new InvoicePurpose();
+                        invP.setId(-1);
+                        invP.setName("--");
+                    }
+                }
             }
             if(hasExpiryDate) {
                 if(date == null) {
@@ -446,8 +491,14 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 }
 
                 if(hasInvoicePurpose) {
-                    values.setInvoicePurpose((InvoicePurpose) spInvoicePurpose.getSelectedItem());
-                    values.setExpiry_date(date);
+                    InvoicePurpose invoicePurpose = (InvoicePurpose) spInvoicePurpose.getSelectedItem();
+                    if(invoicePurpose.getId() == -1)
+                        values.setInvoicePurpose(null);
+                    else {
+                        values.setInvoicePurpose(invoicePurpose);
+                        if(invoicePurpose.getExtras().require_date())
+                            values.setExpiry_date(date);
+                    }
                 }
                 if(hasBadStock)
                     values.setBadStock(swcBadStock.isChecked());
