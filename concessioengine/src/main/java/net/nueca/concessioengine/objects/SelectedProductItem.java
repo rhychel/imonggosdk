@@ -321,6 +321,7 @@ public class SelectedProductItem {
     }
 
     public String getOriginalQuantity() {
+        Log.e("getOriginalQuantity", "total_discrepancy="+total_discrepancy+" | total_quantity="+total_quantity+" | total_return="+total_return);
         Double originalQty = NumberTools.toDouble(total_discrepancy) + NumberTools.toDouble(total_quantity) +
                 NumberTools.toDouble(total_return);
         return NumberTools.separateInCommas(originalQty);
