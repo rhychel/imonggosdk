@@ -171,16 +171,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     Invoice invoice = generateInvoice();
 
-//                    printSimulator(invoice);
-                    // Print
-                    if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
-                        if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                            printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                        if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                    }
-                    // Print
-
                     transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
 
                     // Transaction Date
@@ -232,6 +222,18 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             ProductsAdapterHelper.getDecimalPlace())));
                     customer.updateTo(getHelper());
 
+                    ProductsAdapterHelper.setSelectedCustomer(customer);
+
+//                    printSimulator(invoice);
+                    // Print
+                    if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
+                        if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
+                            printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                        if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                    }
+                    // Print
+
                     Log.e("INVOICE ~ Full", invoice.toJSONString());
                 }
             }
@@ -259,13 +261,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         transactionDialog.setCancelable(false);
 
                         Invoice invoice = generateInvoice();
-
-                        if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
-                            if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                            if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                        }
 
                         transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
 
@@ -317,6 +312,14 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         customer.setAvailable_points(String.valueOf(NumberTools.formatDouble(availablePoints - pointsUsed,
                                 ProductsAdapterHelper.getDecimalPlace())));
                         customer.updateTo(getHelper());
+
+                        ProductsAdapterHelper.setSelectedCustomer(customer);
+                        if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
+                            if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
+                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                        }
 
                         Gson gson = new Gson();
                         Log.e("INVOICE ~ Partial", gson.toJson(invoice));
