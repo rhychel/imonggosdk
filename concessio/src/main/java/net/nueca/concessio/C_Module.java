@@ -1017,6 +1017,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             llFooter.setVisibility(View.GONE);
         if (changeToReview)
             btn1.setText("REVIEW");
+        if (concessioModule == ConcessioModule.PHYSICAL_COUNT && getModuleSetting(concessioModule).is_view())
+            btn1.setText("PRINT INVENTORY");
         if (concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER)
             simpleInventoryFragment.refreshList();
         if (concessioModule == ConcessioModule.STOCK_REQUEST || concessioModule == ConcessioModule.PHYSICAL_COUNT)
