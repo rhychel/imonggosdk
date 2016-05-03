@@ -633,6 +633,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
         else
             size = ProductsAdapterHelper.getSelectedProductItems().size();
+        toggleNext(linearLayout, tvItems, size);
+    }
+
+    protected void toggleNext(ViewGroup linearLayout, TextView tvItems, int size) {
         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
         AnimationTools.toggleShowHide(linearLayout, size == 0, 300);
     }
