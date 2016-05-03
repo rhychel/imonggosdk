@@ -453,14 +453,14 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             @Override
             public void onClick(View v) {
                 String accountId = etAccountID.getText().toString().trim();
-                if(useDynamicUrls)
+                if (useDynamicUrls)
                     try {
                         JSONObject servers = new JSONObject(SettingTools.currentServer(BaseLoginActivity.this));
 
                         Log.e("Servers", servers.toString());
 
                         String label = "---";
-                        if(servers.has(accountId))
+                        if (servers.has(accountId))
                             label = servers.getString(accountId);
                         Log.e("Servers", label);
 
@@ -1058,9 +1058,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
         table.ordinal();
 
-        progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
+        if (table == Table.BRANCH_PRODUCTS) {
+            progress = page;
+            Log.e(TAG + "~", "setting branch product... " +  progress );
+        } else {
+            Log.e(TAG + "~", "setting others... " +  progress );
+            progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
+        }
 
-        Log.e(TAG, table + " progress: " + progress);
+        Log.e(TAG + "~", table + "xprogress: " + progress);
+
         if (isUsingDefaultCustomDialogForSync()) {
 
             if (mModulesToDownload != null && mTablesToDownload == null)

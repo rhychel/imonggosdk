@@ -1011,7 +1011,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 mCurrentTableSyncing == Table.ROUTE_PLANS ||
                 mCurrentTableSyncing == Table.LAYAWAYS ||
                 mCurrentTableSyncing == Table.BRANCH_USERS ||
-                    mCurrentTableSyncing == Table.USERS_ME) {
+                mCurrentTableSyncing == Table.USERS_ME) {
             startSyncModuleContents(RequestType.API_CONTENT);
         } else {
             // otherwise, call the last updated at request {
@@ -2115,7 +2115,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     }
                                 }
 
-                                updateNext(requestType, getListOfBranchIds().size());
+                                updateNext(requestType, size);
                                 break;
                             }
                         case PRODUCTS:
@@ -4065,7 +4065,24 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         if (mCurrentTableSyncing == Table.DOCUMENTS) {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, branchIndex, getUserBranchesSize());
                         } else if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS) {
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, mBranchIdIndex, getListOfBranchIds().size());
+
+                            double progress1 = (double) page / (double) numberOfPages;
+                            double progress2 = (int) Math.ceil((((double) (mBranchIdIndex + 1) / (double) getListOfBranchIds().size()) * 100.0));
+                            double progressX = progress1 * progress2;
+
+                            int progress3 = (int) progressX;
+
+                            Log.e(TAG + "~", "page: " + page);
+                            Log.e(TAG + "~", "numberOfPages: " + numberOfPages);
+                            Log.e(TAG + "~", "branchIndex: " + (branchIndex + 1));
+                            Log.e(TAG + "~", "branchIndexSize: " + getListOfBranchIds().size());
+                            Log.e(TAG + "~", "progressX: " + progressX);
+                            Log.e(TAG + "~", "progress1: " + progress1);
+                            Log.e(TAG + "~", "progress2: " + progress2);
+                            Log.e(TAG + "~", "progrezz: " + progress3);
+
+
+                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, progress3, 100);
                         } else {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
                         }
