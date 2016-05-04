@@ -86,8 +86,8 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
 
-        /* TODO : remove this
-        List<Product> productList = Product.fetchAll(getHelper(),Product.class);
+        // TODO : remove this
+        /*List<Product> productList = Product.fetchAll(getHelper(),Product.class);
         Log.e("PRODUCT COUNT", productList.size() + " items");
         try {
             Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId",177).queryForFirst();
@@ -154,7 +154,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             invoice.setPayments(computation.getPayments());
             for(InvoicePayment payment : computation.getReturnsPayments())
                 invoice.addPayment(payment);
-            invoice.setReference("TEST-0001");
+            invoice.setReference("TEST-0002");
             invoice.setStatus("L");
 
             new SwableTools.Transaction(getHelper())

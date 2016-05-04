@@ -743,7 +743,11 @@ public class SwableTools {
                     //case OfflineData.DOCUMENT:
                     //    offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_DOCUMENT); break;
                     case OfflineData.CUSTOMER:
-                        offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_CUSTOMER); break;
+                        if(offlineData.getObjectFromData(Customer.class).getReturnId() == -1)
+                            offlineData.setOfflineDataTransactionType(OfflineDataType.ADD_CUSTOMER);
+                        else
+                            offlineData.setOfflineDataTransactionType(OfflineDataType.UPDATE_CUSTOMER);
+                        break;
                 }
 
                 if(isNewOfflineData)
