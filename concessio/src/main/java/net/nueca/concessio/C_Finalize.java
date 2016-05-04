@@ -73,7 +73,7 @@ public class C_Finalize extends ModuleActivity {
 
     private TextView tvItems;
     private Button btn1, btn2; // CHECKOUT
-    private LinearLayout llTotalAmount, llReview, llBalance;
+    private LinearLayout llTotalAmount, llFooter, llBalance;
 
     private TextView tvBalance, tvTotalAmount;
     private View viewStub;
@@ -98,7 +98,7 @@ public class C_Finalize extends ModuleActivity {
         tvItems = (TextView) findViewById(R.id.tvItems);
         btn1 = (Button) findViewById(R.id.btn1);
         llBalance = (LinearLayout) findViewById(R.id.llBalance);
-        llReview = (LinearLayout) findViewById(R.id.llReview);
+        llFooter = (LinearLayout) findViewById(R.id.llFooter);
         tvBalance = (TextView) findViewById(R.id.tvBalance);
         viewStub = findViewById(R.id.viewStub);
 
@@ -136,7 +136,6 @@ public class C_Finalize extends ModuleActivity {
                         //DialogTools.showDialog(C_Finalize.this, "Ooops!", "Under construction :)", R.style.AppCompatDialogStyle_Light_NoTitle);
                         //return;
 //                        ProductsAdapterHelper.clearSelectedReturnProductItemList(); -- REMOVED BEFORE 1.2.7-BETA
-
                         ProductsAdapterHelper.isDuplicating = true;
                         Intent intent = new Intent(C_Finalize.this, C_Module.class);
                         intent.putExtra(ModuleActivity.FOR_CUSTOMER_DETAIL, ProductsAdapterHelper.getSelectedCustomer().getId());
@@ -264,7 +263,11 @@ public class C_Finalize extends ModuleActivity {
                 @Override
                 public void onClick(View v) {
                     if(((Double)tvBalance.getTag()) < 0) {
-                        DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total return amount cannot be greater than to your total sales amount.", R.style.AppCompatDialogStyle_Light);
+                        DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total return amount cannot be greater than your total sales amount.", R.style.AppCompatDialogStyle_Light);
+                        return;
+                    }
+                    if(((Double)tvBalance.getTag()) == 0) {
+                        DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total amount cannot be zero.", R.style.AppCompatDialogStyle_Light);
                         return;
                     }
 
@@ -279,10 +282,33 @@ public class C_Finalize extends ModuleActivity {
         viewStub.setVisibility(View.VISIBLE);
         tvItems.setVisibility(View.VISIBLE);
 
-        toggleNext(llReview, tvItems);
+        toggleNext(llFooter, tvItems);
 
         reviewAdapter = new ReviewAdapter(getSupportFragmentManager());
         vpReview.setAdapter(reviewAdapter);
+        vpReview.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.e("onPageSelected", position+"<--");
+                int size = 0;
+                if(position == 0)
+                    size = ProductsAdapterHelper.getSelectedProductItems().size();
+                else
+                    size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+
+                tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         tlTotal.setupWithViewPager(vpReview);
 
@@ -301,6 +327,16 @@ public class C_Finalize extends ModuleActivity {
             Double balance = getBalance();
             tvBalance.setText("P" + NumberTools.separateInCommas(balance));
             tvBalance.setTag(balance);
+        }
+        if(isForHistoryDetail) {
+            try {
+                ProductsAdapterHelper.clearSelectedProductItemList(false);
+                ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
+                processOfflineData(offlineData);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -461,7 +497,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                 @Override
                 public void whenItemsSelectedUpdated() {
-                    toggleNext(llReview, tvItems);
+                    toggleNext(llFooter, tvItems);
                 }
             });
 
@@ -479,7 +515,7 @@ public class C_Finalize extends ModuleActivity {
                         Double balance = getBalance();
                         tvBalance.setText("P" + NumberTools.separateInCommas(balance));
                         tvBalance.setTag(balance);
-                        toggleNext(llReview, tvItems);
+                        toggleNext(llFooter, tvItems);
                     }
                 }
             });
@@ -589,24 +625,20 @@ public class C_Finalize extends ModuleActivity {
                 data.add("--------------------------------".getBytes());
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
 
-                //InvoiceTools.PaymentsComputation paymentsComputation = checkoutFragment.getComputation();
-                //paymentsComputation.addAllInvoiceLines(invoice.getInvoiceLines());
-                //paymentsComputation.addAllPayments(invoice.getPayments());
-
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
                 data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\r\n").getBytes());
 
-                if(invoice.getExtras().getCustomer_discount_text_summary() != null) {
-                    data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\r\n").getBytes());
+                if(paymentsComputation.getCustomerDiscount().size() > 0) {
+                    data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", "("+invoice.getExtras().getCustomer_discount_text_summary()+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                     for (Double cusDisc : paymentsComputation.getCustomerDiscount())
                         data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
                 }
-                if(invoice.getExtras().getTotal_company_discount() != null) {
+                if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                 }
-                if(paymentsComputation.getTotalProductDiscount() != BigDecimal.ZERO) {
+                if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                 }
@@ -658,7 +690,7 @@ public class C_Finalize extends ModuleActivity {
                     }
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(totalQuantity), 2)), 32)+"\r\n").getBytes());
-                    data.add((EpsonPrinterTools.spacer("Net BO Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()),2)), 32)+"\r\n\r\n").getBytes());
+                    data.add((EpsonPrinterTools.spacer("LESS Net BO Amount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()),2))+")", 32)+"\r\n\r\n").getBytes());
                 }
                 if(invoice.getRgsInvoiceLines().size() > 0) {
                     totalQuantity = 0.0;
@@ -704,9 +736,9 @@ public class C_Finalize extends ModuleActivity {
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(Math.abs(totalQuantity)), 32)+"\r\n").getBytes());
                     if(paymentsComputation.getReturnsPayments().size() > 1)
-                        data.add((EpsonPrinterTools.spacer("Net RGS Amount: ", NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(1).getAmount())), 32)+"\r\n\r\n").getBytes());
+                        data.add((EpsonPrinterTools.spacer("LESS Net RGS Amount: ", "("+NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(1).getAmount()))+")", 32)+"\r\n\r\n").getBytes());
                     else
-                        data.add((EpsonPrinterTools.spacer("Net RGS Amount: ", NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount())), 32)+"\r\n\r\n").getBytes());
+                        data.add((EpsonPrinterTools.spacer("LESS Net RGS Amount: ", "("+NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()))+")", 32)+"\r\n\r\n").getBytes());
                 }
 
                 data.add((EpsonPrinterTools.spacer("Amount Due: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(true).doubleValue(), 2)), 32)+"\r\n\r\n").getBytes());

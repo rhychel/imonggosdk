@@ -34,6 +34,7 @@ import com.j256.ormlite.stmt.Where;
 import net.nueca.concessioengine.activities.AddEditCustomerActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.dialogs.SearchDRDialog;
+import net.nueca.concessioengine.dialogs.SearchDRDialog2;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
@@ -118,7 +119,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     private boolean hasMenu = true, showsCustomer = false, // -- for the search
             changeToReview = false, refreshCustomerList = false;
 
-    private SearchDRDialog searchDRDialog;
+    private SearchDRDialog2 searchDRDialog;
 
     // for transaction details
     private String referenceNumber = "";
@@ -253,21 +254,26 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         ProductsAdapterHelper.setDbHelper(getHelper());
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
+//                            try {
+//                                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
+//                                ProductsAdapterHelper.setSelectedCustomer(customer);
+//                                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+//                                if(customerGroups.size() > 0)
+//                                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
+//                                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
+//
+//                                SelectedProductItemList selecteds =
+//                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
+//                                SelectedProductItemList returns =
+//                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
+//
+//                                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
+//                                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+//                            } catch (SQLException e) {
+//                                e.printStackTrace();
+//                            }
                             try {
-                                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
-                                ProductsAdapterHelper.setSelectedCustomer(customer);
-                                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
-                                if(customerGroups.size() > 0)
-                                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
-                                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
-
-                                SelectedProductItemList selecteds =
-                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
-                                SelectedProductItemList returns =
-                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
-
-                                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
-                                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+                                processOfflineData(offlineData);
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
@@ -487,11 +493,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     simpleProductsFragment.setConcessioModule(concessioModule);
                     finalizeFragment.setConcessioModule(concessioModule);
                     try {
-                        searchDRDialog = new SearchDRDialog(this, getHelper(), getUser(), R.style.AppCompatDialogStyle_Light);
-                        searchDRDialog.setTitle("Confirm Pullout");
-                        searchDRDialog.setHasBranch(false);
+                        searchDRDialog = new SearchDRDialog2(this, getHelper(), getUser(), ConcessioModule.RECEIVE_BRANCH_PULLOUT, R.style.AppCompatDialogStyle_Light_NoTitle);
                         searchDRDialog.setConcessioModule(concessioModule);
-                        searchDRDialog.setDialogListener(new SearchDRDialog.SearchDRDialogListener() {
+                        searchDRDialog.setDialogListener(new SearchDRDialog2.SearchDRDialogListener() {
                             @Override
                             public boolean onCancel() {
                                 finish();
@@ -873,7 +877,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     Log.e("onBackStackChanged", "called--hasMenu");
                     if (concessioModule == ConcessioModule.HISTORY) {
                         llFooter.setVisibility(View.GONE);
-                        btn1.setVisibility(View.GONE);
+                        btn1.setVisibility(View.INVISIBLE);
                         btn2.setVisibility(View.GONE);
                         tvItems.setVisibility(View.INVISIBLE);
                         hasMenu = true;
@@ -929,7 +933,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         boolean isVoiding = simpleTransactionDetailsFragment.getOfflineData().isCancelled()
                                 || simpleTransactionDetailsFragment.getOfflineData().getOfflineDataTransactionType().isVoiding();
                         if(isVoiding) {
-                            btn1.setVisibility(View.GONE);
+                            btn1.setVisibility(View.INVISIBLE);
                             useBtn2 = false;
                         }
                         else
@@ -941,7 +945,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             if(isVoiding)
                                 initializeDuplicateButton(btn1, referenceNumber);
                         }
-                        else
+                        else if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() != ConcessioModule.RECEIVE_BRANCH_PULLOUT)
                             initializeDuplicateButton(useBtn2 ? btn2 : btn1, referenceNumber);
 
                         Log.e("useBtn2", useBtn2+"");
@@ -1013,6 +1017,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             llFooter.setVisibility(View.GONE);
         if (changeToReview)
             btn1.setText("REVIEW");
+        if (concessioModule == ConcessioModule.PHYSICAL_COUNT && getModuleSetting(concessioModule).is_view())
+            btn1.setText("PRINT INVENTORY");
         if (concessioModule == ConcessioModule.RECEIVE_SUPPLIER || concessioModule == ConcessioModule.RELEASE_SUPPLIER)
             simpleInventoryFragment.refreshList();
         if (concessioModule == ConcessioModule.STOCK_REQUEST || concessioModule == ConcessioModule.PHYSICAL_COUNT)
@@ -1428,6 +1434,16 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     e.printStackTrace();
                                 }
 
+                                try {
+                                    Document confirmedDocument = getHelper().fetchObjects(Document.class).queryBuilder().where().eq("returnId", ProductsAdapterHelper.getParent_document_id()).queryForFirst();
+                                    if(confirmedDocument != null) {
+                                        confirmedDocument.setIntransit_status("Received");
+                                        confirmedDocument.updateTo(getHelper());
+                                    }
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+
                                 offlineData = new SwableTools.Transaction(getHelper())
                                         .toSend()
                                         .forBranch(warehouse)
@@ -1446,7 +1462,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
 
+                                        simpleProductsFragment.getFilterProductsBy().clear();
+                                        simpleProductsFragment.forceUpdateProductList();
                                         simpleProductsFragment.refreshList();
+
+                                        finalizeFragment.getFilterProductsBy().clear();
                                         finalizeFragment.refreshList();
                                         if (!mSearch.isIconified())
                                             closeSearchField(mSearch);

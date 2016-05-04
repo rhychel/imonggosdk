@@ -37,8 +37,10 @@ import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.tools.DialogTools;
@@ -199,6 +201,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return transactionTypes;
     }
 
+    @Deprecated
     public List<Branch> getBranches() {
         return getBranches(Constants.WAREHOUSE_ONLY);
     }
@@ -208,6 +211,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * Generate the user's branches.
      * @return
      */
+    @Deprecated
     public List<Branch> getBranches(boolean warehouseOnly) {
         List<Branch> assignedBranches = new ArrayList<>();
         try {
@@ -591,7 +595,24 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             return productList;
         }
         else if(offlineData.getType() == OfflineData.INVOICE) {
+            try {
+                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
+                ProductsAdapterHelper.setSelectedCustomer(customer);
+                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+                if(customerGroups.size() > 0)
+                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
+                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
 
+                SelectedProductItemList selecteds =
+                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
+                SelectedProductItemList returns =
+                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
+
+                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
+                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return productList;
     }
@@ -612,6 +633,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
         else
             size = ProductsAdapterHelper.getSelectedProductItems().size();
+        toggleNext(linearLayout, tvItems, size);
+    }
+
+    protected void toggleNext(ViewGroup linearLayout, TextView tvItems, int size) {
         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
         AnimationTools.toggleShowHide(linearLayout, size == 0, 300);
     }

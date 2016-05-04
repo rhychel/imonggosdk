@@ -171,16 +171,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     Invoice invoice = generateInvoice();
 
-//                    printSimulator(invoice);
-                    // Print
-                    if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
-                        if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                            printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                        if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                    }
-                    // Print
-
                     transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
 
                     // Transaction Date
@@ -232,6 +222,18 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             ProductsAdapterHelper.getDecimalPlace())));
                     customer.updateTo(getHelper());
 
+                    ProductsAdapterHelper.setSelectedCustomer(customer);
+
+//                    printSimulator(invoice);
+                    // Print
+                    if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
+                        if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
+                            printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                        if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                    }
+                    // Print
+
                     Log.e("INVOICE ~ Full", invoice.toJSONString());
                 }
             }
@@ -259,13 +261,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         transactionDialog.setCancelable(false);
 
                         Invoice invoice = generateInvoice();
-
-                        if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
-                            if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                            if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                        }
 
                         transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
 
@@ -317,6 +312,14 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         customer.setAvailable_points(String.valueOf(NumberTools.formatDouble(availablePoints - pointsUsed,
                                 ProductsAdapterHelper.getDecimalPlace())));
                         customer.updateTo(getHelper());
+
+                        ProductsAdapterHelper.setSelectedCustomer(customer);
+                        if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
+                            if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
+                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                        }
 
                         Gson gson = new Gson();
                         Log.e("INVOICE ~ Partial", gson.toJson(invoice));
@@ -579,17 +582,16 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
             printText.append(EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\n");
             printText.append(EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\n");
 
-            if(invoice.getExtras().getCustomer_discount_text_summary() != null) {
-
+            if(paymentsComputation.getCustomerDiscount().size() > 0) {
                 printText.append(EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\n");
 
                 for (Double cusDisc : paymentsComputation.getCustomerDiscount())
                     printText.append("(" + NumberTools.separateInCommas(cusDisc) + ")\n");
             }
-            if(invoice.getExtras().getTotal_company_discount() != null) {
+            if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
                 printText.append(EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\n");
             }
-            if(paymentsComputation.getTotalProductDiscount() != BigDecimal.ZERO) {
+            if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
                 printText.append(EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\n");
             }
 
@@ -790,17 +792,17 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
                 data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\r\n").getBytes());
 
-                if(invoice.getExtras().getCustomer_discount_text_summary() != null) {
-                    data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\r\n").getBytes());
+                if(paymentsComputation.getCustomerDiscount().size() > 0) {
+                    data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", "("+invoice.getExtras().getCustomer_discount_text_summary()+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                     for (Double cusDisc : paymentsComputation.getCustomerDiscount())
                         data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
                 }
-                if(invoice.getExtras().getTotal_company_discount() != null) {
+                if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                 }
-                if(paymentsComputation.getTotalProductDiscount() != BigDecimal.ZERO) {
+                if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                 }

@@ -206,6 +206,35 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         this.gender = builder.gender;
     }
 
+    public void updateCustomerDetail(CustomerFields customerField, Object value) {
+        switch (customerField) {
+            case LAST_NAME:
+                this.last_name = (String)value;
+                break;
+            case FIRST_NAME:
+                this.first_name = (String)value;
+                break;
+            case MIDDLE_NAME:
+                this.middle_name = (String)value;
+                break;
+            case MOBILE:
+                this.mobile = (String)value;
+                break;
+            case TELEPHONE:
+                this.telephone = (String)value;
+                break;
+            case COMPANY_NAME:
+                this.company_name = (String)value;
+                break;
+            case STREET:
+                this.street = (String)value;
+                break;
+            case PAYMENT_TERMS_ID:
+                this.payment_terms_id = (Integer)value;
+                break;
+        }
+    }
+
     public int getPoint_to_amount_ratio() {
         return point_to_amount_ratio;
     }

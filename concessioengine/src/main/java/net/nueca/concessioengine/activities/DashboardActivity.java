@@ -11,6 +11,7 @@ import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.tools.DialogTools;
@@ -80,6 +81,7 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
         List<Branch> assignedBranches = new ArrayList<>();
         try {
             List<BranchUserAssoc> branchUserAssocs = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
+            boolean hasDefaultBranch = false;
             for(BranchUserAssoc branchUser : branchUserAssocs) {
                 Log.e("Branches", branchUser.getBranch().getName());
                 if(warehouseOnly) {
@@ -91,7 +93,11 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
                 if(branchUser.getBranch().getStatus().equals("D"))
                     continue;
 
-                if(branchUser.getBranch().getId() == Integer.valueOf(SettingTools.defaultBranch(this))) //getUser().getHome_branch_id())
+                if(branchUser.getBranch().getId() == Integer.valueOf(SettingTools.defaultBranch(this))) { //getUser().getHome_branch_id())
+                    assignedBranches.add(0, branchUser.getBranch());
+                    hasDefaultBranch = true;
+                }
+                else if(!hasDefaultBranch && getUser().getHome_branch_id() == branchUser.getBranch().getId())
                     assignedBranches.add(0, branchUser.getBranch());
                 else
                     assignedBranches.add(branchUser.getBranch());
@@ -100,6 +106,8 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
 //                else
 //                    assignedBranches.add(branchUser.getBranch());
             }
+            if(!hasDefaultBranch)
+                SettingTools.updateSettings(this, SettingsName.DEFAULT_BRANCH, String.valueOf(getUser().getHome_branch_id()));
         } catch (SQLException e) {
             e.printStackTrace();
         }

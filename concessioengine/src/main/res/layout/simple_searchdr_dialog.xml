@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <me.grantland.widget.AutofitTextView
+        android:padding="3dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:text="Receiving"
+        android:textSize="20sp"
+        android:singleLine="false"
+        android:maxLines="2"
+        android:ellipsize="end"
+        autofit:minTextSize="12sp"
+        android:id="@+id/tvTitle"
+        style="@style/TextView.ProductItem.Name"
+        android:textStyle="bold"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:measureWithLargestChild="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:weightSum="3"
+            android:id="@+id/llReason"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Reason"
+                android:layout_gravity="center_vertical"
+                android:textSize="13sp"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/spReason"
+                android:layout_weight="2"
+                android:layout_marginLeft="16dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:weightSum="3"
+            android:id="@+id/llSourceBranch"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Source"
+                android:id="@+id/tvSourceBranchLabel"
+                android:layout_gravity="center_vertical"
+                android:textSize="13sp"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/spSourceBranch"
+                android:layout_weight="2"
+                android:layout_marginLeft="16dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:weightSum="3"
+            android:id="@+id/llDestinationBranch"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Destination"
+                android:id="@+id/textView10"
+                android:layout_gravity="center_vertical"
+                android:textSize="13sp"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/spDestinationBranch"
+                android:layout_weight="2"
+                android:layout_marginLeft="16dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:weightSum="3"
+            android:id="@+id/llReceiptNo"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Receipt No."
+                android:layout_weight="1"
+                android:textSize="13sp" />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/etReceiptNo"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_weight="2"
+                android:layout_marginLeft="16dp"
+                android:textSize="18sp"
+                android:gravity="left" />
+        </LinearLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tilPulloutRef"
+            android:visibility="gone">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:hint="Pullout Reference No."
+                android:textSize="20sp"
+                android:id="@+id/etPulloutRef" />
+        </android.support.design.widget.TextInputLayout>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Tap SEARCH..."
+            android:id="@+id/tvNotFound"
+            android:gravity="center"
+            android:textColor="@color/accentLogin"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:measureWithLargestChild="true">
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="Manual"
+            android:id="@+id/btnManual"
+            android:layout_gravity="right"
+            android:textSize="16sp"
+            android:textColor="@color/primary"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:layout_weight="1">
+
+            <Button
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="Cancel"
+                android:id="@+id/btnCancel"
+                android:layout_gravity="right"
+                android:textSize="16sp"
+                android:textColor="@color/primary"/>
+
+            <Button
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="Search"
+                android:id="@+id/btnSave"
+                android:textSize="16sp"
+                android:textColor="@color/primary"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
