@@ -47,6 +47,8 @@ public class Configurations {
             put(Table.POS_DEVICES, "pos_devices.json");
             put(Table.DAILY_SALES, "daily_sales.json");
             put(Table.DOCUMENTS, "documents.json");
+            put(Table.DOCUMENT_ADJUSTMENT_OUT, "documents.json");
+            put(Table.DOCUMENT_TRANSFER_OUT, "documents.json");
             put(Table.DOCUMENT_TYPES, "document_types.json");
             put(Table.DOCUMENT_PURPOSES, "document_purposes.json");
 
@@ -107,6 +109,8 @@ public class Configurations {
             put(Table.POS_DEVICES, "pos_devices");
             put(Table.DAILY_SALES, "daily_sales");
             put(Table.DOCUMENTS, "documents");
+            put(Table.DOCUMENT_ADJUSTMENT_OUT, "documents");
+            put(Table.DOCUMENT_TRANSFER_OUT, "documents");
             put(Table.DOCUMENT_TYPES, "document_types");
             put(Table.DOCUMENT_PURPOSES, "document_purposes");
 

@@ -41,6 +41,7 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.base.DBTable;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -141,6 +142,13 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         rvModules.setAdapter(dashboardRecyclerAdapter);
 
         try {
+            List<SalesPromotion> sp = SalesPromotion.fetchAll(getHelper(), SalesPromotion.class);
+
+            Log.e(TAG, "salespromotions: " + sp.size() );
+
+            for(SalesPromotion s : sp) {
+                Log.e(TAG, "id: " + s.getId());
+            }
             /*Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", 1417).queryForFirst();
 
             if(product == null) {
