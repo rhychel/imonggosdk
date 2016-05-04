@@ -235,6 +235,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                             @Override
                             public void onEndDownload(Table table) {
                                 Log.e("apiDownloader", "end" + table.getStringName());
+                                if(table == Table.BRANCH_USERS || table == Table.BRANCHES) {
+                                    branchesAdapter.clear();
+                                    branchesAdapter.addAll(getBranches());
+                                    branchesAdapter.notifyDataSetChanged();
+                                }
                                 progressListDialog.finishedDownload();
                             }
 

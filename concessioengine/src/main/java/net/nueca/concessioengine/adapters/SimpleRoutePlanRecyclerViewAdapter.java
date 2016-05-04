@@ -94,16 +94,21 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
                 paymentsComputation.addAllPayments(myInvoices.get(0).getPayments());
 
                 BigDecimal remaining = paymentsComputation.getRemaining();
+
+                double balance = NumberTools.formatDouble(remaining.doubleValue(), ProductsAdapterHelper.getDecimalPlace());
                 holder.tvSubtotal.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
-                if (remaining.signum() == 1)
+                if (balance > 0) //remaining.signum() == 1
                     holder.tvSubtotal.setText("P " + NumberTools.separateInCommas(remaining));
                 else {
                     holder.tvSubtotal.setText("P " + NumberTools.separateInCommas(paymentsComputation.getTotalPayable(true)));
                     holder.tvSubtotal.setTextColor(ContextCompat.getColor(getContext(), R.color.payment_color));
                 }
 
-                double balance = 0.0;
+                int i = 0;
                 for(Invoice invoice : myInvoices) {
+                    i++;
+                    if(i == 1)
+                        continue;
                     InvoiceTools.PaymentsComputation temp = new InvoiceTools.PaymentsComputation();
                     /*device_id = ProductsAdapterHelper.getSession().getDevice_id();
                     if(Integer.parseInt(invoice.getReference().substring(0,invoice.getReference().indexOf('-'))) != device_id) {
@@ -121,7 +126,7 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
                     temp.addAllInvoiceLines(invoice.getInvoiceLines());
                     temp.addAllPayments(invoice.getPayments());
 
-                    balance += temp.getRemaining().doubleValue();
+                    balance += NumberTools.formatDouble(temp.getRemaining().doubleValue(), ProductsAdapterHelper.getDecimalPlace());
                 }
 
                 if(balance > 0) {

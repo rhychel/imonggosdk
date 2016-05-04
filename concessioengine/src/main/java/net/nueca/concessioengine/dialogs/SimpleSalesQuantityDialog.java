@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -33,6 +34,7 @@ import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.tools.TimerTools;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Calendar;
 
@@ -61,6 +63,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
     private Unit defaultUnit;
 
     private Product product;
+
+    private InvoicePurpose invP;
 
     protected SimpleSalesQuantityDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
@@ -97,7 +101,17 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(hasExpectedQty) {
+
+                    BigDecimal orig_qty = NumberTools.toBigDecimal(etExpectedQty.getText().toString());
+                    BigDecimal rcv_qty = NumberTools.toBigDecimal(etQuantity.getText().toString());
+                    BigDecimal ret_qty = NumberTools.toBigDecimal(etOutright.getText().toString());
+                    BigDecimal dsc_qty = orig_qty.subtract(rcv_qty.add(ret_qty));
+
+                    etDiscrepancy.setText(NumberTools.separateInCommas(dsc_qty.doubleValue()));
+                }
+            }
             @Override
             public void afterTextChanged(Editable editable) {
                 String quantity = etQuantity.getText().toString();
@@ -113,6 +127,11 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             llExpectedQty = (LinearLayout) super.findViewById(R.id.llExpectedQty);
             tvExpectedQty = (TextView) super.findViewById(R.id.tvExpectedQty);
             etExpectedQty = (EditText) super.findViewById(R.id.etExpectedQty);
+            etOutright= (EditText) super.findViewById(R.id.etOutright);
+            etDiscrepancy = (EditText) super.findViewById(R.id.etDiscrepancy);
+
+            etExpectedQty.setText(selectedProductItem.getOriginalQuantity());
+            etDiscrepancy.setText(selectedProductItem.getDiscrepancy());
 
             llExpectedQty.setVisibility(View.VISIBLE);
         }
@@ -129,12 +148,6 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             etDiscrepancy = (EditText) super.findViewById(R.id.etDiscrepancy);
 
             llDiscrepancy.setVisibility(View.VISIBLE);
-        }
-
-        if(hasBadStock) {
-            swcBadStock = (SwitchCompat) super.findViewById(R.id.swcBadStock);
-            swcBadStock.setVisibility(View.VISIBLE);
-            swcBadStock.setChecked(true);
         }
 
         if(hasBrand) {
@@ -156,6 +169,9 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             }
         }
 
+        invP = new InvoicePurpose();
+        invP.setId(-1);
+        invP.setName("--");
         if(hasInvoicePurpose) {
             llInvoicePurpose = (LinearLayout) super.findViewById(R.id.llInvoicePurpose);
             spInvoicePurpose = (Spinner) super.findViewById(R.id.spInvoicePurpose);
@@ -176,7 +192,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         Log.e(">>>", "invoice purposes extras: " + invoicePurposeList.get(position).getExtras());
-                        if(invoicePurposeList.get(position).getExtras().require_date()) {
+                        if(invoicePurposeList.get(position).getExtras() != null && invoicePurposeList.get(position).getExtras().require_date()) {
                             llExpiryDate.setVisibility(View.VISIBLE);
                         }
                         else
@@ -197,6 +213,37 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 });
             }
 
+        }
+
+        if(hasBadStock) {
+            swcBadStock = (SwitchCompat) super.findViewById(R.id.swcBadStock);
+            swcBadStock.setVisibility(View.VISIBLE);
+            swcBadStock.setChecked(true);
+            swcBadStock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.e("badStock", "onCheckedChanged-"+isChecked);
+                    if(hasInvoicePurpose) {
+                        if(isChecked) {
+//                            if(invoicePurposeList.indexOf(invoicePurpose) > 0) {
+//                                selectedIndex--;
+//                                spInvoicePurpose.setSelection(selectedIndex);
+//                            }
+                            int invpIndex = invoicePurposeList.indexOf(invP);
+                            Log.e("invpIndex", invpIndex+"");
+                            if(invpIndex > -1)
+                                invoicePurposesAdapter.remove(invP);
+                        }
+                        else {
+//                            selectedIndex++;
+                            invoicePurposeList.add(0, invP);
+                            spInvoicePurpose.setSelection(0);
+//                            invoicePurposesAdapter.add(invoicePurpose);
+                        }
+                        invoicePurposesAdapter.notifyDataSetChanged();
+                    }
+                }
+            });
         }
 
         product = selectedProductItem.getProduct();
@@ -227,22 +274,36 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 if (valuePosition > -1) {
                     Values value = selectedProductItem.getValues().get(valuePosition);
                     spUnits.setSelection(unitList.indexOf(value.getUnit() != null? value.getUnit() : defaultUnit));
-                    if(hasInvoicePurpose) {
-                        date = value.getExpiry_date();
-                        spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
-                    }
                     if(hasBadStock)
                         swcBadStock.setChecked(value.isBadStock());
+                    if(hasInvoicePurpose) {
+                        date = value.getExpiry_date();
+                        InvoicePurpose ip = value.getInvoicePurpose();
+                        if(ip != null)
+                            spInvoicePurpose.setSelection(invoicePurposeList.indexOf(ip));
+                        else {
+                            invP = new InvoicePurpose();
+                            invP.setId(-1);
+                            invP.setName("--");
+                        }
+                    }
                 }
             } else {
                 Values value = selectedProductItem.getValues().get(0);
                 spUnits.setSelection(unitList.indexOf(value.getUnit() != null? value.getUnit() : defaultUnit));
-                if(hasInvoicePurpose) {
-                    date = value.getExpiry_date();
-                    spInvoicePurpose.setSelection(invoicePurposeList.indexOf(value.getInvoicePurpose()));
-                }
                 if(hasBadStock)
                     swcBadStock.setChecked(value.isBadStock());
+                if(hasInvoicePurpose) {
+                    date = value.getExpiry_date();
+                    InvoicePurpose ip = value.getInvoicePurpose();
+                    if(ip != null)
+                        spInvoicePurpose.setSelection(invoicePurposeList.indexOf(ip));
+                    else {
+                        invP = new InvoicePurpose();
+                        invP.setId(-1);
+                        invP.setName("--");
+                    }
+                }
             }
             if(hasExpiryDate) {
                 if(date == null) {
@@ -430,8 +491,14 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 }
 
                 if(hasInvoicePurpose) {
-                    values.setInvoicePurpose((InvoicePurpose) spInvoicePurpose.getSelectedItem());
-                    values.setExpiry_date(date);
+                    InvoicePurpose invoicePurpose = (InvoicePurpose) spInvoicePurpose.getSelectedItem();
+                    if(invoicePurpose.getId() == -1)
+                        values.setInvoicePurpose(null);
+                    else {
+                        values.setInvoicePurpose(invoicePurpose);
+                        if(invoicePurpose.getExtras().require_date())
+                            values.setExpiry_date(date);
+                    }
                 }
                 if(hasBadStock)
                     values.setBadStock(swcBadStock.isChecked());
@@ -439,6 +506,16 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                 if(hasBrand) {
                     ExtendedAttributes extendedAttributes = new ExtendedAttributes();
                     extendedAttributes.setBrand(((String) spBrands.getSelectedItem()));
+
+                    values.setExtendedAttributes(extendedAttributes);
+                }
+
+                if(hasExpectedQty) {
+                    ExtendedAttributes extendedAttributes = values.getExtendedAttributes();
+                    if (extendedAttributes == null)
+                        extendedAttributes = new ExtendedAttributes();
+                    extendedAttributes.setOutright_return(NumberTools.toBigDecimal(etOutright.getText().toString()).toString());
+                    extendedAttributes.setDiscrepancy(NumberTools.toBigDecimal(etDiscrepancy.getText().toString()).toString());
 
                     values.setExtendedAttributes(extendedAttributes);
                 }

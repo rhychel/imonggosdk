@@ -195,6 +195,10 @@ public enum Table {
             prerequisites = new Table[]{PRICE_LISTS_FROM_CUSTOMERS};
         if(this == PRICE_LISTS_FROM_CUSTOMERS)
             prerequisites = new Table[]{CUSTOMER_BY_SALESMAN};
+        if(this == USERS_ME)
+            prerequisites = new Table[]{BRANCH_USERS, BRANCH_PRODUCTS};
+        if(this == BRANCH_USERS)
+            prerequisites = new Table[]{USERS_ME, BRANCH_PRODUCTS};
 
         return prerequisites;
     }

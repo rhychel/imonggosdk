@@ -201,6 +201,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return transactionTypes;
     }
 
+    @Deprecated
     public List<Branch> getBranches() {
         return getBranches(Constants.WAREHOUSE_ONLY);
     }
@@ -210,6 +211,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * Generate the user's branches.
      * @return
      */
+    @Deprecated
     public List<Branch> getBranches(boolean warehouseOnly) {
         List<Branch> assignedBranches = new ArrayList<>();
         try {
@@ -631,6 +633,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
         else
             size = ProductsAdapterHelper.getSelectedProductItems().size();
+        toggleNext(linearLayout, tvItems, size);
+    }
+
+    protected void toggleNext(ViewGroup linearLayout, TextView tvItems, int size) {
         tvItems.setText(getResources().getQuantityString(R.plurals.items, size, size));
         AnimationTools.toggleShowHide(linearLayout, size == 0, 300);
     }

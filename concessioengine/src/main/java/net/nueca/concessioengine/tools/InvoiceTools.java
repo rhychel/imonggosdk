@@ -227,6 +227,14 @@ public class InvoiceTools {
             else
                 values.setValue("" + invoiceLine.getQuantity(), unit, branchPrice);
 
+            if(invoiceLine.getExtras() != null) {
+                Extras extras = invoiceLine.getExtras();
+                if(extras.getIs_bad_stock() != null)
+                    values.setBadStock(extras.getIs_bad_stock());
+                values.setInvoicePurpose(InvoicePurpose.fetchById(helper, InvoicePurpose.class,extras.getInvoice_purpose_id()));
+                values.setExpiry_date(extras.getExpiry_date());
+            }
+
             selectedProductItem.addValues(values);
             selectedProductItemList.add(selectedProductItem);
         }

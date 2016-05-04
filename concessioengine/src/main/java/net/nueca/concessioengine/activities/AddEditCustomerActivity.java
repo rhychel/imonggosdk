@@ -187,6 +187,8 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mSaveCustomer) {
             final Customer customer = customerFieldsAdapter.generateCustomer();
+            Gson gson = new Gson();
+            Log.e("Customer", gson.toJson(customer));
             FieldValidatorMessage fieldValidatorMessage = customer.doesRequiredSatisfied(Customer.CustomerFields.FIRST_NAME, Customer.CustomerFields.LAST_NAME,
                     Customer.CustomerFields.MOBILE, Customer.CustomerFields.TELEPHONE, Customer.CustomerFields.EXTRAS_CATEGORY_ID, Customer.CustomerFields.PAYMENT_TERMS_ID);
 
@@ -204,6 +206,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                                     .queue();
                         }
                         else {
+//                            customer.set
                             OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                     .toUpdate()
                                     .object(customer)
@@ -214,7 +217,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                         }
 
                         Intent intent = new Intent();
-                        intent.putExtra(CUSTOMER_ID, customer.getId());
+                        intent.putExtra(CUSTOMER_ID, updateCustomer != null ? updateCustomer.getId() : customer.getId());
                         setResult(SUCCESS, intent);
                         finish();
                     }
@@ -437,7 +440,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
         }
 
         public Customer generateCustomer() {
-            Customer customer = null;
+            Customer customer = updateCustomer;
             Gson gson = new GsonBuilder().serializeNulls().create();
             JSONObject jsonObject = new JSONObject();
             try {
@@ -463,13 +466,22 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                         paymentTerm = paymentTerms.getValues().get(paymentTerms.getSelectedIndex());
                         if(paymentTerm.getId() == -1)
                             continue;
-                        jsonObject.put(Customer.CustomerFields.PAYMENT_TERMS_ID.getLabel(), paymentTerm.getId());
+
+                        if(updateCustomer != null)
+                            customer.setPayment_terms_id(paymentTerm.getId());
+                        else
+                            jsonObject.put(Customer.CustomerFields.PAYMENT_TERMS_ID.getLabel(), paymentTerm.getId());
+
                         continue;
                     }
-
-                    jsonObject.put(customerField.getFieldName().getLabel(), customerField.getEditTextValue());
+                    if(updateCustomer != null)
+                        customer.updateCustomerDetail(customerField.getFieldName(), customerField.getEditTextValue());
+                    else
+                        jsonObject.put(customerField.getFieldName().getLabel(), customerField.getEditTextValue());
                 }
-                customer = gson.fromJson(jsonObject.toString(), Customer.class);
+
+                if(updateCustomer == null)
+                    customer = gson.fromJson(jsonObject.toString(), Customer.class);
                 /*
                  {
                     customer.setId(TempIdGenerator.generateTempId(getContext(), Customer.class));
