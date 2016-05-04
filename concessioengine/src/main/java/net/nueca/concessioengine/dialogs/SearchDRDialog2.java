@@ -241,7 +241,7 @@ public class SearchDRDialog2 extends BaseAppCompatDialog {
             etPulloutRef.setText("");
         if(tvNotFound != null) {
             tvNotFound.setVisibility(View.VISIBLE);
-            tvNotFound.setText("type the reference");
+            tvNotFound.setText("Type the reference...");
             tvNotFound.setTextColor(ContextCompat.getColor(getContext(), R.color.accentLogin));
         }
     }
@@ -255,7 +255,13 @@ public class SearchDRDialog2 extends BaseAppCompatDialog {
             String reference = etReceiptNo != null ? etReceiptNo.getText().toString() : etPulloutRef.getText().toString();
 
             try {
-                document = search(reference, spSourceBranch != null ? (Branch) spSourceBranch.getSelectedItem() : null);
+                Branch branch = null;
+                if(spSourceBranch != null)
+                    branch = (Branch) spSourceBranch.getSelectedItem();
+                else
+                    branch = Branch.allUserBranches(getContext(), dbHelper, user, true).get(0); // Handle if no warehouse assigned
+
+                document = search(reference, branch);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
