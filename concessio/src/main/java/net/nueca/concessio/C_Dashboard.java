@@ -41,6 +41,7 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.base.DBTable;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -140,6 +141,53 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
 
+        try {
+            List<SalesPromotion> sp = SalesPromotion.fetchAll(getHelper(), SalesPromotion.class);
+
+            Log.e(TAG, "salespromotions: " + sp.size() );
+
+            for(SalesPromotion s : sp) {
+                Log.e(TAG, "id: " + s.getId());
+            }
+            /*Product product = getHelper().fetchObjects(Product.class).queryBuilder().where().eq("id", 1417).queryForFirst();
+
+            if(product == null) {
+                Log.e(TAG, "product is null");
+            } else {
+                Log.e(TAG, "product is " + product.toString());
+                List<BranchProduct> bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("product_id", product).query();
+
+                if(bp == null) {
+                    Log.e(TAG, "branch product is null");
+                } else {
+                    Log.e(TAG, "bp size is " + bp.size());
+
+                    for(BranchProduct b : bp) {
+                        Log.e(TAG, "branch product: " + b.getProduct().getName() + " unit: " +  b.getUnit().getName() + " product status: " + b.getProduct().getStatus());
+
+                    }
+                }
+            }*/
+/*
+
+            BranchProduct bp = getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("id", 2102).queryForFirst();
+
+            if(bp != null) {
+                Log.e(TAG, bp.toString());
+            } else {
+                Log.e(TAG, "bp is null");
+            }
+*/
+          List<BranchUserAssoc> listOfBranchIds = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query();
+            Log.e(TAG, "size: " + listOfBranchIds.size());
+
+            for(BranchUserAssoc ba : listOfBranchIds) {
+                Log.e(TAG, "User: " + ba.getUser().getName() + "Branch Name: " + ba.getBranch().getName());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
