@@ -267,13 +267,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.DOCUMENT_TYPE,
                             Parameter.INTRANSIT,
-                            Parameter.FROM,
-                            Parameter.TO,
                             Parameter.LAST_UPDATED_AT,
                             Parameter.BRANCH_ID),  // RHY: Parameter.TARGET_BRANCH_ID Changed to cater transfer to branch
                             document_type, intransit_status,
-                            DateTimeTools.convertDateForUrl(from),
-                            DateTimeTools.convertDateForUrl(to),
                             getTargetBranchId(branchIndex));
                 } else {
                     return String.format(ImonggoTools.generateParameter(
