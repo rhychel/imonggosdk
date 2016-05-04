@@ -229,7 +229,8 @@ public class InvoiceTools {
 
             if(invoiceLine.getExtras() != null) {
                 Extras extras = invoiceLine.getExtras();
-                values.setBadStock(extras.getIs_bad_stock());
+                if(extras.getIs_bad_stock() != null)
+                    values.setBadStock(extras.getIs_bad_stock());
                 values.setInvoicePurpose(InvoicePurpose.fetchById(helper, InvoicePurpose.class,extras.getInvoice_purpose_id()));
                 values.setExpiry_date(extras.getExpiry_date());
             }
