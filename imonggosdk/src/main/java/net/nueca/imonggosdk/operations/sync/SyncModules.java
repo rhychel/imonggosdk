@@ -1123,6 +1123,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                     newLastUpdatedAt = gson.fromJson(jsonObject.toString(), LastUpdatedAt.class);
 
+                    if (newLastUpdatedAt.getLast_updated_at() == null) {
+                        newLastUpdatedAt.setLast_updated_at(DateTimeTools.getCurrentDateTime());
+                        Log.e(TAG, "server return is null use this date: " + DateTimeTools.getCurrentDateTime());
+                    }
+
+
                     if (mCurrentTableSyncing == Table.DOCUMENTS) {
                         newLastUpdatedAt.setTableName(LastUpdateAtTools.getTableToSync(module, getTargetBranchId(branchIndex) + ""));
                         Log.e(TAG, "Table Name: " + newLastUpdatedAt.getTableName());
@@ -1138,13 +1144,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         /*lastUpdatedAt.setLast_updated_at("2016/03/28 06:39:00 +0000");
                         lastUpdatedAt.updateTo(getHelper());*/
 
+                        SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
                         if (lastUpdatedAt.getLast_updated_at() != null) {
 
-                            SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                            if (newLastUpdatedAt.getLast_updated_at() == null) {
-                                newLastUpdatedAt.setLast_updated_at(DateTimeTools.getCurrentDateTime());
-                                Log.e(TAG, "server return is null use this date: " + DateTimeTools.getCurrentDateTime());
-                            }
 
                             try {
                                 Date date1 = dateFormat1.parse(lastUpdatedAt.getLast_updated_at());
@@ -1194,8 +1197,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 Log.e(TAG, e.toString());
                             }
                         } else {
-                            Log.e(TAG, "Inserting lastUpdatedAt.. " + newLastUpdatedAt.toString());
-                            newLastUpdatedAt.insertTo(getHelper());
+
                             if (lastUpdatedAt.getLast_updated_at() == null) {
                                 lastUpdatedAt = newLastUpdatedAt;
                                 lastUpdatedAt.updateTo(getHelper());
@@ -1204,7 +1206,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         }
                     } else {
                         Log.e(TAG, "Inserting lastUpdatedAt.. " + newLastUpdatedAt.toString());
-                        newLastUpdatedAt.insertTo(getHelper());
+
                         lastUpdatedAt = new LastUpdatedAt();
                         if (lastUpdatedAt.getLast_updated_at() == null) {
                             lastUpdatedAt.setTableName(newLastUpdatedAt.getTableName());

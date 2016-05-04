@@ -227,7 +227,7 @@ public class DateTimeTools {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date currentDateTime= new Date();
         String currentDate = dateFormat.format(currentDateTime);
-        return currentDate;
+        return currentDate + " +0000";
     }
 
     /**
