@@ -36,7 +36,10 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
         setRequireObjectConcessioSettings(false);
-        setServer(Server.REBISCO);
+        setServer(Server.PLDTRETAILCLOUD);
+
+        TEST_ACCOUNT = true;
+
 
 
         SettingTools.updateSettings(C_Login.this,
@@ -44,7 +47,9 @@ public class C_Login extends LoginActivity {
 
         setModulesToSync(
                 Table.USERS_ME.ordinal(),
-                Table.INVOICE_PURPOSES.ordinal()
+                Table.BRANCH_USERS.ordinal(),
+                Table.DOCUMENT_ADJUSTMENT_OUT.ordinal(),
+                Table.DOCUMENT_TRANSFER_OUT.ordinal()
 
                 /*Table.ORDERS.ordinal(),
                 Table.ORDERS_PURCHASES.ordinal(),
@@ -83,8 +88,8 @@ public class C_Login extends LoginActivity {
     @Override
     protected void onCreateLoginLayout() {
         super.onCreateLoginLayout();
-        setEditTextAccountID("A1029");
+        /*setEditTextAccountID("A1029");
         setEditTextEmail("A1072A_OSS-1@A1029.com");
-        setEditTextPassword("password");
+        setEditTextPassword("password");*/
     }
 }

@@ -69,6 +69,8 @@ public enum Table {
     POS_DEVICES(API_TYPE.API, "Pos Devices", null),
     DAILY_SALES(API_TYPE.API, "Daily Sales", DailySales.class, "daily_sales"),
     DOCUMENTS(API_TYPE.API, "Documents", Document.class, "documents"),
+    DOCUMENT_TRANSFER_OUT(API_TYPE.API, "Documents", Document.class, "documents"),
+    DOCUMENT_ADJUSTMENT_OUT(API_TYPE.API, "Documents", Document.class, "documents"),
     DOCUMENT_TYPES(API_TYPE.API, "Document Types", DocumentType.class, "document_types"),
     DOCUMENT_PURPOSES(API_TYPE.API, "Document Purposes", DocumentPurpose.class, "document_purposes"),
 
