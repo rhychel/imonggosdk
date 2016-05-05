@@ -266,7 +266,7 @@ public class C_Finalize extends ModuleActivity {
                         DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total return amount cannot be greater than your total sales amount.", R.style.AppCompatDialogStyle_Light);
                         return;
                     }
-                    if(((Double)tvBalance.getTag()) == 0) {
+                    if(((Double)tvBalance.getTag()) == 0 && ProductsAdapterHelper.getSelectedReturnProductItems().size() > 0) {
                         DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total amount cannot be zero.", R.style.AppCompatDialogStyle_Light);
                         return;
                     }

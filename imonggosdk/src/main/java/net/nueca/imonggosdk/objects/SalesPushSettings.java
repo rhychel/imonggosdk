@@ -22,7 +22,10 @@ public class SalesPushSettings extends DBTable {
 
     @Expose
     @DatabaseField
-    private int enable_threshold, threshold, return_trigger;
+    private int
+            enable_threshold,
+            threshold,
+            return_trigger;
 
     @Expose
     @DatabaseField
