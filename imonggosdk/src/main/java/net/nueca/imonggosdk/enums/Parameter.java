@@ -30,5 +30,6 @@ public enum Parameter {
     SALES_DISCOUNT,
     SALES_POINTS,
     ORDER_TYPE,
-    LAYAWAYS
+    LAYAWAYS,
+    REFERENCE // reference
 }

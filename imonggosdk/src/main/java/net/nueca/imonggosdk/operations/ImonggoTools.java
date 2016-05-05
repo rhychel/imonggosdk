@@ -108,6 +108,10 @@ public class ImonggoTools {
 					parameterStr += "type=layaways&";
 					stringInputCount++;
 					break;
+				case REFERENCE:
+					parameterStr += "reference=%"+stringInputCount+"$s&";
+					stringInputCount++;
+					break;
             }
         }
         if(!parameterStr.equals("?"))

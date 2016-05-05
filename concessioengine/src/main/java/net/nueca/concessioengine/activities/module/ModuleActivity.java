@@ -86,6 +86,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected boolean isReturnItems = false;
     protected boolean initSelectedCustomer = true;
     protected boolean isForHistoryDetail = false;
+    protected boolean isManualReceive = false;
     private ModuleSetting moduleSetting;
     protected Customer customer;
 
@@ -501,6 +502,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 productList.add(product);
 
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+            selectedProductItem.setIsMultiline(concessioModule == ConcessioModule.RECEIVE_BRANCH || concessioModule == ConcessioModule.PHYSICAL_COUNT); // TODO Configure on the concessio.json
             String quantity = "0";
             Unit unit = null;
             if(documentLine.getUnit_id() != null)
@@ -517,7 +519,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 quantity = String.valueOf(documentLine.getQuantity());
             }
             Values values = null;
-            if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
+            if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT || concessioModule == ConcessioModule.RECEIVE_BRANCH) {
                 ExtendedAttributes extendedAttributes = new ExtendedAttributes(0d, Double.valueOf(quantity));
                 values = new Values();
                 Log.e("Unit", unit.getName()+" == "+unit.getId());
@@ -537,8 +539,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
                 values.setValue("0.0", unit, extendedAttributes);
             }
-            else
+            else {
                 values = new Values(unit, quantity);
+                values.setUnit_retail_price(unit.getRetail_price());
+            }
             values.setLine_no(documentLine.getLine_no());
             selectedProductItem.addValues(values);
             selectedProductItem.setInventory(product.getInventory());
@@ -552,6 +556,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         if(object instanceof Document) {
             Document document = (Document) object;
             processDocument(document, productList);
+            if(reference != null && !reference.equals(""))
+                document.setRemark("delivery_receipt_no="+reference);
         }
 
         return productList;
@@ -590,6 +596,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         else if(offlineData.getType() == OfflineData.DOCUMENT) {
             Document document = offlineData.getObjectFromData(Document.class);
             processDocument(document, productList);
+            if(reference != null && !reference.equals(""))
+                document.setRemark("delivery_receipt_no="+reference);
 
             Log.e("SelectedProductItems", ProductsAdapterHelper.getSelectedProductItems().size()+"");
             return productList;

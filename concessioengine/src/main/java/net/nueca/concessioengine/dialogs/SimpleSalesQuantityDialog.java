@@ -78,6 +78,28 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         super(context);
     }
 
+    private TextWatcher onQuantityChanged = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            if(hasExpectedQty) {
+                BigDecimal orig_qty = NumberTools.toBigDecimal(etExpectedQty.getText().toString());
+                BigDecimal rcv_qty = NumberTools.toBigDecimal(etQuantity.getText().toString());
+                BigDecimal ret_qty = NumberTools.toBigDecimal(etOutright.getText().toString());
+                BigDecimal dsc_qty = orig_qty.subtract(rcv_qty.add(ret_qty));
+
+                etDiscrepancy.setText(NumberTools.separateInCommas(dsc_qty.doubleValue()));
+            }
+        }
+        @Override
+        public void afterTextChanged(Editable editable) {
+            String quantity = etQuantity.getText().toString();
+            subtotal = String.valueOf(NumberTools.toDouble(quantity.equals("-") ? "0" : quantity) * NumberTools.toDouble(retailPrice));
+            tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
+            Log.e("SUBTOTAL AFTER", subtotal);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,29 +119,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         llSubtotal = (LinearLayout) super.findViewById(R.id.llSubtotal);
 
         etQuantity.setSelectAllOnFocus(true);
-        etQuantity.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(hasExpectedQty) {
-
-                    BigDecimal orig_qty = NumberTools.toBigDecimal(etExpectedQty.getText().toString());
-                    BigDecimal rcv_qty = NumberTools.toBigDecimal(etQuantity.getText().toString());
-                    BigDecimal ret_qty = NumberTools.toBigDecimal(etOutright.getText().toString());
-                    BigDecimal dsc_qty = orig_qty.subtract(rcv_qty.add(ret_qty));
-
-                    etDiscrepancy.setText(NumberTools.separateInCommas(dsc_qty.doubleValue()));
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String quantity = etQuantity.getText().toString();
-                subtotal = String.valueOf(NumberTools.toDouble(quantity.equals("-") ? "0" : quantity) * NumberTools.toDouble(retailPrice));
-                tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
-                Log.e("SUBTOTAL AFTER", subtotal);
-            }
-        });
+        etQuantity.addTextChangedListener(onQuantityChanged);
 
         boolean hasValues = selectedProductItem.getValues().size() > 0;
 
@@ -130,8 +130,21 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             etOutright= (EditText) super.findViewById(R.id.etOutright);
             etDiscrepancy = (EditText) super.findViewById(R.id.etDiscrepancy);
 
-            etExpectedQty.setText(selectedProductItem.getOriginalQuantity());
-            etDiscrepancy.setText(selectedProductItem.getDiscrepancy());
+            if (isMultiValue) {
+                if (valuePosition > -1) {
+                    etExpectedQty.setText(selectedProductItem.getOriginalQuantity(valuePosition));
+                    etDiscrepancy.setText(selectedProductItem.getDiscrepancy(valuePosition));
+                }
+                else {
+                    etExpectedQty.setText("0");
+                    etDiscrepancy.setText("0");
+                }
+            } else {
+                etExpectedQty.setText(selectedProductItem.getOriginalQuantity());
+                Log.e("Discrepancy", selectedProductItem.getDiscrepancy());
+                etDiscrepancy.setText(selectedProductItem.getDiscrepancy());
+            }
+
 
             llExpectedQty.setVisibility(View.VISIBLE);
         }
@@ -139,6 +152,16 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             llOutright = (LinearLayout) super.findViewById(R.id.llOutright);
             tvOutright = (TextView) super.findViewById(R.id.tvOutright);
             etOutright = (EditText) super.findViewById(R.id.etOutright);
+            etOutright.setSelectAllOnFocus(true);
+            etOutright.addTextChangedListener(onQuantityChanged);
+
+            if (isMultiValue) {
+                if (valuePosition > -1)
+                    etOutright.setText(selectedProductItem.getReturn(valuePosition));
+                else
+                    etOutright.setText("0");
+            } else
+                etOutright.setText(selectedProductItem.getReturn());
 
             llOutright.setVisibility(View.VISIBLE);
         }
@@ -146,6 +169,14 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             llDiscrepancy = (LinearLayout) super.findViewById(R.id.llDiscrepancy);
             tvDiscrepancy = (TextView) super.findViewById(R.id.tvDiscrepancy);
             etDiscrepancy = (EditText) super.findViewById(R.id.etDiscrepancy);
+
+            if (isMultiValue) {
+                if (valuePosition > -1)
+                    etDiscrepancy.setText(selectedProductItem.getDiscrepancy(valuePosition));
+                else
+                    etDiscrepancy.setText("0");
+            } else
+                etDiscrepancy.setText(selectedProductItem.getDiscrepancy());
 
             llDiscrepancy.setVisibility(View.VISIBLE);
         }
@@ -436,6 +467,16 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         this.forceSellableUnit = forceSellableUnit;
     }
 
+    private boolean checkForValues() {
+        String quantity = etQuantity.getText().toString().replace(",", "");
+
+        boolean hasQty = !quantity.equals("") && Double.valueOf(quantity) != 0.0; // true
+        boolean hasReturns = etOutright != null && !NumberTools.toBigDecimal(etOutright.getText().toString()).equals(BigDecimal.ZERO); // false
+        boolean hasDiscrepancy = etDiscrepancy != null && !NumberTools.toBigDecimal(etDiscrepancy.getText().toString()).equals(BigDecimal.ZERO); // false
+
+        return hasQty || hasReturns || hasDiscrepancy;
+    }
+
     private View.OnClickListener onSaveClicked = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -446,7 +487,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
 
             if (Double.valueOf(quantity) == 0.0 && !isMultiValue)
                 selectedProductItem.removeAll(); // TODO handle this
-            else if (Double.valueOf(quantity) == 0.0 && isMultiValue) {
+            else if (isMultiValue && !checkForValues()) {
                 if (multiQuantityDialogListener != null)
                     multiQuantityDialogListener.onSave(null);
                 dismiss();
@@ -510,15 +551,18 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     values.setExtendedAttributes(extendedAttributes);
                 }
 
-                if(hasExpectedQty) {
-                    ExtendedAttributes extendedAttributes = values.getExtendedAttributes();
+                ExtendedAttributes extendedAttributes = values.getExtendedAttributes();
+                if(hasOutright) {
                     if (extendedAttributes == null)
                         extendedAttributes = new ExtendedAttributes();
                     extendedAttributes.setOutright_return(NumberTools.toBigDecimal(etOutright.getText().toString()).toString());
-                    extendedAttributes.setDiscrepancy(NumberTools.toBigDecimal(etDiscrepancy.getText().toString()).toString());
-
-                    values.setExtendedAttributes(extendedAttributes);
                 }
+                if(hasDiscrepancy || etDiscrepancy != null) {
+                    if (extendedAttributes == null)
+                        extendedAttributes = new ExtendedAttributes();
+                    extendedAttributes.setDiscrepancy(NumberTools.toBigDecimal(etDiscrepancy.getText().toString()).toString());
+                }
+                values.setExtendedAttributes(extendedAttributes);
 
                 if (isMultiValue) {
                     if (multiQuantityDialogListener != null)

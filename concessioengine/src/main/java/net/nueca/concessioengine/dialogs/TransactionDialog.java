@@ -138,6 +138,8 @@ public class TransactionDialog extends BaseAppCompatDialog {
                 return "Pullout Request Saved";
             case RECEIVE_BRANCH_PULLOUT:
                 return "Pullout Confirmation Successful";
+            case RECEIVE_BRANCH:
+                return "Receiving Successful";
             default:
                 return "Sales Items Saved";
         }

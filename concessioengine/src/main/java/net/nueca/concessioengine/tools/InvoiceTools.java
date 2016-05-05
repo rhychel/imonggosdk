@@ -526,8 +526,11 @@ public class InvoiceTools {
         }
 
         private void addDiscounts(InvoiceLine invoiceLine) {
-            if(invoiceLine.getExtras() == null)
+            if(invoiceLine.getExtras() == null) {
+                productDiscount.add(0d);
+                companyDiscount.add(0d);
                 return;
+            }
             double itemDiscount;
 
             if(invoiceLine.getExtras().getProduct_discount_amount() != null) {

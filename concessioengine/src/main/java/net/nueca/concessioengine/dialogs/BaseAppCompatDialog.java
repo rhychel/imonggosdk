@@ -10,8 +10,13 @@ import android.widget.Button;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DateTimeTools;
+
+import java.sql.SQLException;
 
 /**
  * Created by rhymart on 7/24/15.
@@ -20,6 +25,7 @@ import net.nueca.imonggosdk.tools.DateTimeTools;
 public class BaseAppCompatDialog extends AppCompatDialog {
 
     protected boolean isButtonTapped = false;
+    protected ImonggoDBHelper2 dbHelper;
     protected static int NO_THEME = -1;
     protected String date;
     protected FragmentManager fragmentManager;
@@ -77,6 +83,13 @@ public class BaseAppCompatDialog extends AppCompatDialog {
             }
         }, Integer.valueOf(dateS[0]), Integer.valueOf(dateS[1]) - 1, Integer.valueOf(dateS[2]));
         deliveryDatePicker.show(fragmentManager, "delivery_date_picker");
+    }
+
+    public Session getSession() throws SQLException {
+        Session session = null;
+        if(AccountTools.isLoggedIn(dbHelper))
+            session = dbHelper.fetchObjectsList(Session.class).get(0);
+        return session;
     }
 
 }

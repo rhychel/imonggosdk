@@ -58,7 +58,7 @@
         android:clickable="true"
         android:src="@drawable/ic_add_white"
         android:layout_gravity="bottom|right"
-        android:background="@color/primary"
+        app:backgroundTint="@color/primary"
         app:fabSize="normal"
         android:id="@+id/fabAddValue"/>
 </android.support.design.widget.CoordinatorLayout>

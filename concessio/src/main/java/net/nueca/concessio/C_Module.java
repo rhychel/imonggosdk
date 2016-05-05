@@ -460,7 +460,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
             break;
             case STOCK_REQUEST:
-            case RECEIVE_BRANCH_PULLOUT: { // TODO for Petron
+            case RECEIVE_BRANCH_PULLOUT:
+            case RECEIVE_BRANCH: { // TODO for Petron
 
                 changeToReview = true;
                 initializeProducts();
@@ -472,6 +473,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setProductsFragmentListener(this);
                 simpleProductsFragment.setHasSubtotal(false);
                 simpleProductsFragment.setUseRecyclerView(true);
+                simpleProductsFragment.setConcessioModule(concessioModule);
 
                 initializeFinalize();
                 finalizeFragment.setListingType(ListingType.SALES);
@@ -480,6 +482,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setHasUnits(true);
                 finalizeFragment.setHasSubtotal(false);
                 finalizeFragment.setUseSalesProductAdapter(false);
+                finalizeFragment.setConcessioModule(concessioModule);
 
                 prepareFooter();
 
@@ -490,11 +493,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         .commit();
 
                 if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
-                    simpleProductsFragment.setConcessioModule(concessioModule);
-                    finalizeFragment.setConcessioModule(concessioModule);
                     try {
                         searchDRDialog = new SearchDRDialog2(this, getHelper(), getUser(), ConcessioModule.RECEIVE_BRANCH_PULLOUT, R.style.AppCompatDialogStyle_Light_NoTitle);
-                        searchDRDialog.setConcessioModule(concessioModule);
                         searchDRDialog.setDialogListener(new SearchDRDialog2.SearchDRDialogListener() {
                             @Override
                             public boolean onCancel() {
@@ -507,12 +507,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 if(target_branch == null)
                                     Log.e("target_branch", "is null");
 
+                                reference = deliveryReceiptNo;
                                 ProductsAdapterHelper.setWarehouse_id(document.getTarget_branch_id());
                                 ProductsAdapterHelper.setParent_document_id(document.getReturnId());
 
+                                simpleProductsFragment.customReason(document.getReference(), onCancelProgress);
                                 try {
                                     simpleProductsFragment.setFilterProductsBy(processObject(document));
-                                    simpleProductsFragment.forceUpdateProductList(simpleProductsFragment.getFilterProductsBy());
+                                    simpleProductsFragment.forceUpdateProductList(); //simpleProductsFragment.getFilterProductsBy()
                                 } catch (SQLException e) {
                                     e.printStackTrace();
                                 }
@@ -520,8 +522,75 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             }
 
                             @Override
-                            public void onManualReceive(String deliveryReceiptNo, Branch target_branch) {
+                            public void onManualReceive(String deliveryReceiptNo, Branch target_branch) { }
+                        });
+                        searchDRDialog.show();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(concessioModule == ConcessioModule.RECEIVE_BRANCH) {
+                    try {
+                        searchDRDialog = new SearchDRDialog2(this, getHelper(), getUser(), ConcessioModule.RECEIVE_BRANCH, net.nueca.concessioengine.R.style.AppCompatDialogStyle_Light_NoTitle);
+                        searchDRDialog.setDialogListener(new SearchDRDialog2.SearchDRDialogListener() {
+                            @Override
+                            public boolean onCancel() {
+                                Log.e("onCancel", "called");
+                                finish();
+                                return true;
+                            }
 
+                            @Override
+                            public void onSearch(String deliveryReceiptNo, Branch target_branch, Document document) {
+                                if(target_branch == null)
+                                    Log.e("target_branch", "is null");
+                                Log.e("onSearch", "Branch="+target_branch.getName());
+
+                                ProductsAdapterHelper.setWarehouse_id(document.getBranch_id()); // document.target_branch_id
+                                ProductsAdapterHelper.setParent_document_id(document.getReturnId());
+                                ProductsAdapterHelper.setSource(target_branch); // documents.json?branch_id
+
+                                reference = deliveryReceiptNo;
+                                isManualReceive = false;
+
+                                simpleProductsFragment.customReason(document.getReference(), onCancelProgress);
+                                try {
+                                    simpleProductsFragment.setFilterProductsBy(processObject(document));
+                                    simpleProductsFragment.forceUpdateProductList();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                                whenItemsSelectedUpdated();
+
+                                simpleProductsFragment.setMultipleInput(true);
+                                simpleProductsFragment.setMultiInputListener(multiInputListener);
+
+                                finalizeFragment.setMultipleInput(true);
+                                finalizeFragment.setMultiInputListener(multiInputListener);
+                                finalizeFragment.setCanDeleteItems(false);
+                            }
+
+                            @Override
+                            public void onManualReceive(String deliveryReceiptNo, Branch target_branch) {
+                                Log.e("onManualReceive", "Branch="+target_branch.getName());
+
+                                try {
+                                    ProductsAdapterHelper.setWarehouse_id(Branch.allUserBranches(C_Module.this, getHelper(), getUser(), true).get(0).getId()); // document.target_branch_id
+                                    ProductsAdapterHelper.setSource(target_branch); // documents.json?branch_id
+
+                                    reference = deliveryReceiptNo;
+                                    isManualReceive = true;
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+
+                                simpleProductsFragment.customReason(reference, onCancelProgress);
+                                simpleProductsFragment.setMultipleInput(true);
+                                simpleProductsFragment.setMultiInputListener(multiInputListener);
+
+                                finalizeFragment.setMultipleInput(true);
+                                finalizeFragment.setMultiInputListener(multiInputListener);
+                                finalizeFragment.setCanDeleteItems(true);
                             }
                         });
                         searchDRDialog.show();
@@ -650,44 +719,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.flContent, simpleProductsFragment)
-                        .commit();
-            }
-            break;
-            case RECEIVE_BRANCH: { // TODO for Petron
-                changeToReview = true;
-                simpleReceiveFragment = new SimpleReceiveFragment();
-                simpleReceiveFragment.setHelper(getHelper());
-                simpleReceiveFragment.setSetupActionBar(this);
-                simpleReceiveFragment.setUseRecyclerView(false);
-                simpleReceiveFragment.setFragmentContainer(R.id.flContent);
-                simpleReceiveFragment.setProductCategories(getProductCategories(true));
-                simpleReceiveFragment.setFABListener(new SimpleReceiveFragment.FloatingActionButtonListener() {
-                    @Override
-                    public void onClick(ReceivedProductItemList receivedProductItemList, Branch targetBranch,
-                                        String reference, Integer parentDocumentID) {
-                        SimpleReceiveReviewFragment simpleReceiveReviewFragment = new SimpleReceiveReviewFragment();
-                        simpleReceiveReviewFragment.setParentID(parentDocumentID);
-                        simpleReceiveReviewFragment.setTargetBranch(targetBranch);
-                        simpleReceiveReviewFragment.setDRNo(reference);
-                        simpleReceiveReviewFragment.setUseRecyclerView(true);
-                        simpleReceiveReviewFragment.setHelper(getHelper());
-                        simpleReceiveReviewFragment.setFragmentContainer(R.id.flContent);
-                        simpleReceiveReviewFragment.setReceivedProductItemList(receivedProductItemList);
-                        simpleReceiveReviewFragment.setIsManual(simpleReceiveFragment.isManual());
-
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
-                                        R.anim.slide_in_left, R.anim.slide_out_right)
-                                .replace(R.id.flContent, simpleReceiveReviewFragment)
-                                .addToBackStack("review_fragment")
-                                .commit();
-                    }
-                });
-
-                prepareFooter();
-
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.flContent, simpleReceiveFragment)
                         .commit();
             }
             break;
@@ -917,6 +948,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             hasMenu = true;
                         }
                     }
+                    if(concessioModule == ConcessioModule.RECEIVE_BRANCH || concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT)
+                        if(finalizeFragment != null)
+                            finalizeFragment.customReason(reference, null);
+
                     if (concessioModule == ConcessioModule.HISTORY) {
                         hasMenu = true;
                         tvItems.setVisibility(View.VISIBLE);
@@ -961,6 +996,29 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         });
     }
 
+    private View.OnClickListener onCancelProgress = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogTools.showConfirmationDialog(C_Module.this, "Oopps!", "Editing the reference will clear your progress. Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ProductsAdapterHelper.clearSelectedProductItemList(true);
+                    simpleProductsFragment.setFilterProductsBy(new ArrayList<Product>());
+                    simpleProductsFragment.forceUpdateProductList();
+
+                    searchDRDialog.show();
+                    simpleProductsFragment.customReason("");
+
+                    whenItemsSelectedUpdated();
+                }
+            }, "No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            }, R.style.AppCompatDialogStyle_Light);
+        }
+    };
 
     private void initializeFinalize() {
         finalizeFragment = SimpleProductsFragment.newInstance();
@@ -1384,6 +1442,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         public void showInputScreen(Product product) {
             Intent intent = new Intent(C_Module.this, C_MultiInput.class);
             intent.putExtra(MultiInputSelectedItemFragment.PRODUCT_ID, product.getId());
+            intent.putExtra(MultiInputSelectedItemFragment.IS_MANUAL_RECEIVE, isManualReceive);
+            intent.putExtra(ModuleActivity.CONCESSIO_MODULE, concessioModule.ordinal());
             startActivityForResult(intent, FROM_MULTIINPUT);
         }
     };
@@ -1412,7 +1472,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 if(isButtonTapped)
                     return;
                 isButtonTapped = true;
-                if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
+                if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT || (concessioModule == ConcessioModule.RECEIVE_BRANCH && !isManualReceive)) {
                     if(getWarehouse() != null) {
                         DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                             @Override
@@ -1446,7 +1506,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                 offlineData = new SwableTools.Transaction(getHelper())
                                         .toSend()
-                                        .forBranch(warehouse)
+                                        .forBranch(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT ? warehouse : ProductsAdapterHelper.getSource())
                                         .object(document)
                                         .fromModule(concessioModule)
                                         .queue();
@@ -1583,9 +1643,21 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         return;
                                     }
 
-                                    if (concessioModule == ConcessioModule.STOCK_REQUEST) {
+                                    if (concessioModule == ConcessioModule.STOCK_REQUEST
+                                            || concessioModule == ConcessioModule.PHYSICAL_COUNT
+                                            || concessioModule == ConcessioModule.RECEIVE_BRANCH) {
                                         simpleProductsFragment.refreshList();
                                         finalizeFragment.refreshList();
+
+
+                                        if(concessioModule == ConcessioModule.RECEIVE_BRANCH) {
+                                            simpleProductsFragment.getFilterProductsBy().clear();
+                                            simpleProductsFragment.forceUpdateProductList();
+                                            finalizeFragment.getFilterProductsBy().clear();
+
+                                            searchDRDialog.show();
+                                        }
+
                                         onBackPressed();
                                     } else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                         llFooter.setVisibility(View.GONE);
@@ -1731,9 +1803,20 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             return;
                                                         }
 
-                                                        if (concessioModule == ConcessioModule.STOCK_REQUEST || concessioModule == ConcessioModule.PHYSICAL_COUNT) {
+                                                        if (concessioModule == ConcessioModule.STOCK_REQUEST
+                                                                || concessioModule == ConcessioModule.PHYSICAL_COUNT
+                                                                || concessioModule == ConcessioModule.RECEIVE_BRANCH) {
                                                             simpleProductsFragment.refreshList();
                                                             finalizeFragment.refreshList();
+
+                                                            if(concessioModule == ConcessioModule.RECEIVE_BRANCH) {
+                                                                simpleProductsFragment.getFilterProductsBy().clear();
+                                                                simpleProductsFragment.forceUpdateProductList();
+                                                                finalizeFragment.getFilterProductsBy().clear();
+
+                                                                searchDRDialog.show();
+                                                            }
+
                                                             onBackPressed();
                                                         } else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
                                                             llFooter.setVisibility(View.GONE);
