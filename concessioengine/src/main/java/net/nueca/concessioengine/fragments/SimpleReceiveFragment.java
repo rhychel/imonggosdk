@@ -42,6 +42,7 @@ import java.util.List;
 /**
  * Created by gama on 9/2/15.
  */
+@Deprecated
 public class SimpleReceiveFragment extends BaseReceiveFragment {
 
     private TextView tvNoProducts;

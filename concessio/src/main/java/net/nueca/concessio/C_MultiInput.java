@@ -8,6 +8,7 @@ import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 
 /**
  * Created by rhymart on 8/24/15.
@@ -26,6 +27,13 @@ public class C_MultiInput extends ModuleActivity implements SetupActionBar {
         multiInputSelectedItemFragment.setHelper(getHelper());
         multiInputSelectedItemFragment.setSetupActionBar(this);
         multiInputSelectedItemFragment.setProductId(getIntent().getIntExtra(MultiInputSelectedItemFragment.PRODUCT_ID, 0));
+
+        boolean isManualReceive = getIntent().getBooleanExtra(MultiInputSelectedItemFragment.IS_MANUAL_RECEIVE, false);
+        multiInputSelectedItemFragment.setConcessioModule(concessioModule);
+        multiInputSelectedItemFragment.setManualReceive(isManualReceive);
+        multiInputSelectedItemFragment.setHasBrand(!isManualReceive);
+        multiInputSelectedItemFragment.setHasDeliveryDate(!isManualReceive);
+        multiInputSelectedItemFragment.setHasBatchNo(!isManualReceive);
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.flContent, multiInputSelectedItemFragment)

@@ -71,7 +71,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             hasPromotionalProducts = false,
             isReturnItems = false,
             isOnSalesFinalize = false,
-            dialogIsOpened = false;
+            dialogIsOpened = false,
+            canDeleteItems = false;
     protected int prevLast = -1;
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
@@ -402,6 +403,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setIsFinalize(boolean isFinalize) {
         this.isFinalize = isFinalize;
+        this.canDeleteItems = true;
     }
 
     public void setReason(DocumentPurpose reason) {
@@ -461,5 +463,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setHasInStock(boolean hasInStock) {
         this.hasInStock = hasInStock;
+    }
+
+    public void setCanDeleteItems(boolean canDeleteItems) {
+        this.canDeleteItems = canDeleteItems;
     }
 }
