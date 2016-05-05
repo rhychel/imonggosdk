@@ -633,14 +633,27 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             mCustomPageIndex);
                 }
 
-                if (mCurrentTableSyncing == Table.ROUTE_PLANS ||
-                        mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
+                if (mCurrentTableSyncing == Table.CUSTOMER_BY_SALESMAN) {
 
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.SALESMAN_ID,
                             Parameter.AFTER),
                             getSession().getUser_id(),
                             DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at())
+                    );
+                }
+
+                if(mCurrentTableSyncing == Table.ROUTE_PLANS) {
+                    return String.format(ImonggoTools.generateParameter(
+                            Parameter.SALESMAN_ID),
+                            getSession().getUser_id()
+                    );
+                }
+
+                if(mCurrentTableSyncing == Table.ROUTE_PLANS) {
+                    return String.format(ImonggoTools.generateParameter(
+                            Parameter.SALESMAN_ID),
+                            getSession().getUser_id()
                     );
                 }
 
@@ -2367,15 +2380,19 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
 
                                     if (initialSync || lastUpdatedAt == null) {
+                                        Log.e(TAG, "+inserting units... " );
                                         newUnits.add(unit);
                                     } else {
                                         if (isExisting(unit, Table.UNITS)) {
                                             if (unit.getStatus() == null) {
+                                                Log.e(TAG, "=updating units... ");
                                                 updateUnits.add(unit);
                                             } else {
+                                                Log.e(TAG, "~deleting units... ");
                                                 deleteUnits.add(unit);
                                             }
                                         } else {
+                                            Log.e(TAG, "+deleting units... ");
                                             newUnits.add(unit);
                                         }
                                     }
@@ -3735,7 +3752,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 Log.e(TAG, "Customer: " + customer.getName());
                                                 routePlanDetails.setCustomer(customer);
                                             } else {
-                                                Log.e(TAG, "Can't find customer with id " + routePlanDetailJsonObject.getInt("customer_id"));
+                                                Log.e(TAG, "Can't find customer with id " + routePlanDetailJsonObject.getInt("customer_id") + " skipping..");
+                                                continue;
                                             }
                                         }
                                     } else {
@@ -3746,6 +3764,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         newRoutePlanDetails.add(routePlanDetails);
                                     } else {
                                         if (isExisting(routePlanDetails, Table.ROUTE_PLANS_DETAILS)) {
+
                                             updateRoutePlanDetails.add(routePlanDetails);
                                         } else {
                                             newRoutePlanDetails.add(routePlanDetails);
@@ -3911,23 +3930,19 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     RoutePlan routePlan = gson.fromJson(jsonObject.toString(), RoutePlan.class);
                                     routePlan.setUser(getUser());
 
-                                    List<RoutePlan> routePlen = RoutePlan.fetchAll(getHelper(), RoutePlan.class);
-
-                                    for (RoutePlan p : routePlen) {
-                                        p.deleteTo(getHelper());
-                                    }
-
                                     if (initialSync || lastUpdatedAt == null) {
                                         if (routePlan.getStatus() == null) {
                                             Log.e(TAG, "route plan status is not null adding");
                                             newRoutePlans.add(routePlan);
                                         } else {
-                                            Log.e(TAG, "route plan status is null ");
+                                            Log.e(TAG, "route plan status is null skipping ");
                                         }
                                     } else {
                                         if (isExisting(routePlan, Table.ROUTE_PLANS)) {
+                                            Log.e(TAG, "route plan is exisiting adding to update");
                                             updateRoutePlans.add(routePlan);
                                         } else {
+                                            Log.e(TAG, "route plan is  noexisiting adding to insert");
                                             newRoutePlans.add(routePlan);
                                         }
                                     }
