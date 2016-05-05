@@ -34,13 +34,18 @@
         <item quantity="other">%d Items</item>
     </plurals>
 
-<!--    <string name="test_account_id">1007893</string>
+<!--
+    <string name="test_account_id">1007893</string>
     <string name="test_email">cirioong@gmail.com</string>
-    <string name="test_password">password</string>-->
+    <string name="test_password">password</string>
+-->
 
     <!--<string name="test_account_id">1034092</string>
     <string name="test_email">unitedbig3@yahoo.com.ph</string>
     <string name="test_password">password</string>-->
+    <string name="test_account_id">A1029</string>
+    <string name="test_email">A1072C_OSS-3@A1029.com</string>
+    <string name="test_password">rebisco</string>
 
     <!--<string name="test_account_id">A1029</string>-->
     <!--<string name="test_email">elvin29@imonggo.com8</string>-->
@@ -62,9 +67,9 @@
     <string name="test_email">A1072A_OSS-1@A1029.com</string>
     <string name="test_password">password</string>-->
 
-    <string name="test_account_id">rebiscovismin</string>
+<!--    <string name="test_account_id">rebiscovismin</string>
     <string name="test_email">rebiscovismin@rbc.com.ph</string>
-    <string name="test_password">rebiscovismin</string>
+    <string name="test_password">rebiscovismin</string>-->
 
 
 
