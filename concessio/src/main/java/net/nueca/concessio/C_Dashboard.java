@@ -15,8 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.j256.ormlite.stmt.Where;
-
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -26,7 +24,6 @@ import net.nueca.concessioengine.dialogs.ProgressListDialog;
 import net.nueca.concessioengine.dialogs.UpdaterChooserDialog;
 import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
-import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
@@ -36,11 +33,7 @@ import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchProduct;
-import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
-import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
-import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;

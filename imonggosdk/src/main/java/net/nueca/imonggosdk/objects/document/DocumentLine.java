@@ -154,13 +154,14 @@ public class DocumentLine extends BaseTransactionLine {
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
 
-        insertExtrasTo(dbHelper);
         try {
             dbHelper.insert(DocumentLine.class, this);
+
+            insertExtrasTo(dbHelper);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        updateExtrasTo(dbHelper);
+//        updateExtrasTo(dbHelper);
     }
 
     @Override

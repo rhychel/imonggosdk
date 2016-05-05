@@ -32,6 +32,7 @@ import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
@@ -51,6 +52,7 @@ import me.grantland.widget.AutofitTextView;
 public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
     public static final String PRODUCT_ID = "product_id";
+    public static final String IS_MANUAL_RECEIVE = "is_manual_receive";
     public static String TAG = "MultiInputSelectedItemFragment";
     private int productId = 0;
     private NetworkImageView ivProductImage;
@@ -60,7 +62,8 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
     private CollapsingToolbarLayout ctlActionBar;
     private SetupActionBar setupActionBar;
     private FloatingActionButton fabAddValue;
-    private boolean hasUnits = false, hasBrand = true, hasDeliveryDate = true, hasBatchNo = false;
+    private boolean hasUnits = false, hasBrand = true, hasDeliveryDate = true, hasBatchNo = false, isManualReceive = false;
+    private ConcessioModule concessioModule;
     private Product product;
     private SelectedProductItem selectedProductItem;
 
@@ -111,6 +114,7 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
         simpleMultiInputAdapter.initializeRecyclerView(getActivity(), rvProducts);
         simpleMultiInputAdapter.setHasDeliveryDate(hasDeliveryDate);
         simpleMultiInputAdapter.setHasBrand(hasBrand);
+        simpleMultiInputAdapter.setHasBatchNo(hasBatchNo);
         simpleMultiInputAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
@@ -118,17 +122,21 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
             }
         });
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(rvProducts);
+        if(concessioModule == ConcessioModule.PHYSICAL_COUNT || isManualReceive) {
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+            itemTouchHelper.attachToRecyclerView(rvProducts);
+
+            fabAddValue.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showQuantityDialog(selectedProductItem, -1);
+                }
+            });
+        }
+        else
+            fabAddValue.setVisibility(View.GONE);
 
         rvProducts.setAdapter(simpleMultiInputAdapter);
-
-        fabAddValue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showQuantityDialog(selectedProductItem, -1);
-            }
-        });
 
         return view;
     }
@@ -194,6 +202,8 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
         simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
         simpleSalesQuantityDialog.setHelper(getHelper());
         simpleSalesQuantityDialog.setIsMultiValue(true);
+        if(concessioModule == ConcessioModule.RECEIVE_BRANCH)
+           simpleSalesQuantityDialog.setUnitDisplay(!isManualReceive);
 
 //        if(productRecyclerViewAdapter instanceof BaseSalesProductRecyclerAdapter) {
 //            BaseSalesProductRecyclerAdapter salesAdapter = (BaseSalesProductRecyclerAdapter) productRecyclerViewAdapter;
@@ -233,21 +243,34 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        simpleSalesQuantityDialog.setHasBrand(true);
 
-        try {
-            List<ProductTag> tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
-            List<String> brands = new ArrayList<>();
+        if(isManualReceive)
+            simpleSalesQuantityDialog.setHasOutright(true);
+        else {
+            if(concessioModule == ConcessioModule.PHYSICAL_COUNT) {
+                simpleSalesQuantityDialog.setHasBrand(true);
 
-            for (ProductTag productTag : tags)
-                if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
-                    brands.add(productTag.getTag().replaceAll("##", ""));
-            brands.add("Sample 1"); // TODO Remove this
-            brands.add("Sample 2");
-            simpleSalesQuantityDialog.setBrandList(brands, true);
-        } catch (SQLException e) {
-            e.printStackTrace();
+                try {
+                    List<ProductTag> tags = getHelper().fetchForeignCollection(product.getTags().closeableIterator());
+                    List<String> brands = new ArrayList<>();
+
+                    for (ProductTag productTag : tags)
+                        if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
+                            brands.add(productTag.getTag().replaceAll("##", ""));
+    //                brands.add("Sample 1"); // TODO Remove this
+    //                brands.add("Sample 2");
+                    simpleSalesQuantityDialog.setBrandList(brands, true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                simpleSalesQuantityDialog.setHasOutright(true);
+                simpleSalesQuantityDialog.setHasDiscrepancy(true);
+                simpleSalesQuantityDialog.setHasExpectedQty(true);
+            }
         }
+
         simpleSalesQuantityDialog.setFragmentManager(getActivity().getFragmentManager());
         simpleSalesQuantityDialog.setMultiQuantityDialogListener(new BaseQuantityDialog.MultiQuantityDialogListener() {
             @Override
@@ -384,5 +407,13 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
 
     public void setHasBatchNo(boolean hasBatchNo) {
         this.hasBatchNo = hasBatchNo;
+    }
+
+    public void setManualReceive(boolean manualReceive) {
+        isManualReceive = manualReceive;
+    }
+
+    public void setConcessioModule(ConcessioModule concessioModule) {
+        this.concessioModule = concessioModule;
     }
 }
