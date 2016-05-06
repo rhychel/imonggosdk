@@ -300,7 +300,6 @@ public class C_Finalize extends ModuleActivity {
                     size = ProductsAdapterHelper.getSelectedProductItems().size();
                 else
                     size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
-
                 tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
             }
 
@@ -516,6 +515,12 @@ public class C_Finalize extends ModuleActivity {
                         tvBalance.setText("P" + NumberTools.separateInCommas(balance));
                         tvBalance.setTag(balance);
                         toggleNext(llFooter, tvItems);
+
+                        if(vpReview.getCurrentItem() == 1) {
+                            // improve shit
+                            int size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+                            tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
+                        }
                     }
                 }
             });
