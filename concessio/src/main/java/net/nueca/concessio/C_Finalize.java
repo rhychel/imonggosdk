@@ -358,7 +358,7 @@ public class C_Finalize extends ModuleActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(isForHistoryDetail)
+        if(isForHistoryDetail && (offlineData != null && getModuleSetting(offlineData.getConcessioModule()).isCan_print()))
             getMenuInflater().inflate(R.menu.others_menu, menu);
 
         if(getModuleSetting(ConcessioModule.INVOICE).isHas_returns())
@@ -481,6 +481,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setHasInStock(!(isForHistoryDetail || isLayaway));
             simpleProductsFragment.setConcessioModule(concessioModule);
             simpleProductsFragment.setCustomer(customer);
+            simpleProductsFragment.setCanOverridePrice(getModuleSetting(concessioModule).isCan_override_price());
 
             CustomerGroup customerGroup = null;
             try {

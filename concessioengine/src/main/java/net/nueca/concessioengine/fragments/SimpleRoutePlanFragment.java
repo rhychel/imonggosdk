@@ -138,8 +138,10 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
                     rvCustomers.removeOnScrollListener(rvScrollListener);
                 }
                 Log.e("shouldShow", shouldShow+"");
-                toggleNoItems(todayPosition == position ? "No customers today." : "No customers this "+days.get(position).getFullname()+".", shouldShow);
-
+                if(days.get(position).getFullname().trim().equals("all"))
+                    toggleNoItems("No customers.", shouldShow);
+                else
+                    toggleNoItems(todayPosition == position ? "No customers today." : "No customers this "+days.get(position).getFullname()+".", shouldShow);
             }
 
             @Override

@@ -15,6 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
+
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -34,6 +37,7 @@ import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -134,7 +138,52 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         rvModules.setAdapter(dashboardRecyclerAdapter);
 
 
+        try {
+            queryAllDocuments();
+            viaTargetBranchId();
+            viaBranchId();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void queryAllDocuments() {
+        boolean hasOne = false;
+        for(Document document : Document.fetchAll(getHelper(), Document.class)) {
+            hasOne = true;
+            Log.e("Document", document.getReference()+" | docLines = "+document.getDocument_lines().size()
+                    + " | target_branch_id = "+document.getTarget_branch_id()+ " | branch_id = "+document.getBranch_id());
+        }
+        if(!hasOne)
+            Log.e("Document", "no documents are saved!");
+    }
+
+    private void viaTargetBranchId() throws SQLException {
+        QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
+
+        Where<Document, Integer> whereDoc = queryBuilder.where();
+        whereDoc.eq("target_branch_id", 32).and();
+        whereDoc.eq("reference", "9000-4");
+
+        Document document = queryBuilder.queryForFirst();
+        if(document == null)
+            Log.e("Document via TBI", "Failed!");
+        else
+            Log.e("Document via TBI", document.getReference());
+    }
+
+    private void viaBranchId() throws SQLException {
+        QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
+
+        Where<Document, Integer> whereDoc = queryBuilder.where();
+        whereDoc.eq("branch_id", 30).and();
+        whereDoc.eq("reference", "9000-4");
+
+        Document document = queryBuilder.queryForFirst();
+        if(document == null)
+            Log.e("Document via BI", "Failed!");
+        else
+            Log.e("Document via BI", document.getReference());
     }
 
     @Override

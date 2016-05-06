@@ -465,24 +465,27 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                 changeToReview = true;
                 initializeProducts();
-                simpleProductsFragment.setListingType(ListingType.SALES);
+                simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES);
                 simpleProductsFragment.setHasUnits(true);
                 simpleProductsFragment.setHasBrand(false);
                 simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting(concessioModule).getProductListing().isLock_category()));
+                simpleProductsFragment.setLockCategory(getModuleSetting(concessioModule).getProductListing().isLock_category());
                 simpleProductsFragment.setShowCategoryOnStart(false);
                 simpleProductsFragment.setProductsFragmentListener(this);
                 simpleProductsFragment.setHasSubtotal(false);
                 simpleProductsFragment.setUseRecyclerView(true);
                 simpleProductsFragment.setConcessioModule(concessioModule);
+                simpleProductsFragment.setUseSalesProductAdapter(true);
 
                 initializeFinalize();
-                finalizeFragment.setListingType(ListingType.SALES);
+                finalizeFragment.setListingType(ListingType.ADVANCED_SALES);
                 finalizeFragment.setHasCategories(false);
                 finalizeFragment.setHasDeliveryDate(false);
                 finalizeFragment.setHasUnits(true);
                 finalizeFragment.setHasSubtotal(false);
                 finalizeFragment.setUseSalesProductAdapter(false);
                 finalizeFragment.setConcessioModule(concessioModule);
+                finalizeFragment.setUseSalesProductAdapter(true);
 
                 prepareFooter();
 
@@ -627,6 +630,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setBranch(getBranches().get(0));
                 simpleProductsFragment.setConcessioModule(concessioModule);
 
+                simpleProductsFragment.setCanOverridePrice(getModuleSetting(concessioModule).isCan_override_price()); // TODO FOR PETRON ONLY
+
                 prepareFooter();
                 btn1.setOnClickListener(nextClickedListener);
 
@@ -689,10 +694,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 }
                 else {
                     initializeFinalize();
-                    finalizeFragment.setListingType(ListingType.SALES);
+                    finalizeFragment.setListingType(ListingType.ADVANCED_SALES);
                     finalizeFragment.setHasCategories(false);
                     finalizeFragment.setUseRecyclerView(true);
-                    finalizeFragment.setUseSalesProductAdapter(false);
+                    finalizeFragment.setUseSalesProductAdapter(true);
 
                     if(getModuleSetting(ConcessioModule.PHYSICAL_COUNT).getQuantityInput().is_multiinput()) {
                         simpleProductsFragment.setMultipleInput(true);
@@ -1522,6 +1527,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
 
+                                        simpleProductsFragment.customReason("");
                                         simpleProductsFragment.getFilterProductsBy().clear();
                                         simpleProductsFragment.forceUpdateProductList();
                                         simpleProductsFragment.refreshList();
