@@ -64,6 +64,8 @@ public class ModuleSetting extends DBTable {
     @DatabaseField
     private boolean can_change_inventory = true;
     @DatabaseField
+    private boolean can_override_price = false;
+    @DatabaseField
     private boolean has_returns = true;
     @DatabaseField
     private boolean has_partial = true;
@@ -466,5 +468,13 @@ public class ModuleSetting extends DBTable {
                 "label='" + label + '\'' +
                 ", module_type='" + module_type + '\'' +
                 '}';
+    }
+
+    public boolean isCan_override_price() {
+        return can_override_price;
+    }
+
+    public void setCan_override_price(boolean can_override_price) {
+        this.can_override_price = can_override_price;
     }
 }

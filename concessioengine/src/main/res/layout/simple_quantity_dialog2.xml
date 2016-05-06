@@ -298,6 +298,36 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:weightSum="3"
+            android:id="@+id/llRetailPrice"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Retail Price"
+                android:layout_weight="1"
+                android:textSize="13sp" />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/etRetailPrice"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="0"
+                android:layout_weight="2"
+                android:layout_marginLeft="16dp"
+                android:textSize="18sp"
+                android:gravity="left" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:weightSum="3"
             android:id="@+id/llBrand"
             android:visibility="gone">
 

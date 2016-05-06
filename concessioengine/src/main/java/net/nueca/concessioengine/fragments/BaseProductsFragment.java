@@ -72,7 +72,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             isReturnItems = false,
             isOnSalesFinalize = false,
             dialogIsOpened = false,
-            canDeleteItems = false;
+            canDeleteItems = false,
+            canOverridePrice = false;
     protected int prevLast = -1;
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
@@ -467,5 +468,9 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     public void setCanDeleteItems(boolean canDeleteItems) {
         this.canDeleteItems = canDeleteItems;
+    }
+
+    public void setCanOverridePrice(boolean canOverridePrice) {
+        this.canOverridePrice = canOverridePrice;
     }
 }

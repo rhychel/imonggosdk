@@ -239,7 +239,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         Calendar now = Calendar.getInstance(timeZone);
         now.setTimeZone(timeZone);
         to = convertStringToDate.format(now.getTime());
-        now.add(Calendar.MONTH, -3);
+        now.add(Calendar.MONTH, -1);
         now.set(Calendar.HOUR_OF_DAY, 23);
         now.set(Calendar.MINUTE, 59);
         now.set(Calendar.SECOND, 59);

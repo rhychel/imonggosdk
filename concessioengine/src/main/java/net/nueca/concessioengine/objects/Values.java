@@ -118,6 +118,7 @@ public class Values {
         if(this.price != null && this.price.getUnit() != null && !this.price.getUnit().equals(unit))
             this.price = null;
         this.retail_price = retail_price;
+        this.unit_retail_price = retail_price;// added this
         setValue(quantity, unit, null);
     }
 
