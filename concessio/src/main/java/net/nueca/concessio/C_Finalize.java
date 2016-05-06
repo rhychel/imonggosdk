@@ -434,6 +434,8 @@ public class C_Finalize extends ModuleActivity {
                     super.handleMessage(msg);
                     reviewAdapter.updateReturns();
                     vpReview.setCurrentItem(1);
+                    int size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+                    tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
                 }
             };
             handler.sendEmptyMessageDelayed(0, 100);
