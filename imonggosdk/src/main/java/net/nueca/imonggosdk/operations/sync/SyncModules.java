@@ -290,11 +290,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.DOCUMENT_TYPE,
                             Parameter.LAST_UPDATED_AT,
-                            Parameter.BRANCH_ID,
-                            Parameter.AFTER),
+                            Parameter.BRANCH_ID),
                             document_type,
-                            getListOfBranchIds().get(mBranchIdIndex).getBranch().getId(),
-                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                            getListOfBranchIds().get(mBranchIdIndex).getBranch().getId());
                 }
             }
 
@@ -2116,7 +2114,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                                         Log.e(TAG, "other branch products exist with this product skipping delete...");
                                                                         deleteThisProduct = false;
                                                                     } else {
-                                                                        Log.e(TAG, "onSuccess: " );
+                                                                        Log.e(TAG, "onSuccess: ");
                                                                     }
                                                                 }
 
@@ -2941,24 +2939,26 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Document document = gson.fromJson(jsonObject.toString(), Document.class);
 
                                     if (initialSync || lastUpdatedAt == null) {
-                                        if (jsonObject.has("received")) {
-                                            if (!jsonObject.isNull("received") & !jsonObject.getString("received").isEmpty()) {
-                                                if (!document.getIntransit_status().equalsIgnoreCase("received")) {
-                                                    newDocument.add(document);
-                                                }
-                                            }
+                                        if (!document.getIntransit_status().equalsIgnoreCase("received")) {
+                                            Log.e(TAG, "adding to insert document...");
+                                            newDocument.add(document);
+                                        } else {
+                                            Log.e(TAG, "intransit status is 'received' skipping...");
                                         }
                                     } else {
                                         if (isExisting(document, Table.DOCUMENTS)) {
-
+                                            Log.e(TAG, "existing to insert document...");
                                             //TODO: Do this if instransit=1
                                             //TODO: branch.site_type = warehouse
                                             if (document.getIntransit_status().equalsIgnoreCase("received")) {
+                                                Log.e(TAG, "adding to delete document...");
                                                 deleteDocument.add(document);
                                             } else {
+                                                Log.e(TAG, "adding to update document...");
                                                 updateDocument.add(document);
                                             }
                                         } else {
+                                            Log.e(TAG, "adding to insert document...");
                                             newDocument.add(document);
                                         }
                                     }

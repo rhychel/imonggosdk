@@ -15,6 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
+
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -34,6 +37,7 @@ import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -132,7 +136,21 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
+        try {
+            QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
 
+            Where<Document, Integer> whereDoc = queryBuilder.where();
+            whereDoc.eq("target_branch_id", 32).and();
+            whereDoc.eq("reference", "9000-4");
+
+            queryBuilder.setWhere(whereDoc);
+
+            Document document = queryBuilder.queryForFirst();
+
+            Log.e("Document", document.getReference());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -182,7 +200,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                             @Override
                             public void onEndDownload(Table table) {
                                 Log.e("apiDownloader", "end" + table.getStringName());
-                                if(table == Table.BRANCH_USERS || table == Table.BRANCHES) {
+                                if (table == Table.BRANCH_USERS || table == Table.BRANCHES) {
                                     branchesAdapter.clear();
                                     branchesAdapter.addAll(getBranches());
                                     branchesAdapter.notifyDataSetChanged();
