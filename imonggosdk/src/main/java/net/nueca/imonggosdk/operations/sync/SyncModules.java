@@ -1148,8 +1148,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
-                        /*lastUpdatedAt.setLast_updated_at("2016/03/28 06:39:00 +0000");
-                        lastUpdatedAt.updateTo(getHelper());*/
+//                        /*lastUpdatedAt.setLast_updated_at("2016/03/28 06:39:00 +0000");
+//                        lastUpdatedAt.updateTo(getHelper());*/
 
                         SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                         if (newLastUpdatedAt.getLast_updated_at() == null) {
@@ -2394,8 +2394,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 deleteUnits.add(unit);
                                             }
                                         } else {
-                                            Log.e(TAG, "+deleting units... ");
-                                            newUnits.add(unit);
+                                            if (unit.getStatus() == null) {
+                                                Log.e(TAG, "+inserting units... ");
+                                                newUnits.add(unit);
+                                            } else {
+                                                Log.e(TAG, "~unit is not exsting in db and status is null skipping... ");
+                                            }
                                         }
                                     }
                                 }
@@ -3877,7 +3881,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             if (size == 0) {
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                                 mCustomPageIndex = 1;
-                                syncNext();
+                                updateNext(requestType, listOfSalesPromotionIds.size());
                                  return;
                             } else {
                                 SalesPromotion sp = getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", listOfSalesPromotionIds.get(mCustomIdIndex)).queryForFirst();
