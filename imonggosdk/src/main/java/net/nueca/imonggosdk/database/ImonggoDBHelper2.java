@@ -82,7 +82,6 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
     private static final int DATABASE_VERSION = 92;
-
     private static final Class<?> tables[] = {
             Branch.class,
             BranchTag.class,
