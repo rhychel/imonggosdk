@@ -178,6 +178,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                         Toast.makeText(getContext(), "Tender payment cannot be empty.", Toast.LENGTH_LONG).show();
                         return;
                     }
+
                     PaymentType paymentType = (PaymentType) spnPaymentType.getSelectedItem();
                     if(paymentType.getName().equals("Rewards")) {
                         if(availablePoints <= 0d) {
@@ -227,6 +228,13 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                             return;
                         }
                     }
+                    BigDecimal currentBalance = new BigDecimal(balance);
+                    BigDecimal payment = new BigDecimal(etPayment.getText().toString());
+                    if(!paymentType.getName().toLowerCase().equals("cash") && currentBalance.compareTo(payment) == -1) {
+                        Toast.makeText(getContext(), "You cannot pay more than your balance using this payment type.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     if(isButtonTapped)
                         return;
                     isButtonTapped = true;
@@ -263,7 +271,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                     else {
                         newBalance = currentBalance.subtract(payment).doubleValue();
                     }
-                    tvBalance.setText(NumberTools.separateInCommas(Math.abs(newBalance)));
+                    // tvBalance.setText(NumberTools.separateInCommas(Math.abs(newBalance)));
                     balanceColor(newBalance);
                 }
             });

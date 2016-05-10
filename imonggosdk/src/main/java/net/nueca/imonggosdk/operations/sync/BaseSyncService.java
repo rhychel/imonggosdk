@@ -262,9 +262,11 @@ public abstract class BaseSyncService extends ImonggoService {
                 ProductTag productTag = (ProductTag) o;
                 return getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("id", productTag.getId()).queryForFirst() != null;
             }
+            case DOCUMENT_ADJUSTMENT_OUT:
+            case DOCUMENT_TRANSFER_OUT:
             case DOCUMENTS: {
                 Document document = (Document) o;
-                return getHelper().fetchObjects(Document.class).queryBuilder().where().eq("id", document.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Document.class).queryBuilder().where().eq("returnId", document.getId()).queryForFirst() != null;
             }
             case INVOICES: {
                 Invoice invoice = (Invoice) o;
@@ -469,7 +471,7 @@ public abstract class BaseSyncService extends ImonggoService {
         //Log.e(TAG, "getListOfBranchIds... ");
         try {
           //  Log.e(TAG, "getListOfBranchIds size: " +  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query().size());
-            return  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query();
+            return  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
         } catch (SQLException e) {
             //Log.e(TAG, "getListOfBranchIds: is null");
             return null;

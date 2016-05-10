@@ -300,7 +300,6 @@ public class C_Finalize extends ModuleActivity {
                     size = ProductsAdapterHelper.getSelectedProductItems().size();
                 else
                     size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
-
                 tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
             }
 
@@ -359,7 +358,7 @@ public class C_Finalize extends ModuleActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(isForHistoryDetail)
+        if(isForHistoryDetail && (offlineData != null && getModuleSetting(offlineData.getConcessioModule()).isCan_print()))
             getMenuInflater().inflate(R.menu.others_menu, menu);
 
         if(getModuleSetting(ConcessioModule.INVOICE).isHas_returns())
@@ -435,6 +434,8 @@ public class C_Finalize extends ModuleActivity {
                     super.handleMessage(msg);
                     reviewAdapter.updateReturns();
                     vpReview.setCurrentItem(1);
+                    int size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+                    tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
                 }
             };
             handler.sendEmptyMessageDelayed(0, 100);
@@ -482,6 +483,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setHasInStock(!(isForHistoryDetail || isLayaway));
             simpleProductsFragment.setConcessioModule(concessioModule);
             simpleProductsFragment.setCustomer(customer);
+            simpleProductsFragment.setCanOverridePrice(getModuleSetting(concessioModule).isCan_override_price());
 
             CustomerGroup customerGroup = null;
             try {
@@ -516,6 +518,12 @@ public class C_Finalize extends ModuleActivity {
                         tvBalance.setText("P" + NumberTools.separateInCommas(balance));
                         tvBalance.setTag(balance);
                         toggleNext(llFooter, tvItems);
+
+                        if(vpReview.getCurrentItem() == 1) {
+                            // improve shit
+                            int size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+                            tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
+                        }
                     }
                 }
             });

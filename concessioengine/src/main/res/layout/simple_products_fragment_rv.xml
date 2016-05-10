@@ -47,6 +47,7 @@
                 android:id="@+id/llReason"
                 android:visibility="gone">
                 <TextView
+                    android:id="@+id/tvReasonLabel"
                     android:layout_width="72dp"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"

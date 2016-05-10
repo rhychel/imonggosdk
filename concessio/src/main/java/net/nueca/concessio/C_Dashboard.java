@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.activities.DashboardActivity;
@@ -22,18 +23,11 @@ import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.DashboardRecyclerAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
-import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.ProgressListDialog;
 import net.nueca.concessioengine.dialogs.UpdaterChooserDialog;
-import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.DashboardTile;
-import net.nueca.concessioengine.objects.SelectedProductItem;
-import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
-import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
-import net.nueca.concessioengine.tools.InvoiceTools;
-import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
@@ -42,18 +36,8 @@ import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchProduct;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
-import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
-import net.nueca.imonggosdk.objects.base.DBTable;
-import net.nueca.imonggosdk.objects.customer.Customer;
-import net.nueca.imonggosdk.objects.customer.CustomerGroup;
-import net.nueca.imonggosdk.objects.invoice.Invoice;
-import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
-import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
-import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -85,88 +69,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
-
-        // TODO : remove this
-        /*List<Product> productList = Product.fetchAll(getHelper(),Product.class);
-        Log.e("PRODUCT COUNT", productList.size() + " items");
-        try {
-            Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId",177).queryForFirst();
-            ProductsAdapterHelper.setSelectedCustomer(customer);
-            Branch branch = Branch.fetchById(getHelper(),Branch.class,getSession().getCurrent_branch_id());
-            ProductsAdapterHelper.setSelectedBranch(branch);
-
-            List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
-            CustomerGroup customerGroup = null;
-            if(customerGroups.size() > 0)
-                customerGroup = customerGroups.get(0);
-
-            for(int i = 0; i < Math.min(335, productList.size()); i++) {
-                Product product = productList.get((int)(Math.random() * 1000) % productList.size());
-                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().getSelectedProductItem(product);
-                if(selectedProductItem == null)
-                    selectedProductItem = ProductsAdapterHelper.getSelectedReturnProductItems().getSelectedProductItem(product);
-                if(selectedProductItem == null)
-                    selectedProductItem = new SelectedProductItem(product);
-
-                Unit unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).queryForFirst();
-                if(unit == null) {
-                    unit = new Unit();
-                    unit.setId(-1);
-                    unit.setName(product.getBase_unit_name());
-                }
-                Values values = selectedProductItem.getValues() != null && selectedProductItem.getValues().size() > 0 ? selectedProductItem.getValues()
-                        .get(0) : null;
-                Price price = PriceTools.identifyPrice(getHelper(),product,branch,customerGroup,customer,unit);
-
-                Integer quantity = 1+ ((int)(Math.random() * 100) % 10);
-                if(i >= 300)
-                    quantity *= -1;
-
-                if(values == null) {
-                    if(price != null)
-                        values = new Values(String.valueOf(quantity),price);
-                    else
-                        values = new Values(unit,String.valueOf(quantity),PriceTools.getBranchPrice(getHelper(),product,branch,unit));
-                }
-                selectedProductItem.addValues(values);
-                if(quantity >= 0)
-                    ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
-                else
-                    ProductsAdapterHelper.getSelectedReturnProductItems().add(selectedProductItem);
-            }
-
-            List<InvoiceLine> invoiceLines = new ArrayList<>();
-            invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                    .getSelectedProductItems()));
-            invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
-                    .getSelectedReturnProductItems(), invoiceLines.size()));
-            Invoice.Builder invoiceBuilder = new Invoice.Builder()
-                    .invoice_lines(invoiceLines);
-            Invoice invoice = invoiceBuilder.build();
-            invoice.setCustomer(customer);
-            invoice.setBranch(branch);
-
-            ProductsAdapterHelper.setDbHelper(getHelper());
-            InvoiceTools.PaymentsComputation computation = new InvoiceTools.PaymentsComputation();
-            computation.addAllInvoiceLines(invoiceLines);
-            computation.addPayment(new InvoicePayment(1,1,1));
-
-            invoice.setPayments(computation.getPayments());
-            for(InvoicePayment payment : computation.getReturnsPayments())
-                invoice.addPayment(payment);
-            invoice.setReference("TEST-0002");
-            invoice.setStatus("L");
-
-            new SwableTools.Transaction(getHelper())
-                    .toSend()
-                    .forBranch(branch)
-                    .fromModule(ConcessioModule.INVOICE_PARTIAL)
-                    .object(invoice)
-                    .queue();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
 
         setNextActivityClass(C_Module.class);
 
@@ -234,7 +136,68 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
+        try {
+            QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
 
+            Where<Document, Integer> whereDoc = queryBuilder.where();
+            whereDoc.eq("target_branch_id", 32).and();
+            whereDoc.eq("reference", "9000-4");
+
+            queryBuilder.setWhere(whereDoc);
+
+            Document document = queryBuilder.queryForFirst();
+
+            Log.e("Document", document.getReference());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            queryAllDocuments();
+            viaTargetBranchId();
+            viaBranchId();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void queryAllDocuments() {
+        boolean hasOne = false;
+        for(Document document : Document.fetchAll(getHelper(), Document.class)) {
+            hasOne = true;
+            Log.e("Document", document.getReference()+" | docLines = "+document.getDocument_lines().size()
+                    + " | target_branch_id = "+document.getTarget_branch_id()+ " | branch_id = "+document.getBranch_id());
+        }
+        if(!hasOne)
+            Log.e("Document", "no documents are saved!");
+    }
+
+    private void viaTargetBranchId() throws SQLException {
+        QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
+
+        Where<Document, Integer> whereDoc = queryBuilder.where();
+        whereDoc.eq("target_branch_id", 32).and();
+        whereDoc.eq("reference", "9000-4");
+
+        Document document = queryBuilder.queryForFirst();
+        if(document == null)
+            Log.e("Document via TBI", "Failed!");
+        else
+            Log.e("Document via TBI", document.getReference());
+    }
+
+    private void viaBranchId() throws SQLException {
+        QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
+
+        Where<Document, Integer> whereDoc = queryBuilder.where();
+        whereDoc.eq("branch_id", 30).and();
+        whereDoc.eq("reference", "9000-4");
+
+        Document document = queryBuilder.queryForFirst();
+        if(document == null)
+            Log.e("Document via BI", "Failed!");
+        else
+            Log.e("Document via BI", document.getReference());
     }
 
     @Override
@@ -282,7 +245,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                             @Override
                             public void onEndDownload(Table table) {
                                 Log.e("apiDownloader", "end" + table.getStringName());
-                                if(table == Table.BRANCH_USERS || table == Table.BRANCHES) {
+                                if (table == Table.BRANCH_USERS || table == Table.BRANCHES) {
                                     branchesAdapter.clear();
                                     branchesAdapter.addAll(getBranches());
                                     branchesAdapter.notifyDataSetChanged();

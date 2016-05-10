@@ -1,7 +1,10 @@
 package net.nueca.imonggosdk.objects.document;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
@@ -12,13 +15,19 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
+import net.nueca.imonggosdk.enums.Parameter;
+import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.operations.ImonggoTools;
+import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.swable.SwableTools;
 
 import org.apache.commons.lang3.StringUtils;
@@ -398,7 +407,8 @@ public class Document extends BaseTransactionTable3 {
 
         updateExtrasTo(dbHelper);
 
-        Log.e("DOCUMENT", "update " + id + " ~ " + offlineData.getId());
+        if(offlineData != null)
+            Log.e("DOCUMENT", "update " + id + " ~ " + offlineData.getId());
     }
 
     @Override
@@ -604,5 +614,11 @@ public class Document extends BaseTransactionTable3 {
         int result = 17;
         result = 31 * result + id;
         return result;
+    }
+
+    public static void fetchByReference(Context context, String target_branch_id, String reference, Session session, VolleyRequestListener volleyRequestListener) {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        queue.add(HTTPRequests.sendGETJsonObjectRequest(context, session, volleyRequestListener, session.getServer(), Table.DOCUMENTS,
+                RequestType.API_CONTENT, String.format(ImonggoTools.generateParameter(Parameter.TARGET_BRANCH_ID, Parameter.REFERENCE), target_branch_id, reference)));
     }
 }

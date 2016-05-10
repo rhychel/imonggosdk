@@ -19,17 +19,28 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.R;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.RequestType;
+import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.widgets.ModifiedNumpad;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -65,7 +76,6 @@ public class SearchDRDialog2 extends BaseAppCompatDialog {
     private ArrayAdapter<Branch> destinationBranch;
 
     private SearchDRDialogListener dialogListener;
-    private ImonggoDBHelper2 dbHelper;
     private User user;
     private boolean isNotFound = false, isFromSource = false, isFromDestination = false;
 
@@ -252,10 +262,10 @@ public class SearchDRDialog2 extends BaseAppCompatDialog {
             isNotFound = false;
 
             Document document = null;
-            String reference = etReceiptNo != null ? etReceiptNo.getText().toString() : etPulloutRef.getText().toString();
+            final String reference = etReceiptNo != null ? etReceiptNo.getText().toString() : etPulloutRef.getText().toString();
 
+            Branch branch = null;
             try {
-                Branch branch = null;
                 if(spSourceBranch != null)
                     branch = (Branch) spSourceBranch.getSelectedItem();
                 else
@@ -266,43 +276,121 @@ public class SearchDRDialog2 extends BaseAppCompatDialog {
                 e.printStackTrace();
             }
 
-            if(document != null) {
-                if(document.getIntransit_status().equals("Received")) {
-                    if(btnManual != null)
-                        btnManual.setVisibility(View.GONE);
-                    tvNotFound.startAnimation(animation);
-                    tvNotFound.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_light));
-                    if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT)
-                        tvNotFound.setText("Document already confirmed.");
-                    else
-                        tvNotFound.setText("Document already received.");
-                    return;
-                }
-                if(document.getReturnId() < 0) {
-                    tvNotFound.setText("Document is not yet sent.");
-                    return;
-                }
+            // documentResult
+            if(isNotFound) {
+                if(branch != null)
+                    try {
+                        Document.fetchByReference(getContext(), String.valueOf(branch.getId()), reference, getSession(), new VolleyRequestListener() {
+                            @Override
+                            public void onStart(Table table, RequestType requestType) {
+                                net.nueca.imonggosdk.dialogs.DialogTools.showIndeterminateProgressDialog(getContext(), null, "Searching for document...", false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                            }
+
+                            @Override
+                            public void onSuccess(Table table, RequestType requestType, Object response) {
+                                net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
+                                Log.e("onSuccess", "fetchByReference| JSONObject="+((JSONObject) response).toString());
+
+                                JSONObject docJsonObject = (JSONObject) response;
+                                try {
+                                    Branch warehouse = Branch.allUserBranches(getContext(), dbHelper, user, true).get(0); // handle no warehouse
+
+                                    Document document = Document.fromJSONObject(docJsonObject);
+                                    document.setReturnId(docJsonObject.getInt("id"));
+                                    document.setBranch_id(warehouse.getId());
+                                    document.insertTo(dbHelper);
+
+                                    BatchList<DocumentLine> documentLines = new BatchList<>(DatabaseOperation.INSERT, dbHelper);
+                                    documentLines.addAll(document.getDocument_lines());
+                                    if(documentLines.size() > 0) {
+                                        for(int i = 0;i < documentLines.size();i++) {
+                                            int productId = documentLines.get(i).getProduct_id();
+                                            Product product = Product.fetchById(dbHelper, Product.class, productId);
+                                            documentLines.get(i).setDocument(document);
+                                            documentLines.get(i).setProduct(product);
+                                        }
+
+                                        documentLines.doOperation(DocumentLine.class);
+                                    }
+
+                                    isNotFound = false;
+                                    documentResult(reference, document);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                isNotFound = false;
+                            }
+
+                            @Override
+                            public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                                net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
+                                Log.e("onError", "fetchByReference| responseCode="+responseCode+"| response="+((String)response));
+                                if(responseCode > 0) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject((String) response);
+                                        isNotFound = jsonObject.getString("error").toLowerCase().contains("not found");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                documentResult(reference, null);
+                            }
+
+                            @Override
+                            public void onRequestError() {
+                                net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
+                                Log.e("onRequestError", "fetchByReference");
+                                isNotFound = true;
+                                documentResult(reference, null);
+                            }
+                        });
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
             }
-
-            if(btnManual != null)
-                btnManual.setVisibility(isNotFound && reference.trim().length() > 0 ?
-                        View.VISIBLE : View.INVISIBLE);
-            tvNotFound.setVisibility(isNotFound ? View.VISIBLE : View.INVISIBLE);
-
-            Log.e("isNotFound", "" + isNotFound);
-            if (isNotFound) {
-                tvNotFound.startAnimation(animation);
-                tvNotFound.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_light));
-                tvNotFound.setText("Document not found.");
-                return;
-            }
-
-            if (dialogListener != null)
-                dialogListener.onSearch(reference,
-                        spSourceBranch != null ? (Branch) spSourceBranch.getSelectedItem() : null, document);
-            dismiss();
+            else
+                documentResult(reference, document);
         }
     };
+
+    private void documentResult(String reference, Document document) {
+        if(document != null) {
+            if(document.getIntransit_status().equals("Received")) {
+                if(btnManual != null)
+                    btnManual.setVisibility(View.GONE);
+                tvNotFound.startAnimation(animation);
+                tvNotFound.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_light));
+                if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT)
+                    tvNotFound.setText("Document already confirmed.");
+                else
+                    tvNotFound.setText("Document already received.");
+                return;
+            }
+            if(document.getReturnId() < 0) {
+                tvNotFound.setText("Document is not yet sent.");
+                return;
+            }
+        }
+
+        if(btnManual != null)
+            btnManual.setVisibility(isNotFound && reference.trim().length() > 0 ?
+                    View.VISIBLE : View.INVISIBLE);
+        tvNotFound.setVisibility(isNotFound ? View.VISIBLE : View.INVISIBLE);
+
+        Log.e("isNotFound", "" + isNotFound);
+        if (isNotFound) {
+            tvNotFound.startAnimation(animation);
+            tvNotFound.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_light));
+            tvNotFound.setText("Document not found.");
+            return;
+        }
+
+        if (dialogListener != null)
+            dialogListener.onSearch(reference,
+                    spSourceBranch != null ? (Branch) spSourceBranch.getSelectedItem() : null, document);
+        dismiss();
+    }
 
     public Document search(String drNo, Branch branch) throws SQLException {
         Log.e("search", drNo + " from " + dbHelper.fetchObjectsList(Document.class).size() + " document(s) for branch '"
@@ -319,7 +407,6 @@ public class SearchDRDialog2 extends BaseAppCompatDialog {
         queryBuilder.setWhere(whereDoc);
 
         Document document = queryBuilder.queryForFirst();
-
 
         if(document != null)
             Log.e("Reference " + drNo, document.getTarget_branch_id() + " -- " + (branch != null ? branch.getId() : "branch is null"));
