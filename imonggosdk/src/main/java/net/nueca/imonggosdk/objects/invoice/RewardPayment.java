@@ -92,9 +92,10 @@ public class RewardPayment {
         return paymentBatches;
     }
 
-    protected double getPointsUsed() {
+    public double getPointsUsed() {
         List<Integer> paymentBatches = getPaymentBatches();
-        Log.e("&&&&&&&&&&&&&", new Gson().toJson(paymentBatches));
+        if(paymentBatches.size() <= 0)
+            return 0d;
 
         int latestBatch = paymentBatches.get(paymentBatches.size()-1);
         double points = 0d;

@@ -214,7 +214,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     if(salesPromotion != null && salesPromotion.getSettings() != null)
                         pointsUsed = PointsTools.amountToPoints(salesPromotion.getSettings(),
-                                getNewPointsInAmountUsed(invoice, checkoutFragment.getComputation().getPoints()));
+                                //getNewPointsInAmountUsed(invoice, checkoutFragment.getComputation().getPoints())
+                                getPointsInAmountUsed());
 
                     Log.e("C_Checkout", "SEND " + availablePoints + " ~ " + pointsUsed);
 
@@ -305,7 +306,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                         if (salesPromotion != null && salesPromotion.getSettings() != null)
                             pointsUsed = PointsTools.amountToPoints(salesPromotion.getSettings(),
-                                    getNewPointsInAmountUsed(invoice, checkoutFragment.getComputation().getPoints()));
+                                    //getNewPointsInAmountUsed(invoice, checkoutFragment.getComputation().getPoints())
+                                    getPointsInAmountUsed());
 
                         Log.e("C_Checkout", "PARTIAL " + availablePoints + " ~ " + pointsUsed);
 

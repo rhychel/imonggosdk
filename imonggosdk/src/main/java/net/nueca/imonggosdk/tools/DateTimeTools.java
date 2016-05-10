@@ -319,4 +319,21 @@ public class DateTimeTools {
         Date now = new Date();
         return now.compareTo(lowerBound) >= 0 && now.compareTo(upperBound) <= 0;
     }
+
+    public static String convertDateOnly(String dateTime) {
+        SimpleDateFormat convertStringToDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
+        SimpleDateFormat forDisplaying = new SimpleDateFormat("yyyy-MM-dd");
+        //Log.e("Timezone is => ", convertStringToDate.getTimeZone().getID() + " --- " + dateTime);
+        forDisplaying.setTimeZone(convertStringToDate.getTimeZone());
+        forDisplaying.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        try {
+            Date theDate = convertStringToDate.parse(dateTime);
+            String result = forDisplaying.format(theDate);
+            return result;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

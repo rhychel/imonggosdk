@@ -147,7 +147,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
             Document document = queryBuilder.queryForFirst();
 
-            Log.e("Document", document.getReference());
+            Log.e("Document", document != null? document.getReference() : "null object");
         } catch (SQLException e) {
             e.printStackTrace();
         }
