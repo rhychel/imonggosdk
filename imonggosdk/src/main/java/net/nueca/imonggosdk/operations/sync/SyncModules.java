@@ -3066,7 +3066,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             } else {
                                                 Log.e(TAG, "customer is null!");
                                             }
-
                                             OfflineData offlineData = new OfflineData(invoice, OfflineDataType.SEND_INVOICE);
                                             offlineData.setBranch_id(currentBranch.getId());
                                             offlineData.setBranchName(currentBranch.getName());
