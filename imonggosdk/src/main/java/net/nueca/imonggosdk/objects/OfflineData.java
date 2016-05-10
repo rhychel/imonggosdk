@@ -625,6 +625,11 @@ public class OfflineData extends BaseTable2 {
         this.concessioModule = concessioModule;
     }
 
+    public boolean isVoided() {
+        return isCancelled || getOfflineDataTransactionType().isVoiding();
+    }
+
+
     @Override
     public boolean equals(Object o) {
         return o instanceof OfflineData && id == ((OfflineData)o).getId();
