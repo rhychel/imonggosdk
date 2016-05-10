@@ -925,6 +925,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     if(paymentType != null && !paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip")) {
                         data.add((EpsonPrinterTools.spacer(paymentType.getName(), DateTimeTools.convertToDate(invoicePayment.getExtras().getPayment_date(), "yyyy-MM-dd", "MMM dd, yyyy"), 32) + "\r\n").getBytes());
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
+                        data.add((NumberTools.separateInCommas(invoicePayment.getTender()) + "\r\n").getBytes());
 
                         items++;
 
