@@ -28,6 +28,7 @@ import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 
+import java.sql.Date;
 import java.sql.SQLException;
 
 /**
@@ -187,6 +188,10 @@ public class Extras extends DBTable {
     @DatabaseField
     private Integer show = 1;
 
+    @Expose
+    @DatabaseField(format = "yyyy-MM-dd")
+    private Date created_at = null;
+
     /** FOREIGN TABLES **/
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private transient RoutePlan routePlan;
@@ -261,6 +266,7 @@ public class Extras extends DBTable {
         check_number = builder.check_number;
         bank_branch = builder.bank_branch;
         check_date = builder.check_date;
+        created_at = builder.createdAt;
 
         payment_term_id = builder.payment_term_id;
         payment_term_code = builder.payment_term_code;
@@ -783,6 +789,14 @@ public class Extras extends DBTable {
         this.show = show;
     }
 
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
@@ -843,6 +857,7 @@ public class Extras extends DBTable {
         protected User user;
         protected Unit unit;
         protected InvoicePayment invoicePayment;
+        protected Date createdAt;
 
         protected String delivery_date;
         protected String brand;
@@ -1129,6 +1144,11 @@ public class Extras extends DBTable {
 
         public Builder require_date(Boolean requires_expiry_date) {
             this.require_date = requires_expiry_date;
+            return this;
+        }
+
+        public Builder created_at(Date created_at) {
+            this.createdAt = created_at;
             return this;
         }
 

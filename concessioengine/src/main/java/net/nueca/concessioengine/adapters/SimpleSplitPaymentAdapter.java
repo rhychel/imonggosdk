@@ -93,7 +93,8 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         else {
             InvoicePayment invoicePayment = getItem(position);
 
-            lvh.isEditable = invoicePayment.getPaymentBatchNo() == null;
+//            lvh.isEditable = invoicePayment.getPaymentBatchNo() == null;
+            lvh.isEditable = invoicePayment.getExtras().getCreated_at() == null;
 
             lvh.itemView.setTag(position);
             lvh.tvPaymentType.setText(getPaymentTypeWithId(invoicePayment.getPayment_type_id()).getName());
