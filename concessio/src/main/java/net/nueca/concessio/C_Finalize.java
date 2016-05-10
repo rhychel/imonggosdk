@@ -48,6 +48,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.Configurations;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -639,8 +640,8 @@ public class C_Finalize extends ModuleActivity {
                 if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", "("+invoice.getExtras().getCustomer_discount_text_summary()+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
-                    for (Double cusDisc : paymentsComputation.getCustomerDiscount())
-                        data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
+//                    for (Double cusDisc : paymentsComputation.getCustomerDiscount())
+//                        data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
                 }
                 if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
@@ -756,22 +757,25 @@ public class C_Finalize extends ModuleActivity {
                 data.add("Payments                  Amount".getBytes());
                 for(InvoicePayment invoicePayment : invoice.getPayments()) {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
-                    if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip"))
-                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
+                    if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip")) {
+//                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32) + "\r\n").getBytes());
+                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), DateTimeTools.convertToDate(invoicePayment.getExtras().getPayment_date(), "yyyy-MM-dd", "MMM dd, yyyy"), 32) + "\r\n").getBytes());
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
 
-                    items++;
+                        items++;
 
-                    if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
-                        data.add(("\r\n\r\n\r\n").getBytes());
-                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
-                        data.add(("*Page "+page+"*\r\n\r\n").getBytes());
-                        data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
-                        page++;
-                        items = 0;
+                        if (numberOfPages > 1.0 && page < (int) numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[]{0x1b, 0x1d, 0x61, 0x01}); // Center
+                            data.add(("*Page " + page + "*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
 
-                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
-                            break;
-                        data.clear();
+                            if (!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                 }
                 data.add((EpsonPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\r\n").getBytes());

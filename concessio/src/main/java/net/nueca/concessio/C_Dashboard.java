@@ -136,7 +136,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
-        try {
+        /*try {
             QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
 
             Where<Document, Integer> whereDoc = queryBuilder.where();
@@ -150,7 +150,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             Log.e("Document", document != null? document.getReference() : "null object");
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
 
         try {
             queryAllDocuments();

@@ -195,7 +195,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         List<ModuleSetting> moduleSettings = getActiveModuleSetting(HISTORY_ITEM_FILTERS, false);
 
         for(ModuleSetting moduleSetting : moduleSettings) {
-            if(moduleSetting.is_enabled())
+            if(moduleSetting.is_enabled() && !moduleSetting.is_view())
                 transactionTypes.add(moduleSetting.getModuleType().setLabel(moduleSetting.getLabel()));
         }
 

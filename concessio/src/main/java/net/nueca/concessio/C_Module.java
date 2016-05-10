@@ -970,8 +970,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         Log.e("Offline Data", simpleTransactionDetailsFragment.getOfflineData().isCancelled()+" isCancelled");
 
                         boolean useBtn2 = true;
-                        boolean isVoiding = simpleTransactionDetailsFragment.getOfflineData().isCancelled()
-                                || simpleTransactionDetailsFragment.getOfflineData().getOfflineDataTransactionType().isVoiding();
+                        boolean isVoiding = simpleTransactionDetailsFragment.getOfflineData().isVoided();
+//                                simpleTransactionDetailsFragment.getOfflineData().isCancelled()
+//                                || simpleTransactionDetailsFragment.getOfflineData().getOfflineDataTransactionType().isVoiding();
                         if(isVoiding) {
                             btn1.setVisibility(View.INVISIBLE);
                             useBtn2 = false;
