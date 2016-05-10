@@ -136,8 +136,16 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
-        /*try {
-            QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
+        /*try {*/
+            List<Document> documentList = Document.fetchAll(getHelper(), Document.class);
+            Log.e(TAG, "size of document: " + documentList.size());
+
+            for(Document ds : documentList) {
+                Log.e(TAG, "document: "  + ds.getReturnId());
+            }
+            
+            
+            /*QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
 
             Where<Document, Integer> whereDoc = queryBuilder.where();
             whereDoc.eq("target_branch_id", 32).and();
@@ -148,7 +156,9 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             Document document = queryBuilder.queryForFirst();
 
             Log.e("Document", document.getReference());
-        } catch (SQLException e) {
+*/
+            
+/*        } catch (SQLException e) {
             e.printStackTrace();
         }*/
 
