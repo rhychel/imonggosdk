@@ -2937,6 +2937,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, i, progress3);
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     Document document = gson.fromJson(jsonObject.toString(), Document.class);
+                                    document.setReturnId(document.getId());
 
                                     if (initialSync || lastUpdatedAt == null) {
                                         if (!document.getIntransit_status().equalsIgnoreCase("received")) {
@@ -2947,16 +2948,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
                                     } else {
                                         if (isExisting(document, Table.DOCUMENTS)) {
-                                            Log.e(TAG, "existing to insert document...");
+                                            Log.e(TAG, "existing to querying document...");
                                             //TODO: Do this if instransit=1
                                             //TODO: branch.site_type = warehouse
-                                            if (document.getIntransit_status().equalsIgnoreCase("received")) {
-                                                Log.e(TAG, "adding to delete document...");
-                                                deleteDocument.add(document);
-                                            } else {
-                                                Log.e(TAG, "adding to update document...");
-                                                updateDocument.add(document);
-                                            }
+                                            Document dx = getHelper().fetchObjects(Document.class).queryBuilder().where().eq("returnId", document.getId()).queryForFirst();
+                                            dx.setIntransit_status(document.getIntransit_status());
+                                            Log.e(TAG, "setting status to " + document.getIntransit_status());
+                                            updateDocument.add(dx);
                                         } else {
                                             Log.e(TAG, "adding to insert document...");
                                             newDocument.add(document);
