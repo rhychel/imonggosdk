@@ -1,15 +1,10 @@
 package net.nueca.imonggosdk.objects.base;
 
-import android.util.Log;
-
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.Product;
@@ -22,13 +17,11 @@ import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
-import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 
-import java.sql.Date;
 import java.sql.SQLException;
 
 /**
@@ -187,10 +180,9 @@ public class Extras extends DBTable {
     @Expose
     @DatabaseField
     private Integer show = 1;
-
     @Expose
-    @DatabaseField(format = "yyyy-MM-dd")
-    private Date created_at = null;
+    @DatabaseField
+    private String payment_date = null;
 
     /** FOREIGN TABLES **/
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
@@ -266,7 +258,7 @@ public class Extras extends DBTable {
         check_number = builder.check_number;
         bank_branch = builder.bank_branch;
         check_date = builder.check_date;
-        created_at = builder.createdAt;
+        payment_date = builder.payment_date;
 
         payment_term_id = builder.payment_term_id;
         payment_term_code = builder.payment_term_code;
@@ -789,12 +781,12 @@ public class Extras extends DBTable {
         this.show = show;
     }
 
-    public Date getCreated_at() {
-        return created_at;
+    public String getPayment_date() {
+        return payment_date;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public void setPayment_date(String payment_date) {
+        this.payment_date = payment_date;
     }
 
     @Override
@@ -857,7 +849,7 @@ public class Extras extends DBTable {
         protected User user;
         protected Unit unit;
         protected InvoicePayment invoicePayment;
-        protected Date createdAt;
+        protected String payment_date;
 
         protected String delivery_date;
         protected String brand;
@@ -1147,8 +1139,8 @@ public class Extras extends DBTable {
             return this;
         }
 
-        public Builder created_at(Date created_at) {
-            this.createdAt = created_at;
+        public Builder payment_date(String payment_date) {
+            this.payment_date = payment_date;
             return this;
         }
 

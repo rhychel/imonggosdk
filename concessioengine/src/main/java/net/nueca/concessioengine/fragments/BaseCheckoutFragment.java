@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
-import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
@@ -20,12 +19,10 @@ import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -156,6 +153,16 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         List<InvoicePayment> payments = computation.getPayments();
         if(includeReturns)
             payments.addAll(computation.getReturnsPayments());
+
+        for(InvoicePayment payment : payments) {
+            Extras paymentExtras = payment.getExtras();
+            if(paymentExtras == null)
+                paymentExtras = new Extras(InvoicePayment.class.getName().toUpperCase(), payment.getId());
+
+            if(paymentExtras.getPayment_date() == null)
+                paymentExtras.setPayment_date(DateTimeTools.convertDateOnly(DateTimeTools.getCurrentDateTimeUTCFormat().replaceAll("-","/")));
+            payment.setExtras(paymentExtras);
+        }
         return payments;
     }
     

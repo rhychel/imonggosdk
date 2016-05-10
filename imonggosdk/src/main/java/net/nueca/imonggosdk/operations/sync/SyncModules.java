@@ -3009,6 +3009,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    if(jsonObject.has("layaway_status") && jsonObject.getString("layaway_status").equals("V"))
+                                        continue;
+
                                     Invoice invoice = gson.fromJson(jsonObject.toString(), Invoice.class);
                                     for (InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
                                         if (invoiceLine.getExtras() == null)

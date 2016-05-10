@@ -675,7 +675,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
             for(InvoicePayment invoicePayment : invoice.getPayments()) {
                 PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
                 if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip")) {
-                    printText.append(EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32) + "\n");
+                    printText.append(EpsonPrinterTools.spacer(paymentType.getName(), invoicePayment.getExtras().getPayment_date(), 32) + "\n");
+                    printText.append(NumberTools.separateInCommas(invoicePayment.getTender())+"\n");
 
                 }
             }
@@ -919,7 +920,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add("Payments                  Amount".getBytes());
                 for(InvoicePayment invoicePayment : invoice.getPayments()) {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
-                    if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip")) {
+                    if(paymentType != null && !paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip")) {
                         data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32) + "\r\n").getBytes());
 
                         items++;
