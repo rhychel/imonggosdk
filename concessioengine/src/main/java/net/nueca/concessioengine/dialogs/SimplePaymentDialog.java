@@ -231,7 +231,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                     BigDecimal currentBalance = new BigDecimal(balance);
                     BigDecimal payment = new BigDecimal(etPayment.getText().toString());
                     if(!paymentType.getName().toLowerCase().equals("cash") && currentBalance.compareTo(payment) == -1) {
-                        Toast.makeText(getContext(), "You cannot pay more than your balance on this payment type.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "You cannot pay more than your balance using this payment type.", Toast.LENGTH_LONG).show();
                         return;
                     }
 
