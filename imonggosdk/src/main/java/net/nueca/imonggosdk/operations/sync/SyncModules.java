@@ -7,6 +7,7 @@ import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DailySalesEnums;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.OfflineDataType;
@@ -3007,6 +3008,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    if(jsonObject.has("layaway_status") && jsonObject.getString("layaway_status").equals("V"))
+                                        continue;
+
                                     Invoice invoice = gson.fromJson(jsonObject.toString(), Invoice.class);
 
 
@@ -3063,8 +3067,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             } else {
                                                 Log.e(TAG, "customer is null!");
                                             }
-
                                             OfflineData offlineData = new OfflineData(invoice, OfflineDataType.SEND_INVOICE);
+                                            offlineData.setConcessioModule(ConcessioModule.INVOICE);
                                             offlineData.setBranch_id(currentBranch.getId());
                                             offlineData.setBranchName(currentBranch.getName());
                                             offlineData.setSynced(true);

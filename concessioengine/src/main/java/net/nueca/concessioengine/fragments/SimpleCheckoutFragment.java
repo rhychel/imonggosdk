@@ -19,6 +19,7 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleSplitPaymentAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
@@ -33,6 +34,7 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
     private LinearLayout llAmountDue, llBalance;
 
     private RecyclerView rvPayments;
+//    private ItemTouchHelper itemTouchHelper;
 
     private BaseSplitPaymentAdapter splitPaymentAdapter;
 
@@ -134,6 +136,7 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
             if (direction == ItemTouchHelper.LEFT || direction == ItemTouchHelper.RIGHT) {
                 SimpleSplitPaymentAdapter.ListViewHolder lvh = (SimpleSplitPaymentAdapter.ListViewHolder) viewHolder;
 
@@ -152,6 +155,11 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
             return super.getSwipeDirs(recyclerView, viewHolder);
         }
     });
+
+
+    public void setItemTouchHelper(ItemTouchHelper itemTouchHelper) {
+        this.itemTouchHelper = itemTouchHelper;
+    }
 
     public void setAmountDueTextView(TextView tvAmountDue) {
         this.tvAmountDue = tvAmountDue;

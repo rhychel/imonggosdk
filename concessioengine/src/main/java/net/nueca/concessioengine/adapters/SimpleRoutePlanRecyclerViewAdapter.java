@@ -95,17 +95,25 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
 
                 BigDecimal remaining = paymentsComputation.getRemaining();
 
+                boolean hasBalance = false;
+
                 double balance = NumberTools.formatDouble(remaining.doubleValue(), ProductsAdapterHelper.getDecimalPlace());
                 holder.tvSubtotal.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
-                if (balance > 0) //remaining.signum() == 1
+                if (balance > 0) { //remaining.signum() == 1
                     holder.tvSubtotal.setText("P " + NumberTools.separateInCommas(remaining));
+                    hasBalance = true;
+                }
                 else {
                     holder.tvSubtotal.setText("P " + NumberTools.separateInCommas(paymentsComputation.getTotalPayable(true)));
                     holder.tvSubtotal.setTextColor(ContextCompat.getColor(getContext(), R.color.payment_color));
                 }
 
                 int i = 0;
+                Log.e("invoice["+i+"]", "Balance: "+balance);
                 for(Invoice invoice : myInvoices) {
+                    Log.e("invoice["+i+"]", invoice.getReference());
+                    if(hasBalance)
+                        break;
                     i++;
                     if(i == 1)
                         continue;
@@ -126,10 +134,17 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
                     temp.addAllInvoiceLines(invoice.getInvoiceLines());
                     temp.addAllPayments(invoice.getPayments());
 
-                    balance += NumberTools.formatDouble(temp.getRemaining().doubleValue(), ProductsAdapterHelper.getDecimalPlace());
+                    BigDecimal totalPaid = temp.getTotalPayable(true).subtract(temp.getTotalPaymentMade()); // positive
+                    Log.e("invoice["+i+"]", "totalPaid: "+totalPaid.doubleValue());
+
+                    if(totalPaid.compareTo(BigDecimal.ZERO) == 1)
+                        hasBalance = true;
+
+//                    balance += NumberTools.formatDouble(temp.getRemaining().doubleValue(), ProductsAdapterHelper.getDecimalPlace());
+//                    Log.e("invoice["+i+"]", "Balance: "+balance);
                 }
 
-                if(balance > 0) {
+                if(hasBalance) {
                     holder.ivStatus.setImageResource(R.drawable.ic_alert_red);
                 }
             }

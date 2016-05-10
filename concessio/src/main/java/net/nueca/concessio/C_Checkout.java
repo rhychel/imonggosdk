@@ -35,6 +35,7 @@ import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.BluetoothTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.tools.Configurations;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.PointsTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
@@ -67,34 +68,36 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private Toolbar tbActionBar;
     private RecyclerView rvPayments;
     private SimpleSplitPaymentAdapter simpleSplitPaymentAdapter;
-    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-        @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            if(target != null)
-                Log.e("target", "Not null");
-
-            if(viewHolder != null)
-                Log.e("viewHolder", "Not null");
-            return false;
-        }
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            Log.e("onSwiped", "Index=" + viewHolder.getAdapterPosition());
-            if(simpleSplitPaymentAdapter.getItem(viewHolder.getAdapterPosition()).getPaymentBatchNo() == null) {
-                simpleSplitPaymentAdapter.remove(viewHolder.getAdapterPosition());
-                simpleSplitPaymentAdapter.notifyItemChanged(0);
-            }
-        }
-
-        @Override
-        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            if(viewHolder instanceof SimpleSplitPaymentAdapter.ListViewHolder) {
-                return ((SimpleSplitPaymentAdapter.ListViewHolder) viewHolder).isLastItem() ? 0 : super.getSwipeDirs(recyclerView, viewHolder);
-            }
-            return super.getSwipeDirs(recyclerView, viewHolder);
-        }
-    };
+//    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+//        @Override
+//        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+//            if(target != null)
+//                Log.e("target", "Not null");
+//
+//            if(viewHolder != null)
+//                Log.e("viewHolder", "Not null");
+//            return false;
+//        }
+//
+//        @Override
+//        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+//            Log.e("onSwiped", "Index=" + viewHolder.getAdapterPosition());
+//            Log.e("onSwiped", "Payment Batch No=" + simpleSplitPaymentAdapter.getItem(viewHolder.getAdapterPosition()).getPaymentBatchNo());
+//
+//            if(simpleSplitPaymentAdapter.getItem(viewHolder.getAdapterPosition()).getPaymentBatchNo() == null) {
+//                simpleSplitPaymentAdapter.remove(viewHolder.getAdapterPosition());
+//                simpleSplitPaymentAdapter.notifyItemChanged(0);
+//            }
+//        }
+//
+//        @Override
+//        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+//            if(viewHolder instanceof SimpleSplitPaymentAdapter.ListViewHolder) {
+//                return ((SimpleSplitPaymentAdapter.ListViewHolder) viewHolder).isLastItem() ? 0 : super.getSwipeDirs(recyclerView, viewHolder);
+//            }
+//            return super.getSwipeDirs(recyclerView, viewHolder);
+//        }
+//    };
     private LinearLayout llBalance, llTotalAmount;
     private TextView tvLabelBalance, tvBalance, tvTotalAmount;
     private Button btn1, btn2;
@@ -476,9 +479,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         llBalance.setVisibility(View.VISIBLE);
         llTotalAmount.setVisibility(View.VISIBLE);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(rvPayments);
-
+//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+//        itemTouchHelper.attachToRecyclerView(rvPayments);
+//        ((SimpleCheckoutFragment) checkoutFragment).setItemTouchHelper(itemTouchHelper);
         ((SimpleCheckoutFragment) checkoutFragment).setAmountDueTextView(tvTotalAmount);
         ((SimpleCheckoutFragment) checkoutFragment).setBalanceTextView(tvBalance);
 
@@ -672,8 +675,10 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
             for(InvoicePayment invoicePayment : invoice.getPayments()) {
                 PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
-                if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip"))
-                    printText.append(EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\n");
+                if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip")) {
+                    printText.append(EpsonPrinterTools.spacer(paymentType.getName(), DateTimeTools.convertToDate(invoicePayment.getExtras().getPayment_date(), "yyyy-MM-dd", "MMM dd, yyyy")+"       ", 32) + "\n");
+                    printText.append(NumberTools.separateInCommas(invoicePayment.getTender())+"\n");
+                }
             }
 
             printText.append(EpsonPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\n");
@@ -795,8 +800,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", "("+invoice.getExtras().getCustomer_discount_text_summary()+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
-                    for (Double cusDisc : paymentsComputation.getCustomerDiscount())
-                        data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
+//                    for (Double cusDisc : paymentsComputation.getCustomerDiscount())
+//                        data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
                 }
                 if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
                     data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
@@ -915,22 +920,24 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add("Payments                  Amount".getBytes());
                 for(InvoicePayment invoicePayment : invoice.getPayments()) {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
-                    if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip"))
-                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
+                    if(paymentType != null && !paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip")) {
+                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), DateTimeTools.convertToDate(invoicePayment.getExtras().getPayment_date(), "yyyy-MM-dd", "MMM dd, yyyy"), 32) + "\r\n").getBytes());
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
 
-                    items++;
+                        items++;
 
-                    if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
-                        data.add(("\r\n\r\n\r\n").getBytes());
-                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
-                        data.add(("*Page "+page+"*\r\n\r\n").getBytes());
-                        data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
-                        page++;
-                        items = 0;
+                        if (numberOfPages > 1.0 && page < (int) numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[]{0x1b, 0x1d, 0x61, 0x01}); // Center
+                            data.add(("*Page " + page + "*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
 
-                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
-                            break;
-                        data.clear();
+                            if (!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                 }
                 data.add((EpsonPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\r\n").getBytes());

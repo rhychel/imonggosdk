@@ -155,6 +155,7 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
 
     public void updateListWhenSearch(String searchKey) {
         setSearchKey(searchKey);
+        offset = 0l;
         if(currentDayOfWeek == 0)
             toggleNoItems("No results for \"" + searchKey + "\".", simpleRoutePlanRecyclerViewAdapter.updateList(getCustomers()));
         else

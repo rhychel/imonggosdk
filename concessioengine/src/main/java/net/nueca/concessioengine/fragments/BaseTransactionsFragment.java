@@ -177,7 +177,7 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
         if(layawaysOnly) {
             List<OfflineData> finalTransactions = new ArrayList<>();
             for(OfflineData offlineData : transactions) {
-                if(offlineData.getObjectFromData(Invoice.class).getStatus() != null && offlineData.getObjectFromData(Invoice.class).getStatus().equals("L"))
+                if(!offlineData.isVoided() && offlineData.getObjectFromData(Invoice.class).getStatus() != null && offlineData.getObjectFromData(Invoice.class).getStatus().equals("L"))
                     finalTransactions.add(offlineData);
             }
             return finalTransactions;
