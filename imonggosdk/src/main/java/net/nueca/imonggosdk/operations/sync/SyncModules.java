@@ -1146,8 +1146,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
-/*                        lastUpdatedAt.setLast_updated_at("2016/05/06 01:00:00 +0000");
-                        lastUpdatedAt.updateTo(getHelper());*/
+                        lastUpdatedAt.setLast_updated_at("2016/05/06 10:48:42 +0000");
+                        lastUpdatedAt.updateTo(getHelper());
 
                         SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                         if (newLastUpdatedAt.getLast_updated_at() == null) {
@@ -3008,6 +3008,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     Invoice invoice = gson.fromJson(jsonObject.toString(), Invoice.class);
+
+
                                     for (InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
                                         if (invoiceLine.getExtras() == null)
                                             invoiceLine.setNo_discount_subtotal(invoiceLine.getSubtotal());

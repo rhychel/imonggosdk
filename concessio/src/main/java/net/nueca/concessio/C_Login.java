@@ -40,7 +40,7 @@ public class C_Login extends LoginActivity {
     protected void initLoginEquipments() {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
-        setServer(Server.REBISCO);
+        setServer(Server.PETRONDIS_NET);
         setAutoUpdateApp(false);
         /**
          *"payment_types"
