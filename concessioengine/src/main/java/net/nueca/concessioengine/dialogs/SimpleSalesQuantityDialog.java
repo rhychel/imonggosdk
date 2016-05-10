@@ -47,18 +47,18 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
 
     private AutofitTextView tvProductName;
     private TextView tvRetailPrice, tvInStock, tvSubtotal, tvUnit, tvExpectedQty, tvOutright, tvDiscrepancy;
-    private EditText etQuantity, etExpectedQty, etOutright, etDiscrepancy;
+    private EditText etQuantity, etExpectedQty, etOutright, etDiscrepancy, etRetailPrice;
     private Spinner spUnits;
     private Button btnCancel, btnSave;
     private LinearLayout llSubtotal;
 
-    private LinearLayout llInvoicePurpose, llExpiryDate, llBrand, llExpectedQty, llOutright, llDiscrepancy;
+    private LinearLayout llInvoicePurpose, llExpiryDate, llBrand, llExpectedQty, llOutright, llDiscrepancy, llRetailPrice;
     private Spinner spInvoicePurpose, spBrands;
     private Button btnExpiryDate;
     private SwitchCompat swcBadStock;
 
     private boolean forceSellableUnit = false;
-    private String subtotal, retailPrice;
+    private String subtotal, retailPrice, ovPrice;
 
     private Unit defaultUnit;
 
@@ -285,20 +285,58 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
         spUnits.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                retailPrice = "P"+NumberTools.separateInCommas(PriceTools.identifyRetailPrice(getHelper(), product,
-                        salesBranch, salesCustomerGroup, salesCustomer, unitsAdapter.getItem(i)));
+                Double price = PriceTools.identifyRetailPrice(getHelper(), product,
+                        salesBranch, salesCustomerGroup, salesCustomer, unitsAdapter.getItem(i));
+                retailPrice = "P"+NumberTools.separateInCommas(price);
                 subtotal = String.valueOf(NumberTools.toDouble(etQuantity.getText().toString()) * NumberTools.toDouble(retailPrice));
                 tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
+
+                if(etRetailPrice != null) {
+                    if(ovPrice != null)
+                        etRetailPrice.setText(ovPrice);
+                    else
+                        etRetailPrice.setText(NumberTools.formatDouble(price, ProductsAdapterHelper.getDecimalPlace()) + "");
+                    ovPrice = null;
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                retailPrice = "P"+NumberTools.separateInCommas(PriceTools.identifyRetailPrice(getHelper(), product,
-                        salesBranch, salesCustomerGroup, salesCustomer, defaultUnit));
+                Double price = PriceTools.identifyRetailPrice(getHelper(), product,
+                        salesBranch, salesCustomerGroup, salesCustomer, defaultUnit);
+                retailPrice = "P"+NumberTools.separateInCommas(price);
                 subtotal = String.valueOf(NumberTools.toDouble(etQuantity.getText().toString()) * NumberTools.toDouble(retailPrice));
                 tvSubtotal.setText("P"+NumberTools.separateInCommas(subtotal));
+
+                if(etRetailPrice != null) {
+                    if (ovPrice != null)
+                        etRetailPrice.setText(ovPrice);
+                    else
+                        etRetailPrice.setText(NumberTools.formatDouble(price, ProductsAdapterHelper.getDecimalPlace()) + "");
+                    ovPrice = null;
+                }
             }
         });
+
+        if(canOverridePrice) {
+            llRetailPrice = (LinearLayout) super.findViewById(R.id.llRetailPrice);
+            etRetailPrice = (EditText) super.findViewById(R.id.etRetailPrice);
+            llRetailPrice.setVisibility(View.VISIBLE);
+            etRetailPrice.setSelectAllOnFocus(true);
+            etRetailPrice.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    retailPrice = etRetailPrice.getText().toString();
+                    onQuantityChanged.afterTextChanged(null); // update the subtotal
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) { }
+            });
+        }
 
         if (hasValues) {
             if (isMultiValue) {
@@ -318,6 +356,10 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                             invP.setName("--");
                         }
                     }
+
+                    if(canOverridePrice)
+                        ovPrice = value.getUnit_retail_price()+"";
+//                        etRetailPrice.setText();
                 }
             } else {
                 Values value = selectedProductItem.getValues().get(0);
@@ -335,6 +377,9 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                         invP.setName("--");
                     }
                 }
+                if(canOverridePrice)
+                    ovPrice = value.getUnit_retail_price()+"";
+//                etRetailPrice.setText(value.getUnit_retail_price()+"");
             }
             if(hasExpiryDate) {
                 if(date == null) {
@@ -515,6 +560,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     Log.e("Simple Sales QTY Dialog", "VALUES PRICE : isNull? " + (price == null));
                     if(price != null)
                         values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
+                    else if(canOverridePrice)
+                        values.setValue(quantity, unit, Double.valueOf(retailPrice));
                     else {
                         if(salesBranch == null)
                             Log.e("sales branch", "shit its null");
@@ -563,6 +610,11 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     extendedAttributes.setDiscrepancy(NumberTools.toBigDecimal(etDiscrepancy.getText().toString()).toString());
                 }
                 values.setExtendedAttributes(extendedAttributes);
+
+                if(canOverridePrice) {
+                    values.setUnit_retail_price(Double.valueOf(etRetailPrice.getText().toString()));
+                    values.setRetail_price(Double.valueOf(etRetailPrice.getText().toString()));
+                }
 
                 if (isMultiValue) {
                     if (multiQuantityDialogListener != null)

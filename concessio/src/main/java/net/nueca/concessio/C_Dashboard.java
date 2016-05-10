@@ -152,7 +152,52 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
             e.printStackTrace();
         }
 
+        try {
+            queryAllDocuments();
+            viaTargetBranchId();
+            viaBranchId();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void queryAllDocuments() {
+        boolean hasOne = false;
+        for(Document document : Document.fetchAll(getHelper(), Document.class)) {
+            hasOne = true;
+            Log.e("Document", document.getReference()+" | docLines = "+document.getDocument_lines().size()
+                    + " | target_branch_id = "+document.getTarget_branch_id()+ " | branch_id = "+document.getBranch_id());
+        }
+        if(!hasOne)
+            Log.e("Document", "no documents are saved!");
+    }
+
+    private void viaTargetBranchId() throws SQLException {
+        QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
+
+        Where<Document, Integer> whereDoc = queryBuilder.where();
+        whereDoc.eq("target_branch_id", 32).and();
+        whereDoc.eq("reference", "9000-4");
+
+        Document document = queryBuilder.queryForFirst();
+        if(document == null)
+            Log.e("Document via TBI", "Failed!");
+        else
+            Log.e("Document via TBI", document.getReference());
+    }
+
+    private void viaBranchId() throws SQLException {
+        QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
+
+        Where<Document, Integer> whereDoc = queryBuilder.where();
+        whereDoc.eq("branch_id", 30).and();
+        whereDoc.eq("reference", "9000-4");
+
+        Document document = queryBuilder.queryForFirst();
+        if(document == null)
+            Log.e("Document via BI", "Failed!");
+        else
+            Log.e("Document via BI", document.getReference());
     }
 
     @Override

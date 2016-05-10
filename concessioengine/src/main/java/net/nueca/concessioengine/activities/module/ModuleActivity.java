@@ -324,6 +324,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                     .line_no(value.getLine_no())
                     .product_id(selectedProductItem.getProduct().getId())
                     .quantity(Double.valueOf(value.getActualQuantity()))
+                    .retail_price(value.getRetail_price())
                     .build();
             if(value.isValidUnit()) {
                 orderLine.setUnit_id(value.getUnit().getId());

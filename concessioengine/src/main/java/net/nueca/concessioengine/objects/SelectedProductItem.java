@@ -11,6 +11,8 @@ import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.tools.ProductListTools;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 7/13/15.
@@ -378,14 +380,21 @@ public class SelectedProductItem {
         this.retail_price = retail_price;
     }
 
-    public String getValuesRetailPrices(char delimiter) {
+    public String getValuesRetailPrices() {
+        // char delimiter
         if(valuesList == null || valuesList.size() == 0)
             return "";
+        List<String> unitNames = new ArrayList<>();
         String retailPrices = "";
+        boolean hasOne = false;
         for(Values values : valuesList) {
-            retailPrices += values.getRetail_price();
-            if(valuesList.indexOf(values) < valuesList.size()-1)
-                retailPrices += delimiter;
+            if(unitNames.contains(values.getUnit_name()))
+                continue;
+            if(hasOne)
+                retailPrices += "\n";
+            retailPrices += "P"+values.getRetail_price()+"/"+values.getUnit_name();
+            unitNames.add(values.getUnit_name());
+            hasOne = true;
         }
         return retailPrices;
     }

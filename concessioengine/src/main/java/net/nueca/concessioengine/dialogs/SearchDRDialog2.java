@@ -326,13 +326,15 @@ public class SearchDRDialog2 extends BaseAppCompatDialog {
                             public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
                                 net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
                                 Log.e("onError", "fetchByReference| responseCode="+responseCode+"| response="+((String)response));
-                                try {
-                                    JSONObject jsonObject = new JSONObject((String)response);
-                                    isNotFound = jsonObject.getString("error").toLowerCase().contains("not found");
-                                    documentResult(reference, null);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                if(responseCode > 0) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject((String) response);
+                                        isNotFound = jsonObject.getString("error").toLowerCase().contains("not found");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
+                                documentResult(reference, null);
                             }
 
                             @Override
