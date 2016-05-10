@@ -2938,6 +2938,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, i, progress3);
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     Document document = gson.fromJson(jsonObject.toString(), Document.class);
+                                    document.setBranch_id(getListOfBranchIds().get(mBranchIdIndex).getBranch().getId());
                                     document.setReturnId(document.getId());
 
                                     if (initialSync || lastUpdatedAt == null) {
