@@ -14,14 +14,17 @@ import net.nueca.concessioengine.tools.LocationTools;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.SalesPushSettings;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
+import net.nueca.imonggosdk.objects.invoice.RewardPayment;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.NumberTools;
+import net.nueca.imonggosdk.tools.PointsTools;
 import net.nueca.imonggosdk.tools.ReferenceNumberTool;
 
 import java.math.BigDecimal;
@@ -106,6 +109,10 @@ public abstract class CheckoutActivity extends ModuleActivity {
         super.onStop();
     }
 
+    public Double getPointsInAmountUsed() {
+        return checkoutFragment.getUsedPointsInAmount();
+    }
+
     public Double getNewPointsInAmountUsed(Invoice invoice, PaymentType pointsPaymentType) {
         if(pointsPaymentType == null)
             return 0d;
@@ -113,7 +120,7 @@ public abstract class CheckoutActivity extends ModuleActivity {
         List<InvoicePayment> payments = invoice.getUnmarkedPayments();
         BigDecimal newPointsPayment = BigDecimal.ZERO;
         for(InvoicePayment payment : payments) {
-            if(payment.getPayment_type_id() == pointsPaymentType.getId())
+            if(payment.getPayment_type_id() == pointsPaymentType.getId() && payment.getPaymentBatchNo() == null)
                 newPointsPayment = newPointsPayment.add(new BigDecimal(payment.getTender()));
         }
         return NumberTools.formatDouble(newPointsPayment.doubleValue(),ProductsAdapterHelper.getDecimalPlace());

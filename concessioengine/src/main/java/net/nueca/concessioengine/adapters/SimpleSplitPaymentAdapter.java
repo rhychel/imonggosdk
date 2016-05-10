@@ -2,6 +2,7 @@ package net.nueca.concessioengine.adapters;
 
 import android.app.FragmentManager;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +94,13 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
         else {
             InvoicePayment invoicePayment = getItem(position);
 
-            lvh.isEditable = invoicePayment.getPaymentBatchNo() == null;
+//            lvh.isEditable = invoicePayment.getPaymentBatchNo() == null;
+//            Log.e("InvoicePayment", invoicePayment.getExtras()+" <--- ||");
+//            Log.e("InvoicePayment", "|| ---> "+invoicePayment.getExtras().getPayment_date());
+            if(invoicePayment.getExtras() == null)
+                lvh.isEditable = true;
+            else
+                lvh.isEditable = invoicePayment.getExtras().getPayment_date() == null;
 
             lvh.itemView.setTag(position);
             lvh.tvPaymentType.setText(getPaymentTypeWithId(invoicePayment.getPayment_type_id()).getName());
@@ -155,6 +162,7 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
 
         @Override
         public void onClick(final View v) {
+            Log.e("isEditable", isEditable+"result");
             if(!isEditable)
                 return;
             if(listingType == ListingType.BASIC_PAYMENTS) {
@@ -252,8 +260,8 @@ public class SimpleSplitPaymentAdapter extends BaseSplitPaymentAdapter<SimpleSpl
                         //simpleSplitPaymentAdapter.notifyItemInserted(simpleSplitPaymentAdapter.getItemCount());
                     }
                 });
-                if(!isLayaway)
-                    dialog.show();
+//                if(!isLayaway)
+                dialog.show();
             }
         }
 
