@@ -202,6 +202,7 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
         simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
         simpleSalesQuantityDialog.setHelper(getHelper());
         simpleSalesQuantityDialog.setIsMultiValue(true);
+        simpleSalesQuantityDialog.setHasStock(false);
         if(concessioModule == ConcessioModule.RECEIVE_BRANCH)
            simpleSalesQuantityDialog.setUnitDisplay(!isManualReceive);
 
