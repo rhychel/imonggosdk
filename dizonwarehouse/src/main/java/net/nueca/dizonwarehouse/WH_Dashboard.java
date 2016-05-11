@@ -69,13 +69,16 @@ public class WH_Dashboard extends DashboardActivity implements OnItemClickListen
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
         rvModules = (RecyclerView) findViewById(R.id.rvModules);
         spBranches = (Spinner) findViewById(R.id.spBranches);
+
+        tbActionBar.setTitleTextColor(getResources().getColor(R.color.primary_text));
         setSupportActionBar(tbActionBar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_app_logo);
+        getSupportActionBar().setTitle("  Home");
 
-        ArrayAdapter<Branch> branchesAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_dark, getBranches());
-        branchesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
+        ArrayAdapter<Branch> branchesAdapter = new ArrayAdapter<>(this, R.layout.toolbar_spinner_item, getBranches());
+        branchesAdapter.setDropDownViewResource(R.layout.toolbar_spinner_dropdown_item);
         spBranches.setAdapter(branchesAdapter);
 
         rvModules.setHasFixedSize(true);

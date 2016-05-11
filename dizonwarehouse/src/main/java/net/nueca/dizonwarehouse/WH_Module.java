@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
@@ -26,6 +28,7 @@ import net.nueca.dizonwarehouse.adapters.CategoryRecyclerAdapter;
 import net.nueca.dizonwarehouse.dialogs.SearchDialog;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -123,7 +126,7 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
         simpleInventoryFragment.setProductsFragmentListener(selectionListener);
         simpleInventoryFragment.setHasCategories(true);
         // if there's branch product
-        simpleInventoryFragment.setBranch(getBranches().get(0));
+        simpleInventoryFragment.setBranch(selectedBranch);
 
         initFinalizeFragment();
 
@@ -135,7 +138,7 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
         selectedProductFragment.setHasDeliveryDate(false);
         selectedProductFragment.setHasUnits(true);
         // if there's branch product
-        selectedProductFragment.setBranch(getBranches().get(0));
+        selectedProductFragment.setBranch(selectedBranch);
 
         btnNext.setOnClickListener(nextClickedListener);
 
@@ -328,7 +331,13 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
     public boolean onSearch(String text) {
         reference = text;
         refreshTitle();
-        return text.equals("OK");
+        try {
+            Log.e("ORDERS", new Gson().toJson(Order.fetchAll(getHelper(),Order.class)));
+            return getHelper().fetchObjects(Order.class).queryBuilder().where().eq("reference",text).queryForFirst() != null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override

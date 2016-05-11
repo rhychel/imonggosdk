@@ -19,8 +19,7 @@
         android:theme="@style/WarehouseTheme">
         <activity
             android:name=".WH_Login"
-            android:theme="@style/LoginTheme"
-            android:screenOrientation="landscape">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -28,18 +27,23 @@
             </intent-filter>
         </activity>
         <activity android:name=".WH_Welcome"
-                  android:theme="@style/WelcomeTheme"
-                  android:screenOrientation="landscape">
+                  android:screenOrientation="portrait">
         </activity>
         <activity android:name=".WH_Dashboard"
-                  android:screenOrientation="landscape">
+                  android:screenOrientation="portrait">
         </activity>
         <activity android:name=".WH_Module"
-                  android:screenOrientation="landscape">
+                  android:screenOrientation="portrait">
         </activity>
         <activity android:name=".WH_Finalize"
-                  android:screenOrientation="landscape">
+                  android:screenOrientation="portrait">
         </activity>
+
+        <activity
+            android:name="net.nueca.concessioengine.activities.SettingsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Concessio.Light.NoActionBar.Form"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

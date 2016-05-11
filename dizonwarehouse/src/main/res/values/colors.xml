@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="wh_colorPrimaryLight">#FFCC80</color>
+    <color name="wh_colorPrimary">#ef6c00</color>
+    <color name="wh_colorPrimaryDark">#e65100</color>
+    <color name="wh_colorAccent">#00bfa5</color>
+
+    <color name="wh_colorText">#000000</color>
+    <color name="wh_colorPrimaryText">#d9000000</color>
+    <color name="wh_colorPrimaryTextInverse">#ffffff</color>
+
+    <color name="wh_colorSecondaryText">#8c000000</color>
+    <color name="wh_colorSecondaryTextInverse">#b3ffffff</color>
+
+    <color name="wh_colorDisabledText">#59000000</color>
+    <color name="wh_colorHintText">#59000000</color>
+
+    <color name="wh_colorDivider">#26000000</color>
+    <color name="wh_colorIcon">#59000000</color>
+
+    <color name="wh_colorForeground">#212121</color>
+    <color name="wh_colorBackground">#dddddd</color>
 
 </resources>

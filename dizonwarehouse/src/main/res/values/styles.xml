@@ -3,8 +3,58 @@
     <style name="TabLayout.TextSize" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">13sp</item>
     </style>
-    <style name="WarehouseTheme" parent="AppTheme.Concessio.Light.NoActionBar">
 
+    <style name="WarehouseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/wh_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/wh_colorPrimaryDark</item>
+        <item name="colorAccent">@color/wh_colorAccent</item>
+
+        <item name="android:colorBackground">@color/wh_colorBackground</item>
+        <item name="android:colorForeground">@color/wh_colorForeground</item>
+
+        <item name="android:textColorPrimary">@color/wh_colorPrimaryText</item>
+        <item name="android:textColorPrimaryInverse">@color/wh_colorPrimaryTextInverse</item>
+        <item name="android:textColorSecondary">@color/wh_colorSecondaryText</item>
+        <item name="android:textColorSecondaryInverse">@color/wh_colorSecondaryTextInverse</item>
+
+        <item name="android:textColorHint">@color/wh_colorHintText</item>
+
+        <item name="buttonStyle">@style/WarehouseTheme.Button.Colored</item>
+        <item name="borderlessButtonStyle">@style/WarehouseTheme.Button.Borderless.Colored</item>
+    </style>
+
+    <!-- Buttons -->
+    <style name="WarehouseTheme.Button" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@color/wh_colorPrimaryText</item>
+    </style>
+
+    <style name="WarehouseTheme.Button.Colored" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/wh_colorPrimary</item>
+        <item name="android:textColor">@color/wh_colorPrimaryTextInverse</item>
+    </style>
+
+    <style name="WarehouseTheme.Button.Borderless" parent="Widget.AppCompat.Button.Borderless">
+    </style>
+
+    <style name="WarehouseTheme.Button.Borderless.Colored" parent="Widget.AppCompat.Button.Borderless.Colored">
+    </style>
+
+    <!-- Toolbar -->
+    <style name="WarehouseTheme.Toolbar" parent="WarehouseTheme">
+        <item name="android:textColorPrimary">@color/wh_colorPrimaryTextInverse</item>
+        <item name="android:textColorPrimaryInverse">@color/wh_colorPrimaryText</item>
+        <item name="android:textColorSecondary">@color/wh_colorSecondaryTextInverse</item>
+        <item name="android:textColorSecondaryInverse">@color/wh_colorSecondaryText</item>
+        <item name="popupTheme">@style/WarehouseTheme.Toolbar.Popup</item>
+    </style>
+    <style name="WarehouseTheme.Toolbar.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">@color/wh_colorPrimaryTextInverse</item>
+    </style>
+    <style name="WarehouseTheme.Toolbar.SpinnerItem.DropDown" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">@color/wh_colorPrimaryText</item>
+    </style>
+    <style name="WarehouseTheme.Toolbar.Popup" parent="@android:style/Widget.PopupMenu">
+        <item name="android:textColor">@color/wh_colorPrimaryText</item>
     </style>
 
     <style name="WarehouseTheme.InputDialog" parent="AppCompatDialogStyle">

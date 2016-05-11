@@ -37,7 +37,7 @@ public class WH_Welcome extends WelcomeActivity {
         spBranch = (Spinner) findViewById(R.id.spBranch);
         btnBegin = (Button) findViewById(R.id.btnBegin);
 
-        ArrayAdapter<Branch> branchArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, getBranches());
+        ArrayAdapter<Branch> branchArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, getBranches(true));
         branchArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
         spBranch.setAdapter(branchArrayAdapter);
 
@@ -71,7 +71,6 @@ public class WH_Welcome extends WelcomeActivity {
         btnBegin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("WH_Welcome","wadawdawdawdawd");
                 Branch branch = (Branch)spBranch.getSelectedItem();
                 SettingTools.updateSettings(WH_Welcome.this, SettingsName.DEFAULT_BRANCH, String.valueOf(branch.getId()));
 

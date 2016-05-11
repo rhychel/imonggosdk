@@ -105,6 +105,8 @@ public class DateTimeTools {
      * @return
      */
     public static String convertDateForUrl(String dateTime) {
+        if(dateTime == null || dateTime.equals("null"))
+            return null;
         SimpleDateFormat convertStringToDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
         SimpleDateFormat forDisplaying = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         //Log.e("Timezone is => ", convertStringToDate.getTimeZone().getID() + " --- " + dateTime);

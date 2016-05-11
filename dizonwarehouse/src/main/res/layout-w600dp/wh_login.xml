@@ -2,15 +2,18 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:background="@color/warehouse_background">
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="@dimen/action_bar_size_x2"
         android:elevation="8dp"
         android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:id="@+id/toolbar"/>
+        android:id="@+id/toolbar"
+        app:theme="@style/WarehouseTheme"
+        android:theme="@style/WarehouseTheme"
+        android:background="?attr/colorPrimary"/>
 
     <LinearLayout android:orientation="vertical"
                   android:layout_width="400dp"
@@ -53,7 +56,8 @@
                     android:hint="Account ID"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:textSize="14sp"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -67,7 +71,8 @@
                     android:hint="Email"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textSize="14sp"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -81,16 +86,20 @@
                     android:hint="Password"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textSize="14sp"/>
             </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:text="Login"
                 android:id="@+id/btnLogin"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="30dp"
+                android:textSize="14sp"
+                style="@style/WarehouseTheme.Button.Colored"
+                android:theme="@style/WarehouseTheme.Button.Colored"/>
 
         </LinearLayout>
 

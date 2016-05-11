@@ -9,12 +9,15 @@
         android:id="@+id/tbActionBar"
         android:layout_height="?attr/actionBarSize"
         android:elevation="8dp"
-        android:background="?attr/colorPrimary"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:theme="@style/WarehouseTheme.Toolbar"
+        android:background="?attr/colorPrimary">
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/spBranches"/>
+            android:layout_gravity="end"
+            android:id="@+id/spBranches"
+            />
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
