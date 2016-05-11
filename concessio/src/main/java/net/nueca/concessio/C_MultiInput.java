@@ -2,6 +2,7 @@ package net.nueca.concessio;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
@@ -29,6 +30,7 @@ public class C_MultiInput extends ModuleActivity implements SetupActionBar {
         multiInputSelectedItemFragment.setProductId(getIntent().getIntExtra(MultiInputSelectedItemFragment.PRODUCT_ID, 0));
 
         boolean isManualReceive = getIntent().getBooleanExtra(MultiInputSelectedItemFragment.IS_MANUAL_RECEIVE, false);
+        Log.e("isManualReceive", isManualReceive+"");
         multiInputSelectedItemFragment.setConcessioModule(concessioModule);
         multiInputSelectedItemFragment.setManualReceive(isManualReceive);
         multiInputSelectedItemFragment.setHasBrand(!isManualReceive);
