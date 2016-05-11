@@ -585,7 +585,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
             //paymentsComputation.addAllPayments(invoice.getPayments());
 
             printText.append(EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\n");
-            printText.append(EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\n");
+            printText.append(EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(false).doubleValue(), 2)), 32)+"\n");
 
             if(paymentsComputation.getCustomerDiscount().size() > 0) {
                 printText.append(EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\n");
@@ -593,12 +593,12 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 for (Double cusDisc : paymentsComputation.getCustomerDiscount())
                     printText.append("(" + NumberTools.separateInCommas(cusDisc) + ")\n");
             }
-            if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
-                printText.append(EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\n");
-            }
-            if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
-                printText.append(EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\n");
-            }
+//            if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
+//                printText.append(EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\n");
+//            }
+//            if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
+//                printText.append(EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\n");
+//            }
 
             printText.append(EpsonPrinterTools.spacer("Net Order Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(true).doubleValue(), 2)), 32)+"\n\n");
 
@@ -797,7 +797,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 //paymentsComputation.addAllPayments(invoice.getPayments());
 
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
-                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\r\n").getBytes());
+                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
 
                 if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", "("+invoice.getExtras().getCustomer_discount_text_summary()+")", 32) + "\r\n").getBytes());
