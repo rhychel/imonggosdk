@@ -4066,10 +4066,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-                                BatchList<Order> newOrders = new BatchList<>();
-                                BatchList<Order> updateOrders = new BatchList<>();
-                                BatchList<OrderLine> newOrderLine = new BatchList<>();
-                                BatchList<OrderLine> updateOrderLine = new BatchList<>();
+                                BatchList<Order> newOrders = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                                BatchList<Order> updateOrders = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                                BatchList<OrderLine> newOrderLine = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                                BatchList<OrderLine> updateOrderLine = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
