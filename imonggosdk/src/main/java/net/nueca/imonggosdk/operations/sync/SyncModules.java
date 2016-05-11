@@ -50,6 +50,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
@@ -4069,12 +4070,51 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-                                BatchList<Order> newOrders = new BatchList<>();
-                                BatchList<Order> updateOrders = new BatchList<>();
+                                BatchList<Order> newOrders = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                                BatchList<Order> updateOrders = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+                                BatchList<OrderLine> newOrderLine = new BatchList<>(DatabaseOperation.INSERT, getHelper());
+                                BatchList<OrderLine> updateOrderLine = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
                                 for (int i = 0; i < size; i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     Order orders = gson.fromJson(jsonObject.toString(), Order.class);
+                                    //returnId
+                                    Log.e(TAG, "setting return id: " + jsonObject.getInt("id"));
+                                    orders.setReturnId(jsonObject.getInt("id"));
+
+                                    //order_lines
+                                    if(jsonObject.has("order_lines")) {
+                                        if(!jsonObject.isNull("order_lines")) {
+
+                                            JSONArray orderLineArray = jsonObject.getJSONArray("order_lines");
+
+                                            for (int x = 0; x < orderLineArray.length(); x++) {
+                                                JSONObject orderLinejsonObject = orderLineArray.getJSONObject(x);
+                                                OrderLine orderLine = gson.fromJson(orderLinejsonObject.toString(), OrderLine.class);
+
+                                                Log.e(TAG, "setting this order line to order: " + orderLine.toString());
+                                                orderLine.setOrder(orders);
+
+                                                if(initialSync || lastUpdatedAt == null) {
+                                                    Log.e(TAG, "adding to insert... ");
+                                                    newOrderLine.add(orderLine);
+                                                } else {
+                                                    if (isExisting(orderLine, Table.ORDER_LINES)) {
+                                                        Log.e(TAG, "adding to update... ");
+                                                        updateOrderLine.add(orderLine);
+                                                    } else {
+                                                        Log.e(TAG, "adding to insert ... ");
+                                                        newOrderLine.add(orderLine);
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            Log.e(TAG, "'order_lines' field is null.");
+                                        }
+
+                                    } else {
+                                        Log.e(TAG, "API " + mCurrentTableSyncing + " don't have 'order_lines' field.");
+                                    }
 
                                     if (initialSync || lastUpdatedAt == null) {
                                         newOrders.add(orders);
@@ -4086,8 +4126,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
                                     }
                                 }
-                                newOrders.doOperation(Order.class, getHelper());
-                                updateOrders.doOperation(Order.class, getHelper());
+
+                                newOrders.doOperationBT3(Order.class, getHelper());
+                                updateOrders.doOperationBT3(Order.class, getHelper());
+                                newOrderLine.doOperationBT2(OrderLine.class, getHelper());
+                                updateOrderLine.doOperationBT2(OrderLine.class, getHelper());
                             }
                             updateNext(requestType, size);
                             break;
@@ -4190,17 +4233,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             double progressX = progress1 * progress2;
 
                             int progress3 = (int) progressX;
-
-                            Log.e(TAG + "~", "page: " + page);
-                            Log.e(TAG + "~", "numberOfPages: " + numberOfPages);
-                            Log.e(TAG + "~", "branchIndex: " + (branchIndex + 1));
-                            Log.e(TAG + "~", "branchIndexSize: " + getListOfBranchIds().size());
-                            Log.e(TAG + "~", "progressX: " + progressX);
-                            Log.e(TAG + "~", "progress1: " + progress1);
-                            Log.e(TAG + "~", "progress2: " + progress2);
-                            Log.e(TAG + "~", "progrezz: " + progress3);
-
-
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, progress3, 100);
                         } else {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
