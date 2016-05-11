@@ -635,22 +635,22 @@ public class C_Finalize extends ModuleActivity {
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
 
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
-                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\r\n").getBytes());
+                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
 
                 if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", "("+invoice.getExtras().getCustomer_discount_text_summary()+")", 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
-//                    for (Double cusDisc : paymentsComputation.getCustomerDiscount())
-//                        data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
+                    for (Double cusDisc : paymentsComputation.getCustomerDiscount())
+                        data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
                 }
-                if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
-                    data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
-                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
-                }
-                if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
-                    data.add((EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
-                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
-                }
+//                if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
+//                    data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
+//                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
+//                }
+//                if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
+//                    data.add((EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
+//                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
+//                }
 
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                 data.add((EpsonPrinterTools.spacer("Net Order Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(true).doubleValue(), 2)), 32)+"\r\n\r\n").getBytes());
@@ -761,6 +761,7 @@ public class C_Finalize extends ModuleActivity {
 //                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32) + "\r\n").getBytes());
                         data.add((EpsonPrinterTools.spacer(paymentType.getName(), DateTimeTools.convertToDate(invoicePayment.getExtras().getPayment_date(), "yyyy-MM-dd", "MMM dd, yyyy"), 32) + "\r\n").getBytes());
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
+                        data.add((NumberTools.separateInCommas(invoicePayment.getTender()) + "\r\n").getBytes());
 
                         items++;
 
