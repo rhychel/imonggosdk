@@ -3,6 +3,7 @@ package net.nueca.concessioengine.dialogs;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -182,7 +183,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                     PaymentType paymentType = (PaymentType) spnPaymentType.getSelectedItem();
                     if(paymentType.getName().equals("Rewards")) {
                         if(availablePoints <= 0d) {
-                            Toast.makeText(getContext(), "You have no available points to use a payment.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "You have no available points to use as a payment.", Toast.LENGTH_LONG).show();
                             return;
                         }
 
@@ -228,7 +229,11 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                             return;
                         }
                     }
+                    Log.e("B-currentBalance", balance+"--");
+                    Log.e("B-payment", etPayment.getText().toString()+"--");
+
                     BigDecimal currentBalance = new BigDecimal(balance);
+                    currentBalance = currentBalance.setScale(ProductsAdapterHelper.getDecimalPlace(), BigDecimal.ROUND_HALF_UP);
                     BigDecimal payment = new BigDecimal(etPayment.getText().toString());
                     if(!paymentType.getName().toLowerCase().equals("cash") && currentBalance.compareTo(payment) == -1) {
                         Toast.makeText(getContext(), "You cannot pay more than your balance using this payment type.", Toast.LENGTH_LONG).show();
@@ -290,11 +295,11 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
     private void balanceColor(double balance) {
         if(balance > 0) {
             tvLabelBalance.setText("Balance");
-            tvBalance.setTextColor(getContext().getResources().getColor(android.R.color.holo_red_dark));
+            tvBalance.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
         }
         else {
-            tvLabelBalance.setText("Change");
-            tvBalance.setTextColor(getContext().getResources().getColor(R.color.payment_color));
+//            tvLabelBalance.setText("Change");
+            tvBalance.setTextColor(ContextCompat.getColor(getContext(), R.color.payment_color));
         }
     }
 
