@@ -97,6 +97,7 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
                 if(offlineData.getType() == OfflineData.INVOICE) {
                     Invoice invoice = offlineData.getObjectFromData(Invoice.class);
                     try {
+                        Log.e("OfflineData", "returnId="+invoice.getReturnId());
                         Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId", invoice.getCustomer().getReturnId()).queryForFirst();
                         Log.e("OfflineData", "Customer from Invoice=" + invoice.getCustomer().getReturnId()+" || "+invoice.getCustomer().getId());
                         Log.e("OfflineData", "Customer from DB=" + customer.getReturnId()+" || "+customer.getId());

@@ -24,6 +24,7 @@ import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
@@ -40,6 +41,7 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
@@ -90,7 +92,6 @@ public abstract class BaseSyncService extends ImonggoService {
     protected List<Integer> listOfIdsPriceListSorted;
     protected List<Object> listPriceListStorage;
     protected List<Object> listOfSalesPromotionStorage;
-    protected List<BranchUserAssoc> listOfBranchIds;
     protected List<? extends BaseTable> listOfIds;
     protected List<Integer> listOfSalesPromotionIds;
     protected String from = "", to = "";
@@ -199,15 +200,21 @@ public abstract class BaseSyncService extends ImonggoService {
     public boolean isExisting(Object o, int id, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
 
         switch (table) {
+            case SETTINGS:
+                Settings settings = (Settings) o;
+                return getHelper().fetchObjects(Settings.class).queryBuilder().where().eq("name", settings.getName()).queryForFirst() != null;
             case EXTRAS: {
                 Extras extras = (Extras) o;
                 return getHelper().fetchObjects(Extras.class).queryBuilder().where().eq("id", extras.getId()).queryForFirst() != null;
             }
             case ORDERS: {
                 Order order = (Order) o;
-                return getHelper().fetchObjects(Order.class).queryBuilder().where().eq("id", order.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Order.class).queryBuilder().where().eq("returnId", order.getReturnId()).queryForFirst() != null;
             }
-
+            case ORDER_LINES: {
+                OrderLine orderLine = (OrderLine) o;
+                return getHelper().fetchObjects(OrderLine.class).queryBuilder().where().eq("id", orderLine.getId()).queryForFirst() != null;
+            }
             case USERS: {
                 User user = (User) o;
                 return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
@@ -259,9 +266,11 @@ public abstract class BaseSyncService extends ImonggoService {
                 ProductTag productTag = (ProductTag) o;
                 return getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("id", productTag.getId()).queryForFirst() != null;
             }
+            case DOCUMENT_ADJUSTMENT_OUT:
+            case DOCUMENT_TRANSFER_OUT:
             case DOCUMENTS: {
                 Document document = (Document) o;
-                return getHelper().fetchObjects(Document.class).queryBuilder().where().eq("id", document.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Document.class).queryBuilder().where().eq("returnId", document.getId()).queryForFirst() != null;
             }
             case INVOICES: {
                 Invoice invoice = (Invoice) o;
@@ -294,11 +303,11 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case ROUTE_PLANS: {
                 RoutePlan routePlan = (RoutePlan) o;
-                return getHelper().fetchObjects(RoutePlan.class).queryBuilder().where().eq("id", routePlan.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(RoutePlan.class).queryBuilder().where().eq("user_id", routePlan.getUser()).queryForFirst() != null;
             }
             case ROUTE_PLANS_DETAILS: {
                 RoutePlanDetail routePlanDetail = (RoutePlanDetail) o;
-                return getHelper().fetchObjects(RoutePlanDetail.class).queryBuilder().where().eq("id", routePlanDetail.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(RoutePlanDetail.class).queryBuilder().where().eq("route_plan_id", routePlanDetail.getRoutePlan()).and().eq("customer_id",routePlanDetail.getCustomer()).queryForFirst() != null;
             }
             case BRANCH_PRODUCTS: {
                 BranchProduct branchProduct = (BranchProduct) o;
@@ -307,9 +316,9 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case SALES_PROMOTIONS: {
 
-                net.nueca.imonggosdk.objects.salespromotion.SalesPromotion salesPromotion = (net.nueca.imonggosdk.objects.salespromotion.SalesPromotion) o;
-                Log.e(TAG, "checking sales promotions... " + getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", salesPromotion.getId()));
-                return getHelper().fetchObjects(net.nueca.imonggosdk.objects.salespromotion.SalesPromotion.class).queryBuilder().where().eq("id", salesPromotion.getId()) != null;
+                SalesPromotion salesPromotion = (SalesPromotion) o;
+                Log.e(TAG, "checking sales promotions... " + (getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", salesPromotion.getId()) != null) + "");
+                return getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", salesPromotion.getId()) != null;
             }
             case SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS: {
                 net.nueca.imonggosdk.objects.salespromotion.Discount discount = (Discount) o;
@@ -466,7 +475,7 @@ public abstract class BaseSyncService extends ImonggoService {
         //Log.e(TAG, "getListOfBranchIds... ");
         try {
           //  Log.e(TAG, "getListOfBranchIds size: " +  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query().size());
-            return  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query();
+            return  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
         } catch (SQLException e) {
             //Log.e(TAG, "getListOfBranchIds: is null");
             return null;

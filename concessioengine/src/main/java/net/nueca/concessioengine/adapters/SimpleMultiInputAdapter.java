@@ -35,10 +35,26 @@ public class SimpleMultiInputAdapter extends BaseRecyclerAdapter<SimpleMultiInpu
 
     @Override
     public void onBindViewHolder(SimpleMultiInputAdapter.ListViewHolder holder, int position) {
-        holder.tvQuantity.setText(getItem(position).getQuantity()+" "+getItem(position).getUnit_name());
-        holder.tvBrand.setText(getItem(position).getExtendedAttributes().getBrand());
-        holder.tvDeliveryDate.setText(getItem(position).getExtendedAttributes().getDelivery_date());
-        holder.tvBatchNo.setText(getItem(position).getExtendedAttributes().getBatch_no());
+        if(getItem(position).getExtendedAttributes() != null) {
+            holder.tvBrand.setText(getItem(position).getExtendedAttributes().getBrand());
+            holder.tvDeliveryDate.setText(getItem(position).getExtendedAttributes().getDelivery_date());
+            holder.tvBatchNo.setText(getItem(position).getExtendedAttributes().getBatch_no());
+
+            if(hasBrand)
+                holder.tvQuantity.setText(getItem(position).getQuantity()+" "+getItem(position).getUnit_name());
+            else {
+                holder.tvQuantity.setText(getItem(position).getQuantity());
+                holder.tvBrand.setText(getItem(position).getUnit_name());
+
+                holder.tvBrand.setVisibility(View.VISIBLE);
+            }
+        }
+        else {
+            holder.tvBrand.setVisibility(View.VISIBLE);
+
+            holder.tvQuantity.setText(getItem(position).getQuantity());
+            holder.tvBrand.setText(getItem(position).getUnit_name());
+        }
     }
 
     @Override

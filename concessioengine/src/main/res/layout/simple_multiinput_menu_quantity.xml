@@ -14,4 +14,6 @@
     android:background="@color/white_20"
     android:gravity="center"
     android:textStyle="bold"
-    android:id="@+id/tvQuantity"/>
+    android:id="@+id/tvQuantity"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp" />

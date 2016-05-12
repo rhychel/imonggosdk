@@ -225,4 +225,5 @@ public class ImonggoOperations {
         queue.add(HTTPRequests.sendPOSTRequest(context, session, volleyRequestListener, server, Table.POS_DEVICES, jsonObject, parameter));
     }
 
+
 }

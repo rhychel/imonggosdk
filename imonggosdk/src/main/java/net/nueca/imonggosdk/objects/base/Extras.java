@@ -1,15 +1,10 @@
 package net.nueca.imonggosdk.objects.base;
 
-import android.util.Log;
-
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
-import net.nueca.imonggosdk.enums.DatabaseOperation;
-import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.Product;
@@ -22,7 +17,6 @@ import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
-import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
@@ -186,6 +180,9 @@ public class Extras extends DBTable {
     @Expose
     @DatabaseField
     private Integer show = 1;
+    @Expose
+    @DatabaseField
+    private String payment_date = null;
 
     /** FOREIGN TABLES **/
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
@@ -261,6 +258,7 @@ public class Extras extends DBTable {
         check_number = builder.check_number;
         bank_branch = builder.bank_branch;
         check_date = builder.check_date;
+        payment_date = builder.payment_date;
 
         payment_term_id = builder.payment_term_id;
         payment_term_code = builder.payment_term_code;
@@ -783,6 +781,14 @@ public class Extras extends DBTable {
         this.show = show;
     }
 
+    public String getPayment_date() {
+        return payment_date;
+    }
+
+    public void setPayment_date(String payment_date) {
+        this.payment_date = payment_date;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
@@ -843,6 +849,7 @@ public class Extras extends DBTable {
         protected User user;
         protected Unit unit;
         protected InvoicePayment invoicePayment;
+        protected String payment_date;
 
         protected String delivery_date;
         protected String brand;
@@ -1129,6 +1136,11 @@ public class Extras extends DBTable {
 
         public Builder require_date(Boolean requires_expiry_date) {
             this.require_date = requires_expiry_date;
+            return this;
+        }
+
+        public Builder payment_date(String payment_date) {
+            this.payment_date = payment_date;
             return this;
         }
 

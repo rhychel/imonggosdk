@@ -8,6 +8,7 @@ public class RemarkBuilder {
     private String delivery_reference_no;
     private int page = 1;
     private int pageTotal = 1;
+    private String other = "";
 
     public RemarkBuilder parse(String remark) {
         if(remark == null || remark.length() == 0)
@@ -23,6 +24,12 @@ public class RemarkBuilder {
                 String paging[] = keyvalue[1].split("/");
                 page = Integer.parseInt(paging[0]);
                 pageTotal = Integer.parseInt(paging[1]);
+            }
+            else {
+                if(other.isEmpty())
+                    other = element;
+                else
+                    other += "," + element;
             }
         }
         return this;
@@ -41,6 +48,10 @@ public class RemarkBuilder {
         this.pageTotal = max;
         return this;
     }
+    public RemarkBuilder other(String other) {
+        this.other = other;
+        return this;
+    }
 
     public String build() {
         String remark = "manual=" + isManual;
@@ -48,6 +59,8 @@ public class RemarkBuilder {
             remark += ",delivery_reference_no=" + delivery_reference_no;
 
         remark += ",page=" + page + "/" + pageTotal;
+        if(!other.isEmpty())
+            remark += "," + other;
         return remark;
     }
 }

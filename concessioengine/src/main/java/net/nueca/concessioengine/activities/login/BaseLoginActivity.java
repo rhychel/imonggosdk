@@ -441,6 +441,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.etPassword = editTextPassword;
 
         if (TEST_ACCOUNT) {
+            Log.e(TAG, "setting test account..");
             setEditTextAccountID(getResources().getString(R.string.test_account_id));
             setEditTextEmail(getResources().getString(R.string.test_email));
             setEditTextPassword(getResources().getString(R.string.test_password));
@@ -465,6 +466,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         Log.e("Servers", label);
 
                         setServer(Server.getServer(label));
+                        setServer(Server.PLDTRETAILCLOUD);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

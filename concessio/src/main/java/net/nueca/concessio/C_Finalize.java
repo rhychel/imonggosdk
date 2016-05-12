@@ -48,6 +48,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.Configurations;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 
@@ -266,7 +267,7 @@ public class C_Finalize extends ModuleActivity {
                         DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total return amount cannot be greater than your total sales amount.", R.style.AppCompatDialogStyle_Light);
                         return;
                     }
-                    if(((Double)tvBalance.getTag()) == 0) {
+                    if(((Double)tvBalance.getTag()) == 0 && ProductsAdapterHelper.getSelectedReturnProductItems().size() > 0) {
                         DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total amount cannot be zero.", R.style.AppCompatDialogStyle_Light);
                         return;
                     }
@@ -300,7 +301,6 @@ public class C_Finalize extends ModuleActivity {
                     size = ProductsAdapterHelper.getSelectedProductItems().size();
                 else
                     size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
-
                 tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
             }
 
@@ -359,7 +359,7 @@ public class C_Finalize extends ModuleActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(isForHistoryDetail)
+        if(isForHistoryDetail && (offlineData != null && getModuleSetting(offlineData.getConcessioModule()).isCan_print()))
             getMenuInflater().inflate(R.menu.others_menu, menu);
 
         if(getModuleSetting(ConcessioModule.INVOICE).isHas_returns())
@@ -435,6 +435,8 @@ public class C_Finalize extends ModuleActivity {
                     super.handleMessage(msg);
                     reviewAdapter.updateReturns();
                     vpReview.setCurrentItem(1);
+                    int size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+                    tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
                 }
             };
             handler.sendEmptyMessageDelayed(0, 100);
@@ -482,6 +484,7 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setHasInStock(!(isForHistoryDetail || isLayaway));
             simpleProductsFragment.setConcessioModule(concessioModule);
             simpleProductsFragment.setCustomer(customer);
+            simpleProductsFragment.setCanOverridePrice(getModuleSetting(concessioModule).isCan_override_price());
 
             CustomerGroup customerGroup = null;
             try {
@@ -516,6 +519,12 @@ public class C_Finalize extends ModuleActivity {
                         tvBalance.setText("P" + NumberTools.separateInCommas(balance));
                         tvBalance.setTag(balance);
                         toggleNext(llFooter, tvItems);
+
+                        if(vpReview.getCurrentItem() == 1) {
+                            // improve shit
+                            int size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+                            tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
+                        }
                     }
                 }
             });
@@ -626,7 +635,7 @@ public class C_Finalize extends ModuleActivity {
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
 
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
-                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoDiscount().doubleValue(), 2)), 32)+"\r\n").getBytes());
+                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
 
                 if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", "("+invoice.getExtras().getCustomer_discount_text_summary()+")", 32) + "\r\n").getBytes());
@@ -634,14 +643,14 @@ public class C_Finalize extends ModuleActivity {
                     for (Double cusDisc : paymentsComputation.getCustomerDiscount())
                         data.add(("(" + NumberTools.separateInCommas(cusDisc) + ")\r\n").getBytes());
                 }
-                if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
-                    data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
-                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
-                }
-                if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
-                    data.add((EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
-                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
-                }
+//                if(!paymentsComputation.getTotalCompanyDiscount().equals(BigDecimal.ZERO)) {
+//                    data.add((EpsonPrinterTools.spacer("LESS Company Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalCompanyDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
+//                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
+//                }
+//                if(!paymentsComputation.getTotalProductDiscount().equals(BigDecimal.ZERO)) {
+//                    data.add((EpsonPrinterTools.spacer("LESS Product Discount: ", "("+NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalProductDiscount().doubleValue(), 2))+")", 32) + "\r\n").getBytes());
+//                    data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
+//                }
 
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
                 data.add((EpsonPrinterTools.spacer("Net Order Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(true).doubleValue(), 2)), 32)+"\r\n\r\n").getBytes());
@@ -748,22 +757,26 @@ public class C_Finalize extends ModuleActivity {
                 data.add("Payments                  Amount".getBytes());
                 for(InvoicePayment invoicePayment : invoice.getPayments()) {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
-                    if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip"))
-                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32)+"\r\n").getBytes());
+                    if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip")) {
+//                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32) + "\r\n").getBytes());
+                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), DateTimeTools.convertToDate(invoicePayment.getExtras().getPayment_date(), "yyyy-MM-dd", "MMM dd, yyyy"), 32) + "\r\n").getBytes());
+                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
+                        data.add((NumberTools.separateInCommas(invoicePayment.getTender()) + "\r\n").getBytes());
 
-                    items++;
+                        items++;
 
-                    if(numberOfPages > 1.0 && page < (int)numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
-                        data.add(("\r\n\r\n\r\n").getBytes());
-                        data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x01 }); // Center
-                        data.add(("*Page "+page+"*\r\n\r\n").getBytes());
-                        data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
-                        page++;
-                        items = 0;
+                        if (numberOfPages > 1.0 && page < (int) numberOfPages && items == Configurations.MAX_ITEMS_FOR_PRINTING) {
+                            data.add(("\r\n\r\n\r\n").getBytes());
+                            data.add(new byte[]{0x1b, 0x1d, 0x61, 0x01}); // Center
+                            data.add(("*Page " + page + "*\r\n\r\n").getBytes());
+                            data.add(("- - - - - - CUT HERE - - - - - -\r\n\r\n").getBytes());
+                            page++;
+                            items = 0;
 
-                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
-                            break;
-                        data.clear();
+                            if (!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                                break;
+                            data.clear();
+                        }
                     }
                 }
                 data.add((EpsonPrinterTools.spacer("Paid Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPaymentMade().doubleValue(), 2)), 32)+"\r\n").getBytes());

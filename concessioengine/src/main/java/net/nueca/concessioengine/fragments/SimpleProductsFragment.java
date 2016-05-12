@@ -43,11 +43,8 @@ import net.nueca.concessioengine.dialogs.BaseQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleQuantityDialog;
 import net.nueca.concessioengine.dialogs.SimpleSalesQuantityDialog;
 import net.nueca.concessioengine.objects.SelectedProductItem;
-import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.ConcessioModule;
-import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.BranchPrice;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
@@ -127,6 +124,15 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             tvReason.setText("");
     }
 
+    public void customReason(String message, View.OnClickListener onClickListener) {
+        tvReason.setText(message);
+        ivEdit.setOnClickListener(onClickListener);
+    }
+
+    public void customReason(String message) {
+        tvReason.setText(message);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         View view = inflater.inflate(useRecyclerView ? R.layout.simple_products_fragment_rv : R.layout.simple_products_fragment_lv, container,
@@ -168,6 +174,22 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         Log.e("useRecyclerView", useRecyclerView+"");
         if(useRecyclerView) {
             llReason = (LinearLayout) view.findViewById(R.id.llReason);
+            if(concessioModule == ConcessioModule.RECEIVE_BRANCH) {
+                llReason.setVisibility(View.VISIBLE);
+                tvReason = (TextView) view.findViewById(R.id.tvReason);
+                ivEdit = (ImageView) view.findViewById(R.id.ivEdit);
+                ((TextView) view.findViewById(R.id.tvReasonLabel)).setText("DR. No.");
+                if(isFinalize)
+                    ivEdit.setVisibility(View.GONE);
+            }
+            if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
+                llReason.setVisibility(View.VISIBLE);
+                tvReason = (TextView) view.findViewById(R.id.tvReason);
+                ivEdit = (ImageView) view.findViewById(R.id.ivEdit);
+                ((TextView) view.findViewById(R.id.tvReasonLabel)).setText("PR. No.");
+                if(isFinalize)
+                    ivEdit.setVisibility(View.GONE);
+            }
             if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH) {
                 llReason.setVisibility(View.VISIBLE);
                 tvReason = (TextView) view.findViewById(R.id.tvReason);
@@ -270,7 +292,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             rvProducts.setAdapter(productRecyclerViewAdapter);
             rvProducts.addOnScrollListener(rvScrollListener);
 
-            if(isFinalize && !displayOnly) {
+            if(isFinalize && !displayOnly && canDeleteItems) {
                 ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
                 itemTouchHelper.attachToRecyclerView(rvProducts);
             }
@@ -367,6 +389,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 simpleSalesQuantityDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 simpleSalesQuantityDialog.setSelectedProductItem(selectedProductItem);
                 simpleSalesQuantityDialog.setHelper(getHelper());
+                simpleSalesQuantityDialog.setCanOverridePrice(canOverridePrice);
 
                 if(productRecyclerViewAdapter instanceof BaseSalesProductRecyclerAdapter) {
                     BaseSalesProductRecyclerAdapter salesAdapter = (BaseSalesProductRecyclerAdapter) productRecyclerViewAdapter;
@@ -608,6 +631,7 @@ public class SimpleProductsFragment extends BaseProductsFragment {
             }
             else
                 changeCategory(category, position);
+
         }
 
         @Override

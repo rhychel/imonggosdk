@@ -1,5 +1,9 @@
 package net.nueca.imonggosdk.objects.invoice;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.customer.Customer;
@@ -88,8 +92,10 @@ public class RewardPayment {
         return paymentBatches;
     }
 
-    protected double getPointsUsed() {
+    public double getPointsUsed() {
         List<Integer> paymentBatches = getPaymentBatches();
+        if(paymentBatches.size() <= 0)
+            return 0d;
 
         int latestBatch = paymentBatches.get(paymentBatches.size()-1);
         double points = 0d;

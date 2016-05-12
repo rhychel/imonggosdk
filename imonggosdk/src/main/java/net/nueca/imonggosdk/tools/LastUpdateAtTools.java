@@ -14,10 +14,13 @@ public class LastUpdateAtTools {
     public static String getTableToSync(Table table) {
         return getTableToSync(table, "");
     }
+
     public static String getTableToSync(Table table, String id) {
         switch (table) {
             case DOCUMENTS:
-                return DOCUMENTS+id;
+            case DOCUMENT_TRANSFER_OUT:
+            case DOCUMENT_ADJUSTMENT_OUT:
+                return DOCUMENTS + id;
             default:
                 return table.getStringName();
         }

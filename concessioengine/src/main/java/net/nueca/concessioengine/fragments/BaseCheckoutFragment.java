@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
-import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
@@ -20,12 +19,11 @@ import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.NumberTools;
+import net.nueca.imonggosdk.tools.PointsTools;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +39,7 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
 
     protected Invoice invoice;
     protected InvoiceTools.PaymentsComputation computation = new InvoiceTools.PaymentsComputation();
+    protected double usedPointsInAmount;
 
     public BaseCheckoutFragment() {
         if(getArguments() != null && getArguments().containsKey(INVOICE_ARGUMENT_KEY)) {
@@ -144,7 +143,7 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         return invoice;
     }
 
-    public BigDecimal getPointsInAmountUsed() {
+    public BigDecimal getTotalPointsInAmountUsed() {
         return computation.getTotalPointsPayment();
     }
 
@@ -156,9 +155,28 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         List<InvoicePayment> payments = computation.getPayments();
         if(includeReturns)
             payments.addAll(computation.getReturnsPayments());
+
+        usedPointsInAmount = 0d;
+        for(InvoicePayment payment : payments) {
+            Extras paymentExtras = payment.getExtras();
+            if(paymentExtras == null)
+                paymentExtras = new Extras(InvoicePayment.class.getName().toUpperCase(), payment.getId());
+
+            if(paymentExtras.getPayment_date() == null) {
+                paymentExtras.setPayment_date(DateTimeTools.convertDateOnly(DateTimeTools.getCurrentDateTimeUTCFormat().replaceAll("-", "/")));
+
+                if(payment.getPayment_type_id() == PointsTools.getRewardsPointsPaymentType(getHelper()).getId())
+                    usedPointsInAmount += payment.getAmount();
+            }
+            payment.setExtras(paymentExtras);
+        }
         return payments;
     }
-    
+
+    public double getUsedPointsInAmount() {
+        return usedPointsInAmount;
+    }
+
     public double getAmountDue() {
         return computation.getTotalPayable(true).doubleValue();
     }
