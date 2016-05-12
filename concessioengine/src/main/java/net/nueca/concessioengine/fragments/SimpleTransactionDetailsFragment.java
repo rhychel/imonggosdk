@@ -13,22 +13,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.nueca.concessioengine.R;
-import net.nueca.concessioengine.adapters.SimpleProductListAdapter;
-import net.nueca.concessioengine.adapters.SimpleProductRecyclerViewAdapter;
+import net.nueca.concessioengine.adapters.SimpleMultipleProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.SimpleSalesProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.ListingType;
+import net.nueca.concessioengine.objects.MultiItem;
 import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.document.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +43,46 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
 
     private OfflineData offlineData;
 
+    private SimpleMultipleProductRecyclerAdapter simpleMultipleProductRecyclerAdapter;
+
+    private List<MultiItem> getItems() {
+        List<MultiItem> items = new ArrayList<>();
+        List<Product> products = getProducts();
+
+        int headerCount = 0;
+        int itemCount = 0;
+        int sectionPosition = 0;
+        for(Product product : products) {
+            SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().getSelectedProductItem(product);
+
+            MultiItem headerMI = new MultiItem();
+            headerMI.setHeader(true);
+            headerMI.setProduct(product);
+            headerMI.setSelectedProductItem(selectedProductItem);
+            headerMI.setSectionFirstPosition(sectionPosition);
+            headerCount++;
+
+            Log.e("getItems", "header| firstPosition = "+sectionPosition);
+            items.add(headerMI);
+
+            for(Values values : selectedProductItem.getValues()) {
+                MultiItem item = new MultiItem();
+                item.setHeader(false);
+                item.setValues(values);
+                item.setProduct(product);
+                item.setSectionFirstPosition(sectionPosition);
+                Log.e("getItems", "items| firstPosition = "+sectionPosition);
+
+                items.add(item);
+                itemCount++;
+            }
+            sectionPosition = itemCount+headerCount;
+            Log.e("getItems", "sectionPosition| firstPosition = "+sectionPosition);
+        }
+
+        return items;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.simple_products_fragment_rv, container, false);
@@ -52,13 +92,21 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
         ((Spinner) view.findViewById(R.id.spCategories)).setVisibility(View.GONE);
         isFinalize = true;
 
-        productRecyclerViewAdapter = new SimpleSalesProductRecyclerAdapter(getActivity(), getHelper(), getProducts());
-        productRecyclerViewAdapter.setListingType(ListingType.ADVANCED_SALES);
-        productRecyclerViewAdapter.setBranch(branch);
-        productRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
-        productRecyclerViewAdapter.setHasInStock(hasInStock);
-        rvProducts.setAdapter(productRecyclerViewAdapter);
-        rvProducts.addOnScrollListener(rvScrollListener);
+        if(multipleInput) {
+            simpleMultipleProductRecyclerAdapter = new SimpleMultipleProductRecyclerAdapter(getActivity(), getHelper(), getItems());
+            simpleMultipleProductRecyclerAdapter.initializeRecyclerView(getActivity(), rvProducts);
+            rvProducts.setAdapter(simpleMultipleProductRecyclerAdapter);
+        }
+        else {
+            productRecyclerViewAdapter = new SimpleSalesProductRecyclerAdapter(getActivity(), getHelper(), getProducts());
+            productRecyclerViewAdapter.setListingType(ListingType.ADVANCED_SALES);
+            productRecyclerViewAdapter.setBranch(branch);
+            productRecyclerViewAdapter.initializeRecyclerView(getActivity(), rvProducts);
+            productRecyclerViewAdapter.setHasInStock(hasInStock);
+            rvProducts.setAdapter(productRecyclerViewAdapter);
+            rvProducts.addOnScrollListener(rvScrollListener);
+        }
+
 
         if(offlineData.getType() == OfflineData.DOCUMENT) {
             if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
@@ -80,7 +128,9 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
     }
 
     public int numberOfItems() {
-        return productRecyclerViewAdapter.getItemCount();
+        if(productRecyclerViewAdapter != null)
+            return productRecyclerViewAdapter.getItemCount();
+        return simpleMultipleProductRecyclerAdapter.getItemCount();
     }
 
     @Override
