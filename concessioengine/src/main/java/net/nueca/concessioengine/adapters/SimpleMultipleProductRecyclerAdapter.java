@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.tonicartos.superslim.GridSLM;
 import com.tonicartos.superslim.LayoutManager;
 import com.tonicartos.superslim.LinearSLM;
@@ -16,11 +18,13 @@ import com.tonicartos.superslim.LinearSLM;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseMultipleProductRecyclerAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.MultiItem;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.operations.ImonggoTools;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -106,6 +110,15 @@ public class SimpleMultipleProductRecyclerAdapter extends BaseMultipleProductRec
                 holder.tvQuantity.setText(String.format("%1$s %2$s", getSelectedProductItems().getQuantity(multiItem.getProduct()), getSelectedProductItems()
                         .getUnitName(multiItem.getProduct(), false)));
             }
+
+            holder.tvRetailPrice.setText(String.format("%s", selectedProductItem.getValuesRetailPrices()));
+
+            if(multiItem.getProduct().getThumbnail_url() != null && !multiItem.getProduct().getThumbnail_url().trim().equals("")) {
+                String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
+                        ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), multiItem.getProduct().getId() + "", false, false);
+                holder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
+            }
+
             if (lp.isHeaderInline() || (marginsFixed && !lp.isHeaderOverlay())) {
                 lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
             } else {
@@ -116,6 +129,7 @@ public class SimpleMultipleProductRecyclerAdapter extends BaseMultipleProductRec
             lp.headerStartMarginIsAuto = !marginsFixed;
         }
         else {
+            // TODO Support more
             holder.tvQuantity.setText(getItem(position).getValues().getQuantity()+" "+getItem(position).getValues().getUnit_name());
         }
 
@@ -137,16 +151,25 @@ public class SimpleMultipleProductRecyclerAdapter extends BaseMultipleProductRec
 
     @Override
     public void initializeRecyclerView(Context context, RecyclerView rvProducts) {
-        layoutManager = new LayoutManager(context);
+        Log.e("initializeRecyclerView", "SimpleMultipleProductRecyclerAdapter");
+        layoutManager = new LayoutManager(context){
+            @Override
+            public Parcelable onSaveInstanceState() { return null; }
+
+            @Override
+            public void onRestoreInstanceState(Parcelable state) { }
+        };
         rvProducts.setLayoutManager(layoutManager);
+        Log.e("initializeRecyclerView", "SimpleMultipleProductRecyclerAdapter--has been set");
     }
 
     public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {
 
         public View itemView;
         // HEADER
+        public NetworkImageView ivProductImage;
         public AutofitTextView tvInStock, tvProductName;
-        public TextView tvSubtotal;
+        public TextView tvSubtotal, tvRetailPrice;
         public LinearLayout llQuantity;
 
         // ITEMS
@@ -156,15 +179,18 @@ public class SimpleMultipleProductRecyclerAdapter extends BaseMultipleProductRec
         public ListViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
+
             tvQuantity = (AutofitTextView) itemView.findViewById(R.id.tvQuantity);
             // HEADER
             if(itemView.findViewById(R.id.tvBrand) == null) {
+                ivProductImage = (NetworkImageView) itemView.findViewById(R.id.ivProductImage);
                 tvInStock = (AutofitTextView) itemView.findViewById(R.id.tvInStock);
 //            tvRetailPrice = (TextView) itemView.findViewById(R.id.tvRetailPrice);
 //            ivProductImage = (NetworkImageView) itemView.findViewById(R.id.ivProductImage);
                 tvProductName = (AutofitTextView) itemView.findViewById(R.id.tvProductName);
                 tvSubtotal = (TextView) itemView.findViewById(R.id.tvSubtotal);
                 llQuantity = (LinearLayout) itemView.findViewById(R.id.llQuantity);
+                tvRetailPrice = (TextView) itemView.findViewById(R.id.tvRetailPrice);
             }
             else {
                 tvBrand = (TextView) itemView.findViewById(R.id.tvBrand);

@@ -305,7 +305,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                                     .add(R.id.flContent, simpleTransactionDetailsFragment, "transaction_details")
                                     .addToBackStack("transaction_details")
-                                    .commit();
+                                    .commitAllowingStateLoss();
                         }
 
                     }

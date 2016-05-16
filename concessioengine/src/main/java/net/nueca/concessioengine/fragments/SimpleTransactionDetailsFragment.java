@@ -92,6 +92,7 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
         ((Spinner) view.findViewById(R.id.spCategories)).setVisibility(View.GONE);
         isFinalize = true;
 
+        Log.e("onCreateView", "multipleInput="+multipleInput);
         if(multipleInput) {
             simpleMultipleProductRecyclerAdapter = new SimpleMultipleProductRecyclerAdapter(getActivity(), getHelper(), getItems());
             simpleMultipleProductRecyclerAdapter.initializeRecyclerView(getActivity(), rvProducts);
@@ -106,7 +107,6 @@ public class SimpleTransactionDetailsFragment extends BaseProductsFragment {
             rvProducts.setAdapter(productRecyclerViewAdapter);
             rvProducts.addOnScrollListener(rvScrollListener);
         }
-
 
         if(offlineData.getType() == OfflineData.DOCUMENT) {
             if(offlineData.getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {

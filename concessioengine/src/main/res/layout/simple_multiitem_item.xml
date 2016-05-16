@@ -5,8 +5,7 @@
     xmlns:autofit="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:weightSum="3"
-    android:layout_marginLeft="51dp"
-    android:background="@color/secondary_text">
+    android:background="@color/gray_90">
 
     <LinearLayout
         android:orientation="vertical"
@@ -14,7 +13,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:layout_weight="2"
-        android:layout_marginLeft="11dp"
+        android:layout_marginLeft="62dp"
         android:layout_marginTop="8dp">
 
         <TextView
@@ -65,7 +64,7 @@
         android:layout_width="0dp"
         android:layout_height="70dp"
         android:text="1000"
-        android:textSize="24sp"
+        android:textSize="16sp"
         android:singleLine="true"
         autofit:minTextSize="12sp"
         android:textStyle="bold"
