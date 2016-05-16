@@ -41,6 +41,7 @@ import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
@@ -208,9 +209,12 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case ORDERS: {
                 Order order = (Order) o;
-                return getHelper().fetchObjects(Order.class).queryBuilder().where().eq("id", order.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Order.class).queryBuilder().where().eq("returnId", order.getReturnId()).queryForFirst() != null;
             }
-
+            case ORDER_LINES: {
+                OrderLine orderLine = (OrderLine) o;
+                return getHelper().fetchObjects(OrderLine.class).queryBuilder().where().eq("id", orderLine.getId()).queryForFirst() != null;
+            }
             case USERS: {
                 User user = (User) o;
                 return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;

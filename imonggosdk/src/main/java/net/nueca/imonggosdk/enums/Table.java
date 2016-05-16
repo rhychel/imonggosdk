@@ -68,6 +68,7 @@ public enum Table {
     ORDERS_STOCK_REQUEST(API_TYPE.API, "Stock Requests", Order.class, "orders_stock_requests"),
     POS_DEVICES(API_TYPE.API, "Pos Devices", null),
     DAILY_SALES(API_TYPE.API, "Daily Sales", DailySales.class, "daily_sales"),
+    @Deprecated
     DOCUMENTS(API_TYPE.API, "Documents", Document.class, "documents"),
     DOCUMENT_TRANSFER_OUT(API_TYPE.API, "Transfer Out Docs", Document.class, "document_transfer_out"),
     DOCUMENT_ADJUSTMENT_OUT(API_TYPE.API, "Adjustment Out Docs", Document.class, "document_adjustment_out"),

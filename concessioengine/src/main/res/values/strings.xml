@@ -38,9 +38,9 @@
     <!--<string name="test_email">cirioong@gmail.com</string>-->
     <!--<string name="test_password">password</string>-->
 
-    <string name="test_account_id">1034092</string>
-    <string name="test_email">unitedbig3@yahoo.com.ph</string>
-    <string name="test_password">password</string>
+    <!--<string name="test_account_id">1034092</string>-->
+    <!--<string name="test_email">unitedbig3@yahoo.com.ph</string>-->
+    <!--<string name="test_password">password</string>-->
 
     <!--<string name="test_account_id">A1029</string>-->
     <!--<string name="test_email">elvin29@imonggo.com8</string>-->
@@ -54,9 +54,15 @@
     <!--<string name="test_email">K1457A_31042@imonggo.com</string>-->
     <!--<string name="test_password">123rebisco456</string>-->
 
-    <!--<string name="test_account_id">A1029</string>-->
-    <!--<string name="test_email">BValerozo@A1029.com</string>-->
-    <!--<string name="test_password">rebisco</string>-->
+    <string name="test_account_id">sapintegration</string>
+    <string name="test_email">gama@nueca.net</string>
+    <string name="test_password">gamagama</string>
+
+<!--
+    <string name="test_account_id">A1029</string>
+    <string name="test_email">BValerozo@A1029.com</string>
+    <string name="test_password">rebisco</string>
+-->
 
     <!--<string name="test_account_id">janice</string>-->
     <!--<string name="test_email">CROSS5_SA5@janice.com</string>-->
