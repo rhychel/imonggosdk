@@ -745,7 +745,7 @@ public class C_Finalize extends ModuleActivity {
                     data.add("--------------------------------".getBytes());
                     data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(Math.abs(totalQuantity)), 32)+"\r\n").getBytes());
                     if(paymentsComputation.getReturnsPayments().size() > 1)
-                        data.add((EpsonPrinterTools.spacer("LESS Net RGS Amount: ", "("+NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(1).getAmount()))+")", 32)+"\r\n\r\n").getBytes());
+                        data.add((EpsonPrinterTools.spacer("LESS Net RGS Amount: ", "("+NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(2).getAmount()))+")", 32)+"\r\n\r\n").getBytes());
                     else
                         data.add((EpsonPrinterTools.spacer("LESS Net RGS Amount: ", "("+NumberTools.separateInCommas(Math.abs(paymentsComputation.getReturnsPayments().get(0).getAmount()))+")", 32)+"\r\n\r\n").getBytes());
                 }
