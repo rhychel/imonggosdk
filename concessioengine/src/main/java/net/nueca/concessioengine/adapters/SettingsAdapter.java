@@ -20,7 +20,6 @@ import com.tonicartos.superslim.LinearSLM;
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.tools.appsettings.AppSettings;
-import net.nueca.imonggosdk.objects.Product;
 
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class SettingsAdapter extends BaseRecyclerAdapter<SettingsAdapter.ListVie
     public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
         if(viewType == VIEW_TYPE_HEADER)
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_settings_header_letter, parent, false);
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_settings_header, parent, false);
         else
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_settings_listitem, parent, false);
         ListViewHolder lvh = new ListViewHolder(v);

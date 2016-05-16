@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.tonicartos.superslim.LayoutManager;
@@ -40,7 +41,7 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
     protected OnItemClickListener onItemClickListener = null;
     protected OnItemLongClickListener onItemLongClickListener = null;
 
-    public RecyclerView.LayoutManager layoutManager;
+    public LayoutManager layoutManager;
     protected LinearLayoutManager linearLayoutManager;
     protected GridLayoutManager gridLayoutManager;
 
@@ -143,6 +144,7 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
     }
 
     public void initializeRecyclerView(Context context, RecyclerView rvProducts) {
+        Log.e("BaseRecyclerAdapter", "initializeRecyclerView");
         initializeRecyclerView(context, rvProducts, true);
     }
 
