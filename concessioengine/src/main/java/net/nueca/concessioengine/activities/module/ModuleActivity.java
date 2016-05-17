@@ -174,12 +174,6 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         Log.e("onBackPressed", "is backed :)");
     }
 
-    // TODO Search the document
-    public List<Document> getDocument(int branchId, String referenceNumber) {
-        List<Document> documents = new ArrayList<>();
-        return documents;
-    }
-
     /**
      * TODO REVISE According to the universal Concessio Settings
      * Get the transaction types the account can access.
@@ -505,6 +499,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return updated;
     }
 
+    @Deprecated
     private void processDocument(Document document, List<Product> productList) throws SQLException {
         List<DocumentLine> documentLines = document.getDocument_lines();
         for(DocumentLine documentLine : documentLines) {
@@ -573,6 +568,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         }
     }
 
+    @Deprecated
     protected List<Product> processObject(Object object) throws SQLException {
         List<Product> productList = new ArrayList<>();
 
