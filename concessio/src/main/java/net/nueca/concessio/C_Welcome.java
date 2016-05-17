@@ -41,9 +41,13 @@ public class C_Welcome extends WelcomeActivity {
         spBranch = (Spinner) findViewById(R.id.spBranch);
         btnBegin = (Button) findViewById(R.id.btnBegin);
 
-        ArrayAdapter<Branch> branchArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, getBranches());
-        branchArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
-        spBranch.setAdapter(branchArrayAdapter);
+        try {
+            ArrayAdapter<Branch> branchArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, getBranches());
+            branchArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
+            spBranch.setAdapter(branchArrayAdapter);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         btnNotYou.setOnClickListener(new View.OnClickListener() {
             @Override

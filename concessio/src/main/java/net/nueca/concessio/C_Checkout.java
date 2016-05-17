@@ -33,6 +33,7 @@ import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.BluetoothTools;
+import net.nueca.concessioengine.tools.InventoryTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.DateTimeTools;
@@ -107,7 +108,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         public void whenDismissed() {
             if(getAppSetting().isCan_change_inventory())
                 if(!isLayaway)
-                    updateInventoryFromSelectedItemList(false);
+                    InventoryTools.updateInventoryFromSelectedItemList(getHelper());
             Intent intent = new Intent();
             intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
             setResult(SUCCESS, intent);
@@ -533,7 +534,12 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     }
 
     private void printSimulator(final Invoice invoice) {
-        Branch branch = getBranches().get(0);
+        Branch branch = null;
+        try {
+            branch = getBranches().get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         StringBuilder printText = new StringBuilder();
 
@@ -721,7 +727,12 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
             return;
         if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
             return;
-        Branch branch = getBranches().get(0);
+        Branch branch = null;
+        try {
+            branch = getBranches().get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         ArrayList<byte[]> data = new ArrayList<>();
 
@@ -1006,7 +1017,12 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                 @Override
                 public Printer onBuildPrintData(Printer printer) {
-                    Branch branch = getBranches().get(0);
+                    Branch branch = null;
+                    try {
+                        branch = getBranches().get(0);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     for(int i = 0;i < labels.length;i++) {
                         StringBuilder printText = new StringBuilder();
                         try {

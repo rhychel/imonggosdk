@@ -36,12 +36,15 @@ import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.BluetoothTools;
 import net.nueca.concessioengine.tools.DiscountTools;
+import net.nueca.concessioengine.tools.DocumentTools;
+import net.nueca.concessioengine.tools.InventoryTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
 import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
@@ -125,7 +128,7 @@ public class C_Finalize extends ModuleActivity {
                                 .object(offlineData)
                                 .queue();
 
-                        revertInventoryFromInvoice();
+                        InventoryTools.revertInventoryFromSelectedItemList(getHelper());
 
                         onBackPressed();
                     }
@@ -494,7 +497,11 @@ public class C_Finalize extends ModuleActivity {
                 e.printStackTrace();
             }
             simpleProductsFragment.setCustomerGroup(customerGroup);
-            simpleProductsFragment.setBranch(getBranches().get(0));
+            try {
+                simpleProductsFragment.setBranch(getBranches().get(0));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             simpleProductsFragment.setOnSalesFinalize(true);
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
@@ -566,7 +573,12 @@ public class C_Finalize extends ModuleActivity {
             return;
         if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
             return;
-        Branch branch = getBranches().get(0);
+        Branch branch = null;
+        try {
+            branch = getBranches().get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         ArrayList<byte[]> data = new ArrayList<>();
 
         for(int i = 0;i < labels.length;i++) {
@@ -846,7 +858,12 @@ public class C_Finalize extends ModuleActivity {
 
                 @Override
                 public Printer onBuildPrintData(Printer printer) {
-                    Branch branch = getBranches().get(0);
+                    Branch branch = null;
+                    try {
+                        branch = getBranches().get(0);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     for(int i = 0;i < labels.length;i++) {
                         StringBuilder printText = new StringBuilder();
                         try {

@@ -15,7 +15,9 @@ import java.sql.SQLException;
  */
 public class InventoryTools {
 
-
+    public static int updateInventoryFromSelectedItemList(ImonggoDBHelper2 dbHelper) {
+        return updateInventoryFromSelectedItemList(dbHelper, false);
+    }
     /**
      *
      * @return the number of inventory objects updated

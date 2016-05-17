@@ -49,111 +49,6 @@ public class C_Welcome extends ModuleActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_welcome);
 
-        /*Document.Builder builder = new Document.Builder();
-        try {
-            builder.addDocumentLine(new DocumentLine.Builder()
-                    .line_no(1)
-                    .unit_content_quantity(200)
-                    .unit_id(31167)
-                    .unit_name("Bndl(s)")
-                    .unit_quantity(60)
-                    .unit_retail_price(0)
-                    .product_id(192565)
-                    .quantity(20)
-                    .retail_price(0)
-                    .build());
-
-            builder.generateReference(this, getSession().getDevice_id());
-            builder.target_branch_id(getSession().getCurrent_branch_id());
-            builder.document_type_code(DocumentTypeCode.RELEASE_ADJUSTMENT);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        Document document1 = builder.build();
-        document1.setReference(document1.getReference()+"a");
-        document1.setExtras(new Extras.Builder()
-                .customer_id(182556)
-                .build());
-        Document document2 = builder.build();
-        document2.setReference(document2.getReference()+"b");
-        document2.setExtras(new Extras.Builder()
-                .customer_id(182557)
-                .build());
-
-        try {
-
-            for(OfflineData to : getHelper().fetchObjects(OfflineData.class).queryForAll())
-                to.deleteTo(getHelper());
-
-            Log.e("DOCUMENT", document1.getReference() + " " + document1.getId());
-            Log.e("DOCUMENT", document1.toJSONString());
-
-            OfflineData offlineData = new SwableTools.Transaction(getHelper())
-                    .toSend()
-                    .forBranch(document1.getTarget_branch_id())
-                    .object(document1)
-                    .queue();
-            new SwableTools.Transaction(getHelper())
-                    .toSend()
-                    .forBranch(document2.getTarget_branch_id())
-                    .object(document2)
-                    .queue();
-            Log.e("OFFLINEDATA " + offlineData.getId(), ((Document)offlineData.getObjectFromData()).getId() + " ~~~ " + offlineData.getObjectFromData().toString
-                    ());
-            int id = offlineData.getId();
-            offlineData = null;
-            offlineData = getHelper().fetchObjects(OfflineData.class).queryBuilder().where().eq("id", id).queryForFirst();
-            Log.e("OFFLINEDATA " + offlineData.getId(), offlineData.getObjectFromData() != null ? ((Document)offlineData
-                    .getObjectFromData()).getId() + "" : "null");
-            Log.e("OFFLINEDATA JSON", offlineData.getObjectFromData().toString());
-
-        }*//* catch (JSONException e) {
-            e.printStackTrace();
-        }*//* catch (SQLException e) {
-            e.printStackTrace();
-        }*/
-
-        /*try {
-            Log.e("UNITS count", getHelper().fetchObjectsList(Unit.class).size() + "");
-            for(Unit unit : getHelper().fetchObjectsList(Unit.class)) {
-                Log.e("UNIT " + unit.getId(), unit.toString());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
-
-        /*Customer customer = new Customer.Builder()
-                .first_name("Johnny")
-                .last_name("Tester")
-                .build();
-        OfflineData offlineData = new SwableTools.Transaction(getHelper())
-                .toSend()
-                .forBranch(860)
-                .object(customer)
-                .queue();*/
-        /*try {
-            List<OfflineData> offlineDatas = getHelper().fetchObjectsList(OfflineData.class);
-            for(OfflineData offlineData : offlineDatas)
-                offlineData.deleteTo(getHelper());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        OfflineData offlineData = new OfflineData(
-                new Document.Builder()
-                        .addDocumentLine(new DocumentLine())
-                        .build(),
-                OfflineDataType.CANCEL_DOCUMENT);
-        offlineData.setBranch_id(876);
-        offlineData.setReturnId("60321");
-        offlineData.insertTo(getHelper());
-        new SwableTools.Transaction(getHelper())
-                .toCancel()
-                .object(offlineData)
-                .withReason("VOID")
-                .queue();
-        SwableTools.startSwable(this);*/
-
         tvAgentName = (TextView) findViewById(R.id.tvAgentName);
         tvLogout = (TextView) findViewById(R.id.tvLogout);
         spBranch = (Spinner) findViewById(R.id.spBranch);
@@ -161,7 +56,12 @@ public class C_Welcome extends ModuleActivity {
 
         tvLogout.setText(Html.fromHtml("<u><i>Not you?<br/>Logout</i></u>"));
 
-        ArrayAdapter<Branch> branchArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, getBranches());
+        ArrayAdapter<Branch> branchArrayAdapter = null;
+        try {
+            branchArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, getBranches());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         spBranch.setAdapter(branchArrayAdapter);
 
         tvLogout.setOnClickListener(new View.OnClickListener() {

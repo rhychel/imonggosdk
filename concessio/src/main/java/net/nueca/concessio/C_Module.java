@@ -64,13 +64,17 @@ import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.AnimationTools;
 import net.nueca.concessioengine.tools.BluetoothTools;
+import net.nueca.concessioengine.tools.DocumentTools;
+import net.nueca.concessioengine.tools.InventoryTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
+import net.nueca.concessioengine.tools.OrderTools;
 import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.concessioengine.views.SimplePulloutToolbarExt;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
+import net.nueca.imonggosdk.enums.OrderTypeCode;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -226,7 +230,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleTransactionDetailsFragment.setHasCategories(false);
                 simpleTransactionDetailsFragment.setSetupActionBar(this);
                 // if there's branch product
-                simpleTransactionDetailsFragment.setBranch(getBranches().get(0));
+                try {
+                    simpleTransactionDetailsFragment.setBranch(getBranches().get(0));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 simpleTransactionDetailsFragment.setHasInStock(false);
 
                 simpleTransactionsFragment = new SimpleTransactionsFragment();
@@ -254,24 +262,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         ProductsAdapterHelper.setDbHelper(getHelper());
 
                         if(offlineData.getType() == OfflineData.INVOICE) {
-//                            try {
-//                                Customer customer = offlineData.getObjectFromData(Invoice.class).getCustomer();
-//                                ProductsAdapterHelper.setSelectedCustomer(customer);
-//                                List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
-//                                if(customerGroups.size() > 0)
-//                                    ProductsAdapterHelper.setSelectedCustomerGroup(customerGroups.get(0));
-//                                ProductsAdapterHelper.setSelectedBranch(getBranches().get(0));
-//
-//                                SelectedProductItemList selecteds =
-//                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, false, false);
-//                                SelectedProductItemList returns =
-//                                        InvoiceTools.generateSelectedProductItemList(getHelper(), offlineData, true, false);
-//
-//                                ProductsAdapterHelper.getSelectedProductItems().addAll(selecteds);
-//                                ProductsAdapterHelper.getSelectedReturnProductItems().addAll(returns);
-//                            } catch (SQLException e) {
-//                                e.printStackTrace();
-//                            }
                             try {
                                 processOfflineData(offlineData);
                             } catch (SQLException e) {
@@ -324,10 +314,10 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                         // <-- Voiding issue when the transaction is voided for Receive and Pullout -->
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER) // Receive
-                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), false);
+                            InventoryTools.revertInventoryFromSelectedItemList(getHelper(), false);
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER
                                 || simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) // Pullout || MSO
-                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), true);
+                            InventoryTools.revertInventoryFromSelectedItemList(getHelper());
 
                         onBackPressed();
                         OfflineData offlineData = simpleTransactionDetailsFragment.getOfflineData();
@@ -517,7 +507,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                 simpleProductsFragment.customReason(document.getReference(), onCancelProgress);
                                 try {
-                                    simpleProductsFragment.setFilterProductsBy(processObject(document));
+                                    simpleProductsFragment.setFilterProductsBy(DocumentTools.generateSelectedItemList(getHelper(), document));
                                     simpleProductsFragment.forceUpdateProductList(); //simpleProductsFragment.getFilterProductsBy()
                                 } catch (SQLException e) {
                                     e.printStackTrace();
@@ -559,7 +549,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                 simpleProductsFragment.customReason(document.getReference(), onCancelProgress);
                                 try {
-                                    simpleProductsFragment.setFilterProductsBy(processObject(document));
+                                    simpleProductsFragment.setFilterProductsBy(DocumentTools.generateSelectedItemList(getHelper(), document));
                                     simpleProductsFragment.forceUpdateProductList();
                                 } catch (SQLException e) {
                                     e.printStackTrace();
@@ -628,7 +618,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleProductsFragment.setCustomer(customer);
                 simpleProductsFragment.setHasPromotionalProducts(true);
                 simpleProductsFragment.setCustomerGroup(customerGroup);
-                simpleProductsFragment.setBranch(getBranches().get(0));
+                try {
+                    simpleProductsFragment.setBranch(getBranches().get(0));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 simpleProductsFragment.setConcessioModule(concessioModule);
 
                 simpleProductsFragment.setCanOverridePrice(getModuleSetting(concessioModule).isCan_override_price()); // TODO FOR PETRON ONLY
@@ -647,7 +641,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 initializeProducts();
                 simpleProductsFragment.setDisplayOnly(getModuleSetting(concessioModule).is_view());
                 // if there's branch product
-                simpleProductsFragment.setBranch(getBranches().get(0));
+                try {
+                    simpleProductsFragment.setBranch(getBranches().get(0));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 simpleProductsFragment.setProductCategories(getProductCategories(!getModuleSetting(ConcessioModule.PHYSICAL_COUNT).getProductListing().isLock_category()));
                 simpleProductsFragment.setProductsFragmentListener(this);
 
@@ -680,7 +678,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     DialogTools.showConfirmationDialog(C_Module.this, "Print Inventory", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
+                                            try {
+                                                printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
+                                            } catch (SQLException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
                                     }, "No", new DialogInterface.OnClickListener() {
                                         @Override
@@ -741,8 +743,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 simpleInventoryFragment.setSetupActionBar(this);
                 simpleInventoryFragment.setHasSubtotal(false);
                 simpleInventoryFragment.setProductsFragmentListener(this);
-                // if there's branch product
-                simpleInventoryFragment.setBranch(getBranches().get(0));
 
                 initializeFinalize();
                 finalizeFragment.setListingType(ListingType.ADVANCED_SALES); //changed to show the individual price of every unit-- Sales
@@ -752,8 +752,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 finalizeFragment.setHasBrand(false);
                 finalizeFragment.setHasDeliveryDate(false);
                 finalizeFragment.setHasUnits(true);
+
                 // if there's branch product
-                finalizeFragment.setBranch(getBranches().get(0));
+                try {
+                    simpleInventoryFragment.setBranch(getBranches().get(0));
+                    finalizeFragment.setBranch(getBranches().get(0));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
                 prepareFooter();
 
@@ -858,7 +864,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 simpleProductsFragment.setShowCategoryOnStart(getModuleSetting(concessioModule).getProductListing().isShow_categories_on_start());
                                 simpleProductsFragment.setProductsFragmentListener(C_Module.this);
                                 // if there's branch product
-                                simpleProductsFragment.setBranch(getBranches().get(0));
+                                try {
+                                    simpleProductsFragment.setBranch(getBranches().get(0));
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
                                 simpleProductsFragment.setConcessioModule(concessioModule);
                                 if(ProductsAdapterHelper.isDuplicating)
                                     simpleProductsFragment.setCategory(getIntent().getStringExtra(ModuleActivity.CATEGORY));
@@ -872,7 +882,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                 finalizeFragment.setUseSalesProductAdapter(true);//added to show the individual price of every unit
 //                                finalizeFragment.setListingType(ListingType.SALES);
                                 // if there's branch product
-                                finalizeFragment.setBranch(getBranches().get(0));
+                                try {
+                                    finalizeFragment.setBranch(getBranches().get(0));
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
                                 finalizeFragment.setConcessioModule(concessioModule);
 
                                 prepareFooter();
@@ -1255,10 +1269,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
-                                printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                            else
-                                printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                                try {
+                                    if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                        printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                    else
+                                        printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
                         }
                     }, "No", new DialogInterface.OnClickListener() {
                         @Override
@@ -1497,61 +1515,60 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                 isButtonTapped = true;
 
-                                Gson gson = new GsonBuilder().serializeNulls().create();
-
-                                Branch warehouse = Branch.fetchById(getHelper(), Branch.class, ProductsAdapterHelper.getWarehouse_id());
-                                Document document = generateDocument(C_Module.this, ProductsAdapterHelper.getWarehouse_id(), DocumentTypeCode.identify(concessioModule));
-
                                 try {
+                                    Gson gson = new GsonBuilder().serializeNulls().create();
+
+                                    Branch warehouse = Branch.fetchById(getHelper(), Branch.class, ProductsAdapterHelper.getWarehouse_id());
+
+                                    Document document = DocumentTools.generateDocument(C_Module.this, getSession().getDevice_id(), ProductsAdapterHelper.getWarehouse_id(), DocumentTypeCode.identify(concessioModule));
+
                                     JSONObject jsonObject = new JSONObject(gson.toJson(document));
                                     Log.e("jsonObject", jsonObject.toString());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
 
-                                try {
+
                                     Document confirmedDocument = getHelper().fetchObjects(Document.class).queryBuilder().where().eq("returnId", ProductsAdapterHelper.getParent_document_id()).queryForFirst();
                                     if(confirmedDocument != null) {
                                         confirmedDocument.setIntransit_status("Received");
                                         confirmedDocument.updateTo(getHelper());
                                     }
-                                } catch (SQLException e) {
+
+                                    offlineData = new SwableTools.Transaction(getHelper())
+                                            .toSend()
+                                            .forBranch(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT ? warehouse : ProductsAdapterHelper.getSource())
+                                            .object(document)
+                                            .fromModule(concessioModule)
+                                            .queue();
+
+                                    TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                    transactionDialog.setTitle(concessioModule);
+                                    String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
+                                    transactionDialog.setInStock(dateTime);
+                                    transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
+                                        @Override
+                                        public void whenDismissed() {
+                                            isButtonTapped = false;
+                                            ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                            ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
+                                            simpleProductsFragment.customReason("");
+                                            simpleProductsFragment.getFilterProductsBy().clear();
+                                            simpleProductsFragment.forceUpdateProductList();
+                                            simpleProductsFragment.refreshList();
+
+                                            finalizeFragment.getFilterProductsBy().clear();
+                                            finalizeFragment.refreshList();
+                                            if (!mSearch.isIconified())
+                                                closeSearchField(mSearch);
+                                            onBackPressed();
+
+                                            searchDRDialog.show();
+                                        }
+                                    });
+                                    transactionDialog.show();
+                                } catch (SQLException | JSONException e) {
                                     e.printStackTrace();
                                 }
 
-                                offlineData = new SwableTools.Transaction(getHelper())
-                                        .toSend()
-                                        .forBranch(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT ? warehouse : ProductsAdapterHelper.getSource())
-                                        .object(document)
-                                        .fromModule(concessioModule)
-                                        .queue();
-
-                                TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
-                                transactionDialog.setTitle(concessioModule);
-                                String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
-                                transactionDialog.setInStock(dateTime);
-                                transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
-                                    @Override
-                                    public void whenDismissed() {
-                                        isButtonTapped = false;
-                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
-                                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
-
-                                        simpleProductsFragment.customReason("");
-                                        simpleProductsFragment.getFilterProductsBy().clear();
-                                        simpleProductsFragment.forceUpdateProductList();
-                                        simpleProductsFragment.refreshList();
-
-                                        finalizeFragment.getFilterProductsBy().clear();
-                                        finalizeFragment.refreshList();
-                                        if (!mSearch.isIconified())
-                                            closeSearchField(mSearch);
-                                        onBackPressed();
-
-                                        searchDRDialog.show();
-                                    }
-                                });
-                                transactionDialog.show();
 
                             }
                         }, "No", new DialogInterface.OnClickListener() {
@@ -1570,326 +1587,341 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         DialogTools.showDialog(C_Module.this, "Ooops!", "You have no assigned warehouse on your account. Please contact admin.");
                     return;
                 }
-                if (getBranches().size() == 1) {
-                    final Branch branch = getBranches().get(0);
-                    DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            if (isButtonTapped)
-                                return;
+                try {
+                    if (getBranches().size() == 1) {
+                        final Branch branch = getBranches().get(0);
+                        DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (isButtonTapped)
+                                    return;
 
-                            isButtonTapped = true;
+                                isButtonTapped = true;
 
-                            Gson gson = new GsonBuilder().serializeNulls().create();
-                            if (concessioModule == ConcessioModule.STOCK_REQUEST) {
-                                Order order = generateOrder(getApplicationContext(), branch.getId());
+                                Gson gson = new GsonBuilder().serializeNulls().create();
+                                if (concessioModule == ConcessioModule.STOCK_REQUEST) {
 
-                                try {
-                                    JSONObject jsonObject = new JSONObject(gson.toJson(order));
-                                    Log.e("jsonObject", jsonObject.toString());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                                    try {
+                                        Order order = OrderTools.generateOrder(getApplicationContext(), getSession().getDevice_id(), branch.getId(), OrderTypeCode.STOCK_REQUEST);
 
-                                offlineData = new SwableTools.Transaction(getHelper())
-                                        .toSend()
-                                        .forBranch(branch)
-                                        .fromModule(ConcessioModule.STOCK_REQUEST)
-                                        .object(order)
-                                        .queue();
-                            } else {
-                                int warehouseId = 0;
-                                if (getBranches(true).size() > 0)
-                                    warehouseId = getBranches(true).get(0).getId();
-                                Document document = generateDocument(C_Module.this, warehouseId, DocumentTypeCode.identify(concessioModule));
+                                        JSONObject jsonObject = new JSONObject(gson.toJson(order));
+                                        Log.e("jsonObject", jsonObject.toString());
 
-                                try {
-                                    JSONObject jsonObject = new JSONObject(gson.toJson(document));
-                                    Log.e("jsonObject", jsonObject.toString());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                    Extras extras = new Extras();
-                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
-                                    document.setExtras(extras);
-                                }
-
-                                if (getAppSetting().isCan_change_inventory())
-                                    updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
-
-                                offlineData = new SwableTools.Transaction(getHelper())
-                                        .toSend()
-                                        .forBranch(branch)
-                                        .object(document)
-                                        .fromModule(concessioModule)
-                                        .category(simpleProductsFragment != null ? simpleProductsFragment.getCategory() : "")
-                                        .documentReason(ProductsAdapterHelper.getReason() != null ? ProductsAdapterHelper.getReason().getName() : "")
-                                        .queue();
-                                if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
-                                    if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                                        printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                    if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals("")) {
-                                        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
-                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                                        else
-                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                    }
-                                }
-                            }
-
-                            TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
-                            transactionDialog.setTitle(concessioModule);
-                            String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
-                            transactionDialog.setInStock(dateTime);
-                            transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
-                                @Override
-                                public void whenDismissed() {
-                                    isButtonTapped = false;
-
-                                    ProductsAdapterHelper.clearSelectedProductItemList(true);
-                                    ProductsAdapterHelper.clearSelectedReturnProductItemList();
-
-                                    if (ProductsAdapterHelper.isDuplicating) {
-                                        Intent intent = new Intent();
-                                        intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
-                                        setResult(SUCCESS, intent);
-                                        finish();
-                                        return;
+                                        offlineData = new SwableTools.Transaction(getHelper())
+                                                .toSend()
+                                                .forBranch(branch)
+                                                .fromModule(ConcessioModule.STOCK_REQUEST)
+                                                .object(order)
+                                                .queue();
+                                    } catch (JSONException | SQLException e) {
+                                        e.printStackTrace();
                                     }
 
-                                    if (concessioModule == ConcessioModule.STOCK_REQUEST
-                                            || concessioModule == ConcessioModule.PHYSICAL_COUNT
-                                            || concessioModule == ConcessioModule.RECEIVE_BRANCH) {
-                                        simpleProductsFragment.refreshList();
-                                        finalizeFragment.refreshList();
+                                } else {
+                                    int warehouseId = 0;
 
+                                    try {
+                                        if (getBranches(true).size() > 0)
+                                            warehouseId = getBranches(true).get(0).getId();
+                                        Document document = DocumentTools.generateDocument(C_Module.this, getSession().getDevice_id(), warehouseId, DocumentTypeCode.identify(concessioModule));
 
-                                        if(concessioModule == ConcessioModule.RECEIVE_BRANCH) {
-                                            simpleProductsFragment.getFilterProductsBy().clear();
-                                            simpleProductsFragment.forceUpdateProductList();
-                                            finalizeFragment.getFilterProductsBy().clear();
+                                        JSONObject jsonObject = new JSONObject(gson.toJson(document));
+                                        Log.e("jsonObject", jsonObject.toString());
 
-                                            searchDRDialog.show();
+                                        if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                            Extras extras = new Extras();
+                                            extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
+                                            document.setExtras(extras);
                                         }
 
-                                        onBackPressed();
-                                    } else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                        llFooter.setVisibility(View.GONE);
-                                        simpleCustomersFragment.setHasSelected(false);
-                                        simpleCustomersFragment.onViewCreated(null, null);
-                                        hasMenu = true;
-                                        showsCustomer = true;
+                                        if (getAppSetting().isCan_change_inventory())
+                                            InventoryTools.updateInventoryFromSelectedItemList(getHelper(), concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
 
-                                        getSupportFragmentManager().popBackStackImmediate(); // finalize
-                                        getSupportFragmentManager().popBackStackImmediate(); // product list
-                                        previousFragmentCount = 0;
-                                        Log.e("simple", "called customer fragment");
-                                    } else {
-                                        Log.e("whenDismissed", " should backpressed");
-                                        // TODO
-                                        if (!mSearch.isIconified())
-                                            closeSearchField(mSearch);
-                                        onBackPressed();
-
-                                        if (concessioModule == ConcessioModule.RELEASE_BRANCH)
-                                            simplePulloutFragment.showReasonDialog(true, getModuleSetting(concessioModule).isRequire_document_reason()); // add settings
+                                        offlineData = new SwableTools.Transaction(getHelper())
+                                                .toSend()
+                                                .forBranch(branch)
+                                                .object(document)
+                                                .fromModule(concessioModule)
+                                                .category(simpleProductsFragment != null ? simpleProductsFragment.getCategory() : "")
+                                                .documentReason(ProductsAdapterHelper.getReason() != null ? ProductsAdapterHelper.getReason().getName() : "")
+                                                .queue();
+                                        if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
+                                            if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
+                                                printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                            if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals("")) {
+                                                if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                                    printTransactionStar(offlineData, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                                else
+                                                    printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                            }
+                                        }
+                                    } catch (JSONException | SQLException e) {
+                                        e.printStackTrace();
                                     }
+
                                 }
-                            });
-                            transactionDialog.show();
 
-                        }
-                    }, "No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            isButtonTapped = false;
-                        }
-                    }, new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(DialogInterface dialog) {
-                            Log.e("onShow", isButtonTapped+"<---");
-                            isButtonTapped = false;
-                        }
-                    }, R.style.AppCompatDialogStyle_Light);
-                } else {
-                    new MaterialDialog.Builder(C_Module.this)
-                            .title("Choose branch")
-                            .items(getBranches())
-                            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                                @Override
-                                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                    final Branch branch = getBranches().get(which);
+                                TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                transactionDialog.setTitle(concessioModule);
+                                String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
+                                transactionDialog.setInStock(dateTime);
+                                transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
+                                    @Override
+                                    public void whenDismissed() {
+                                        isButtonTapped = false;
 
-                                    final Branch warehouse = getWarehouse();
-                                    if (warehouse == null && getModuleSetting(concessioModule).isRequire_warehouse())
-                                        DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.", R.style.AppCompatDialogStyle_Light);
-                                    else {
-                                        DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                if (isButtonTapped)
-                                                    return;
+                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
 
-                                                isButtonTapped = true;
+                                        if (ProductsAdapterHelper.isDuplicating) {
+                                            Intent intent = new Intent();
+                                            intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
+                                            setResult(SUCCESS, intent);
+                                            finish();
+                                            return;
+                                        }
 
-                                                Gson gson = new GsonBuilder().serializeNulls().create();
-
-                                                if (concessioModule == ConcessioModule.STOCK_REQUEST) {
-                                                    Order order = generateOrder(getApplicationContext(), branch.getId());
-
-                                                    try {
-                                                        JSONObject jsonObject = new JSONObject(gson.toJson(order));
-                                                        Log.e("jsonObject", jsonObject.toString());
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-
-                                                    offlineData = new SwableTools.Transaction(getHelper())
-                                                            .toSend()
-                                                            .forBranch(branch)
-                                                            .fromModule(ConcessioModule.STOCK_REQUEST)
-                                                            .object(order)
-                                                            .queue();
-                                                } else {
-                                                    int warehouseId = 0;
-                                                    if (getBranches(true).size() > 0)
-                                                        warehouseId = getBranches(true).get(0).getId();
-
-                                                    Document document = generateDocument(C_Module.this, warehouseId, DocumentTypeCode.identify(concessioModule));
-
-                                                    if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-//                                                  document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
-
-                                                        Extras extras = new Extras();
-                                                        extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
-                                                        document.setExtras(extras);
-                                                    }
-
-                                                    try {
-                                                        JSONObject jsonObject = new JSONObject(gson.toJson(document));
-                                                        Log.e("jsonObject", jsonObject.toString());
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-
-                                                    if (getAppSetting().isCan_change_inventory())
-                                                        updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
-
-                                                    offlineData = new SwableTools.Transaction(getHelper())
-                                                            .toSend()
-                                                            .forBranch(branch)
-                                                            .object(document)
-                                                            .fromModule(concessioModule)
-                                                            .category(simpleProductsFragment != null ? simpleProductsFragment.getCategory() : "")
-                                                            .documentReason(ProductsAdapterHelper.getReason() != null ? ProductsAdapterHelper.getReason().getName() : "")
-                                                            .queue();
-
-                                                    if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
-                                                        if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                                                            printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                                        if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals("")) {
-                                                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
-                                                                printTransactionStar(offlineData, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                                                            else
-                                                                printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                                        }
-                                                    }
-                                                }
+                                        if (concessioModule == ConcessioModule.STOCK_REQUEST
+                                                || concessioModule == ConcessioModule.PHYSICAL_COUNT
+                                                || concessioModule == ConcessioModule.RECEIVE_BRANCH) {
+                                            simpleProductsFragment.refreshList();
+                                            finalizeFragment.refreshList();
 
 
-                                                TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
-                                                transactionDialog.setTitle(concessioModule);
-                                                String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
-                                                transactionDialog.setInStock(dateTime);
-                                                transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
+                                            if(concessioModule == ConcessioModule.RECEIVE_BRANCH) {
+                                                simpleProductsFragment.getFilterProductsBy().clear();
+                                                simpleProductsFragment.forceUpdateProductList();
+                                                finalizeFragment.getFilterProductsBy().clear();
+
+                                                searchDRDialog.show();
+                                            }
+
+                                            onBackPressed();
+                                        } else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                            llFooter.setVisibility(View.GONE);
+                                            simpleCustomersFragment.setHasSelected(false);
+                                            simpleCustomersFragment.onViewCreated(null, null);
+                                            hasMenu = true;
+                                            showsCustomer = true;
+
+                                            getSupportFragmentManager().popBackStackImmediate(); // finalize
+                                            getSupportFragmentManager().popBackStackImmediate(); // product list
+                                            previousFragmentCount = 0;
+                                            Log.e("simple", "called customer fragment");
+                                        } else {
+                                            Log.e("whenDismissed", " should backpressed");
+                                            // TODO
+                                            if (!mSearch.isIconified())
+                                                closeSearchField(mSearch);
+                                            onBackPressed();
+
+                                            if (concessioModule == ConcessioModule.RELEASE_BRANCH)
+                                                simplePulloutFragment.showReasonDialog(true, getModuleSetting(concessioModule).isRequire_document_reason()); // add settings
+                                        }
+                                    }
+                                });
+                                transactionDialog.show();
+
+                            }
+                        }, "No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                isButtonTapped = false;
+                            }
+                        }, new DialogInterface.OnShowListener() {
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+                                Log.e("onShow", isButtonTapped+"<---");
+                                isButtonTapped = false;
+                            }
+                        }, R.style.AppCompatDialogStyle_Light);
+                    } else {
+                        new MaterialDialog.Builder(C_Module.this)
+                                .title("Choose branch")
+                                .items(getBranches())
+                                .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                                    @Override
+                                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                        try {
+                                            final Branch branch = getBranches().get(which);
+
+                                            final Branch warehouse = getWarehouse();
+                                            if (warehouse == null && getModuleSetting(concessioModule).isRequire_warehouse())
+                                                DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.", R.style.AppCompatDialogStyle_Light);
+                                            else {
+                                                DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                                                     @Override
-                                                    public void whenDismissed() {
-                                                        isButtonTapped = false;
-
-                                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
-                                                        ProductsAdapterHelper.clearSelectedReturnProductItemList();
-
-                                                        if (ProductsAdapterHelper.isDuplicating) {
-                                                            Intent intent = new Intent();
-                                                            intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
-                                                            setResult(SUCCESS, intent);
-                                                            finish();
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        if (isButtonTapped)
                                                             return;
-                                                        }
 
-                                                        if (concessioModule == ConcessioModule.STOCK_REQUEST
-                                                                || concessioModule == ConcessioModule.PHYSICAL_COUNT
-                                                                || concessioModule == ConcessioModule.RECEIVE_BRANCH) {
-                                                            simpleProductsFragment.refreshList();
-                                                            finalizeFragment.refreshList();
+                                                        isButtonTapped = true;
 
-                                                            if(concessioModule == ConcessioModule.RECEIVE_BRANCH) {
-                                                                simpleProductsFragment.getFilterProductsBy().clear();
-                                                                simpleProductsFragment.forceUpdateProductList();
-                                                                finalizeFragment.getFilterProductsBy().clear();
+                                                        Gson gson = new GsonBuilder().serializeNulls().create();
 
-                                                                searchDRDialog.show();
+                                                        if (concessioModule == ConcessioModule.STOCK_REQUEST) {
+
+                                                            try {
+                                                                Order order = OrderTools.generateOrder(getApplicationContext(), getSession().getDevice_id(), branch.getId(), OrderTypeCode.STOCK_REQUEST);
+
+                                                                JSONObject jsonObject = new JSONObject(gson.toJson(order));
+                                                                Log.e("jsonObject", jsonObject.toString());
+
+                                                                offlineData = new SwableTools.Transaction(getHelper())
+                                                                        .toSend()
+                                                                        .forBranch(branch)
+                                                                        .fromModule(ConcessioModule.STOCK_REQUEST)
+                                                                        .object(order)
+                                                                        .queue();
+                                                            } catch (JSONException | SQLException e) {
+                                                                e.printStackTrace();
                                                             }
 
-                                                            onBackPressed();
-                                                        } else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                                            llFooter.setVisibility(View.GONE);
-                                                            simpleCustomersFragment.setHasSelected(false);
-                                                            simpleCustomersFragment.onViewCreated(null, null);
-
-
-                                                            hasMenu = true;
-                                                            showsCustomer = true;
-
-                                                            Log.e("simple", "called customer fragment");
-
-                                                            getSupportFragmentManager().popBackStackImmediate(); // finalize
-                                                            getSupportFragmentManager().popBackStackImmediate(); // product list
-                                                            previousFragmentCount = 0;
                                                         } else {
-                                                            // TODO
-                                                            if (!mSearch.isIconified())
-                                                                closeSearchField(mSearch);
-                                                            onBackPressed();
+                                                            int warehouseId = 0;
+                                                            try {
+                                                                if (getBranches(true).size() > 0)
+                                                                    warehouseId = getBranches(true).get(0).getId();
 
-                                                            if (concessioModule == ConcessioModule.RELEASE_BRANCH)
-                                                                simplePulloutFragment.showReasonDialog(true, getModuleSetting(concessioModule).isRequire_document_reason()); // add settings
+                                                                Document document = DocumentTools.generateDocument(C_Module.this, getSession().getDevice_id(), warehouseId, DocumentTypeCode.identify(concessioModule));
+
+                                                                if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                                                    //                                                  document.setDocument_purpose_id(ProductsAdapterHelper.getReason().getId());
+
+                                                                    Extras extras = new Extras();
+                                                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
+                                                                    document.setExtras(extras);
+                                                                }
+
+                                                                JSONObject jsonObject = new JSONObject(gson.toJson(document));
+                                                                Log.e("jsonObject", jsonObject.toString());
+
+                                                                if (getAppSetting().isCan_change_inventory())
+                                                                    InventoryTools.updateInventoryFromSelectedItemList(getHelper(), concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
+
+                                                                offlineData = new SwableTools.Transaction(getHelper())
+                                                                        .toSend()
+                                                                        .forBranch(branch)
+                                                                        .object(document)
+                                                                        .fromModule(concessioModule)
+                                                                        .category(simpleProductsFragment != null ? simpleProductsFragment.getCategory() : "")
+                                                                        .documentReason(ProductsAdapterHelper.getReason() != null ? ProductsAdapterHelper.getReason().getName() : "")
+                                                                        .queue();
+
+                                                                if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
+                                                                    if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
+                                                                        printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                                    if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals("")) {
+                                                                        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                                                        else
+                                                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                                    }
+                                                                }
+                                                            } catch (SQLException | JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+
                                                         }
+
+
+                                                        TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                                        transactionDialog.setTitle(concessioModule);
+                                                        String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
+                                                        transactionDialog.setInStock(dateTime);
+                                                        transactionDialog.setTransactionDialogListener(new TransactionDialog.TransactionDialogListener() {
+                                                            @Override
+                                                            public void whenDismissed() {
+                                                                isButtonTapped = false;
+
+                                                                ProductsAdapterHelper.clearSelectedProductItemList(true);
+                                                                ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
+                                                                if (ProductsAdapterHelper.isDuplicating) {
+                                                                    Intent intent = new Intent();
+                                                                    intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
+                                                                    setResult(SUCCESS, intent);
+                                                                    finish();
+                                                                    return;
+                                                                }
+
+                                                                if (concessioModule == ConcessioModule.STOCK_REQUEST
+                                                                        || concessioModule == ConcessioModule.PHYSICAL_COUNT
+                                                                        || concessioModule == ConcessioModule.RECEIVE_BRANCH) {
+                                                                    simpleProductsFragment.refreshList();
+                                                                    finalizeFragment.refreshList();
+
+                                                                    if(concessioModule == ConcessioModule.RECEIVE_BRANCH) {
+                                                                        simpleProductsFragment.getFilterProductsBy().clear();
+                                                                        simpleProductsFragment.forceUpdateProductList();
+                                                                        finalizeFragment.getFilterProductsBy().clear();
+
+                                                                        searchDRDialog.show();
+                                                                    }
+
+                                                                    onBackPressed();
+                                                                } else if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                                                    llFooter.setVisibility(View.GONE);
+                                                                    simpleCustomersFragment.setHasSelected(false);
+                                                                    simpleCustomersFragment.onViewCreated(null, null);
+
+
+                                                                    hasMenu = true;
+                                                                    showsCustomer = true;
+
+                                                                    Log.e("simple", "called customer fragment");
+
+                                                                    getSupportFragmentManager().popBackStackImmediate(); // finalize
+                                                                    getSupportFragmentManager().popBackStackImmediate(); // product list
+                                                                    previousFragmentCount = 0;
+                                                                } else {
+                                                                    // TODO
+                                                                    if (!mSearch.isIconified())
+                                                                        closeSearchField(mSearch);
+                                                                    onBackPressed();
+
+                                                                    if (concessioModule == ConcessioModule.RELEASE_BRANCH)
+                                                                        simplePulloutFragment.showReasonDialog(true, getModuleSetting(concessioModule).isRequire_document_reason()); // add settings
+                                                                }
+                                                            }
+                                                        });
+                                                        transactionDialog.show();
+
+                                                    }
+                                                }, "No", R.style.AppCompatDialogStyle_Light, new DialogInterface.OnShowListener() {
+                                                    @Override
+                                                    public void onShow(DialogInterface dialog) {
+                                                        isButtonTapped = false;
                                                     }
                                                 });
-                                                transactionDialog.show();
-
                                             }
-                                        }, "No", R.style.AppCompatDialogStyle_Light, new DialogInterface.OnShowListener() {
-                                            @Override
-                                            public void onShow(DialogInterface dialog) {
-                                                isButtonTapped = false;
-                                            }
-                                        });
+                                        } catch (SQLException e) {
+                                            e.printStackTrace();
+                                        }
+                                        return true;
                                     }
-                                    return true;
-                                }
-                            })
-                            .positiveText("YES")
-                            .positiveColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    isButtonTapped = false;
-                                }
-                            })
-                            .negativeText("NO")
-                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    isButtonTapped = false;
-                                }
-                            })
-                            .negativeColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
-                            .widgetColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
-                            .show();
+                                })
+                                .positiveText("YES")
+                                .positiveColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        isButtonTapped = false;
+                                    }
+                                })
+                                .negativeText("NO")
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        isButtonTapped = false;
+                                    }
+                                })
+                                .negativeColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
+                                .widgetColor(ContextCompat.getColor(C_Module.this, R.color.text_orange))
+                                .show();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             } else {
                 if (ProductsAdapterHelper.getSelectedProductItems().isEmpty())
@@ -1916,7 +1948,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
     };
 
-    private void printTransactionStar(final OfflineData offlineData, final String... labels) {
+    private void printTransactionStar(final OfflineData offlineData, final String... labels) throws SQLException {
         if(!BluetoothTools.isEnabled())
             return;
 
@@ -2197,7 +2229,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                 @Override
                 public Printer onBuildPrintData(Printer printer) {
-                    Branch branch = getBranches().get(0);
+                    Branch branch = null;
+                    try {
+                        branch = getBranches().get(0);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     for(int i = 0;i < labels.length;i++) {
                         StringBuilder printText = new StringBuilder();
                         try {
