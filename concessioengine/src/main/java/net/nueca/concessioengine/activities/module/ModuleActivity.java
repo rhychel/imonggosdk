@@ -174,12 +174,6 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         Log.e("onBackPressed", "is backed :)");
     }
 
-    // TODO Search the document
-    public List<Document> getDocument(int branchId, String referenceNumber) {
-        List<Document> documents = new ArrayList<>();
-        return documents;
-    }
-
     /**
      * TODO REVISE According to the universal Concessio Settings
      * Get the transaction types the account can access.
@@ -314,6 +308,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * @param servingBranchId --- Pass the serving branch id of the order. Preferably, this should be the warehouse branch id
      * @return
      */
+    @Deprecated
     public Order generateOrder(Context context, int servingBranchId) {
         Order.Builder order = new Order.Builder();
         for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
@@ -333,6 +328,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 orderLine.setUnit_quantity(Double.valueOf(value.getUnit_quantity()));
                 orderLine.setUnit_retail_price(value.getUnit_retail_price());
             }
+            else {
+                orderLine.setUnit_retail_price(value.getUnit_retail_price());
+                orderLine.setRetail_price(value.getRetail_price());
+            }
             order.addOrderLine(orderLine);
         }
         order.order_type_code("stock_request");
@@ -350,6 +349,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * @param context
      * @return
      */
+    @Deprecated
     public Document generateDocument(Context context) {
         return generateDocument(context, -1, DocumentTypeCode.PHYSICAL_COUNT);
     }
@@ -361,6 +361,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * @param documentTypeCode
      * @return
      */
+    @Deprecated
     public Document generateDocument(Context context, int targetBranchId, DocumentTypeCode documentTypeCode) {
         Document.Builder pcount = new Document.Builder();
 //        TimerTools.duration("generateDocument -- first loop", true);
@@ -421,6 +422,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      *
      * @return the number of inventory objects updated
      */
+    @Deprecated
     public int updateInventoryFromSelectedItemList(boolean shouldAdd) {
         int updated = 0;
         BatchList<Inventory> newInventories = new BatchList<>(DatabaseOperation.INSERT, getHelper());
@@ -452,6 +454,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return updated;
     }
 
+    @Deprecated
     protected int revertInventoryFromDocument(Document document, boolean shouldAdd) {
         int updated = 0;
         List<DocumentLine> documentLines = document.getDocument_lines();
@@ -474,6 +477,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return updated;
     }
 
+    @Deprecated
     protected int revertInventoryFromInvoice() {
         int updated = 0;
         BatchList<Inventory> inventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
@@ -495,6 +499,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return updated;
     }
 
+    @Deprecated
     private void processDocument(Document document, List<Product> productList) throws SQLException {
         List<DocumentLine> documentLines = document.getDocument_lines();
         for(DocumentLine documentLine : documentLines) {
@@ -503,7 +508,15 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 productList.add(product);
 
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
-            selectedProductItem.setIsMultiline(concessioModule == ConcessioModule.RECEIVE_BRANCH || concessioModule == ConcessioModule.PHYSICAL_COUNT); // TODO Configure on the concessio.json
+
+            if(document.getOfflineData() != null) {
+                Log.e("processDocument=", "offlineData is not null || multiinput="+getModuleSetting(document.getOfflineData().getConcessioModule()).getQuantityInput().is_multiinput());
+                selectedProductItem.setIsMultiline(getModuleSetting(document.getOfflineData().getConcessioModule()).getQuantityInput().is_multiinput());
+            }
+            else
+                selectedProductItem.setIsMultiline(concessioModule == ConcessioModule.RECEIVE_BRANCH || concessioModule == ConcessioModule.PHYSICAL_COUNT); // TODO Configure on the concessio.json
+//            Log.e("processDocument=", concessioModule.toString());
+
             String quantity = "0";
             Unit unit = null;
             if(documentLine.getUnit_id() != null)
@@ -543,6 +556,10 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             else {
                 values = new Values(unit, quantity);
                 values.setUnit_retail_price(unit.getRetail_price());
+                if(documentLine.getExtras() != null) {
+                    ExtendedAttributes extendedAttributes = new ExtendedAttributes(documentLine.getExtras());
+                    values.setExtendedAttributes(extendedAttributes);
+                }
             }
             values.setLine_no(documentLine.getLine_no());
             selectedProductItem.addValues(values);
@@ -551,6 +568,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         }
     }
 
+    @Deprecated
     protected List<Product> processObject(Object object) throws SQLException {
         List<Product> productList = new ArrayList<>();
 
@@ -579,12 +597,15 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 Unit unit = null;
                 if(orderLine.getUnit_id() != null)
                     unit = getHelper().fetchIntId(Unit.class).queryForId(orderLine.getUnit_id());
-                if(unit != null)
+                if(unit != null) {
                     quantity = orderLine.getUnit_quantity().toString();
+                    unit.setRetail_price(orderLine.getUnit_retail_price());
+                }
                 else {
                     unit = new Unit();
                     unit.setId(-1);
                     unit.setName(product.getBase_unit_name());
+                    unit.setRetail_price(orderLine.getUnit_retail_price());
                     quantity = String.valueOf(orderLine.getQuantity());
                 }
                 Values values = new Values(unit, quantity);

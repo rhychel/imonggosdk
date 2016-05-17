@@ -2,6 +2,7 @@ package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class SimpleMultiInputAdapter extends BaseRecyclerAdapter<SimpleMultiInpu
             holder.tvDeliveryDate.setText(getItem(position).getExtendedAttributes().getDelivery_date());
             holder.tvBatchNo.setText(getItem(position).getExtendedAttributes().getBatch_no());
 
+            Log.e("MultiInput", "hasBrand="+hasBrand);
             if(hasBrand)
                 holder.tvQuantity.setText(getItem(position).getQuantity()+" "+getItem(position).getUnit_name());
             else {
@@ -50,6 +52,7 @@ public class SimpleMultiInputAdapter extends BaseRecyclerAdapter<SimpleMultiInpu
             }
         }
         else {
+            Log.e("MultiInput", "extendedAttributes is null");
             holder.tvBrand.setVisibility(View.VISIBLE);
 
             holder.tvQuantity.setText(getItem(position).getQuantity());

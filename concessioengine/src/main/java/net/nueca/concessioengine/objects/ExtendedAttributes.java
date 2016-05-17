@@ -18,6 +18,14 @@ public class ExtendedAttributes {
 
     public ExtendedAttributes() { }
 
+    public ExtendedAttributes(Extras extras) {
+        if(extras != null) {
+            this.batch_no = extras.getBatch_no();
+            this.brand = extras.getBrand();
+            this.delivery_date = extras.getDelivery_date();
+        }
+    }
+
     public ExtendedAttributes(String batch_no, String delivery_date, String brand) {
         this.batch_no = batch_no;
         this.delivery_date = delivery_date;
@@ -46,6 +54,10 @@ public class ExtendedAttributes {
         if(batch_no.equals(""))
             return "No Batch Number";
         return batch_no;
+    }
+
+    public boolean hasAnyValue() {
+        return !brand.equals("") || !delivery_date.equals("") || !batch_no.equals("");
     }
 
     @Deprecated

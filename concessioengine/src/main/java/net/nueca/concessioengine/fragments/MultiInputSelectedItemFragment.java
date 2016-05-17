@@ -49,7 +49,7 @@ import me.grantland.widget.AutofitTextView;
  * Created by rhymart on 8/11/15.
  * imonggosdk (c)2015
  */
-public class MultiInputSelectedItemFragment extends ImonggoFragment {
+public class MultiInputSelectedItemFragment extends BaseProductsFragment {
 
     public static final String PRODUCT_ID = "product_id";
     public static final String IS_MANUAL_RECEIVE = "is_manual_receive";
@@ -240,7 +240,7 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
 //        }
 
         try {
-            simpleSalesQuantityDialog.setUnitList(getHelper().fetchForeignCollection(product.getUnits().closeableIterator()), true);
+            simpleSalesQuantityDialog.setUnitList(getUnits(product));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -417,4 +417,26 @@ public class MultiInputSelectedItemFragment extends ImonggoFragment {
     public void setConcessioModule(ConcessioModule concessioModule) {
         this.concessioModule = concessioModule;
     }
+
+    // -------------------------- IGNORE
+    @Override
+    protected void showQuantityDialog(int position, Product product, SelectedProductItem selectedProductItem) {
+
+    }
+
+    @Override
+    protected void showProductDetails(Product product) {
+
+    }
+
+    @Override
+    protected void whenListEndReached(List<Product> productList) {
+
+    }
+
+    @Override
+    protected void toggleNoItems(String msg, boolean show) {
+
+    }
+
 }
