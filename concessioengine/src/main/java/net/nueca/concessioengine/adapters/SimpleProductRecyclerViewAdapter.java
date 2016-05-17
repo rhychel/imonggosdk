@@ -173,15 +173,15 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
                 ivProductImage.setErrorImageResId(R.drawable.ic_image_photo_gray);
             }
 
-            if(listingType == ListingType.SALES) {
+            if(listingType == ListingType.SALES_GRID) {
+                ivOverlay = (ImageView) itemView.findViewById(R.id.ivOverlay);
+                tvInventoryCount = (TextView) itemView.findViewById(R.id.tvInventoryCount);
+            }
+            else {
                 tvInStock = (AutofitTextView) itemView.findViewById(R.id.tvInStock);
                 tvRetailPrice = (TextView) itemView.findViewById(R.id.tvRetailPrice);
                 tvSubtotal = (TextView) itemView.findViewById(R.id.tvSubtotal);
                 llQuantity = (LinearLayout) itemView.findViewById(R.id.llQuantity);
-            }
-            else if(listingType == ListingType.SALES_GRID) {
-                ivOverlay = (ImageView) itemView.findViewById(R.id.ivOverlay);
-                tvInventoryCount = (TextView) itemView.findViewById(R.id.tvInventoryCount);
             }
 
 

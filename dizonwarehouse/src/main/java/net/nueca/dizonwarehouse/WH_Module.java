@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -47,10 +48,10 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
     private final String RECEIVING_ORDER = "Purchase Order";
     private final String DISPATCHING_ORDER = "Sales Order";
 
-    //private LinearLayout llFooter, llReview;
+    private LinearLayout llFooter, llReview;
     private TextView tvTotalAmount, tvItems;
     private Button btnNext;
-    private RecyclerView rvCategories;
+    //private RecyclerView rvCategories;
 
     private SimpleInventoryFragment simpleInventoryFragment;
     private SimpleProductsFragment selectedProductFragment, finalizeFragment;
@@ -100,15 +101,15 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
             }
         }
 
-        //llReview = (LinearLayout) findViewById(R.id.llReview);
-        //llFooter = (LinearLayout) findViewById(R.id.llFooter);
+        llReview = (LinearLayout) findViewById(R.id.llReview);
+        llFooter = (LinearLayout) findViewById(R.id.llFooter);
         btnNext = (Button) findViewById(R.id.btn1);
         btnNext.setText(CONTINUE);
         tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
         tvItems = (TextView) findViewById(R.id.tvItems);
-        rvCategories = (RecyclerView) findViewById(R.id.rvCategories);
+        //rvCategories = (RecyclerView) findViewById(R.id.rvCategories);
 
-        List<String> categories = new ArrayList<>();
+        //List<String> categories = new ArrayList<>();
 
         showDialog();
 
@@ -116,7 +117,7 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
         //changeToReview = true;
         simpleInventoryFragment = new SimpleInventoryFragment();
         simpleInventoryFragment.setHelper(getHelper());
-        simpleInventoryFragment.setListingType(ListingType.SALES_GRID);
+        simpleInventoryFragment.setListingType(ListingType.BASIC);
         simpleInventoryFragment.setSetupActionBar(sabSelection);
         simpleInventoryFragment.setHasUnits(true);
         simpleInventoryFragment.setProductCategories(getProductCategories(!getModuleSetting(concessioModule).getProductListing()
@@ -133,7 +134,7 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
         initSelectedProductFragment();
         selectedProductFragment.setListingType(ListingType.ADVANCED_SALES);
         selectedProductFragment.setHasSubtotal(true);
-        selectedProductFragment.setHasCategories(false);
+        selectedProductFragment.setHasCategories(true);
         selectedProductFragment.setHasBrand(false);
         selectedProductFragment.setHasDeliveryDate(false);
         selectedProductFragment.setHasUnits(true);
@@ -142,22 +143,22 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
 
         btnNext.setOnClickListener(nextClickedListener);
 
-        switch (concessioModule) {
+        /*switch (concessioModule) {
             case RECEIVE_SUPPLIER:  // Receiving
-                /** Setup Bottom Category **/
+                *//** Setup Bottom Category **//*
                 categories = getProductCategories(!getModuleSetting(concessioModule).getProductListing().isLock_category());
                 categories.set(0, RECEIVING_ORDER.toUpperCase());
-                /** ---------------------- **/
+                *//** ---------------------- **//*
             break;
             case RELEASE_BRANCH:    // Dispatch
-                /** Setup Bottom Category **/
+                *//** Setup Bottom Category **//*
                 categories = getProductCategories(!getModuleSetting(concessioModule).getProductListing().isLock_category());
                 categories.set(0, DISPATCHING_ORDER.toUpperCase());
-                /** ---------------------- **/
+                *//** ---------------------- **//*
             break;
-        }
+        }*/
 
-        CategoryRecyclerAdapter categoryAdapter = new CategoryRecyclerAdapter(this, categories);
+        /*CategoryRecyclerAdapter categoryAdapter = new CategoryRecyclerAdapter(this, categories);
         rvCategories.setAdapter(categoryAdapter);
         categoryAdapter.initializeRecyclerView(this, rvCategories, true);
         LinearLayoutManager layoutManager = categoryAdapter.getLinearLayoutManager();
@@ -168,14 +169,14 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
             public void onItemClicked(View view, int position) {
                 simpleInventoryFragment.setSelectedCategory(position);
             }
-        });
+        });*/
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flSelectionContent, simpleInventoryFragment)
+                .replace(R.id.flContent, simpleInventoryFragment)
                 .commit();
-        getSupportFragmentManager().beginTransaction()
+        /*getSupportFragmentManager().beginTransaction()
                 .replace(R.id.flReviewContent, selectedProductFragment)
-                .commit();
+                .commit();*/
     }
 
     @Override
@@ -373,7 +374,7 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
         if(btnNext.getText().toString().equals(SUBMIT)) {
             btnNext.setText(CONTINUE);
             refreshTitle();
-            rvCategories.setVisibility(View.VISIBLE);
+            //rvCategories.setVisibility(View.VISIBLE);
         }
     }
 
@@ -392,11 +393,11 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
                 else {
                     btnNext.setText(SUBMIT);
                     finalizeFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
-                    rvCategories.setVisibility(View.GONE);
+                    //rvCategories.setVisibility(View.GONE);
                     getSupportFragmentManager().beginTransaction()
 //                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,
 //                                    R.anim.slide_in_right, R.anim.slide_out_left)
-                            .replace(R.id.flSelectionContent, finalizeFragment, "finalize")
+                            .replace(R.id.flContent, finalizeFragment, "finalize")
                             .addToBackStack("finalizer")
                             .commit();
                     refreshTitle();

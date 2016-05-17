@@ -37,7 +37,7 @@ public class WH_Login extends LoginActivity {
         setAutoUpdateApp(true);
         //Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
-        setServer(Server.PLDTRETAILCLOUD);
+        setServer(Server.IRETAILCLOUD_NET);
         setUseDynamicUrls(false);
         //SettingTools.updateSettings(this, SettingsName.SERVERS, "{\"A1029\":\"rebisco\"}");
 

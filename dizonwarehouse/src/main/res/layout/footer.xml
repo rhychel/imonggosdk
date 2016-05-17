@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:id="@+id/llFooter"
     android:background="@android:color/white"
+    android:elevation="4dp"
     >
 
     <View
