@@ -314,6 +314,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * @param servingBranchId --- Pass the serving branch id of the order. Preferably, this should be the warehouse branch id
      * @return
      */
+    @Deprecated
     public Order generateOrder(Context context, int servingBranchId) {
         Order.Builder order = new Order.Builder();
         for(int i = 0;i < ProductsAdapterHelper.getSelectedProductItems().size();i++) {
@@ -354,6 +355,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * @param context
      * @return
      */
+    @Deprecated
     public Document generateDocument(Context context) {
         return generateDocument(context, -1, DocumentTypeCode.PHYSICAL_COUNT);
     }
@@ -365,6 +367,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      * @param documentTypeCode
      * @return
      */
+    @Deprecated
     public Document generateDocument(Context context, int targetBranchId, DocumentTypeCode documentTypeCode) {
         Document.Builder pcount = new Document.Builder();
 //        TimerTools.duration("generateDocument -- first loop", true);
@@ -425,6 +428,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      *
      * @return the number of inventory objects updated
      */
+    @Deprecated
     public int updateInventoryFromSelectedItemList(boolean shouldAdd) {
         int updated = 0;
         BatchList<Inventory> newInventories = new BatchList<>(DatabaseOperation.INSERT, getHelper());
@@ -456,6 +460,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return updated;
     }
 
+    @Deprecated
     protected int revertInventoryFromDocument(Document document, boolean shouldAdd) {
         int updated = 0;
         List<DocumentLine> documentLines = document.getDocument_lines();
@@ -478,6 +483,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         return updated;
     }
 
+    @Deprecated
     protected int revertInventoryFromInvoice() {
         int updated = 0;
         BatchList<Inventory> inventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
