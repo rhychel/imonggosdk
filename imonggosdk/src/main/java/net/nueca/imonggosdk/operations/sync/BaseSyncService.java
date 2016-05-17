@@ -267,8 +267,7 @@ public abstract class BaseSyncService extends ImonggoService {
                 return getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("id", productTag.getId()).queryForFirst() != null;
             }
             case DOCUMENT_ADJUSTMENT_OUT:
-            case DOCUMENT_TRANSFER_OUT:
-            case DOCUMENTS: {
+            case DOCUMENT_TRANSFER_OUT: {
                 Document document = (Document) o;
                 return getHelper().fetchObjects(Document.class).queryBuilder().where().eq("returnId", document.getId()).queryForFirst() != null;
             }
