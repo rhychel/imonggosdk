@@ -299,12 +299,13 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                             referenceNumber = offlineData.getReference_no();
                             simpleTransactionDetailsFragment.setOfflineData(offlineData);
+                            simpleTransactionDetailsFragment.setMultipleInput(getModuleSetting(offlineData.getConcessioModule()).getQuantityInput().is_multiinput());
 
                             getSupportFragmentManager().beginTransaction()
                                     .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                                     .add(R.id.flContent, simpleTransactionDetailsFragment, "transaction_details")
                                     .addToBackStack("transaction_details")
-                                    .commit();
+                                    .commitAllowingStateLoss();
                         }
 
                     }
@@ -980,6 +981,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         else
                             initializeVoidButton(btn1, referenceNumber);
 
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
+                            if(!offlineData.isSynced() && !offlineData.isSyncing() && !offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                initializeVoidButton(btn1, referenceNumber);
+                                initializeDuplicateButton(btn2, referenceNumber);
+                            }
+                            else
+                                initializeDuplicateButton(btn1, referenceNumber);
+                        }
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
                                 simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) {
                             Log.e("duplicate", "yeah");
