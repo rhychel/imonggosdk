@@ -272,6 +272,28 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         return products;
     }
 
+    protected List<Unit> getUnits(Product product) throws SQLException {
+        return getUnits(product, true);
+    }
+
+    protected List<Unit> getUnits(Product product, boolean includeBaseUnit) throws SQLException {
+        List<Unit> unitList = getHelper().fetchForeignCollection(product.getUnits().closeableIterator());
+
+        if(includeBaseUnit) {
+            Unit unit = new Unit(product);
+            unit.setId(-1);
+            unit.setName(product.getBase_unit_name());
+            unit.setRetail_price(product.getRetail_price());
+
+            if (unitList.size() > 0)
+                unitList.add(0, unit);
+            else
+                unitList.add(unit);
+        }
+
+        return unitList;
+    }
+
     protected AbsListView.OnScrollListener lvScrollListener = new AbsListView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {

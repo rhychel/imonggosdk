@@ -7,11 +7,11 @@
     <!--<color name="accent">#50d2c2</color>-->
 
     <!-- On Dark Background Specs -->
-    <color name="primary">#ef6c00</color>
+    <color name="primary">#EF6C00</color>
     <color name="primary_dark">#E65100</color>
     <color name="primary_light">#FFCC80</color>
-    <color name="accent">#bdbdbd</color>
-    <color name="accentLogin">#00bfa5</color>
+    <color name="accent">#BDBDBD</color>
+    <color name="accentLogin">#00BFA5</color>
     <color name="hint_text">#E0E0E0</color>
     <color name="secondary_text">#BCBCBC</color>
     <color name="primary_text">#FFFFFF</color>
@@ -48,6 +48,7 @@
     <color name="white_50">#44000000</color>
 
     <color name="gray_50">#77363636</color>
+    <color name="gray_90">#CCEDEDED</color>
 
     <color name="warehouse_background">#f2f2f2</color>
 </resources>

@@ -44,7 +44,7 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
     protected OnItemClickListener onItemClickListener = null;
     protected OnItemLongClickListener onItemLongClickListener = null;
 
-    public RecyclerView.LayoutManager layoutManager;
+    public LayoutManager layoutManager;
     protected LinearLayoutManager linearLayoutManager;
     protected GridLayoutManager gridLayoutManager;
 
@@ -147,6 +147,7 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
     }
 
     public void initializeRecyclerView(Context context, RecyclerView rvProducts) {
+        Log.e("BaseRecyclerAdapter", "initializeRecyclerView");
         initializeRecyclerView(context, rvProducts, true);
     }
 

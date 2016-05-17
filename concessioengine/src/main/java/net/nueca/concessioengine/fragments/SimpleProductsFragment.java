@@ -464,18 +464,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                         Log.e("Unit", "default selling unit id --> "+product.getExtras().getDefault_selling_unit());
                     }
                 }
-                else {
-                    unitList = getHelper().fetchForeignCollection(product.getUnits().closeableIterator());
-                    Unit unit = new Unit(product);
-                    unit.setId(-1);
-                    unit.setName(product.getBase_unit_name());
-                    unit.setRetail_price(product.getRetail_price());
-
-                    if(unitList.size() > 0)
-                        unitList.add(0, unit);
-                    else
-                        unitList.add(unit);
-                }
+                else
+                    unitList = getUnits(product);
 
                 if(hasUnits)
                     simpleSalesQuantityDialog.setUnitList(unitList); //, addBaseProduct
