@@ -981,6 +981,14 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         else
                             initializeVoidButton(btn1, referenceNumber);
 
+                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
+                            if(!offlineData.isSynced() && !offlineData.isSyncing() && !offlineData.getOfflineDataTransactionType().isVoiding()) {
+                                initializeVoidButton(btn1, referenceNumber);
+                                initializeDuplicateButton(btn2, referenceNumber);
+                            }
+                            else
+                                initializeDuplicateButton(btn1, referenceNumber);
+                        }
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
                                 simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) {
                             Log.e("duplicate", "yeah");
