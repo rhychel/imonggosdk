@@ -165,6 +165,8 @@ public class Values {
         }
 
         Log.e("PRICE OBJ", "isNull? " + (price == null));
+        product_discounts = new ArrayList<>();
+        company_discounts = new ArrayList<>();
         if(this.price == null) {
             if(isValidUnit()) {
                 this.no_discount_subtotal = this.subtotal; // this.unit_retail_price
