@@ -24,6 +24,7 @@ import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleInventoryFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.concessioengine.tools.OrderTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.dizonwarehouse.adapters.CategoryRecyclerAdapter;
 import net.nueca.dizonwarehouse.dialogs.SearchDialog;
@@ -335,8 +336,12 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
         reference = text;
         refreshTitle();
         try {
-            Log.e("ORDERS", new Gson().toJson(Order.fetchAll(getHelper(),Order.class)));
-            return getHelper().fetchObjects(Order.class).queryBuilder().where().eq("reference",text).queryForFirst() != null;
+            Order order = getHelper().fetchObjects(Order.class).queryBuilder().where().eq("reference",text).queryForFirst();
+            Log.e("WH_Module", "found Order " + order.getReference());
+            simpleInventoryFragment.setFilterProductsBy(OrderTools.generateSelectedItemList(getHelper(), order));
+            simpleInventoryFragment.refreshList();
+
+            return order != null;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
