@@ -842,6 +842,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
     private boolean syncNext() {
         Log.e(TAG, "syncNext()...");
+
+
         if (mModulesIndex == (mModulesToSync.length - 1)) {  // this is when there are no left tables to sync
             endSyncNext();
             return false;
@@ -1026,7 +1028,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 mCurrentTableSyncing == Table.DOCUMENT_TRANSFER_OUT ||
                 mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
                 mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
-                mCurrentTableSyncing == Table.ORDERS) {
+                mCurrentTableSyncing == Table.ORDERS_STOCK_REQUEST ||
+                mCurrentTableSyncing == Table.ORDERS_PURCHASES) {
             mBranchIdIndex++;
             Log.e(TAG, "syncNextLogic.... this... " + mBranchIdIndex + " < " + getListOfBranchIds().size());
             if (mBranchIdIndex < getListOfBranchIds().size()) {
@@ -1162,8 +1165,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     } else {
                                         mSyncModulesListener.onDownloadProgress(module, 1, 1);
                                     }
-
-                                    Log.e(TAG, ">> parehas: table: " + module + " skip next: " + mSkipNextModule);
                                     syncNext();
                                     return;
                                 } else {
@@ -1228,17 +1229,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 || mCurrentTableSyncing == Table.PRICE_LISTS_DETAILS
                                 || mCurrentTableSyncing == Table.ROUTE_PLANS_DETAILS) {
                             mModulesIndex++;
-                        }
-
-                        if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
-                                mCurrentTableSyncing == Table.DOCUMENT_ADJUSTMENT_OUT ||
-                                mCurrentTableSyncing == Table.DOCUMENT_TRANSFER_OUT ||
-                                mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
-                                mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
-                                mCurrentTableSyncing == Table.ORDERS ||
-                                mCurrentTableSyncing == Table.ORDERS_STOCK_REQUEST ||
-                                mCurrentTableSyncing == Table.ORDERS_PURCHASES) {
-                            updateNext(requestType, 0);
                         }
 
                         syncNext();
@@ -4253,7 +4243,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             try {
                                 if (mBranchIdIndex < getListOfBranchIds().size()) {
                                     Log.e(TAG, "DOWNLOADING NEXT VISITING BRANCH OF THIS USER ");
-                                    startSyncModuleContents(RequestType.COUNT);
+                                    startSyncModuleContents(RequestType.LAST_UPDATED_AT);
                                 } else {
                                     Log.e(TAG, "ENDING DOWNLOADING OF BRANCHES OF THIS USER ");
                                     syncNext();
