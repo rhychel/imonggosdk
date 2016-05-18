@@ -68,8 +68,8 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
                 if(selectedProductFragment.getProductsRecyclerAdapter().getItemCount() > 0)
                 ( (RecyclerView)selectedProductFragment.getView().findViewById(R.id.rvProducts) ).smoothScrollToPosition(selectedProductFragment
                         .getProductsRecyclerAdapter().getItemCount()-1);
-                updateFooter();
             }
+            updateFooter();
         }
     };
     private BaseProductsFragment.ProductsFragmentListener selectedListener = new BaseProductsFragment.ProductsFragmentListener() {
@@ -117,7 +117,7 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
         //changeToReview = true;
         simpleInventoryFragment = new SimpleInventoryFragment();
         simpleInventoryFragment.setHelper(getHelper());
-        simpleInventoryFragment.setListingType(ListingType.BASIC);
+        simpleInventoryFragment.setListingType(ListingType.ADVANCED_SALES);
         simpleInventoryFragment.setSetupActionBar(sabSelection);
         simpleInventoryFragment.setHasUnits(true);
         simpleInventoryFragment.setProductCategories(getProductCategories(!getModuleSetting(concessioModule).getProductListing()
@@ -325,7 +325,9 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
         else if(concessioModule == ConcessioModule.RELEASE_BRANCH)
             title = "Enter " + DISPATCHING_ORDER + " Number";
 
-        new SearchDialog(this,R.style.WarehouseTheme_InputDialog).setTitle(title).setOnSearchListener(this).show();
+        SearchDialog dialog = new SearchDialog(this,R.style.WarehouseTheme_InputDialog).setTitle(title).setOnSearchListener(this);
+        dialog.setCancelable(false);
+        dialog.show();
     }
 
     @Override

@@ -119,6 +119,8 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
                         retail_price = product.getRetail_price();
                     Log.e("identified retail_price", retail_price.toString());
                     viewHolder.tvRetailPrice.setText(String.format("P%s", NumberTools.separateInCommas(retail_price)));
+
+                    subtotal = retail_price * Double.valueOf(getSelectedProductItems().getQuantity(product));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
