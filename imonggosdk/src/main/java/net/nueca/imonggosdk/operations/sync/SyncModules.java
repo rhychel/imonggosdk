@@ -4095,6 +4095,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 JSONObject orderLinejsonObject = orderLineArray.getJSONObject(x);
                                                 OrderLine orderLine = gson.fromJson(orderLinejsonObject.toString(), OrderLine.class);
 
+                                                if(orderLine.getUnit_retail_price() == null)
+                                                    orderLine.setUnit_retail_price(orderLine.getRetail_price());
+
                                                 //Log.e(TAG, "setting this order line to order: " + orderLine.toString());
                                                 orderLine.setOrder(orders);
 
