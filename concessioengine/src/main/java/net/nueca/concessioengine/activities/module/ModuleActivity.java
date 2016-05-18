@@ -337,7 +337,6 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
         AnimationTools.toggleShowHide(linearLayout, size == 0, 300);
     }
 
-
     protected void initializeDuplicateButton(Button btn, final String referenceNumber) {
         btn.setVisibility(View.VISIBLE);
         btn.setText("DUPLICATE");

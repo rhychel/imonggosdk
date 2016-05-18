@@ -23,6 +23,7 @@ import java.util.List;
 /**
  * Created by gama on 10/5/15.
  */
+@Deprecated
 public class SimplePulloutRequestDialog extends BasePulloutRequestDialog {
 //    private TextView tvSourceBranchLabel, tvDestinationBranchLabel;
     private Button btnSave, btnCancel;

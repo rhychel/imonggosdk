@@ -46,15 +46,6 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
             return;
         }
         switch (dashboardTile.getConcessioModule()) {
-//            case RECEIVE_BRANCH:
-//                DialogTools.showDialog(this, "Coming Soon", "Willing to wait?", "Yes!", new DialogInterface.OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                    }
-//                }, R.style.AppCompatDialogStyle_Light);
-//                break;
             default: { // TEMPORARY
                 Intent intent = new Intent(this, nextActivityClass);
                 Bundle bundle = addExtras(dashboardTile);
@@ -67,49 +58,4 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
     }
 
     protected abstract Bundle addExtras(DashboardTile dashboardTile);
-
-    public List<Branch> getBranches() {
-        return getBranches(false);
-    }
-
-    /**
-     * Generate the user's branches.
-     * @return
-     */
-    public List<Branch> getBranches(boolean warehouseOnly) {
-        List<Branch> assignedBranches = new ArrayList<>();
-        try {
-            List<BranchUserAssoc> branchUserAssocs = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
-            boolean hasDefaultBranch = false;
-            for(BranchUserAssoc branchUser : branchUserAssocs) {
-                Log.e("Branches", branchUser.getBranch().getName());
-                if(warehouseOnly) {
-                    if (branchUser.getBranch().getSite_type() == null || branchUser.getBranch().getSite_type().equals("null"))
-                        continue;
-                }
-                else if(branchUser.getBranch().getSite_type() != null && branchUser.getBranch().getSite_type().equals("warehouse"))
-                    continue;
-                if(branchUser.getBranch().getStatus().equals("D"))
-                    continue;
-
-                if(branchUser.getBranch().getId() == Integer.valueOf(SettingTools.defaultBranch(this))) { //getUser().getHome_branch_id())
-                    assignedBranches.add(0, branchUser.getBranch());
-                    hasDefaultBranch = true;
-                }
-                else if(!hasDefaultBranch && getUser().getHome_branch_id() == branchUser.getBranch().getId())
-                    assignedBranches.add(0, branchUser.getBranch());
-                else
-                    assignedBranches.add(branchUser.getBranch());
-//                if(branchUser.getBranch().getId() == getUser().getHome_branch_id())
-//                    assignedBranches.add(0, branchUser.getBranch());
-//                else
-//                    assignedBranches.add(branchUser.getBranch());
-            }
-            if(!hasDefaultBranch)
-                SettingTools.updateSettings(this, SettingsName.DEFAULT_BRANCH, String.valueOf(getUser().getHome_branch_id()));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return assignedBranches;
-    }
 }

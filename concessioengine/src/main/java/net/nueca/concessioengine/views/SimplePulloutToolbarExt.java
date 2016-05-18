@@ -11,6 +11,7 @@ import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 /**
  * Created by gama on 10/6/15.
  */
+@Deprecated
 public class SimplePulloutToolbarExt extends BaseToolbarExt {
 
     protected OnToolbarClickedListener onClickListener;

@@ -40,6 +40,7 @@ import java.util.List;
 /**
  * Created by gama on 9/10/15.
  */
+@Deprecated
 public class SimpleReceiveReviewFragment extends BaseReviewFragment {
 
     protected SimpleReceiveListAdapter simpleReceiveListAdapter;

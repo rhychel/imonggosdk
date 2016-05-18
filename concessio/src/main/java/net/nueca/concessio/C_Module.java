@@ -133,9 +133,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
     private SimpleTransactionsFragment simpleTransactionsFragment;
     private SimpleTransactionDetailsFragment simpleTransactionDetailsFragment;
 
-    private SimpleReceiveFragment simpleReceiveFragment;
-    private SimpleReceiveReviewFragment simpleReceiveReviewFragment;
-
     private SimpleInventoryFragment simpleInventoryFragment;
 
     private SimpleCustomersFragment simpleCustomersFragment;
@@ -145,8 +142,6 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
     // For the pullout module
     private SimplePulloutFragment simplePulloutFragment;
-    private SimplePulloutToolbarExt simplePulloutToolbarExt;
-    private SimplePulloutRequestDialog simplePulloutRequestDialog;
 
     private ImonggoSwableServiceConnection imonggoSwableServiceConnection;
 

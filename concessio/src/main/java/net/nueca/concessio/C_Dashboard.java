@@ -80,33 +80,36 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_app_logo);
 
-        branchesAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_dark, getBranches());
-        branchesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
-        spBranches.setAdapter(branchesAdapter);
-        spBranches.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
-                if (position != currentlySelected) {
-                    DialogTools.showConfirmationDialog(C_Dashboard.this, "Change Default Branch", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            currentlySelected = position;
-                            SettingTools.updateSettings(C_Dashboard.this, SettingsName.DEFAULT_BRANCH, String.valueOf(branchesAdapter.getItem(position).getId()));
-                            Log.e("Branch selected", branchesAdapter.getItem(position).getName());
-                        }
-                    }, "No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            spBranches.setSelection(currentlySelected);
-                        }
-                    }, R.style.AppCompatDialogStyle_Light);
+        try {
+            branchesAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_dark, Branch.allUserBranches(this, getHelper(), getUser()));
+            branchesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
+            spBranches.setAdapter(branchesAdapter);
+            spBranches.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
+                    if (position != currentlySelected) {
+                        DialogTools.showConfirmationDialog(C_Dashboard.this, "Change Default Branch", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                currentlySelected = position;
+                                SettingTools.updateSettings(C_Dashboard.this, SettingsName.DEFAULT_BRANCH, String.valueOf(branchesAdapter.getItem(position).getId()));
+                            }
+                        }, "No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                spBranches.setSelection(currentlySelected);
+                            }
+                        }, R.style.AppCompatDialogStyle_Light);
+                    }
                 }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         rvModules.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(this, 2);
@@ -118,7 +121,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                     dashboardTiles.add(new DashboardTile(ConcessioModule.ROUTE_PLAN, moduleSetting.getLabel()));
                 else
                     dashboardTiles.add(new DashboardTile(moduleSetting.getModuleType(), moduleSetting.getLabel()));
-
             }
             dashboardTiles.add(5, new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
         } else { // OTHERS
@@ -127,8 +129,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                     dashboardTiles.add(new DashboardTile(ConcessioModule.CUSTOMERS, moduleSetting.getLabel(), true, ConcessioModule.INVOICE.getLogo()));
                 else
                     dashboardTiles.add(new DashboardTile(moduleSetting.getModuleType(), moduleSetting.getLabel()));
-
-                Log.e("ModuleSettings", moduleSetting.getModule_type() + "=" + moduleSetting.getDisplay_sequence());
             }
         }
         dashboardTiles.add(new DashboardTile(ConcessioModule.HISTORY, "History"));
@@ -136,68 +136,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
-        /*try {
-            QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
-
-            Where<Document, Integer> whereDoc = queryBuilder.where();
-            whereDoc.eq("target_branch_id", 32).and();
-            whereDoc.eq("reference", "9000-4");
-
-            queryBuilder.setWhere(whereDoc);
-
-            Document document = queryBuilder.queryForFirst();
-
-            Log.e("Document", document != null? document.getReference() : "null object");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
-
-        try {
-            queryAllDocuments();
-            viaTargetBranchId();
-            viaBranchId();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void queryAllDocuments() {
-        boolean hasOne = false;
-        for(Document document : Document.fetchAll(getHelper(), Document.class)) {
-            hasOne = true;
-            Log.e("Document", document.getReference()+" | docLines = "+document.getDocument_lines().size()
-                    + " | target_branch_id = "+document.getTarget_branch_id()+ " | branch_id = "+document.getBranch_id());
-        }
-        if(!hasOne)
-            Log.e("Document", "no documents are saved!");
-    }
-
-    private void viaTargetBranchId() throws SQLException {
-        QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
-
-        Where<Document, Integer> whereDoc = queryBuilder.where();
-        whereDoc.eq("target_branch_id", 32).and();
-        whereDoc.eq("reference", "9000-4");
-
-        Document document = queryBuilder.queryForFirst();
-        if(document == null)
-            Log.e("Document via TBI", "Failed!");
-        else
-            Log.e("Document via TBI", document.getReference());
-    }
-
-    private void viaBranchId() throws SQLException {
-        QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
-
-        Where<Document, Integer> whereDoc = queryBuilder.where();
-        whereDoc.eq("branch_id", 30).and();
-        whereDoc.eq("reference", "9000-4");
-
-        Document document = queryBuilder.queryForFirst();
-        if(document == null)
-            Log.e("Document via BI", "Failed!");
-        else
-            Log.e("Document via BI", document.getReference());
     }
 
     @Override
@@ -247,7 +185,11 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                                 Log.e("apiDownloader", "end" + table.getStringName());
                                 if (table == Table.BRANCH_USERS || table == Table.BRANCHES) {
                                     branchesAdapter.clear();
-                                    branchesAdapter.addAll(getBranches());
+                                    try {
+                                        branchesAdapter.addAll(Branch.allUserBranches(C_Dashboard.this, getHelper(), getUser()));
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
                                     branchesAdapter.notifyDataSetChanged();
                                 }
                                 progressListDialog.finishedDownload();
@@ -357,8 +299,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-//                EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
-//                StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
             }
             break;
             case R.id.mSettings: {
@@ -388,12 +328,10 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
     @Override
     protected void onDestroy() {
-        Log.e("onDestroy", "---- unbind");
         if (!SwableTools.isImonggoSwableRunning(this))
             SwableTools.stopSwable(this);
 
         apiDownloader.onUnbindSyncService();
-        Log.e("onDestroy", "---- nothing to unbind");
         super.onDestroy();
     }
 }
