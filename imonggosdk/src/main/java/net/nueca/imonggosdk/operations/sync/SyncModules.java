@@ -4070,6 +4070,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         if (!jsonObject.isNull("order_lines")) {
 
                                             JSONArray orderLineArray = jsonObject.getJSONArray("order_lines");
+                                            List<OrderLine> orderLineList = orders.getOrder_lines();
+                                            orders.setOrder_lines(null);
 
                                             for (int x = 0; x < orderLineArray.length(); x++) {
                                                 JSONObject orderLinejsonObject = orderLineArray.getJSONObject(x);
@@ -4080,6 +4082,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                                 //Log.e(TAG, "setting this order line to order: " + orderLine.toString());
                                                 orderLine.setOrder(orders);
+                                                if(orderLineList.get(x).getLine_no() == orderLine.getLine_no())
+                                                    orders.addOrderLine(orderLine);
 
                                                 if (initialSync || lastUpdatedAt == null) {
                                                     //Log.e(TAG, "adding to insert... ");

@@ -23,6 +23,7 @@ import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleInventoryFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
+import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.tools.OrderTools;
 import net.nueca.concessioengine.views.SearchViewEx;
@@ -30,6 +31,7 @@ import net.nueca.dizonwarehouse.adapters.CategoryRecyclerAdapter;
 import net.nueca.dizonwarehouse.dialogs.SearchDialog;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -127,6 +129,14 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
         simpleInventoryFragment.setHasSubtotal(true);
         simpleInventoryFragment.setProductsFragmentListener(selectionListener);
         simpleInventoryFragment.setHasCategories(true);
+
+        simpleInventoryFragment.setMultipleInput(true);
+        simpleInventoryFragment.setMultiInputListener(new MultiInputListener() {
+            @Override
+            public void showInputScreen(Product product) {
+
+            }
+        });
         // if there's branch product
         simpleInventoryFragment.setBranch(selectedBranch);
 
@@ -337,9 +347,12 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
         refreshTitle();
         try {
             Order order = getHelper().fetchObjects(Order.class).queryBuilder().where().eq("reference",text).queryForFirst();
-            Log.e("WH_Module", "found Order " + order.getReference());
-            simpleInventoryFragment.setFilterProductsBy(OrderTools.generateSelectedItemList(getHelper(), order));
-            simpleInventoryFragment.refreshList();
+            Log.e("WH_Module", order == null? "not found" : "found Order ~ " + order.toJSONString());
+
+            if(order != null) {
+                simpleInventoryFragment.setFilterProductsBy(OrderTools.generateSelectedItemList(getHelper(), order));
+                simpleInventoryFragment.refreshList();
+            }
 
             return order != null;
         } catch (SQLException e) {
@@ -366,7 +379,7 @@ public class WH_Module extends ModuleActivity implements SearchDialog.OnSearchLi
     private void initFinalizeFragment() {
         finalizeFragment = SimpleProductsFragment.newInstance();
         finalizeFragment.setHelper(getHelper());
-        finalizeFragment.setListingType(ListingType.SALES_GRID);
+        finalizeFragment.setListingType(ListingType.ADVANCED_SALES);
         finalizeFragment.setSetupActionBar(sabFinalize);
         finalizeFragment.setHasUnits(true);
         finalizeFragment.setHasSubtotal(true);

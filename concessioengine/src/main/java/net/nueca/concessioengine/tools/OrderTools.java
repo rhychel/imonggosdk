@@ -1,6 +1,9 @@
 package net.nueca.concessioengine.tools;
 
 import android.content.Context;
+import android.util.Log;
+
+import com.google.gson.Gson;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.SelectedProductItem;
@@ -57,6 +60,7 @@ public class OrderTools {
 
         List<OrderLine> orderLines = order.getOrder_lines();
         for(OrderLine orderLine : orderLines) {
+            Log.e(">>>>>>>>>>>>>>>>>>>", new Gson().toJson(orderLine));
             Product product = dbHelper.fetchIntId(Product.class).queryForId(orderLine.getProduct_id());
             if(productList.indexOf(product) == -1)
                 productList.add(product);
