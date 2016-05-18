@@ -260,12 +260,17 @@ public class Order extends BaseTransactionTable3 {
 
         refresh();
         if(order_lines != null) {
-            BatchList<OrderLine> batchList = new BatchList<>(DatabaseOperation.INSERT, dbHelper);
+            BatchList<OrderLine> batchListIns = new BatchList<>(DatabaseOperation.INSERT, dbHelper);
+            BatchList<OrderLine> batchListUpd = new BatchList<>(DatabaseOperation.UPDATE, dbHelper);
             for (OrderLine orderLine : order_lines) {
                 orderLine.setOrder(this);
-                batchList.add(orderLine);
+                if(orderLine.getId() == -1)
+                    batchListIns.add(orderLine);
+                else
+                    batchListUpd.add(orderLine);
             }
-            batchList.doOperation(OrderLine.class);
+            batchListIns.doOperation(OrderLine.class);
+            batchListUpd.doOperation(OrderLine.class);
         }
 
         updateExtrasTo(dbHelper);
