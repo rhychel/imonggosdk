@@ -10,6 +10,7 @@ import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 /**
  * Created by rhymart on 12/2/15.
  */
+@Deprecated
 public class CustomerDetailsActivity extends ImonggoAppCompatActivity {
 
     private RecyclerView rvCustomerDetails;

@@ -27,6 +27,7 @@ import com.google.gson.GsonBuilder;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.R;
+import net.nueca.concessioengine.adapters.CustomerFieldsAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.objects.OfflineData;
@@ -34,6 +35,7 @@ import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
+import net.nueca.imonggosdk.objects.customer.CustomerField;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.DialogTools;
@@ -86,42 +88,25 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
 
         setSupportActionBar(tbAddCustomer);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("New Customer");
+        boolean isUpdate = updateCustomer != null;
         tbAddCustomer.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
-
-        if(updateCustomer != null) {
-            customerFieldArrayList.add(new CustomerField("Last Name", FieldType.EDITTEXT, Customer.CustomerFields.LAST_NAME, updateCustomer.getLast_name()));
-            customerFieldArrayList.add(new CustomerField("First Name", FieldType.EDITTEXT, Customer.CustomerFields.FIRST_NAME, updateCustomer.getFirst_name()));
-            customerFieldArrayList.add(new CustomerField("Middle Name", FieldType.EDITTEXT, Customer.CustomerFields.MIDDLE_NAME, updateCustomer.getMiddle_name()));
-            customerFieldArrayList.add(new CustomerField("Mobile", FieldType.EDITTEXT, R.drawable.ic_phone_orange, Customer.CustomerFields.MOBILE, updateCustomer.getMobile()));
-            customerFieldArrayList.add(new CustomerField("Work", FieldType.EDITTEXT, Customer.CustomerFields.TELEPHONE, updateCustomer.getTelephone()));
-            customerFieldArrayList.add(new CustomerField("Company", FieldType.EDITTEXT, R.drawable.ic_branch_orange, Customer.CustomerFields.COMPANY_NAME, updateCustomer.getCompany_name()));
-            customerFieldArrayList.add(new CustomerField("Address", FieldType.EDITTEXT, Customer.CustomerFields.STREET, updateCustomer.getStreet()));
-            getSupportActionBar().setTitle("Update Customer");
-            try {
-                initSpinnerValues(true, true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        else {
-            customerFieldArrayList.add(new CustomerField("Last Name", FieldType.EDITTEXT, Customer.CustomerFields.LAST_NAME));
-            customerFieldArrayList.add(new CustomerField("First Name", FieldType.EDITTEXT, Customer.CustomerFields.FIRST_NAME));
-            customerFieldArrayList.add(new CustomerField("Middle Name", FieldType.EDITTEXT, Customer.CustomerFields.MIDDLE_NAME));
-            customerFieldArrayList.add(new CustomerField("Mobile", FieldType.EDITTEXT, R.drawable.ic_phone_orange, Customer.CustomerFields.MOBILE));
-            customerFieldArrayList.add(new CustomerField("Work", FieldType.EDITTEXT, Customer.CustomerFields.TELEPHONE));
-            customerFieldArrayList.add(new CustomerField("Company", FieldType.EDITTEXT, R.drawable.ic_branch_orange, Customer.CustomerFields.COMPANY_NAME));
-            customerFieldArrayList.add(new CustomerField("Address", FieldType.EDITTEXT, Customer.CustomerFields.STREET));
-            try {
-                initSpinnerValues(true, false);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        customerFieldArrayList.add(new CustomerField("Last Name", CustomerField.FieldType.EDITTEXT, Customer.CustomerFields.LAST_NAME, updateCustomer));
+        customerFieldArrayList.add(new CustomerField("First Name", CustomerField.FieldType.EDITTEXT, Customer.CustomerFields.FIRST_NAME, updateCustomer));
+        customerFieldArrayList.add(new CustomerField("Middle Name", CustomerField.FieldType.EDITTEXT, Customer.CustomerFields.MIDDLE_NAME, updateCustomer));
+        customerFieldArrayList.add(new CustomerField("Mobile", CustomerField.FieldType.EDITTEXT, R.drawable.ic_phone_orange, Customer.CustomerFields.MOBILE, updateCustomer));
+        customerFieldArrayList.add(new CustomerField("Work", CustomerField.FieldType.EDITTEXT, Customer.CustomerFields.TELEPHONE, updateCustomer));
+        customerFieldArrayList.add(new CustomerField("Company", CustomerField.FieldType.EDITTEXT, R.drawable.ic_branch_orange, Customer.CustomerFields.COMPANY_NAME, updateCustomer));
+        customerFieldArrayList.add(new CustomerField("Address", CustomerField.FieldType.EDITTEXT, Customer.CustomerFields.STREET, updateCustomer));
+        getSupportActionBar().setTitle(isUpdate ? "Update Customer" : "New Customer");
+        try {
+            initSpinnerValues(true, isUpdate);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         customerFieldsAdapter = new CustomerFieldsAdapter(this, customerFieldArrayList);
@@ -168,12 +153,12 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
 
             int ccIndex = customerCategories.indexOf(updateCustomer.getExtras().getCustomerCategory());
 
-            customerFieldArrayList.add(new CustomerField<>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID, ccIndex));
-            customerFieldArrayList.add(new CustomerField<>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID, ptIndex));
+            customerFieldArrayList.add(new CustomerField<>("Outlet Type", customerCategories, CustomerField.FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID, ccIndex));
+            customerFieldArrayList.add(new CustomerField<>("Payment Terms", paymentTerms, CustomerField.FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID, ptIndex));
         }
         else {
-            customerFieldArrayList.add(new CustomerField<>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID));
-            customerFieldArrayList.add(new CustomerField<>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID));
+            customerFieldArrayList.add(new CustomerField<>("Outlet Type", customerCategories, CustomerField.FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID));
+            customerFieldArrayList.add(new CustomerField<>("Payment Terms", paymentTerms, CustomerField.FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID));
         }
     }
 
@@ -186,407 +171,59 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mSaveCustomer) {
-            final Customer customer = customerFieldsAdapter.generateCustomer();
-            Gson gson = new Gson();
-            Log.e("Customer", gson.toJson(customer));
-            FieldValidatorMessage fieldValidatorMessage = customer.doesRequiredSatisfied(Customer.CustomerFields.FIRST_NAME, Customer.CustomerFields.LAST_NAME,
-                    Customer.CustomerFields.MOBILE, Customer.CustomerFields.TELEPHONE, Customer.CustomerFields.EXTRAS_CATEGORY_ID, Customer.CustomerFields.PAYMENT_TERMS_ID);
-
-            if(fieldValidatorMessage.isPassed()) {
-                DialogTools.showConfirmationDialog(this, "Save Customer",
-                        updateCustomer != null ? "Update customer details?" : "Create this customer?",
-                        "Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.e("customer Name", customer.getFirst_name()+"");
-                        if(updateCustomer == null) {
-                            OfflineData offlineData = new SwableTools.Transaction(getHelper())
-                                    .toSend()
-                                    .object(customer)
-                                    .queue();
-                        }
-                        else {
-//                            customer.set
-                            OfflineData offlineData = new SwableTools.Transaction(getHelper())
-                                    .toUpdate()
-                                    .object(customer)
-                                    .queue();
-
-                            offlineData.setBeingModified(false);
-                            offlineData.updateTo(getHelper());
-                        }
-
-                        Intent intent = new Intent();
-                        intent.putExtra(CUSTOMER_ID, updateCustomer != null ? updateCustomer.getId() : customer.getId());
-                        setResult(SUCCESS, intent);
-                        finish();
-                    }
-                }, "No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) { }
-                }, R.style.AppCompatDialogStyle_Light);
-            }
-            else {
-                DialogTools.showDialog(this, "Ooops!", fieldValidatorMessage.getMessage(), "Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) { }
-                }, R.style.AppCompatDialogStyle_Light);
-            }
-                Log.e("Satisfied", "nope!");
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public enum FieldType {
-        EDITTEXT,
-        SPINNER
-    }
-
-    public class CustomerField<T> {
-        private String label;
-        private Customer.CustomerFields fieldName;
-        private List<T> values;
-        private FieldType fieldType;
-        private int iconField = -1;
-        private int selectedIndex = 0;
-        private String editTextValue = "";
-        private boolean hasTextChangedListener = false;
-
-        public CustomerField(String label, FieldType fieldType, Customer.CustomerFields fieldName) {
-            this.label = label;
-            this.fieldType = fieldType;
-            this.fieldName = fieldName;
-        }
-
-        public CustomerField(String label, FieldType fieldType, Customer.CustomerFields fieldName, String editTextValue) {
-            this.label = label;
-            this.fieldType = fieldType;
-            this.fieldName = fieldName;
-            this.editTextValue = editTextValue;
-        }
-
-        public CustomerField(String label, List<T> values, FieldType fieldType, Customer.CustomerFields fieldName) {
-            this.label = label;
-            this.values = values;
-            this.fieldType = fieldType;
-            this.fieldName = fieldName;
-        }
-
-        public CustomerField(String label, List<T> values, FieldType fieldType, Customer.CustomerFields fieldName, int selectedIndex) {
-            this.label = label;
-            this.values = values;
-            this.fieldType = fieldType;
-            this.fieldName = fieldName;
-            this.selectedIndex = selectedIndex;
-        }
-
-        public CustomerField(String label, FieldType fieldType, int iconField, Customer.CustomerFields fieldName) {
-            this.label = label;
-            this.fieldType = fieldType;
-            this.iconField = iconField;
-            this.fieldName = fieldName;
-        }
-
-        public CustomerField(String label, FieldType fieldType, int iconField, Customer.CustomerFields fieldName, String editTextValue) {
-            this.label = label;
-            this.fieldType = fieldType;
-            this.iconField = iconField;
-            this.fieldName = fieldName;
-            this.editTextValue = editTextValue;
-        }
-
-        public CustomerField(String label, List<T> values, FieldType fieldType, int iconField, Customer.CustomerFields fieldName) {
-            this.label = label;
-            this.values = values;
-            this.fieldType = fieldType;
-            this.iconField = iconField;
-            this.fieldName = fieldName;
-        }
-
-        public CustomerField(String label, List<T> values, Customer.CustomerFields fieldName) {
-            this.label = label;
-            this.values = values;
-            this.fieldName = fieldName;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-
-        public List<T> getValues() {
-            return values;
-        }
-
-        public void setValues(List<T> values) {
-            this.values = values;
-        }
-
-        public FieldType getFieldType() {
-            return fieldType;
-        }
-
-        public void setFieldType(FieldType fieldType) {
-            this.fieldType = fieldType;
-        }
-
-        public int getIconField() {
-            return iconField;
-        }
-
-        public void setIconField(int iconField) {
-            this.iconField = iconField;
-        }
-
-        public Customer.CustomerFields getFieldName() {
-            return fieldName;
-        }
-
-        public void setFieldName(Customer.CustomerFields fieldName) {
-            this.fieldName = fieldName;
-        }
-
-        public int getSelectedIndex() {
-            return selectedIndex;
-        }
-
-        public void setSelectedIndex(int selectedIndex) {
-            this.selectedIndex = selectedIndex;
-        }
-
-        public String getEditTextValue() {
-            return editTextValue;
-        }
-
-        public void setEditTextValue(String editTextValue) {
-            this.editTextValue = editTextValue;
-        }
-
-        public boolean isHasTextChangedListener() {
-            return hasTextChangedListener;
-        }
-
-        public void setHasTextChangedListener(boolean hasTextChangedListener) {
-            this.hasTextChangedListener = hasTextChangedListener;
-        }
-    }
-
-    public class CustomerFieldsAdapter extends BaseRecyclerAdapter<CustomerFieldsAdapter.ListItemView, CustomerField> {
-
-        public CustomerFieldsAdapter(Context context, List<CustomerField> list) {
-            super(context, list);
-        }
-
-        @Override
-        public ListItemView onCreateViewHolder(ViewGroup parent, int viewType) {
-            FieldType fieldType = FieldType.values()[viewType];
-            View view;
-
-            if(fieldType == FieldType.EDITTEXT) {
-                view = LayoutInflater.from(getContext()).inflate(R.layout.add_customer_fielditem, parent, false);
-            }
-            else { // SPINNER
-                view = LayoutInflater.from(getContext()).inflate(R.layout.add_customer_spinneritem, parent, false);
-            }
-            ListItemView listItemView = new ListItemView(view, new EditTextWatcher(), fieldType);
-            return listItemView;
-        }
-
-        @Override
-        public void onBindViewHolder(ListItemView holder, final int position) {
-            FieldType fieldType = FieldType.values()[getItemViewType(position)];
-            holder.ivIcon.setVisibility(View.INVISIBLE);
-
-            if(getItem(position).getIconField() != -1) {
-                holder.ivIcon.setVisibility(View.VISIBLE);
-                holder.ivIcon.setImageResource(getItem(position).getIconField());
-            }
-
-            if(fieldType == FieldType.EDITTEXT) {
-                holder.tilEt.setHint(getItem(position).getLabel());
-                holder.editTextWatcher.setPosition(position);
-                holder.etField.setInputType(getItem(position).getFieldName().getInputType());
-                holder.etField.setText(getItem(position).getEditTextValue());
-            }
-            else {
-                holder.tvLabel.setText(getItem(position).getLabel());
-                ArrayAdapter<?> valuesAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_light, getItem(position).getValues());
-                valuesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
-                holder.spOptions.setAdapter(valuesAdapter);
-                holder.spOptions.setSelection(getItem(position).getSelectedIndex());
-                holder.spOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int selectedPosition, long id) {
-                        getItem(position).setSelectedIndex(selectedPosition);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) { }
-                });
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return getCount();
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return getItem(position).getFieldType().ordinal();
-        }
-
-        public Customer generateCustomer() {
-            Customer customer = updateCustomer;
-            Gson gson = new GsonBuilder().serializeNulls().create();
-            JSONObject jsonObject = new JSONObject();
             try {
-                Extras extras = new Extras();
-                extras.setSalesman_id(getSession().getUser_id());
-                PaymentTerms paymentTerm = null;
-                CustomerCategory customerCategory = null;
-                for(CustomerField customerField : getList()) {
-                    if(customerField.getFieldName().equals(Customer.CustomerFields.EXTRAS_CATEGORY_ID)) {
-                        CustomerField<CustomerCategory> category = (CustomerField<CustomerCategory>)customerField;
-                        if(category.getSelectedIndex() == -1)
-                            continue;
-                        customerCategory = category.getValues().get(category.getSelectedIndex());
-                        if(customerCategory.getId() == -1)
-                            continue;
-                        extras.setCustomer_category_id(String.valueOf(customerCategory.getId()));
-                        continue;
-                    }
-                    if(customerField.getFieldName().equals(Customer.CustomerFields.PAYMENT_TERMS_ID)) {
-                        CustomerField<PaymentTerms> paymentTerms = (CustomerField<PaymentTerms>)customerField;
-                        if(paymentTerms.getSelectedIndex() == -1)
-                            continue;
-                        paymentTerm = paymentTerms.getValues().get(paymentTerms.getSelectedIndex());
-                        if(paymentTerm.getId() == -1)
-                            continue;
+                final Customer customer = Customer.generateCustomer(updateCustomer, getSession().getUser_id(), customerFieldsAdapter.getList());
+                Gson gson = new Gson();
+                Log.e("Customer", gson.toJson(customer));
+                FieldValidatorMessage fieldValidatorMessage = customer.doesRequiredSatisfied(Customer.CustomerFields.FIRST_NAME, Customer.CustomerFields.LAST_NAME,
+                        Customer.CustomerFields.MOBILE, Customer.CustomerFields.TELEPHONE, Customer.CustomerFields.EXTRAS_CATEGORY_ID, Customer.CustomerFields.PAYMENT_TERMS_ID);
 
-                        if(updateCustomer != null)
-                            customer.setPayment_terms_id(paymentTerm.getId());
-                        else
-                            jsonObject.put(Customer.CustomerFields.PAYMENT_TERMS_ID.getLabel(), paymentTerm.getId());
+                if(fieldValidatorMessage.isPassed()) {
+                    DialogTools.showConfirmationDialog(this, "Save Customer",
+                            updateCustomer != null ? "Update customer details?" : "Create this customer?",
+                            "Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.e("customer Name", customer.getFirst_name()+"");
+                                    if(updateCustomer == null) {
+                                        OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                                                .toSend()
+                                                .object(customer)
+                                                .queue();
+                                    }
+                                    else {
+//                            customer.set
+                                        OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                                                .toUpdate()
+                                                .object(customer)
+                                                .queue();
 
-                        continue;
-                    }
-                    if(updateCustomer != null)
-                        customer.updateCustomerDetail(customerField.getFieldName(), customerField.getEditTextValue());
-                    else
-                        jsonObject.put(customerField.getFieldName().getLabel(), customerField.getEditTextValue());
-                }
+                                        offlineData.setBeingModified(false);
+                                        offlineData.updateTo(getHelper());
+                                    }
 
-                if(updateCustomer == null)
-                    customer = gson.fromJson(jsonObject.toString(), Customer.class);
-                /*
-                 {
-                    customer.setId(TempIdGenerator.generateTempId(getContext(), Customer.class));
-                    extras.setId(Customer.class.getName().toUpperCase()+"_"+customer.getId());
-                }
-                else
-                 */
-                if(updateCustomer != null) {
-                    extras.setId(Customer.class.getName().toUpperCase()+"_"+updateCustomer.getId());
-
-                    customer.setId(updateCustomer.getId());
-                    customer.setReturnId(updateCustomer.getReturnId());
-                }
-                customer.setExtras(extras);
-                if(paymentTerm == null)
-                    Log.e("paymentTerm", "null");
-                customer.setPaymentTerms(paymentTerm);
-
-                customer.getExtras().setCustomerCategory(customerCategory);
-                if(customerCategory == null)
-                    Log.e("customerCategory", "null");
-                else
-                    Log.e("customerCategory", "Customer Category="+customerCategory.getName()+" EXTRAS = "+extras.getCustomerCategory().getName());
-                customer.generateFullName();
-            } catch (SQLException | JSONException e) {
-                e.printStackTrace();
-            }
-
-            return customer;
-        }
-
-        private Extras getExtras(Extras extras) {
-            if(extras == null)
-                extras = new Extras();
-            return extras;
-        }
-
-        public class ListItemView extends BaseRecyclerAdapter.ViewHolder {
-
-            ImageView ivIcon;
-            EditText etField;
-            TextView tvLabel;
-            Spinner spOptions;
-            TextInputLayout tilEt;
-
-            FieldType fieldType = FieldType.EDITTEXT;
-            EditTextWatcher editTextWatcher;
-
-            public ListItemView(View itemView, EditTextWatcher editTextWatcher, FieldType fieldType) {
-                super(itemView);
-                this.editTextWatcher = editTextWatcher;
-                this.fieldType = fieldType;
-
-                ivIcon = (ImageView) itemView.findViewById(R.id.ivIcon);
-
-                if(fieldType == FieldType.EDITTEXT) {
-                    etField = (EditText) itemView.findViewById(R.id.etField);
-                    etField.addTextChangedListener(editTextWatcher);
-                    tilEt = (TextInputLayout) itemView.findViewById(R.id.tilEt);
+                                    Intent intent = new Intent();
+                                    intent.putExtra(CUSTOMER_ID, updateCustomer != null ? updateCustomer.getId() : customer.getId());
+                                    setResult(SUCCESS, intent);
+                                    finish();
+                                }
+                            }, "No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) { }
+                            }, R.style.AppCompatDialogStyle_Light);
                 }
                 else {
-                    tvLabel = (TextView) itemView.findViewById(R.id.tvLabel);
-                    spOptions = (Spinner) itemView.findViewById(R.id.spOptions);
+                    DialogTools.showDialog(this, "Ooops!", fieldValidatorMessage.getMessage(), "Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) { }
+                    }, R.style.AppCompatDialogStyle_Light);
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-
-            @Override
-            public void onClick(View v) {
-
-            }
-
-            @Override
-            public boolean onLongClick(View v) {
-                return false;
-            }
+            Log.e("Satisfied", "nope!");
         }
-
-
-        public class EditTextWatcher implements TextWatcher {
-
-            private int position = 0;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.e("Position", position+"");
-                getItem(position).setEditTextValue(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-
-            public void setPosition(int position) {
-                this.position = position;
-            }
-        }
-
-
-
+        return super.onOptionsItemSelected(item);
     }
 
 }

@@ -356,74 +356,74 @@ public class C_Module extends ModuleActivity implements SetupActionBar {
         @Override
         public void onClick(View view) {
             if(btnReview.getText().equals("Send")) {
-                DialogTools.showSelectionDialog(C_Module.this,
-                        new ArrayAdapter<>(C_Module.this, android.R.layout.simple_list_item_single_choice, getBranches()),
-                        "Yes", new DialogTools.OnItemSelected<Branch>() {
-                            @Override
-                            public void itemChosen(final Branch branch) {
-                                final Branch warehouse = getWarehouse();
-                                if(warehouse == null)
-                                    DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.");
-                                else {
-                                    DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            switch (concessioModule) {
-                                                case STOCK_REQUEST: {
-                                                    try {
-                                                        SwableTools.sendTransaction(getHelper(), branch.getId(),
-                                                                generateOrder(C_Module.this, warehouse.getId()), OfflineDataType.SEND_ORDER);
-                                                        onBackPressed();
-                                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
-                                                        simpleProductsFragment.refreshList();
-                                                    } catch (SQLException | JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                                break;
-                                                case PHYSICAL_COUNT: {
-                                                    try {
-                                                        OfflineData offlineData = SwableTools.sendTransaction(getHelper(), branch.getId(),
-                                                                generateDocument(C_Module.this), OfflineDataType.SEND_DOCUMENT);
-
-                                                        Log.e("PCount", offlineData.getData().toString());
-                                                        onBackPressed();
-                                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
-                                                        simpleProductsFragment.refreshList();
-                                                    } catch (SQLException | JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                                break;
-                                                case RELEASE_BRANCH: {
-                                                    try {
-                                                        Document pulloutDoc = generateDocument(C_Module.this,
-                                                                simplePulloutRequestDialog
-                                                                        .getSelectedDestinationBranch().getId(),
-                                                                DocumentTypeCode.RELEASE_BRANCH);
-                                                        pulloutDoc.setDocument_purpose_name
-                                                                (simplePulloutRequestDialog.getSelectedReason().getName());
-                                                        OfflineData offlineData = SwableTools.sendTransaction(getHelper(),
-                                                                simplePulloutRequestDialog.getSelectedSourceBranch()
-                                                                        .getId(),
-                                                                pulloutDoc,
-                                                                OfflineDataType.SEND_DOCUMENT);
-
-                                                        Log.e("PULLOUT", offlineData.getData().toString());
-                                                        onBackPressed();
-                                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
-                                                        simpleProductsFragment.refreshList();
-                                                    } catch (SQLException | JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                                break;
-                                            }
-                                        }
-                                    }, "No");
-                                }
-                            }
-                        }, "No");
+//                DialogTools.showSelectionDialog(C_Module.this,
+//                        new ArrayAdapter<>(C_Module.this, android.R.layout.simple_list_item_single_choice, getBranches()),
+//                        "Yes", new DialogTools.OnItemSelected<Branch>() {
+//                            @Override
+//                            public void itemChosen(final Branch branch) {
+//                                final Branch warehouse = getWarehouse();
+//                                if(warehouse == null)
+//                                    DialogTools.showDialog(C_Module.this, "Ooops!", "You have no warehouse. Kindly contact your admin.");
+//                                else {
+//                                    DialogTools.showConfirmationDialog(C_Module.this, "Send", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(DialogInterface dialogInterface, int i) {
+//                                            switch (concessioModule) {
+//                                                case STOCK_REQUEST: {
+//                                                    try {
+//                                                        SwableTools.sendTransaction(getHelper(), branch.getId(),
+//                                                                generateOrder(C_Module.this, warehouse.getId()), OfflineDataType.SEND_ORDER);
+//                                                        onBackPressed();
+//                                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
+//                                                        simpleProductsFragment.refreshList();
+//                                                    } catch (SQLException | JSONException e) {
+//                                                        e.printStackTrace();
+//                                                    }
+//                                                }
+//                                                break;
+//                                                case PHYSICAL_COUNT: {
+//                                                    try {
+//                                                        OfflineData offlineData = SwableTools.sendTransaction(getHelper(), branch.getId(),
+//                                                                generateDocument(C_Module.this), OfflineDataType.SEND_DOCUMENT);
+//
+//                                                        Log.e("PCount", offlineData.getData().toString());
+//                                                        onBackPressed();
+//                                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
+//                                                        simpleProductsFragment.refreshList();
+//                                                    } catch (SQLException | JSONException e) {
+//                                                        e.printStackTrace();
+//                                                    }
+//                                                }
+//                                                break;
+//                                                case RELEASE_BRANCH: {
+//                                                    try {
+//                                                        Document pulloutDoc = generateDocument(C_Module.this,
+//                                                                simplePulloutRequestDialog
+//                                                                        .getSelectedDestinationBranch().getId(),
+//                                                                DocumentTypeCode.RELEASE_BRANCH);
+//                                                        pulloutDoc.setDocument_purpose_name
+//                                                                (simplePulloutRequestDialog.getSelectedReason().getName());
+//                                                        OfflineData offlineData = SwableTools.sendTransaction(getHelper(),
+//                                                                simplePulloutRequestDialog.getSelectedSourceBranch()
+//                                                                        .getId(),
+//                                                                pulloutDoc,
+//                                                                OfflineDataType.SEND_DOCUMENT);
+//
+//                                                        Log.e("PULLOUT", offlineData.getData().toString());
+//                                                        onBackPressed();
+//                                                        ProductsAdapterHelper.clearSelectedProductItemList(true);
+//                                                        simpleProductsFragment.refreshList();
+//                                                    } catch (SQLException | JSONException e) {
+//                                                        e.printStackTrace();
+//                                                    }
+//                                                }
+//                                                break;
+//                                            }
+//                                        }
+//                                    }, "No");
+//                                }
+//                            }
+//                        }, "No");
             } else if(btnReview.getText().toString().equals("Checkout")) {
                 if(ProductsAdapterHelper.hasSelectedProductItems()) {
                     btnReview.setText("Send");

@@ -235,6 +235,30 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
         }
     }
 
+    public Object getCustomerDetail(CustomerFields customerField) {
+        switch (customerField) {
+            case LAST_NAME:
+                return this.last_name;
+            case FIRST_NAME:
+                return this.first_name;
+            case MIDDLE_NAME:
+                return this.middle_name;
+            case MOBILE:
+                return this.mobile;
+            case TELEPHONE:
+                return this.telephone;
+            case COMPANY_NAME:
+                return this.company_name;
+            case STREET:
+                return this.street;
+            case PAYMENT_TERMS_ID:
+                return this.payment_terms_id;
+            default:
+                return generateFullName();
+        }
+
+    }
+
     public int getPoint_to_amount_ratio() {
         return point_to_amount_ratio;
     }
@@ -777,6 +801,71 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
             customerGroups.add(assoc.getCustomerGroup());
         }
         return customerGroups;
+    }
+
+    public static Customer generateCustomer(String userId, List<CustomerField> customerFields) {
+        return generateCustomer(null, userId, customerFields);
+    }
+
+    public static Customer generateCustomer(Customer updateCustomer, String userId, List<CustomerField> customerFields) {
+        Customer customer = updateCustomer;
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Extras extras = new Extras();
+            extras.setSalesman_id(userId);
+            PaymentTerms paymentTerm = null;
+            CustomerCategory customerCategory = null;
+            for(CustomerField customerField : customerFields) {
+                if(customerField.getFieldName().equals(Customer.CustomerFields.EXTRAS_CATEGORY_ID)) {
+                    CustomerField<CustomerCategory> category = (CustomerField<CustomerCategory>)customerField;
+                    if(category.getSelectedIndex() == -1)
+                        continue;
+                    customerCategory = category.getValues().get(category.getSelectedIndex());
+                    if(customerCategory.getId() == -1)
+                        continue;
+                    extras.setCustomer_category_id(String.valueOf(customerCategory.getId()));
+                    continue;
+                }
+                if(customerField.getFieldName().equals(Customer.CustomerFields.PAYMENT_TERMS_ID)) {
+                    CustomerField<PaymentTerms> paymentTerms = (CustomerField<PaymentTerms>)customerField;
+                    if(paymentTerms.getSelectedIndex() == -1)
+                        continue;
+                    paymentTerm = paymentTerms.getValues().get(paymentTerms.getSelectedIndex());
+                    if(paymentTerm.getId() == -1)
+                        continue;
+
+                    if(updateCustomer != null)
+                        customer.setPayment_terms_id(paymentTerm.getId());
+                    else
+                        jsonObject.put(Customer.CustomerFields.PAYMENT_TERMS_ID.getLabel(), paymentTerm.getId());
+
+                    continue;
+                }
+                if(updateCustomer != null)
+                    customer.updateCustomerDetail(customerField.getFieldName(), customerField.getEditTextValue());
+                else
+                    jsonObject.put(customerField.getFieldName().getLabel(), customerField.getEditTextValue());
+            }
+
+            if(updateCustomer == null)
+                customer = gson.fromJson(jsonObject.toString(), Customer.class);
+            if(updateCustomer != null) {
+                extras.setId(Customer.class.getName().toUpperCase()+"_"+updateCustomer.getId());
+
+                customer.setId(updateCustomer.getId());
+                customer.setReturnId(updateCustomer.getReturnId());
+            }
+            customer.setExtras(extras);
+            customer.setPaymentTerms(paymentTerm);
+
+            customer.getExtras().setCustomerCategory(customerCategory);
+            customer.generateFullName();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return customer;
     }
 
     @Override
