@@ -59,12 +59,10 @@ import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
-import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.LastUpdateAtTools;
 import net.nueca.imonggosdk.tools.LoggingTools;
-import net.nueca.imonggosdk.tools.NumberTools;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -340,7 +338,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 if (initialSync || lastUpdatedAt == null) {
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.LAST_UPDATED_AT,
-                                Parameter.TARGET_BRANCH_ID,
+                            Parameter.TARGET_BRANCH_ID,
                             Parameter.ORDER_TYPE),
                             getListOfBranchIds().get(mBranchIdIndex).getBranch().getId(),
                             Order.ORDERTYPE_STOCK_REQUEST);
@@ -1128,8 +1126,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
-                        /*lastUpdatedAt.setLast_updated_at("2016/05/06 10:48:42 +0000");
-                        lastUpdatedAt.updateTo(getHelper());*/
+                        lastUpdatedAt.setLast_updated_at("2016/05/06 10:48:42 +0000");
+                        lastUpdatedAt.updateTo(getHelper());
 
                         SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                         if (newLastUpdatedAt.getLast_updated_at() == null) {
@@ -1713,7 +1711,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 updateNext(requestType, size);
                                 return;
                             } else {
+
+                                /*int progress = (int) Math.ceil((((double) mBranchIdIndex / (double) getUserBranchesSize()) * 100.0));
+                                int progress2 = (int) Math.ceil((((double) page / (double) progress) * 100.0));
+                                int progress3 = (int) Math.ceil((((double) size / (double) progress2) * 100.0));*/
+
                                 for (int i = 0; i < size; i++) {
+                                    //    mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, i, progress3);
+
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
                                     //TODO: support multiple branch
@@ -2899,7 +2904,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             BatchList<Document> deleteDocument = new BatchList<>(DatabaseOperation.DELETE, getHelper());
 
                             //TODO: tag branch id here
-
 
                             if (size == 0) {
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, branchIndex, getUserBranchesSize());
@@ -4195,18 +4199,28 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
 
             } else {
+
                 if (mSyncModulesListener != null) {
                     if (size != 0) {
                         if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
                                 mCurrentTableSyncing == Table.DOCUMENT_ADJUSTMENT_OUT ||
-                                mCurrentTableSyncing == Table.DOCUMENT_TRANSFER_OUT) {
+                                mCurrentTableSyncing == Table.DOCUMENT_TRANSFER_OUT ||
+                                mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
+                                mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
+                                mCurrentTableSyncing == Table.ORDERS ||
+                                mCurrentTableSyncing == Table.ORDERS_STOCK_REQUEST ||
+                                mCurrentTableSyncing == Table.ORDERS_PURCHASES) {
 
-                            double progress1 = (double) page / (double) numberOfPages;
-                            double progress2 = (int) Math.ceil((((double) (mBranchIdIndex + 1) / (double) getListOfBranchIds().size()) * 100.0));
-                            double progressX = progress1 * progress2;
+                            double mCustomPercentagePerBranch = (int) (100.0 / getListOfBranchIds().size());
+                            double progressa = (double) page / (double) numberOfPages;
+                            double progressb = progressa * mCustomPercentagePerBranch;
 
-                            int progress3 = (int) progressX;
-                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, progress3, 100);
+                            mCustomPercentage = (mCustomPercentagePerBranch * mBranchIdIndex) + progressb;
+
+                            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, (int) mCustomPercentage, 100);
+                            Log.e(TAG, "progressa: " + progressa);
+                            Log.e(TAG, "progressb: " + progressb);
+                            Log.e(TAG, "progress=====: " + mCustomPercentage);
                         } else {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
                         }

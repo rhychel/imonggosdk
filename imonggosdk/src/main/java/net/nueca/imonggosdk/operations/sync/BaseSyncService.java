@@ -104,6 +104,9 @@ public abstract class BaseSyncService extends ImonggoService {
     protected SyncModulesListener mSyncModulesListener = null;
     protected RequestType mCurrentRequestType;
     protected ModuleSetting app = null;
+    protected double mCustomPercentage = 0;
+    protected int perPageProgress = 0;
+    protected int mCustomPercentagePerBranch = 0;
 
     protected Gson gson = new GsonBuilder().serializeNulls().create();
 
