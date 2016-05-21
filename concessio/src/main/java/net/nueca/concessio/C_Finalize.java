@@ -304,17 +304,20 @@ public class C_Finalize extends ModuleActivity {
                     size = ProductsAdapterHelper.getSelectedProductItems().size();
                     ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Sales");
                     if(!isForHistoryDetail && !isLayaway) {
-                        tvBalance.setText("P" + NumberTools.separateInCommas(paymentsComputation.getTotalPayableNoReturns(true)));
-                        tvBalance.setTag(paymentsComputation.getTotalPayable(true).doubleValue());
+                        Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+                        tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                        tvBalance.setTag(totalSales);
                     }
                 }
                 else {
                     size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
 
                     if(!isForHistoryDetail && !isLayaway) {
+                        Double totalReturns = ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+
                         ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Returns");
-                        tvBalance.setText("P" + NumberTools.separateInCommas(paymentsComputation.getTotalReturnsPayment()));
-                        tvBalance.setTag(paymentsComputation.getTotalReturnsPayment().doubleValue());
+                        tvBalance.setText("P" + NumberTools.separateInCommas(totalReturns));
+                        tvBalance.setTag(totalReturns);
                     }
                 }
                 tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
@@ -340,10 +343,10 @@ public class C_Finalize extends ModuleActivity {
     protected void onResume() {
         super.onResume();
         if(!isForHistoryDetail && !isLayaway) {
-            getBalance();
+            Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+            tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+            tvBalance.setTag(totalSales);
 
-            tvBalance.setText("P" + NumberTools.separateInCommas(paymentsComputation.getTotalPayableNoReturns(true)));
-            tvBalance.setTag(paymentsComputation.getTotalPayable(true).doubleValue());
 //            tvBalance.setText("P" + NumberTools.separateInCommas(balance));
 //            tvBalance.setTag(balance);
         }
