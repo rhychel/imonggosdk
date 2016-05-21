@@ -232,9 +232,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     // Print
                     if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                         if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                            printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
                         if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
                     }
                     // Print
 
@@ -321,9 +321,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         ProductsAdapterHelper.setSelectedCustomer(customer);
                         if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                             if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
                             if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
                         }
 
                         Gson gson = new Gson();
