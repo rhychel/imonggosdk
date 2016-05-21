@@ -1603,17 +1603,17 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     warehouseId = getBranches(true).get(0).getId();
                                 Document document = generateDocument(C_Module.this, warehouseId, DocumentTypeCode.identify(concessioModule));
 
+                                if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                    Extras extras = new Extras();
+                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
+                                    document.setExtras(extras);
+                                }
+
                                 try {
                                     JSONObject jsonObject = new JSONObject(gson.toJson(document));
                                     Log.e("jsonObject", jsonObject.toString());
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                }
-
-                                if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                    Extras extras = new Extras();
-                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
-                                    document.setExtras(extras);
                                 }
 
                                 if (getAppSetting().isCan_change_inventory())
