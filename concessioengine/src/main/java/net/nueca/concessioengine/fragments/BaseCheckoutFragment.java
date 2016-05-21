@@ -157,6 +157,8 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
             payments.addAll(computation.getReturnsPayments());
 
         usedPointsInAmount = 0d;
+
+        // ADd condition to handle the payment_line.extras??? WTF!
         for(InvoicePayment payment : payments) {
             Extras paymentExtras = payment.getExtras();
             if(paymentExtras == null)
@@ -165,7 +167,7 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
             if(paymentExtras.getPayment_date() == null) {
                 paymentExtras.setPayment_date(DateTimeTools.convertDateOnly(DateTimeTools.getCurrentDateTimeUTCFormat().replaceAll("-", "/")));
 
-                if(payment.getPayment_type_id() == PointsTools.getRewardsPointsPaymentType(getHelper()).getId())
+                if(PointsTools.getRewardsPointsPaymentType(getHelper()) != null && payment.getPayment_type_id() == PointsTools.getRewardsPointsPaymentType(getHelper()).getId())
                     usedPointsInAmount += payment.getAmount();
             }
             payment.setExtras(paymentExtras);
