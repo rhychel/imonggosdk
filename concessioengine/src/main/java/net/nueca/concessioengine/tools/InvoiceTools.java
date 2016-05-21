@@ -741,6 +741,10 @@ public class InvoiceTools {
             return totalPayable;
         }
 
+        public BigDecimal getTotalReturnsPayment() {
+            return totalReturnsPayment;
+        }
+
         public BigDecimal getTotalPayable(boolean applyCustomerDiscount) {
             if(applyCustomerDiscount)
                 return totalPayable.subtract(totalReturnsPayment).subtract(totalCustomerDiscount);
