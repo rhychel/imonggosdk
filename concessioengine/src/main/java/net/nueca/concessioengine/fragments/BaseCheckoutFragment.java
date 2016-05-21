@@ -159,18 +159,20 @@ public abstract class BaseCheckoutFragment extends ImonggoFragment implements Ba
         usedPointsInAmount = 0d;
 
         // ADd condition to handle the payment_line.extras??? WTF!
-        for(InvoicePayment payment : payments) {
-            Extras paymentExtras = payment.getExtras();
-            if(paymentExtras == null)
-                paymentExtras = new Extras(InvoicePayment.class.getName().toUpperCase(), payment.getId());
+        if(getModuleSetting(ConcessioModule.INVOICE).isHas_partial()) {
+            for (InvoicePayment payment : payments) {
+                Extras paymentExtras = payment.getExtras();
+                if (paymentExtras == null)
+                    paymentExtras = new Extras(InvoicePayment.class.getName().toUpperCase(), payment.getId());
 
-            if(paymentExtras.getPayment_date() == null) {
-                paymentExtras.setPayment_date(DateTimeTools.convertDateOnly(DateTimeTools.getCurrentDateTimeUTCFormat().replaceAll("-", "/")));
+                if (paymentExtras.getPayment_date() == null) {
+                    paymentExtras.setPayment_date(DateTimeTools.convertDateOnly(DateTimeTools.getCurrentDateTimeUTCFormat().replaceAll("-", "/")));
 
-                if(PointsTools.getRewardsPointsPaymentType(getHelper()) != null && payment.getPayment_type_id() == PointsTools.getRewardsPointsPaymentType(getHelper()).getId())
-                    usedPointsInAmount += payment.getAmount();
+                    if (PointsTools.getRewardsPointsPaymentType(getHelper()) != null && payment.getPayment_type_id() == PointsTools.getRewardsPointsPaymentType(getHelper()).getId())
+                        usedPointsInAmount += payment.getAmount();
+                }
+                payment.setExtras(paymentExtras);
             }
-            payment.setExtras(paymentExtras);
         }
         return payments;
     }
