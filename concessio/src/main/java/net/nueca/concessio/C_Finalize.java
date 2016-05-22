@@ -459,6 +459,14 @@ public class C_Finalize extends ModuleActivity {
                     vpReview.setCurrentItem(1);
                     int size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
                     tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
+
+                    if(!isForHistoryDetail && !isLayaway) {
+                        Double totalReturns = ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+
+                        ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Returns");
+                        tvBalance.setText("P" + NumberTools.separateInCommas(totalReturns));
+                        tvBalance.setTag(totalReturns);
+                    }
                 }
             };
             handler.sendEmptyMessageDelayed(0, 100);
