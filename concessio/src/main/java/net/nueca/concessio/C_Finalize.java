@@ -558,9 +558,10 @@ public class C_Finalize extends ModuleActivity {
                     Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");*/
 
                     if(!isForHistoryDetail && !isLayaway) {
-                        Double balance = getBalance();
-                        tvBalance.setText("P" + NumberTools.separateInCommas(balance));
-                        tvBalance.setTag(balance);
+                        Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+
+                        tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                        tvBalance.setTag(totalSales);
                         toggleNext(llFooter, tvItems);
 
                         if(vpReview.getCurrentItem() == 1) {
