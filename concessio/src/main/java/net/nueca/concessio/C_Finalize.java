@@ -344,9 +344,21 @@ public class C_Finalize extends ModuleActivity {
     protected void onResume() {
         super.onResume();
         if(!isForHistoryDetail && !isLayaway) {
-            Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
-            tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
-            tvBalance.setTag(totalSales);
+            if(vpReview.getCurrentItem() == 0) {
+                ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Sales");
+
+                Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+
+                tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                tvBalance.setTag(totalSales);
+            }
+            else {
+                ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Returns");
+
+                Double totalSales = ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+                tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                tvBalance.setTag(totalSales);
+            }
 
 //            tvBalance.setText("P" + NumberTools.separateInCommas(balance));
 //            tvBalance.setTag(balance);
