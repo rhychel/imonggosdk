@@ -263,11 +263,12 @@ public class C_Finalize extends ModuleActivity {
             btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(((Double)tvBalance.getTag()) < 0) {
+                    Double balance = getBalance();
+                    if(balance < 0) {
                         DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total return amount cannot be greater than your total sales amount.", R.style.AppCompatDialogStyle_Light);
                         return;
                     }
-                    if(((Double)tvBalance.getTag()) == 0 && ProductsAdapterHelper.getSelectedReturnProductItems().size() > 0) {
+                    if(balance == 0 && ProductsAdapterHelper.getSelectedReturnProductItems().size() > 0) {
                         DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total amount cannot be zero.", R.style.AppCompatDialogStyle_Light);
                         return;
                     }
