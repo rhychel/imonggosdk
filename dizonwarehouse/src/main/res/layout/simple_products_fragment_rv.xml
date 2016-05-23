@@ -16,6 +16,11 @@
         sothree:umanoDragView="@+id/llProductDesription"
         >
         <!-- sothree:umanoParalaxOffset="100dp" -->
+        <android.support.design.widget.CoordinatorLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,29 +30,41 @@
             <!--sothree:theme="@style/ActionBar"-->
 
             <!---->
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/tbActionBar"
-                android:layout_height="?attr/actionBarSize"
+            <android.support.design.widget.AppBarLayout
+                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:background="?attr/colorPrimary"
                 android:elevation="3dp"
-                android:theme="@style/ThemeOverlay.ActionBar.Concessio"
-                app:titleTextAppearance="@style/Toolbar.TitleText"
-                android:backgroundTintMode="src_over">
-                <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/spCategories"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
+                android:theme="@style/ThemeOverlay.ActionBar.Concessio">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/tbActionBar"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_width="match_parent"
+                    android:background="?attr/colorPrimary"
+                    android:theme="@style/ThemeOverlay.ActionBar.Concessio"
                     app:titleTextAppearance="@style/Toolbar.TitleText"
-                    android:id="@+id/tvBranch"
-                    android:text="Branch 1"
-                    android:gravity="center_vertical"
-                    android:visibility="gone"/>
-            </android.support.v7.widget.Toolbar>
+                    android:backgroundTintMode="src_over">
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/spCategories"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        app:titleTextAppearance="@style/Toolbar.TitleText"
+                        android:id="@+id/tvBranch"
+                        android:text="Branch 1"
+                        android:gravity="center_vertical"
+                        android:visibility="gone"/>
+                </android.support.v7.widget.Toolbar>
+                <include
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:id="@+id/toolbar_extension"
+                    android:visibility="gone"
+                    layout="@layout/wh_toolbar_ext"/>
+            </android.support.design.widget.AppBarLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,6 +121,7 @@
                 android:layout_margin="50dp"
                 android:visibility="gone"/>
         </LinearLayout>
+        </android.support.design.widget.CoordinatorLayout>
 
         <LinearLayout android:orientation="vertical"
             android:layout_width="match_parent"

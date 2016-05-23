@@ -24,6 +24,7 @@ public class SettingTools {
     private static final String CURRENT_BRANCH = "_current_branch";
     private static final String CURRENT_SERVER = "_current_server";
     private static final String IS_SYNC_FINISHED = "_sync_finished";
+    private static final String DEFAULT_WAREHOUSE = "_default_warehouse";
 
 
     /**
@@ -74,6 +75,10 @@ public class SettingTools {
                 editor.apply();
             } else if (settingsName == SettingsName.SERVERS) {
                 editor.putString(pinfo.packageName + CURRENT_SERVER, value);
+                editor.apply();
+            } else if (settingsName == SettingsName.DEFAULT_WAREHOUSE) {
+                //    Log.e("Key[defaultBranch]", pinfo.packageName + DEFAULT_BRANCH);
+                editor.putString(pinfo.packageName + DEFAULT_WAREHOUSE, value);
                 editor.apply();
             }
             else {
@@ -133,10 +138,26 @@ public class SettingTools {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-          //  Log.e("Key[defaultBranch]", pinfo.packageName + DEFAULT_BRANCH);
+            //  Log.e("Key[defaultBranch]", pinfo.packageName + DEFAULT_BRANCH);
             return preferences.getString(pinfo.packageName + DEFAULT_BRANCH, "");
         } catch (PackageManager.NameNotFoundException e) {
-         //   Log.e("Key[defaultBranch]", "Not Found");
+            //   Log.e("Key[defaultBranch]", "Not Found");
+            return "";
+        }
+    }
+
+    /**
+     * Returns Default Warehouse
+     *
+     * @param context current mContext
+     * @return Branch name, "" if none
+     */
+    public static String defaultWarehouse(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        try {
+            PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return preferences.getString(pinfo.packageName + DEFAULT_WAREHOUSE, "");
+        } catch (PackageManager.NameNotFoundException e) {
             return "";
         }
     }

@@ -14,7 +14,7 @@
     <color name="accentLogin">#00BFA5</color>
     <color name="hint_text">#E0E0E0</color>
     <color name="secondary_text">#BCBCBC</color>
-    <color name="primary_text">#FFFFFF</color>
+    <color name="primary_text">#ffffff</color>
     <color name="divider">#3C3C3C</color>
 
     <!-- On Light Background Specs -->

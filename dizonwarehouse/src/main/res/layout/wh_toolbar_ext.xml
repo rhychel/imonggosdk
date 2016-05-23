@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_height="wrap_content"
+              android:layout_width="fill_parent"
+              android:orientation="horizontal"
+              android:padding="10dp"
+              android:gravity="center"
+              android:elevation="4dp">
+        <TextView
+            android:text="Ref No. : "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:id="@+id/tvLabel"
+            android:textColor="@color/primary_text"
+            android:layout_marginLeft="25dp"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvValue"
+        android:textSize="20dp"
+        android:layout_weight="1"
+        android:textColor="@color/primary_text"/>
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/ibtnEdit"
+        android:src="@drawable/ic_pen"
+        android:background="@drawable/toolbar_ext_button"/>
+</LinearLayout>

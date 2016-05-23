@@ -35,7 +35,7 @@ public class WH_Login extends LoginActivity {
     @Override
     protected void initLoginEquipments() {
         setAutoUpdateApp(true);
-        //Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
         setServer(Server.IRETAILCLOUD_NET);
         setUseDynamicUrls(false);
@@ -88,6 +88,7 @@ public class WH_Login extends LoginActivity {
 ////        }
 //    }
 
+    private boolean isOnNextActivity = false;
     @Override
     protected void showNextActivityAfterLogin() {
         try {
@@ -103,9 +104,12 @@ public class WH_Login extends LoginActivity {
             e.printStackTrace();
         }
 
-        finish();
-        Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? WH_Welcome.class : WH_Dashboard.class));
-        startActivity(intent);
+        if(!isOnNextActivity) {
+            isOnNextActivity = true;
+            finish();
+            Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? WH_Welcome.class : WH_Dashboard.class));
+            startActivity(intent);
+        }
     }
 
     private int[] generateModules() {

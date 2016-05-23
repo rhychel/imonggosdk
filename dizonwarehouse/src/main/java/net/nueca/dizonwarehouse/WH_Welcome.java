@@ -73,6 +73,7 @@ public class WH_Welcome extends WelcomeActivity {
             public void onClick(View view) {
                 Branch branch = (Branch)spBranch.getSelectedItem();
                 SettingTools.updateSettings(WH_Welcome.this, SettingsName.DEFAULT_BRANCH, String.valueOf(branch.getId()));
+                SettingTools.updateSettings(WH_Welcome.this, SettingsName.DEFAULT_WAREHOUSE, String.valueOf(branch.getId()));
 
                 finish();
                 Intent intent = new Intent(WH_Welcome.this, WH_Dashboard.class);

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import net.nueca.concessioengine.dialogs.UpdaterChooserDialog;
 import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
@@ -34,6 +36,7 @@ import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -63,6 +66,17 @@ public class WH_Dashboard extends DashboardActivity implements OnItemClickListen
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wh_dashboard);
+        try {
+            Log.e("~~~~~~~~~~~~~~~~~~~~", getUser().getName() + " ~ " + AccountTools.isUserActive(this));
+            if(!AccountTools.isUserActive(this)) {
+                AccountTools.updateUserActiveStatus(this, getUser().getStatus() == null);
+                Log.e("~~~~~~~~~~~~~~~~~~~~", getUser().getName() + " ~ " + AccountTools.isUserActive(this));
+            }
+            Log.e("~~~~~~~~~~~~~~~~~~~~", Branch.fetchById(getHelper(),Branch.class, SettingTools.defaultBranch(this)).getName());
+            Log.e("~~~~~~~~~~~~~~~~~~~~", Branch.fetchById(getHelper(),Branch.class, SettingTools.defaultWarehouse(this)).getName());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         setNextActivityClass(WH_Module.class);
 
@@ -80,6 +94,19 @@ public class WH_Dashboard extends DashboardActivity implements OnItemClickListen
         ArrayAdapter<Branch> branchesAdapter = new ArrayAdapter<>(this, R.layout.toolbar_spinner_item, getBranches());
         branchesAdapter.setDropDownViewResource(R.layout.toolbar_spinner_dropdown_item);
         spBranches.setAdapter(branchesAdapter);
+        spBranches.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                SettingTools.updateSettings(WH_Dashboard.this, SettingsName.CURRENT_BRANCH,
+                        String.valueOf(((Branch)spBranches.getSelectedItem()).getId()));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                SettingTools.updateSettings(WH_Dashboard.this, SettingsName.CURRENT_BRANCH,
+                        String.valueOf(((Branch)spBranches.getSelectedItem()).getId()));
+            }
+        });
 
         rvModules.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, MAX_COL);
