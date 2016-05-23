@@ -363,6 +363,8 @@ public class C_Finalize extends ModuleActivity {
 //            tvBalance.setText("P" + NumberTools.separateInCommas(balance));
 //            tvBalance.setTag(balance);
         }
+        else
+            ((TextView) findViewById(R.id.tvLabelBalance)).setText("Balance");
         if(isForHistoryDetail) {
             try {
                 ProductsAdapterHelper.clearSelectedProductItemList(false);
