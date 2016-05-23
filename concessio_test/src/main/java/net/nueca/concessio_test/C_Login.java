@@ -36,20 +36,17 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
         setRequireObjectConcessioSettings(false);
-        setServer(Server.PLDTRETAILCLOUD);
+        setServer(Server.REBISCO);
 
         TEST_ACCOUNT = true;
-
-
 
         SettingTools.updateSettings(C_Login.this,
                 SettingsName.AUTO_UPDATE, false, "");
 
         setModulesToSync(
-                Table.USERS_ME.ordinal(),
+                Table.USERS.ordinal(),
                 Table.BRANCH_USERS.ordinal(),
-                Table.DOCUMENT_ADJUSTMENT_OUT.ordinal(),
-                Table.DOCUMENT_TRANSFER_OUT.ordinal()
+                Table.BRANCH_PRODUCTS.ordinal()
 
                 /*Table.ORDERS.ordinal(),
                 Table.ORDERS_PURCHASES.ordinal(),

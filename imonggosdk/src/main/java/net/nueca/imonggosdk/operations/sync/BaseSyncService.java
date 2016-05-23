@@ -104,6 +104,9 @@ public abstract class BaseSyncService extends ImonggoService {
     protected SyncModulesListener mSyncModulesListener = null;
     protected RequestType mCurrentRequestType;
     protected ModuleSetting app = null;
+    protected double mCustomPercentage = 0;
+    protected int perPageProgress = 0;
+    protected int mCustomPercentagePerBranch = 0;
 
     protected Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -267,8 +270,7 @@ public abstract class BaseSyncService extends ImonggoService {
                 return getHelper().fetchObjects(ProductTag.class).queryBuilder().where().eq("id", productTag.getId()).queryForFirst() != null;
             }
             case DOCUMENT_ADJUSTMENT_OUT:
-            case DOCUMENT_TRANSFER_OUT:
-            case DOCUMENTS: {
+            case DOCUMENT_TRANSFER_OUT: {
                 Document document = (Document) o;
                 return getHelper().fetchObjects(Document.class).queryBuilder().where().eq("returnId", document.getId()).queryForFirst() != null;
             }

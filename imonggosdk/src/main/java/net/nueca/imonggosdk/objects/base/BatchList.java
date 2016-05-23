@@ -129,7 +129,7 @@ public class BatchList<T> extends ArrayList<T> {
     }
 
     public <T extends DBTable> void doOperation(Class<T> objClass) {
-        Log.e(TAG, "doing Operation: " + databaseOperation.toString());
+        //Log.e(TAG, "doing Operation: " + databaseOperation.toString());
         if(dbHelper2 == null)
             throw new NullPointerException("Oops! Your dbHelper2 is null!");
         doOperation(objClass, dbHelper2);
