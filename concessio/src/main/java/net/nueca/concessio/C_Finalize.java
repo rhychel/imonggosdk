@@ -434,7 +434,7 @@ public class C_Finalize extends ModuleActivity {
                         DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                printTransaction(offlineInvoice, paymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
+                                printTransaction(offlineInvoice, paymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                             }
                         }, "No", new DialogInterface.OnClickListener() {
                             @Override
@@ -446,7 +446,7 @@ public class C_Finalize extends ModuleActivity {
                         DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                printTransactionStar(offlineData, offlineInvoice, paymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
+                                printTransactionStar(offlineData, offlineInvoice, paymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                             }
                         }, "No", new DialogInterface.OnClickListener() {
                             @Override
