@@ -82,7 +82,7 @@ public class C_Finalize extends ModuleActivity {
     private ReviewAdapter reviewAdapter;
     private Invoice offlineInvoice;
     private OfflineData offlineData;
-    private InvoiceTools.PaymentsComputation offlinePaymentsComputation;
+    private InvoiceTools.PaymentsComputation paymentsComputation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,13 +163,13 @@ public class C_Finalize extends ModuleActivity {
                     initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
 
                 offlineInvoice = offlineData.getObjectFromData(Invoice.class);
-                offlinePaymentsComputation = new InvoiceTools.PaymentsComputation();
+                paymentsComputation = new InvoiceTools.PaymentsComputation();
 
-                offlinePaymentsComputation.addAllInvoiceLines(offlineInvoice.getInvoiceLines());
-                offlinePaymentsComputation.addAllPayments(offlineInvoice.getPayments());
+                paymentsComputation.addAllInvoiceLines(offlineInvoice.getInvoiceLines());
+                paymentsComputation.addAllPayments(offlineInvoice.getPayments());
 
                 Gson gson = new Gson();
-                Log.e("C_Finalize", "HISTORY " + gson.toJson(offlinePaymentsComputation.getPayments()));
+                Log.e("C_Finalize", "HISTORY " + gson.toJson(paymentsComputation.getPayments()));
 
                 //paymentsComputation.getTotalPayable(); // Total Amount
                 //paymentsComputation.getRemaining(); // Total Balance
@@ -178,13 +178,13 @@ public class C_Finalize extends ModuleActivity {
                 tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
 
                 llTotalAmount.setVisibility(View.VISIBLE);
-                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(offlinePaymentsComputation.getTotalPayable(true)));
+                tvTotalAmount.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getTotalPayable(true)));
 
-                if(offlinePaymentsComputation.getRemaining().doubleValue() == 0)
+                if(paymentsComputation.getRemaining().doubleValue() == 0)
                     llBalance.setVisibility(View.GONE);
                 //Log.e("C_Finalize", "onCreate : BALANCE: " + paymentsComputation.getRemaining());
-                if(offlinePaymentsComputation.getRemaining().doubleValue() > 0)
-                    tvBalance.setText("P"+ NumberTools.separateInCommas(offlinePaymentsComputation.getRemaining()));
+                if(paymentsComputation.getRemaining().doubleValue() > 0)
+                    tvBalance.setText("P"+ NumberTools.separateInCommas(paymentsComputation.getRemaining()));
                 else
                     tvBalance.setText("P0.00");
 
@@ -212,7 +212,7 @@ public class C_Finalize extends ModuleActivity {
                     initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
                 }
 
-                InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
+                paymentsComputation = new InvoiceTools
                         .PaymentsComputation();
 
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
@@ -263,11 +263,12 @@ public class C_Finalize extends ModuleActivity {
             btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(((Double)tvBalance.getTag()) < 0) {
+                    Double balance = getBalance();
+                    if(balance < 0) {
                         DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total return amount cannot be greater than your total sales amount.", R.style.AppCompatDialogStyle_Light);
                         return;
                     }
-                    if(((Double)tvBalance.getTag()) == 0 && ProductsAdapterHelper.getSelectedReturnProductItems().size() > 0) {
+                    if(balance == 0 && ProductsAdapterHelper.getSelectedReturnProductItems().size() > 0) {
                         DialogTools.showDialog(C_Finalize.this, "Oopss!", "Total amount cannot be zero.", R.style.AppCompatDialogStyle_Light);
                         return;
                     }
@@ -285,6 +286,7 @@ public class C_Finalize extends ModuleActivity {
 
         toggleNext(llFooter, tvItems);
 
+        ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Sales");
         reviewAdapter = new ReviewAdapter(getSupportFragmentManager());
         vpReview.setAdapter(reviewAdapter);
         vpReview.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -297,10 +299,28 @@ public class C_Finalize extends ModuleActivity {
             public void onPageSelected(int position) {
                 Log.e("onPageSelected", position+"<--");
                 int size = 0;
-                if(position == 0)
+                getBalance();
+
+                if(position == 0) {
                     size = ProductsAdapterHelper.getSelectedProductItems().size();
-                else
+                    ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Sales");
+                    if(!isForHistoryDetail && !isLayaway) {
+                        Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+                        tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                        tvBalance.setTag(totalSales);
+                    }
+                }
+                else {
                     size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+
+                    if(!isForHistoryDetail && !isLayaway) {
+                        Double totalReturns = ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+
+                        ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Returns");
+                        tvBalance.setText("P" + NumberTools.separateInCommas(totalReturns));
+                        tvBalance.setTag(totalReturns);
+                    }
+                }
                 tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
             }
 
@@ -324,9 +344,24 @@ public class C_Finalize extends ModuleActivity {
     protected void onResume() {
         super.onResume();
         if(!isForHistoryDetail && !isLayaway) {
-            Double balance = getBalance();
-            tvBalance.setText("P" + NumberTools.separateInCommas(balance));
-            tvBalance.setTag(balance);
+            if(vpReview.getCurrentItem() == 0) {
+                ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Sales");
+
+                Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+
+                tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                tvBalance.setTag(totalSales);
+            }
+            else {
+                ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Returns");
+
+                Double totalSales = ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+                tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                tvBalance.setTag(totalSales);
+            }
+
+//            tvBalance.setText("P" + NumberTools.separateInCommas(balance));
+//            tvBalance.setTag(balance);
         }
         if(isForHistoryDetail) {
             try {
@@ -348,7 +383,7 @@ public class C_Finalize extends ModuleActivity {
         Double balance =
                 sales + ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();*/
 
-        InvoiceTools.PaymentsComputation paymentsComputation = new InvoiceTools
+        paymentsComputation = new InvoiceTools
                 .PaymentsComputation();
 
         paymentsComputation.addAllInvoiceLines(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper.getSelectedProductItems()));
@@ -399,7 +434,7 @@ public class C_Finalize extends ModuleActivity {
                         DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                printTransaction(offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                printTransaction(offlineInvoice, paymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                             }
                         }, "No", new DialogInterface.OnClickListener() {
                             @Override
@@ -411,7 +446,7 @@ public class C_Finalize extends ModuleActivity {
                         DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                printTransactionStar(offlineData, offlineInvoice, offlinePaymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                printTransactionStar(offlineData, offlineInvoice, paymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
                             }
                         }, "No", new DialogInterface.OnClickListener() {
                             @Override
@@ -437,6 +472,14 @@ public class C_Finalize extends ModuleActivity {
                     vpReview.setCurrentItem(1);
                     int size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
                     tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
+
+                    if(!isForHistoryDetail && !isLayaway) {
+                        Double totalReturns = ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+
+                        ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Returns");
+                        tvBalance.setText("P" + NumberTools.separateInCommas(totalReturns));
+                        tvBalance.setTag(totalReturns);
+                    }
                 }
             };
             handler.sendEmptyMessageDelayed(0, 100);
@@ -515,9 +558,10 @@ public class C_Finalize extends ModuleActivity {
                     Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");*/
 
                     if(!isForHistoryDetail && !isLayaway) {
-                        Double balance = getBalance();
-                        tvBalance.setText("P" + NumberTools.separateInCommas(balance));
-                        tvBalance.setTag(balance);
+                        Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+
+                        tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                        tvBalance.setTag(totalSales);
                         toggleNext(llFooter, tvItems);
 
                         if(vpReview.getCurrentItem() == 1) {
@@ -759,7 +803,7 @@ public class C_Finalize extends ModuleActivity {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
                     if(!paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip")) {
 //                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), NumberTools.separateInCommas(invoicePayment.getTender()), 32) + "\r\n").getBytes());
-                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), DateTimeTools.convertToDate(invoicePayment.getExtras().getPayment_date(), "yyyy-MM-dd", "MMM dd, yyyy"), 32) + "\r\n").getBytes());
+                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), DateTimeTools.convertToDate(invoicePayment.getExtras().getPayment_date(), "yyyy-MM-dd", "MMM dd, yyyy")+"       ", 32) + "\r\n").getBytes());
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                         data.add((NumberTools.separateInCommas(invoicePayment.getTender()) + "\r\n").getBytes());
 

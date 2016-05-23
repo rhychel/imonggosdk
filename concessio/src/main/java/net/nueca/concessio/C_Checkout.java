@@ -321,9 +321,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         ProductsAdapterHelper.setSelectedCustomer(customer);
                         if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                             if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
                             if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
                         }
 
                         Gson gson = new Gson();
@@ -923,7 +923,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 for(InvoicePayment invoicePayment : invoice.getPayments()) {
                     PaymentType paymentType = PaymentType.fetchById(getHelper(), PaymentType.class, invoicePayment.getPayment_type_id());
                     if(paymentType != null && !paymentType.getName().trim().equals("Credit Memo") && !paymentType.getName().trim().equals("RS Slip")) {
-                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), DateTimeTools.convertToDate(invoicePayment.getExtras().getPayment_date(), "yyyy-MM-dd", "MMM dd, yyyy"), 32) + "\r\n").getBytes());
+                        data.add((EpsonPrinterTools.spacer(paymentType.getName(), DateTimeTools.convertToDate(invoicePayment.getExtras().getPayment_date(), "yyyy-MM-dd", "MMM dd, yyyy")+"       ", 32) + "\r\n").getBytes());
                         data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                         data.add((NumberTools.separateInCommas(invoicePayment.getTender()) + "\r\n").getBytes());
 

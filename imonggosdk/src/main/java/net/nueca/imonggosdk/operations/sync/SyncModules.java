@@ -2994,7 +2994,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     Invoice invoice = gson.fromJson(jsonObject.toString(), Invoice.class);
 
-
                                     for (InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
                                         if (invoiceLine.getExtras() == null)
                                             invoiceLine.setNo_discount_subtotal(invoiceLine.getSubtotal());
@@ -3024,6 +3023,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     if (mCurrentTableSyncing == Table.LAYAWAYS) {
                                         //LOGIN
 
+                                        // ADD THE CREATED AT as DATE CREATED of OfflineData
                                         if (isExisting(invoice, Table.INVOICES)) {
                                             OfflineData offlineData = getHelper().fetchObjects(OfflineData.class).queryBuilder().where().eq("reference_no", invoice.getReference()).queryForFirst();
                                             offlineData.setReturnId(jsonObject.getString("id"));
