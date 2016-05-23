@@ -982,7 +982,9 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             initializeVoidButton(btn1, referenceNumber);
 
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
-                            if(!offlineData.isSynced() && !offlineData.isSyncing() && !offlineData.getOfflineDataTransactionType().isVoiding()) {
+                            if(!simpleTransactionDetailsFragment.getOfflineData().isSynced() &&
+                                    !simpleTransactionDetailsFragment.getOfflineData().isSyncing() &&
+                                    !simpleTransactionDetailsFragment.getOfflineData().getOfflineDataTransactionType().isVoiding()) {
                                 initializeVoidButton(btn1, referenceNumber);
                                 initializeDuplicateButton(btn2, referenceNumber);
                             }
