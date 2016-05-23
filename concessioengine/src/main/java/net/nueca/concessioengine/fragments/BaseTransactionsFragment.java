@@ -17,6 +17,7 @@ import net.nueca.imonggosdk.objects.AccountSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
@@ -24,6 +25,7 @@ import net.nueca.imonggosdk.tools.ModuleSettingTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -96,9 +98,31 @@ public abstract class BaseTransactionsFragment extends ImonggoFragment {
         isTypesInitialized = true;
     }
 
+    // 90 days purging --- TODO Improve
+    protected void purgeTransactions() throws SQLException {
+        getHelper().deleteAll(OfflineData.class, new DBTable.ConditionsWindow<OfflineData, Integer>() {
+            @Override
+            public Where<OfflineData, Integer> renderConditions(Where<OfflineData, Integer> where) throws SQLException {
+                Where<OfflineData, Integer> whereOfflineData = getHelper().fetchIntId(OfflineData.class).queryBuilder().where();
+//            whereOfflineData.eq("user_id", getSession().getUser().getId());
+                whereOfflineData.in("type", OfflineData.DOCUMENT, OfflineData.ORDER, OfflineData.INVOICE);
+
+                Calendar day_90 = Calendar.getInstance();
+                day_90.add(Calendar.DATE, -90);
+
+                whereOfflineData.and().le("dateCreated", day_90.getTime());
+
+                return whereOfflineData;
+            }
+        });
+
+    }
+
     protected List<OfflineData> getTransactions() { // TODO BUGGED!
         List<OfflineData> transactions = new ArrayList<>();
         try {
+            purgeTransactions(); // FIRST
+
             boolean includeSearchKey = !searchKey.trim().isEmpty();
             Where<OfflineData, Integer> whereOfflineData = getHelper().fetchIntId(OfflineData.class).queryBuilder().where();
 //            whereOfflineData.eq("user_id", getSession().getUser().getId());
