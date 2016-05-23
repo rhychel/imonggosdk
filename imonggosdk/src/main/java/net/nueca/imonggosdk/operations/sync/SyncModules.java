@@ -310,8 +310,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
             // with branch_id
             if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
                     mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
-                    mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
-                    mCurrentTableSyncing == Table.ORDERS) {
+                    mCurrentTableSyncing == Table.BRANCH_CUSTOMERS) {
                 return ImonggoTools.generateParameter(
                         Parameter.LAST_UPDATED_AT);
             }
@@ -364,6 +363,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 return String.format(ImonggoTools.generateParameter(Parameter.USER_ID, Parameter.LAST_UPDATED_AT), getSession().getUser_id());
             }
 
+            if (mCurrentTableSyncing == Table.LAYAWAYS)
+                return ImonggoTools.generateParameter(Parameter.LAST_UPDATED_AT, Parameter.LAYAWAYS);
+
             return ImonggoTools.generateParameter(Parameter.LAST_UPDATED_AT);
 
         } else if (requestType == RequestType.API_CONTENT) {
@@ -402,8 +404,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 // request with branch id
                 if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
                         mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
-                        mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
-                        mCurrentTableSyncing == Table.ORDERS) {
+                        mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS) {
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.PAGE,
                             Parameter.BRANCH_ID),
@@ -540,8 +541,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 // request with branch id
                 if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
                         mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
-                        mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
-                        mCurrentTableSyncing == Table.ORDERS) {
+                        mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS) {
 
                     Log.e(TAG, "branch id: " + getListOfBranchIds().get(mBranchIdIndex).getBranch().getId() + " branch index: " + mBranchIdIndex);
 
@@ -640,6 +640,17 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     );
                 }
 
+                if (mCurrentTableSyncing == Table.LAYAWAYS) {
+                    return String.format(ImonggoTools.generateParameter(
+                            Parameter.SALESMAN_ID,
+                            Parameter.PAGE,
+                            Parameter.AFTER,
+                            Parameter.LAYAWAYS),
+                            getSession().getUser_id(),
+                            String.valueOf(page),
+                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                }
+
 
                 if (lastUpdatedAt.getLast_updated_at() != null) {
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.AFTER),
@@ -692,8 +703,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     // request with branch id
                     if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
                             mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
-                            mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
-                            mCurrentTableSyncing == Table.ORDERS) {
+                            mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS) {
 
                         Log.e(TAG, "mBranchIdIndex: " + mBranchIdIndex);
                         Log.e(TAG, "size: " + getListOfBranchIds().size());
@@ -733,6 +743,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 getSession().getUser_id());
                     }
 
+                    if (mCurrentTableSyncing == Table.LAYAWAYS) {
+                        return ImonggoTools.generateParameter(
+                                Parameter.LAYAWAYS,
+                                Parameter.COUNT);
+                    }
+
+
                     if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
                         return ".json" + ImonggoTools.generateParameter(Parameter.COUNT);
                     }
@@ -756,8 +773,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     // request with branch id
                     if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
                             mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
-                            mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
-                            mCurrentTableSyncing == Table.ORDERS) {
+                            mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS) {
                         return String.format(ImonggoTools.generateParameter(Parameter.ACTIVE_ONLY,
                                 Parameter.COUNT, Parameter.AFTER, Parameter.BRANCH_ID),
                                 DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()),
@@ -830,6 +846,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                     }
 
+                    if (mCurrentTableSyncing == Table.LAYAWAYS) {
+                        return String.format(ImonggoTools.generateParameter(
+                                Parameter.AFTER,
+                                Parameter.LAYAWAYS,
+                                Parameter.COUNT),
+                                DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                    }
+
                     return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.AFTER),
                             DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                 }
@@ -868,12 +892,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_FROM_CUSTOMERS, 1, 1);
                 syncNext();
             } else {
-               /* if(!initialSync) {
-                    Log.e(TAG, "Price list is for updating...");
-                    mUpdatingPriceListFromCustomer = false;
-                    startSyncModuleContents(RequestType.LAST_UPDATED_AT);
-                } else {*/
-
                 if (listOfPricelistIds != null) {
                     if (listOfPricelistIds.size() != 0) {
                         count = listOfPricelistIds.size();
@@ -901,7 +919,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     mSyncModulesListener.onDownloadProgress(Table.PRICE_LISTS_FROM_CUSTOMERS, 1, 1);
                     syncNext();
                 }
-                // }
             }
 
         } else if (mCurrentTableSyncing == Table.ROUTE_PLANS_DETAILS) {
@@ -1126,8 +1143,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
-                        lastUpdatedAt.setLast_updated_at("2016/05/06 10:48:42 +0000");
-                        lastUpdatedAt.updateTo(getHelper());
+                        /*lastUpdatedAt.setLast_updated_at("2016/05/06 10:48:42 +0000");
+                        lastUpdatedAt.updateTo(getHelper());*/
 
                         SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                         if (newLastUpdatedAt.getLast_updated_at() == null) {
@@ -1329,12 +1346,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         }
 
                         newTaxRates.doOperation(TaxRate.class);
-/*
-                        if (productTaxRateAssocList.size() == 0) {
-                           // Log.e(TAG, "Product Tax Rate is 0");
-                        } else {
-                            Log.e(TAG, "Product Tax Rates has values");
-                        }*/
 
                         for (int i = 0; i < productTaxRateAssocList.size(); i++) {
 
@@ -1390,9 +1401,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 if (isExisting(user, Table.USERS)) {
                                     if (user.getStatus() == null) {
                                         user.updateTo(getHelper());
-                                        /*if (user.getId() == getSession().getUser().getId()) {
-                                            Log.e(TAG, "Updating sessions user from " + getSession().getUser().getName() + " to " + user.getName());
-                                        }*/
                                     } else {
                                         user.insertTo(getHelper());
                                     }
@@ -1711,11 +1719,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 updateNext(requestType, size);
                                 return;
                             } else {
-
-                                /*int progress = (int) Math.ceil((((double) mBranchIdIndex / (double) getUserBranchesSize()) * 100.0));
-                                int progress2 = (int) Math.ceil((((double) page / (double) progress) * 100.0));
-                                int progress3 = (int) Math.ceil((((double) size / (double) progress2) * 100.0));*/
-
                                 for (int i = 0; i < size; i++) {
                                     //    mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, i, progress3);
 
@@ -4038,7 +4041,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             }
                             updateNext(requestType, size);
                             break;
-                        case ORDERS:
                         case ORDERS_PURCHASES:
                         case ORDERS_STOCK_REQUEST:
                             // Log.e(TAG, "onSuccess: " + mCurrentTableSyncing);
@@ -4096,7 +4098,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     if (initialSync || lastUpdatedAt == null) {
                                         newOrders.add(orders);
                                     } else {
-                                        if (isExisting(orders, Table.ORDERS)) {
+                                        if (isExisting(orders, mCurrentTableSyncing)) {
                                             updateOrders.add(orders);
                                         } else {
                                             newOrders.add(orders);
@@ -4207,7 +4209,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 mCurrentTableSyncing == Table.DOCUMENT_TRANSFER_OUT ||
                                 mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
                                 mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
-                                mCurrentTableSyncing == Table.ORDERS ||
                                 mCurrentTableSyncing == Table.ORDERS_STOCK_REQUEST ||
                                 mCurrentTableSyncing == Table.ORDERS_PURCHASES) {
 
@@ -4218,9 +4219,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             mCustomPercentage = (mCustomPercentagePerBranch * mBranchIdIndex) + progressb;
 
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, (int) mCustomPercentage, 100);
-                            Log.e(TAG, "progressa: " + progressa);
-                            Log.e(TAG, "progressb: " + progressb);
-                            Log.e(TAG, "progress=====: " + mCustomPercentage);
                         } else {
                             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, page, numberOfPages);
                         }

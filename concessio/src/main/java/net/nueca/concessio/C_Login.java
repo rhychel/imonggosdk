@@ -45,6 +45,7 @@ public class C_Login extends LoginActivity {
         /**
          *"payment_types"
          */
+        TEST_ACCOUNT = true;
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
     }
