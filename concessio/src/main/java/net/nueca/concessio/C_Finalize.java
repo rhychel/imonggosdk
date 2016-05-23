@@ -679,7 +679,7 @@ public class C_Finalize extends ModuleActivity {
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
 
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
-                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
+                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
 
                 if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\r\n").getBytes());

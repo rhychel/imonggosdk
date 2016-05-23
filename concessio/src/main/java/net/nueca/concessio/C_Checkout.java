@@ -797,7 +797,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 //paymentsComputation.addAllPayments(invoice.getPayments());
 
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
-                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
+                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
 
                 if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\r\n").getBytes());
