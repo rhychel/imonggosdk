@@ -363,6 +363,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                 return String.format(ImonggoTools.generateParameter(Parameter.USER_ID, Parameter.LAST_UPDATED_AT), getSession().getUser_id());
             }
 
+            if (mCurrentTableSyncing == Table.LAYAWAYS)
+                return ImonggoTools.generateParameter(Parameter.LAST_UPDATED_AT, Parameter.LAYAWAYS);
+
             return ImonggoTools.generateParameter(Parameter.LAST_UPDATED_AT);
 
         } else if (requestType == RequestType.API_CONTENT) {
@@ -637,6 +640,17 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     );
                 }
 
+                if (mCurrentTableSyncing == Table.LAYAWAYS) {
+                    return String.format(ImonggoTools.generateParameter(
+                            Parameter.SALESMAN_ID,
+                            Parameter.PAGE,
+                            Parameter.AFTER,
+                            Parameter.LAYAWAYS),
+                            getSession().getUser_id(),
+                            String.valueOf(page),
+                            DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                }
+
 
                 if (lastUpdatedAt.getLast_updated_at() != null) {
                     return String.format(ImonggoTools.generateParameter(Parameter.PAGE, Parameter.AFTER),
@@ -728,6 +742,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 Parameter.COUNT),
                                 getSession().getUser_id());
                     }
+
+                    if (mCurrentTableSyncing == Table.LAYAWAYS) {
+                        return ImonggoTools.generateParameter(
+                                Parameter.LAYAWAYS,
+                                Parameter.COUNT);
+                    }
+
 
                     if (mCurrentTableSyncing == Table.PRICE_LISTS_FROM_CUSTOMERS) {
                         return ".json" + ImonggoTools.generateParameter(Parameter.COUNT);
@@ -822,6 +843,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                     if (mCurrentTableSyncing == Table.DOCUMENT_PURPOSES) {
                         return String.format(ImonggoTools.generateParameter(Parameter.COUNT, Parameter.AFTER),
+                                DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
+                    }
+
+                    if (mCurrentTableSyncing == Table.LAYAWAYS) {
+                        return String.format(ImonggoTools.generateParameter(
+                                Parameter.AFTER,
+                                Parameter.LAYAWAYS,
+                                Parameter.COUNT),
                                 DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()));
                     }
 
@@ -1114,8 +1143,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         Log.e(TAG, "From Server: " + newLastUpdatedAt.getLast_updated_at());
                         Log.e(TAG, "From DB: " + lastUpdatedAt.getLast_updated_at());
 
-                        lastUpdatedAt.setLast_updated_at("2016/05/06 10:48:42 +0000");
-                        lastUpdatedAt.updateTo(getHelper());
+                        /*lastUpdatedAt.setLast_updated_at("2016/05/06 10:48:42 +0000");
+                        lastUpdatedAt.updateTo(getHelper());*/
 
                         SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                         if (newLastUpdatedAt.getLast_updated_at() == null) {
@@ -1317,12 +1346,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         }
 
                         newTaxRates.doOperation(TaxRate.class);
-/*
-                        if (productTaxRateAssocList.size() == 0) {
-                           // Log.e(TAG, "Product Tax Rate is 0");
-                        } else {
-                            Log.e(TAG, "Product Tax Rates has values");
-                        }*/
 
                         for (int i = 0; i < productTaxRateAssocList.size(); i++) {
 
@@ -1378,9 +1401,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 if (isExisting(user, Table.USERS)) {
                                     if (user.getStatus() == null) {
                                         user.updateTo(getHelper());
-                                        /*if (user.getId() == getSession().getUser().getId()) {
-                                            Log.e(TAG, "Updating sessions user from " + getSession().getUser().getName() + " to " + user.getName());
-                                        }*/
                                     } else {
                                         user.insertTo(getHelper());
                                     }
