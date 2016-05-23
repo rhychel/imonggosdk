@@ -542,12 +542,6 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setBranch(getBranches().get(0));
 
             simpleProductsFragment.setOnSalesFinalize(true);
-            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
-                @Override
-                public void whenItemsSelectedUpdated() {
-                    toggleNext(llFooter, tvItems);
-                }
-            });
 
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                 @Override
@@ -559,11 +553,29 @@ public class C_Finalize extends ModuleActivity {
                     Log.e("PRODUCTS ADAPTER HELPER", gson.toJson(ProductsAdapterHelper.getSelectedReturnProductItems()));
                     Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");*/
 
+//                    toggleNext(llFooter, tvItems);
                     if(!isForHistoryDetail && !isLayaway) {
-                        Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
 
-                        tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
-                        tvBalance.setTag(totalSales);
+                        if(vpReview.getCurrentItem() == 0) {
+                            ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Sales");
+
+                            Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+
+                            tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                            tvBalance.setTag(totalSales);
+                        }
+                        else {
+                            ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Returns");
+
+                            Double totalSales = ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+                            tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                            tvBalance.setTag(totalSales);
+                        }
+//
+//                        Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+//
+//                        tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+//                        tvBalance.setTag(totalSales);
                         toggleNext(llFooter, tvItems);
 
                         if(vpReview.getCurrentItem() == 1) {
