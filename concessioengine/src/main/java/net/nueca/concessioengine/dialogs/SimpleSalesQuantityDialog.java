@@ -223,7 +223,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         Log.e(">>>", "invoice purposes extras: " + invoicePurposeList.get(position).getExtras());
-                        if(invoicePurposeList.get(position).getExtras() != null && invoicePurposeList.get(position).getExtras().require_date()) {
+                        if(invoicePurposeList.get(position).getExtras() != null && invoicePurposeList.get(position).getExtras().require_date()
+                                && invoicePurposeList.get(position).getId() != -1) {
                             llExpiryDate.setVisibility(View.VISIBLE);
                         }
                         else
