@@ -40,12 +40,9 @@ public class C_Login extends LoginActivity {
     protected void initLoginEquipments() {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
-        setServer(Server.REBISCO);
-        setAutoUpdateApp(false);
-        /**
-         *"payment_types"
-         */
-        TEST_ACCOUNT = true;
+
+        setAutoUpdateApp(true);
+
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
     }
@@ -109,7 +106,7 @@ public class C_Login extends LoginActivity {
         Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
         initializeApp();
 
-        BaseLoginActivity.TEST_ACCOUNT = false;
+        BaseLoginActivity.TEST_ACCOUNT = true;
 
         setupLayoutEquipments((EditText)findViewById(R.id.etAccountId),
                 (EditText)findViewById(R.id.etEmail),
