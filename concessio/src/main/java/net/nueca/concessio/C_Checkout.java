@@ -342,7 +342,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                             .payments_computation(checkoutFragment.getComputation())
                                             .branch(getBranches().get(0))
                                             .agent_name(getSession().getUser().getName())
-                                            .print("*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                            .print("*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
                                 } catch (SQLException e) {
                                     e.printStackTrace();
                                 }                            }
