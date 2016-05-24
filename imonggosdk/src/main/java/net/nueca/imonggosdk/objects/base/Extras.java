@@ -666,6 +666,8 @@ public class Extras extends DBTable {
     }
 
     public String getInvoice_purpose_name() {
+        if(invoice_purpose_name == null)
+            return "--";
         return invoice_purpose_name;
     }
 

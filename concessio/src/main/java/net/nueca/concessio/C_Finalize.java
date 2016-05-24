@@ -363,6 +363,8 @@ public class C_Finalize extends ModuleActivity {
 //            tvBalance.setText("P" + NumberTools.separateInCommas(balance));
 //            tvBalance.setTag(balance);
         }
+        else
+            ((TextView) findViewById(R.id.tvLabelBalance)).setText("Balance");
         if(isForHistoryDetail) {
             try {
                 ProductsAdapterHelper.clearSelectedProductItemList(false);
@@ -540,12 +542,6 @@ public class C_Finalize extends ModuleActivity {
             simpleProductsFragment.setBranch(getBranches().get(0));
 
             simpleProductsFragment.setOnSalesFinalize(true);
-            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
-                @Override
-                public void whenItemsSelectedUpdated() {
-                    toggleNext(llFooter, tvItems);
-                }
-            });
 
             simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
                 @Override
@@ -557,11 +553,29 @@ public class C_Finalize extends ModuleActivity {
                     Log.e("PRODUCTS ADAPTER HELPER", gson.toJson(ProductsAdapterHelper.getSelectedReturnProductItems()));
                     Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");*/
 
+//                    toggleNext(llFooter, tvItems);
                     if(!isForHistoryDetail && !isLayaway) {
-                        Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
 
-                        tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
-                        tvBalance.setTag(totalSales);
+                        if(vpReview.getCurrentItem() == 0) {
+                            ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Sales");
+
+                            Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+
+                            tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                            tvBalance.setTag(totalSales);
+                        }
+                        else {
+                            ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Returns");
+
+                            Double totalSales = ProductsAdapterHelper.getSelectedReturnProductItems().getSubtotal();
+                            tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+                            tvBalance.setTag(totalSales);
+                        }
+//
+//                        Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
+//
+//                        tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
+//                        tvBalance.setTag(totalSales);
                         toggleNext(llFooter, tvItems);
 
                         if(vpReview.getCurrentItem() == 1) {
@@ -679,7 +693,7 @@ public class C_Finalize extends ModuleActivity {
                 data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x00 }); // Left
 
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
-                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayable(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
+                data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
 
                 if(paymentsComputation.getCustomerDiscount().size() > 0) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\r\n").getBytes());
