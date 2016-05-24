@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import net.nueca.concessioengine.activities.DashboardActivity;
@@ -91,7 +92,7 @@ public class WH_Dashboard extends DashboardActivity implements OnItemClickListen
         getSupportActionBar().setIcon(R.drawable.ic_app_logo);
         getSupportActionBar().setTitle("  Home");
 
-        ArrayAdapter<Branch> branchesAdapter = new ArrayAdapter<>(this, R.layout.toolbar_spinner_item, getBranches());
+        ArrayAdapter<Branch> branchesAdapter = new ArrayAdapter<>(this, R.layout.toolbar_spinner_item, getBranches(true));
         branchesAdapter.setDropDownViewResource(R.layout.toolbar_spinner_dropdown_item);
         spBranches.setAdapter(branchesAdapter);
         spBranches.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -125,6 +126,7 @@ public class WH_Dashboard extends DashboardActivity implements OnItemClickListen
 
             Log.e("ModuleSettings", moduleSetting.getModule_type()+"="+moduleSetting.getDisplay_sequence());
         }
+        dashboardTiles.add(new DashboardTile(ConcessioModule.HISTORY, "HISTORY"));
 
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
@@ -140,19 +142,29 @@ public class WH_Dashboard extends DashboardActivity implements OnItemClickListen
                     int totalHeight = parent.getHeight();
                     CARD_DIMENS = getResources().getDimensionPixelOffset(R.dimen.wh_card_dimens) + DEFAULT_PADDING * 2;
 
-                    MAX_ROW = dashboardRecyclerAdapter.getItemCount() / MAX_COL;
+                    MAX_ROW = (int) Math.ceil((double)dashboardRecyclerAdapter.getItemCount() / (double)MAX_COL);
 
                     HORIZONTAL_PADDING = ((totalWidth / MAX_COL) - CARD_DIMENS);
                     VERTICAL_PADDING = ((totalHeight / MAX_ROW) - CARD_DIMENS) / 2;
                     Log.e("RecyclerView", "init padding");
+                    Log.e(" >>>> ROW", MAX_ROW + "");
                 }
+                Log.e(" >>>> " + itemIndex, ((TextView)view.findViewById(R.id.tvTitle)).getText().toString() );
 
                 int top = DEFAULT_PADDING, left = DEFAULT_PADDING,
                         bot = DEFAULT_PADDING, right = DEFAULT_PADDING;
                 if(itemIndex % MAX_COL == 0) left = HORIZONTAL_PADDING;
                 if(itemIndex % MAX_COL == MAX_COL - 1) right = HORIZONTAL_PADDING;
-                if(itemIndex % MAX_ROW == 0) top = VERTICAL_PADDING;
-                if(itemIndex % MAX_ROW == MAX_ROW - 1) bot = VERTICAL_PADDING;
+                if((itemIndex / MAX_COL) % MAX_ROW == 0) {
+                    top = VERTICAL_PADDING;
+                    //bot = DEFAULT_PADDING;
+                }
+                if((itemIndex / MAX_COL) % MAX_ROW == MAX_ROW - 1) {
+                    //top = DEFAULT_PADDING;
+                    bot = VERTICAL_PADDING;
+                }
+                Log.e("    > ", itemIndex + " % " + MAX_ROW + " = " + (itemIndex % MAX_ROW) );
+
 
                 if(left == right) {
                     left /= 2;

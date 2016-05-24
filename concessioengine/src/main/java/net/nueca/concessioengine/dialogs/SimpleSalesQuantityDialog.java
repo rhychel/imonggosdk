@@ -46,13 +46,16 @@ import me.grantland.widget.AutofitTextView;
 public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
 
     private AutofitTextView tvProductName;
-    private TextView tvRetailPrice, tvInStock, tvSubtotal, tvUnit, tvExpectedQty, tvOutright, tvDiscrepancy;
-    private EditText etQuantity, etExpectedQty, etOutright, etDiscrepancy, etRetailPrice;
+    private TextView tvRetailPrice, tvInStock, tvSubtotal, tvUnit, tvExpectedQty, tvOutright, tvDiscrepancy,
+        tvExpectedPrice, tvActualPrice;
+    private EditText etQuantity, etExpectedQty, etOutright, etDiscrepancy, etRetailPrice,
+        etExpectedPrice, etActualPrice;
     private Spinner spUnits;
     private Button btnCancel, btnSave;
     private LinearLayout llSubtotal;
 
-    private LinearLayout llInvoicePurpose, llExpiryDate, llBrand, llExpectedQty, llOutright, llDiscrepancy, llRetailPrice;
+    private LinearLayout llInvoicePurpose, llExpiryDate, llBrand, llExpectedQty, llOutright, llDiscrepancy, llRetailPrice,
+        llExpectedPrice, llActualPrice;
     private Spinner spInvoicePurpose, spBrands;
     private Button btnExpiryDate;
     private SwitchCompat swcBadStock;
@@ -148,6 +151,45 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
 
             llExpectedQty.setVisibility(View.VISIBLE);
         }
+
+        if(hasExpectedPrice) {
+            llExpectedPrice = (LinearLayout) super.findViewById(R.id.llExpectedPrice);
+            tvExpectedPrice = (TextView) super.findViewById(R.id.tvExpectedPrice);
+            etExpectedPrice = (EditText) super.findViewById(R.id.etExpectedPrice);
+
+            if (isMultiValue) {
+                if (valuePosition > -1) {
+                    etExpectedPrice.setText("" + selectedProductItem.getRetail_price(valuePosition));
+                }
+                else {
+                    etExpectedPrice.setText("" + selectedProductItem.getRetail_price());
+                }
+            } else {
+                etExpectedPrice.setText("" + selectedProductItem.getRetail_price());
+            }
+
+            llExpectedPrice.setVisibility(View.VISIBLE);
+        }
+
+        if(hasActualPrice) {
+            llActualPrice = (LinearLayout) super.findViewById(R.id.llActualPrice);
+            tvActualPrice = (TextView) super.findViewById(R.id.tvActualPrice);
+            etActualPrice = (EditText) super.findViewById(R.id.etActualPrice);
+
+            if (isMultiValue) {
+                if (valuePosition > -1) {
+                    etActualPrice.setText("" + selectedProductItem.getValuesRetailPrice(valuePosition));
+                }
+                else {
+                    etActualPrice.setText("" + selectedProductItem.getRetail_price());
+                }
+            } else {
+                etActualPrice.setText("" + selectedProductItem.getValuesRetailPrice(0));
+            }
+
+            llActualPrice.setVisibility(View.VISIBLE);
+        }
+
         if(hasOutright) {
             llOutright = (LinearLayout) super.findViewById(R.id.llOutright);
             tvOutright = (TextView) super.findViewById(R.id.tvOutright);

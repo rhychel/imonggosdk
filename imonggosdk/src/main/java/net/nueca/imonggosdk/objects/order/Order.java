@@ -1,7 +1,10 @@
 package net.nueca.imonggosdk.objects.order;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;
@@ -11,11 +14,17 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.enums.Parameter;
+import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
+import net.nueca.imonggosdk.operations.ImonggoTools;
+import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.swable.SwableTools;
 
 import org.json.JSONException;
@@ -45,6 +54,8 @@ public class Order extends BaseTransactionTable3 {
     @Expose
     @DatabaseField
     private int serving_branch_id;
+    @DatabaseField
+    private Integer branch_id;
     @Expose
     private List<OrderLine> order_lines;
 
@@ -65,6 +76,15 @@ public class Order extends BaseTransactionTable3 {
         remark = "page=1/1";
         order_type_code = builder.order_type_code;
         serving_branch_id = builder.serving_branch_id;
+        branch_id = builder.branch_id;
+    }
+
+    public Integer getBranch_id() {
+        return branch_id;
+    }
+
+    public void setBranch_id(Integer branch_id) {
+        this.branch_id = branch_id;
     }
 
     public String getTarget_delivery_date() {
@@ -168,6 +188,7 @@ public class Order extends BaseTransactionTable3 {
         private String remark;
         private String order_type_code; // purchase order
         private int serving_branch_id = 0;
+        private Integer branch_id;
         private List<OrderLine> order_lines = new ArrayList<>();
 
         public Builder target_delivery_date(String date) {
@@ -184,6 +205,10 @@ public class Order extends BaseTransactionTable3 {
         }
         public Builder serving_branch_id(int serving_branch_id) {
             this.serving_branch_id = serving_branch_id;
+            return this;
+        }
+        public Builder branch_id(Integer branch_id) {
+            this.branch_id = branch_id;
             return this;
         }
         public Builder order_lines(List<OrderLine> order_lines) {
@@ -353,5 +378,13 @@ public class Order extends BaseTransactionTable3 {
                 extras.insertTo(dbHelper);
             }
         }
+    }
+
+    public static void fetchByReference(Context context, String branch_id, String reference, String order_type_code, Session session,
+                                        VolleyRequestListener volleyRequestListener) {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, session.getServer(), Table.ORDERS,
+                RequestType.API_CONTENT, String.format(ImonggoTools.generateParameter(Parameter.ORDER_TYPE, Parameter.BRANCH_ID, Parameter
+                        .REFERENCE), order_type_code, branch_id, reference)));
     }
 }

@@ -38,6 +38,9 @@
         <activity android:name=".WH_Finalize"
                   android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".WH_MultiInput"
+                  android:screenOrientation="portrait">
+        </activity>
 
         <activity
             android:name="net.nueca.concessioengine.activities.SettingsActivity"

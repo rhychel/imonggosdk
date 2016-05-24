@@ -510,6 +510,8 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
 
             if(document.getOfflineData() != null) {
+                Log.e(">>>>>>>>>>>>>>>>",document.getOfflineData().getConcessioModule().toString());
+                Log.e("processDocument=", getModuleSetting(document.getOfflineData().getConcessioModule()).toString());
                 Log.e("processDocument=", "offlineData is not null || multiinput="+getModuleSetting(document.getOfflineData().getConcessioModule()).getQuantityInput().is_multiinput());
                 selectedProductItem.setIsMultiline(getModuleSetting(document.getOfflineData().getConcessioModule()).getQuantityInput().is_multiinput());
             }

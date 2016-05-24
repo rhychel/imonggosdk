@@ -15,6 +15,7 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
+import net.nueca.imonggosdk.tools.ProductListTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -56,16 +57,21 @@ public class OrderTools {
     }
 
     public static List<Product> generateSelectedItemList(ImonggoDBHelper2 dbHelper, Order order) throws SQLException {
+        return generateSelectedItemList(dbHelper, order, false);
+    }
+
+    public static List<Product> generateSelectedItemList(ImonggoDBHelper2 dbHelper, Order order, boolean isMultiLine) throws SQLException {
         List<Product> productList = new ArrayList<>();
 
         List<OrderLine> orderLines = order.getOrder_lines();
         for(OrderLine orderLine : orderLines) {
-            Log.e(">>>>>>>>>>>>>>>>>>>", new Gson().toJson(orderLine));
+            //Log.e(">>>>>>>>>>>>>>>>>>>", new Gson().toJson(orderLine));
             Product product = dbHelper.fetchIntId(Product.class).queryForId(orderLine.getProduct_id());
             if(productList.indexOf(product) == -1)
                 productList.add(product);
 
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
+            selectedProductItem.setIsMultiline(isMultiLine);
             String quantity = "0";
             Unit unit = null;
             if(orderLine.getUnit_id() != null)
@@ -85,6 +91,8 @@ public class OrderTools {
             values.setLine_no(orderLine.getLine_no());
             selectedProductItem.addValues(values);
             ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+
+            ProductListTools.getLineNo();
         }
 
         return productList;

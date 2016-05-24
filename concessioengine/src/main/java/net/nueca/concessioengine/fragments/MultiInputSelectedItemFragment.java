@@ -203,6 +203,7 @@ public class MultiInputSelectedItemFragment extends BaseProductsFragment {
         simpleSalesQuantityDialog.setHelper(getHelper());
         simpleSalesQuantityDialog.setIsMultiValue(true);
         simpleSalesQuantityDialog.setHasStock(false);
+
         if(concessioModule == ConcessioModule.RECEIVE_BRANCH)
            simpleSalesQuantityDialog.setUnitDisplay(!isManualReceive);
 
@@ -244,8 +245,9 @@ public class MultiInputSelectedItemFragment extends BaseProductsFragment {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        Log.e(">>>>>>", concessioModule.toString());
 
-        if(isManualReceive)
+        if(isManualReceive && concessioModule == ConcessioModule.RECEIVE_BRANCH)
             simpleSalesQuantityDialog.setHasOutright(true);
         else {
             if(concessioModule == ConcessioModule.PHYSICAL_COUNT) {
@@ -264,6 +266,11 @@ public class MultiInputSelectedItemFragment extends BaseProductsFragment {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+            else if(concessioModule == ConcessioModule.RELEASE_BRANCH || concessioModule == ConcessioModule.RECEIVE_SUPPLIER) {
+                simpleSalesQuantityDialog.setHasExpectedQty(true);
+                simpleSalesQuantityDialog.setHasExpectedPrice(true);
+                simpleSalesQuantityDialog.setHasActualPrice(true);
             }
             else {
                 simpleSalesQuantityDialog.setHasOutright(true);

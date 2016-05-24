@@ -21,7 +21,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -34,7 +34,13 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:elevation="3dp"
-                android:theme="@style/ThemeOverlay.ActionBar.Concessio">
+                android:theme="@style/ThemeOverlay.ActionBar.Concessio"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="0dp"
+                android:id="@+id/ablToolbarHolder"
+                app:elevation="4dp">
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/tbActionBar"
@@ -66,6 +72,18 @@
                     layout="@layout/wh_toolbar_ext"/>
             </android.support.design.widget.AppBarLayout>
 
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:id="@+id/fabAdd"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/ablToolbarHolder"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="-30dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_add_white"
+                app:elevation="8dp"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -75,7 +93,11 @@
                 android:gravity="center_vertical"
                 android:background="@android:color/white"
                 android:id="@+id/llReason"
-                android:visibility="gone">
+                android:visibility="gone"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_below="@+id/ablToolbarHolder">
                 <TextView
                     android:layout_width="72dp"
                     android:layout_height="wrap_content"
@@ -105,11 +127,15 @@
                 android:layout_height="match_parent"
                 android:id="@+id/rvProducts"
                 android:elevation="1dp"
-                android:paddingBottom="100dp"
+                android:paddingBottom="150dp"
                 android:clipToPadding="false"
                 android:listDivider="@color/dividerL"
                 android:columnWidth="@dimen/product_tile_dimens"
-                android:paddingTop="8dp"/>
+                android:paddingTop="8dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dp"
+                android:layout_below="@+id/llReason"
+                />
 
             <TextView
                 android:layout_width="match_parent"
@@ -119,8 +145,12 @@
                 android:id="@+id/tvNoProducts"
                 android:gravity="center"
                 android:layout_margin="50dp"
-                android:visibility="gone"/>
-        </LinearLayout>
+                android:visibility="gone"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_below="@+id/llReason"/>
+        </RelativeLayout>
         </android.support.design.widget.CoordinatorLayout>
 
         <LinearLayout android:orientation="vertical"

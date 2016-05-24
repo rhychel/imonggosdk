@@ -93,7 +93,11 @@ public class SimpleProductRecyclerViewAdapter extends BaseProductsRecyclerAdapte
                 viewHolder.tvSubtotal.setVisibility(View.GONE);
             viewHolder.llQuantity.setVisibility(View.GONE);
             viewHolder.tvProductName.setText(product.getName());
-            viewHolder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+            if(hasInStock) {
+                viewHolder.tvInStock.setVisibility(View.VISIBLE);
+                viewHolder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+            } else
+                viewHolder.tvInStock.setVisibility(View.GONE);
             double subtotal = 0.0;
             if(branch != null) {
                 try {

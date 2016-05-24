@@ -45,9 +45,6 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
     protected static final int FROM_MULTIINPUT = 109;
     protected static final int ROUTE_PLAN = 110;
 
-    protected static final int WH_RECEIVING = 111;
-    protected static final int WH_DISPATCHING = 112;
-
     private ImonggoDBHelper2 dbHelper2;
 
     @Override

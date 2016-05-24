@@ -71,8 +71,6 @@ import java.util.TimeZone;
  */
 public class WH_Finalize extends ModuleActivity {
     public static final String BRANCH_ID = "branch_id";
-    public static final String IS_RECEIVING = "is_receiving";
-    public static final String IS_DISPATCHING = "is_dispatching";
 
     private boolean isReceiving = false;
     private boolean isDispatching = false;
@@ -88,19 +86,18 @@ public class WH_Finalize extends ModuleActivity {
     private TextView tvBalance, tvTotalAmount;
     private View viewStub;
 
-    private ReviewAdapter reviewAdapter;
     private OfflineData offlineData;
     private Branch selectedBranch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.simple_review_activity);
+        setContentView(R.layout.wh_module);
 
-        if(getIntent().hasExtra(IS_RECEIVING))
-            isReceiving = getIntent().getBooleanExtra(IS_RECEIVING, false);
-        if(getIntent().hasExtra(IS_DISPATCHING))
-            isDispatching = getIntent().getBooleanExtra(IS_DISPATCHING, false);
+        isReceiving = concessioModule == ConcessioModule.RECEIVE_SUPPLIER;
+        isDispatching = concessioModule == ConcessioModule.RELEASE_BRANCH;
+        Log.e(">>>>>>>>>>>>>>>>>", concessioModule.toString());
+
         if(getIntent().hasExtra(BRANCH_ID)) {
             try {
                 selectedBranch = getHelper().fetchObjectsInt(Branch.class).queryBuilder().where()
@@ -124,8 +121,8 @@ public class WH_Finalize extends ModuleActivity {
         tvBalance = (TextView) findViewById(R.id.tvBalance);
         viewStub = findViewById(R.id.viewStub);
 
-        setSupportActionBar(tbActionBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //setSupportActionBar(tbActionBar);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         btn1.setText("CHECKOUT");
 
         llBalance.setVisibility(View.VISIBLE);
@@ -168,6 +165,7 @@ public class WH_Finalize extends ModuleActivity {
                             if(document != null) {
                                 new SwableTools.Transaction(getHelper())
                                         .toSend()
+                                        .fromModule(concessioModule)
                                         .object(document)
                                         .forBranch(warehouseBranch)
                                         .queue();
@@ -194,32 +192,62 @@ public class WH_Finalize extends ModuleActivity {
 
         toggleNext(llFooter, tvItems);
 
-        reviewAdapter = new ReviewAdapter(getSupportFragmentManager());
-        vpReview.setAdapter(reviewAdapter);
-        vpReview.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        SimpleProductsFragment simpleProductsFragment = SimpleProductsFragment.newInstance();
+        simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES);
+        simpleProductsFragment.setUseSalesProductAdapter(true);
+        simpleProductsFragment.setHelper(getHelper());
+        simpleProductsFragment.setHasUnits(true);
+        simpleProductsFragment.setHasToolBar(false);
+        simpleProductsFragment.setHasCategories(false);
+        simpleProductsFragment.setIsFinalize(true);
+        simpleProductsFragment.setHasSubtotal(true);
+        simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
+        simpleProductsFragment.setHasInStock(!(isForHistoryDetail || isLayaway));
+        simpleProductsFragment.setConcessioModule(concessioModule);
+        simpleProductsFragment.setCustomer(customer);
+        simpleProductsFragment.setCanOverridePrice(getModuleSetting(concessioModule).isCan_override_price());
+
+        CustomerGroup customerGroup = null;
+        try {
+            if (customer != null && customer.getCustomerGroups(getHelper()).size() > 0)
+                customerGroup = customer.getCustomerGroups(getHelper()).get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        simpleProductsFragment.setCustomerGroup(customerGroup);
+        simpleProductsFragment.setBranch(getBranches().get(0));
+
+        simpleProductsFragment.setOnSalesFinalize(true);
+        simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                Log.e("onPageSelected", position+"<--");
-                int size = 0;
-                if(position == 0)
-                    size = ProductsAdapterHelper.getSelectedProductItems().size();
-                else
-                    size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
-                tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
+            public void whenItemsSelectedUpdated() {
+                toggleNext(llFooter, tvItems);
             }
         });
 
-        tlTotal.setupWithViewPager(vpReview);
+        simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
+            @Override
+            public void whenItemsSelectedUpdated() {
+                if(!isForHistoryDetail && !isLayaway) {
+                    Double balance = getBalance();
+                    tvBalance.setText("P" + NumberTools.separateInCommas(balance));
+                    tvBalance.setTag(balance);
+                    toggleNext(llFooter, tvItems);
+
+                    if(vpReview.getCurrentItem() == 1) {
+                        // improve shit
+                        int size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
+                        tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
+                    }
+                }
+            }
+        });
+        simpleProductsFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
+
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.flContent,simpleProductsFragment)
+                .commit();
 
         tbActionBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -337,110 +365,10 @@ public class WH_Finalize extends ModuleActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == WH_RECEIVING || requestCode == WH_DISPATCHING) {
+        //if (requestCode == WH_RECEIVING || requestCode == WH_DISPATCHING) {
             if(resultCode == SUCCESS)
                 finish();
-        }
-    }
-
-    public class ReviewAdapter extends FragmentPagerAdapter {
-
-        private SimpleProductsFragment returnsProductFragment;
-
-        public ReviewAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            SimpleProductsFragment simpleProductsFragment = SimpleProductsFragment.newInstance();
-            simpleProductsFragment.setListingType(ListingType.ADVANCED_SALES);
-            simpleProductsFragment.setUseSalesProductAdapter(true);
-            if(position == 1)
-                returnsProductFragment = simpleProductsFragment;
-            simpleProductsFragment.setHelper(getHelper());
-            simpleProductsFragment.setHasUnits(true);
-            simpleProductsFragment.setHasToolBar(false);
-            simpleProductsFragment.setHasCategories(false);
-            simpleProductsFragment.setIsFinalize(true);
-            simpleProductsFragment.setHasSubtotal(true);
-            simpleProductsFragment.setDisplayOnly(isForHistoryDetail || isLayaway);
-            simpleProductsFragment.setHasInStock(!(isForHistoryDetail || isLayaway));
-            simpleProductsFragment.setConcessioModule(concessioModule);
-            simpleProductsFragment.setCustomer(customer);
-            simpleProductsFragment.setCanOverridePrice(getModuleSetting(concessioModule).isCan_override_price());
-
-            CustomerGroup customerGroup = null;
-            try {
-                if (customer != null && customer.getCustomerGroups(getHelper()).size() > 0)
-                    customerGroup = customer.getCustomerGroups(getHelper()).get(0);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            simpleProductsFragment.setCustomerGroup(customerGroup);
-            simpleProductsFragment.setBranch(getBranches().get(0));
-
-            simpleProductsFragment.setOnSalesFinalize(true);
-            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
-                @Override
-                public void whenItemsSelectedUpdated() {
-                    toggleNext(llFooter, tvItems);
-                }
-            });
-
-            simpleProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
-                @Override
-                public void whenItemsSelectedUpdated() {
-                    /*Gson gson = new Gson();
-                    Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                    Log.e("PRODUCTS ADAPTER HELPER", gson.toJson(ProductsAdapterHelper.getSelectedProductItems()));
-                    Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                    Log.e("PRODUCTS ADAPTER HELPER", gson.toJson(ProductsAdapterHelper.getSelectedReturnProductItems()));
-                    Log.e(">>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");*/
-
-                    if(!isForHistoryDetail && !isLayaway) {
-                        Double balance = getBalance();
-                        tvBalance.setText("P" + NumberTools.separateInCommas(balance));
-                        tvBalance.setTag(balance);
-                        toggleNext(llFooter, tvItems);
-
-                        if(vpReview.getCurrentItem() == 1) {
-                            // improve shit
-                            int size = ProductsAdapterHelper.getSelectedReturnProductItems().size();
-                            tvItems.setText(getResources().getQuantityString(net.nueca.concessioengine.R.plurals.items, size, size));
-                        }
-                    }
-                }
-            });
-            if(position == 0)// Positive Transactions
-                simpleProductsFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
-            else {
-                simpleProductsFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedReturnProductItems().getSelectedProducts());
-                simpleProductsFragment.setReturnItems(true);
-            }
-
-            Log.e("SelectedReturnsPI", "getItem is called");
-            return simpleProductsFragment;
-        }
-
-        public void updateReturns() {
-            Log.e("SelectedReturnsPI", ProductsAdapterHelper.getSelectedReturnProductItems().getSelectedProducts().size()+" size");
-            returnsProductFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedReturnProductItems().getSelectedProducts());
-            returnsProductFragment.forceUpdateProductList();
-        }
-
-        @Override
-        public int getCount() {
-            Log.e("hasReturns", getModuleSetting(ConcessioModule.INVOICE).isHas_returns()+"");
-            return getModuleSetting(ConcessioModule.INVOICE).isHas_returns() ? 2 : 1;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            if(position == 0)
-                return "TOTAL SALES";
-            return "TOTAL RETURNS";
-        }
+        //}
     }
 
     // ----------------------- PRINTING
