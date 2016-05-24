@@ -1,7 +1,6 @@
 package net.nueca.imonggosdk.objects.order;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -11,7 +10,6 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
-import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Parameter;
@@ -19,7 +17,6 @@ import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.OfflineData;
-import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
@@ -384,7 +381,7 @@ public class Order extends BaseTransactionTable3 {
                                         VolleyRequestListener volleyRequestListener) {
         RequestQueue queue = Volley.newRequestQueue(context);
         queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, session.getServer(), Table.ORDERS,
-                RequestType.API_CONTENT, String.format(ImonggoTools.generateParameter(Parameter.ORDER_TYPE, Parameter.BRANCH_ID, Parameter
+                RequestType.API_CONTENT, String.format(ImonggoTools.generateParameter(Parameter.ORDER_TYPE_CODE, Parameter.BRANCH_ID, Parameter
                         .REFERENCE), order_type_code, branch_id, reference)));
     }
 }

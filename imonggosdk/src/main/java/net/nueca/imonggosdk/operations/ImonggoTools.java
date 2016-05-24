@@ -100,8 +100,8 @@ public class ImonggoTools {
                     parameterStr += "salesman_id=%"+stringInputCount+"$s&";
                     stringInputCount++;
                     break;
-				case ORDER_TYPE:
-					parameterStr += "order_type=%"+stringInputCount+"$s&";
+				case ORDER_TYPE_CODE:
+					parameterStr += "order_type_code=%"+stringInputCount+"$s&";
 					stringInputCount++;
 					break;
 				case LAYAWAYS:
