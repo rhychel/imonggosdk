@@ -56,6 +56,7 @@ import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -310,7 +311,7 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case ROUTE_PLANS_DETAILS: {
                 RoutePlanDetail routePlanDetail = (RoutePlanDetail) o;
-                return getHelper().fetchObjects(RoutePlanDetail.class).queryBuilder().where().eq("route_plan_id", routePlanDetail.getRoutePlan()).and().eq("customer_id",routePlanDetail.getCustomer()).queryForFirst() != null;
+                return getHelper().fetchObjects(RoutePlanDetail.class).queryBuilder().where().eq("route_plan_id", routePlanDetail.getRoutePlan()).and().eq("customer_id", routePlanDetail.getCustomer()).queryForFirst() != null;
             }
             case BRANCH_PRODUCTS: {
                 BranchProduct branchProduct = (BranchProduct) o;
@@ -474,14 +475,48 @@ public abstract class BaseSyncService extends ImonggoService {
         }
     }
 
-    public List<BranchUserAssoc> getListOfBranchIds() {
-        //Log.e(TAG, "getListOfBranchIds... ");
+    public List<BranchUserAssoc> getListOfWarehouseIds() {
         try {
-          //  Log.e(TAG, "getListOfBranchIds size: " +  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query().size());
-            return  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
+            List<BranchUserAssoc> list = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
+            List<BranchUserAssoc> warehouses = new ArrayList<>();
+
+            if (list != null) {
+                for (BranchUserAssoc br : list) {
+                    Log.e(TAG, "branch: " + br.getBranch().getSite_type());
+
+                    if(br.getBranch().getSite_type() == null) {
+                        Log.e(TAG, "branch is null");
+                    } else {
+                        if (br.getBranch().getSite_type().equals("warehouse")) {
+                            warehouses.add(br);
+                            Log.e(TAG, "its a warehouse!");
+                        } else {
+                            Log.e(TAG, "no it's not.");
+                        }
+                    }
+                }
+            }
+
+            return warehouses;
         } catch (SQLException e) {
-            //Log.e(TAG, "getListOfBranchIds: is null");
+
             return null;
+        }
+    }
+
+
+    public List<BranchUserAssoc> getListOfBranchIds(Table table) {
+        if(table == Table.ORDERS_PURCHASES || table == Table.ORDERS_STOCK_REQUEST) {
+            return getListOfWarehouseIds();
+        } else {
+            //Log.e(TAG, "getListOfBranchIds... ");
+            try {
+                //  Log.e(TAG, "getListOfBranchIds size: " +  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query().size());
+                return getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
+            } catch (SQLException e) {
+                //Log.e(TAG, "getListOfBranchIds: is null");
+                return null;
+            }
         }
     }
 
