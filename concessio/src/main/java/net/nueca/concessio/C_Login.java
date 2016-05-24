@@ -40,11 +40,12 @@ public class C_Login extends LoginActivity {
     protected void initLoginEquipments() {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
-        setServer(Server.IRETAILCLOUD_NET);
+        setServer(Server.REBISCO);
         setAutoUpdateApp(false);
         /**
          *"payment_types"
          */
+        TEST_ACCOUNT = true;
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
     }

@@ -340,7 +340,4 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     public interface Conditional<D> {
         boolean validate(D obj);
     }
-
-
-
 }

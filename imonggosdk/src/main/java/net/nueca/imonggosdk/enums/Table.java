@@ -63,6 +63,7 @@ public enum Table {
     INVOICES(API_TYPE.API, "Invoices", Invoice.class, "invoices"),
     SETTINGS(API_TYPE.API, "Settings", Settings.class, "settings"),
     APPLICATION_SETTINGS(API_TYPE.API, "Application Settings", ApplicationSettings.class, "application_settings"),
+    @Deprecated
     ORDERS(API_TYPE.API, "Orders", Order.class, "orders"),
     ORDERS_PURCHASES(API_TYPE.API, "Purchase Orders", Order.class, "orders_purchase_orders"),
     ORDERS_STOCK_REQUEST(API_TYPE.API, "Stock Requests", Order.class, "orders_stock_requests"),
@@ -105,11 +106,13 @@ public enum Table {
     DOCUMENT_LINES(API_TYPE.NON_API, "Document Lines", DocumentLine.class),
     EXTENDED_ATTRIBUTES(API_TYPE.NON_API, "Extended Attributes"),
     EXTRAS(API_TYPE.NON_API, "Extras", Extras.class),
+    @Deprecated
     BRANCH_UNIT(API_TYPE.NON_API, "Branch Unit", BranchUnit.class),
 
     // ----- FOR REBISCO
     CUSTOMER_BY_SALESMAN(API_TYPE.API, "Customers", Customer.class, "customer_by_salesman"),
-    BRANCH_PRODUCTS(API_TYPE.API, "Branch Prices", BranchProduct.class, "branch_products"),
+
+    BRANCH_PRODUCTS(API_TYPE.API, "Branch Prices", net.nueca.imonggosdk.objects.BranchProduct.class, "branch_products"),
     INVOICE_PURPOSES(API_TYPE.API, "Invoice Purposes", InvoicePurpose.class, "invoice_purposes"),
     PAYMENT_TERMS(API_TYPE.API, "Payment Terms", PaymentTerms.class, "payment_terms"),
     CUSTOMER_CATEGORIES(API_TYPE.API, "Customer Categories", CustomerCategory.class, "customer_categories"),

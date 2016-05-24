@@ -1002,14 +1002,16 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             initializeVoidButton(btn1, referenceNumber);
 
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
-                            if(!offlineData.isSynced() && !offlineData.isSyncing() && !offlineData.getOfflineDataTransactionType().isVoiding()) {
+                            if(!simpleTransactionDetailsFragment.getOfflineData().isSynced() &&
+                                    !simpleTransactionDetailsFragment.getOfflineData().isSyncing() &&
+                                    !simpleTransactionDetailsFragment.getOfflineData().getOfflineDataTransactionType().isVoiding()) {
                                 initializeVoidButton(btn1, referenceNumber);
                                 initializeDuplicateButton(btn2, referenceNumber);
                             }
                             else
                                 initializeDuplicateButton(btn1, referenceNumber);
                         }
-                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
+                        else if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
                                 simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) {
                             Log.e("duplicate", "yeah");
                             if(isVoiding)
@@ -1216,6 +1218,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             simpleCustomersFragment.updateListWhenSearch(newText);
                         else if(concessioModule == ConcessioModule.HISTORY || concessioModule == ConcessioModule.LAYAWAY)
                             simpleTransactionsFragment.updateListWhenSearch(newText);
+                        else if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+                            simplePulloutFragment.updateListWhenSearch(newText);
                         else
                             simpleProductsFragment.updateListWhenSearch(newText);
                         return true;
@@ -1618,11 +1622,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                                 isButtonTapped = true;
 
-                                Gson gson = new GsonBuilder().serializeNulls().create();
-                                if (concessioModule == ConcessioModule.STOCK_REQUEST) {
+                            Gson gson = new GsonBuilder().serializeNulls().create();
+                            if (concessioModule == ConcessioModule.STOCK_REQUEST) {
 
                                     try {
-                                        Order order = OrderTools.generateOrder(getApplicationContext(), getSession().getDevice_id(), branch.getId(), OrderTypeCode.STOCK_REQUEST);
+                                        Order order = OrderTools.generateOrder(getApplicationContext(), getSession().getDevice_id(), getWarehouse().getId(), OrderTypeCode.STOCK_REQUEST);
 
                                         JSONObject jsonObject = new JSONObject(gson.toJson(order));
                                         Log.e("jsonObject", jsonObject.toString());
@@ -1798,7 +1802,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         if (concessioModule == ConcessioModule.STOCK_REQUEST) {
 
                                                             try {
-                                                                Order order = OrderTools.generateOrder(getApplicationContext(), getSession().getDevice_id(), branch.getId(), OrderTypeCode.STOCK_REQUEST);
+                                                                Order order = OrderTools.generateOrder(getApplicationContext(), getSession().getDevice_id(), warehouse.getId(), OrderTypeCode.STOCK_REQUEST);
 
                                                                 JSONObject jsonObject = new JSONObject(gson.toJson(order));
                                                                 Log.e("jsonObject", jsonObject.toString());
