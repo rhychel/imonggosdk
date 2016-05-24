@@ -414,13 +414,19 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
         searchViewEx.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                simpleInventoryFragment.updateListWhenSearch(query);
+                if(concessioModule == ConcessioModule.HISTORY)
+                    simpleTransactionsFragment.updateListWhenSearch(query);
+                else
+                    simpleInventoryFragment.updateListWhenSearch(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                simpleInventoryFragment.updateListWhenSearch(newText);
+                if(concessioModule == ConcessioModule.HISTORY)
+                    simpleTransactionsFragment.updateListWhenSearch(newText);
+                else
+                    simpleInventoryFragment.updateListWhenSearch(newText);
                 return false;
             }
         });
