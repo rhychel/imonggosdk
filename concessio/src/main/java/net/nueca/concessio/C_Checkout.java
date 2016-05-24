@@ -71,36 +71,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private Toolbar tbActionBar;
     private RecyclerView rvPayments;
     private SimpleSplitPaymentAdapter simpleSplitPaymentAdapter;
-//    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-//        @Override
-//        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-//            if(target != null)
-//                Log.e("target", "Not null");
-//
-//            if(viewHolder != null)
-//                Log.e("viewHolder", "Not null");
-//            return false;
-//        }
-//
-//        @Override
-//        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-//            Log.e("onSwiped", "Index=" + viewHolder.getAdapterPosition());
-//            Log.e("onSwiped", "Payment Batch No=" + simpleSplitPaymentAdapter.getItem(viewHolder.getAdapterPosition()).getPaymentBatchNo());
-//
-//            if(simpleSplitPaymentAdapter.getItem(viewHolder.getAdapterPosition()).getPaymentBatchNo() == null) {
-//                simpleSplitPaymentAdapter.remove(viewHolder.getAdapterPosition());
-//                simpleSplitPaymentAdapter.notifyItemChanged(0);
-//            }
-//        }
-//
-//        @Override
-//        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-//            if(viewHolder instanceof SimpleSplitPaymentAdapter.ListViewHolder) {
-//                return ((SimpleSplitPaymentAdapter.ListViewHolder) viewHolder).isLastItem() ? 0 : super.getSwipeDirs(recyclerView, viewHolder);
-//            }
-//            return super.getSwipeDirs(recyclerView, viewHolder);
-//        }
-//    };
+
     private LinearLayout llBalance, llTotalAmount;
     private TextView tvLabelBalance, tvBalance, tvTotalAmount;
     private Button btn1, btn2;
@@ -124,12 +95,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 if (btn1.getText().toString().equals("PAY")) {
                     SimplePaymentDialog dialog = new SimplePaymentDialog(C_Checkout.this, simpleSplitPaymentAdapter.getPaymentTypeList(), R.style.AppCompatDialogStyle_Light_NoTitle);
                     dialog.setDialogType(DialogType.ADVANCED_PAY);
-
-//                    Double availablePoints = Double.parseDouble(ProductsAdapterHelper.getSelectedCustomer().getAvailable_points());
-//                    Double pointsInPeso = 0d;
-//
-//                    if(salesPromotion != null && salesPromotion.getSettings() != null)
-//                        pointsInPeso = PointsTools.pointsToAmount(salesPromotion.getSettings(), availablePoints);
 
                     dialog.setAvailablePoints(availablePoints);
                     dialog.setPointsInPesoText(pointsInPeso);
