@@ -108,6 +108,10 @@ public class ImonggoTools {
 					parameterStr += "type=layaways&";
 					stringInputCount++;
 					break;
+				case SERVING_BRANCH_ID:
+					parameterStr += "serving_branch_id=%"+stringInputCount+"$s&";
+					stringInputCount++;
+					break;
 				case REFERENCE:
 					parameterStr += "reference=%"+stringInputCount+"$s&";
 					stringInputCount++;

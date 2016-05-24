@@ -120,6 +120,7 @@ public class TransactionDialog extends BaseAppCompatDialog {
             llDetails.setVisibility(View.VISIBLE);
     }
 
+    // -- Handle custom
     private String getTitle(ConcessioModule concessioModule) {
         switch (concessioModule) {
             case STOCK_REQUEST:
@@ -127,7 +128,7 @@ public class TransactionDialog extends BaseAppCompatDialog {
             case RECEIVE_SUPPLIER:
                 return "Received Items Saved";
             case RELEASE_SUPPLIER:
-                return "Pullout Successful";
+                return "Salesman RGS Successful";
             case RELEASE_ADJUSTMENT:
                 return "MSO Successful";
             case INVOICE_PARTIAL:

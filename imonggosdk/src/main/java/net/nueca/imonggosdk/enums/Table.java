@@ -63,6 +63,7 @@ public enum Table {
     INVOICES(API_TYPE.API, "Invoices", Invoice.class, "invoices"),
     SETTINGS(API_TYPE.API, "Settings", Settings.class, "settings"),
     APPLICATION_SETTINGS(API_TYPE.API, "Application Settings", ApplicationSettings.class, "application_settings"),
+    @Deprecated
     ORDERS(API_TYPE.API, "Orders", Order.class, "orders"),
     ORDERS_PURCHASES(API_TYPE.API, "Purchase Orders", Order.class, "orders_purchase_orders"),
     ORDERS_STOCK_REQUEST(API_TYPE.API, "Stock Requests", Order.class, "orders_stock_requests"),

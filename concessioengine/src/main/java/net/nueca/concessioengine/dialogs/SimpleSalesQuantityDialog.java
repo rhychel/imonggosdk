@@ -265,6 +265,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         Log.e(">>>", "invoice purposes extras: " + invoicePurposeList.get(position).getExtras());
+                        Log.e(">>>", "invoice purposes ["+invoicePurposeList.get(position).getName()+"]: " + invoicePurposeList.get(position).getId()+" id");
                         if(invoicePurposeList.get(position).getExtras() != null && invoicePurposeList.get(position).getExtras().require_date()) {
                             llExpiryDate.setVisibility(View.VISIBLE);
                         }
@@ -306,14 +307,19 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                             Log.e("invpIndex", invpIndex+"");
                             if(invpIndex > -1)
                                 invoicePurposesAdapter.remove(invP);
+                            invoicePurposesAdapter.notifyDataSetChanged();
+                            spInvoicePurpose.setSelection(0);
+                            if(invoicePurposeList.get(0).getExtras() != null && invoicePurposeList.get(0).getExtras().require_date())
+                                llExpiryDate.setVisibility(View.VISIBLE);
                         }
                         else {
 //                            selectedIndex++;
                             invoicePurposeList.add(0, invP);
+                            invoicePurposesAdapter.notifyDataSetChanged();
                             spInvoicePurpose.setSelection(0);
+                            llExpiryDate.setVisibility(View.GONE);
 //                            invoicePurposesAdapter.add(invoicePurpose);
                         }
-                        invoicePurposesAdapter.notifyDataSetChanged();
                     }
                 }
             });

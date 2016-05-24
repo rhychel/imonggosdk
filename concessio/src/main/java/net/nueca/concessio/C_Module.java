@@ -982,14 +982,16 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             initializeVoidButton(btn1, referenceNumber);
 
                         if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
-                            if(!offlineData.isSynced() && !offlineData.isSyncing() && !offlineData.getOfflineDataTransactionType().isVoiding()) {
+                            if(!simpleTransactionDetailsFragment.getOfflineData().isSynced() &&
+                                    !simpleTransactionDetailsFragment.getOfflineData().isSyncing() &&
+                                    !simpleTransactionDetailsFragment.getOfflineData().getOfflineDataTransactionType().isVoiding()) {
                                 initializeVoidButton(btn1, referenceNumber);
                                 initializeDuplicateButton(btn2, referenceNumber);
                             }
                             else
                                 initializeDuplicateButton(btn1, referenceNumber);
                         }
-                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
+                        else if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
                                 simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) {
                             Log.e("duplicate", "yeah");
                             if(isVoiding)
@@ -1196,6 +1198,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             simpleCustomersFragment.updateListWhenSearch(newText);
                         else if(concessioModule == ConcessioModule.HISTORY || concessioModule == ConcessioModule.LAYAWAY)
                             simpleTransactionsFragment.updateListWhenSearch(newText);
+                        else if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+                            simplePulloutFragment.updateListWhenSearch(newText);
                         else
                             simpleProductsFragment.updateListWhenSearch(newText);
                         return true;
@@ -1582,7 +1586,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
 
                             Gson gson = new GsonBuilder().serializeNulls().create();
                             if (concessioModule == ConcessioModule.STOCK_REQUEST) {
-                                Order order = generateOrder(getApplicationContext(), branch.getId());
+                                Order order = generateOrder(getApplicationContext(), getWarehouse().getId());
 
                                 try {
                                     JSONObject jsonObject = new JSONObject(gson.toJson(order));
@@ -1603,17 +1607,17 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     warehouseId = getBranches(true).get(0).getId();
                                 Document document = generateDocument(C_Module.this, warehouseId, DocumentTypeCode.identify(concessioModule));
 
+                                if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                    Extras extras = new Extras();
+                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
+                                    document.setExtras(extras);
+                                }
+
                                 try {
                                     JSONObject jsonObject = new JSONObject(gson.toJson(document));
                                     Log.e("jsonObject", jsonObject.toString());
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                }
-
-                                if (concessioModule == ConcessioModule.RELEASE_ADJUSTMENT) {
-                                    Extras extras = new Extras();
-                                    extras.setCustomer_id(ProductsAdapterHelper.getSelectedCustomer().getReturnId());
-                                    document.setExtras(extras);
                                 }
 
                                 if (getAppSetting().isCan_change_inventory())
@@ -1737,7 +1741,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                 Gson gson = new GsonBuilder().serializeNulls().create();
 
                                                 if (concessioModule == ConcessioModule.STOCK_REQUEST) {
-                                                    Order order = generateOrder(getApplicationContext(), branch.getId());
+                                                    Order order = generateOrder(getApplicationContext(), warehouse.getId());
 
                                                     try {
                                                         JSONObject jsonObject = new JSONObject(gson.toJson(order));
