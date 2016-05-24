@@ -100,6 +100,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 //isAutoUpdate()
                 if (isAutoUpdate() && isLoggedIn() && !isUnlinked())
                     updateAppData(mSyncModules);
+
             } else {
                 Log.e(TAG, "Cannot bindLoginModule Service and Activity");
                 // isAutoUpdate()
@@ -107,10 +108,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     showNextActivityAfterLogin();
                 }
             }
-
-            // isAutoUpdate()
-            if (isAutoUpdate() && isLoggedIn() && !isUnlinked())
-                updateAppData(mSyncModules);
         }
 
 
@@ -466,11 +463,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         Log.e("Servers", label);
 
                         setServer(Server.getServer(label));
-                        //setServer(Server.IRETAILCLOUD_NET);
+                        setServer(Server.IRETAILCLOUD_NET);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 initLogin();
             }
         });

@@ -863,8 +863,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
     private boolean syncNext() {
         Log.e(TAG, "syncNext()...");
 
-
         if (mModulesIndex == (mModulesToSync.length - 1)) {  // this is when there are no left tables to sync
+            mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
             endSyncNext();
             return false;
         } else {
@@ -1202,6 +1202,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             if (lastUpdatedAt.getLast_updated_at() == null) {
                                 lastUpdatedAt = newLastUpdatedAt;
                                 Log.e(TAG, "lastUpdatedAt is null querying from database this: " + lastUpdatedAt.toString());
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                             }
                             lastUpdatedAt.updateTo(getHelper());
                         }
@@ -2298,6 +2299,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             break;
                         case UNITS:
                             if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                                 syncNext();
                                 return;
                             } else {
@@ -2399,6 +2401,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             break;
                         case BRANCHES:
                             if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                                 syncNext();
                                 return;
                             } else {
@@ -2482,6 +2485,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             break;
                         case BRANCH_USERS:
                             if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                                 syncNext();
                                 return;
                             } else {
@@ -2541,6 +2545,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             BatchList<CustomerCustomerGroupAssoc> updateCustomerCustomerGroup = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
 
                             if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                                 syncNext();
                                 return;
                             } else {
@@ -2800,6 +2805,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             break;
                         case INVENTORIES:
                             if (size == 0) {
+                                mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                                 syncNext();
                                 return;
                             } else {
@@ -2971,7 +2977,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         settings.insertTo(getHelper());
                                     }
                                 }
-
                                 mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
                             }
 
