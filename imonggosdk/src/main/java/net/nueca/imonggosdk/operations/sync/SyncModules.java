@@ -4099,12 +4099,24 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     }
 
                                     if (initialSync || lastUpdatedAt == null) {
-                                        newOrders.add(orders);
+                                        if(!orders.getStatus().equalsIgnoreCase("V")) {
+                                            newOrders.add(orders);
+                                        } else {
+                                            Log.e(TAG, "ignoring voided orders...");
+                                        }
                                     } else {
                                         if (isExisting(orders, mCurrentTableSyncing)) {
-                                            updateOrders.add(orders);
+                                            if(orders.getStatus().equalsIgnoreCase("V")) {
+                                                orders.deleteTo(getHelper());
+                                            } else {
+                                                updateOrders.add(orders);
+                                            }
                                         } else {
-                                            newOrders.add(orders);
+                                            if(!orders.getStatus().equalsIgnoreCase("V")) {
+                                                newOrders.add(orders);
+                                            } else {
+                                                Log.e(TAG, "ignoring voided orders...");
+                                            }
                                         }
                                     }
                                 }
