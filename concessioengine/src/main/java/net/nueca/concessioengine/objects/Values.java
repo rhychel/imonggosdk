@@ -348,6 +348,8 @@ public class Values {
 
     public void setUnit(Unit unit) {
         this.unit = unit;
+        if(this.unit != null)
+            this.unit_name = unit.getName();
     }
 
     public void setQuantity(String quantity) {

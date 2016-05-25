@@ -564,10 +564,17 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
 
                     Log.e("Simple Sales QTY Dialog", "VALUES PRICE : isNull? " + (price == null));
-                    if(price != null)
-                        values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
-                    else if(canOverridePrice)
+                    if(price != null) {
+//                        price.setUnit(unit);
+                        values.setValue(quantity, price, salesCustomer != null ? salesCustomer.getDiscount_text() : null);
+                        values.setUnit(unit);
+                        Log.e(">>>>>>", "Price is not null | unit = "+unit);
+                    }
+                    else if(canOverridePrice) {
+                        Log.e(">>>>>>", "canOverridePrice = "+canOverridePrice+" | unit = "+unit);
                         values.setValue(quantity, unit, Double.valueOf(retailPrice));
+                        values.setUnit(unit);
+                    }
                     else {
                         if(salesBranch == null)
                             Log.e("sales branch", "shit its null");
