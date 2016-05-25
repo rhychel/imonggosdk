@@ -303,8 +303,8 @@ public class C_Finalize extends ModuleActivity {
 
                 if(position == 0) {
                     size = ProductsAdapterHelper.getSelectedProductItems().size();
-                    ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Sales");
                     if(!isForHistoryDetail && !isLayaway) {
+                        ((TextView) findViewById(R.id.tvLabelBalance)).setText("Total Sales");
                         Double totalSales = ProductsAdapterHelper.getSelectedProductItems().getSubtotal();
                         tvBalance.setText("P" + NumberTools.separateInCommas(totalSales));
                         tvBalance.setTag(totalSales);
