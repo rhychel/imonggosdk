@@ -41,7 +41,7 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
 
-        setAutoUpdateApp(true);
+        setAutoUpdateApp(false);
 
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
