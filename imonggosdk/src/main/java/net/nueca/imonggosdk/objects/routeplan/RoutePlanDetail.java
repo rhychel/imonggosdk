@@ -10,6 +10,7 @@ import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.customer.Customer;
 
 import java.sql.SQLException;
+import java.util.Calendar;
 
 /**
  * Created by rhymart on 12/18/15.
@@ -36,6 +37,15 @@ public class RoutePlanDetail extends BaseTable2 {
 
     public String getFrequency() {
         return frequency;
+    }
+
+    public boolean shouldShowBasedOnFrequency() {
+        boolean isOdd = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) % 2 == 1;
+        if(frequency.equals("BM1"))
+            return isOdd;
+        if(frequency.equals("BM2"))
+            return !isOdd;
+        return true; // weekly
     }
 
     public void setFrequency(String frequency) {

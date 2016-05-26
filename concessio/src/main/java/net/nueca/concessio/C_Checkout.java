@@ -354,6 +354,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
         Log.e("C_Checkout", "initializeFragment " + (checkoutFragment == null));
     }
 
+    private int newPayments = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -411,6 +413,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         if(getModuleSetting(ConcessioModule.INVOICE).isHas_partial())
                             btn2.setVisibility(View.VISIBLE);
                     }
+                    newPayments++;
                 }
 
                 @Override
@@ -447,6 +450,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 @Override
                 public void onDeletePayment(int location, double prevValue) {
                     tvBalance.setText(NumberTools.separateInCommas(checkoutFragment.getRemainingBalance(true)));
+                    newPayments--;
 
                     if(prevValue > -1) {
                         availablePoints = availablePoints+PointsTools.amountToPoints(salesPromotion.getSettings(), prevValue);
@@ -455,13 +459,15 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         simpleSplitPaymentAdapter.setAvailablePoints(availablePoints);
                         simpleSplitPaymentAdapter.setPointsInPeso(pointsInPeso);
                     }
-
                     if (!simpleSplitPaymentAdapter.isFullyPaid()) {
                         tvLabelBalance.setText("Balance");
                         tvBalance.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
                         btn1.setText("PAY");
-                        if(getModuleSetting(ConcessioModule.INVOICE).isHas_partial())
+                        if(getModuleSetting(ConcessioModule.INVOICE).isHas_partial()) {
                             btn2.setVisibility(simpleSplitPaymentAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+                            if(newPayments == 0)
+                                btn2.setVisibility(View.GONE);
+                        }
                     }
                 }
             });
