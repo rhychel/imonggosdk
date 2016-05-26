@@ -196,7 +196,6 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
             List<RoutePlanDetail> routePlanDetails = getHelper().fetchForeignCollection(routePlan.getRoutePlanDetails().closeableIterator());
 
             Log.e("Week of the Year", Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+" day");
-            boolean isOdd = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) % 2 == 1;
             for(RoutePlanDetail routePlanDetail : routePlanDetails) {
                 Log.e("RoutePlan", "route plan details="+routePlanDetail.getFrequency()+"---");
                 if(!day.getShortname().equals(routePlanDetail.getRoute_day()))
@@ -207,7 +206,7 @@ public class SimpleRoutePlanFragment extends BaseCustomersFragment {
                     continue;
                 }
 
-                if(routePlanDetail.getFrequency().equals("BM2") && isOdd)
+                if(!routePlanDetail.shouldShowBasedOnFrequency())
                     continue;
 
                 if(routePlanDetail.getCustomer() != null) {

@@ -47,6 +47,9 @@ public class Order extends BaseTransactionTable3 {
     private int serving_branch_id;
     @Expose
     private List<OrderLine> order_lines;
+    @Expose
+    @DatabaseField
+    private String status;
 
     @ForeignCollectionField(orderColumnName = "line_no")
     private transient ForeignCollection<OrderLine> order_lines_fc;
@@ -65,6 +68,14 @@ public class Order extends BaseTransactionTable3 {
         remark = "page=1/1";
         order_type_code = builder.order_type_code;
         serving_branch_id = builder.serving_branch_id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getTarget_delivery_date() {
