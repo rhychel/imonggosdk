@@ -100,7 +100,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
             customerFieldArrayList.add(new CustomerField("Middle Name", FieldType.EDITTEXT, Customer.CustomerFields.MIDDLE_NAME, updateCustomer.getMiddle_name()));
             customerFieldArrayList.add(new CustomerField("Mobile", FieldType.EDITTEXT, R.drawable.ic_phone_orange, Customer.CustomerFields.MOBILE, updateCustomer.getMobile()));
             customerFieldArrayList.add(new CustomerField("Work", FieldType.EDITTEXT, Customer.CustomerFields.TELEPHONE, updateCustomer.getTelephone()));
-            customerFieldArrayList.add(new CustomerField("Company", FieldType.EDITTEXT, R.drawable.ic_branch_orange, Customer.CustomerFields.COMPANY_NAME, updateCustomer.getCompany_name()));
+            customerFieldArrayList.add(new CustomerField("Business Name", FieldType.EDITTEXT, R.drawable.ic_branch_orange, Customer.CustomerFields.COMPANY_NAME, updateCustomer.getCompany_name()));
             customerFieldArrayList.add(new CustomerField("Address", FieldType.EDITTEXT, Customer.CustomerFields.STREET, updateCustomer.getStreet()));
             getSupportActionBar().setTitle("Update Customer");
             try {
@@ -115,7 +115,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
             customerFieldArrayList.add(new CustomerField("Middle Name", FieldType.EDITTEXT, Customer.CustomerFields.MIDDLE_NAME));
             customerFieldArrayList.add(new CustomerField("Mobile", FieldType.EDITTEXT, R.drawable.ic_phone_orange, Customer.CustomerFields.MOBILE));
             customerFieldArrayList.add(new CustomerField("Work", FieldType.EDITTEXT, Customer.CustomerFields.TELEPHONE));
-            customerFieldArrayList.add(new CustomerField("Company", FieldType.EDITTEXT, R.drawable.ic_branch_orange, Customer.CustomerFields.COMPANY_NAME));
+            customerFieldArrayList.add(new CustomerField("Business Name", FieldType.EDITTEXT, R.drawable.ic_branch_orange, Customer.CustomerFields.COMPANY_NAME));
             customerFieldArrayList.add(new CustomerField("Address", FieldType.EDITTEXT, Customer.CustomerFields.STREET));
             try {
                 initSpinnerValues(true, false);
