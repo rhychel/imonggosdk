@@ -17,6 +17,7 @@ public enum Parameter {
     FROM,
     TO,
     TARGET_BRANCH_ID,
+    SERVING_BRANCH_ID,
     DOCUMENT_TYPE, // document_type=transfer_out
     INTRANSIT,
     NONE,

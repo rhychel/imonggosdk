@@ -225,6 +225,7 @@ public class DateTimeTools {
 
     public static String getCurrentDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date currentDateTime= new Date();
         String currentDate = dateFormat.format(currentDateTime);
         return currentDate + " +0000";

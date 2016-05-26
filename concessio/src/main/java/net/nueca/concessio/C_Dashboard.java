@@ -37,6 +37,7 @@ import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -136,6 +137,32 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
+
+        try {
+            //  Log.e(TAG, "getListOfBranchIds size: " +  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query().size());
+            List<BranchUserAssoc> list = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
+            List<BranchUserAssoc> warehouses = new ArrayList<>();
+
+            if (list != null) {
+                for (BranchUserAssoc br : list) {
+                    Log.e(TAG, "branch: " + br.getBranch().getSite_type());
+
+                    if(br.getBranch().getSite_type() == null) {
+                        Log.e(TAG, "branch is null");
+                    } else {
+                        if (br.getBranch().getSite_type().equals("warehouse")) {
+                            warehouses.add(br);
+                            Log.e(TAG, "its a warehouse!");
+                        } else {
+                            Log.e(TAG, "no it's not.");
+                        }
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+
+        }
         /*try {
             QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
 
