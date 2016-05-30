@@ -11,7 +11,7 @@ public enum CustomerDetail {
     CODE("Code"),
     MOBILE_NO("Mobile"),
     TEL_NO("Telephone"),
-    COMPANY_NAME("Company"),
+    COMPANY_NAME("Business Name"),
     ADDRESS("Address"),
     STREET("Street"),
     TOWN("Town"),
