@@ -380,8 +380,13 @@ public class Order extends BaseTransactionTable3 {
     public static void fetchByReference(Context context, String branch_id, String reference, String order_type_code, Session session,
                                         VolleyRequestListener volleyRequestListener) {
         RequestQueue queue = Volley.newRequestQueue(context);
+
+        Parameter branchParameter = Parameter.BRANCH_ID;
+        if(order_type_code.toUpperCase().equals(ORDERTYPE_STOCK_REQUEST))
+            branchParameter = Parameter.SERVING_BRANCH_ID;
+
         queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, session.getServer(), Table.ORDERS,
-                RequestType.API_CONTENT, String.format(ImonggoTools.generateParameter(Parameter.ORDER_TYPE_CODE, Parameter.BRANCH_ID, Parameter
-                        .REFERENCE), order_type_code, branch_id, reference)));
+                RequestType.API_CONTENT, String.format(ImonggoTools.generateParameter(Parameter.ORDER_TYPE_CODE, branchParameter, Parameter
+                        .REFERENCE, Parameter.ACTIVE_ONLY), order_type_code, branch_id, reference, "1")));
     }
 }

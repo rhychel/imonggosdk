@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:autofit="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <me.grantland.widget.AutofitTextView
+        android:padding="3dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:text="Dispatch Details"
+        android:textSize="25sp"
+        android:singleLine="false"
+        android:maxLines="2"
+        android:ellipsize="end"
+        autofit:minTextSize="12sp"
+        android:id="@+id/tvDialogTitle"
+        style="@style/TextView.ProductItem.Name"
+        android:textStyle="bold"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Monday, Jan. 23, 2016, 2:30pm"
+        android:id="@+id/tvDateTime"
+        android:layout_marginLeft="16dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:id="@+id/viewStub"
+        android:background="@color/dividerL"
+        android:layout_marginTop="16dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:weightSum="3"
+        android:id="@+id/llPlate">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Plate #"
+            android:id="@+id/tvPlateLabel"
+            android:layout_weight="1"
+            android:textSize="13sp"
+            android:gravity="center_vertical"/>
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/etPlate"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_weight="2"
+            android:layout_marginLeft="16dp"
+            android:textSize="18sp"
+            android:gravity="left"
+            android:singleLine="true"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:weightSum="3"
+        android:id="@+id/llCrates">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Crates"
+            android:id="@+id/tvCratesLabel"
+            android:layout_weight="1"
+            android:textSize="13sp"
+            android:gravity="center_vertical"/>
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/etCrates"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="0"
+            android:layout_weight="2"
+            android:layout_marginLeft="16dp"
+            android:textSize="18sp"
+            android:gravity="left"
+            android:singleLine="true"
+            android:inputType="number"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:weightSum="3"
+        android:id="@+id/llBranch">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Branch"
+            android:id="@+id/tvBranchLabel"
+            android:layout_weight="1"
+            android:textSize="13sp"
+            android:gravity="center_vertical"/>
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/etBranch"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_weight="2"
+            android:layout_marginLeft="16dp"
+            android:textSize="18sp"
+            android:gravity="left"
+            android:singleLine="true"
+            android:editable="false"
+            android:enabled="false"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:measureWithLargestChild="true"
+        android:gravity="right">
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="Cancel"
+            android:id="@+id/btnCancel"
+            android:layout_gravity="right"
+            android:textSize="16sp"
+            android:textColor="@color/primary"/>
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="Submit"
+            android:id="@+id/btnSubmit"
+            android:textSize="16sp"
+            android:textColor="@color/primary"/>
+    </LinearLayout>
+
+</LinearLayout>

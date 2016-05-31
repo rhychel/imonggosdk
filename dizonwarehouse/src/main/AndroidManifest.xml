@@ -49,7 +49,7 @@
             android:screenOrientation="portrait"/>
 
         <!-- Services -->
-        <service android:name="net.nueca.imonggosdk.swable.ImonggoSwable"
+        <service android:name="net.nueca.dizonwarehouse.services.WarehouseSwable"
                  android:enabled="true"/>
 
         <service android:name="net.nueca.imonggosdk.operations.sync.SyncModules"

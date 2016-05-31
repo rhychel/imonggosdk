@@ -24,6 +24,7 @@ import net.nueca.concessioengine.adapters.DashboardRecyclerAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.dialogs.ProgressListDialog;
 import net.nueca.concessioengine.dialogs.UpdaterChooserDialog;
+import net.nueca.concessioengine.enums.PrinterType;
 import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
@@ -35,7 +36,7 @@ import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
-import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.dizonwarehouse.services.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
@@ -310,6 +311,7 @@ public class WH_Dashboard extends DashboardActivity implements OnItemClickListen
             } break;
             case R.id.mSettings: {
                 Intent intent = new Intent(this, SettingsActivity.class);
+                intent.putExtra(SettingsActivity.PRINTER_TYPE, PrinterType.EPSON.ordinal());
                 startActivity(intent);
             } break;
         }

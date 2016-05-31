@@ -62,24 +62,52 @@ public class EpsonPrinterTools {
     private static String TAG = "EpsonPrinterTools";
 
     public static String spacer(String text1, String text2, int maxChar) {
+        return spacer(text1, text2, maxChar, false);
+    }
+    public static String spacer(String text1, String text2, int maxChar, boolean limitChar) {
         String finalText = text1+text2;
         int combinedLength = text1.length()+text2.length();
         if(combinedLength < maxChar) {
             int spaces = maxChar-combinedLength;
             String space = "";
             for(int i = 0;i < spaces;i++)
-                space += " ";
+                space += "*";
 
             finalText = text1+space+text2;
         }
+        if(limitChar && finalText.length() > maxChar)
+            return finalText.substring(0, maxChar);
         return finalText;
     }
 
     public static String addSpace(int spaces) {
         String addSpaces = "";
         for(int i = 0;i < spaces;i++)
-            addSpaces += " ";
+            addSpaces += "*";
         return addSpaces;
+    }
+
+    public static String repeat(char character, int count) {
+        String string = "";
+        for(int i = 0;i < count;i++)
+            string += character;
+        return string;
+    }
+
+    public static String centerInRange(String text, int max_char) {
+        int remaining = max_char - text.length();
+        if(remaining <= 0)
+            return text.substring(0,max_char);
+
+        String output = text;
+        int margin = remaining / 2;
+
+        for(int i=0; i < margin; i++)
+            output = "*" + output + "*";
+
+        if(output.length() < max_char)
+            output += "*";
+        return output;
     }
 
 //    Salesman: Joel Estelin Lamangan

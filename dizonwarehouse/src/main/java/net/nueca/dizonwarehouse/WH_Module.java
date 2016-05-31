@@ -15,7 +15,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.j256.ormlite.stmt.Where;
+import com.epson.epos2.Epos2Exception;
+import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
@@ -29,26 +31,27 @@ import net.nueca.concessioengine.fragments.SimpleTransactionDetailsFragment;
 import net.nueca.concessioengine.fragments.SimpleTransactionsFragment;
 import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.concessioengine.printer.epson.listener.PrintListener;
+import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.tools.DocumentTools;
 import net.nueca.concessioengine.tools.OrderTools;
 import net.nueca.concessioengine.views.SearchViewEx;
 import net.nueca.dizonwarehouse.dialogs.SearchOrdersDialog;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
-import net.nueca.imonggosdk.enums.RequestType;
-import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.document.Document;
+import net.nueca.imonggosdk.objects.document.DocumentLine;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
-import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.dizonwarehouse.services.SwableTools;
 import net.nueca.imonggosdk.tools.NumberTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -57,24 +60,27 @@ import java.util.ArrayList;
  */
 public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSearchListener, SetupActionBar {
     public static final String BRANCH_ID = "branch_id";
-    public static final String IS_REVIEW = "is_review";
 
     private final String CONTINUE = "CONTINUE";
     private final String SUBMIT = "SUBMIT";
+    private final String VOID = "VOID";
+    private final String DUPLICATE = "DUPLICATE";
 
     private final String RECEIVING_ORDER = "Purchase Order";
     private final String DISPATCHING_ORDER = "Sales Order";
 
-    private LinearLayout llFooter, llReview;
+    private boolean isAddProduct;
+
+    private LinearLayout llFooter, llReview, llTotalAmount;
     private TextView tvTotalAmount, tvItems, tvLabel, tvValue;
     private ImageButton ibtnEdit;
     private FloatingActionButton fabAdd;
 
-    private Button btnNext;
+    private Button btnPrimary, btnSecondary;
     private Toolbar tbActionBar;
 
     private SimpleInventoryFragment simpleInventoryFragment;
-    private SimpleProductsFragment reviewFragment;
+    private SimpleProductsFragment reviewFragment, additionalProductsFragment;
     
     private SimpleTransactionDetailsFragment simpleTransactionDetailsFragment;
     private SimpleTransactionsFragment simpleTransactionsFragment;
@@ -108,9 +114,11 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
         }
 
         llReview = (LinearLayout) findViewById(R.id.llReview);
+        llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
         llFooter = (LinearLayout) findViewById(R.id.llFooter);
-        btnNext = (Button) findViewById(R.id.btn1);
-        btnNext.setText(CONTINUE);
+        btnPrimary = (Button) findViewById(R.id.btn1);
+        btnSecondary = (Button) findViewById(R.id.btn2);
+        btnPrimary.setText(CONTINUE);
         tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
         tvItems = (TextView) findViewById(R.id.tvItems);
 
@@ -119,7 +127,11 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
             case RELEASE_BRANCH:
                 isManualReceive = getModuleSetting(concessioModule).getManual().is_enabled();
                 llFooter.setVisibility(View.VISIBLE);
-                showDialog();
+
+                if(!isAddProduct && !ProductsAdapterHelper.isDuplicating)
+                    showDialog();
+                if(ProductsAdapterHelper.isDuplicating)
+                    refreshTitle();
 
                 ProductsAdapterHelper.clearSelectedProductItemList(true);
                 simpleInventoryFragment = new SimpleInventoryFragment();
@@ -142,7 +154,7 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                 // if there's branch product
                 simpleInventoryFragment.setBranch(selectedBranch);
 
-                btnNext.setOnClickListener(nextClickedListener);
+                btnPrimary.setOnClickListener(nextClickedListener);
 
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.flContent, simpleInventoryFragment)
@@ -178,25 +190,35 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                         if(getSupportFragmentManager().findFragmentByTag("transaction_details") != null)
                             return;
     
-                        //prepareFooter();
+                        llFooter.setVisibility(View.VISIBLE);
+                        btnPrimary.setText(VOID);
+
+                        if(!offlineData.isCancelled()) {
+                            btnPrimary.setEnabled(true);
+                            initializeVoidButton(btnPrimary, offlineData.getReferenceNumber());
+                        }
+                        else
+                            btnPrimary.setEnabled(false);
+
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
                         ProductsAdapterHelper.setDbHelper(getHelper());
-                            try {
-                                simpleTransactionDetailsFragment.setFilterProductsBy(processOfflineData(offlineData));
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-    
-                            //referenceNumber = offlineData.getReference_no();
-                            simpleTransactionDetailsFragment.setOfflineData(offlineData);
-                            simpleTransactionDetailsFragment.setMultipleInput(getModuleSetting(offlineData.getConcessioModule()).getQuantityInput().is_multiinput());
-    
-                            getSupportFragmentManager().beginTransaction()
-                                    .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                                    .replace(R.id.flContent, simpleTransactionDetailsFragment, "transaction_details")
-                                    .addToBackStack("transaction_details")
-                                    .commitAllowingStateLoss();
+                        try {
+                            simpleTransactionDetailsFragment.setFilterProductsBy(processOfflineData(offlineData));
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        updateFooter();
+
+                        reference = offlineData.getReference_no();
+                        simpleTransactionDetailsFragment.setOfflineData(offlineData);
+                        simpleTransactionDetailsFragment.setMultipleInput(getModuleSetting(offlineData.getConcessioModule()).getQuantityInput().is_multiinput());
+
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                                .replace(R.id.flContent, simpleTransactionDetailsFragment, "transaction_details")
+                                .addToBackStack("transaction_details")
+                                .commitAllowingStateLoss();
                     }
                 });
 
@@ -210,14 +232,6 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                                 .withReason("VOID")
                                 .object(simpleTransactionDetailsFragment.getOfflineData())
                                 .queue();
-
-                        // <-- Voiding issue when the transaction is voided for Receive and Pullout -->
-                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER) // Receive
-                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), false);
-                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER
-                                || simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) // Pullout || MSO
-                            revertInventoryFromDocument(simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Document.class), true);
-
                         onBackPressed();
                         OfflineData offlineData = simpleTransactionDetailsFragment.getOfflineData();
                         offlineData.setSynced(false);
@@ -236,12 +250,6 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                         }
                         Intent intent = new Intent(WH_Module.this, WH_Module.class);
                         intent.putExtra(ModuleActivity.CONCESSIO_MODULE, simpleTransactionDetailsFragment.getOfflineData().getConcessioModule().ordinal());
-                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT)
-                            intent.putExtra(ModuleActivity.CATEGORY, simpleTransactionDetailsFragment.getOfflineData().getCategory());
-                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.INVOICE) {
-                            Invoice invoice = simpleTransactionDetailsFragment.getOfflineData().getObjectFromData(Invoice.class);
-                            intent.putExtra(FOR_CUSTOMER_DETAIL, invoice.getCustomer().getId());
-                        }
                         startActivityForResult(intent, IS_DUPLICATING);
                     }
                 };
@@ -308,8 +316,20 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if(btnNext.getText().equals(SUBMIT))
-            btnNext.setText(CONTINUE);
+        if(isAddProduct) {
+            isAddProduct = false;
+            btnPrimary.setEnabled(true);
+        }
+        else {
+            if (isReview()) {
+                btnPrimary.setText(CONTINUE);
+            }
+            else if(isTransactionDetail()) {
+                llFooter.setVisibility(View.GONE);
+                btnPrimary.setText(CONTINUE);
+                btnPrimary.setEnabled(true);
+            }
+        }
         setupActionBar(tbActionBar);
     }
 
@@ -317,7 +337,7 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
         @Override
         public void onClick(View view) {
             if(!isReview()) {
-                btnNext.setText(SUBMIT);
+                btnPrimary.setText(SUBMIT);
 
                 reviewFragment = SimpleProductsFragment.newInstance();
                 reviewFragment.setHelper(getHelper());
@@ -351,7 +371,7 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                         .addToBackStack("review")
                         .commit();
             }
-            else {
+            else if(isReview()){
                 AlertDialog.Builder dialog = new AlertDialog.Builder(WH_Module.this, R.style.AppCompatDialogStyle_Light);
                 dialog.setTitle("Send this Document?");
                 dialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
@@ -368,7 +388,7 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                                         DocumentTypeCode.RELEASE_BRANCH);
 
                             if(document != null) {
-                                new SwableTools.Transaction(getHelper())
+                                OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                         .toSend()
                                         .fromModule(concessioModule)
                                         .object(document)
@@ -376,7 +396,7 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                                         .queue();
                                 setResult(SUCCESS);
                                 finish();
-
+                                printTransaction(offlineData,"TEST");
                             }
                         } catch (SQLException e) {
                             e.printStackTrace();
@@ -390,6 +410,9 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                     }
                 });
                 dialog.show();
+            }
+            else if(isTransactionDetail()) {
+
             }
         }
     };
@@ -409,15 +432,19 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.wh_module_right, menu);
         menu.findItem(R.id.mDelete).setVisible(false);
-        menu.findItem(R.id.mSearch).setVisible(!isReview());
+        menu.findItem(R.id.mSearch).setVisible(!isReview() || isAddProduct);
         SearchViewEx searchViewEx = (SearchViewEx) menu.findItem(R.id.mSearch).getActionView();
         searchViewEx.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if(concessioModule == ConcessioModule.HISTORY)
                     simpleTransactionsFragment.updateListWhenSearch(query);
-                else
-                    simpleInventoryFragment.updateListWhenSearch(query);
+                else {
+                    if(isAddProduct)
+                        additionalProductsFragment.updateListWhenSearch(query);
+                    else
+                        simpleInventoryFragment.updateListWhenSearch(query);
+                }
                 return false;
             }
 
@@ -425,8 +452,12 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
             public boolean onQueryTextChange(String newText) {
                 if(concessioModule == ConcessioModule.HISTORY)
                     simpleTransactionsFragment.updateListWhenSearch(newText);
-                else
-                    simpleInventoryFragment.updateListWhenSearch(newText);
+                else {
+                    if (isAddProduct)
+                        additionalProductsFragment.updateListWhenSearch(newText);
+                    else
+                        simpleInventoryFragment.updateListWhenSearch(newText);
+                }
                 return false;
             }
         });
@@ -455,6 +486,7 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
             default:
                 //tvLabel.setText("Ref No: ");
                 //tvValue.setText(reference == null? "" : reference);
+                setTitle(reference);
                 break;
         }
     }
@@ -483,7 +515,45 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
 
         fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
         if(fabAdd != null) {
-            fabAdd.setVisibility(isReview() && concessioModule != ConcessioModule.RECEIVE_SUPPLIER?
+            fabAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    isAddProduct = true;
+                    btnPrimary.setEnabled(false);
+
+                    additionalProductsFragment = SimpleProductsFragment.newInstance();
+                    additionalProductsFragment.setHelper(getHelper());
+                    additionalProductsFragment.setSetupActionBar(WH_Module.this);
+                    additionalProductsFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
+                        @Override
+                        public void whenItemsSelectedUpdated() {
+
+                        }
+                    });
+                    additionalProductsFragment.setReturnItems(isReturnItems);
+
+                    additionalProductsFragment.setListingType(ListingType.ADVANCED_SALES); //changed to show the individual price of every unit-- Sales
+                    additionalProductsFragment.setUseSalesProductAdapter(true);//added to show the individual price of every unit
+                    additionalProductsFragment.setHasSubtotal(true);
+                    additionalProductsFragment.setHasCategories(true);
+                    additionalProductsFragment.setProductCategories(getProductCategories(!getModuleSetting(concessioModule).getProductListing()
+                            .isLock_category()));
+                    additionalProductsFragment.setHasBrand(false);
+                    additionalProductsFragment.setHasDeliveryDate(false);
+                    additionalProductsFragment.setHasUnits(true);
+                    additionalProductsFragment.setHasInStock(false);
+                    // if there's branch product
+                    additionalProductsFragment.setBranch(selectedBranch);
+                    additionalProductsFragment.setMultipleInput(getModuleSetting(concessioModule).getQuantityInput().is_multiinput());
+                    additionalProductsFragment.setMultiInputListener(multiInputListener);
+
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.flContent, additionalProductsFragment, "additionalProductsFragment")
+                            .addToBackStack("addProducts")
+                            .commit();
+                }
+            });
+            fabAdd.setVisibility(isReview() && concessioModule != ConcessioModule.RECEIVE_SUPPLIER && !isAddProduct?
                     View.VISIBLE : View.GONE);
         }
 
@@ -498,7 +568,7 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
 
         refreshTitle();
 
-        getSupportActionBar().setDisplayShowTitleEnabled(isReview());
+        getSupportActionBar().setDisplayShowTitleEnabled((isReview() && !isAddProduct) || isTransactionDetail());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -506,6 +576,17 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FROM_MULTIINPUT) {
             if(resultCode == SUCCESS) {
+                if(additionalProductsFragment != null && isAddProduct) {
+                    additionalProductsFragment.refreshList();
+                    simpleInventoryFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
+                    simpleInventoryFragment.forceUpdateProductList();
+
+                    if(reviewFragment != null) {
+                        reviewFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
+                        reviewFragment.forceUpdateProductList();
+                    }
+                }
+
                 simpleInventoryFragment.refreshList();
                 if(reviewFragment != null && isReview())
                     reviewFragment.refreshList();
@@ -518,6 +599,204 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
     }
 
     protected boolean isReview() {
-        return btnNext.getText().toString().equals(SUBMIT);
+        return btnPrimary.getText().toString().equals(SUBMIT);
+    }
+    protected boolean isTransactionDetail() {
+        return btnPrimary.getText().toString().equals(VOID);
+    }
+
+    private final int MAX_CHAR = 33;
+    private void printTransactionLog(OfflineData offlineData, String... labels) {
+        Document document = offlineData.getObjectFromData(Document.class);
+        Branch targetBranch = Branch.fetchById(getHelper(), Branch.class, document.getTarget_branch_id());
+        Log.e("TARGET BRANCH", targetBranch.getName());
+        Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
+        Log.e("BRANCH", branch.getName());
+
+        for(int i = 0;i < labels.length;i++) {
+            // ---------- HEADER
+            Log.e("",EpsonPrinterTools.centerInRange(branch.getName(),MAX_CHAR));
+            Log.e("",EpsonPrinterTools.centerInRange(branch.generateAddress(),MAX_CHAR));
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy");
+            Log.e("",simpleDateFormat.format(offlineData.getDateCreated()) + "\n");
+            Log.e("",EpsonPrinterTools.spacer("Store Code:", branch.getName(), MAX_CHAR));
+            Log.e("",EpsonPrinterTools.spacer("Store     :", branch.getCity(), MAX_CHAR));
+            Log.e("",EpsonPrinterTools.spacer("DR No.    :", offlineData.getReference_no(), MAX_CHAR));
+
+            // ---------- HEADER
+            double totalQuantity = 0.0;
+            double totalAmount = 0.0;
+            Log.e("",EpsonPrinterTools.repeat('=', MAX_CHAR));
+            Log.e("","Item No.  Description     UOM    ");
+            Log.e(""," Original    Shipped    Received ");
+            Log.e("","             Selling     Amount  ");
+            Log.e("","   Notes                         ");
+            Log.e("",EpsonPrinterTools.repeat('=', MAX_CHAR));
+
+            for(DocumentLine documentLine : document.getDocument_lines()) {
+                Product product = documentLine.getProduct();
+                Log.e("",
+                        EpsonPrinterTools.spacer(product.getStock_no() + " ",
+                                product.getName() + " ", 2 * (MAX_CHAR / 3), true) +
+                                EpsonPrinterTools.centerInRange(documentLine.getUnit_name(), MAX_CHAR/3)
+                );
+                Log.e("",
+                        EpsonPrinterTools.centerInRange("0.00",MAX_CHAR/3) +
+                        EpsonPrinterTools.centerInRange(""+NumberTools.separateInCommas(documentLine.getQuantity()),
+                                (MAX_CHAR / 3)) +
+                        EpsonPrinterTools.repeat('_',MAX_CHAR/3)
+                );
+                Log.e("",
+                        EpsonPrinterTools.spacer("",
+                        EpsonPrinterTools.spacer("@ P " + NumberTools.separateInCommas(documentLine.getUnit_retail_price())
+                                + " ", "", (MAX_CHAR / 3)) +
+                        EpsonPrinterTools.spacer("", "P " + NumberTools.separateInCommas(documentLine.getSubtotal()),
+                                (MAX_CHAR / 3) + 3), MAX_CHAR)
+                );
+                Log.e("","                                 ");
+            }
+
+            Log.e("",EpsonPrinterTools.repeat('-',MAX_CHAR));
+
+            try {
+                SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("MM/dd/yy hh:mm a");
+                Log.e("",EpsonPrinterTools.spacer("ENCODED BY: "+ getSession().getUser().getName(),
+                        simpleDateFormat2.format(offlineData.getDateCreated()),MAX_CHAR));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            Log.e("",labels[i]);
+            if(i < labels.length-1) {
+                Log.e("","- - - - - - CUT HERE - - - - - -\n\n");
+            }
+        }
+    }
+
+    private void printTransaction(final OfflineData offlineData, final String... labels) {
+        String targetPrinter = EpsonPrinterTools.targetPrinter(getApplicationContext());
+        if(targetPrinter != null) {
+            EpsonPrinterTools.print(targetPrinter, new PrintListener() {
+                @Override
+                public Printer initializePrinter() {
+                    try {
+                        return new Printer(EpsonPrinterTools.getPrinterProperties(WH_Module.this, EpsonPrinterTools.PRINTER_SERIES),
+                                EpsonPrinterTools.getPrinterProperties(WH_Module.this, EpsonPrinterTools.PRINTER_LANGUAGE), WH_Module.this);
+                    } catch (Epos2Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                public Printer onBuildPrintData(Printer printer) {
+                    Document document = offlineData.getObjectFromData(Document.class);
+                    Branch targetBranch = Branch.fetchById(getHelper(), Branch.class, document.getTarget_branch_id());
+                    Log.e("TARGET BRANCH", targetBranch.getName());
+                    Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
+                    Log.e("BRANCH", branch.getName());
+
+                    for(int i = 0;i < labels.length;i++) {
+                        StringBuilder printText = new StringBuilder();
+                        try {
+                            // ---------- HEADER
+                            printer.addTextFont(Printer.FONT_A);
+                            printText.append(branch.getName());
+                            printText.append("\n");
+                            printText.append(branch.generateAddress());
+                            printText.append("\n");
+                            printer.addTextAlign(Printer.ALIGN_CENTER);
+                            printer.addFeedLine(2);
+                            printer.addText(printText.toString());
+                            printer.addFeedLine(2);
+                            printText.delete(0, printText.length());
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+                            printer.addText(simpleDateFormat.format(offlineData.getDateCreated()) + "\n");
+                            printer.addText(EpsonPrinterTools.spacer("Store Code:", branch.getName(), MAX_CHAR));
+                            printer.addText(EpsonPrinterTools.spacer("Store     :", branch.getCity(), MAX_CHAR));
+                            printer.addText(EpsonPrinterTools.spacer("DR No.    :", offlineData.getReference_no(), MAX_CHAR));
+
+                            // ---------- HEADER
+                            printer.addText(EpsonPrinterTools.repeat('=', MAX_CHAR));
+                            printer.addText("Item No.  Description     UOM    ");
+                            printer.addText(" Original    Shipped    Received ");
+                            printer.addText("             Selling     Amount  ");
+                            printer.addText("   Notes                         ");
+                            printer.addText(EpsonPrinterTools.repeat('=', MAX_CHAR));
+
+                            printer.addFeedLine(1);
+
+                            for(DocumentLine documentLine : document.getDocument_lines()) {
+                                Product product = documentLine.getProduct();
+                                printer.addText(
+                                        EpsonPrinterTools.spacer(product.getStock_no() + " ",
+                                                product.getName() + " ", 2 * (MAX_CHAR / 3), true) +
+                                                EpsonPrinterTools.centerInRange(documentLine.getUnit_name(), MAX_CHAR/3)
+                                );
+                                printer.addText(
+                                        EpsonPrinterTools.centerInRange("0.00",MAX_CHAR/3) +
+                                                EpsonPrinterTools.centerInRange(""+NumberTools.separateInCommas(documentLine.getQuantity()),
+                                                        (MAX_CHAR / 3)) +
+                                                EpsonPrinterTools.repeat('_',MAX_CHAR/3)
+                                );
+                                printer.addText(
+                                        EpsonPrinterTools.spacer("",
+                                                EpsonPrinterTools.spacer("@ P " + NumberTools.separateInCommas(documentLine.getUnit_retail_price())
+                                                        + " ", "", (MAX_CHAR / 3)) +
+                                                        EpsonPrinterTools.spacer("", "P " + NumberTools.separateInCommas(documentLine.getSubtotal()),
+                                                                (MAX_CHAR / 3) + 3), MAX_CHAR)
+                                );
+                                printer.addFeedLine(1);
+                            }
+
+                            printer.addText(EpsonPrinterTools.repeat('-',MAX_CHAR));
+
+                            try {
+                                SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("MM/dd/yy hh:mm a");
+                                printer.addText(EpsonPrinterTools.spacer("ENCODED BY: "+ getSession().getUser().getName()+", ",
+                                        simpleDateFormat2.format(offlineData.getDateCreated()),MAX_CHAR));
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+
+                            printer.addTextAlign(Printer.ALIGN_CENTER);
+                            printer.addText(labels[i]);
+                            if(i < labels.length-1) {
+                                printer.addFeedLine(3);
+                                printer.addText("- - - - - - CUT HERE - - - - - -\n\n");
+                            }
+                            else
+                                printer.addFeedLine(5);
+
+                        } catch (Epos2Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    return printer;
+                }
+
+                @Override
+                public void onPrintSuccess() {
+                    Log.e("Printer", "onPrintSuccess");
+                }
+
+                @Override
+                public void onPrinterWarning(String message) {
+
+                }
+
+                @Override
+                public void onPrinterReceive(Printer printerObj, int code, PrinterStatusInfo status, String printJobId) {
+
+                }
+
+                @Override
+                public void onPrintError(String message) {
+
+                }
+            }, getApplicationContext());
+        }
     }
 }
