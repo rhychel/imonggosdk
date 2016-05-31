@@ -70,6 +70,9 @@ public class OrderLine extends BaseTransactionLine {
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
+        if(unit_retail_price == null)
+            unit_retail_price = retail_price;
+
         insertExtrasTo(dbHelper);
         try {
             dbHelper.insert(OrderLine.class, this);

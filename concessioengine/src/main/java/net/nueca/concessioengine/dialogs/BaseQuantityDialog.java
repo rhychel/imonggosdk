@@ -55,7 +55,8 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     protected boolean hasSubtotal = false, hasInvoicePurpose = false,
             hasExpiryDate = false, hasBadStock = false, hasStock = true, hasPrice = true,
-            hasExpectedQty = false, hasOutright =false, hasDiscrepancy = false, canOverridePrice = false;
+            hasExpectedQty = false, hasOutright = false, hasDiscrepancy = false, canOverridePrice = false,
+            hasExpectedPrice = false, hasActualPrice = false;
 
     protected ArrayAdapter<InvoicePurpose> invoicePurposesAdapter;
     protected ArrayAdapter<Unit> unitsAdapter;
@@ -268,5 +269,13 @@ public class BaseQuantityDialog extends BaseAppCompatDialog {
 
     public void setCanOverridePrice(boolean canOverridePrice) {
         this.canOverridePrice = canOverridePrice;
+    }
+
+    public void setHasActualPrice(boolean hasActualPrice) {
+        this.hasActualPrice = hasActualPrice;
+    }
+
+    public void setHasExpectedPrice(boolean hasExpectedPrice) {
+        this.hasExpectedPrice = hasExpectedPrice;
     }
 }

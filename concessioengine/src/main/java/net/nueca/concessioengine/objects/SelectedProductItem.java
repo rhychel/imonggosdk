@@ -376,6 +376,17 @@ public class SelectedProductItem {
         return retail_price;
     }
 
+    public Double getRetail_price(int valuePosition) {
+        if(valuesList == null || valuesList.size() == 0 || valuesList.size() <= valuePosition || valuePosition < 0)
+            return getRetail_price();
+        Unit unit = valuesList.get(valuePosition).getUnit();
+        if(unit != null && unit.getId() != -1)
+            return unit.getRetail_price();
+        else
+            return product.getRetail_price();
+    }
+
+
     public void setRetail_price(Double retail_price) {
         this.retail_price = retail_price;
     }
@@ -397,6 +408,12 @@ public class SelectedProductItem {
             hasOne = true;
         }
         return retailPrices;
+    }
+
+    public Double getValuesRetailPrice(int valuePosition) {
+        if(valuesList == null || valuesList.size() == 0 || valuesList.size() <= valuePosition)
+            return null;
+        return valuesList.get(valuePosition).getRetail_price();
     }
 
     public Double getValuesSubtotal() {

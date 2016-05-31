@@ -320,14 +320,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.LAST_UPDATED_AT,
                             Parameter.BRANCH_ID,
-                            Parameter.ORDER_TYPE),
+                            Parameter.ORDER_TYPE_CODE),
                             getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                             Order.ORDERTYPE_PURCHASE_ORDER);
                 } else {
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.LAST_UPDATED_AT,
                             Parameter.BRANCH_ID,
-                            Parameter.ORDER_TYPE),
+                            Parameter.ORDER_TYPE_CODE),
                             getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                             Order.ORDERTYPE_PURCHASE_ORDER);
                 }
@@ -338,14 +338,14 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.LAST_UPDATED_AT,
                             Parameter.SERVING_BRANCH_ID,
-                            Parameter.ORDER_TYPE),
+                            Parameter.ORDER_TYPE_CODE),
                             getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                             Order.ORDERTYPE_STOCK_REQUEST);
                 } else {
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.LAST_UPDATED_AT,
                             Parameter.SERVING_BRANCH_ID,
-                            Parameter.ORDER_TYPE),
+                            Parameter.ORDER_TYPE_CODE),
                             getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                             Order.ORDERTYPE_STOCK_REQUEST);
                 }
@@ -416,7 +416,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.PAGE,
                             Parameter.SERVING_BRANCH_ID,
-                            Parameter.ORDER_TYPE),
+                            Parameter.ORDER_TYPE_CODE),
                             String.valueOf(page),
                             getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                             Order.ORDERTYPE_STOCK_REQUEST);
@@ -426,7 +426,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     return String.format(ImonggoTools.generateParameter(
                             Parameter.PAGE,
                             Parameter.BRANCH_ID,
-                            Parameter.ORDER_TYPE),
+                            Parameter.ORDER_TYPE_CODE),
                             String.valueOf(page),
                             getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                             Order.ORDERTYPE_PURCHASE_ORDER);
@@ -559,7 +559,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             Parameter.PAGE,
                             Parameter.BRANCH_ID,
                             Parameter.AFTER,
-                            Parameter.ORDER_TYPE),
+                            Parameter.ORDER_TYPE_CODE),
                             String.valueOf(page),
                             getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                             DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()),
@@ -571,7 +571,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                             Parameter.PAGE,
                             Parameter.SERVING_BRANCH_ID,
                             Parameter.AFTER,
-                            Parameter.ORDER_TYPE),
+                            Parameter.ORDER_TYPE_CODE),
                             String.valueOf(page),
                             getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                             DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()),
@@ -721,7 +721,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         return String.format(ImonggoTools.generateParameter(
                                 Parameter.COUNT,
                                 Parameter.BRANCH_ID,
-                                Parameter.ORDER_TYPE),
+                                Parameter.ORDER_TYPE_CODE),
                                 getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                                 Order.ORDERTYPE_PURCHASE_ORDER);
                     }
@@ -730,7 +730,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                         return String.format(ImonggoTools.generateParameter(
                                 Parameter.COUNT,
                                 Parameter.SERVING_BRANCH_ID,
-                                Parameter.ORDER_TYPE),
+                                Parameter.ORDER_TYPE_CODE),
                                 getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                                 Order.ORDERTYPE_STOCK_REQUEST);
                     }
@@ -784,7 +784,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 Parameter.COUNT,
                                 Parameter.AFTER,
                                 Parameter.TARGET_BRANCH_ID,
-                                Parameter.ORDER_TYPE),
+                                Parameter.ORDER_TYPE_CODE),
                                 DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()),
                                 getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                                 Order.ORDERTYPE_STOCK_REQUEST);
@@ -795,7 +795,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 Parameter.COUNT,
                                 Parameter.AFTER,
                                 Parameter.BRANCH_ID,
-                                Parameter.ORDER_TYPE),
+                                Parameter.ORDER_TYPE_CODE),
                                 DateTimeTools.convertDateForUrl(lastUpdatedAt.getLast_updated_at()),
                                 getListOfBranchIds(mCurrentTableSyncing).get(mBranchIdIndex).getBranch().getId(),
                                 Order.ORDERTYPE_PURCHASE_ORDER);
@@ -865,29 +865,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
         if (mModulesIndex == (mModulesToSync.length - 1)) {  // this is when there are no left tables to sync
             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-            if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
-                    mCurrentTableSyncing == Table.DOCUMENT_ADJUSTMENT_OUT ||
-                    mCurrentTableSyncing == Table.DOCUMENT_TRANSFER_OUT ||
-                    mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
-                    mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
-                    mCurrentTableSyncing == Table.ORDERS_STOCK_REQUEST ||
-                    mCurrentTableSyncing == Table.ORDERS_PURCHASES) {
-
-                Log.e(TAG, "mBranchIdIndex: " + mBranchIdIndex + " size: " + getListOfBranchIds(mCurrentTableSyncing).size() );
-                if((mBranchIdIndex+1) < getListOfBranchIds(mCurrentTableSyncing).size()) {
-                    try {
-                        syncNextLogic();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    endSyncNext();
-                }
-
-            } else {
-                endSyncNext();
-            }
-
+            endSyncNext();
             return false;
         } else {
             try {
@@ -1212,6 +1190,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     } else {
                                         Log.e(TAG, "lastUpdatedAt from DB is null");
                                     }
+
                                     Log.e(TAG, ">> Hindi parehas");
                                 }
 
@@ -4127,24 +4106,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     }
 
                                     if (initialSync || lastUpdatedAt == null) {
-                                        if(!orders.getStatus().equalsIgnoreCase("V")) {
-                                            newOrders.add(orders);
-                                        } else {
-                                            Log.e(TAG, "ignoring voided orders...");
-                                        }
+                                        newOrders.add(orders);
                                     } else {
                                         if (isExisting(orders, mCurrentTableSyncing)) {
-                                            if(orders.getStatus().equalsIgnoreCase("V")) {
-                                                orders.deleteTo(getHelper());
-                                            } else {
-                                                updateOrders.add(orders);
-                                            }
+                                            updateOrders.add(orders);
                                         } else {
-                                            if(!orders.getStatus().equalsIgnoreCase("V")) {
-                                                newOrders.add(orders);
-                                            } else {
-                                                Log.e(TAG, "ignoring voided orders...");
-                                            }
+                                            newOrders.add(orders);
                                         }
                                     }
                                 }

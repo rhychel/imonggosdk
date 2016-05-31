@@ -31,10 +31,13 @@ public class DocumentTools {
 
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             for(Values value : selectedProductItem.getValues()) {
+                Product product = selectedProductItem.getProduct();
                 DocumentLine.Builder builder = new DocumentLine.Builder()
                         .line_no(value.getLine_no())
-                        .product_id(selectedProductItem.getProduct().getId())
+                        .product(product)
+                        .product_id(product.getId())
                         .quantity(Double.valueOf(value.getActualQuantity()));
+
                 if(value.getExtendedAttributes() != null) {
                     ExtendedAttributes extendedAttributes = value.getExtendedAttributes();
                     builder.extras(extendedAttributes.convertForDocumentLine());
@@ -49,9 +52,12 @@ public class DocumentTools {
                     documentLine.setUnit_retail_price(value.getUnit_retail_price());
                 }
                 else {
+                    documentLine.setUnit_name(product.getBase_unit_name());
                     documentLine.setRetail_price(value.getRetail_price());
                     documentLine.setUnit_retail_price(value.getUnit_retail_price());
                 }
+
+                documentLine.setSubtotal(value.getSubtotal());
 
                 document.addDocumentLine(documentLine);
             }

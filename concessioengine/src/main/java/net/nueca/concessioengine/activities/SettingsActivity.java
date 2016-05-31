@@ -24,6 +24,7 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.SettingsAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.concessioengine.enums.PrinterType;
 import net.nueca.concessioengine.printer.epson.listener.DiscoverySettingsListener;
 import net.nueca.concessioengine.printer.epson.listener.PrintListener;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
@@ -54,14 +55,19 @@ import java.util.List;
  * Created by rhymartmanchus on 12/01/2016.
  */
 public class SettingsActivity extends ModuleActivity {
+    public static final String PRINTER_TYPE = "printer_type";
 
     private RecyclerView rvCustomers;
     private Toolbar tbActionBar;
     private SettingsAdapter settingsAdapter;
+    private PrinterType printerType = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getIntent().hasExtra(PRINTER_TYPE))
+            printerType = PrinterType.identify(getIntent().getIntExtra(PRINTER_TYPE, PrinterType.EPSON.ordinal()));
+
         setContentView(R.layout.simple_customers_fragment_rv);
         rvCustomers = (RecyclerView) findViewById(R.id.rvCustomers);
         tbActionBar = (Toolbar) findViewById(R.id.tbActionBar);
@@ -217,25 +223,35 @@ public class SettingsActivity extends ModuleActivity {
         printerHeader.setConcessioModule(ConcessioModule.PRINTER);
         appSettings.add(printerHeader);
 
-//        // Epson Printer ----- TURNED off for Rebisco
-//        appSettings.add(generateEpsonPrinter(sectionFirstPosition));
+        switch (printerType) {
+            // Epson Printer ----- TURNED off for Rebisco
+            case EPSON:
+                appSettings.add(generateEpsonPrinter(sectionFirstPosition));
 
-        // Star Printer
-        appSettings.add(generateStarPrinter(sectionFirstPosition));
 
-        ArrayAdapter<StarIOPaperSize> paperSizeAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, StarIOPaperSize.values());
-        paperSizeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
-        AppSettings starPrinter = new AppSettings();
-        starPrinter.setHeader(false);
-        starPrinter.setSectionFirstPosition(sectionFirstPosition);
-        starPrinter.setConcessioModule(ConcessioModule.PRINTER);
-        starPrinter.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_STAR_PRINTER_SIZE);
-        starPrinter.setValueType(AppSettings.ValueType.DROPDOWN);
-        starPrinter.setAdapter(paperSizeAdapter);
-        starPrinter.setSelectedItem(StarIOPrinterTools.getPaperType(this).ordinal());
-        starPrinter.setEnabled(!StarIOPrinterTools.getTargetPrinter(this).equals(""));
+                break;
 
-        appSettings.add(starPrinter);
+            // Star Printer
+            case STAR_MICRONICS:
+            default:
+                appSettings.add(generateStarPrinter(sectionFirstPosition));
+
+                ArrayAdapter<StarIOPaperSize> paperSizeAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, StarIOPaperSize.values());
+                paperSizeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
+                AppSettings starPrinter = new AppSettings();
+                starPrinter.setHeader(false);
+                starPrinter.setSectionFirstPosition(sectionFirstPosition);
+                starPrinter.setConcessioModule(ConcessioModule.PRINTER);
+                starPrinter.setAppSettingEntry(AppSettings.AppSettingEntry.CONFIGURE_STAR_PRINTER_SIZE);
+                starPrinter.setValueType(AppSettings.ValueType.DROPDOWN);
+                starPrinter.setAdapter(paperSizeAdapter);
+                starPrinter.setSelectedItem(StarIOPrinterTools.getPaperType(this).ordinal());
+                starPrinter.setEnabled(!StarIOPrinterTools.getTargetPrinter(this).equals(""));
+
+                appSettings.add(starPrinter);
+                break;
+        }
+
 
         return appSettings;
     }

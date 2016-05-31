@@ -16,6 +16,10 @@ public class ProductListTools {
         return line_no++;
     }
 
+    public static void setLine_no(int line_no) {
+        ProductListTools.line_no = line_no;
+    }
+
     public static void restartLineNo() {
         line_no = 1;
     }

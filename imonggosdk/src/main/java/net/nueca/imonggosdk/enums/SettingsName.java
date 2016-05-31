@@ -4,6 +4,7 @@ public enum SettingsName {
     AUTO_UPDATE("auto_update"),
     DEFAULT_BRANCH("default_branch"),
     CURRENT_BRANCH("current_branch"),
+    DEFAULT_WAREHOUSE("default_warehouse"),
     ENABLE_CUSTOMER_MEMBERSHIP("enable_customer_membership"),
     ENABLE_REWARD_POINTS("enable_reward_points"),
     ENABLE_SALESMAN("enable_salesman"),
