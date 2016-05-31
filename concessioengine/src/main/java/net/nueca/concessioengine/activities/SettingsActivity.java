@@ -65,8 +65,7 @@ public class SettingsActivity extends ModuleActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getIntent().hasExtra(PRINTER_TYPE))
-            printerType = PrinterType.identify(getIntent().getIntExtra(PRINTER_TYPE, PrinterType.EPSON.ordinal()));
+        printerType = PrinterType.identify(getIntent().getIntExtra(PRINTER_TYPE, PrinterType.STAR_MICRONICS.ordinal()));
 
         setContentView(R.layout.simple_customers_fragment_rv);
         rvCustomers = (RecyclerView) findViewById(R.id.rvCustomers);

@@ -171,7 +171,7 @@ public class Document extends BaseTransactionTable3 {
         this.document_lines = document_lines;
     }
 
-    public int getTarget_branch_id() {
+    public Integer getTarget_branch_id() {
         return target_branch_id;
     }
 
