@@ -22,6 +22,7 @@ import net.nueca.concessioengine.adapters.SimpleTransactionListAdapter;
 import net.nueca.concessioengine.adapters.SimpleTransactionRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.TransactionTypesAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
@@ -30,6 +31,7 @@ import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.swable.ImonggoSwable;
 import net.nueca.imonggosdk.swable.SwableSendModule;
 import net.nueca.imonggosdk.swable.SwableTools;
+import net.nueca.imonggosdk.tools.AccountTools;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -348,7 +350,10 @@ public class SimpleTransactionsFragment extends BaseTransactionsFragment impleme
 
     @Override
     public void onUnauthorizedAccess(Object response, int responseCode) {
-
+        if(!AccountTools.isUserActive(getActivity())) {
+            getActivity().setResult(ImonggoAppCompatActivity.UNLINK);
+            getActivity().finish();
+        }
     }
 
     @Override

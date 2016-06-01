@@ -141,8 +141,73 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == UNLINK) {
+            if(!AccountTools.isUserActive(this))
+                DialogTools.showDialog(this, "Ooopps!", "Your account has been disabled. You will be unlinked.", "Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            AccountTools.unlinkAccount(C_Dashboard.this, getHelper(), new AccountListener() {
+                                @Override
+                                public void onLogoutAccount() {
+                                }
+
+                                @Override
+                                public void onUnlinkAccount() {
+                                    EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+                                    StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+                                    SwableTools.stopSwable(C_Dashboard.this);
+
+                                    finish();
+                                    Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+                                    startActivity(intent);
+                                }
+                            });
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, R.style.AppCompatDialogStyle_Light);
+        }
+        else if(resultCode == UNLINKED) {
+            finish();
+            Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+            startActivity(intent);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        Log.e("UserActive", "?"+AccountTools.isUserActive(this));
+        if(!AccountTools.isUserActive(this))
+            DialogTools.showDialog(this, "Ooopps!", "Your account has been disabled. You will be unlinked.", "Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        AccountTools.unlinkAccount(C_Dashboard.this, getHelper(), new AccountListener() {
+                            @Override
+                            public void onLogoutAccount() {
+                            }
+
+                            @Override
+                            public void onUnlinkAccount() {
+                                EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+                                StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+                                SwableTools.stopSwable(C_Dashboard.this);
+
+                                finish();
+                                Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+                                startActivity(intent);
+                            }
+                        });
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, R.style.AppCompatDialogStyle_Light);
         if (!SwableTools.isImonggoSwableRunning(this))
             SwableTools.startSwable(this);
         Log.e("SWABLE", "START");
