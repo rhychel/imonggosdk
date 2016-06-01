@@ -39,6 +39,7 @@ public class DialogTools<T> {
     }
     public static AlertDialog showDialog(Context context, String title, String message, String btnText, DialogInterface.OnClickListener callback, int theme) {
         AlertDialog.Builder dialog = (theme == NO_THEME) ? new AlertDialog.Builder(context) : new AlertDialog.Builder(context, theme);
+        dialog.setCancelable(false);
         dialog.setTitle(title);
         dialog.setMessage(message);
         dialog.setPositiveButton(btnText, callback);
