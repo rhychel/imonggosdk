@@ -35,6 +35,7 @@ import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.operations.login.BaseLogin;
 import net.nueca.imonggosdk.operations.sync.BaseSyncService;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
+import net.nueca.imonggosdk.swable.ImonggoSwable;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.LoggingTools;
 import net.nueca.imonggosdk.tools.LoginTools;
@@ -166,6 +167,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * progress dialogs and etc.
      */
     protected abstract void showCustomDownloadDialog(String title);
+
+    protected abstract void forceUnlinkUser();
 
     /**
      * This is where you will create your login layout
@@ -1101,13 +1104,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     @Override
-    public void onErrorDownload(Table table, String message) {
+    public void onErrorDownload(Table table, String message, int responseCode) {
         Log.e(TAG, "error downloading " + table + " " + message);
         mLoginState = LoginState.LOGIN_FAILED;
 
         getCustomDialogFrameLayout().getCustomModuleAdapter().showRetryButton(mTablesToDownload.indexOf(table));
 
-        LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed, Tap " + table.getStringName() + " module to retry");
+        if(responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS)
+            forceUnlinkUser();
+        else
+            LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed, Tap " + table.getStringName() + " module to retry");
         stopLogin();
     }
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -14,19 +15,26 @@ import com.crashlytics.android.Crashlytics;
 
 import net.nueca.concessioengine.activities.login.BaseLoginActivity;
 import net.nueca.concessioengine.activities.login.LoginActivity;
+import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
+import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
+import net.nueca.concessioengine.tools.appsettings.AppTools;
 import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
+import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DialogTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
 import org.json.JSONObject;
+
+import java.sql.SQLException;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -41,7 +49,7 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         super.initLoginEquipments();
 
-        setAutoUpdateApp(false);
+        setAutoUpdateApp(true); // should have a settings
 
         setRequireConcessioSettings(true);
         setRequireObjectConcessioSettings(true);
@@ -50,9 +58,20 @@ public class C_Login extends LoginActivity {
     @Override
     protected void updateAppData(SyncModules syncmodules) {
         super.updateAppData(syncmodules);
-        int[] modulesToDownload = generateModules();
-        setModulesToSync(modulesToDownload);
-        syncmodules.initializeTablesToSync(modulesToDownload);
+        try {
+            if(getSession().getServer() == Server.REBISCO) {
+                int[] modulesToDownload = {Table.SETTINGS.ordinal()};
+                setModulesToSync(modulesToDownload);
+                syncmodules.initializeTablesToSync(modulesToDownload);
+            }
+            else {
+                int[] modulesToDownload = generateModules();
+                setModulesToSync(modulesToDownload);
+                syncmodules.initializeTablesToSync(modulesToDownload);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         updateApp();
 
         Log.e(TAG, "updateAppData called");
@@ -73,6 +92,37 @@ public class C_Login extends LoginActivity {
         }
         setModulesToSync(modulesToDownload);
         getSyncModules().initializeTablesToSync(modulesToDownload);
+    }
+
+    @Override
+    protected void forceUnlinkUser() {
+        super.forceUnlinkUser();
+
+        DialogTools.showDialog(this, "Ooopps!", "Your account has been disabled.", "Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    AccountTools.unlinkAccount(C_Login.this, getHelper(), new AccountListener() {
+                        @Override
+                        public void onLogoutAccount() {
+                        }
+
+                        @Override
+                        public void onUnlinkAccount() {
+                            EpsonPrinterTools.clearTargetPrinter(C_Login.this);
+                            StarIOPrinterTools.updateTargetPrinter(C_Login.this, "");
+                            SwableTools.stopSwable(C_Login.this);
+
+                            finish();
+                            Intent intent = new Intent(C_Login.this, C_Login.class);
+                            startActivity(intent);
+                        }
+                    });
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, R.style.AppCompatDialogStyle_Light);
     }
 
     @Override
@@ -102,6 +152,8 @@ public class C_Login extends LoginActivity {
         super.onCreateLoginLayout();
         setIsUsingDefaultLoginLayout(false);
         setContentView(R.layout.c_login);
+
+        ((TextView)findViewById(R.id.tvVersion)).setText("Version: "+AppTools.getAppVersionName(this));
 
         Log.e("Unlinked", AccountTools.isUnlinked(this)+"---");
         initializeApp();

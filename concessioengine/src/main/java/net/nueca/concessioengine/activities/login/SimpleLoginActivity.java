@@ -48,6 +48,11 @@ public class SimpleLoginActivity extends BaseLoginActivity {
     protected void showCustomDownloadDialog(String title) {
     }
 
+    @Override
+    protected void forceUnlinkUser() {
+
+    }
+
 
     @Override
     protected void onCreateLoginLayout() {

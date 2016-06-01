@@ -266,7 +266,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                             }
 
                             @Override
-                            public void onErrorDownload(Table table, String message) {
+                            public void onErrorDownload(Table table, String message, int responseCode) {
                                 Log.e("apiDownloader", "error" + table.getStringName());
                                 progressListDialog.errorDownload();
                             }

@@ -59,6 +59,7 @@ import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
+import net.nueca.imonggosdk.swable.ImonggoSwable;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 import net.nueca.imonggosdk.tools.LastUpdateAtTools;
@@ -4294,6 +4295,9 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                     " ");
         }
 
+        if(responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS)
+            AccountTools.updateUserActiveStatus(this, false);
+
         Log.e(TAG, "page: " + page);
         Log.e(TAG, "numberOfPages: " + numberOfPages);
         Log.e(TAG, "count: " + count);
@@ -4301,7 +4305,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
         Log.e(TAG, "moduleIndex: " + mModulesIndex);
 
         if (mSyncModulesListener != null) {
-            mSyncModulesListener.onErrorDownload(table, "error");
+            mSyncModulesListener.onErrorDownload(table, "error", responseCode);
         }
     }
 

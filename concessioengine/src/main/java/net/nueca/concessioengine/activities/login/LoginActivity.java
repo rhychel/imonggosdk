@@ -222,6 +222,8 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
     }
 
+
+
     @Override
     protected void showCustomDownloadDialog(String title) {
         if (isUsingDefaultCustomDialogForSync()) {
@@ -237,6 +239,11 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             setCustomDialogCancelable(false);
             showCustomDialog();
         }
+    }
+
+    @Override
+    protected void forceUnlinkUser() {
+
     }
 
     @Override
