@@ -112,6 +112,7 @@ public class C_Login extends LoginActivity {
                             EpsonPrinterTools.clearTargetPrinter(C_Login.this);
                             StarIOPrinterTools.updateTargetPrinter(C_Login.this, "");
                             SwableTools.stopSwable(C_Login.this);
+                            SettingTools.updateSettings(C_Login.this, SettingsName.DEFAULT_BRANCH, "");
 
                             finish();
                             Intent intent = new Intent(C_Login.this, C_Login.class);
