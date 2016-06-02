@@ -69,8 +69,10 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
     public Session getSession() throws SQLException {
         Session session = null;
         Log.e("isLoggedIn", AccountTools.isLoggedIn(getHelper()) + "");
+
         if(AccountTools.isLoggedIn(getHelper()))
-            session = getHelper().fetchObjectsList(Session.class).get(0);
+            session = Session.fetchAll(getHelper(), Session.class).get(0);
+
         return session;
     }
 

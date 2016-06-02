@@ -83,6 +83,14 @@ public class BaseLogin {
         mPassword = "";
     }
 
+    public ImonggoDBHelper2 getDBHelper() {
+        return mDBHelper;
+    }
+
+    public void setDBHelper(ImonggoDBHelper2 mDBHelper) {
+        this.mDBHelper = mDBHelper;
+    }
+
     /**
      * Creates login credentials with the given accountId, email, password
      * and setup Volley Request Queue
