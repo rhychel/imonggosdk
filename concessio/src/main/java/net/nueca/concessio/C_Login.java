@@ -58,20 +58,20 @@ public class C_Login extends LoginActivity {
     @Override
     protected void updateAppData(SyncModules syncmodules) {
         super.updateAppData(syncmodules);
-        try {
-            if(getSession().getServer() == Server.REBISCO_DEV) {
+       // try {
+           /* if(getSession().getServer() == Server.REBISCO_DEV) {
                 int[] modulesToDownload = {Table.SETTINGS.ordinal()};
                 setModulesToSync(modulesToDownload);
                 syncmodules.initializeTablesToSync(modulesToDownload);
             }
-            else {
+            else {*/
                 int[] modulesToDownload = generateModules();
                 setModulesToSync(modulesToDownload);
                 syncmodules.initializeTablesToSync(modulesToDownload);
-            }
-        } catch (SQLException e) {
+           // }
+      /*  } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
         updateApp();
 
         Log.e(TAG, "updateAppData called");
