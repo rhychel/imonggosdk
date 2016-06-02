@@ -32,6 +32,8 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
     protected static final int SUCCESS = 10;
     protected static final int ERROR = 20;
     protected static final int REFRESH = 30;
+    public static final int UNLINK = 40;
+    public static final int UNLINKED = 41;
 
     protected static final int ADD_CUSTOMER = 100;
     protected static final int EDIT_CUSTOMER = 101;
@@ -44,6 +46,7 @@ public abstract class ImonggoAppCompatActivity extends AppCompatActivity {
     protected static final int HISTORY_DETAILS = 108;
     protected static final int FROM_MULTIINPUT = 109;
     protected static final int ROUTE_PLAN = 110;
+    protected static final int DASHBOARD = 111;
 
     private ImonggoDBHelper2 dbHelper2;
 

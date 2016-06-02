@@ -77,4 +77,15 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Version 1.1.1"
+        android:id="@+id/tvVersion"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white_50"
+        android:layout_marginBottom="8dp"
+        android:textSize="12sp" />
+
 </LinearLayout>

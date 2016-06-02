@@ -49,7 +49,7 @@ public abstract class BaseUpdater implements SyncModulesListener {
             }
         } else {
             startSyncService();
-            mSyncModulesListener.onErrorDownload(null, "Cannot Start Update, Service not binded");
+            mSyncModulesListener.onErrorDownload(null, "Cannot Start Update, Service not binded", 0);
         }
     }
 
@@ -81,9 +81,9 @@ public abstract class BaseUpdater implements SyncModulesListener {
     }
 
     @Override
-    public void onErrorDownload(Table table, String message) {
+    public void onErrorDownload(Table table, String message, int responseCode) {
         if (mSyncModulesListener != null) {
-            mSyncModulesListener.onErrorDownload(table, message);
+            mSyncModulesListener.onErrorDownload(table, message, responseCode);
         }
     }
 

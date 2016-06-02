@@ -465,8 +465,6 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     for (ProductTag productTag : tags)
                         if (productTag.getTag().matches("^##[A-Za-z0-9_ ]*$"))
                             brands.add(productTag.getTag().replaceAll("##", ""));
-                    brands.add("Sample 1");
-                    brands.add("Sample 2");
                     simpleSalesQuantityDialog.setBrandList(brands, true);
                     simpleSalesQuantityDialog.setHasBrand(true);
                 }
