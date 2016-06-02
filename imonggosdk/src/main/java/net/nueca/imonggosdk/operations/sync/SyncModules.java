@@ -866,7 +866,29 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
         if (mModulesIndex == (mModulesToSync.length - 1)) {  // this is when there are no left tables to sync
             mSyncModulesListener.onDownloadProgress(mCurrentTableSyncing, 1, 1);
-            endSyncNext();
+            if (mCurrentTableSyncing == Table.BRANCH_PRODUCTS ||
+                    mCurrentTableSyncing == Table.DOCUMENT_ADJUSTMENT_OUT ||
+                    mCurrentTableSyncing == Table.DOCUMENT_TRANSFER_OUT ||
+                    mCurrentTableSyncing == Table.BRANCH_PRICE_LISTS ||
+                    mCurrentTableSyncing == Table.BRANCH_CUSTOMERS ||
+                    mCurrentTableSyncing == Table.ORDERS_STOCK_REQUEST ||
+                    mCurrentTableSyncing == Table.ORDERS_PURCHASES) {
+
+                Log.e(TAG, "mBranchIdIndex: " + mBranchIdIndex + " size: " + getListOfBranchIds(mCurrentTableSyncing).size() );
+                if((mBranchIdIndex+1) < getListOfBranchIds(mCurrentTableSyncing).size()) {
+                    try {
+                        syncNextLogic();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    endSyncNext();
+                }
+
+            } else {
+                endSyncNext();
+            }
+
             return false;
         } else {
             try {
@@ -1191,7 +1213,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     } else {
                                         Log.e(TAG, "lastUpdatedAt from DB is null");
                                     }
-
                                     Log.e(TAG, ">> Hindi parehas");
                                 }
 

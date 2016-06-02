@@ -466,7 +466,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                         Log.e("Servers", label);
 
                         setServer(Server.getServer(label));
-                        //setServer(Server.IRETAILCLOUD_NET);
+                        //setServer(Server.PETRONDIS_NET);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
