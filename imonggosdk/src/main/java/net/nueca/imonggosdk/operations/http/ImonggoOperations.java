@@ -49,7 +49,7 @@ public class ImonggoOperations {
             case PLDTRETAILCLOUD:
             case PETRONDIS_COM:
             case PETRONDIS_NET:
-            case REBISCO:
+            case REBISCO_DEV:
                 URL = ImonggoTools.buildAPIModuleIDURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, id, parameter, false);
                 break;
             default:
@@ -78,7 +78,7 @@ public class ImonggoOperations {
             case IMONGGO_NET:
             case PETRONDIS_NET:
             case PETRONDIS_COM:
-            case REBISCO:
+            case REBISCO_DEV:
                 return ImonggoTools.buildAPIModuleURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, parameter, false);
             default:
                 return "";
@@ -106,7 +106,7 @@ public class ImonggoOperations {
             case PLDTRETAILCLOUD:
             case PETRONDIS_COM:
             case PETRONDIS_NET:
-            case REBISCO:
+            case REBISCO_DEV:
                 URL = ImonggoTools.buildAPIModuleReferenceURL(context, session.getApiToken(), session.getAcctUrlWithoutProtocol(), table, reference, false);
                 break;
             default:

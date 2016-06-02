@@ -8,7 +8,8 @@ public enum Server {
 	PLDTRETAILCLOUD("pldtretailcloud_com"),
 	PETRONDIS_COM("petrondis_com"),
 	PETRONDIS_NET("petrondis_net"),
-	REBISCO("rebisco");
+	REBISCO_DEV("rebisco"),
+	REBISCO_LIVE("rebisco_live");
 
 	private String label;
 
@@ -20,6 +21,6 @@ public enum Server {
 		for(Server server : values())
 			if(server.label.equals(label))
 				return server;
-		return REBISCO; // TEMP, should be irc.net
+		return IRETAILCLOUD_NET; // TEMP, should be irc.net
 	}
 }

@@ -10,7 +10,8 @@
     <string name="API_URL_IMONGGO_NET">http://www.imonggo.net:8888/system/api_url?account_id=%s</string>
     <string name="API_URL_PETRONDIS_COM">http://www.petrondis.com/system/api_url?account_id=%s</string>
     <string name="API_URL_PETRONDIS_NET">http://www.petrondis.net/system/api_url?account_id=%s</string>
-    <string name="API_URL_REBISCO">http://www.rbcsadr.net/system/api_url?account_id=%s</string>
+    <string name="API_URL_REBISCO_DEV">http://www.rbcsadr.net/system/api_url?account_id=%s</string>
+    <string name="API_URL_REBISCO_LIVE">http://www.webrdas.com/system/api_url?account_id=%s</string>
     <string name="API_URL_CUSTOM">%1$s/system/api_url?account_id=%2$s</string> <!-- TODO URL for custom mServer domain -->
     <string name="API_URL_CUSTOM_SECURED">%1$s/system/api_url?account_id=%2$s</string> <!-- TODO URL for custom mServer domain -->
 

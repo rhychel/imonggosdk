@@ -59,7 +59,7 @@ public class C_Login extends LoginActivity {
     protected void updateAppData(SyncModules syncmodules) {
         super.updateAppData(syncmodules);
         try {
-            if(getSession().getServer() == Server.REBISCO) {
+            if(getSession().getServer() == Server.REBISCO_DEV) {
                 int[] modulesToDownload = {Table.SETTINGS.ordinal()};
                 setModulesToSync(modulesToDownload);
                 syncmodules.initializeTablesToSync(modulesToDownload);
@@ -127,9 +127,13 @@ public class C_Login extends LoginActivity {
 
     @Override
     protected void showNextActivityAfterLogin() {
-        finish();
-        Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? C_Welcome.class : C_Dashboard.class));//C_Dashboard
-        startActivity(intent);
+        if(!AccountTools.isUserActive(this))
+            forceUnlinkUser();
+        else {
+            finish();
+            Intent intent = new Intent(this, (SettingTools.defaultBranch(this).equals("") ? C_Welcome.class : C_Dashboard.class));//C_Dashboard
+            startActivity(intent);
+        }
     }
 
     private int[] generateModules() {

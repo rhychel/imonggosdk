@@ -1099,6 +1099,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
         Log.e(TAG, ">Session " + mSession.isHas_logged_in());
 
+        AccountTools.updateUserActiveStatus(this, true);
         DialogTools.hideIndeterminateProgressDialog();
         showNextActivityAfterLogin();
     }
