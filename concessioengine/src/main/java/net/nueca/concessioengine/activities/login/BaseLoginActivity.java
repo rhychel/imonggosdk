@@ -1123,12 +1123,18 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         mLoginState = LoginState.LOGIN_FAILED;
 
         getCustomDialogFrameLayout().getCustomModuleAdapter().showRetryButton(mTablesToDownload.indexOf(table));
+        stopLogin();
 
         if (responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS)
             forceUnlinkUser();
+        else if(responseCode == ImonggoSwable.INTERNAL_SERVER_ERROR)
+            LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed. 500, something's wrong with the server.");
+        else if(responseCode == 0) {
+            LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed. Server is down.");
+            showNextActivityAfterLogin();
+        }
         else
             LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed, Tap " + table.getStringName() + " module to retry");
-        stopLogin();
     }
 
     @Override

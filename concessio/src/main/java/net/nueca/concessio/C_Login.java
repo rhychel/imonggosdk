@@ -58,20 +58,20 @@ public class C_Login extends LoginActivity {
     @Override
     protected void updateAppData(SyncModules syncmodules) {
         super.updateAppData(syncmodules);
-       // try {
-           /* if(getSession().getServer() == Server.REBISCO_DEV) {
+        try {
+           if(getSession().getServer() == Server.REBISCO_DEV) {
                 int[] modulesToDownload = {Table.SETTINGS.ordinal()};
                 setModulesToSync(modulesToDownload);
                 syncmodules.initializeTablesToSync(modulesToDownload);
             }
-            else {*/
+            else {
                 int[] modulesToDownload = generateModules();
                 setModulesToSync(modulesToDownload);
                 syncmodules.initializeTablesToSync(modulesToDownload);
-           // }
-      /*  } catch (SQLException e) {
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
-        }*/
+        }
         updateApp();
 
         Log.e(TAG, "updateAppData called");
@@ -112,6 +112,7 @@ public class C_Login extends LoginActivity {
                             EpsonPrinterTools.clearTargetPrinter(C_Login.this);
                             StarIOPrinterTools.updateTargetPrinter(C_Login.this, "");
                             SwableTools.stopSwable(C_Login.this);
+                            SettingTools.updateSettings(C_Login.this, SettingsName.DEFAULT_BRANCH, "");
 
                             finish();
                             Intent intent = new Intent(C_Login.this, C_Login.class);

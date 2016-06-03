@@ -197,6 +197,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                                 EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
                                 StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
                                 SwableTools.stopSwable(C_Dashboard.this);
+                                SettingTools.updateSettings(C_Dashboard.this, SettingsName.DEFAULT_BRANCH, "");
 
                                 finish();
                                 Intent intent = new Intent(C_Dashboard.this, C_Login.class);
