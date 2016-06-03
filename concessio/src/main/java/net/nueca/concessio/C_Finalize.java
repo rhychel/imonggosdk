@@ -38,6 +38,7 @@ import net.nueca.concessioengine.tools.BluetoothTools;
 import net.nueca.concessioengine.tools.DiscountTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
@@ -159,8 +160,16 @@ public class C_Finalize extends ModuleActivity {
                     initializeVoidButton(btn1, getIntent().getStringExtra(REFERENCE));
                     initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
                 }
-                else
-                    initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
+                else {
+                    if(getSession().getServer() == Server.REBISCO_DEV ||
+                            (offlineData.getOfflineDataTransactionType().isVoiding() && offlineData.isCancelled()))
+                        initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
+                    else {
+                        btn2 = (Button) findViewById(R.id.btn2);
+                        initializeVoidButton(btn1, getIntent().getStringExtra(REFERENCE));
+                        initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
+                    }
+                }
 
                 offlineInvoice = offlineData.getObjectFromData(Invoice.class);
                 paymentsComputation = new InvoiceTools.PaymentsComputation();
