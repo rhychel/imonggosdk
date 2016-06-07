@@ -183,14 +183,9 @@ public class C_Login extends LoginActivity {
         ImageView ivLogo = (ImageView) findViewById(R.id.ivLogo);
 
         final ArrayList<Server> servers = new ArrayList<Server>(){{
-            add(Server.IMONGGO);
-            add(Server.IMONGGO_NET);
-            add(Server.IRETAILCLOUD_COM);
-            add(Server.IRETAILCLOUD_NET);
-            add(Server.PETRONDIS_COM);
-            add(Server.PETRONDIS_NET);
             add(Server.REBISCO_DEV);
             add(Server.REBISCO_LIVE);
+            add(Server.REBISCO_LIVE_NET);
         }};
         ArrayAdapter<Server> serversAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, servers);
         serversAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
@@ -209,9 +204,9 @@ public class C_Login extends LoginActivity {
         ivLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(hiddenTaps == 8)
+                if(hiddenTaps == 3)
                     Toast.makeText(C_Login.this, "Almost there!", Toast.LENGTH_SHORT).show();
-                if(hiddenTaps == 10) {
+                if(hiddenTaps == 5) {
                     spServers.setVisibility(View.VISIBLE);
                     useCustomServer = true;
                 }

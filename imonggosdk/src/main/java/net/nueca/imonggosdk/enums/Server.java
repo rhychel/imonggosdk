@@ -9,7 +9,8 @@ public enum Server {
 	PETRONDIS_COM("petrondis_com", "http://www.petrondis.com"),
 	PETRONDIS_NET("petrondis_net", "http://www.petrondis.net"),
 	REBISCO_DEV("rebisco", "http://www.rbcsadr.net"),
-	REBISCO_LIVE("rebisco_live", "http://www.webrdas.com");
+	REBISCO_LIVE("rebisco_live", "http://www.webrdas.com"),
+	REBISCO_LIVE_NET("rebisco_live_net", "http://www.webrdas.net");
 
 	private String label;
 	private String serverUrl;
