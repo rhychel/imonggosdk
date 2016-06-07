@@ -70,6 +70,7 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
             holder.ivStatus.setImageResource(R.drawable.ic_check_round_teal);
             holder.tvSubtotal.setTextColor(ContextCompat.getColor(getContext(), R.color.payment_color));
 
+            Log.e("Customer", customer.generateFullName());
             List<Invoice> myInvoices = customer.getMyInvoices();
             if(myInvoices.size() > 0) {
                 ProductsAdapterHelper.setSelectedCustomer(customer);
@@ -134,7 +135,10 @@ public class SimpleRoutePlanRecyclerViewAdapter extends BaseRoutePlanRecyclerAda
                     temp.addAllInvoiceLines(invoice.getInvoiceLines());
                     temp.addAllPayments(invoice.getPayments());
 
-                    BigDecimal totalPaid = temp.getTotalPayable(true).subtract(temp.getTotalPaymentMade()); // positive
+                    BigDecimal totalPayable = temp.getTotalPayable(true).setScale(ProductsAdapterHelper.getDecimalPlace(), BigDecimal.ROUND_HALF_UP);
+                    BigDecimal totalPaymentMade = temp.getTotalPaymentMade().setScale(ProductsAdapterHelper.getDecimalPlace(), BigDecimal.ROUND_HALF_UP);
+
+                    BigDecimal totalPaid = totalPayable.subtract(totalPaymentMade); // positive
                     Log.e("invoice["+i+"]", "totalPaid: "+totalPaid.doubleValue());
 
                     if(totalPaid.compareTo(BigDecimal.ZERO) == 1)

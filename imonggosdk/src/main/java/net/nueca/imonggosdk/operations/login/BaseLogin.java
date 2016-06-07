@@ -677,7 +677,7 @@ public class BaseLogin {
                                             mLoginListener.onStopLogin();
                                         }
                                     }
-                                }, server, true, mUseObjectForConcessioSettings);
+                                }, server, false, mUseObjectForConcessioSettings);
                     } else { // not using Concession Settings
                         Log.i("Jn-BaseLogin", "Not Using Concession Settings");
                         // Update the Listener

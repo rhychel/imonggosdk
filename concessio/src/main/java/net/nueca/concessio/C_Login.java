@@ -4,8 +4,13 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +40,7 @@ import net.nueca.imonggosdk.tools.SettingTools;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -43,6 +49,9 @@ import io.fabric.sdk.android.Fabric;
  * imonggosdk2 (c)2015
  */
 public class C_Login extends LoginActivity {
+
+    private int hiddenTaps = 0;
+    private Spinner spServers;
 
     @Override
     protected void initLoginEquipments() {
@@ -58,20 +67,20 @@ public class C_Login extends LoginActivity {
     @Override
     protected void updateAppData(SyncModules syncmodules) {
         super.updateAppData(syncmodules);
-       // try {
-           /* if(getSession().getServer() == Server.REBISCO_DEV) {
+        try {
+           if(getSession().getServer() == Server.REBISCO_DEV) {
                 int[] modulesToDownload = {Table.SETTINGS.ordinal()};
                 setModulesToSync(modulesToDownload);
                 syncmodules.initializeTablesToSync(modulesToDownload);
             }
-            else {*/
+            else {
                 int[] modulesToDownload = generateModules();
                 setModulesToSync(modulesToDownload);
                 syncmodules.initializeTablesToSync(modulesToDownload);
-           // }
-      /*  } catch (SQLException e) {
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
-        }*/
+        }
         updateApp();
 
         Log.e(TAG, "updateAppData called");
@@ -112,6 +121,7 @@ public class C_Login extends LoginActivity {
                             EpsonPrinterTools.clearTargetPrinter(C_Login.this);
                             StarIOPrinterTools.updateTargetPrinter(C_Login.this, "");
                             SwableTools.stopSwable(C_Login.this);
+                            SettingTools.updateSettings(C_Login.this, SettingsName.DEFAULT_BRANCH, "");
 
                             finish();
                             Intent intent = new Intent(C_Login.this, C_Login.class);
@@ -168,6 +178,41 @@ public class C_Login extends LoginActivity {
                 (EditText)findViewById(R.id.etEmail),
                 (EditText)findViewById(R.id.etPassword),
                 (Button)findViewById(R.id.btnLogin));
+
+        spServers = (Spinner) findViewById(R.id.spServers);
+        ImageView ivLogo = (ImageView) findViewById(R.id.ivLogo);
+
+        final ArrayList<Server> servers = new ArrayList<Server>(){{
+            add(Server.REBISCO_DEV);
+            add(Server.REBISCO_LIVE);
+            add(Server.REBISCO_LIVE_NET);
+        }};
+        ArrayAdapter<Server> serversAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, servers);
+        serversAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
+        spServers.setAdapter(serversAdapter);
+        spServers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(useCustomServer)
+                    setServer(servers.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
+        ivLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(hiddenTaps == 3)
+                    Toast.makeText(C_Login.this, "Almost there!", Toast.LENGTH_SHORT).show();
+                if(hiddenTaps == 5) {
+                    spServers.setVisibility(View.VISIBLE);
+                    useCustomServer = true;
+                }
+                hiddenTaps++;
+            }
+        });
     }
 
     private void initializeApp() {

@@ -1032,6 +1032,13 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
                     fieldValidatorMessage.setPassed(false);
                     lastField = "payment terms";
                     break;
+                case COMPANY_NAME: // -- Added 1.2.14.4
+                    if(company_name != null && !company_name.isEmpty())
+                        continue;
+                    fieldValidatorMessage.appendMessage(lastField, false);
+                    fieldValidatorMessage.setPassed(false);
+                    lastField = "business name";
+                    break;
             }
         }
         fieldValidatorMessage.appendMessage(lastField, true);

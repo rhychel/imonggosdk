@@ -28,8 +28,8 @@ android {
         applicationId "net.nueca.concessio"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.2.13.4-BETA"
+        versionCode 3
+        versionName "1.2.15.1"
     }
     buildTypes {
         release {
@@ -53,7 +53,7 @@ dependencies {
     compile 'com.android.support:design:23.2.0'
     compile 'com.android.support:support-v4:23.2.0'
     compile project(':concessioengine')
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.6@aar') {
         transitive = true;
     }
 }

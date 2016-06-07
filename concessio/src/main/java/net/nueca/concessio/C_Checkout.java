@@ -105,9 +105,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private TransactionDialog.TransactionDialogListener transactionDialogListener = new TransactionDialog.TransactionDialogListener() {
         @Override
         public void whenDismissed() {
-            if(getAppSetting().isCan_change_inventory())
-                if(!isLayaway)
-                    updateInventoryFromSelectedItemList(false);
+//            updateInventoryFromInvoice();
             Intent intent = new Intent();
             intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
             setResult(SUCCESS, intent);
@@ -173,6 +171,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     transactionDialog.setCancelable(false);
 
                     Invoice invoice = generateInvoice();
+                    updateInventoryFromInvoice(); // UPDATE BEFORE PRINT! SHITTER SHIT!
 
                     transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
 
@@ -265,6 +264,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         transactionDialog.setCancelable(false);
 
                         Invoice invoice = generateInvoice();
+                        updateInventoryFromInvoice(); // UPDATE BEFORE PRINT! SHITTER SHIT!
 
                         transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
 
@@ -280,7 +280,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             e.printStackTrace();
                         }
                         // Transaction Date
-
                         transactionDialog.show();
 
                         customer = ProductsAdapterHelper.getSelectedCustomer();
@@ -344,6 +343,12 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
         }
     };
+
+    private void updateInventoryFromInvoice() {
+        if(getAppSetting().isCan_change_inventory())
+            if(!isLayaway)
+                updateInventoryFromSelectedItemList(false);
+    }
 
     @Override
     protected void initializeFragment() {

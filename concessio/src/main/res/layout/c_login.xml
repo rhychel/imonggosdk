@@ -7,7 +7,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
+        android:id="@+id/ivLogo"
         android:src="@drawable/concessio_logo"
         android:adjustViewBounds="true"
         android:layout_marginLeft="88dp"
@@ -23,6 +23,12 @@
         android:layout_weight="1"
         android:layout_marginLeft="36dp"
         android:layout_marginRight="36dp">
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spServers"
+            android:visibility="gone"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
