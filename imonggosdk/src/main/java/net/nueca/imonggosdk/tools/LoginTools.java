@@ -60,6 +60,8 @@ public class LoginTools {
                 return ImonggoTools.buildAPIUrlRebiscoDev(context, accountId);
             case REBISCO_LIVE:
                 return ImonggoTools.buildAPIUrlRebiscoLive(context, accountId);
+            case REBISCO_LIVE_NET:
+                return ImonggoTools.buildAPIUrlRebiscoLiveNet(context, accountId);
             default:
                 return "";
         }

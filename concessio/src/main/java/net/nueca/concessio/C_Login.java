@@ -191,6 +191,7 @@ public class C_Login extends LoginActivity {
             add(Server.PETRONDIS_NET);
             add(Server.REBISCO_DEV);
             add(Server.REBISCO_LIVE);
+            add(Server.REBISCO_LIVE_NET);
         }};
         ArrayAdapter<Server> serversAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_light, servers);
         serversAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);

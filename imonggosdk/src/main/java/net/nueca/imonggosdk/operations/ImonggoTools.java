@@ -238,6 +238,10 @@ public class ImonggoTools {
 		return String.format(context.getString(R.string.API_URL_REBISCO_LIVE), accountId);
 	}
 
+	public static String buildAPIUrlRebiscoLiveNet(Context context, String accountId) {
+		return String.format(context.getString(R.string.API_URL_REBISCO_LIVE_NET), accountId);
+	}
+
     /**
      *
      * Build URL for getting Account URL on a custom URL.
