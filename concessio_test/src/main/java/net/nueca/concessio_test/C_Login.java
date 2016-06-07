@@ -36,7 +36,7 @@ public class C_Login extends LoginActivity {
         Fabric.with(this, new Crashlytics());
         setRequireConcessioSettings(false);
         setRequireObjectConcessioSettings(false);
-        setServer(Server.REBISCO);
+        setServer(Server.REBISCO_DEV);
 
         TEST_ACCOUNT = true;
 

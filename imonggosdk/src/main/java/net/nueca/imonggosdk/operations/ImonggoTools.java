@@ -230,8 +230,12 @@ public class ImonggoTools {
 	 * @param accountId
 	 * @return
 	 */
-	public static String buildAPIUrlRebisco(Context context, String accountId) {
-		return String.format(context.getString(R.string.API_URL_REBISCO), accountId);
+	public static String buildAPIUrlRebiscoDev(Context context, String accountId) {
+		return String.format(context.getString(R.string.API_URL_REBISCO_DEV), accountId);
+	}
+
+	public static String buildAPIUrlRebiscoLive(Context context, String accountId) {
+		return String.format(context.getString(R.string.API_URL_REBISCO_LIVE), accountId);
 	}
 
     /**

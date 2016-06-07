@@ -117,7 +117,7 @@ public class APIDownloader extends BaseUpdater implements SyncServiceConnectionL
             Log.e(TAG, "can't start download, you haven't set modules to download or anything");
 
             if (mSyncModulesListener != null) {
-                mSyncModulesListener.onErrorDownload(null, "Something wen't wrong please check the logs");
+                mSyncModulesListener.onErrorDownload(null, "Something wen't wrong please check the logs", 0);
             } else {
                 Log.e(TAG, "also SyncModulesListener is null, don't you wanna listen?");
             }

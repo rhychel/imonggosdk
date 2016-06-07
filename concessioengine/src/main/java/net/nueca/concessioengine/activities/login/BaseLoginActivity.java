@@ -35,6 +35,7 @@ import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.operations.login.BaseLogin;
 import net.nueca.imonggosdk.operations.sync.BaseSyncService;
 import net.nueca.imonggosdk.operations.sync.SyncModules;
+import net.nueca.imonggosdk.swable.ImonggoSwable;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.LoggingTools;
 import net.nueca.imonggosdk.tools.LoginTools;
@@ -98,8 +99,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
 
                 //isAutoUpdate()
-                if (isAutoUpdate() && isLoggedIn() && !isUnlinked())
+                if (isAutoUpdate() && isLoggedIn() && !isUnlinked()) {
+                    //Log.e(TAG, "isAutoUpdate: " + isAutoUpdate() + " isLoggedIn: " + isLoggedIn() + " !isUnlinked: " + isUnlinked() );
                     updateAppData(mSyncModules);
+                }
 
             } else {
                 Log.e(TAG, "Cannot bindLoginModule Service and Activity");
@@ -167,6 +170,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     protected abstract void showCustomDownloadDialog(String title);
 
+    protected abstract void forceUnlinkUser();
+
     /**
      * This is where you will create your login layout
      * setContentView and align the ids in your layout
@@ -177,7 +182,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * override this method and call this
      * functions inside:
      * <p/>
-     * 1. setContentView( your custom layout)
+     * 1. setContentView( your custom layout) OnResume()
      * 2. setLayoutEquipments( fill in the ids in your layout)
      */
     protected abstract void onCreateLoginLayout();
@@ -204,6 +209,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected void onResume() {
         super.onResume();
         Log.e(TAG, "OnResume()");
+        autoUpdateChecker();
     }
 
     @Override
@@ -221,14 +227,17 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(TAG, "onCreate().. ");
+        Log.e(TAG, "isAutoUpdate: " + isAutoUpdate() + " isLoggedIn: " + isLoggedIn() + " isUnlinked: " + isUnlinked());
         setAutoUpdateApp(false);
         super.onCreate(savedInstanceState);
         initLoginEquipments();
         loginChecker();
         // not logged in and unlinked
-        if (!isLoggedIn() || isUnlinked()) {
+        if (!isLoggedIn() && isUnlinked()) {
             onCreateLoginLayout();
         }
+
         autoUpdateChecker();
 
         //getIntent();
@@ -358,8 +367,13 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     public void createNewCustomDialogFrameLayout(List<Table> moduleName, Context context) {
         customDialogFrameLayout = new CustomDialogFrameLayout(moduleName, context);
-        if (mBaseLogin != null)
-            customDialogFrameLayout.setLoginListener(mBaseLogin.getLoginListener());
+
+        if (mBaseLogin == null) {
+            mBaseLogin = new BaseLogin();
+            mBaseLogin.setDBHelper(getHelper());
+            setLoginListeners();
+        }
+        customDialogFrameLayout.setLoginListener(mBaseLogin.getLoginListener());
     }
 
     public CustomDialogFrameLayout getCustomDialogFrameLayout() {
@@ -559,6 +573,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mSession.setHas_logged_in(true);
                 mSession.updateTo(getHelper());
                 AccountTools.updateLogout(getApplicationContext(), false);
+                AccountTools.updateUnlinked(getApplicationContext(), false);
                 try {
                     startSyncingImonggoModules();
                 } catch (SQLException e) {
@@ -913,7 +928,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
 
     protected void setUnlinked(Boolean isUnlinked) {
-        AccountTools.updateUnlinked(this, isUnlinked);
+        Log.e(TAG, ">>>>>>setUnlinked... " + isUnlinked);
+        AccountTools.updateUnlinked(BaseLoginActivity.this, isUnlinked);
     }
 
     protected ServiceConnection getServiceConnection() {
@@ -1058,9 +1074,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
         if (table == Table.BRANCH_PRODUCTS) {
             progress = page;
-            Log.e(TAG + "~", "setting branch product... " +  progress );
+            Log.e(TAG + "~", "setting branch product... " + progress);
         } else {
-            Log.e(TAG + "~", "setting others... " +  progress );
+            Log.e(TAG + "~", "setting others... " + progress);
             progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
         }
 
@@ -1096,19 +1112,29 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
         Log.e(TAG, ">Session " + mSession.isHas_logged_in());
 
+        AccountTools.updateUserActiveStatus(this, true);
         DialogTools.hideIndeterminateProgressDialog();
         showNextActivityAfterLogin();
     }
 
     @Override
-    public void onErrorDownload(Table table, String message) {
+    public void onErrorDownload(Table table, String message, int responseCode) {
         Log.e(TAG, "error downloading " + table + " " + message);
         mLoginState = LoginState.LOGIN_FAILED;
 
         getCustomDialogFrameLayout().getCustomModuleAdapter().showRetryButton(mTablesToDownload.indexOf(table));
-
-        LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed, Tap " + table.getStringName() + " module to retry");
         stopLogin();
+
+        if (responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS)
+            forceUnlinkUser();
+        else if(responseCode == ImonggoSwable.INTERNAL_SERVER_ERROR)
+            LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed. 500, something's wrong with the server.");
+        else if(responseCode == 0) {
+            LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed. Server is down.");
+            showNextActivityAfterLogin();
+        }
+        else
+            LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed, Tap " + table.getStringName() + " module to retry");
     }
 
     @Override
@@ -1127,6 +1153,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 getBaseLogin().onStop();
             }
         }
+
+        if (!isUnlinked() && isLoggedIn()) {
+            Log.e(TAG, ">>>>>>onStop: isUnlinked: " + isUnlinked());
+            AccountTools.updateUnlinked(BaseLoginActivity.this, false);
+        }
+
         DialogTools.hideIndeterminateProgressDialog();
         stopLogin();
     }
@@ -1142,11 +1174,16 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     @Override
     public void onDestroy() {
         Log.e(TAG, "onDestroy()");
-
+        Log.e(TAG, "isAutoUpdate: " + isAutoUpdate() + " isLoggedIn: " + isLoggedIn() + " isUnlinked: " + isUnlinked());
         if (isUnlinked() && !isLoggedIn()) {
             if (getBaseLogin() != null) {
                 getBaseLogin().onStop();
             }
+        }
+
+        if (isLoggedIn()) {
+            Log.e(TAG, ">>>>>>onDestroy: isUnlinked: " + isUnlinked());
+            AccountTools.updateUnlinked(BaseLoginActivity.this, false);
         }
         super.onDestroy(); // This should be the last to call after onStop();
         DialogTools.hideIndeterminateProgressDialog();

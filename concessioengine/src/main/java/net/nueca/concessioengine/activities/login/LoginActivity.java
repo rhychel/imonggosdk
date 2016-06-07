@@ -59,7 +59,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
         Log.e(TAG, "isUnlinked: " + isUnlinked() + "\nisLoggedIn: " + isLoggedIn() + "\nisLogout: " + isLogout());
 
         // LOGOUT
-        if(isUnlinked() && isLogout()) {
+        if (isUnlinked() && isLogout()) {
             getAccountIDEditText().setEnabled(false);
 
             // log AccountID
@@ -72,7 +72,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 */
         }
 
-        if(isUnlinked() && !isLoggedIn()) {
+        if (isUnlinked() && !isLoggedIn()) {
             Log.e(TAG, "App is Unlinked.. ");
         }
 
@@ -90,6 +90,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
      */
     @Override
     protected void autoUpdateChecker() {
+        Log.e(TAG, "autoUpdateChecker... ");
         // Account is Linked User is logged in
         if (!isUnlinked() && isLoggedIn()) {
             if (isAutoUpdate() && NetworkTools.isInternetAvailable(LoginActivity.this)) {
@@ -127,13 +128,14 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             intent.putExtra(SyncModules.PARAMS_SERVER, Server.IMONGGO.ordinal());
             intent.putExtra(SyncModules.PARAMS_INITIAL_SYNC, true);
             setSyncServiceIntent(intent);
-            setModulesToSync(null);
+            setModulesToSync(AccountTools.getModulesSyncing(getApplicationContext()));
             setSyncAllModules(true);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             setRequireConcessioSettings(false);
-            setUnlinked(AccountTools.isUnlinked(this));
             setIsUsingDefaultLoginLayout(true);
+
             if (getSession() == null) {
+                Log.e(TAG, "session is null setting unlinked to true..");
                 setUnlinked(true);
             }
         } catch (SQLException e) {
@@ -150,6 +152,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
         try {
             // Account is unlinked and user is logout
             if (AccountTools.isUnlinked(this) && !AccountTools.isLoggedIn(getHelper())) {
+                Log.e(TAG, "loginChecker1");
                 setUnlinked(true);
             }
             // Account is Linked
@@ -157,29 +160,27 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
                 // if user is logout
                 if (!AccountTools.isLoggedIn(getHelper())) {
                     setUnlinked(false);
+                    Log.e(TAG, "loginChecker2");
                 }
                 // if User is Logged In
                 if (AccountTools.isLoggedIn(getHelper())) {
-                    if (!isSyncFinished()) { // Sync is not finished, unlinking account
-                        getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, true);
-                        setUnlinked(true);
-                        unlinkAccount();
-                    } else {
-                        setUnlinked(false);
-                        getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, false);
-                        setLoginSession(getSession()); // user is logged in set up data
 
-                        if (!getLoginSession().getApiAuthentication().equals("")) { // User is authenticated
-                            // check if sessions email exist in user's database
-                            if (getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
-                                //LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
-                                setUnlinked(true);
-                                unlinkAccount();
-                            } else {
-                                getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, false); // Sets Initial sync to false
-                            }
+                    setUnlinked(false);
+                    getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, false);
+                    setLoginSession(getSession()); // user is logged in set up data
+
+                    if (!getLoginSession().getApiAuthentication().equals("")) { // User is authenticated
+                        // check if sessions email exist in user's database
+                        if (getHelper().fetchObjects(User.class).queryBuilder().where().eq("email", getLoginSession().getEmail()).query().size() == 0) {
+                            //LoggingTools.showToast(this, getString(R.string.LOGIN_USER_DONT_EXIST));
+                            Log.e(TAG, "loginChecker4");
+                            setUnlinked(true);
+                            unlinkAccount();
+                        } else {
+                            getSyncServiceIntent().putExtra(SyncModules.PARAMS_INITIAL_SYNC, false); // Sets Initial sync to false
                         }
                     }
+
                 }
             }
         } catch (SQLException e) {
@@ -199,7 +200,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
     @Override
     public void onLogoutAccount() {
-     getSyncModules().setInitialSync();
+        getSyncModules().setInitialSync();
     }
 
     @Override
@@ -222,6 +223,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
     }
 
+
     @Override
     protected void showCustomDownloadDialog(String title) {
         if (isUsingDefaultCustomDialogForSync()) {
@@ -232,11 +234,15 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
             setCustomDialogTitle(title);
 
-
             setCustomDialogContentView(getCustomDialogFrameLayout());
             setCustomDialogCancelable(false);
             showCustomDialog();
         }
+    }
+
+    @Override
+    protected void forceUnlinkUser() {
+
     }
 
     @Override

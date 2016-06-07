@@ -116,12 +116,12 @@ public class AccountTools {
      * @param context Current mContext
      * @return
      */
-    public static boolean isUnlinked(Context context) {
+    public static Boolean isUnlinked(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             //Log.e("Key[isUnlinked]", pinfo.packageName + IS_UNLINKED);
-            return preferences.getBoolean(pinfo.packageName + IS_UNLINKED, true);
+            return preferences.getBoolean(pinfo.packageName + IS_UNLINKED, false);
         } catch (PackageManager.NameNotFoundException e) {
             //Log.e("Key[isUnlinked]", "Not Found");
             return true;
@@ -139,7 +139,6 @@ public class AccountTools {
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             SharedPreferences.Editor editor = preferences.edit();
-            Log.e("Key[updateIsUnlinked]", pinfo.packageName + IS_UNLINKED);
             editor.putBoolean(pinfo.packageName + IS_UNLINKED, isUnlinked);
             editor.apply();
         } catch (PackageManager.NameNotFoundException e) {
@@ -358,8 +357,10 @@ public class AccountTools {
         List<Integer> modules = new ArrayList<>();
 
         if(size == 0) {
+            Log.e(TAG, "getModulesSyncing: NULLLLLLLLL");
             return new int[] {0};
         } else {
+            Log.e(TAG, "getModulesSyncing: MAY LAMAN!");
             for (int i =0; i<size; i++) {
                 modules.add(preferences.getInt(MODULES_TO_SYNC +i, 0));
             }

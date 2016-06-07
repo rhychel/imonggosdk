@@ -285,7 +285,7 @@ public class C_Customers extends ImonggoAppCompatActivity implements SetupAction
                     }
 
                     @Override
-                    public void onErrorDownload(Table table, String message) {
+                    public void onErrorDownload(Table table, String message, int responseCode) {
                         Log.e(TAG, ">>onErrorDownload");
                     }
 

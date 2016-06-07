@@ -138,98 +138,77 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
 
-        try {
-            //  Log.e(TAG, "getListOfBranchIds size: " +  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query().size());
-            List<BranchUserAssoc> list = getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getUser()).query();
-            List<BranchUserAssoc> warehouses = new ArrayList<>();
+    }
 
-            if (list != null) {
-                for (BranchUserAssoc br : list) {
-                    Log.e(TAG, "branch: " + br.getBranch().getSite_type());
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == UNLINK) {
+            if(!AccountTools.isUserActive(this))
+                DialogTools.showDialog(this, "Ooopps!", "Your account has been disabled. You will be unlinked.", "Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            AccountTools.unlinkAccount(C_Dashboard.this, getHelper(), new AccountListener() {
+                                @Override
+                                public void onLogoutAccount() {
+                                }
 
-                    if(br.getBranch().getSite_type() == null) {
-                        Log.e(TAG, "branch is null");
-                    } else {
-                        if (br.getBranch().getSite_type().equals("warehouse")) {
-                            warehouses.add(br);
-                            Log.e(TAG, "its a warehouse!");
-                        } else {
-                            Log.e(TAG, "no it's not.");
+                                @Override
+                                public void onUnlinkAccount() {
+                                    EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+                                    StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+                                    SwableTools.stopSwable(C_Dashboard.this);
+
+                                    finish();
+                                    Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+                                    startActivity(intent);
+                                }
+                            });
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
                     }
-                }
-            }
-
-        } catch (SQLException e) {
-
+                }, R.style.AppCompatDialogStyle_Light);
         }
-        /*try {
-            QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
-
-            Where<Document, Integer> whereDoc = queryBuilder.where();
-            whereDoc.eq("target_branch_id", 32).and();
-            whereDoc.eq("reference", "9000-4");
-
-            queryBuilder.setWhere(whereDoc);
-
-            Document document = queryBuilder.queryForFirst();
-
-            Log.e("Document", document != null? document.getReference() : "null object");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
-
-        try {
-            queryAllDocuments();
-            viaTargetBranchId();
-            viaBranchId();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        else if(resultCode == UNLINKED) {
+            finish();
+            Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+            startActivity(intent);
         }
-    }
-
-    private void queryAllDocuments() {
-        boolean hasOne = false;
-        for(Document document : Document.fetchAll(getHelper(), Document.class)) {
-            hasOne = true;
-            Log.e("Document", document.getReference()+" | docLines = "+document.getDocument_lines().size()
-                    + " | target_branch_id = "+document.getTarget_branch_id()+ " | branch_id = "+document.getBranch_id());
-        }
-        if(!hasOne)
-            Log.e("Document", "no documents are saved!");
-    }
-
-    private void viaTargetBranchId() throws SQLException {
-        QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
-
-        Where<Document, Integer> whereDoc = queryBuilder.where();
-        whereDoc.eq("target_branch_id", 32).and();
-        whereDoc.eq("reference", "9000-4");
-
-        Document document = queryBuilder.queryForFirst();
-        if(document == null)
-            Log.e("Document via TBI", "Failed!");
-        else
-            Log.e("Document via TBI", document.getReference());
-    }
-
-    private void viaBranchId() throws SQLException {
-        QueryBuilder<Document, Integer> queryBuilder = getHelper().fetchObjectsInt(Document.class).queryBuilder();
-
-        Where<Document, Integer> whereDoc = queryBuilder.where();
-        whereDoc.eq("branch_id", 30).and();
-        whereDoc.eq("reference", "9000-4");
-
-        Document document = queryBuilder.queryForFirst();
-        if(document == null)
-            Log.e("Document via BI", "Failed!");
-        else
-            Log.e("Document via BI", document.getReference());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e("UserActive", "?"+AccountTools.isUserActive(this));
+        if(!AccountTools.isUserActive(this))
+            DialogTools.showDialog(this, "Ooopps!", "Your account has been disabled. You will be unlinked.", "Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        AccountTools.unlinkAccount(C_Dashboard.this, getHelper(), new AccountListener() {
+                            @Override
+                            public void onLogoutAccount() {
+                            }
+
+                            @Override
+                            public void onUnlinkAccount() {
+                                EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+                                StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+                                SwableTools.stopSwable(C_Dashboard.this);
+                                SettingTools.updateSettings(C_Dashboard.this, SettingsName.DEFAULT_BRANCH, "");
+
+                                finish();
+                                Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+                                startActivity(intent);
+                            }
+                        });
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, R.style.AppCompatDialogStyle_Light);
         if (!SwableTools.isImonggoSwableRunning(this))
             SwableTools.startSwable(this);
         Log.e("SWABLE", "START");
@@ -288,7 +267,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                             }
 
                             @Override
-                            public void onErrorDownload(Table table, String message) {
+                            public void onErrorDownload(Table table, String message, int responseCode) {
                                 Log.e("apiDownloader", "error" + table.getStringName());
                                 progressListDialog.errorDownload();
                             }

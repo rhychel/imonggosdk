@@ -61,7 +61,7 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
                 if(bundle != null)
                     intent.putExtras(bundle);
                 intent.putExtra(ModuleActivity.CONCESSIO_MODULE, dashboardTile.getConcessioModule().ordinal());
-                startActivity(intent);
+                startActivityForResult(intent, DASHBOARD);
             }
         }
     }

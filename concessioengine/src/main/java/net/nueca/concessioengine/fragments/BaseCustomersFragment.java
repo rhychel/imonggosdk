@@ -29,7 +29,7 @@ import java.util.List;
  * Created by gama on 8/11/15.
  */
 public abstract class BaseCustomersFragment extends ImonggoFragment {
-    protected static final long LIMIT = 100l;
+    protected static final long LIMIT = 500l;
     protected long offset = 0l;
     protected int headerCount = 0;
     protected int prevLast = -1;
@@ -236,21 +236,21 @@ public abstract class BaseCustomersFragment extends ImonggoFragment {
                 totalItemCount = listScrollListener.getTotalItemCount();
                 firstVisibleItem = listScrollListener.getFirstVisibleItem();
             }
-            Log.e("RoutePlan", "*totalItemCount="+totalItemCount);
-            Log.e("RoutePlan", "*firstVisibleItem="+firstVisibleItem);
-            Log.e("RoutePlan", "*headerCount="+headerCount);
-            Log.e("RoutePlan", "*visibleItemCount="+visibleItemCount);
+            Log.e("RoutePlan", "*totalItemCount ="+totalItemCount);
+            Log.e("RoutePlan", "*firstVisibleItem ="+firstVisibleItem);
+            Log.e("RoutePlan", "*headerCount ="+headerCount);
+            Log.e("RoutePlan", "*visibleItemCount ="+visibleItemCount);
             int lastItem = firstVisibleItem + visibleItemCount;
             Log.e("RoutePlan", "*lastItem="+lastItem);
 
-            if(lastItem == totalItemCount) { // Customer Items --
+            if(lastItem >= offset+LIMIT) { // Customer Items --
                 if(prevLast != lastItem) {
                     offset += LIMIT;
                     if(listingType == ListingType.LETTER_HEADER) {
-                        Customer lastCustomer = simpleCustomerRecyclerViewAdapter.getItem(lastItem - 1);
+                        Customer lastCustomer = simpleCustomerRecyclerViewAdapter.getItem(totalItemCount - 1); // ?
                         List<Customer> customersToBeAdded = getCustomers();
 
-                        whenListEndReached(processCustomersForLetterHeader(customersToBeAdded, lastCustomer, lastItem));
+                        whenListEndReached(processCustomersForLetterHeader(customersToBeAdded, lastCustomer, totalItemCount)); // ?
                     }
                     else
                         whenListEndReached(getCustomers());
