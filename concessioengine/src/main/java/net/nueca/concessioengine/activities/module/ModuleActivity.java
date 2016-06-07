@@ -424,13 +424,15 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      */
     @Deprecated
     public int updateInventoryFromSelectedItemList(boolean shouldAdd) {
+        Log.e("updateInventory", "updateInventoryFromSelectedItemList[shouldAdd]="+shouldAdd);
+
         int updated = 0;
         BatchList<Inventory> newInventories = new BatchList<>(DatabaseOperation.INSERT, getHelper());
         BatchList<Inventory> updateInventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
-        TimerTools.duration("updateInventoryFromSelectedItemList, first loop", true);
+//        TimerTools.duration("updateInventoryFromSelectedItemList, first loop", true);
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             if(selectedProductItem.getInventory() != null) {
-                Log.e("updateInventory", "inventory is null");
+                Log.e("updateInventory", "inventory is not null");
                 Inventory updateInventory = selectedProductItem.getInventory();
                 updateInventory.setProduct(selectedProductItem.getProduct());
                 updateInventory.setQuantity(Double.valueOf(selectedProductItem.updatedInventory(shouldAdd)));
@@ -439,7 +441,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 updated++;
             }
             else {
-                Log.e("updateInventory", "inventory is not null");
+                Log.e("updateInventory", "inventory is null");
                 Inventory newInventory = new Inventory();
                 Log.e("Product.Extras["+selectedProductItem.getProduct().getName()+"]", "updateInventory="+selectedProductItem.getProduct().getExtras().getDefault_selling_unit());
                 newInventory.setProduct(selectedProductItem.getProduct());
@@ -448,7 +450,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
                 updated++;
             }
         }
-        TimerTools.duration("updateInventoryFromSelectedItemList, first loop, end", true);
+//        TimerTools.duration("updateInventoryFromSelectedItemList, first loop, end", true);
         newInventories.doOperation(Inventory.class);
         updateInventories.doOperation(Inventory.class);
         return updated;
