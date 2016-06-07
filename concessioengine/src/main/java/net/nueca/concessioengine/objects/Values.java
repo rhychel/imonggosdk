@@ -152,6 +152,13 @@ public class Values {
 
         Log.e("QTY", this.quantity + " ~ " + quantity);
 
+        if(Double.valueOf(this.quantity) < 0) {
+            this.discount_text = "";
+            this.customer_discount_text = "";
+            this.product_discount_text = "";
+            this.company_discount_text = "";
+        }
+
         Log.e("DISCOUNT TEXT", (this.discount_text == null? "null" : this.discount_text) );
         if(this.discount_text != null && this.discount_text.length() > 0) {
             if (this.discount_text.contains(";")) {
