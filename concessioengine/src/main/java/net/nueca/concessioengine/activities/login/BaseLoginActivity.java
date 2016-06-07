@@ -79,6 +79,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private LoginState mLoginState = LoginState.LOGIN_DEFAULT;
 
     protected Boolean useDynamicUrls = true;
+    protected Boolean useCustomServer = false;
     /**
      * For Sync Service only
      * Defines callbacks for service binding, passed to bindService()
@@ -476,7 +477,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             label = servers.getString(accountId);
                         Log.e("Servers", label);
 
-                        setServer(Server.getServer(label));
+                        if(!useCustomServer)
+                            setServer(Server.getServer(label));
                         //setServer(Server.PETRONDIS_NET);
                     } catch (JSONException e) {
                         e.printStackTrace();
