@@ -46,6 +46,7 @@ import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
+import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
@@ -2605,6 +2606,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                         customer_extras = new Extras();
                                         customer_extras.setId(Customer.class.getName().toUpperCase(), customer.getId());
+
+                                        //// EXTRAS NOT EXISTING
                                         if (!isExisting(customer_extras, Table.EXTRAS)) {
                                             user_id = 0;
                                             customer_category_id = 0;
@@ -2638,8 +2641,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 } else {
                                                     Log.e(TAG, "User not found");
                                                 }
+
                                             }
+
                                             CustomerCategory customerCategory;
+
                                             if (customer_category_id != 0) {
                                                 customerCategory = getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customer_category_id).queryForFirst();
 
@@ -2649,7 +2655,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     Log.e(TAG, "Customer Category not found");
                                                 }
                                             }
-                                        } else {
+                                        } else { ///// EXTRAS IS EXISTING
                                             Log.e(customer.getName() + " EXTRAS", "is on the database!");
                                             customer_extras = getHelper().fetchObjects(Extras.class).queryBuilder()
                                                     .where().eq("id", customer_extras.getId()).queryForFirst();
@@ -3023,6 +3029,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Invoice invoice = gson.fromJson(jsonObject.toString(), Invoice.class);
 
                                     for (InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
+
                                         if (invoiceLine.getExtras() == null)
                                             invoiceLine.setNo_discount_subtotal(invoiceLine.getSubtotal());
                                         else {
@@ -3056,9 +3063,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             OfflineData offlineData = getHelper().fetchObjects(OfflineData.class).queryBuilder().where().eq("reference_no", invoice.getReference()).queryForFirst();
                                             offlineData.setReturnId(jsonObject.getString("id"));
                                             Invoice existing_invoice = offlineData.getObjectFromData(Invoice.class);
+
+                                            BatchList<InvoicePayment> deleteInvoicePayment = new BatchList<>(DatabaseOperation.DELETE, getHelper());
+                                            deleteInvoicePayment.addAll(existing_invoice.getPayments());
+                                            deleteInvoicePayment.doOperation(InvoicePayment.class);
+
                                             existing_invoice.setPayments(invoice.getPayments());
                                             existing_invoice.markSentPayment(jsonObject.getInt("id"));
-
                                             existing_invoice.updateTo(getHelper());
                                             offlineData.updateTo(getHelper());
                                         } else {
@@ -3092,7 +3103,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
 
                                     } else {
-
                                         if (initialSync || lastUpdatedAt == null) {
                                             newInvoice.add(invoice);
                                         } else {

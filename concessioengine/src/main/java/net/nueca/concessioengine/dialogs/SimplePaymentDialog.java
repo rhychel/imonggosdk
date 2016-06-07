@@ -128,6 +128,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
         btnCheckDate.setText(DateTimeTools.getCurrentDateTimeWithFormat("yyyy-MM-dd"));
 
         if(invoicePayment != null) {
+            balance += invoicePayment.getTender();
             etPayment.setText(String.valueOf(invoicePayment.getTender()));
             int selectedPosition = paymentTypes.indexOf(new PaymentType(invoicePayment.getPayment_type_id()));
             spnPaymentType.setSelection(selectedPosition);
@@ -235,6 +236,7 @@ public class SimplePaymentDialog extends BaseAppCompatDialog {
                     BigDecimal currentBalance = new BigDecimal(balance);
                     currentBalance = currentBalance.setScale(ProductsAdapterHelper.getDecimalPlace(), BigDecimal.ROUND_HALF_UP);
                     BigDecimal payment = new BigDecimal(etPayment.getText().toString());
+                    Log.e("B-resultCompare", currentBalance.compareTo(payment)+"--");
                     if(!paymentType.getName().toLowerCase().equals("cash") && currentBalance.compareTo(payment) == -1) {
                         Toast.makeText(getContext(), "You cannot pay more than your balance using this payment type.", Toast.LENGTH_LONG).show();
                         return;
