@@ -74,12 +74,12 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
 
         if (isUnlinked() && !isLoggedIn()) {
             Log.e(TAG, "App is Unlinked.. ");
-        }
 
-        try {
-            getHelper().deleteAllDatabaseValues();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            try {
+                getHelper().deleteAllDatabaseValues();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -211,6 +211,11 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
     @Override
     protected void beforeLogin() {
 
+        try {
+            getHelper().deleteAllDatabaseValues();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

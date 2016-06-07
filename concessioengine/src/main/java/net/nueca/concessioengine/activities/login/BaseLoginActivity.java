@@ -464,6 +464,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                resetData();
+
                 String accountId = etAccountID.getText().toString().trim();
                 if (useDynamicUrls)
                     try {
@@ -484,6 +487,21 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 initLogin();
             }
         });
+    }
+
+    public void resetData() {
+
+        try {
+
+            SettingTools.updateSettings(BaseLoginActivity.this, SettingsName.BRANCH_NAME, "");
+            SettingTools.updateSettings(BaseLoginActivity.this, SettingsName.DEFAULT_BRANCH, "");
+            SettingTools.updateSettings(BaseLoginActivity.this, SettingsName.CURRENT_BRANCH, "");
+            SettingTools.updateSettings(BaseLoginActivity.this, SettingsName.SYNC_FINISHED, false);
+
+            getHelper().deleteAllDatabaseValues();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -1158,7 +1176,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     public void setAutoUpdateApp(Boolean choice) {
-        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, choice, "");
+        SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, choice);
     }
 
     public void setUseDynamicUrls(Boolean useDynamicUrls) {

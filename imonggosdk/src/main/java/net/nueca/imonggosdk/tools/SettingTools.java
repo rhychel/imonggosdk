@@ -49,7 +49,7 @@ public class SettingTools {
      * @param bool         for boolean input
      * @param value        for string input
      */
-    public static void updateSettings(Context context, SettingsName settingsName, boolean bool, String value) {
+    private static void updateSettings(Context context, SettingsName settingsName, boolean bool, String value) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
@@ -90,7 +90,7 @@ public class SettingTools {
      * Returns SyncFinished Setting
      *
      * @param context current mContext
-     * @return true if syncing modules is finished, false otherwise
+     * @return true if syncing modx6ules is finished, false otherwise
      */
     public static boolean isSyncFinished(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
