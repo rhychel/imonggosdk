@@ -465,13 +465,15 @@ public class SwableTools {
 
                                 if(rewardsPaymentType != null && salesPromotion != null && salesPromotion.getSettings() != null) {
                                     double pointsInAmount = PointsTools.getTotalPointsInAmount(invoice,rewardsPaymentType);
-                                    Customer customer = invoice.getCustomer();
-                                    pointsInAmount += PointsTools.pointsToAmount(salesPromotion.getSettings(), NumberTools.toDouble(customer
-                                            .getAvailable_points()));
+                                    Customer customer = Customer.fetchById(helper, Customer.class, invoice.getCustomer().getId()); // helper.
+                                    if(customer != null) {
+                                        pointsInAmount += PointsTools.pointsToAmount(salesPromotion.getSettings(), NumberTools.toDouble(customer
+                                                .getAvailable_points()));
 
-                                    customer.setAvailable_points(String.valueOf(PointsTools.amountToPoints(salesPromotion.getSettings(),
-                                            pointsInAmount)));
-                                    customer.updateTo(helper);
+                                        customer.setAvailable_points(String.valueOf(PointsTools.amountToPoints(salesPromotion.getSettings(),
+                                                pointsInAmount)));
+                                        customer.updateTo(helper);
+                                    }
                                 }
                             } catch (SQLException e) {
                                 e.printStackTrace();

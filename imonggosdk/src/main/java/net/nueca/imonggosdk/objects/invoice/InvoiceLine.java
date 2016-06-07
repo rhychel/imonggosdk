@@ -22,7 +22,7 @@ import java.sql.SQLException;
  * Created by gama on 7/1/15.
  */
 public class InvoiceLine extends BaseTransactionLine implements Extras.DoOperationsForExtras {
-    @Expose
+//    @Expose
     @DatabaseField
     protected String discount_text;
     @Expose

@@ -79,6 +79,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private LoginState mLoginState = LoginState.LOGIN_DEFAULT;
 
     protected Boolean useDynamicUrls = true;
+    protected Boolean useCustomServer = false;
     /**
      * For Sync Service only
      * Defines callbacks for service binding, passed to bindService()
@@ -479,7 +480,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                             label = servers.getString(accountId);
                         Log.e("Servers", label);
 
-                        setServer(Server.getServer(label));
+                        if(!useCustomServer)
+                            setServer(Server.getServer(label));
                         //setServer(Server.PETRONDIS_NET);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1141,12 +1143,18 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         mLoginState = LoginState.LOGIN_FAILED;
 
         getCustomDialogFrameLayout().getCustomModuleAdapter().showRetryButton(mTablesToDownload.indexOf(table));
+        stopLogin();
 
         if (responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS)
             forceUnlinkUser();
+        else if(responseCode == ImonggoSwable.INTERNAL_SERVER_ERROR)
+            LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed. 500, something's wrong with the server.");
+        else if(responseCode == 0) {
+            LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed. Server is down.");
+            showNextActivityAfterLogin();
+        }
         else
             LoggingTools.showToastLong(BaseLoginActivity.this, "Download failed, Tap " + table.getStringName() + " module to retry");
-        stopLogin();
     }
 
     @Override

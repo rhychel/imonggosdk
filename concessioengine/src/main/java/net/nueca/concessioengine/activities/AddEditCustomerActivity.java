@@ -184,13 +184,29 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(updateCustomer != null) {
+            try {
+                OfflineData offlineData = getHelper().fetchForeignCollection(updateCustomer.getOfflineData().closeableIterator()).get(0);
+                offlineData.setBeingModified(false);
+                offlineData.updateTo(getHelper());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mSaveCustomer) {
             final Customer customer = customerFieldsAdapter.generateCustomer();
             Gson gson = new Gson();
             Log.e("Customer", gson.toJson(customer));
             FieldValidatorMessage fieldValidatorMessage = customer.doesRequiredSatisfied(Customer.CustomerFields.FIRST_NAME, Customer.CustomerFields.LAST_NAME,
-                    Customer.CustomerFields.MOBILE, Customer.CustomerFields.TELEPHONE, Customer.CustomerFields.EXTRAS_CATEGORY_ID, Customer.CustomerFields.PAYMENT_TERMS_ID);
+                    Customer.CustomerFields.MOBILE, Customer.CustomerFields.TELEPHONE,
+                    Customer.CustomerFields.COMPANY_NAME, Customer.CustomerFields.EXTRAS_CATEGORY_ID,
+                    Customer.CustomerFields.PAYMENT_TERMS_ID);
 
             if(fieldValidatorMessage.isPassed()) {
                 DialogTools.showConfirmationDialog(this, "Save Customer",
@@ -584,9 +600,6 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                 this.position = position;
             }
         }
-
-
-
     }
 
 }

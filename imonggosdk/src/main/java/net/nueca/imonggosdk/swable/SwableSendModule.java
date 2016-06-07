@@ -95,6 +95,12 @@ public class SwableSendModule extends BaseSwableModule {
                 Invoice invoice = offlineData.getObjectFromData(Invoice.class);
                 Log.e("Customer", invoice.getCustomer() == null? "null" : invoice.getCustomer().getId() + " "
                         + invoice.getCustomer().getReturnId());
+
+                if(invoice.getCustomer() != null && invoice.getCustomer().getReturnId() == -1) {
+                    queueTracker.remove(offlineData.getId());
+                    return;
+                }
+
                 invoice.setPayments(invoice.getUnmarkedPayments());
                 if(invoice.getPayments().size() == 0) { // no more unmarked payments
                     sendPointsDeduction(offlineData);
