@@ -2601,14 +2601,17 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     // EXTRAS
                                     if (jsonObject.has(name_extras)) {
+
                                         JSONObject json_extras = jsonObject.getJSONObject(name_extras);
 
                                         customer_extras = new Extras();
                                         customer_extras.setId(Customer.class.getName().toUpperCase(), customer.getId());
+
                                         if (!isExisting(customer_extras, Table.EXTRAS)) {
                                             user_id = 0;
                                             customer_category_id = 0;
 
+                                            // salesman_id
                                             if (json_extras.has(name_salesman_id)) {
                                                 if (!json_extras.getString(name_salesman_id).isEmpty()) {
                                                     salesman_id = json_extras.getString(name_salesman_id);
@@ -2620,8 +2623,10 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 Log.e(TAG, mCurrentTableSyncing + " API don't have '" + name_salesman_id + "' field.");
                                             }
 
+                                            // customer category id
                                             if (json_extras.has(name_customer_category)) {
                                                 if (!json_extras.getString(name_customer_category).isEmpty()) {
+                                                    Log.e(TAG, "customer_category: " + json_extras.getInt(name_customer_category));
                                                     customer_category_id = json_extras.getInt(name_customer_category);
                                                 } else {
                                                     Log.e(TAG, mCurrentTableSyncing + " API '" + name_customer_category + "' field don't have value.");
@@ -2630,6 +2635,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 Log.e(TAG, mCurrentTableSyncing + " API don't have '" + name_customer_category + "' field.");
                                             }
 
+                                            // User
                                             User user;
                                             if (user_id != 0) {
                                                 user = getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user_id).queryForFirst();
@@ -2639,6 +2645,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     Log.e(TAG, "User not found");
                                                 }
                                             }
+
+                                            // Customer Category
                                             CustomerCategory customerCategory;
                                             if (customer_category_id != 0) {
                                                 customerCategory = getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customer_category_id).queryForFirst();
@@ -2649,6 +2657,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     Log.e(TAG, "Customer Category not found");
                                                 }
                                             }
+
                                         } else {
                                             Log.e(customer.getName() + " EXTRAS", "is on the database!");
                                             customer_extras = getHelper().fetchObjects(Extras.class).queryBuilder()
