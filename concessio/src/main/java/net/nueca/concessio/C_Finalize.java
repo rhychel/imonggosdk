@@ -161,7 +161,8 @@ public class C_Finalize extends ModuleActivity {
                     initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
                 }
                 else {
-                    if(getSession().getServer() == Server.REBISCO_DEV ||
+                    if((getSession().getServer() == Server.REBISCO_DEV || getSession().getServer() == Server.REBISCO_LIVE
+                            || getSession().getServer() == Server.REBISCO_LIVE_NET) ||
                             (offlineData.getOfflineDataTransactionType().isVoiding() && offlineData.isCancelled()))
                         initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
                     else {

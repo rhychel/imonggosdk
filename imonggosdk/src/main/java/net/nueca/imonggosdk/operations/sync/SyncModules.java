@@ -3964,12 +3964,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-/*
+
                                 if (page == 1) {
                                     Log.e(TAG, "page: " + page + ". deleting ROUTEPLANS: " + getHelper().deleteAll(RoutePlan.class));
                                 } else {
                                     Log.e(TAG, "page: " + page + ". skipping deleting of routeplans");
-                                }*/
+                                }
 
                                 BatchList<RoutePlan> newRoutePlans = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                                 BatchList<RoutePlan> updateRoutePlans = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
@@ -3979,16 +3979,22 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     RoutePlan routePlan = gson.fromJson(jsonObject.toString(), RoutePlan.class);
                                     routePlan.setUser(getUser());
 
-                                    if (initialSync || lastUpdatedAt == null) {
+                                    Log.e(TAG, "route_plan: " + jsonObject.toString());
+                                    Log.e(TAG, "initialSync: " + initialSync + " lastUpdatedAt: " + lastUpdatedAt);
+
+                                    if (initialSync && lastUpdatedAt == null) {
+                                        Log.e(TAG, "initialSync ");
                                         if (routePlan.getStatus() == null) {
-                                            //  Log.e(TAG, "route plan status is not null adding");
+                                            Log.e(TAG, "route plan status is not null adding");
                                             newRoutePlans.add(routePlan);
                                         } else {
-                                            Log.e(TAG, "route plan status is null skipping ");
+                                            Log.e(TAG, "route plan status is not null skipping ");
                                         }
                                     } else {
+                                        Log.e(TAG, "updating...: ");
+
                                         if (isExisting(routePlan, Table.ROUTE_PLANS)) {
-                                            //Log.e(TAG, "route plan is exisiting adding to update");
+                                            Log.e(TAG, "route plan is exisiting adding to update");
                                             updateRoutePlans.add(routePlan);
                                         } else {
                                             Log.e(TAG, "route plan is  noexisiting adding to insert");

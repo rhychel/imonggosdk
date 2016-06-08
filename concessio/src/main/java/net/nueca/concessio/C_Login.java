@@ -68,7 +68,8 @@ public class C_Login extends LoginActivity {
     protected void updateAppData(SyncModules syncmodules) {
         super.updateAppData(syncmodules);
         try {
-           if(getSession().getServer() == Server.REBISCO_DEV) {
+           if(getSession().getServer() == Server.REBISCO_DEV || getSession().getServer() == Server.REBISCO_LIVE
+                   || getSession().getServer() == Server.REBISCO_LIVE_NET) {
                 int[] modulesToDownload = {Table.SETTINGS.ordinal()};
                 setModulesToSync(modulesToDownload);
                 syncmodules.initializeTablesToSync(modulesToDownload);
