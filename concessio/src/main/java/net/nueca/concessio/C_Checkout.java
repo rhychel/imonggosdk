@@ -105,6 +105,15 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private TransactionDialog.TransactionDialogListener transactionDialogListener = new TransactionDialog.TransactionDialogListener() {
         @Override
         public void whenDismissed() {
+            // Print
+            if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
+                if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
+                    printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+                    printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+            }
+            // Print
+
 //            updateInventoryFromInvoice();
             Intent intent = new Intent();
             intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
@@ -170,7 +179,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     transactionDialog.setCanceledOnTouchOutside(false);
                     transactionDialog.setCancelable(false);
 
-                    Invoice invoice = generateInvoice();
+                    final Invoice invoice = generateInvoice();
                     updateInventoryFromInvoice(); // UPDATE BEFORE PRINT! SHITTER SHIT!
 
                     transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
@@ -186,8 +195,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    // Transaction Date
-                    transactionDialog.show();
 
                     customer = ProductsAdapterHelper.getSelectedCustomer();
 
@@ -227,15 +234,23 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
 
                     ProductsAdapterHelper.setSelectedCustomer(customer);
 
-//                    printSimulator(invoice);
-                    // Print
-                    if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
-                        if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                            printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                        if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                            printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                    }
-                    // Print
+                    // --------------------------SHOULD FIX INVENTORY ISSUE?
+//                    // Transaction Date
+//                    transactionDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+//                        @Override
+//                        public void onShow(DialogInterface dialog) {
+//                            Log.e("Print", "should print!");
+//                            // Print
+//                            if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
+//                                if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
+//                                    printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+//                                if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+//                                    printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+//                            }
+//                            // Print
+//                        }
+//                    });
+                    transactionDialog.show();
 
                     Log.e("INVOICE ~ Full", invoice.toJSONString());
                 }
@@ -263,7 +278,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         transactionDialog.setCanceledOnTouchOutside(false);
                         transactionDialog.setCancelable(false);
 
-                        Invoice invoice = generateInvoice();
+                        final Invoice invoice = generateInvoice();
                         updateInventoryFromInvoice(); // UPDATE BEFORE PRINT! SHITTER SHIT!
 
                         transactionDialog.setInStock("Transaction Ref No. " + invoice.getReference());
@@ -279,8 +294,9 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
-                        // Transaction Date
-                        transactionDialog.show();
+
+//                        // Transaction Date
+//                        transactionDialog.show();
 
                         customer = ProductsAdapterHelper.getSelectedCustomer();
                         invoice.setStatus("L");
@@ -318,15 +334,16 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         customer.updateTo(getHelper());
 
                         ProductsAdapterHelper.setSelectedCustomer(customer);
-                        if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
-                            if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
-                            if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
-                        }
+//                        if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
+//                            if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
+//                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
+//                            if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
+//                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
+//                        }
 
                         Gson gson = new Gson();
                         Log.e("INVOICE ~ Partial", gson.toJson(invoice));
+                        transactionDialog.show();
                     }
                 }, "No", new DialogInterface.OnClickListener() {
                     @Override
