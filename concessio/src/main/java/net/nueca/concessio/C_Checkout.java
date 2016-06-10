@@ -2,6 +2,7 @@ package net.nueca.concessio;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -105,15 +106,6 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private TransactionDialog.TransactionDialogListener transactionDialogListener = new TransactionDialog.TransactionDialogListener() {
         @Override
         public void whenDismissed() {
-            // Print
-            if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
-                if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-                    printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-                    printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-            }
-            // Print
-
 //            updateInventoryFromInvoice();
             Intent intent = new Intent();
             intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
@@ -170,7 +162,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         return;
                     isButtonTapped = true;
 
-                    TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                    final TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                     transactionDialog.setTitle(ConcessioModule.INVOICE);
                     transactionDialog.setAmount("P"+NumberTools.separateInCommas(checkoutFragment.getTotalPaymentMade()));
                     transactionDialog.setAmountLabel("Amount");
@@ -235,22 +227,37 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                     ProductsAdapterHelper.setSelectedCustomer(customer);
 
                     // --------------------------SHOULD FIX INVENTORY ISSUE?
-//                    // Transaction Date
-//                    transactionDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//                        @Override
-//                        public void onShow(DialogInterface dialog) {
-//                            Log.e("Print", "should print!");
-//                            // Print
-//                            if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
-//                                if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-//                                    printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-//                                if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-//                                    printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-//                            }
-//                            // Print
-//                        }
-//                    });
-                    transactionDialog.show();
+                    // Print
+                    if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
+                        if(!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
+                            printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                        if(!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals("")) {
+                            AsyncTask<Void, Void, Void> printingThread = new AsyncTask<Void, Void, Void>() {
+
+                                @Override
+                                protected void onPreExecute() {
+                                    super.onPreExecute();
+                                    net.nueca.imonggosdk.dialogs.DialogTools.showIndeterminateProgressDialog(C_Checkout.this, null, "Printing....", false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                }
+
+                                @Override
+                                protected Void doInBackground(Void... params) {
+                                    printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                    while (isPrintingStarted) { }
+                                    return null;
+                                }
+
+                                @Override
+                                protected void onPostExecute(Void aVoid) {
+                                    super.onPostExecute(aVoid);
+                                    net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
+                                    // Print
+                                    transactionDialog.show();
+                                }
+                            };
+                            printingThread.execute();
+                        }
+                    }
 
                     Log.e("INVOICE ~ Full", invoice.toJSONString());
                 }
@@ -268,7 +275,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             return;
                         isButtonTapped = true;
 
-                        TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                        final TransactionDialog transactionDialog = new TransactionDialog(C_Checkout.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                         transactionDialog.setTitle(ConcessioModule.INVOICE_PARTIAL);
                         transactionDialog.setStatusResource(R.drawable.ic_alert_red);
                         transactionDialog.setAmount("P" + NumberTools.separateInCommas(checkoutFragment.getRemainingBalance()));
@@ -334,16 +341,40 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         customer.updateTo(getHelper());
 
                         ProductsAdapterHelper.setSelectedCustomer(customer);
-//                        if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
-//                            if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
-//                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
-//                            if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals(""))
-//                                printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
-//                        }
+
+                        if (getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
+                            if (!EpsonPrinterTools.targetPrinter(C_Checkout.this).equals(""))
+                                printTransaction(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
+                            if (!StarIOPrinterTools.getTargetPrinter(C_Checkout.this).equals("")) {
+                                AsyncTask<Void, Void, Void> printingThread = new AsyncTask<Void, Void, Void>() {
+
+                                    @Override
+                                    protected void onPreExecute() {
+                                        super.onPreExecute();
+                                        net.nueca.imonggosdk.dialogs.DialogTools.showIndeterminateProgressDialog(C_Checkout.this, null, "Printing....", false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                    }
+
+                                    @Override
+                                    protected Void doInBackground(Void... params) {
+                                        printTransactionStar(invoice, "*Salesman Copy*", "*Customer Copy*", "*Customer Copy*", "*Office Copy*");
+                                        while (isPrintingStarted) { }
+                                        return null;
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(Void aVoid) {
+                                        super.onPostExecute(aVoid);
+                                        net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
+                                        transactionDialog.show();
+
+                                    }
+                                };
+                                printingThread.execute();
+                            }
+                        }
 
                         Gson gson = new Gson();
                         Log.e("INVOICE ~ Partial", gson.toJson(invoice));
-                        transactionDialog.show();
                     }
                 }, "No", new DialogInterface.OnClickListener() {
                     @Override
@@ -749,6 +780,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
             return;
         if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
             return;
+        isPrintingStarted = true;
         Branch branch = getBranches().get(0);
 
         ArrayList<byte[]> data = new ArrayList<>();
@@ -827,7 +859,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
                 data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
 
-                if(paymentsComputation.getCustomerDiscount().size() > 0) {
+                if(paymentsComputation.getCustomerDiscount().size() > 0 && invoice.getExtras() != null) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                     for (Double cusDisc : paymentsComputation.getCustomerDiscount())
@@ -1013,6 +1045,8 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 e.printStackTrace();
             }
         }
+
+        isPrintingStarted = false;
 
     }
 
