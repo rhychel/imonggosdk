@@ -107,10 +107,6 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         setContentView(R.layout.c_dashboard);
 
         correctInventory();
-        List<Inventory> currentInventories = Inventory.fetchAll(getHelper(), Inventory.class);
-        for(Inventory inventory : currentInventories) {
-            Log.e("Inventory", inventory.getProduct().getName());
-        }
 
         setNextActivityClass(C_Module.class);
 
