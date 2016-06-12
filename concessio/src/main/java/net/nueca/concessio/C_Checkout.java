@@ -257,7 +257,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             };
                             printingThread.execute();
                         }
+                        else
+                            transactionDialog.show();
                     }
+                    else
+                        transactionDialog.show();
 
                     Log.e("INVOICE ~ Full", invoice.toJSONString());
                 }
@@ -371,7 +375,11 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                                 };
                                 printingThread.execute();
                             }
+                            else
+                                transactionDialog.show();
                         }
+                        else
+                            transactionDialog.show();
 
                         Gson gson = new Gson();
                         Log.e("INVOICE ~ Partial", gson.toJson(invoice));

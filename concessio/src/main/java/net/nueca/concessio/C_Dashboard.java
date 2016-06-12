@@ -301,6 +301,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                                 Log.e("apiDownloader", "done!");
                                 progressListDialog.dismiss();
                                 Toast.makeText(C_Dashboard.this, "Update completed!", Toast.LENGTH_LONG).show();
+                                correctInventory();
                             }
 
                             @Override

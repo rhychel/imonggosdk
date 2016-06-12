@@ -461,6 +461,7 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
             etQuantity.setText(selectedProductItem.getQuantity());
 
         if(hasStock) {
+            Log.e("hasStock", "Default Selling Unit: "+product.getExtras().getDefault_selling_unit());
             Unit unit = Unit.fetchById(getHelper(), Unit.class, product.getExtras().getDefault_selling_unit());
             double invQuantity = Double.valueOf(product.getInStock());;
             String unitName = product.getBase_unit_name();

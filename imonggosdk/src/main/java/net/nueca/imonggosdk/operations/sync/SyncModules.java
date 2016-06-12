@@ -1808,11 +1808,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 PRODUCT = gson.fromJson(jsonObject.toString(), Product.class);
 
                                                 if (PRODUCT != null) {
+                                                    Log.e("SyncMOdules-RHY", "Product is not null");
 
                                                     Extras product_extras;
 
                                                     // Extras
                                                     if (jsonObject.has("extras")) {
+                                                        Log.e("SyncMOdules-RHY", "Extras is not null");
                                                         product_extras = new Extras();
                                                         product_extras.setId(Product.class.getName().toUpperCase(), PRODUCT.getId());
                                                         JSONObject json_extras = jsonObject.getJSONObject("extras");
@@ -1838,10 +1840,36 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                             product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
                                                             product_extras.setDefault_selling_unit(default_selling_unit);
                                                             product_extras.insertTo(getHelper());
+
+                                                            Log.e("SyncMOdules-RHY", "Product.Extras is new");
                                                         } else {
-                                                            //Log.e(PRODUCT.getName() + " EXTRAS", "is on the database!");
+                                                            // -------------------- CHANGED BY RHY
                                                             product_extras = getHelper().fetchObjects(Extras.class).queryBuilder()
                                                                     .where().eq("id", product_extras.getId()).queryForFirst();
+                                                            Log.e("SyncModules-RHY", product_extras.getDefault_selling_unit());
+
+                                                            String default_selling_unit = "";
+                                                            String default_ordering_unit_id = "";
+
+                                                            if (json_extras.has("default_selling_unit")) {
+                                                                default_selling_unit = json_extras.getString("default_selling_unit");
+                                                                //Log.e(TAG, "API: " + mCurrentTableSyncing + " API has extras field 'default_selling_unit' on " + PRODUCT.getName());
+                                                            } else {
+                                                                //Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_selling_unit' on " + PRODUCT.getName());
+                                                            }
+
+                                                            if (json_extras.has("default_ordering_unit_id")) {
+                                                                default_ordering_unit_id = json_extras.getString("default_ordering_unit_id");
+                                                                //Log.e(TAG, "API: " + mCurrentTableSyncing + " API has extras field 'default_ordering_unit_id' on " + PRODUCT.getName());
+                                                            } else {
+                                                                //Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_ordering_unit_id' on " + PRODUCT.getName());
+                                                            }
+
+                                                            product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
+                                                            product_extras.setDefault_selling_unit(default_selling_unit);
+                                                            Log.e("SyncModules-RHY", product_extras.getDefault_selling_unit());
+                                                            //Log.e(PRODUCT.getName() + " EXTRAS", "is on the database!");
+                                                            product_extras.updateTo(getHelper());
                                                         }
 
                                                         PRODUCT.setExtras(product_extras);

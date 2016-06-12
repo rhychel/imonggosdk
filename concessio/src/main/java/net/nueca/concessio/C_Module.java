@@ -668,6 +668,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         btn1.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                try {
+                                    pcountPrint();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
                                 // ---- So let's print...
                                 if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                     DialogTools.showConfirmationDialog(C_Module.this, "Print Inventory", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
@@ -1766,7 +1771,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     };
                                     printingThread.execute();
                                 }
+                                else
+                                    transactionDialog.show();
                             }
+                            else
+                                transactionDialog.show();
 
                         }
                     }, "No", new DialogInterface.OnClickListener() {
@@ -1950,8 +1959,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         };
                                                         printingThread.execute();
                                                     }
+                                                    else
+                                                        transactionDialog.show();
                                                 }
-
+                                                else
+                                                    transactionDialog.show();
 
                                             }
                                         }, "No", R.style.AppCompatDialogStyle_Light, new DialogInterface.OnShowListener() {
@@ -2007,6 +2019,80 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
             }
         }
     };
+
+    private void pcountPrint() throws SQLException {
+        Branch branch = getBranches().get(0);
+        double totalQuantity = 0.0;
+        double totalAmount = 0.0;
+
+        QueryBuilder<Inventory, Integer> currentInventories = getHelper().fetchObjectsInt(Inventory.class).queryBuilder();
+        currentInventories.selectColumns("id");
+        currentInventories.where().gt("quantity", 0.0);
+
+        ProductSorting productSorting = getHelper().fetchForeignCollection(getAppSetting().getProductSortings().closeableIterator(), new ImonggoDBHelper2.Conditional<ProductSorting>() {
+            @Override
+            public boolean validate(ProductSorting obj) {
+                if(obj.is_default())
+                    return true;
+                return false;
+            }
+        }, 0);
+        List<Product> products = getHelper().fetchObjects(Product.class).queryBuilder()
+                .orderBy(productSorting.getColumn(), true)
+                .where()
+                .isNotNull("inventory_id").and()
+                .in("inventory_id", currentInventories)
+                .query();
+
+        for(Product product : products) {
+            Double retail_price = 0.0;
+            final Unit unit = Unit.fetchById(getHelper(), Unit.class, product.getExtras().getDefault_selling_unit());
+            try {
+                final BranchProduct branchProduct = getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+                    @Override
+                    public boolean validate(BranchProduct obj) {
+                        if(unit == null) {
+                            if(obj.getUnit() == null)
+                                return true;
+                        }
+                        else if(obj.getUnit() != null && unit.getId() == obj.getUnit().getId())
+                            return true;
+                        return false;
+                    }
+                }, 0);
+
+                retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, null, null, unit);
+
+                if(retail_price == null)
+                    retail_price = branchProduct.getUnit_retail_price();
+                Log.e("identified retail_price", retail_price.toString());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            Log.e("PRINT", product.getName());
+
+            double invQuantity = Double.valueOf(product.getInStock());;
+            String unitName = product.getBase_unit_name();
+            if(product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && !product.getExtras().getDefault_selling_unit().isEmpty()) {
+                if(unit != null) {
+                    invQuantity = Double.valueOf(product.getInStock(unit.getQuantity(), ProductsAdapterHelper.getDecimalPlace()));
+                    unitName = unit.getName();
+                }
+            }
+
+            totalQuantity += invQuantity; //product.getInventory().getQuantity();
+
+            Log.e("PRINT", ("  " + invQuantity + "   " //product.getInventory().getQuantity()
+                    + unitName + " x " //(unit == null ? product.getBase_unit_name() : unit.getName())
+                    + NumberTools.separateInCommas(retail_price)));
+            Double subtotal = invQuantity * retail_price; //product.getInventory().getQuantity()
+
+            totalAmount += subtotal;
+
+            Log.e("PRINT", (NumberTools.separateInCommas(subtotal)));
+        }
+    }
 
     private void printTransactionStar(final OfflineData offlineData, final String... labels) {
         if(!BluetoothTools.isEnabled())

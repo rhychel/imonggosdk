@@ -128,12 +128,12 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                 if (product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && !product.getExtras().getDefault_selling_unit().isEmpty()) {
                     Unit defaultSellingUnit = Unit.fetchById(getHelper(), Unit.class, Integer.valueOf(product.getExtras().getDefault_selling_unit()));
                     if (defaultSellingUnit != null)
-                        holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(defaultSellingUnit.getQuantity(),
+                        holder.tvInStock.setText(String.format("^In Stock: %1$s %2$s", product.getInStock(defaultSellingUnit.getQuantity(),
                                 ProductsAdapterHelper.getDecimalPlace()), defaultSellingUnit.getName()));
                     else
-                        holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+                        holder.tvInStock.setText(String.format("*In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
                 } else
-                    holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+                    holder.tvInStock.setText(String.format("*In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
             }
             else
                 holder.tvInStock.setVisibility(View.GONE);
