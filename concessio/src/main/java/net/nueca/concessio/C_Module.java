@@ -1,10 +1,13 @@
 package net.nueca.concessio;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -665,6 +668,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         btn1.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                try {
+                                    pcountPrint();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
                                 // ---- So let's print...
                                 if(!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
                                     DialogTools.showConfirmationDialog(C_Module.this, "Print Inventory", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
@@ -682,7 +690,28 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     DialogTools.showConfirmationDialog(C_Module.this, "Print Inventory", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
+                                            AsyncTask<Void, Void, Void> printingThread = new AsyncTask<Void, Void, Void>() {
+
+                                                @Override
+                                                protected void onPreExecute() {
+                                                    super.onPreExecute();
+                                                    net.nueca.imonggosdk.dialogs.DialogTools.showIndeterminateProgressDialog(C_Module.this, null, "Printing....", false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                                }
+
+                                                @Override
+                                                protected Void doInBackground(Void... params) {
+                                                    printTransactionStar(null, "*Salesman Copy*", "*Office Copy*");
+                                                    while (isPrintingStarted) { }
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                protected void onPostExecute(Void aVoid) {
+                                                    super.onPostExecute(aVoid);
+                                                    net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
+                                                }
+                                            };
+                                            printingThread.execute();
                                         }
                                     }, "No", new DialogInterface.OnClickListener() {
                                         @Override
@@ -1263,26 +1292,37 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                     DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
-                                printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                            else
-                                printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                            AsyncTask<Void, Void, Void> printingThread = new AsyncTask<Void, Void, Void>() {
+
+                                @Override
+                                protected void onPreExecute() {
+                                    super.onPreExecute();
+                                    net.nueca.imonggosdk.dialogs.DialogTools.showIndeterminateProgressDialog(C_Module.this, null, "Printing....", false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                }
+
+                                @Override
+                                protected Void doInBackground(Void... params) {
+                                    if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                        printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                    else
+                                        printTransactionStar(simpleTransactionDetailsFragment.getOfflineData(), "*Salesman Copy*", "*Office Copy*");
+                                    return null;
+                                }
+
+                                @Override
+                                protected void onPostExecute(Void aVoid) {
+                                    super.onPostExecute(aVoid);
+                                    net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
+                                }
+                            };
+                            printingThread.execute();
                         }
                     }, "No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
                         }
                     }, R.style.AppCompatDialogStyle_Light);
 
-//                AsyncTask<Void, Void, Void> startPrint = new AsyncTask<Void, Void, Void>() {
-//                    @Override
-//                    protected Void doInBackground(Void... params) {
-//
-//                        return null;
-//                    }
-//                };
-//                startPrint.execute();
 
             }
         }
@@ -1624,6 +1664,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     e.printStackTrace();
                                 }
 
+                                Log.e("updateInventory", getAppSetting().isCan_change_inventory()+"");
                                 if (getAppSetting().isCan_change_inventory())
                                     updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
 
@@ -1635,19 +1676,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                         .category(simpleProductsFragment != null ? simpleProductsFragment.getCategory() : "")
                                         .documentReason(ProductsAdapterHelper.getReason() != null ? ProductsAdapterHelper.getReason().getName() : "")
                                         .queue();
-                                if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
-                                    if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                                        printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                    if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals("")) {
-                                        if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
-                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                                        else
-                                            printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                    }
-                                }
+
+                                // PREVIOUSLY PRINTING WAS HERE
                             }
 
-                            TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                            final TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                             transactionDialog.setTitle(concessioModule);
                             String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
                             transactionDialog.setInStock(dateTime);
@@ -1706,7 +1739,43 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                     }
                                 }
                             });
-                            transactionDialog.show();
+
+                            if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
+                                if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
+                                    printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals("")) {
+                                    AsyncTask<Void, Void, Void> printingThread = new AsyncTask<Void, Void, Void>() {
+
+                                        @Override
+                                        protected void onPreExecute() {
+                                            super.onPreExecute();
+                                            net.nueca.imonggosdk.dialogs.DialogTools.showIndeterminateProgressDialog(C_Module.this, null, "Printing....", false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                        }
+
+                                        @Override
+                                        protected Void doInBackground(Void... params) {
+                                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                                printTransactionStar(offlineData, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                            else
+                                                printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                            while (isPrintingStarted) { }
+                                            return null;
+                                        }
+
+                                        @Override
+                                        protected void onPostExecute(Void aVoid) {
+                                            super.onPostExecute(aVoid);
+                                            net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
+                                            transactionDialog.show();
+                                        }
+                                    };
+                                    printingThread.execute();
+                                }
+                                else
+                                    transactionDialog.show();
+                            }
+                            else
+                                transactionDialog.show();
 
                         }
                     }, "No", new DialogInterface.OnClickListener() {
@@ -1782,6 +1851,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         e.printStackTrace();
                                                     }
 
+                                                    Log.e("updateInventory", getAppSetting().isCan_change_inventory()+"");
                                                     if (getAppSetting().isCan_change_inventory())
                                                         updateInventoryFromSelectedItemList(concessioModule == ConcessioModule.RECEIVE_SUPPLIER);
 
@@ -1794,20 +1864,11 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                             .documentReason(ProductsAdapterHelper.getReason() != null ? ProductsAdapterHelper.getReason().getName() : "")
                                                             .queue();
 
-                                                    if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
-                                                        if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
-                                                            printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                                        if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals("")) {
-                                                            if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
-                                                                printTransactionStar(offlineData, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
-                                                            else
-                                                                printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
-                                                        }
-                                                    }
+                                                    // --- PREVIOUSLY PRINTING WAS HERE
                                                 }
 
 
-                                                TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                                final TransactionDialog transactionDialog = new TransactionDialog(C_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
                                                 transactionDialog.setTitle(concessioModule);
                                                 String dateTime = DateTimeTools.convertFromTo(offlineData.getDateCreated(), "cccc, MMM. dd, yyyy, h:mma", Calendar.getInstance().getTimeZone());
                                                 transactionDialog.setInStock(dateTime);
@@ -1867,7 +1928,42 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                                                         }
                                                     }
                                                 });
-                                                transactionDialog.show();
+
+                                                if (getAppSetting().isCan_print() && getModuleSetting(concessioModule).isCan_print()) {
+                                                    if (!EpsonPrinterTools.targetPrinter(C_Module.this).equals(""))
+                                                        printTransaction(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                    if (!StarIOPrinterTools.getTargetPrinter(C_Module.this).equals("")) {
+                                                        AsyncTask<Void, Void, Void> printingThread = new AsyncTask<Void, Void, Void>() {
+
+                                                            @Override
+                                                            protected void onPreExecute() {
+                                                                super.onPreExecute();
+                                                                net.nueca.imonggosdk.dialogs.DialogTools.showIndeterminateProgressDialog(C_Module.this, null, "Printing....", false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                                            }
+
+                                                            @Override
+                                                            protected Void doInBackground(Void... params) {                                                                if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT)
+                                                                printTransactionStar(offlineData, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                                            else
+                                                                printTransactionStar(offlineData, "*Salesman Copy*", "*Office Copy*");
+                                                                while (isPrintingStarted) { }
+                                                                return null;
+                                                            }
+
+                                                            @Override
+                                                            protected void onPostExecute(Void aVoid) {
+                                                                super.onPostExecute(aVoid);
+                                                                net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
+                                                                transactionDialog.show();
+                                                            }
+                                                        };
+                                                        printingThread.execute();
+                                                    }
+                                                    else
+                                                        transactionDialog.show();
+                                                }
+                                                else
+                                                    transactionDialog.show();
 
                                             }
                                         }, "No", R.style.AppCompatDialogStyle_Light, new DialogInterface.OnShowListener() {
@@ -1924,12 +2020,88 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         }
     };
 
+    private void pcountPrint() throws SQLException {
+        Branch branch = getBranches().get(0);
+        double totalQuantity = 0.0;
+        double totalAmount = 0.0;
+
+        QueryBuilder<Inventory, Integer> currentInventories = getHelper().fetchObjectsInt(Inventory.class).queryBuilder();
+        currentInventories.selectColumns("id");
+        currentInventories.where().gt("quantity", 0.0);
+
+        ProductSorting productSorting = getHelper().fetchForeignCollection(getAppSetting().getProductSortings().closeableIterator(), new ImonggoDBHelper2.Conditional<ProductSorting>() {
+            @Override
+            public boolean validate(ProductSorting obj) {
+                if(obj.is_default())
+                    return true;
+                return false;
+            }
+        }, 0);
+        List<Product> products = getHelper().fetchObjects(Product.class).queryBuilder()
+                .orderBy(productSorting.getColumn(), true)
+                .where()
+                .isNotNull("inventory_id").and()
+                .in("inventory_id", currentInventories)
+                .query();
+
+        for(Product product : products) {
+            Double retail_price = 0.0;
+            final Unit unit = Unit.fetchById(getHelper(), Unit.class, product.getExtras().getDefault_selling_unit());
+            try {
+                final BranchProduct branchProduct = getHelper().fetchForeignCollection(product.getBranchProducts().closeableIterator(), new ImonggoDBHelper2.Conditional<BranchProduct>() {
+                    @Override
+                    public boolean validate(BranchProduct obj) {
+                        if(unit == null) {
+                            if(obj.getUnit() == null)
+                                return true;
+                        }
+                        else if(obj.getUnit() != null && unit.getId() == obj.getUnit().getId())
+                            return true;
+                        return false;
+                    }
+                }, 0);
+
+                retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, null, null, unit);
+
+                if(retail_price == null)
+                    retail_price = branchProduct.getUnit_retail_price();
+                Log.e("identified retail_price", retail_price.toString());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            Log.e("PRINT", product.getName());
+
+            double invQuantity = Double.valueOf(product.getInStock());;
+            String unitName = product.getBase_unit_name();
+            if(product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && !product.getExtras().getDefault_selling_unit().isEmpty()) {
+                if(unit != null) {
+                    invQuantity = Double.valueOf(product.getInStock(unit.getQuantity(), ProductsAdapterHelper.getDecimalPlace()));
+                    unitName = unit.getName();
+                }
+            }
+
+            totalQuantity += invQuantity; //product.getInventory().getQuantity();
+
+            Log.e("PRINT", ("  " + invQuantity + "   " //product.getInventory().getQuantity()
+                    + unitName + " x " //(unit == null ? product.getBase_unit_name() : unit.getName())
+                    + NumberTools.separateInCommas(retail_price)));
+            Double subtotal = invQuantity * retail_price; //product.getInventory().getQuantity()
+
+            totalAmount += subtotal;
+
+            Log.e("PRINT", (NumberTools.separateInCommas(subtotal)));
+        }
+    }
+
     private void printTransactionStar(final OfflineData offlineData, final String... labels) {
         if(!BluetoothTools.isEnabled())
             return;
 
         if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
             return;
+
+        isPrintingStarted = true;
 
         Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
@@ -2185,6 +2357,8 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        isPrintingStarted = false;
     }
 
     private void printTransaction(final OfflineData offlineData, final String... labels) {

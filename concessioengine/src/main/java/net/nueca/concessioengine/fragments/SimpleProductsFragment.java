@@ -43,6 +43,7 @@ import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchProduct;
+import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.Unit;
@@ -262,6 +263,20 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                             if (selectedProductItem == null) {
                                 selectedProductItem = new SelectedProductItem();
                                 selectedProductItem.setProduct(product);
+
+//                                // add the inventory object
+//                                try {
+//                                    Inventory inventory = getHelper().fetchObjects(Inventory.class)
+//                                            .queryBuilder()
+//                                            .where()
+//                                                .eq("product_id", product.getId())
+//                                            .queryForFirst();
+//
+//                                    selectedProductItem.setInventory(inventory); // add the inventory object
+//                                } catch (SQLException e) {
+//                                    e.printStackTrace();
+//                                }
+
                                 selectedProductItem.setInventory(product.getInventory()); // add the inventory object
                             }
                             showQuantityDialog(position, product, selectedProductItem);
@@ -306,6 +321,19 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                             if (selectedProductItem == null) {
                                 selectedProductItem = new SelectedProductItem();
                                 selectedProductItem.setProduct(product);
+
+//                                // add the inventory object
+//                                try {
+//                                    Inventory inventory = getHelper().fetchObjects(Inventory.class)
+//                                            .queryBuilder()
+//                                            .where()
+//                                                .eq("product_id", product.getId())
+//                                            .queryForFirst();
+//
+//                                    selectedProductItem.setInventory(inventory); // add the inventory object
+//                                } catch (SQLException e) {
+//                                    e.printStackTrace();
+//                                }
                                 selectedProductItem.setInventory(product.getInventory()); // add the inventory object
                             }
 

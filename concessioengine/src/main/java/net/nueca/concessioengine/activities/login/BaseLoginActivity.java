@@ -237,6 +237,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         // not logged in and unlinked
         if (!isLoggedIn() && isUnlinked()) {
             onCreateLoginLayout();
+        } else {
+
         }
 
         autoUpdateChecker();

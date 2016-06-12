@@ -2,6 +2,7 @@ package net.nueca.concessio;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -161,7 +162,8 @@ public class C_Finalize extends ModuleActivity {
                     initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
                 }
                 else {
-                    if(getSession().getServer() == Server.REBISCO_DEV ||
+                    if((getSession().getServer() == Server.REBISCO_DEV || getSession().getServer() == Server.REBISCO_LIVE
+                            || getSession().getServer() == Server.REBISCO_LIVE_NET) ||
                             (offlineData.getOfflineDataTransactionType().isVoiding() && offlineData.isCancelled()))
                         initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
                     else {
@@ -440,6 +442,7 @@ public class C_Finalize extends ModuleActivity {
                 addAndReturnDialog.show();
             } break;
             case R.id.mPrint: {
+
                 if(getAppSetting().isCan_print() && getModuleSetting(ConcessioModule.INVOICE).isCan_print()) {
                     if(!EpsonPrinterTools.targetPrinter(this).equals(""))
                         DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
@@ -453,11 +456,32 @@ public class C_Finalize extends ModuleActivity {
 
                             }
                         }, R.style.AppCompatDialogStyle_Light);
-                    if(!StarIOPrinterTools.getTargetPrinter(this).equals(""))
+                    if(!StarIOPrinterTools.getTargetPrinter(this).equals("")) {
                         DialogTools.showConfirmationDialog(this, "Reprint", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                printTransactionStar(offlineData, offlineInvoice, paymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                            public void onClick(DialogInterface dialog, final int which) {
+                                AsyncTask<Void, Void, Void> printingThread = new AsyncTask<Void, Void, Void>() {
+
+                                    @Override
+                                    protected void onPreExecute() {
+                                        super.onPreExecute();
+                                        net.nueca.imonggosdk.dialogs.DialogTools.showIndeterminateProgressDialog(C_Finalize.this, null, "Printing....", false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                                    }
+
+                                    @Override
+                                    protected Void doInBackground(Void... params) {
+                                        printTransactionStar(offlineData, offlineInvoice, paymentsComputation, "*Salesman Copy*", "*Customer Copy*", "*Office Copy*");
+                                        while (isPrintingStarted) { }
+                                        return null;
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(Void aVoid) {
+                                        super.onPostExecute(aVoid);
+                                        net.nueca.imonggosdk.dialogs.DialogTools.hideIndeterminateProgressDialog();
+                                    }
+                                };
+                                printingThread.execute();
                             }
                         }, "No", new DialogInterface.OnClickListener() {
                             @Override
@@ -465,6 +489,7 @@ public class C_Finalize extends ModuleActivity {
 
                             }
                         }, R.style.AppCompatDialogStyle_Light);
+                    }
                 }
             } break;
         }
@@ -633,6 +658,7 @@ public class C_Finalize extends ModuleActivity {
             return;
         if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
             return;
+        isPrintingStarted = true;
         Branch branch = getBranches().get(0);
         ArrayList<byte[]> data = new ArrayList<>();
 
@@ -704,7 +730,7 @@ public class C_Finalize extends ModuleActivity {
                 data.add((EpsonPrinterTools.spacer("Total Quantity: ", NumberTools.separateInCommas(totalQuantity), 32)+"\r\n").getBytes());
                 data.add((EpsonPrinterTools.spacer("Gross Amount: ", NumberTools.separateInCommas(NumberTools.formatDouble(paymentsComputation.getTotalPayableNoReturns(false).doubleValue(), 2)), 32)+"\r\n").getBytes());
 
-                if(paymentsComputation.getCustomerDiscount().size() > 0) {
+                if(paymentsComputation.getCustomerDiscount().size() > 0 && invoice.getExtras() != null) {
                     data.add((EpsonPrinterTools.spacer("LESS Customer Discount: ", invoice.getExtras().getCustomer_discount_text_summary(), 32) + "\r\n").getBytes());
                     data.add(new byte[] { 0x1b, 0x1d, 0x61, 0x02 }); // Right
                     for (Double cusDisc : paymentsComputation.getCustomerDiscount())
@@ -890,6 +916,7 @@ public class C_Finalize extends ModuleActivity {
                 e.printStackTrace();
             }
         }
+        isPrintingStarted = false;
     }
 
     private void printTransaction(final Invoice invoice, final InvoiceTools.PaymentsComputation paymentsComputation, final String... labels) {
