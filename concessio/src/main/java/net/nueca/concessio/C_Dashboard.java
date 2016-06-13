@@ -76,7 +76,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
         List<Product> currentProducts = Product.fetchAll(getHelper(), Product.class);
         for(Product product : currentProducts) {
-            if(!product.getStatus().equals("D")) {
+            if(product.getStatus() == null || !product.getStatus().equals("D")) {
                 try {
                     Inventory inventory = getHelper().fetchObjects(Inventory.class)
                             .queryBuilder()

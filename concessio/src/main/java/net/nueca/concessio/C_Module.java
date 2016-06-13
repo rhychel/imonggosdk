@@ -1005,32 +1005,32 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                         boolean isVoiding = simpleTransactionDetailsFragment.getOfflineData().isVoided();
 //                                simpleTransactionDetailsFragment.getOfflineData().isCancelled()
 //                                || simpleTransactionDetailsFragment.getOfflineData().getOfflineDataTransactionType().isVoiding();
-                        if(isVoiding) {
-                            btn1.setVisibility(View.INVISIBLE);
-                            useBtn2 = false;
-                        }
-                        else
-                            initializeVoidButton(btn1, referenceNumber);
-
-                        if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
-                            if(!simpleTransactionDetailsFragment.getOfflineData().isSynced() &&
-                                    !simpleTransactionDetailsFragment.getOfflineData().isSyncing() &&
-                                    !simpleTransactionDetailsFragment.getOfflineData().getOfflineDataTransactionType().isVoiding()) {
+                        if(getModuleSetting(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule()).is_voidable()) {
+                            if (isVoiding) {
+                                btn1.setVisibility(View.INVISIBLE);
+                                useBtn2 = false;
+                            } else
                                 initializeVoidButton(btn1, referenceNumber);
-                                initializeDuplicateButton(btn2, referenceNumber);
-                            }
-                            else
-                                initializeDuplicateButton(btn1, referenceNumber);
-                        }
-                        else if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
-                                simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) {
-                            Log.e("duplicate", "yeah");
-                            if(isVoiding)
-                                initializeDuplicateButton(btn1, referenceNumber);
-                        }
-                        else if(simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() != ConcessioModule.RECEIVE_BRANCH_PULLOUT)
-                            initializeDuplicateButton(useBtn2 ? btn2 : btn1, referenceNumber);
 
+                            if (simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_ADJUSTMENT) {
+                                if (!simpleTransactionDetailsFragment.getOfflineData().isSynced() &&
+                                        !simpleTransactionDetailsFragment.getOfflineData().isSyncing() &&
+                                        !simpleTransactionDetailsFragment.getOfflineData().getOfflineDataTransactionType().isVoiding()) {
+                                    initializeVoidButton(btn1, referenceNumber);
+                                    initializeDuplicateButton(btn2, referenceNumber);
+                                } else
+                                    initializeDuplicateButton(btn1, referenceNumber);
+                            } else if (simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RECEIVE_SUPPLIER ||
+                                    simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() == ConcessioModule.RELEASE_SUPPLIER) {
+                                Log.e("duplicate", "yeah");
+                                if (isVoiding)
+                                    initializeDuplicateButton(btn1, referenceNumber);
+                            } else if (simpleTransactionDetailsFragment.getOfflineData().getConcessioModule() != ConcessioModule.RECEIVE_BRANCH_PULLOUT)
+                                initializeDuplicateButton(useBtn2 ? btn2 : btn1, referenceNumber);
+                        }
+                        else {
+                            initializeDuplicateButton(btn1, referenceNumber);
+                        }
                         Log.e("useBtn2", useBtn2+"");
                         whenItemsSelectedUpdated();
                         getSupportActionBar().setTitle(referenceNumber);
@@ -1371,7 +1371,12 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 else
                     setResult(SUCCESS);
                 finish();
-            } else {
+            }
+            else if(resultCode == REFRESH) {
+                OfflineData newOfflineData = OfflineData.fetchById(getHelper(), OfflineData.class, data.getIntExtra(FOR_HISTORY_DETAIL, 0));
+                simpleTransactionsFragment.updateOfflineData(newOfflineData);
+            }
+            else {
                 Handler handler = new Handler() {
                     @Override
                     public void handleMessage(Message msg) {

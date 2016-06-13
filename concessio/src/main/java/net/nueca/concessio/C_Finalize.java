@@ -127,8 +127,12 @@ public class C_Finalize extends ModuleActivity {
                                 .object(offlineData)
                                 .queue();
 
-                        revertInventoryFromInvoice();
+                        if (getAppSetting().isCan_change_inventory())
+                            revertInventoryFromInvoice();
 
+                        Intent intent = new Intent();
+                        intent.putExtra(FOR_HISTORY_DETAIL, offlineData.getId());
+                        setResult(REFRESH, intent);
                         onBackPressed();
                     }
 
@@ -167,9 +171,14 @@ public class C_Finalize extends ModuleActivity {
                             (offlineData.getOfflineDataTransactionType().isVoiding() && offlineData.isCancelled()))
                         initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
                     else {
-                        btn2 = (Button) findViewById(R.id.btn2);
-                        initializeVoidButton(btn1, getIntent().getStringExtra(REFERENCE));
-                        initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
+                        Log.e("C_FInalize", "Super else");
+                        if(offlineData.getOfflineDataTransactionType().isVoiding() || offlineData.isCancelled())
+                            initializeDuplicateButton(btn1, getIntent().getStringExtra(REFERENCE));
+                        else {
+                            btn2 = (Button) findViewById(R.id.btn2);
+                            initializeVoidButton(btn1, getIntent().getStringExtra(REFERENCE));
+                            initializeDuplicateButton(btn2, getIntent().getStringExtra(REFERENCE));
+                        }
                     }
                 }
 

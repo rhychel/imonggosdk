@@ -91,8 +91,18 @@ public class ModuleSetting extends DBTable {
     private boolean has_disable_image = false;
     @DatabaseField
     private boolean show_only_sellable_products = false;
+    @DatabaseField
+    private boolean is_voidable = true;
 
     public ModuleSetting() {
+    }
+
+    public boolean is_voidable() {
+        return is_voidable;
+    }
+
+    public void setIs_voidable(boolean is_voidable) {
+        this.is_voidable = is_voidable;
     }
 
     public String getModule_type() {
