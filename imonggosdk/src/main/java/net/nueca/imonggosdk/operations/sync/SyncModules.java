@@ -1967,15 +1967,24 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                                     PRODUCT.setSearchKey(PRODUCT.getName() + PRODUCT.getStock_no());
 
+                                                    // ----------- ADDED BY RHY! Fix for inventory
+                                                    Inventory inventory = getHelper().fetchObjects(Inventory.class)
+                                                            .queryBuilder()
+                                                            .where()
+                                                                .eq("product_id", PRODUCT.getId())
+                                                            .queryForFirst();
+
                                                     if (!isExisting(PRODUCT, Table.PRODUCTS)) {
                                                         if (jsonObject.getString("status").equals("A")) {
                                                             //Log.e(TAG, "setting status to A");
+                                                            PRODUCT.setInventory(inventory);
                                                             PRODUCT.setStatus("A");
                                                             PRODUCT.insertTo(getHelper());
                                                         } else
                                                             Log.e(TAG, "skipping save of product..");
                                                     } else {
                                                         //Log.e(TAG, "setting status to A. return of API is " + jsonObject.getString("status") + " updating products");
+                                                        PRODUCT.setInventory(inventory);
                                                         PRODUCT.setStatus("A");
                                                         PRODUCT.updateTo(getHelper());
                                                     }
