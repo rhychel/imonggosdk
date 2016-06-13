@@ -213,7 +213,7 @@ public class SwableUpdateModule extends BaseSwableModule {
                                         }
                                     }
                                 } else if (responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS) {
-                                    offlineData.setSynced(true);
+                                    offlineData.setSynced(false);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();

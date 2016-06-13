@@ -131,7 +131,8 @@
             android:layout_height="48dp"
             android:weightSum="3"
             android:id="@+id/llExpectedQty"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:clipChildren="false">
 
             <TextView
                 android:layout_width="0dp"
@@ -139,8 +140,9 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Expected Qty"
                 android:id="@+id/tvExpectedQty"
+                android:textSize="13sp"
                 android:layout_weight="1"
-                android:textSize="13sp" />
+                />
 
             <EditText
                 android:layout_width="0dp"
@@ -163,7 +165,8 @@
             android:layout_height="48dp"
             android:id="@+id/llExpectedPrice"
             android:weightSum="3"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:clipChildren="false">
 
             <TextView
                 android:layout_width="0dp"
@@ -171,8 +174,9 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Expected Price"
                 android:id="@+id/tvExpectedPrice"
+                android:textSize="13sp"
                 android:layout_weight="1"
-                android:textSize="13sp" />
+                />
 
             <EditText
                 android:layout_width="0dp"
@@ -194,16 +198,18 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:weightSum="3"
-            android:id="@+id/llQuantity">
+            android:id="@+id/llQuantity"
+            android:clipChildren="false">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Quantity"
+                android:text="Actual Quantity"
                 android:id="@+id/tvQuantity"
+                android:textSize="13sp"
                 android:layout_weight="1"
-                android:textSize="13sp" />
+                />
 
             <EditText
                 android:layout_width="0dp"
@@ -225,7 +231,8 @@
             android:layout_height="48dp"
             android:id="@+id/llActualPrice"
             android:weightSum="3"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:clipChildren="false">
 
             <TextView
                 android:layout_width="0dp"
@@ -233,8 +240,9 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Actual Price"
                 android:id="@+id/tvActualPrice"
+                android:textSize="13sp"
                 android:layout_weight="1"
-                android:textSize="13sp" />
+                />
 
             <EditText
                 android:layout_width="0dp"
@@ -340,7 +348,8 @@
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/spUnits" />
+                    android:id="@+id/spUnits"
+                    android:visibility="visible"/>
 
                 <TextView
                     android:layout_width="match_parent"

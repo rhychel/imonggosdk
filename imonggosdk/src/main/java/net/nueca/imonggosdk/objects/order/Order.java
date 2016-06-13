@@ -20,6 +20,7 @@ import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.base.BaseTransactionTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
+import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -56,11 +57,20 @@ public class Order extends BaseTransactionTable3 {
     @Expose
     private List<OrderLine> order_lines;
 
+    @DatabaseField
+    private String status;
+
+    @DatabaseField
+    private String order_status;
+
     @ForeignCollectionField(orderColumnName = "line_no")
     private transient ForeignCollection<OrderLine> order_lines_fc;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "offlinedata_id")
     protected transient OfflineData offlineData;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
+    protected transient Document document;
 
     public Order() {}
 
@@ -74,6 +84,9 @@ public class Order extends BaseTransactionTable3 {
         order_type_code = builder.order_type_code;
         serving_branch_id = builder.serving_branch_id;
         branch_id = builder.branch_id;
+
+        status = builder.status;
+        order_status = builder.order_status;
     }
 
     public Integer getBranch_id() {
@@ -135,6 +148,30 @@ public class Order extends BaseTransactionTable3 {
         this.offlineData = offlineData;
     }
 
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getOrder_status() {
+        return order_status;
+    }
+
+    public void setOrder_status(String order_status) {
+        this.order_status = order_status;
+    }
+
     public static Order fromJSONString(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         return fromJSONObject(jsonObject);
@@ -187,6 +224,16 @@ public class Order extends BaseTransactionTable3 {
         private int serving_branch_id = 0;
         private Integer branch_id;
         private List<OrderLine> order_lines = new ArrayList<>();
+        private String status, order_status;
+
+        public Builder status(String status) {
+            this.status = status;
+            return this;
+        }
+        public Builder order_status(String order_status) {
+            this.order_status = order_status;
+            return this;
+        }
 
         public Builder target_delivery_date(String date) {
             target_delivery_date = date;
@@ -385,8 +432,15 @@ public class Order extends BaseTransactionTable3 {
         if(order_type_code.toUpperCase().equals(ORDERTYPE_STOCK_REQUEST))
             branchParameter = Parameter.SERVING_BRANCH_ID;
 
+        String parameters;
+        if(order_type_code.toUpperCase().equals(ORDERTYPE_STOCK_REQUEST))
+            parameters = String.format(ImonggoTools.generateParameter(Parameter.ORDER_TYPE_CODE, branchParameter, Parameter
+                    .REFERENCE, Parameter.ACTIVE_ONLY, Parameter.INTRANSIT), order_type_code, branch_id, reference, "1", "1");
+        else
+            parameters = String.format(ImonggoTools.generateParameter(Parameter.ORDER_TYPE_CODE, branchParameter, Parameter
+                    .REFERENCE, Parameter.ACTIVE_ONLY), order_type_code, branch_id, reference, "1");
+
         queue.add(HTTPRequests.sendGETJsonArrayRequest(context, session, volleyRequestListener, session.getServer(), Table.ORDERS,
-                RequestType.API_CONTENT, String.format(ImonggoTools.generateParameter(Parameter.ORDER_TYPE_CODE, branchParameter, Parameter
-                        .REFERENCE, Parameter.ACTIVE_ONLY), order_type_code, branch_id, reference, "1")));
+                RequestType.API_CONTENT, parameters));
     }
 }

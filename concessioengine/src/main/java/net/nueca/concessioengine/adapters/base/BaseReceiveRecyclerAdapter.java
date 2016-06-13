@@ -1,9 +1,8 @@
 package net.nueca.concessioengine.adapters.base;
 
 import android.content.Context;
-import android.util.Log;
 
-import net.nueca.concessioengine.lists.ReceivedProductItemList;
+import net.nueca.concessioengine.lists.SelectedProductItemList2;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
@@ -24,8 +23,8 @@ public abstract class BaseReceiveRecyclerAdapter<T extends BaseRecyclerAdapter.V
     private ImonggoDBHelper2 dbHelper;
     protected boolean isManual = false, isReview = false;//, isMultiline = false;
     private int listItemRes;
-    protected ReceivedProductItemList displayProductListItem = new ReceivedProductItemList();
-    protected ReceivedProductItemList receivedProductListItem = new ReceivedProductItemList();
+    protected SelectedProductItemList2 displayProductListItem = new SelectedProductItemList2();
+    protected SelectedProductItemList2 receivedProductListItem = new SelectedProductItemList2();
 
     public BaseReceiveRecyclerAdapter(Context context, int resource, ImonggoDBHelper2 dbHelper) {
         super(context, new ArrayList<DocumentLine>());
@@ -33,18 +32,18 @@ public abstract class BaseReceiveRecyclerAdapter<T extends BaseRecyclerAdapter.V
         setHelper(dbHelper);
     }
 
-    public ReceivedProductItemList getDisplayProductListItem() {
+    public SelectedProductItemList2 getDisplayProductListItem() {
         return displayProductListItem;
     }
 
-    public ReceivedProductItemList getReceivedProductListItem() {
+    public SelectedProductItemList2 getReceivedProductListItem() {
         receivedProductListItem.sort();
         if(isManual)
             receivedProductListItem.removeZeroValue();
         return receivedProductListItem;
     }
 
-    public void setReceivedProductListItem(ReceivedProductItemList receivedProductListItem) {
+    public void setReceivedProductListItem(SelectedProductItemList2 receivedProductListItem) {
         this.receivedProductListItem = receivedProductListItem;
         this.receivedProductListItem.sort();
     }
@@ -85,7 +84,7 @@ public abstract class BaseReceiveRecyclerAdapter<T extends BaseRecyclerAdapter.V
         super.addAll(documentLines);
 
         if(displayProductListItem == null)
-            displayProductListItem = new ReceivedProductItemList();
+            displayProductListItem = new SelectedProductItemList2();
 
         for(DocumentLine documentLine : documentLines) {
             Product product = documentLine.getProduct();
@@ -141,14 +140,14 @@ public abstract class BaseReceiveRecyclerAdapter<T extends BaseRecyclerAdapter.V
     }
 
     public void addAllReceived(List<SelectedProductItem> receivedProductItemList) {
-        //if(!displayProductListItem.containsAll(receivedProductItemList))
+        //if(!displayProductListItem.containsAll(selectedProductItemList2))
             displayProductListItem.addAll(receivedProductItemList);
     }
 
     public void clear() {
         super.setList(new ArrayList<DocumentLine>());
         if(displayProductListItem == null)
-            displayProductListItem = new ReceivedProductItemList();
+            displayProductListItem = new SelectedProductItemList2();
         else
             displayProductListItem.clear();
     }

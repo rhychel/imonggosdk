@@ -20,10 +20,9 @@ import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleReceiveListAdapter;
 import net.nueca.concessioengine.adapters.SimpleReceiveRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
-import net.nueca.concessioengine.dialogs.SearchDRDialog;
 import net.nueca.concessioengine.dialogs.SearchDRDialog2;
 import net.nueca.concessioengine.dialogs.SimpleReceiveDialog;
-import net.nueca.concessioengine.lists.ReceivedProductItemList;
+import net.nueca.concessioengine.lists.SelectedProductItemList2;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
@@ -253,7 +252,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
     }
 
     public interface FloatingActionButtonListener {
-        void onClick(ReceivedProductItemList receivedProductItemList, Branch targetBranch, String reference,
+        void onClick(SelectedProductItemList2 selectedProductItemList2, Branch targetBranch, String reference,
                      Integer parentDocumentID);
     }
 
@@ -316,12 +315,12 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
     }
 
     @Override
-    public ReceivedProductItemList getReceivedProductItemList() {
+    public SelectedProductItemList2 getReceivedProductItemList() {
         return useRecyclerView? simpleReceiveRecyclerViewAdapter.getReceivedProductListItem() :
                 simpleReceiveListAdapter.getReceivedProductListItem();
     }
     @Override
-    public ReceivedProductItemList getDisplayProductItemList() {
+    public SelectedProductItemList2 getDisplayProductItemList() {
         return useRecyclerView? simpleReceiveRecyclerViewAdapter.getDisplayProductListItem() :
                 simpleReceiveListAdapter.getDisplayProductListItem();
     }

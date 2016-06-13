@@ -10,11 +10,8 @@ import android.widget.ListView;
 
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
-import net.nueca.concessioengine.lists.ReceivedProductItemList;
+import net.nueca.concessioengine.lists.SelectedProductItemList2;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.base.BaseTable;
-import net.nueca.imonggosdk.objects.document.DocumentLine;
 
 import java.util.List;
 
@@ -37,7 +34,7 @@ public abstract class BaseReviewFragment extends ImonggoFragment {
 
     protected FloatingActionButton fabContinue;
 
-    protected ReceivedProductItemList receivedProductItemList;
+    protected SelectedProductItemList2 selectedProductItemList2;
 
     protected abstract void whenListEndReached(List objects);
     protected abstract void toggleNoItems(String msg, boolean show);
@@ -46,8 +43,8 @@ public abstract class BaseReviewFragment extends ImonggoFragment {
     protected abstract int getRecyclerAdapterItemCount();
     protected abstract int getRecyclerAdapterFirstVisibleItemPosition();
 
-    public void setReceivedProductItemList(ReceivedProductItemList receivedProductItemList) {
-        this.receivedProductItemList = receivedProductItemList;
+    public void setSelectedProductItemList2(SelectedProductItemList2 selectedProductItemList2) {
+        this.selectedProductItemList2 = selectedProductItemList2;
     }
 
     public ListScrollListener getListScrollListener() {

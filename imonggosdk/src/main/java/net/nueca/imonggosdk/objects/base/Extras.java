@@ -184,6 +184,13 @@ public class Extras extends DBTable {
     @DatabaseField
     private String payment_date = null;
 
+    @Expose
+    @DatabaseField
+    private String plate_number = null;
+    @Expose
+    @DatabaseField
+    private Integer crates_count = null;
+
     /** FOREIGN TABLES **/
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private transient RoutePlan routePlan;
@@ -281,10 +288,13 @@ public class Extras extends DBTable {
         expiry_date = builder.expiry_date;
         default_selling_unit = builder.default_selling_unit;
         default_ordering_unit_id = builder.default_ordering_unit_id;
-        additional_fields = builder.addditional_fields;
+        additional_fields = builder.additional_fields;
 
         salesman_id = builder.salesman_id;
         customer_category_id = builder.category_id;
+
+        plate_number = builder.plate_number;
+        crates_count = builder.crates_count;
     }
 
     public int getIs_salesman() {
@@ -791,6 +801,22 @@ public class Extras extends DBTable {
         this.payment_date = payment_date;
     }
 
+    public String getPlate_number() {
+        return plate_number;
+    }
+
+    public void setPlate_number(String plate_number) {
+        this.plate_number = plate_number;
+    }
+
+    public Integer getCrates_count() {
+        return crates_count;
+    }
+
+    public void setCrates_count(Integer crates_count) {
+        this.crates_count = crates_count;
+    }
+
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
@@ -887,7 +913,9 @@ public class Extras extends DBTable {
         protected String expiry_date;
         protected String salesman_id;
         protected String category_id;
-        protected String addditional_fields;
+        protected String additional_fields;
+        protected String plate_number;
+        protected Integer crates_count;
 
         public Builder salesman_id(String salesman_id) {
             this.salesman_id = salesman_id;
@@ -1143,6 +1171,16 @@ public class Extras extends DBTable {
 
         public Builder payment_date(String payment_date) {
             this.payment_date = payment_date;
+            return this;
+        }
+
+        public Builder plate_number(String plate_number) {
+            this.plate_number = plate_number;
+            return this;
+        }
+
+        public Builder crates_count(Integer crates_count) {
+            this.crates_count = crates_count;
             return this;
         }
 

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import net.nueca.dizonwarehouse.R;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 /**
  * Created by gama on 30/05/2016.
@@ -60,8 +61,20 @@ public class DispatchConfirmationDialog extends AppCompatDialog {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String plateNum = etPlate.getText().toString();
+                String crateCount = etCrates.getText().toString();
+
+                if(plateNum.isEmpty()) {
+                    etPlate.setError("Enter plate number");
+                    return;
+                }
+                if(NumberTools.toDouble(crateCount).intValue() <= 0) {
+                    etCrates.setError("Invalid number of crates");
+                    return;
+                }
+
                 if(confirmationListener != null) {
-                    if (confirmationListener.onSubmit(etPlate.getText().toString(), etCrates.getText().toString(), targetBranch))
+                    if (confirmationListener.onSubmit(plateNum, crateCount, targetBranch))
                         dismiss();
                 }
                 else

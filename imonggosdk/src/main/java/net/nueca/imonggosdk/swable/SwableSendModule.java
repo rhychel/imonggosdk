@@ -288,7 +288,7 @@ public class SwableSendModule extends BaseSwableModule {
                                                 }
                                             }
                                         } else if (responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS) {
-                                            offlineData.setSynced(true);
+                                            offlineData.setSynced(false);
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -651,6 +651,16 @@ public class SwableSendModule extends BaseSwableModule {
                                 if (responseJson.has("id")) {
                                     Log.d("ImonggoSwable", "sending success : return ID : " +
                                             responseJson.getString("id"));
+
+                                    if(table == Table.DOCUMENTS) {
+                                        Document document = offlineData.getObjectFromData(Document.class);
+                                        if(document.getOrder() != null) {
+                                            Order order = document.getOrder();
+                                            order.setStatus("P");
+                                            order.setOrder_status("F");
+                                            order.updateTo(dbHelper);
+                                        }
+                                    }
 
                                     offlineData.insertReturnIdAt(page - 1, responseJson.getString("id"));
                                 }

@@ -41,6 +41,9 @@
         <activity android:name=".WH_MultiInput"
                   android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".WH_OrderMultiInput"
+                  android:screenOrientation="portrait">
+        </activity>
 
         <activity
             android:name="net.nueca.concessioengine.activities.SettingsActivity"

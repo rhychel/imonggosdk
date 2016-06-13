@@ -4,6 +4,9 @@ import android.content.Context;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
+import net.nueca.concessioengine.objects.ReceivedItemValue;
+import net.nueca.concessioengine.objects.ReceivedProductItem;
+import net.nueca.concessioengine.objects.ReceivedProductItemLine;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
@@ -12,6 +15,7 @@ import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,10 +31,18 @@ public class DocumentTools {
     }
 
     public static Document generateDocument(Context context, int deviceId, int targetBranchId, DocumentTypeCode documentTypeCode) {
+        return generateDocument(context, deviceId, targetBranchId, documentTypeCode, false);
+    }
+
+    public static Document generateDocument(Context context, int deviceId, int targetBranchId, DocumentTypeCode documentTypeCode, boolean
+            hideZeroQty) {
         Document.Builder document = new Document.Builder();
 
         for(SelectedProductItem selectedProductItem : ProductsAdapterHelper.getSelectedProductItems()) {
             for(Values value : selectedProductItem.getValues()) {
+                if(hideZeroQty && NumberTools.toDouble(value.getQuantity()).doubleValue() == 0d)
+                    continue;
+
                 Product product = selectedProductItem.getProduct();
                 DocumentLine.Builder builder = new DocumentLine.Builder()
                         .line_no(value.getLine_no())
@@ -60,6 +72,73 @@ public class DocumentTools {
                 documentLine.setSubtotal(value.getSubtotal());
 
                 document.addDocumentLine(documentLine);
+            }
+        }
+        document.customer(ProductsAdapterHelper.getSelectedCustomer());
+        document.document_type_code(documentTypeCode);
+        if(documentTypeCode == DocumentTypeCode.RELEASE_ADJUSTMENT || documentTypeCode == DocumentTypeCode.RELEASE_BRANCH)
+            if(ProductsAdapterHelper.getReason() != null)
+                document.document_purpose_name(ProductsAdapterHelper.getReason().getName());
+        if(documentTypeCode == DocumentTypeCode.RELEASE_BRANCH)
+            document.intransit_status(true);
+        if(ProductsAdapterHelper.getParent_document_id() > -1)
+            document.parent_document_id(ProductsAdapterHelper.getParent_document_id());
+        if(targetBranchId > -1)
+            document.target_branch_id(targetBranchId);
+        document.generateReference(context, deviceId);
+        return document.build();
+    }
+
+    public static Document generateOrderReceivingDocument(Context context, int deviceId, DocumentTypeCode documentTypeCode) {
+        return generateOrderReceivingDocument(context, deviceId, -1, documentTypeCode);
+    }
+
+    public static Document generateOrderReceivingDocument(Context context, int deviceId, int targetBranchId, DocumentTypeCode documentTypeCode) {
+        return generateOrderReceivingDocument(context, deviceId, targetBranchId, documentTypeCode, false);
+    }
+
+    public static Document generateOrderReceivingDocument(Context context, int deviceId, int targetBranchId, DocumentTypeCode documentTypeCode,
+                                                          boolean hideZeroQty) {
+        Document.Builder document = new Document.Builder();
+
+        for(ReceivedProductItem receivedProductItem : ProductsAdapterHelper.getReceivedProductItems().toList()) {
+            Product product = receivedProductItem.getProduct();
+            for(ReceivedProductItemLine receivedProductItemLine : receivedProductItem.getProductItemLines()) {
+                for(ReceivedItemValue receivedItemValue : receivedProductItemLine.getItemValueList()) {
+                    if(hideZeroQty && receivedItemValue.getQuantity() == 0d)
+                        continue;
+
+                    DocumentLine.Builder builder = new DocumentLine.Builder()
+                            .autoLine_no()
+                            //.line_no(receivedProductItemLine.getItemValueList().indexOf(receivedItemValue))
+                            .product(product)
+                            .product_id(product.getId());
+
+                    DocumentLine documentLine = builder.build();
+                    Unit unit = receivedProductItemLine.getUnit();
+                    if (receivedProductItemLine.isValidUnit()) {
+                        documentLine.setUnit_id(unit.getId());
+                        documentLine.setUnit_name(unit.getName());
+                        documentLine.setUnit_content_quantity(unit.getQuantity());
+                        documentLine.setUnit_quantity(receivedItemValue.getQuantity());
+
+                        documentLine.setRetail_price(receivedItemValue.getPrice());
+                        documentLine.setUnit_retail_price(unit.getRetail_price());
+
+                        documentLine.setQuantity(receivedItemValue.getQuantity() * unit.getQuantity());
+                    } else {
+                        documentLine.setUnit_name(product.getBase_unit_name());
+
+                        documentLine.setRetail_price(receivedItemValue.getPrice());
+                        documentLine.setUnit_retail_price(receivedItemValue.getPrice());
+
+                        documentLine.setQuantity(receivedItemValue.getQuantity());
+                    }
+
+                    documentLine.setSubtotal(receivedItemValue.getSubtotal());
+
+                    document.addDocumentLine(documentLine);
+                }
             }
         }
         document.customer(ProductsAdapterHelper.getSelectedCustomer());

@@ -4065,7 +4065,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     orders.setReturnId(jsonObject.getInt("id"));
 
                                     //order_lines
-                                    if (jsonObject.has("order_lines")) {
+                                    /*if (jsonObject.has("order_lines")) {
                                         if (!jsonObject.isNull("order_lines")) {
 
                                             JSONArray orderLineArray = jsonObject.getJSONArray("order_lines");
@@ -4103,7 +4103,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     } else {
                                         Log.e(TAG, "API " + mCurrentTableSyncing + " don't have 'order_lines' field.");
-                                    }
+                                    }*/
 
                                     if (initialSync || lastUpdatedAt == null) {
                                         newOrders.add(orders);
@@ -4118,8 +4118,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                 newOrders.doOperationBT3(Order.class, getHelper());
                                 updateOrders.doOperationBT3(Order.class, getHelper());
-                                newOrderLine.doOperationBT2(OrderLine.class, getHelper());
-                                updateOrderLine.doOperationBT2(OrderLine.class, getHelper());
+                                //newOrderLine.doOperationBT2(OrderLine.class, getHelper());
+                                //updateOrderLine.doOperationBT2(OrderLine.class, getHelper());
                             }
                             updateNext(requestType, size);
                             break;

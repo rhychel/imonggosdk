@@ -2,88 +2,79 @@ package net.nueca.concessioengine.lists;
 
 import android.util.Log;
 
-import net.nueca.concessioengine.objects.SelectedProductItem;
-import net.nueca.concessioengine.objects.Values;
-import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.tools.NumberTools;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
-import java.util.Collections;
-import java.util.Comparator;
+import net.nueca.concessioengine.objects.ReceivedProductItem;
+import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.ProductTag;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
- * Created by gama on 9/16/15.
+ * Created by gama on 31/05/2016.
  */
-public class ReceivedProductItemList extends SelectedProductItemList {
-    private boolean isSorted = false;
+public class ReceivedProductItemList extends HashMap<Integer, ReceivedProductItem> {
+    public ReceivedProductItem put(Product product) {
+        return super.put(product.getId(), new ReceivedProductItem(product));
+    }
 
     @Override
-    public boolean add(SelectedProductItem selectedProductItem) {
-        isSorted = false;
-        int index = indexOf(selectedProductItem);
-        if(index > -1) {
-            if(selectedProductItem.getValues().size() > 0)
-                set(index, selectedProductItem);
-            else
-                remove(index);
-            return true;
+    public boolean containsKey(Object key) {
+        if(key instanceof Product)
+            return super.containsKey(((Product) key).getId());
+        return super.containsKey(key);
+    }
+
+    @Override
+    public ReceivedProductItem get(Object key) {
+        if(key instanceof Product)
+            return super.get(((Product) key).getId());
+        return super.get(key);
+    }
+
+    public ReceivedProductItem getItemAt(int index) {
+        return toList().get(index);
+    }
+
+    public List<ReceivedProductItem> toList(ImonggoDBHelper2 helper, String searchkey, String category) throws SQLException {
+        boolean hasSearchkey = searchkey != null && !searchkey.isEmpty();
+        boolean hasCategory = category != null && !category.isEmpty() && !category.toLowerCase().equals("all");
+
+        QueryBuilder<ProductTag, Integer> whereTag = helper.fetchIntId(ProductTag.class).queryBuilder();
+        whereTag.selectColumns("product_id").where().like("searchKey", "%" + category.toLowerCase() + "%");
+        List<Product> productListWithTag = helper.fetchIntId(Product.class).queryBuilder().where().in("id", whereTag).query();
+
+        List<ReceivedProductItem> itemList = new ArrayList<>();
+        for(ReceivedProductItem item : values()) {
+            boolean containsKey = hasSearchkey && item.getProduct().getSearchKey().toLowerCase().contains(searchkey.toLowerCase());
+            boolean containsCategory = hasCategory && productListWithTag.contains(item.getProduct());
+
+            if(hasSearchkey && hasCategory && containsKey && containsCategory)
+                itemList.add(item);
+            else if(hasSearchkey && !hasCategory && containsKey)
+                itemList.add(item);
+            else if(!hasSearchkey && hasCategory && containsCategory)
+                itemList.add(item);
+            else if(!hasSearchkey && !hasCategory)
+                itemList.add(item);
         }
 
-        return super.addNullable(selectedProductItem);
+        return itemList;
     }
 
-    public String getDiscrepancy(Product product) {
-        SelectedProductItem selectedProductItem = getSelectedProductItem(product);
-        if(selectedProductItem == null)
-            return "0";
-        return selectedProductItem.getDiscrepancy();
+    public List<ReceivedProductItem> toList() {
+        return new ArrayList<>(values());
     }
 
-    public String getReturn(Product product) {
-        SelectedProductItem selectedProductItem = getSelectedProductItem(product);
-        if(selectedProductItem == null)
-            return "0";
-        return selectedProductItem.getReturn();
-    }
-
-    public void sort() {
-        sort(true);
-    }
-
-    public void sort(final boolean isAscending) {
-        if(isSorted || size() <= 0)
-            return;
-
-        Collections.sort(this, new Comparator<SelectedProductItem>() {
-            public int compare(SelectedProductItem item1, SelectedProductItem item2) {
-                if(isAscending)
-                    return item1.getProduct().getName().compareToIgnoreCase(item2.getProduct().getName());
-                else
-                    return item2.getProduct().getName().compareToIgnoreCase(item1.getProduct().getName());
-            }
-        });
-
-        int lineNo = 1;
-        for(SelectedProductItem item : this) {
-            for(Values itemValue : item.getValues()) {
-                itemValue.setLine_no(lineNo);
-                lineNo++;
-            }
-        }
-        isSorted = true;
-    }
-
-    public void removeZeroValue() {
-        for(SelectedProductItem item : this) {
-            for(Values itemValue : item.getValues()) {
-                double received = NumberTools.toDouble(itemValue.getQuantity());
-                double returned = itemValue.getExtendedAttributes() == null? 0d :
-                        NumberTools.toDouble(itemValue.getExtendedAttributes().getOutright_return());
-                if(received == 0d && returned == 0d) {
-                    item.remove(item.getValues().indexOf(itemValue));
-                }
-            }
-            if(item.getValues().isEmpty())
-                this.remove(item);
-        }
+    public double getSubtotal() {
+        double subtotal = 0d;
+        for(ReceivedProductItem item : values())
+            subtotal += item.getSubtotal();
+        return subtotal;
     }
 }

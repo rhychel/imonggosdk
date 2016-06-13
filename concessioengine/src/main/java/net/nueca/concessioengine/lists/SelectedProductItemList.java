@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,6 +72,21 @@ public class SelectedProductItemList extends ArrayList<SelectedProductItem> {
 
         for(SelectedProductItem selectedProductItem : this)
             selectedProducts.add(selectedProductItem.getProduct());
+
+        return selectedProducts;
+    }
+
+    public List<Product> getSelectedProducts(boolean showZeroQty) {
+        List<Product> selectedProducts = new ArrayList<>();
+
+        for(SelectedProductItem selectedProductItem : this) {
+            if(showZeroQty)
+                selectedProducts.add(selectedProductItem.getProduct());
+            else {
+                if(NumberTools.toDouble(selectedProductItem.getQuantity()).doubleValue() != 0d)
+                    selectedProducts.add(selectedProductItem.getProduct());
+            }
+        }
 
         return selectedProducts;
     }

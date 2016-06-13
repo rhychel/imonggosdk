@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
@@ -663,6 +665,8 @@ public class SimpleSalesQuantityDialog extends BaseQuantityDialog {
                     values.setUnit_retail_price(Double.valueOf(etRetailPrice.getText().toString()));
                     values.setRetail_price(Double.valueOf(etRetailPrice.getText().toString()));
                 }
+
+                Log.e("VALUES", "^^^^^^^^^^^^^ " + new Gson().toJson(values));
 
                 if (isMultiValue) {
                     if (multiQuantityDialogListener != null)

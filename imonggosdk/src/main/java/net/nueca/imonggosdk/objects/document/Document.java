@@ -26,6 +26,7 @@ import net.nueca.imonggosdk.objects.base.BaseTransactionTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -93,6 +94,9 @@ public class Document extends BaseTransactionTable3 {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "customer_id")
     protected transient Customer customer;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "order_id")
+    protected transient Order order;
 
     // Added by Rhy
 
@@ -171,7 +175,7 @@ public class Document extends BaseTransactionTable3 {
         this.document_lines = document_lines;
     }
 
-    public int getTarget_branch_id() {
+    public Integer getTarget_branch_id() {
         return target_branch_id;
     }
 
@@ -241,6 +245,14 @@ public class Document extends BaseTransactionTable3 {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public void setParent_document_id(Integer parent_document_id) {
@@ -314,6 +326,9 @@ public class Document extends BaseTransactionTable3 {
         }
         insertExtrasTo(dbHelper);
 
+        if(order != null)
+            order.insertTo(dbHelper);
+
         try {
             dbHelper.insert(Document.class, this);
         } catch (SQLException e) {
@@ -340,6 +355,11 @@ public class Document extends BaseTransactionTable3 {
 
         updateExtrasTo(dbHelper);
 
+        if(order != null) {
+            order.setDocument(this);
+            order.updateTo(dbHelper);
+        }
+
         Log.e("DOCUMENT", "insert " + id + " ~ " + (offlineData != null? offlineData.getId() : "null") );
     }
 
@@ -355,6 +375,11 @@ public class Document extends BaseTransactionTable3 {
                 e.printStackTrace();
             }
             return;
+        }
+
+        if(order != null) {
+            order.setDocument(null);
+            order.updateTo(dbHelper);
         }
 
         try {
@@ -586,14 +611,25 @@ public class Document extends BaseTransactionTable3 {
 
     @Override
     public String toJSONString() {
-        refresh();
-        return super.toJSONString();
+        String jsonStr;
+        try {
+            jsonStr = toJSONObject().toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            jsonStr = super.toJSONString();
+        }
+        return jsonStr;
     }
 
     @Override
     public JSONObject toJSONObject() throws JSONException {
         refresh();
-        return super.toJSONObject();
+
+        JSONObject jsonObject = super.toJSONObject();
+        if(order != null)
+            jsonObject.put("order_id", order.getReturnId());
+
+        return jsonObject;
     }
 
     @Override

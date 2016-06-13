@@ -46,7 +46,9 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:weightSum="3"
-        android:id="@+id/llPlate">
+        android:id="@+id/llPlate"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
         <TextView
             android:layout_width="0dp"
@@ -68,7 +70,8 @@
             android:layout_marginLeft="16dp"
             android:textSize="18sp"
             android:gravity="left"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:selectAllOnFocus="true"/>
     </LinearLayout>
 
     <LinearLayout
@@ -76,7 +79,9 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:weightSum="3"
-        android:id="@+id/llCrates">
+        android:id="@+id/llCrates"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
         <TextView
             android:layout_width="0dp"
@@ -100,7 +105,8 @@
             android:textSize="18sp"
             android:gravity="left"
             android:singleLine="true"
-            android:inputType="number"/>
+            android:inputType="number"
+            android:selectAllOnFocus="true"/>
     </LinearLayout>
 
     <LinearLayout
@@ -108,7 +114,9 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:weightSum="3"
-        android:id="@+id/llBranch">
+        android:id="@+id/llBranch"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
         <TextView
             android:layout_width="0dp"
@@ -141,7 +149,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:measureWithLargestChild="true"
-        android:gravity="right">
+        android:gravity="right"
+        >
 
         <Button
             style="?android:attr/borderlessButtonStyle"

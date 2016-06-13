@@ -20,7 +20,7 @@ public class ReferenceNumberTool {
         try {
             // get current reference number
             PackageInfo pinfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            String current_refno = preferences.getString(pinfo.packageName + CURRENT_REF_NUMBER, deviceId + "-0");
+            String current_refno = preferences.getString(pinfo.packageName + CURRENT_REF_NUMBER, deviceId + "-" + 0);
 
             String refno_component[] = current_refno.split("-");
             int refno_devid = Integer.parseInt(refno_component[0]);

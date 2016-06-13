@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:autofit="http://schemas.android.com/apk/res-auto"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#80ffffff"
+                android:minHeight="58dp">
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:id="@+id/ivProductImage"
+        android:layout_alignTop="@+id/llTop"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/no_image"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:layout_alignParentBottom="false"
+        android:minHeight="58dp"
+        android:layout_alignBottom="@+id/tvRetailPrice"
+        android:layout_margin="5dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ivProductImage"
+        android:id="@+id/llTop"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:minHeight="35dp"
+        android:gravity="bottom">
+
+        <me.grantland.widget.AutofitTextView
+            android:padding="3dp"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Special Spicy Honey Glazed Premium Ham &amp; Fried Potato Chips"
+            android:textSize="15sp"
+            android:singleLine="false"
+            android:maxLines="2"
+            android:ellipsize="end"
+            autofit:minTextSize="15sp"
+            android:id="@+id/tvProductName"
+            style="@style/TextView.ProductItem.Name"
+            android:gravity="bottom"/>
+
+        <me.grantland.widget.AutofitTextView
+            android:padding="3dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:text="Php 888,888,888.88"
+            android:textSize="15sp"
+            android:singleLine="true"
+            autofit:minTextSize="12sp"
+            android:id="@+id/tvSubtotal"
+            style="@style/TextView.ProductItem.Name"
+            android:gravity="bottom|right"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Php 888,888,888.88"
+        android:id="@+id/tvRetailPrice"
+        android:textSize="12sp"
+        android:layout_alignLeft="@+id/llTop"
+        android:layout_below="@+id/llTop"
+        android:padding="3dp"
+        android:layout_weight="1"
+        android:gravity="top"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="888,888 pcs"
+        android:id="@+id/tvQuantity"
+        android:textSize="12sp"
+        android:layout_alignTop="@+id/tvRetailPrice"
+        android:layout_alignRight="@+id/llTop"
+        android:padding="3dp"
+        android:layout_weight="1"
+        android:gravity="top|right"/>
+
+</RelativeLayout>

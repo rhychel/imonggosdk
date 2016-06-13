@@ -71,7 +71,7 @@ public class EpsonPrinterTools {
             int spaces = maxChar-combinedLength;
             String space = "";
             for(int i = 0;i < spaces;i++)
-                space += "*";
+                space += " ";
 
             finalText = text1+space+text2;
         }
@@ -83,7 +83,7 @@ public class EpsonPrinterTools {
     public static String addSpace(int spaces) {
         String addSpaces = "";
         for(int i = 0;i < spaces;i++)
-            addSpaces += "*";
+            addSpaces += " ";
         return addSpaces;
     }
 
@@ -103,10 +103,10 @@ public class EpsonPrinterTools {
         int margin = remaining / 2;
 
         for(int i=0; i < margin; i++)
-            output = "*" + output + "*";
+            output = " " + output + " ";
 
         if(output.length() < max_char)
-            output += "*";
+            output += " ";
         return output;
     }
 

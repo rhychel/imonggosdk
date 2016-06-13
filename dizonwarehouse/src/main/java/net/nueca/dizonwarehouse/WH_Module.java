@@ -20,31 +20,36 @@ import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.concessioengine.fragments.BaseProductsFragment;
 import net.nueca.concessioengine.fragments.BaseTransactionsFragment;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
+import net.nueca.concessioengine.fragments.OrderReceiveMultiInputFragment;
 import net.nueca.concessioengine.fragments.SimpleInventoryFragment;
 import net.nueca.concessioengine.fragments.SimpleProductsFragment;
 import net.nueca.concessioengine.fragments.SimpleTransactionDetailsFragment;
 import net.nueca.concessioengine.fragments.SimpleTransactionsFragment;
 import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
+import net.nueca.concessioengine.fragments.SimpleOrderReceiveFragment;
+import net.nueca.concessioengine.objects.ReceivedMultiItem;
 import net.nueca.concessioengine.printer.epson.listener.PrintListener;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.tools.DocumentTools;
 import net.nueca.concessioengine.tools.OrderTools;
 import net.nueca.concessioengine.views.SearchViewEx;
+import net.nueca.dizonwarehouse.dialogs.DispatchConfirmationDialog;
 import net.nueca.dizonwarehouse.dialogs.SearchOrdersDialog;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.DocumentTypeCode;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentLine;
-import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.dizonwarehouse.services.SwableTools;
 import net.nueca.imonggosdk.tools.NumberTools;
@@ -53,6 +58,7 @@ import net.nueca.imonggosdk.tools.SettingTools;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by gama on 28/03/16.
@@ -65,14 +71,15 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
     private final String SUBMIT = "SUBMIT";
     private final String VOID = "VOID";
     private final String DUPLICATE = "DUPLICATE";
+    private final String RECEIVE = "RECEIVE";
 
     private final String RECEIVING_ORDER = "Purchase Order";
     private final String DISPATCHING_ORDER = "Sales Order";
 
     private boolean isAddProduct;
 
-    private LinearLayout llFooter, llReview, llTotalAmount;
-    private TextView tvTotalAmount, tvItems, tvLabel, tvValue;
+    private LinearLayout llFooter, llReview, llTotalAmount, llExpectedQty, llExpectedPrice;
+    private TextView tvTotalAmount, tvItems, tvLabel, tvValue, tvExpectedQty, tvExpectedPrice;
     private ImageButton ibtnEdit;
     private FloatingActionButton fabAdd;
 
@@ -81,12 +88,15 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
 
     private SimpleInventoryFragment simpleInventoryFragment;
     private SimpleProductsFragment reviewFragment, additionalProductsFragment;
+    private SimpleOrderReceiveFragment simpleOrderReceiveFragment, reviewOrderReceiveFragment;
     
     private SimpleTransactionDetailsFragment simpleTransactionDetailsFragment;
     private SimpleTransactionsFragment simpleTransactionsFragment;
     
     private Branch selectedBranch;
     private Order order;
+
+    private int ORDERLINE_RECEIVED = -1;
 
     private BaseProductsFragment.ProductsFragmentListener selectionListener = new BaseProductsFragment.ProductsFragmentListener() {
         @Override
@@ -114,6 +124,8 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
         }
 
         llReview = (LinearLayout) findViewById(R.id.llReview);
+        llExpectedQty = (LinearLayout) findViewById(R.id.llExpectedQty);
+        llExpectedPrice = (LinearLayout) findViewById(R.id.llExpectedPrice);
         llTotalAmount = (LinearLayout) findViewById(R.id.llTotalAmount);
         llFooter = (LinearLayout) findViewById(R.id.llFooter);
         btnPrimary = (Button) findViewById(R.id.btn1);
@@ -122,8 +134,71 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
         tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmount);
         tvItems = (TextView) findViewById(R.id.tvItems);
 
+        tvExpectedPrice = (TextView) findViewById(R.id.tvExpectedPrice);
+        tvExpectedQty = (TextView) findViewById(R.id.tvExpectedQty);
+
         switch (concessioModule) {
             case RECEIVE_SUPPLIER:
+                isManualReceive = getModuleSetting(concessioModule).getManual().is_enabled();
+                llFooter.setVisibility(View.VISIBLE);
+
+                if(!isAddProduct && !ProductsAdapterHelper.isDuplicating)
+                    showDialog();
+                if(ProductsAdapterHelper.isDuplicating)
+                    refreshTitle();
+
+                ProductsAdapterHelper.clearReceivedProductItemList(true);
+                ProductsAdapterHelper.setDbHelper(getHelper());
+                simpleOrderReceiveFragment = new SimpleOrderReceiveFragment();
+                simpleOrderReceiveFragment.setHelper(getHelper());
+                simpleOrderReceiveFragment.setSetupActionBar(this);
+                simpleOrderReceiveFragment.setProductCategories(getProductCategories(true));
+                simpleOrderReceiveFragment.setItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(View view, int position) {
+                        ORDERLINE_RECEIVED = position;
+                        ReceivedMultiItem multiItem = (ReceivedMultiItem) simpleOrderReceiveFragment.getOrderReceiveRecyclerAdapter().getItem(position);
+
+                        if(multiItem.isHeader())
+                            return;
+
+                        /*OrderReceiveMultiInputFragment multiInputFragment = new OrderReceiveMultiInputFragment();
+                        multiInputFragment.setSetupActionBar(WH_Module.this);
+                        multiInputFragment.setProductItem(multiItem.getReceivedProductItem());
+                        multiInputFragment.setProductItemLine(multiItem.getReceivedProductItemLine());
+
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right,
+                                        R.anim.slide_in_right, R.anim.slide_out_left)
+                                .replace(R.id.flContent, multiInputFragment, "receiving_orders_fragment")
+                                .addToBackStack("receiving_orders")
+                                .commit();
+
+                        llExpectedQty.setVisibility(View.VISIBLE);
+                        llExpectedPrice.setVisibility(View.VISIBLE);
+
+                        llTotalAmount.setVisibility(View.GONE);
+
+                        tvExpectedQty.setText("" + NumberTools.separateInCommas(multiItem.getReceivedProductItemLine().getExpected_quantity()));
+                        tvExpectedPrice.setText("P " + NumberTools.separateInCommas(multiItem.getReceivedProductItemLine().getExpected_price()));
+
+                        btnPrimary.setText(RECEIVE);*/
+
+                        Intent intent = new Intent(WH_Module.this, WH_OrderMultiInput.class);
+                        intent.putExtra(WH_OrderMultiInput.RECEIVED_PRODUCT_ITEM_ID, multiItem.getProduct().getId());
+                        intent.putExtra(WH_OrderMultiInput.RECEIVED_PRODUCT_ITEMLINE_INDEX, multiItem.getProductItemLineNo());
+                        startActivityForResult(intent, FROM_MULTIINPUT);
+                    }
+                });
+
+                tvTotalAmount.setText("P"+NumberTools.separateInCommas(ProductsAdapterHelper.getReceivedProductItems().getSubtotal()));
+
+                btnPrimary.setOnClickListener(nextClickedListener);
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.flContent, simpleOrderReceiveFragment)
+                        .commit();
+                break;
             case RELEASE_BRANCH:
                 isManualReceive = getModuleSetting(concessioModule).getManual().is_enabled();
                 llFooter.setVisibility(View.VISIBLE);
@@ -136,6 +211,8 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                 ProductsAdapterHelper.clearSelectedProductItemList(true);
                 simpleInventoryFragment = new SimpleInventoryFragment();
                 simpleInventoryFragment.setHelper(getHelper());
+                simpleInventoryFragment.setConcessioModule(concessioModule);
+                simpleInventoryFragment.setShouldAskReason(false);
                 simpleInventoryFragment.setListingType(ListingType.ADVANCED_SALES);
                 simpleInventoryFragment.setSetupActionBar(this);
                 simpleInventoryFragment.setHasUnits(true);
@@ -191,14 +268,17 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                             return;
     
                         llFooter.setVisibility(View.VISIBLE);
-                        btnPrimary.setText(VOID);
 
                         if(!offlineData.isCancelled()) {
+                            btnPrimary.setText(VOID);
                             btnPrimary.setEnabled(true);
                             initializeVoidButton(btnPrimary, offlineData.getReferenceNumber());
                         }
-                        else
+                        else {
+                            btnPrimary.setText(DUPLICATE);
                             btnPrimary.setEnabled(false);
+                            initializeDuplicateButton(btnPrimary, offlineData.getReferenceNumber());
+                        }
 
                         ProductsAdapterHelper.clearSelectedProductItemList(true);
                         ProductsAdapterHelper.clearSelectedReturnProductItemList();
@@ -275,6 +355,7 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
         try {
             SearchOrdersDialog dialog = new SearchOrdersDialog(this, getHelper(), getSession(), R.style.WarehouseTheme_InputDialog)
                     .setTitle(title).setOnSearchListener(this);
+            dialog.setConcessioModule(concessioModule);
             dialog.setCancelable(false);
             dialog.setBranch_id(selectedBranch.getId());
             if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER)
@@ -289,13 +370,24 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
 
     @Override
     public void onFound(Order foundOrder) {
+        Log.e("onFound", foundOrder.getReference());
         order = foundOrder;
         reference = order.getReference();
 
         try {
-            simpleInventoryFragment.setFilterProductsBy(OrderTools.generateSelectedItemList(getHelper(),order,true));
-            simpleInventoryFragment.forceUpdateProductList();
-            simpleInventoryFragment.refreshList();
+            if(concessioModule == ConcessioModule.RELEASE_BRANCH) {
+                simpleInventoryFragment.setFilterProductsBy(OrderTools.generateSelectedItemList(getHelper(), order));
+                simpleInventoryFragment.forceUpdateProductList();
+                simpleInventoryFragment.refreshList();
+            }
+            else if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER) {
+                ProductsAdapterHelper.clearReceivedProductItemList(true);
+                ProductsAdapterHelper.getReceivedProductItems().putAll(OrderTools.generateReceivedProductItemList(getHelper(),order));
+                Log.e("","^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                simpleOrderReceiveFragment.forceUpdateList();
+                simpleOrderReceiveFragment.refreshList();
+                tvItems.setText(ProductsAdapterHelper.getReceivedProductItems().size() + " Items");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -307,9 +399,10 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
         onBackPressed();
     }
 
-    private void updateFooter() {
+    private void updateFooter() { updateFooter(true); }
+    private void updateFooter(boolean showZeroQty) {
         tvTotalAmount.setText("P"+NumberTools.separateInCommas(ProductsAdapterHelper.getSelectedProductItems().getSubtotal()));
-        int count = ProductsAdapterHelper.getSelectedProductItems().size();
+        int count = ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts(showZeroQty).size();
         tvItems.setText(count + " Item" + (count != 1? "s" : ""));
     }
 
@@ -318,16 +411,30 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
         super.onBackPressed();
         if(isAddProduct) {
             isAddProduct = false;
+            if(reviewFragment != null) {
+                reviewFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
+                reviewFragment.forceUpdateProductList();
+            }
             btnPrimary.setEnabled(true);
         }
         else {
             if (isReview()) {
                 btnPrimary.setText(CONTINUE);
+
+                if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER)
+                    simpleOrderReceiveFragment.forceUpdateList();
             }
             else if(isTransactionDetail()) {
                 llFooter.setVisibility(View.GONE);
                 btnPrimary.setText(CONTINUE);
                 btnPrimary.setEnabled(true);
+            }
+            else if(isReceiving()) {
+                llExpectedPrice.setVisibility(View.GONE);
+                llExpectedQty.setVisibility(View.GONE);
+                llTotalAmount.setVisibility(View.VISIBLE);
+
+                btnPrimary.setText(CONTINUE);
             }
         }
         setupActionBar(tbActionBar);
@@ -339,55 +446,96 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
             if(!isReview()) {
                 btnPrimary.setText(SUBMIT);
 
-                reviewFragment = SimpleProductsFragment.newInstance();
-                reviewFragment.setHelper(getHelper());
-                reviewFragment.setSetupActionBar(WH_Module.this);
-                reviewFragment.setIsFinalize(true);
-                reviewFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
-                    @Override
-                    public void whenItemsSelectedUpdated() {
+                if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER) {
+                    reviewOrderReceiveFragment = new SimpleOrderReceiveFragment();
+                    reviewOrderReceiveFragment.setHelper(getHelper());
+                    reviewOrderReceiveFragment.setSetupActionBar(WH_Module.this);
+                    reviewOrderReceiveFragment.setHasCategories(false);
+                    reviewOrderReceiveFragment.setItemClickListener(new OnItemClickListener() {
+                        @Override
+                        public void onItemClicked(View view, int position) {
+                            ORDERLINE_RECEIVED = position;
+                            ReceivedMultiItem multiItem = (ReceivedMultiItem) simpleOrderReceiveFragment.getOrderReceiveRecyclerAdapter().getItem(position);
 
-                    }
-                });
-                reviewFragment.setReturnItems(isReturnItems);
+                            if(multiItem.isHeader())
+                                return;
 
-                reviewFragment.setListingType(ListingType.ADVANCED_SALES); //changed to show the individual price of every unit-- Sales
-                reviewFragment.setUseSalesProductAdapter(true);//added to show the individual price of every unit
-                reviewFragment.setHasSubtotal(true);
-                reviewFragment.setHasCategories(false);
-                reviewFragment.setHasBrand(false);
-                reviewFragment.setHasDeliveryDate(false);
-                reviewFragment.setHasUnits(true);
-                reviewFragment.setHasInStock(false);
-                // if there's branch product
-                reviewFragment.setBranch(selectedBranch);
-                reviewFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
-                reviewFragment.setMultipleInput(getModuleSetting(concessioModule).getQuantityInput().is_multiinput());
-                reviewFragment.setMultiInputListener(multiInputListener);
-                reviewFragment.setCanDeleteItems(concessioModule != ConcessioModule.RECEIVE_SUPPLIER);
+                            Intent intent = new Intent(WH_Module.this, WH_OrderMultiInput.class);
+                            intent.putExtra(WH_OrderMultiInput.RECEIVED_PRODUCT_ITEM_ID, multiItem.getProduct().getId());
+                            intent.putExtra(WH_OrderMultiInput.RECEIVED_PRODUCT_ITEMLINE_INDEX, multiItem.getProductItemLineNo());
+                            startActivityForResult(intent, FROM_MULTIINPUT);
+                        }
+                    });
 
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.flContent, reviewFragment, "reviewFragment")
-                        .addToBackStack("review")
-                        .commit();
+                    //reviewOrderReceiveFragment.forceUpdateList();
+                    //reviewOrderReceiveFragment.refreshList();
+
+                    tvTotalAmount.setText("P"+NumberTools.separateInCommas(ProductsAdapterHelper.getReceivedProductItems().getSubtotal()));
+
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.flContent, reviewOrderReceiveFragment, "review_receive_fragment")
+                            .addToBackStack("review_receive")
+                            .commit();
+                }
+                else if(concessioModule == ConcessioModule.RELEASE_BRANCH) {
+                    reviewFragment = SimpleProductsFragment.newInstance();
+                    reviewFragment.setHelper(getHelper());
+                    reviewFragment.setConcessioModule(concessioModule);
+                    reviewFragment.setShouldAskReason(false);
+                    reviewFragment.setSetupActionBar(WH_Module.this);
+                    reviewFragment.setIsFinalize(true);
+                    reviewFragment.setProductsFragmentListener(selectionListener);
+                    reviewFragment.setReturnItems(isReturnItems);
+                    reviewFragment.setProductsFragmentListener(new BaseProductsFragment.ProductsFragmentListener() {
+                        @Override
+                        public void whenItemsSelectedUpdated() {
+                            updateFooter(false);
+                        }
+                    });
+
+                    reviewFragment.setListingType(ListingType.ADVANCED_SALES); //changed to show the individual price of every unit-- Sales
+                    reviewFragment.setUseSalesProductAdapter(true);//added to show the individual price of every unit
+                    reviewFragment.setHasSubtotal(true);
+                    reviewFragment.setHasCategories(false);
+                    reviewFragment.setHasBrand(false);
+                    reviewFragment.setHasDeliveryDate(false);
+                    reviewFragment.setHasUnits(true);
+                    reviewFragment.setHasInStock(false);
+                    // if there's branch product
+                    reviewFragment.setBranch(selectedBranch);
+                    reviewFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts(false));
+                    reviewFragment.setMultipleInput(getModuleSetting(concessioModule).getQuantityInput().is_multiinput());
+                    //reviewFragment.setMultiInputListener(multiInputListener);
+                    reviewFragment.setCanDeleteItems(concessioModule != ConcessioModule.RECEIVE_SUPPLIER);
+
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.flContent, reviewFragment, "reviewFragment")
+                            .addToBackStack("review")
+                            .commit();
+                }
             }
             else if(isReview()){
-                AlertDialog.Builder dialog = new AlertDialog.Builder(WH_Module.this, R.style.AppCompatDialogStyle_Light);
-                dialog.setTitle("Send this Document?");
-                dialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            Document document = null;
-                            if (concessioModule == ConcessioModule.RECEIVE_SUPPLIER)
-                                document = DocumentTools.generateDocument(WH_Module.this, getSession().getDevice_id(),
-                                        DocumentTypeCode.RECEIVE_SUPPLIER);
-                            else if (concessioModule == ConcessioModule.RELEASE_BRANCH)
-                                document = DocumentTools.generateDocument(WH_Module.this, getSession().getDevice_id(),
-                                        order.getBranch_id(),
-                                        DocumentTypeCode.RELEASE_BRANCH);
+                if(concessioModule == ConcessioModule.RELEASE_BRANCH) {
+                    DispatchConfirmationDialog dialog = new DispatchConfirmationDialog(WH_Module.this, R.style.AppCompatDialogStyle_Light_NoTitle);
+                    dialog.setTargetBranch(Branch.fetchById(getHelper(),Branch.class,order.getBranch_id()));
+                    dialog.setConfirmationListener(new DispatchConfirmationDialog.DispatchConfirmationListener() {
+                        @Override
+                        public void onCancel() {}
 
-                            if(document != null) {
+                        @Override
+                        public boolean onSubmit(String plateNumber, String crates, Branch branch) {
+                            try {
+                                Document document = DocumentTools.generateDocument(WH_Module.this, getSession().getDevice_id(),
+                                        order.getBranch_id(),
+                                        DocumentTypeCode.RELEASE_BRANCH,true);
+                                document.setOrder(order);
+                                Extras extras = document.getExtras();
+                                if(extras == null)
+                                    extras = new Extras();
+                                extras.setPlate_number(plateNumber);
+                                extras.setCrates_count(NumberTools.toDouble(crates).intValue());
+                                document.setExtras(extras);
+
                                 OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                         .toSend()
                                         .fromModule(concessioModule)
@@ -396,20 +544,82 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                                         .queue();
                                 setResult(SUCCESS);
                                 finish();
-                                printTransaction(offlineData,"TEST");
+                                printTransaction(offlineData, "TEST");
+                            } catch (SQLException e) {
+                                e.printStackTrace();
                             }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                            return true;
                         }
-                    }
-                });
-                dialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    });
+                    dialog.show();
+                }
+                else if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER) {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(WH_Module.this, R.style.AppCompatDialogStyle_Light);
+                    dialog.setTitle("Confirmation");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy hh:mm a");
+                    dialog.setMessage(simpleDateFormat.format(new Date()));
+                    dialog.setPositiveButton("SUBMIT", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                Document document = DocumentTools.generateOrderReceivingDocument(WH_Module.this, getSession().getDevice_id(),
+                                            DocumentTypeCode.RECEIVE_SUPPLIER);
+                                document.setOrder(order);
 
+                                if (document != null) {
+                                    OfflineData offlineData = new SwableTools.Transaction(getHelper())
+                                            .toSend()
+                                            .fromModule(concessioModule)
+                                            .object(document)
+                                            .forBranch(selectedBranch)
+                                            .queue();
+                                    setResult(SUCCESS);
+                                    finish();
+                                    printTransaction(offlineData, "TEST");
+                                }
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    dialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dialog.show();
+                }
+            }
+            else if(isReceiving()) {
+                /*btnPrimary.setText(SUBMIT);
+
+                reviewOrderReceiveFragment = new SimpleOrderReceiveFragment();
+                reviewOrderReceiveFragment.setHelper(getHelper());
+                reviewOrderReceiveFragment.setSetupActionBar(WH_Module.this);
+                reviewOrderReceiveFragment.setItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(View view, int position) {
+                        ORDERLINE_RECEIVED = position;
+                        ReceivedMultiItem multiItem = (ReceivedMultiItem) simpleOrderReceiveFragment.getOrderReceiveRecyclerAdapter().getItem(position);
+
+                        if(multiItem.isHeader())
+                            return;
+
+                        Intent intent = new Intent(WH_Module.this, WH_OrderMultiInput.class);
+                        intent.putExtra(WH_OrderMultiInput.RECEIVED_PRODUCT_ITEM_ID, multiItem.getProduct().getId());
+                        intent.putExtra(WH_OrderMultiInput.RECEIVED_PRODUCT_ITEMLINE_INDEX, multiItem.getProductItemLineNo());
+                        startActivityForResult(intent, FROM_MULTIINPUT);
                     }
                 });
-                dialog.show();
+
+                reviewOrderReceiveFragment.forceUpdateList();
+                reviewOrderReceiveFragment.refreshList();
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.flContent, reviewOrderReceiveFragment, "review_receive_fragment")
+                        .addToBackStack("review_receive")
+                        .commit();*/
             }
             else if(isTransactionDetail()) {
 
@@ -442,8 +652,12 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                 else {
                     if(isAddProduct)
                         additionalProductsFragment.updateListWhenSearch(query);
-                    else
-                        simpleInventoryFragment.updateListWhenSearch(query);
+                    else{
+                        if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER)
+                            simpleOrderReceiveFragment.updateListWhenSearch(query);
+                        else
+                            simpleInventoryFragment.updateListWhenSearch(query);
+                    }
                 }
                 return false;
             }
@@ -455,8 +669,12 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                 else {
                     if (isAddProduct)
                         additionalProductsFragment.updateListWhenSearch(newText);
-                    else
-                        simpleInventoryFragment.updateListWhenSearch(newText);
+                    else {
+                        if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER)
+                            simpleOrderReceiveFragment.updateListWhenSearch(newText);
+                        else
+                            simpleInventoryFragment.updateListWhenSearch(newText);
+                    }
                 }
                 return false;
             }
@@ -568,7 +786,7 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
 
         refreshTitle();
 
-        getSupportActionBar().setDisplayShowTitleEnabled((isReview() && !isAddProduct) || isTransactionDetail());
+        getSupportActionBar().setDisplayShowTitleEnabled((isReview() && !isAddProduct) || isTransactionDetail() || isReceiving());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -576,8 +794,9 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FROM_MULTIINPUT) {
             if(resultCode == SUCCESS) {
-                if(additionalProductsFragment != null && isAddProduct) {
-                    additionalProductsFragment.refreshList();
+                if(isAddProduct) {
+                    if(additionalProductsFragment != null)
+                        additionalProductsFragment.refreshList();
                     simpleInventoryFragment.setFilterProductsBy(ProductsAdapterHelper.getSelectedProductItems().getSelectedProducts());
                     simpleInventoryFragment.forceUpdateProductList();
 
@@ -587,9 +806,25 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                     }
                 }
 
-                simpleInventoryFragment.refreshList();
-                if(reviewFragment != null && isReview())
-                    reviewFragment.refreshList();
+                Log.e("ORDERLINE_RECEIVED", ORDERLINE_RECEIVED + " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER) {
+                    ReceivedMultiItem multiItem = (ReceivedMultiItem) simpleOrderReceiveFragment.getOrderReceiveRecyclerAdapter()
+                            .getItem(ORDERLINE_RECEIVED);
+                    simpleOrderReceiveFragment.getOrderReceiveRecyclerAdapter().notifyItemChanged(multiItem.getProductItemIndex());
+                    simpleOrderReceiveFragment.getOrderReceiveRecyclerAdapter().notifyItemChanged(ORDERLINE_RECEIVED);
+                    if(reviewOrderReceiveFragment != null && isReview()) {
+                        reviewOrderReceiveFragment.getOrderReceiveRecyclerAdapter().notifyItemChanged(multiItem.getProductItemIndex());
+                        reviewOrderReceiveFragment.getOrderReceiveRecyclerAdapter().notifyItemChanged(ORDERLINE_RECEIVED);
+                    }
+                    tvTotalAmount.setText("P"+NumberTools.separateInCommas(ProductsAdapterHelper.getReceivedProductItems().getSubtotal()));
+                    ORDERLINE_RECEIVED = -1;
+                }
+                else {
+
+                    simpleInventoryFragment.refreshList();
+                    if (reviewFragment != null && isReview())
+                        reviewFragment.refreshList();
+                }
             }
         }
         else {
@@ -604,12 +839,17 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
     protected boolean isTransactionDetail() {
         return btnPrimary.getText().toString().equals(VOID);
     }
+    protected boolean isReceiving() {
+        return btnPrimary.getText().toString().equals(RECEIVE);
+    }
 
     private final int MAX_CHAR = 33;
     private void printTransactionLog(OfflineData offlineData, String... labels) {
         Document document = offlineData.getObjectFromData(Document.class);
-        Branch targetBranch = Branch.fetchById(getHelper(), Branch.class, document.getTarget_branch_id());
-        Log.e("TARGET BRANCH", targetBranch.getName());
+        Branch targetBranch = null;
+        if(document.getTarget_branch_id() != null)
+            targetBranch = Branch.fetchById(getHelper(), Branch.class, document.getTarget_branch_id());
+        Log.e("TARGET BRANCH", targetBranch == null? "null" : targetBranch.getName());
         Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
         Log.e("BRANCH", branch.getName());
 
@@ -692,8 +932,10 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                 @Override
                 public Printer onBuildPrintData(Printer printer) {
                     Document document = offlineData.getObjectFromData(Document.class);
-                    Branch targetBranch = Branch.fetchById(getHelper(), Branch.class, document.getTarget_branch_id());
-                    Log.e("TARGET BRANCH", targetBranch.getName());
+                    Branch targetBranch = null;
+                    if(document.getTarget_branch_id() != null)
+                        targetBranch = Branch.fetchById(getHelper(), Branch.class, document.getTarget_branch_id());
+                    Log.e("TARGET BRANCH", targetBranch == null? "null" : targetBranch.getName());
                     Branch branch = Branch.fetchById(getHelper(), Branch.class, offlineData.getBranch_id());
                     Log.e("BRANCH", branch.getName());
 
@@ -766,8 +1008,9 @@ public class WH_Module extends ModuleActivity implements SearchOrdersDialog.OnSe
                                 printer.addFeedLine(3);
                                 printer.addText("- - - - - - CUT HERE - - - - - -\n\n");
                             }
-                            else
+                            else {
                                 printer.addFeedLine(5);
+                            }
 
                         } catch (Epos2Exception e) {
                             e.printStackTrace();

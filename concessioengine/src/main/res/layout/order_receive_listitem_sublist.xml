@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:autofit="http://schemas.android.com/apk/res-auto"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="40dp"
+        android:layout_height="58dp"
+        android:text="8888"
+        android:id="@+id/tvLineNo"
+        android:gravity="center"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:textSize="18sp"
+        android:visibility="invisible"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/llPrice"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:minHeight="29dp"
+        android:gravity="bottom"
+        android:layout_toRightOf="@+id/tvLineNo">
+
+        <TextView
+            android:padding="3dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="Php 888,888.88"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:id="@+id/tvExpectedPrice"
+            android:gravity="bottom"/>
+
+        <TextView
+            android:padding="3dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="Php 888,888.88"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:id="@+id/tvActualPrice"
+            android:gravity="bottom|right"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/llQuantity"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:minHeight="29dp"
+        android:gravity="bottom"
+        android:layout_toRightOf="@+id/tvLineNo"
+        android:layout_below="@+id/llPrice">
+
+        <TextView
+            android:padding="3dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="888,888.88 PC"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:id="@+id/tvExpectedQuantity"
+            android:gravity="top"/>
+
+        <TextView
+            android:padding="3dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="888,888.88 PC"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:id="@+id/tvActualQuantity"
+            android:gravity="top|right"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <me.grantland.widget.AutofitTextView
+        android:padding="3dp"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Php 888,888.88"
+        android:textSize="15sp"
+        android:singleLine="true"
+        android:id="@+id/tvSubtotal"
+        android:gravity="top|right"
+        android:textStyle="bold"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/llQuantity"
+        android:layout_alignLeft="@+id/llQuantity"
+        style="@style/TextView.ProductItem.Name"/>
+
+</RelativeLayout>

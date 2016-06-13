@@ -13,13 +13,10 @@ import android.widget.ListView;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
-import net.nueca.concessioengine.adapters.base.BaseReceiveAdapter;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.concessioengine.fragments.interfaces.ListScrollListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
-import net.nueca.concessioengine.lists.ReceivedProductItemList;
-import net.nueca.concessioengine.lists.SelectedProductItemList;
-import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.concessioengine.lists.SelectedProductItemList2;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
@@ -73,8 +70,8 @@ public abstract class BaseReceiveFragment extends ImonggoFragment {
     protected abstract void toggleNoItems(String msg, boolean show);
     protected abstract boolean shouldContinue();
     protected abstract void clearSelectedItems();
-    public abstract ReceivedProductItemList getReceivedProductItemList();
-    public abstract ReceivedProductItemList getDisplayProductItemList();
+    public abstract SelectedProductItemList2 getReceivedProductItemList();
+    public abstract SelectedProductItemList2 getDisplayProductItemList();
 
     public User getUser() throws SQLException {
         if(getSession() == null)

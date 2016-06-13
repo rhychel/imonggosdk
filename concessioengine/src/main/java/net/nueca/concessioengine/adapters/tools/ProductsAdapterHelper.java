@@ -15,6 +15,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.adapters.interfaces.ImageLoaderListener;
+import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.SettingsName;
@@ -58,6 +59,9 @@ public class ProductsAdapterHelper {
 
     private static int decimalPlace = 2;
 
+    /** RECEIVING PURCHASE ORDERS **/
+    private static ReceivedProductItemList receivedProductItemList = null;
+
     public static ImageLoader getImageLoaderInstance(Context context) {
         return getImageLoaderInstance(context, false);
     }
@@ -97,6 +101,12 @@ public class ProductsAdapterHelper {
                 }
             };
         return imageLoader;
+    }
+
+    public static ReceivedProductItemList getReceivedProductItems() {
+        if(receivedProductItemList == null)
+            receivedProductItemList = new ReceivedProductItemList();
+        return receivedProductItemList;
     }
 
     public static SelectedProductItemList getSelectedProductItems() {
@@ -146,6 +156,12 @@ public class ProductsAdapterHelper {
         return session;
     }
 
+    public static boolean hasReceivedProductItems() {
+        if(receivedProductItemList == null)
+            return false;
+        return !receivedProductItemList.isEmpty();
+    }
+
     public static boolean hasSelectedProductItems() {
         if(selectedProductItems == null)
             return false;
@@ -156,6 +172,24 @@ public class ProductsAdapterHelper {
         if(selectedReturnProductItems == null)
             return false;
         return !selectedReturnProductItems.isEmpty();
+    }
+
+    public static void clearReceivedProductItemList(boolean includeCustomer) {
+        clearReceivedProductItemList(includeCustomer, true);
+    }
+    public static void clearReceivedProductItemList(boolean includeCustomer, boolean includeReason) {
+        if(receivedProductItemList != null)
+            receivedProductItemList.clear();
+        if(includeCustomer) {
+            selectedCustomer = null;
+            selectedCustomerGroup = null;
+        }
+        selectedBranch = null;
+        if(includeReason)
+            reason = null;
+        warehouse_id = -1;
+        parent_document_id = -1;
+        ProductListTools.restartLineNo();
     }
 
     public static void clearSelectedProductItemList(boolean includeCustomer) {
@@ -224,6 +258,8 @@ public class ProductsAdapterHelper {
         warehouse_id = -1;
         parent_document_id = -1;
         Log.e("ProductAdapterHelper", "destroyProductAdapterHelper");
+
+        receivedProductItemList = null;
     }
 
     public static void setSelectedCustomer(Customer selectedCustomer) {

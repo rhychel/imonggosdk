@@ -84,6 +84,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
     private boolean useRecyclerView = true;
     private int prevSelectedCategory = 0;
 
+    private boolean shouldAskReason = true;
+
     private boolean isCustomAdapter = false;
 
     public static SimpleProductsFragment newInstance() {
@@ -175,7 +177,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
         if(useRecyclerView) {
             llReason = (LinearLayout) view.findViewById(R.id.llReason);
             if(concessioModule == ConcessioModule.RECEIVE_BRANCH) {
-                llReason.setVisibility(View.VISIBLE);
+                if(shouldAskReason)
+                    llReason.setVisibility(View.VISIBLE);
                 tvReason = (TextView) view.findViewById(R.id.tvReason);
                 ivEdit = (ImageView) view.findViewById(R.id.ivEdit);
                 ((TextView) view.findViewById(R.id.tvReasonLabel)).setText("DR. No.");
@@ -183,7 +186,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     ivEdit.setVisibility(View.GONE);
             }
             if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
-                llReason.setVisibility(View.VISIBLE);
+                if(shouldAskReason)
+                    llReason.setVisibility(View.VISIBLE);
                 tvReason = (TextView) view.findViewById(R.id.tvReason);
                 ivEdit = (ImageView) view.findViewById(R.id.ivEdit);
                 ((TextView) view.findViewById(R.id.tvReasonLabel)).setText("PR. No.");
@@ -191,7 +195,8 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                     ivEdit.setVisibility(View.GONE);
             }
             if(concessioModule == ConcessioModule.RELEASE_ADJUSTMENT || concessioModule == ConcessioModule.RELEASE_BRANCH) {
-                llReason.setVisibility(View.VISIBLE);
+                if(shouldAskReason)
+                    llReason.setVisibility(View.VISIBLE);
                 tvReason = (TextView) view.findViewById(R.id.tvReason);
                 ivEdit = (ImageView) view.findViewById(R.id.ivEdit);
 
@@ -410,6 +415,11 @@ public class SimpleProductsFragment extends BaseProductsFragment {
                 if(concessioModule == ConcessioModule.RECEIVE_BRANCH_PULLOUT) {
                     simpleSalesQuantityDialog.setHasStock(false);
                     simpleSalesQuantityDialog.setHasPrice(false);
+                    simpleSalesQuantityDialog.setUnitDisplay(true);
+                    simpleSalesQuantityDialog.setHasExpectedQty(true);
+                }
+                else if(concessioModule == ConcessioModule.RELEASE_BRANCH) {
+                    simpleSalesQuantityDialog.setHasStock(false);
                     simpleSalesQuantityDialog.setUnitDisplay(true);
                     simpleSalesQuantityDialog.setHasExpectedQty(true);
                 }
@@ -737,5 +747,13 @@ public class SimpleProductsFragment extends BaseProductsFragment {
 
     public void setSelectedCategory(int position) {
         spCategories.setSelection(position);
+    }
+
+    public boolean isShouldAskReason() {
+        return shouldAskReason;
+    }
+
+    public void setShouldAskReason(boolean shouldAskReason) {
+        this.shouldAskReason = shouldAskReason;
     }
 }

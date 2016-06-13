@@ -6,6 +6,10 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
+import net.nueca.concessioengine.lists.ReceivedProductItemList;
+import net.nueca.concessioengine.objects.ExtendedAttributes;
+import net.nueca.concessioengine.objects.ReceivedProductItem;
+import net.nueca.concessioengine.objects.ReceivedProductItemLine;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
@@ -72,12 +76,12 @@ public class OrderTools {
 
             SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().initializeItem(product);
             selectedProductItem.setIsMultiline(isMultiLine);
-            String quantity = "0";
+            double quantity = 0d;
             Unit unit = null;
             if(orderLine.getUnit_id() != null)
                 unit = dbHelper.fetchIntId(Unit.class).queryForId(orderLine.getUnit_id());
             if(unit != null) {
-                quantity = orderLine.getUnit_quantity().toString();
+                quantity = orderLine.getUnit_quantity();
                 unit.setRetail_price(orderLine.getUnit_retail_price());
             }
             else {
@@ -85,9 +89,10 @@ public class OrderTools {
                 unit.setId(-1);
                 unit.setName(product.getBase_unit_name());
                 unit.setRetail_price(orderLine.getUnit_retail_price());
-                quantity = String.valueOf(orderLine.getQuantity());
+                quantity = orderLine.getQuantity();
             }
-            Values values = new Values(unit, quantity);
+            Values values = new Values(unit,"0");
+            values.setExtendedAttributes(new ExtendedAttributes(0d, quantity));
             values.setLine_no(orderLine.getLine_no());
             selectedProductItem.addValues(values);
             ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
@@ -96,6 +101,42 @@ public class OrderTools {
         }
 
         return productList;
+    }
+
+    public static ReceivedProductItemList generateReceivedProductItemList(ImonggoDBHelper2 dbHelper, Order order) throws SQLException {
+        ReceivedProductItemList receivedProductItemList = new ReceivedProductItemList();
+        Log.e("SIZE", order.getOrder_lines().size() + " order lines");
+        for(OrderLine orderLine : order.getOrder_lines()) {
+            Product product = dbHelper.fetchIntId(Product.class).queryForId(orderLine.getProduct_id());
+
+            ReceivedProductItem productItem;
+            if(!receivedProductItemList.containsKey(product))
+                receivedProductItemList.put(product);
+
+            productItem = receivedProductItemList.get(product);
+
+            double quantity;
+            Unit unit = null;
+            if(orderLine.getUnit_id() != null)
+                unit = dbHelper.fetchIntId(Unit.class).queryForId(orderLine.getUnit_id());
+            if(unit != null) {
+                quantity = orderLine.getUnit_quantity();
+                unit.setRetail_price(orderLine.getUnit_retail_price());
+            }
+            else {
+                unit = new Unit();
+                unit.setId(-1);
+                unit.setName(product.getBase_unit_name());
+                unit.setRetail_price(orderLine.getUnit_retail_price());
+                quantity = orderLine.getQuantity();
+            }
+            ReceivedProductItemLine productItemLine = new ReceivedProductItemLine(unit, quantity, orderLine.getRetail_price());
+
+            productItem.addProductItemLine(productItemLine);
+
+            //receivedProductItemList.put(product, productItem);
+        }
+        return receivedProductItemList;
     }
 
 }

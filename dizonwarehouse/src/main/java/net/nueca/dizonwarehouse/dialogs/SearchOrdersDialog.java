@@ -18,6 +18,7 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.dialogs.DialogTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.RequestType;
+import net.nueca.imonggosdk.enums.Status;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Session;
@@ -48,6 +49,8 @@ public class SearchOrdersDialog extends AppCompatDialog {
     private int branch_id;
     private Order foundOrder;
 
+    private ConcessioModule concessioModule;
+
     public SearchOrdersDialog(Context context, ImonggoDBHelper2 dbHelper2, Session session) {
         super(context);
         this.dbHelper2 = dbHelper2;
@@ -76,7 +79,7 @@ public class SearchOrdersDialog extends AppCompatDialog {
 
 //        if(title != null)
 //            tvTitle.setText(title);
-        etSearch.addTextChangedListener(new TextWatcher() {
+        /*etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
@@ -85,17 +88,24 @@ public class SearchOrdersDialog extends AppCompatDialog {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                toggleNotFound(false);
+                toggleNotFound("", false);
             }
-        });
+        });*/
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String reference = etSearch.getText().toString();
+                if(reference == null || reference.isEmpty()) {
+                    //toggleNotFound("Enter a Reference No.", true);
+                    etSearch.setError("Enter a Reference No.");
+                    return;
+                }
                 try {
                     Where<Order, ?> whereOrder = dbHelper2.fetchObjects(Order.class).queryBuilder().where().eq("reference", reference)
                             .and().like("order_type_code", order_type);
+                            //.and().eq("order_status", "U")
+                            //.and().eq("status","S");
 
                     foundOrder = whereOrder.queryForFirst();
                 } catch (SQLException e) {
@@ -127,7 +137,13 @@ public class SearchOrdersDialog extends AppCompatDialog {
                                 }
 
                                 if(jsonObject == null) { // not found
-                                    toggleNotFound(true);
+                                    //toggleNotFound("No Order with that Reference No.", true);
+                                    if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+                                        etSearch.setError("No Sales Order with that Reference No.");
+                                    else if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER)
+                                        etSearch.setError("No Purchase Order with that Reference No.");
+                                    else
+                                        etSearch.setError("No Order with that Reference No.");
                                 }
                                 else {
                                     foundOrder = Order.fromJSONObject(jsonObject);
@@ -152,23 +168,49 @@ public class SearchOrdersDialog extends AppCompatDialog {
                         public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
                             DialogTools.hideIndeterminateProgressDialog();
                             Log.e("RESPONSE " + responseCode, response == null? "null" : response.toString());
-                            toggleNotFound(true);
+                            //toggleNotFound("No Order with that Reference No.", true);
+                            if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+                                etSearch.setError("No Sales Order with that Reference No.");
+                            else if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER)
+                                etSearch.setError("No Purchase Order with that Reference No.");
+                            else
+                                etSearch.setError("No Order with that Reference No.");
                         }
 
                         @Override
                         public void onRequestError() {
                             DialogTools.hideIndeterminateProgressDialog();
-                            toggleNotFound(true);
+                            //toggleNotFound("No Order with that Reference No.", true);
+                            if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+                                etSearch.setError("No Sales Order with that Reference No.");
+                            else if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER)
+                                etSearch.setError("No Purchase Order with that Reference No.");
+                            else
+                                etSearch.setError("No Order with that Reference No.");
                         }
                     });
                 }
                 else {
-                    if(onSearchListener != null) {
-                        onSearchListener.onFound(foundOrder);
-                        dismiss();
+                    Log.e(foundOrder.getReference(), foundOrder.getStatus() + "");
+                    Log.e(foundOrder.getReference(), foundOrder.getOrder_status() + "");
+
+                    if( (foundOrder.getStatus() != null && !foundOrder.getStatus().equals(Status.VOIDED.toString())) &&
+                        (foundOrder.getOrder_status() != null && foundOrder.getOrder_status().equals(Status.ORDER_UNFULFILLED.toString())) ) {
+                        if (onSearchListener != null) {
+                            onSearchListener.onFound(foundOrder);
+                            dismiss();
+                        } else
+                            dismiss();
                     }
-                    else
-                        dismiss();
+                    else {
+                        //toggleNotFound("Sales Order has already been delivered", true);
+                        if(concessioModule == ConcessioModule.RELEASE_BRANCH)
+                            etSearch.setError("Sales Order has already been delivered");
+                        else if(concessioModule == ConcessioModule.RECEIVE_SUPPLIER)
+                            etSearch.setError("Purchase Order has already been received");
+                        else
+                            etSearch.setError("Order has already been received");
+                    }
                 }
             }
         });
@@ -182,7 +224,9 @@ public class SearchOrdersDialog extends AppCompatDialog {
         });
     }
 
-    public void toggleNotFound(boolean shouldShow) {
+    @Deprecated
+    public void toggleNotFound(String msg, boolean shouldShow) {
+        tvNotFound.setText(msg);
         tvNotFound.setVisibility(shouldShow? View.VISIBLE : View.INVISIBLE);
     }
 
@@ -200,6 +244,10 @@ public class SearchOrdersDialog extends AppCompatDialog {
 
     public void setBranch_id(int branch_id) {
         this.branch_id = branch_id;
+    }
+
+    public void setConcessioModule(ConcessioModule concessioModule) {
+        this.concessioModule = concessioModule;
     }
 
     public SearchOrdersDialog setOnSearchListener(OnSearchListener listener) {

@@ -19,7 +19,7 @@ import net.nueca.concessioengine.adapters.SimpleReceiveListAdapter;
 import net.nueca.concessioengine.adapters.SimpleReceiveRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.dialogs.SimpleReceiveDialog;
-import net.nueca.concessioengine.lists.ReceivedProductItemList;
+import net.nueca.concessioengine.lists.SelectedProductItemList2;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
@@ -40,6 +40,7 @@ import java.util.List;
 /**
  * Created by gama on 9/10/15.
  */
+@Deprecated
 public class SimpleReceiveReviewFragment extends BaseReviewFragment {
 
     protected SimpleReceiveListAdapter simpleReceiveListAdapter;
@@ -110,7 +111,7 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
 
     private List<DocumentLine> generateDocumentLines() {
         List<DocumentLine> documentLines = new ArrayList<>();
-        for(SelectedProductItem selectedProductItem : receivedProductItemList) {
+        for(SelectedProductItem selectedProductItem : selectedProductItemList2) {
             Product product = selectedProductItem.getProduct();
             for(Values values : selectedProductItem.getValues()) {
                 ExtendedAttributes extendedAttributes = values.getExtendedAttributes();
@@ -174,14 +175,14 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
             });
             simpleReceiveRecyclerViewAdapter.setOnItemLongClickListener(null);
 
-            simpleReceiveRecyclerViewAdapter.setReceivedProductListItem(receivedProductItemList);
+            simpleReceiveRecyclerViewAdapter.setReceivedProductListItem(selectedProductItemList2);
             simpleReceiveRecyclerViewAdapter.setIsReview(true);
 
         }
         else {
             simpleReceiveListAdapter = new SimpleReceiveListAdapter(getActivity(), getHelper());
 
-            simpleReceiveListAdapter.setReceivedProductListItem(receivedProductItemList);
+            simpleReceiveListAdapter.setReceivedProductListItem(selectedProductItemList2);
             simpleReceiveListAdapter.setIsReview(true);
         }
     }
@@ -254,17 +255,17 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
     }
 
     public List<SelectedProductItem> getReceivedProducts() {
-        Log.e("SIZE", receivedProductItemList.size() + " " + offset + " " + LIMIT);
-        if((int)offset > receivedProductItemList.size())
+        Log.e("SIZE", selectedProductItemList2.size() + " " + offset + " " + LIMIT);
+        if((int)offset > selectedProductItemList2.size())
             return new ArrayList<>();
 
-        if(receivedProductItemList.size() < LIMIT)
-            return receivedProductItemList;
+        if(selectedProductItemList2.size() < LIMIT)
+            return selectedProductItemList2;
 
-        if(receivedProductItemList.size() < (int)(offset+LIMIT))
-            return receivedProductItemList.subList((int)offset, receivedProductItemList.size());
+        if(selectedProductItemList2.size() < (int)(offset+LIMIT))
+            return selectedProductItemList2.subList((int)offset, selectedProductItemList2.size());
 
-        return receivedProductItemList.subList((int) offset, (int) (offset+LIMIT));
+        return selectedProductItemList2.subList((int) offset, (int) (offset+LIMIT));
     }
 
     public void forceUpdateProductList() {
@@ -305,12 +306,12 @@ public class SimpleReceiveReviewFragment extends BaseReviewFragment {
             setupActionBar.setupActionBar(tbActionBar);
     }
 
-    public ReceivedProductItemList getReceivedProductItemList() {
+    public SelectedProductItemList2 getReceivedProductItemList() {
         return useRecyclerView? simpleReceiveRecyclerViewAdapter.getReceivedProductListItem() :
                 simpleReceiveListAdapter.getReceivedProductListItem();
     }
 
-    public ReceivedProductItemList getDisplayProductItemList() {
+    public SelectedProductItemList2 getDisplayProductItemList() {
         return useRecyclerView? simpleReceiveRecyclerViewAdapter.getDisplayProductListItem() :
                 simpleReceiveListAdapter.getDisplayProductListItem();
     }

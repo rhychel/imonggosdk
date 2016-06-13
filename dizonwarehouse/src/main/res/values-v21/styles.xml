@@ -33,4 +33,22 @@
 
     <style name="WarehouseTheme.Button.Borderless.Colored" parent="Widget.AppCompat.Button.Borderless.Colored">
     </style>
+
+    <!-- Toolbar -->
+    <style name="WarehouseTheme.Toolbar" parent="WarehouseTheme">
+        <item name="android:textColorPrimary">@color/wh_colorPrimaryTextInverse</item>
+        <item name="android:textColorPrimaryInverse">@color/wh_colorPrimaryText</item>
+        <item name="android:textColorSecondary">@color/wh_colorSecondaryTextInverse</item>
+        <item name="android:textColorSecondaryInverse">@color/wh_colorSecondaryText</item>
+        <item name="popupTheme">@style/WarehouseTheme.Toolbar.Popup</item>
+    </style>
+    <style name="WarehouseTheme.Toolbar.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">@color/wh_colorPrimaryTextInverse</item>
+    </style>
+    <style name="WarehouseTheme.Toolbar.SpinnerItem.DropDown" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">@color/wh_colorPrimaryText</item>
+    </style>
+    <style name="WarehouseTheme.Toolbar.Popup" parent="@android:style/Widget.PopupMenu">
+        <item name="android:textColor">@color/wh_colorPrimaryText</item>
+    </style>
 </resources>
