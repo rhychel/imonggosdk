@@ -8,6 +8,7 @@ import android.view.View;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.enums.ConcessioModule;
@@ -33,6 +34,11 @@ public abstract class DashboardActivity extends ImonggoAppCompatActivity {
     }
 
     public void moduleSelected(View view) {
+
+        // ----- CLEAR!!!
+        ProductsAdapterHelper.clearSelectedProductItemList(true);
+        ProductsAdapterHelper.clearSelectedReturnProductItemList();
+
         DashboardTile dashboardTile = new DashboardTile(ConcessioModule.STOCK_REQUEST, "Orders");
         if(view.getTag() != null) {
             dashboardTile = (DashboardTile) view.getTag();

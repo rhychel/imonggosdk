@@ -29,6 +29,7 @@ import net.nueca.concessioengine.objects.DashboardTile;
 import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
 import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
@@ -36,8 +37,11 @@ import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.Inventory;
+import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
@@ -66,10 +70,43 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
     private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>();
     private int currentlySelected = 0;
 
+    private void correctInventory() {
+        BatchList<Product> updateProducts = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+        BatchList<Inventory> updateInventories = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
+
+        List<Product> currentProducts = Product.fetchAll(getHelper(), Product.class);
+        for(Product product : currentProducts) {
+            if(product.getStatus() == null || !product.getStatus().equals("D")) {
+                try {
+                    Inventory inventory = getHelper().fetchObjects(Inventory.class)
+                            .queryBuilder()
+                            .where()
+                                .eq("product_id", product.getId())
+                            .queryForFirst();
+                    if (inventory != null) {
+                        Log.e("Inventory", "Updated!");
+                        product.setInventory(inventory);
+                        updateProducts.add(product);
+
+                        inventory.setProduct(product);
+                        updateInventories.add(inventory);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        updateProducts.doOperation(Product.class);
+        updateInventories.doOperation(Inventory.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
+
+        correctInventory();
 
         setNextActivityClass(C_Module.class);
 
@@ -264,6 +301,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                                 Log.e("apiDownloader", "done!");
                                 progressListDialog.dismiss();
                                 Toast.makeText(C_Dashboard.this, "Update completed!", Toast.LENGTH_LONG).show();
+                                correctInventory();
                             }
 
                             @Override

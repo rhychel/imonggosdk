@@ -41,7 +41,7 @@ public class C_Login extends LoginActivity {
         TEST_ACCOUNT = true;
 
         SettingTools.updateSettings(C_Login.this,
-                SettingsName.AUTO_UPDATE, false, "");
+                SettingsName.AUTO_UPDATE, false );
 
         setModulesToSync(
                 Table.USERS.ordinal(),

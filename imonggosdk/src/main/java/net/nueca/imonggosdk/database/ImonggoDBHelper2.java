@@ -81,7 +81,7 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 98;
+    private static final int DATABASE_VERSION = 99;
     private static final Class<?> tables[] = {
             Branch.class,
             BranchTag.class,
@@ -154,11 +154,24 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
-            for(Class<?> table : tables) {
-                TableUtils.dropTable(connectionSource, table, true);
+            int affectedRows = 0;
+            Log.e("ImonggoDBHelper2", "onUpgrade is called");
+            while(oldVersion < newVersion) {
+                oldVersion++;
+                switch (oldVersion) {
+                    case 99: {
+                        affectedRows = fetchObjectsInt(ModuleSetting.class).executeRaw("ALTER TABLE `modulesetting` ADD COLUMN is_voidable BOOLEAN DEFAULT 1;");
+                        Log.e("Affected Rows["+oldVersion+"]", affectedRows+" row(s)");
+                    }
+                    break;
+                }
             }
 
-            onCreate(database, connectionSource);
+//            for(Class<?> table : tables) {
+//                TableUtils.dropTable(connectionSource, table, true);
+//            }
+//
+//            onCreate(database, connectionSource);
         } catch (SQLException e) {
             e.printStackTrace();
         }

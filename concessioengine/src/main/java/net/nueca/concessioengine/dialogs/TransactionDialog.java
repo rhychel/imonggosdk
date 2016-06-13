@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.dialogs;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -79,7 +80,6 @@ public class TransactionDialog extends BaseAppCompatDialog {
                 dismiss();
             }
         });
-
     }
 
     public void setAmountLabel(String amountLabel) {
