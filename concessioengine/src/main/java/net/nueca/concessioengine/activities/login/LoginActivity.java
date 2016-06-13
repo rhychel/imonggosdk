@@ -149,6 +149,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
      */
     @Override
     protected void loginChecker() {
+        Log.e(TAG, "Before Checking: isAutoUpdate: " + isAutoUpdate() + " isLoggedIn: " + isLoggedIn() + " isUnlinked: " + isUnlinked());
         try {
             // Account is unlinked and user is logout
             if (AccountTools.isUnlinked(this) && !AccountTools.isLoggedIn(getHelper())) {
@@ -159,7 +160,7 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
             if (!AccountTools.isUnlinked(this)) {
                 // if user is logout
                 if (!AccountTools.isLoggedIn(getHelper())) {
-                    setUnlinked(false);
+                    setUnlinked(true);
                     Log.e(TAG, "loginChecker2");
                 }
                 // if User is Logged In
@@ -186,6 +187,9 @@ public class LoginActivity extends BaseLoginActivity implements LoginListener {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        Log.e(TAG, "After Checking: isAutoUpdate: " + isAutoUpdate() + " isLoggedIn: " + isLoggedIn() + " isUnlinked: " + isUnlinked());
+
     }
 
     @Override

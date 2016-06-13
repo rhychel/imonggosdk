@@ -845,8 +845,12 @@ public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras
                 extras.deleteTo(dbHelper);
                 extras.setId(getClass().getName().toUpperCase(), id);
                 try {
-                    if(dbHelper.fetchObjects(Extras.class).queryBuilder().where().eq("id", idstr).queryForFirst() == null)
+                    if(dbHelper.fetchObjects(Extras.class).queryBuilder().where().eq("id", idstr).queryForFirst() == null) {
                         extras.insertTo(dbHelper);
+                        Log.e("EXTRAS", "is inserted");
+                    }
+                    else
+                        Log.e("EXTRAS", "is not inserted");
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

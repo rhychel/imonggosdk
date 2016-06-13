@@ -94,6 +94,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
     protected boolean isLayaway = false;
     protected boolean isDuplicating = false;
     protected boolean isButtonTapped = false;
+    protected boolean isPrintingStarted = false;
 
     protected int previousFragmentCount = 0;
     protected HistoryDetailsListener historyDetailsListener;
@@ -422,7 +423,7 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
      *
      * @return the number of inventory objects updated
      */
-    @Deprecated
+//    @Deprecated
     public int updateInventoryFromSelectedItemList(boolean shouldAdd) {
         Log.e("updateInventory", "updateInventoryFromSelectedItemList[shouldAdd]="+shouldAdd);
 

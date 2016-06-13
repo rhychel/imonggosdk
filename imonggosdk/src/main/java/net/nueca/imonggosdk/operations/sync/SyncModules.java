@@ -46,6 +46,7 @@ import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
+import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
@@ -1807,11 +1808,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 PRODUCT = gson.fromJson(jsonObject.toString(), Product.class);
 
                                                 if (PRODUCT != null) {
+                                                    Log.e("SyncMOdules-RHY", "Product is not null");
 
                                                     Extras product_extras;
 
                                                     // Extras
                                                     if (jsonObject.has("extras")) {
+                                                        Log.e("SyncMOdules-RHY", "Extras is not null");
                                                         product_extras = new Extras();
                                                         product_extras.setId(Product.class.getName().toUpperCase(), PRODUCT.getId());
                                                         JSONObject json_extras = jsonObject.getJSONObject("extras");
@@ -1837,10 +1840,36 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                             product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
                                                             product_extras.setDefault_selling_unit(default_selling_unit);
                                                             product_extras.insertTo(getHelper());
+
+                                                            Log.e("SyncMOdules-RHY", "Product.Extras is new");
                                                         } else {
-                                                            //Log.e(PRODUCT.getName() + " EXTRAS", "is on the database!");
+                                                            // -------------------- CHANGED BY RHY
                                                             product_extras = getHelper().fetchObjects(Extras.class).queryBuilder()
                                                                     .where().eq("id", product_extras.getId()).queryForFirst();
+                                                            Log.e("SyncModules-RHY", product_extras.getDefault_selling_unit());
+
+                                                            String default_selling_unit = "";
+                                                            String default_ordering_unit_id = "";
+
+                                                            if (json_extras.has("default_selling_unit")) {
+                                                                default_selling_unit = json_extras.getString("default_selling_unit");
+                                                                //Log.e(TAG, "API: " + mCurrentTableSyncing + " API has extras field 'default_selling_unit' on " + PRODUCT.getName());
+                                                            } else {
+                                                                //Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_selling_unit' on " + PRODUCT.getName());
+                                                            }
+
+                                                            if (json_extras.has("default_ordering_unit_id")) {
+                                                                default_ordering_unit_id = json_extras.getString("default_ordering_unit_id");
+                                                                //Log.e(TAG, "API: " + mCurrentTableSyncing + " API has extras field 'default_ordering_unit_id' on " + PRODUCT.getName());
+                                                            } else {
+                                                                //Log.e(TAG, "API: " + mCurrentTableSyncing + " API don't have extras field 'default_ordering_unit_id' on " + PRODUCT.getName());
+                                                            }
+
+                                                            product_extras.setDefault_ordering_unit_id(default_ordering_unit_id);
+                                                            product_extras.setDefault_selling_unit(default_selling_unit);
+                                                            Log.e("SyncModules-RHY", product_extras.getDefault_selling_unit());
+                                                            //Log.e(PRODUCT.getName() + " EXTRAS", "is on the database!");
+                                                            product_extras.updateTo(getHelper());
                                                         }
 
                                                         PRODUCT.setExtras(product_extras);
@@ -1938,15 +1967,24 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                                     PRODUCT.setSearchKey(PRODUCT.getName() + PRODUCT.getStock_no());
 
+                                                    // ----------- ADDED BY RHY! Fix for inventory
+                                                    Inventory inventory = getHelper().fetchObjects(Inventory.class)
+                                                            .queryBuilder()
+                                                            .where()
+                                                                .eq("product_id", PRODUCT.getId())
+                                                            .queryForFirst();
+
                                                     if (!isExisting(PRODUCT, Table.PRODUCTS)) {
                                                         if (jsonObject.getString("status").equals("A")) {
                                                             //Log.e(TAG, "setting status to A");
+                                                            PRODUCT.setInventory(inventory);
                                                             PRODUCT.setStatus("A");
                                                             PRODUCT.insertTo(getHelper());
                                                         } else
                                                             Log.e(TAG, "skipping save of product..");
                                                     } else {
                                                         //Log.e(TAG, "setting status to A. return of API is " + jsonObject.getString("status") + " updating products");
+                                                        PRODUCT.setInventory(inventory);
                                                         PRODUCT.setStatus("A");
                                                         PRODUCT.updateTo(getHelper());
                                                     }
@@ -2601,17 +2639,16 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
 
                                     // EXTRAS
                                     if (jsonObject.has(name_extras)) {
-
                                         JSONObject json_extras = jsonObject.getJSONObject(name_extras);
 
                                         customer_extras = new Extras();
                                         customer_extras.setId(Customer.class.getName().toUpperCase(), customer.getId());
 
+                                        //// EXTRAS NOT EXISTING
                                         if (!isExisting(customer_extras, Table.EXTRAS)) {
                                             user_id = 0;
                                             customer_category_id = 0;
 
-                                            // salesman_id
                                             if (json_extras.has(name_salesman_id)) {
                                                 if (!json_extras.getString(name_salesman_id).isEmpty()) {
                                                     salesman_id = json_extras.getString(name_salesman_id);
@@ -2623,10 +2660,8 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 Log.e(TAG, mCurrentTableSyncing + " API don't have '" + name_salesman_id + "' field.");
                                             }
 
-                                            // customer category id
                                             if (json_extras.has(name_customer_category)) {
                                                 if (!json_extras.getString(name_customer_category).isEmpty()) {
-                                                    Log.e(TAG, "customer_category: " + json_extras.getInt(name_customer_category));
                                                     customer_category_id = json_extras.getInt(name_customer_category);
                                                 } else {
                                                     Log.e(TAG, mCurrentTableSyncing + " API '" + name_customer_category + "' field don't have value.");
@@ -2635,7 +2670,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 Log.e(TAG, mCurrentTableSyncing + " API don't have '" + name_customer_category + "' field.");
                                             }
 
-                                            // User
                                             User user;
                                             if (user_id != 0) {
                                                 user = getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user_id).queryForFirst();
@@ -2644,10 +2678,11 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                 } else {
                                                     Log.e(TAG, "User not found");
                                                 }
+
                                             }
 
-                                            // Customer Category
                                             CustomerCategory customerCategory;
+
                                             if (customer_category_id != 0) {
                                                 customerCategory = getHelper().fetchObjects(CustomerCategory.class).queryBuilder().where().eq("id", customer_category_id).queryForFirst();
 
@@ -2657,8 +2692,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                                     Log.e(TAG, "Customer Category not found");
                                                 }
                                             }
-
-                                        } else {
+                                        } else { ///// EXTRAS IS EXISTING
                                             Log.e(customer.getName() + " EXTRAS", "is on the database!");
                                             customer_extras = getHelper().fetchObjects(Extras.class).queryBuilder()
                                                     .where().eq("id", customer_extras.getId()).queryForFirst();
@@ -3032,6 +3066,7 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     Invoice invoice = gson.fromJson(jsonObject.toString(), Invoice.class);
 
                                     for (InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
+
                                         if (invoiceLine.getExtras() == null)
                                             invoiceLine.setNo_discount_subtotal(invoiceLine.getSubtotal());
                                         else {
@@ -3065,9 +3100,13 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                             OfflineData offlineData = getHelper().fetchObjects(OfflineData.class).queryBuilder().where().eq("reference_no", invoice.getReference()).queryForFirst();
                                             offlineData.setReturnId(jsonObject.getString("id"));
                                             Invoice existing_invoice = offlineData.getObjectFromData(Invoice.class);
+
+                                            BatchList<InvoicePayment> deleteInvoicePayment = new BatchList<>(DatabaseOperation.DELETE, getHelper());
+                                            deleteInvoicePayment.addAll(existing_invoice.getPayments());
+                                            deleteInvoicePayment.doOperation(InvoicePayment.class);
+
                                             existing_invoice.setPayments(invoice.getPayments());
                                             existing_invoice.markSentPayment(jsonObject.getInt("id"));
-
                                             existing_invoice.updateTo(getHelper());
                                             offlineData.updateTo(getHelper());
                                         } else {
@@ -3101,7 +3140,6 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                         }
 
                                     } else {
-
                                         if (initialSync || lastUpdatedAt == null) {
                                             newInvoice.add(invoice);
                                         } else {
@@ -3963,12 +4001,12 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                 syncNext();
                                 return;
                             } else {
-/*
+
                                 if (page == 1) {
                                     Log.e(TAG, "page: " + page + ". deleting ROUTEPLANS: " + getHelper().deleteAll(RoutePlan.class));
                                 } else {
                                     Log.e(TAG, "page: " + page + ". skipping deleting of routeplans");
-                                }*/
+                                }
 
                                 BatchList<RoutePlan> newRoutePlans = new BatchList<>(DatabaseOperation.INSERT, getHelper());
                                 BatchList<RoutePlan> updateRoutePlans = new BatchList<>(DatabaseOperation.UPDATE, getHelper());
@@ -3978,16 +4016,22 @@ public class SyncModules extends BaseSyncService implements VolleyRequestListene
                                     RoutePlan routePlan = gson.fromJson(jsonObject.toString(), RoutePlan.class);
                                     routePlan.setUser(getUser());
 
-                                    if (initialSync || lastUpdatedAt == null) {
+                                    Log.e(TAG, "route_plan: " + jsonObject.toString());
+                                    Log.e(TAG, "initialSync: " + initialSync + " lastUpdatedAt: " + lastUpdatedAt);
+
+                                    if (initialSync && lastUpdatedAt == null) {
+                                        Log.e(TAG, "initialSync ");
                                         if (routePlan.getStatus() == null) {
-                                            //  Log.e(TAG, "route plan status is not null adding");
+                                            Log.e(TAG, "route plan status is not null adding");
                                             newRoutePlans.add(routePlan);
                                         } else {
-                                            Log.e(TAG, "route plan status is null skipping ");
+                                            Log.e(TAG, "route plan status is not null skipping ");
                                         }
                                     } else {
+                                        Log.e(TAG, "updating...: ");
+
                                         if (isExisting(routePlan, Table.ROUTE_PLANS)) {
-                                            //Log.e(TAG, "route plan is exisiting adding to update");
+                                            Log.e(TAG, "route plan is exisiting adding to update");
                                             updateRoutePlans.add(routePlan);
                                         } else {
                                             Log.e(TAG, "route plan is  noexisiting adding to insert");
