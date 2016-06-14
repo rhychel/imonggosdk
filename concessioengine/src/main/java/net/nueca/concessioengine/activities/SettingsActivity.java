@@ -274,7 +274,7 @@ public class SettingsActivity extends ModuleActivity {
                             String printData = "TEST PRINT\n";
                             printData += Build.MODEL+" is connected!\n";
 
-                            StarIOPrinterTools.print(SettingsActivity.this,StarIOPrinterTools.getTargetPrinter(SettingsActivity.this), "portable", StarIOPaperSize.p2INCH, printData );
+                            StarIOPrinterTools.print(SettingsActivity.this,StarIOPrinterTools.getTargetPrinter(SettingsActivity.this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, printData);
                         }
                     }
                 });

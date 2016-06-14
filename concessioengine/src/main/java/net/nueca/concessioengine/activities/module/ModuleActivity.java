@@ -3,6 +3,7 @@ package net.nueca.concessioengine.activities.module;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
+import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
 import net.nueca.concessioengine.tools.AnimationTools;
 import net.nueca.concessioengine.tools.InvoiceTools;
 import net.nueca.concessioengine.tools.appsettings.Constants;
@@ -98,6 +100,24 @@ public abstract class ModuleActivity extends ImonggoAppCompatActivity {
 
     protected int previousFragmentCount = 0;
     protected HistoryDetailsListener historyDetailsListener;
+
+    protected StarIOPrinterTools.StarIOPrinterErrorListener starIOPrinterErrorListener = new StarIOPrinterTools.StarIOPrinterErrorListener() {
+        @Override
+        public void onPrinterError(final String error) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(ModuleActivity.this, R.style.AppCompatDialogStyle_Light);
+                    dialog.setNegativeButton("Ok", null);
+                    AlertDialog alert = dialog.create();
+                    alert.setTitle("Oopss!");
+                    alert.setMessage(error);
+                    alert.show();
+                }
+            });
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

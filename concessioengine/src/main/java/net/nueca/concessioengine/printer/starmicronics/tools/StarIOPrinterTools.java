@@ -51,6 +51,10 @@ public class StarIOPrinterTools {
         void onPrinterSelected(PortInfo printer);
     }
 
+    public interface StarIOPrinterErrorListener {
+        void onPrinterError(String error);
+    }
+
     public static void showDiscoverDialog(final Context context, @NonNull StarIOPrinterListener listener) {
         showDiscoveryOptions(context, listener);
     }
@@ -368,7 +372,7 @@ public class StarIOPrinterTools {
      * @param portName     Port name to use for communication. This should be (TCP:<IPAddress> or BT:<Device pair name>)
      * @param portSettings Should be portable; escpos, the port settings portable; escpos is used for portable(ESC/POS) printers
      */
-    public static boolean print(Context context, String portName, String portSettings, StarIOPaperSize mPaperSize, String toPrintData) {
+    public static boolean print(Context context, String portName, String portSettings, StarIOPaperSize mPaperSize, StarIOPrinterErrorListener starIOPrinterErrorListener, String toPrintData) {
         ArrayList<byte[]> list = new ArrayList<>();
 //        if (mPaperSize == StarIOPaperSize.p2INCH) {
 ////            list.add(new byte[] { 0x1d, 0x57, 0x40, 0x32 }); // Page Area Setting <GS> <W> nL nH (nL = 64, nH = 2)
@@ -383,10 +387,10 @@ public class StarIOPrinterTools {
 
         list.add(toPrintData.getBytes());
         list.add(new byte[]{0x1b, 0x64, 0x02}); // Cut
-        return sendCommand(context, portName, portSettings, list);
+        return sendCommand(context, starIOPrinterErrorListener, portName, portSettings, list);
     }
 
-    public static boolean print(Context context, String portName, String portSettings, StarIOPaperSize mPaperSize, ArrayList<byte[]> toPrintData) {
+    public static boolean print(Context context, String portName, String portSettings, StarIOPaperSize mPaperSize, StarIOPrinterErrorListener starIOPrinterErrorListener, ArrayList<byte[]> toPrintData) {
 //        ArrayList<byte[]> list = new ArrayList<>();
 //        if(mPaperSize == StarIOPaperSize.p2INCH) {
 //            toPrintData.add(0, new byte[] { 0x1d, 0x57, (byte) 0x80, 0x31 }); // Page Area Setting <GS> <W> nL nH (nL = 128, nH = 1)
@@ -402,7 +406,7 @@ public class StarIOPrinterTools {
 //        list.add(toPrintData.getBytes());
         toPrintData.add(new byte[]{0x1b, 0x64, 0x02}); // Cut
         toPrintData.add(new byte[]{0x07}); // Kick cash drawer
-        return sendCommand(context, portName, portSettings, toPrintData);
+        return sendCommand(context, starIOPrinterErrorListener, portName, portSettings, toPrintData);
     }
 
     private static byte[] convertFromListByteArrayTobyteArray(List<byte[]> ByteArray) {
@@ -421,7 +425,7 @@ public class StarIOPrinterTools {
         return byteArray;
     }
 
-    public static boolean isPrinterOnline(Context context, String portName, String portSettings) {
+    public static boolean isPrinterOnline(Context context, StarIOPrinterErrorListener starIOPrinterErrorListener, String portName, String portSettings) {
         boolean result = true;
         StarIOPort port = null;
         try {
@@ -476,15 +480,17 @@ public class StarIOPrinterTools {
 			/* End of query commands Sample code */
         } catch (StarIOPortException e) {
             result = false;
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AppCompatDialogStyle_Light);
-            dialog.setNegativeButton("Ok", null);
-            AlertDialog alert = dialog.create();
-            alert.setTitle("Oopss!");
-            if(e.getMessage().contains("socket might closed"))
-                alert.setMessage("Printer might be connected on another device or is turned off. Kindly check.");
-            else
-                alert.setMessage(e.getMessage());
-            alert.show();
+//            AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AppCompatDialogStyle_Light);
+//            dialog.setNegativeButton("Ok", null);
+//            AlertDialog alert = dialog.create();
+//            alert.setTitle("Oopss!");
+            if(starIOPrinterErrorListener != null) {
+                if (e.getMessage().contains("socket might closed"))
+                    starIOPrinterErrorListener.onPrinterError("Printer might be connected on another device or is turned off. Kindly check.");
+                else
+                    starIOPrinterErrorListener.onPrinterError(e.getMessage());
+            }
+//            alert.show();
         } finally {
             if (port != null) {
                 try {
@@ -496,7 +502,7 @@ public class StarIOPrinterTools {
         return result;
     }
 
-    private static boolean sendCommand(Context context, String portName, String portSettings, ArrayList<byte[]> byteList) {
+    private static boolean sendCommand(Context context, StarIOPrinterErrorListener starIOPrinterErrorListener, String portName, String portSettings, ArrayList<byte[]> byteList) {
         boolean result = true;
         StarIOPort port = null;
         try {
@@ -560,15 +566,17 @@ public class StarIOPrinterTools {
 			/* End of query commands Sample code */
         } catch (StarIOPortException e) {
             result = false;
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AppCompatDialogStyle_Light);
-            dialog.setNegativeButton("Ok", null);
-            AlertDialog alert = dialog.create();
-            alert.setTitle("Oopss!");
-            if(e.getMessage().contains("socket might closed"))
-                alert.setMessage("Printer might be connected on another device or is turned off. Kindly check.");
-            else
-                alert.setMessage(e.getMessage());
-            alert.show();
+//            AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AppCompatDialogStyle_Light);
+//            dialog.setNegativeButton("Ok", null);
+//            AlertDialog alert = dialog.create();
+//            alert.setTitle("Oopss!");
+            if(starIOPrinterErrorListener != null) {
+                if (e.getMessage().contains("socket might closed"))
+                    starIOPrinterErrorListener.onPrinterError("Printer might be connected on another device or is turned off. Kindly check.");
+                else
+                    starIOPrinterErrorListener.onPrinterError(e.getMessage());
+            }
+//            alert.show();
         } finally {
             if (port != null) {
                 try {

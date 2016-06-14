@@ -2103,7 +2103,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
         if(!BluetoothTools.isEnabled())
             return;
 
-        if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
+        if(!StarIOPrinterTools.isPrinterOnline(this, starIOPrinterErrorListener, StarIOPrinterTools.getTargetPrinter(this), "portable"))
             return;
 
         isPrintingStarted = true;
@@ -2225,7 +2225,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             page++;
                             items = 0;
                             // print
-                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                                 break;
                             data.clear();
                         }
@@ -2315,7 +2315,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                             page++;
                             items = 0;
 
-                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                                 break;
                             data.clear();
                         }
@@ -2355,7 +2355,7 @@ public class C_Module extends ModuleActivity implements SetupActionBar, BaseProd
                 else
                     data.add(("\r\n\r\n").getBytes());
 
-                if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                     break;
                 data.clear();
             }

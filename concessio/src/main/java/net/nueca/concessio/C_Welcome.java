@@ -20,6 +20,7 @@ import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Currency;
 
 /**
  * Created by rhymart on 8/20/15.
@@ -50,17 +51,29 @@ public class C_Welcome extends WelcomeActivity {
 
             public void onClick(View view) {
                 try {
-                    AccountTools.logoutUser(C_Welcome.this, getHelper(), new AccountListener() {
+                    // ---- THIS IS JUST A PATCH FOR THE BUG
+                    AccountTools.unlinkAccount(C_Welcome.this, getHelper(), new AccountListener() {
                         @Override
-                        public void onLogoutAccount() {
+                        public void onLogoutAccount() { }
+
+                        @Override
+                        public void onUnlinkAccount() {
                             finish();
                             Intent intent = new Intent(C_Welcome.this, C_Login.class);
                             startActivity(intent);
                         }
-
-                        @Override
-                        public void onUnlinkAccount() { }
                     });
+//                    AccountTools.logoutUser(C_Welcome.this, getHelper(), new AccountListener() {
+//                        @Override
+//                        public void onLogoutAccount() {
+//                            finish();
+//                            Intent intent = new Intent(C_Welcome.this, C_Login.class);
+//                            startActivity(intent);
+//                        }
+//
+//                        @Override
+//                        public void onUnlinkAccount() { }
+//                    });
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

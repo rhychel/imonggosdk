@@ -92,8 +92,6 @@
         <service android:name="net.nueca.imonggosdk.operations.sync.SyncModules"
             android:enabled="true"/>
 
-        <service android:name=".PrintingService"
-            android:enabled="true"/>
     </application>
 
 </manifest>

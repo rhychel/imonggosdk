@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -786,7 +787,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
     private void printTransactionStar(final Invoice invoice, final String... labels) {
         if(!BluetoothTools.isEnabled())
             return;
-        if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
+        if(!StarIOPrinterTools.isPrinterOnline(this, starIOPrinterErrorListener, StarIOPrinterTools.getTargetPrinter(this), "portable"))
             return;
         isPrintingStarted = true;
         Branch branch = getBranches().get(0);
@@ -852,7 +853,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                         page++;
                         items = 0;
 
-                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                             break;
                         data.clear();
                     }
@@ -923,7 +924,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             page++;
                             items = 0;
 
-                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                                 break;
                             data.clear();
                         }
@@ -969,7 +970,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             page++;
                             items = 0;
 
-                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                                 break;
                             data.clear();
                         }
@@ -1005,7 +1006,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                             page++;
                             items = 0;
 
-                            if (!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            if (!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                                 break;
                             data.clear();
                         }
@@ -1045,7 +1046,7 @@ public class C_Checkout extends CheckoutActivity implements SetupActionBar {
                 else
                     data.add("\r\n\r\n\r\n".getBytes());
 
-                if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                     break;
 
                 data.clear();

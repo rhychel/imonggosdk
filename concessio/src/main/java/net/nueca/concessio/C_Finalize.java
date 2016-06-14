@@ -665,7 +665,7 @@ public class C_Finalize extends ModuleActivity {
     private void printTransactionStar(final OfflineData offlineData, final Invoice invoice, final InvoiceTools.PaymentsComputation paymentsComputation, final String... labels) {
         if(!BluetoothTools.isEnabled())
             return;
-        if(!StarIOPrinterTools.isPrinterOnline(this, StarIOPrinterTools.getTargetPrinter(this), "portable"))
+        if(!StarIOPrinterTools.isPrinterOnline(this, starIOPrinterErrorListener, StarIOPrinterTools.getTargetPrinter(this), "portable"))
             return;
         isPrintingStarted = true;
         Branch branch = getBranches().get(0);
@@ -728,7 +728,7 @@ public class C_Finalize extends ModuleActivity {
                         page++;
                         items = 0;
 
-                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                        if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                             break;
                         data.clear();
                     }
@@ -794,7 +794,7 @@ public class C_Finalize extends ModuleActivity {
                             page++;
                             items = 0;
 
-                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                                 break;
                             data.clear();
                         }
@@ -839,7 +839,7 @@ public class C_Finalize extends ModuleActivity {
                             page++;
                             items = 0;
 
-                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                                 break;
                             data.clear();
                         }
@@ -875,7 +875,7 @@ public class C_Finalize extends ModuleActivity {
                             page++;
                             items = 0;
 
-                            if (!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                            if (!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                                 break;
                             data.clear();
                         }
@@ -917,7 +917,7 @@ public class C_Finalize extends ModuleActivity {
                 else
                     data.add("\r\n\r\n\r\n".getBytes());
 
-                if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, data))
+                if(!StarIOPrinterTools.print(this, StarIOPrinterTools.getTargetPrinter(this), "portable", StarIOPaperSize.p2INCH, starIOPrinterErrorListener, data))
                     break;
 
                 data.clear();
