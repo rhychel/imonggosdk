@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.android.volley.toolbox.Volley;
+import com.j256.ormlite.dao.ForeignCollection;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.dialogs.SimplePulloutRequestDialog;
@@ -17,8 +18,17 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
+import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
+import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
@@ -27,6 +37,7 @@ import net.nueca.imonggosdk.tools.LoggingTools;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -35,8 +46,8 @@ import java.util.List;
  */
 public class C_Dashboard extends ImonggoAppCompatActivity {
 
+    private static String TAG = "C_Dashboard";
     private Button btnSales, btnOrder, btnCount, btnReceive, btnPullout, btnUnlink;
-
     private Button btnConcessio;
 
     @Override
@@ -78,7 +89,7 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
 
                         @Override
                         public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
-                            Log.e("onError", "hasInternet="+hasInternet+" || responseCode="+responseCode);
+                            Log.e("onDiscoveryError", "hasInternet="+hasInternet+" || responseCode="+responseCode);
                         }
 
                         @Override
@@ -112,6 +123,85 @@ public class C_Dashboard extends ImonggoAppCompatActivity {
                 }
             }
         });
+
+
+        List<CustomerCustomerGroupAssoc> customerCustomerGroupAssoc = null;
+        try {
+            customerCustomerGroupAssoc = getHelper().fetchObjects(CustomerCustomerGroupAssoc.class).queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+/*
+
+        Log.e(TAG, "CustomerCustomerGroup Size: " + customerCustomerGroupAssoc.size());
+
+        for(CustomerCustomerGroupAssoc cg : customerCustomerGroupAssoc) {
+            Log.e(TAG, "customerssss: " + cg.getCustomer().getId());
+            try {
+                Log.e(TAG, "customergroupxx: " + cg.getCustomer().getCustomerGroups(getHelper()));
+                List<CustomerGroup> customerGroups = cg.getCustomer().getCustomerGroups(getHelper());
+
+                Log.e(TAG, "Customer Group Size: " + customerGroups.size());
+
+                for (CustomerGroup c : customerGroups) {
+                    Log.e(TAG, "customerGroupxx: " + c.getId());
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }*/
+
+
+/*
+        List<Product> products = Product.fetchAll(getHelper(), Product.class);
+
+        if(products != null) {
+            for(Product p: products) {
+                Log.e(TAG, "Product: " + p.getName() + " status: " + p.getStatus());
+
+                if(p.getExtras()==  null){
+                    Log.e(TAG, "Extras is null");
+                } else {
+                    Log.e(TAG, "Product Extras: " + p.getExtras().toString());
+                }
+            }
+        } else {
+            Log.e(TAG, "Products is null");
+        }
+
+        List<BranchProduct> branchProducts = BranchProduct.fetchAll(getHelper(), BranchProduct.class);
+
+        if(products != null) {
+            for(BranchProduct bp: branchProducts) {
+                Log.e(TAG,"Branch Product: " +  bp.getName() + " status: " + bp.getProduct().getStatus());
+                if(bp.getProduct().getExtras() ==  null){
+                    Log.e(TAG, "Extras is null");
+                } else {
+                    Log.e(TAG, "Product Extras: " + bp.getProduct().getExtras().toString());
+                }
+            }
+        } else {
+            Log.e(TAG, "Branch Products is null");
+        }*/
+
+        //List<RoutePlanDetail> routePlanDetails = RoutePlanDetail.fetchAll(getHelper(), RoutePlanDetail.class);
+        List<PriceList> routePlan = PriceList.fetchAll(getHelper(), PriceList.class);
+
+        for(PriceList rp : routePlan) {
+            Log.e(TAG, "ID: " + rp.getId() + "PRICELIST Status: " + rp.getStatus() );
+            ForeignCollection<Price> rpd = rp.getPrices();
+
+            for(Price r : rpd) {
+                Log.e(TAG, "price: " + r.getId());
+            }
+        }
+/*
+        for(RoutePlanDetail rpd : routePlanDetails) {
+            Log.e(TAG, "route: " + rpd.getId() + " plan: " + rpd.getRoutePlan().getId() );
+        }*/
+
     }
 
     private View.OnClickListener onChooseModule = new View.OnClickListener() {

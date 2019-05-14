@@ -24,11 +24,13 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.base.BaseRecyclerAdapter;
 import net.nueca.imonggosdk.activities.ImonggoAppCompatActivity;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
@@ -69,11 +71,17 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
         rvFields = (RecyclerView) findViewById(R.id.rvFields);
         tbAddCustomer = (Toolbar) findViewById(R.id.tbAddCustomer);
         if(getIntent().hasExtra(CUSTOMER_ID)) {
+            Log.e("CUSTOMER_ID", getIntent().getIntExtra(CUSTOMER_ID, -1)+"<----");
             try {
                 updateCustomer = getHelper().fetchIntId(Customer.class).queryForId(getIntent().getIntExtra(CUSTOMER_ID, -1));
+
+                OfflineData offlineData = getHelper().fetchForeignCollection(updateCustomer.getOfflineData().closeableIterator()).get(0);
+                offlineData.setBeingModified(true);
+                offlineData.updateTo(getHelper());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            Log.e("Customer Return ID", "" + updateCustomer.getReturnId());
         }
 
         setSupportActionBar(tbAddCustomer);
@@ -94,6 +102,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
             customerFieldArrayList.add(new CustomerField("Work", FieldType.EDITTEXT, Customer.CustomerFields.TELEPHONE, updateCustomer.getTelephone()));
             customerFieldArrayList.add(new CustomerField("Company", FieldType.EDITTEXT, R.drawable.ic_branch_orange, Customer.CustomerFields.COMPANY_NAME, updateCustomer.getCompany_name()));
             customerFieldArrayList.add(new CustomerField("Address", FieldType.EDITTEXT, Customer.CustomerFields.STREET, updateCustomer.getStreet()));
+            getSupportActionBar().setTitle("Update Customer");
             try {
                 initSpinnerValues(true, true);
             } catch (SQLException e) {
@@ -121,8 +130,18 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
     }
 
     public void initSpinnerValues(boolean includeBlank, boolean getCurrentValue) throws SQLException {
-        List<PaymentTerms> paymentTerms = getHelper().fetchObjectsList(PaymentTerms.class);
-        List<CustomerCategory> customerCategories = getHelper().fetchObjectsList(CustomerCategory.class);
+        List<PaymentTerms> paymentTerms = PaymentTerms.fetchWithConditionInt(getHelper(), PaymentTerms.class, new DBTable.ConditionsWindow<PaymentTerms, Integer>() {
+            @Override
+            public Where<PaymentTerms, Integer> renderConditions(Where<PaymentTerms, Integer> where) throws SQLException {
+                return where.eq("status", "A");
+            }
+        });
+        List<CustomerCategory> customerCategories = CustomerCategory.fetchWithConditionInt(getHelper(), CustomerCategory.class, new DBTable.ConditionsWindow<CustomerCategory, Integer>() {
+            @Override
+            public Where<CustomerCategory, Integer> renderConditions(Where<CustomerCategory, Integer> where) throws SQLException {
+                return where.eq("status", "A");
+            }
+        });
         if(includeBlank) {
             PaymentTerms paymentTerm = new PaymentTerms();
             paymentTerm.setId(-1);
@@ -137,14 +156,24 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
         }
         if(getCurrentValue) {
             int ptIndex = paymentTerms.indexOf(updateCustomer.getPaymentTerms());
-            int ccIndex = customerCategories.indexOf(updateCustomer.getCustomerCategory());
+            if(updateCustomer.getExtras() != null)
+                Log.e("Update Customer", updateCustomer.getExtras()+" <-- ");
+            else
+                Log.e("Update Customer", "extras is null");
 
-            customerFieldArrayList.add(new CustomerField<CustomerCategory>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID, ccIndex));
-            customerFieldArrayList.add(new CustomerField<PaymentTerms>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID, ptIndex));
+            if(updateCustomer.getExtras().getCustomerCategory() != null)
+                Log.e("Update Customer", updateCustomer.getExtras().getCustomerCategory()+" <-- ");
+            else
+                Log.e("Update Customer", "extras.customer_category is null");
+
+            int ccIndex = customerCategories.indexOf(updateCustomer.getExtras().getCustomerCategory());
+
+            customerFieldArrayList.add(new CustomerField<>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID, ccIndex));
+            customerFieldArrayList.add(new CustomerField<>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID, ptIndex));
         }
         else {
-            customerFieldArrayList.add(new CustomerField<CustomerCategory>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID));
-            customerFieldArrayList.add(new CustomerField<PaymentTerms>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID));
+            customerFieldArrayList.add(new CustomerField<>("Outlet Type", customerCategories, FieldType.SPINNER, Customer.CustomerFields.EXTRAS_CATEGORY_ID));
+            customerFieldArrayList.add(new CustomerField<>("Payment Terms", paymentTerms, FieldType.SPINNER, Customer.CustomerFields.PAYMENT_TERMS_ID));
         }
     }
 
@@ -158,7 +187,11 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.mSaveCustomer) {
             final Customer customer = customerFieldsAdapter.generateCustomer();
-            FieldValidatorMessage fieldValidatorMessage = customer.doesRequiredSatisfied(Customer.CustomerFields.FIRST_NAME, Customer.CustomerFields.LAST_NAME);
+            Gson gson = new Gson();
+            Log.e("Customer", gson.toJson(customer));
+            FieldValidatorMessage fieldValidatorMessage = customer.doesRequiredSatisfied(Customer.CustomerFields.FIRST_NAME, Customer.CustomerFields.LAST_NAME,
+                    Customer.CustomerFields.MOBILE, Customer.CustomerFields.TELEPHONE, Customer.CustomerFields.EXTRAS_CATEGORY_ID, Customer.CustomerFields.PAYMENT_TERMS_ID);
+
             if(fieldValidatorMessage.isPassed()) {
                 DialogTools.showConfirmationDialog(this, "Save Customer",
                         updateCustomer != null ? "Update customer details?" : "Create this customer?",
@@ -173,14 +206,18 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                                     .queue();
                         }
                         else {
+//                            customer.set
                             OfflineData offlineData = new SwableTools.Transaction(getHelper())
                                     .toUpdate()
                                     .object(customer)
                                     .queue();
+
+                            offlineData.setBeingModified(false);
+                            offlineData.updateTo(getHelper());
                         }
 
                         Intent intent = new Intent();
-                        intent.putExtra(CUSTOMER_ID, customer.getId());
+                        intent.putExtra(CUSTOMER_ID, updateCustomer != null ? updateCustomer.getId() : customer.getId());
                         setResult(SUCCESS, intent);
                         finish();
                     }
@@ -403,7 +440,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
         }
 
         public Customer generateCustomer() {
-            Customer customer = null;
+            Customer customer = updateCustomer;
             Gson gson = new GsonBuilder().serializeNulls().create();
             JSONObject jsonObject = new JSONObject();
             try {
@@ -412,7 +449,7 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                 PaymentTerms paymentTerm = null;
                 CustomerCategory customerCategory = null;
                 for(CustomerField customerField : getList()) {
-                    if(customerField.getFieldName() == Customer.CustomerFields.EXTRAS_CATEGORY_ID) {
+                    if(customerField.getFieldName().equals(Customer.CustomerFields.EXTRAS_CATEGORY_ID)) {
                         CustomerField<CustomerCategory> category = (CustomerField<CustomerCategory>)customerField;
                         if(category.getSelectedIndex() == -1)
                             continue;
@@ -429,24 +466,45 @@ public class AddEditCustomerActivity extends ImonggoAppCompatActivity {
                         paymentTerm = paymentTerms.getValues().get(paymentTerms.getSelectedIndex());
                         if(paymentTerm.getId() == -1)
                             continue;
-                        jsonObject.put(Customer.CustomerFields.PAYMENT_TERMS_ID.getLabel(), paymentTerm.getId());
+
+                        if(updateCustomer != null)
+                            customer.setPayment_terms_id(paymentTerm.getId());
+                        else
+                            jsonObject.put(Customer.CustomerFields.PAYMENT_TERMS_ID.getLabel(), paymentTerm.getId());
+
                         continue;
                     }
-
-                    jsonObject.put(customerField.getFieldName().getLabel(), customerField.getEditTextValue());
+                    if(updateCustomer != null)
+                        customer.updateCustomerDetail(customerField.getFieldName(), customerField.getEditTextValue());
+                    else
+                        jsonObject.put(customerField.getFieldName().getLabel(), customerField.getEditTextValue());
                 }
-                customer = gson.fromJson(jsonObject.toString(), Customer.class);
+
                 if(updateCustomer == null)
+                    customer = gson.fromJson(jsonObject.toString(), Customer.class);
+                /*
+                 {
                     customer.setId(TempIdGenerator.generateTempId(getContext(), Customer.class));
+                    extras.setId(Customer.class.getName().toUpperCase()+"_"+customer.getId());
+                }
                 else
+                 */
+                if(updateCustomer != null) {
+                    extras.setId(Customer.class.getName().toUpperCase()+"_"+updateCustomer.getId());
+
                     customer.setId(updateCustomer.getId());
+                    customer.setReturnId(updateCustomer.getReturnId());
+                }
                 customer.setExtras(extras);
                 if(paymentTerm == null)
                     Log.e("paymentTerm", "null");
                 customer.setPaymentTerms(paymentTerm);
+
+                customer.getExtras().setCustomerCategory(customerCategory);
                 if(customerCategory == null)
                     Log.e("customerCategory", "null");
-                customer.setCustomerCategory(customerCategory);
+                else
+                    Log.e("customerCategory", "Customer Category="+customerCategory.getName()+" EXTRAS = "+extras.getCustomerCategory().getName());
                 customer.generateFullName();
             } catch (SQLException | JSONException e) {
                 e.printStackTrace();

@@ -8,6 +8,8 @@ import net.nueca.imonggosdk.database.ImonggoDBHelper;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
 import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
+import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTable2;
 import net.nueca.imonggosdk.objects.base.DBTable;
 
 import java.sql.SQLException;
@@ -16,7 +18,7 @@ import java.sql.SQLException;
  * Created by gama on 16/10/2015.
  */
 @DatabaseTable
-public class PaymentType extends DBTable {
+public class PaymentType extends BaseTable {
     @DatabaseField
     private String status;
 
@@ -26,8 +28,6 @@ public class PaymentType extends DBTable {
     @DatabaseField
     private String code;
 
-    @DatabaseField(id = true)
-    private int id;
 
     public PaymentType() {}
 

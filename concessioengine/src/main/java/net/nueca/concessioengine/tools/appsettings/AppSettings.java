@@ -1,6 +1,12 @@
 package net.nueca.concessioengine.tools.appsettings;
 
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+
+import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.imonggosdk.enums.ConcessioModule;
+
+import java.util.List;
 
 /**
  * Created by rhymartmanchus on 12/01/2016.
@@ -9,9 +15,10 @@ public class AppSettings {
 
     public enum AppSettingEntry {
         // Application
-        VERSION("Version"),
+        VERSION("Version:"),
         GET_LATEST_DOCUMENT("Get latest documents"), // --
         CLEAR_CACHED_DOCS("Clear cached documents"),
+        CLEAR_TRANSACTIONS("Clear transactions"),
         AUTO_UPDATE_APP("Auto-update app"),
         SHOW_HISTORY_AFTER("Show history after transaction"),
         DEBUG_MODE("Debug mode"),
@@ -20,10 +27,16 @@ public class AppSettings {
 
         // User
         ENABLE_PIN_CODE("Enable PIN code"),
-        CHANGE_PIN_CODE("Change PIN code");
+        CHANGE_PIN_CODE("Change PIN code"),
+
+        // Printer
+        CONFIGURE_EPSON_PRINTER("Epson Printer:"),
+        CONFIGURE_STAR_PRINTER("Star Printer:"),
+        CONFIGURE_STAR_PRINTER_SIZE("Star Paper Size:");
 
         // -- Module dependent label
         // --
+
 
         private String label;
 
@@ -54,12 +67,21 @@ public class AppSettings {
         DROPDOWN
     }
 
-    private boolean isHeader = false;
+    private boolean isHeader = false, isEnabled = true;
     private ConcessioModule concessioModule;
     private AppSettingEntry appSettingEntry;
     private ValueType valueType = ValueType.LABEL;
     private int sectionFirstPosition = 0;
     private Object value;
+    private ArrayAdapter<?> adapter;
+    private AdapterView.OnItemSelectedListener onItemSelectedListener;
+    private int selectedItem = 0;
+    private OnItemClickListener onItemClickListener;
+
+    @Override
+    public boolean equals(Object o) {
+        return appSettingEntry == ((AppSettings)o).getAppSettingEntry();
+    }
 
     public ConcessioModule getConcessioModule() {
         return concessioModule;
@@ -85,6 +107,16 @@ public class AppSettings {
         this.sectionFirstPosition = sectionFirstPosition;
     }
 
+    public int getSelectedItem() {
+        if(selectedItem < 0)
+            return 0;
+        return selectedItem;
+    }
+
+    public void setSelectedItem(int selectedItem) {
+        this.selectedItem = selectedItem;
+    }
+
     public ValueType getValueType() {
         return valueType;
     }
@@ -93,12 +125,28 @@ public class AppSettings {
         this.valueType = valueType;
     }
 
-    public Object getValue() {
-        return value;
+    public <T> T getValue(Class<T> c) {
+        return (T)(c.cast(value));
     }
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    public ArrayAdapter<?> getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(ArrayAdapter<?> adapter) {
+        this.adapter = adapter;
+    }
+
+    public AdapterView.OnItemSelectedListener getOnItemSelectedListener() {
+        return onItemSelectedListener;
+    }
+
+    public void setOnItemSelectedListener(AdapterView.OnItemSelectedListener onItemSelectedListener) {
+        this.onItemSelectedListener = onItemSelectedListener;
     }
 
     public AppSettingEntry getAppSettingEntry() {
@@ -107,5 +155,21 @@ public class AppSettings {
 
     public void setAppSettingEntry(AppSettingEntry appSettingEntry) {
         this.appSettingEntry = appSettingEntry;
+    }
+
+    public OnItemClickListener getOnItemClickListener() {
+        return onItemClickListener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 }

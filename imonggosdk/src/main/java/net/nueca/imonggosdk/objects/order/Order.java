@@ -14,7 +14,8 @@ import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.base.BaseTransactionTable2;
+import net.nueca.imonggosdk.objects.base.BaseTransactionTable3;
+import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.swable.SwableTools;
 
 import org.json.JSONException;
@@ -27,8 +28,10 @@ import java.util.List;
 /**
  * Created by gama on 7/1/15.
  */
-public class Order extends BaseTransactionTable2 {
+public class Order extends BaseTransactionTable3 {
     public static transient final int MAX_ORDERLINES_PER_PAGE = 50;
+    public static String ORDERTYPE_PURCHASE_ORDER = "PURCHASE_ORDER";
+    public static String ORDERTYPE_STOCK_REQUEST = "STOCK_REQUEST";
 
     @Expose
     @DatabaseField
@@ -160,10 +163,10 @@ public class Order extends BaseTransactionTable2 {
         }
     }
 
-    public static class Builder extends BaseTransactionTable2.Builder<Builder> {
-        private String target_delivery_date = ""; // current_date+2days
-        private String remark = "";
-        private String order_type_code = "stock_request"; // purchase order
+    public static class Builder extends BaseTransactionTable3.Builder<Builder> {
+        private String target_delivery_date; // current_date+2days
+        private String remark;
+        private String order_type_code; // purchase order
         private int serving_branch_id = 0;
         private List<OrderLine> order_lines = new ArrayList<>();
 
@@ -211,7 +214,7 @@ public class Order extends BaseTransactionTable2 {
     public Order getChildOrderAt(int position) throws JSONException {
         Order order = Order.fromJSONString(toJSONString());
         order.setOrder_lines(getOrderLineAt(position));
-        order.setReference(reference + "-" + (position + 1));
+        //order.setReference(reference + "-" + (position + 1));
         order.setRemark("page=" + (position + 1) + "/" + getChildCount());
         return order;
     }
@@ -246,10 +249,12 @@ public class Order extends BaseTransactionTable2 {
 
         refresh();
         if(order_lines != null) {
+            BatchList<OrderLine> batchList = new BatchList<>(DatabaseOperation.INSERT, dbHelper);
             for (OrderLine orderLine : order_lines) {
                 orderLine.setOrder(this);
-                orderLine.insertTo(dbHelper);
+                batchList.add(orderLine);
             }
+            batchList.doOperation(OrderLine.class);
         }
 
         updateExtrasTo(dbHelper);
@@ -277,9 +282,9 @@ public class Order extends BaseTransactionTable2 {
 
         refresh();
         if(order_lines != null) {
-            for (OrderLine orderLine : order_lines) {
-                orderLine.deleteTo(dbHelper);
-            }
+            BatchList<OrderLine> batchList = new BatchList<>(DatabaseOperation.DELETE, dbHelper);
+            batchList.addAll(order_lines);
+            batchList.doOperation(OrderLine.class);
         }
 
         deleteExtrasTo(dbHelper);
@@ -305,10 +310,12 @@ public class Order extends BaseTransactionTable2 {
             e.printStackTrace();
         }
         if(order_lines != null) {
+            BatchList<OrderLine> batchList = new BatchList<>(DatabaseOperation.UPDATE, dbHelper);
             for (OrderLine orderLine : order_lines) {
                 orderLine.setOrder(this);
-                orderLine.updateTo(dbHelper);
+                batchList.add(orderLine);
             }
+            batchList.doOperation(OrderLine.class);
         }
 
         updateExtrasTo(dbHelper);

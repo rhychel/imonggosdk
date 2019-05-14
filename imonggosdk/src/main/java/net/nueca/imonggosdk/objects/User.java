@@ -130,7 +130,8 @@ public class User extends BaseTable implements Extras.DoOperationsForExtras {
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            insertExtrasTo(dbHelper);
+            if(extras != null)
+                insertExtrasTo(dbHelper);
             dbHelper.insert(User.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -140,7 +141,8 @@ public class User extends BaseTable implements Extras.DoOperationsForExtras {
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            updateExtrasTo(dbHelper);
+            if(extras != null)
+                updateExtrasTo(dbHelper);
             dbHelper.delete(User.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,7 +152,8 @@ public class User extends BaseTable implements Extras.DoOperationsForExtras {
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            updateExtrasTo(dbHelper);
+            if(extras != null)
+                updateExtrasTo(dbHelper);
             dbHelper.update(User.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -166,11 +169,14 @@ public class User extends BaseTable implements Extras.DoOperationsForExtras {
 
     @Override
     public void deleteExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.setId(User.class.getName().toUpperCase(), id);
         extras.deleteTo(dbHelper);
     }
 
     @Override
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
+        extras.setUser(this);
+        extras.setId(User.class.getName().toUpperCase(), id);
         extras.updateTo(dbHelper);
     }
 }

@@ -1,6 +1,7 @@
 package net.nueca.imonggosdk.operations.sync;
 
 import android.app.Service;
+import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -49,15 +50,23 @@ public abstract class ImonggoService extends Service {
         return queue;
     }
 
+    public void resetSession() {
+        session = null;
+    }
+
     protected Session getSession() {
         if(session == null) {
             try {
                 List<Session> sessionList = getHelper().fetchObjectsList(Session.class);
                 session = sessionList.get(0);
+
+                Log.e("Session", "is "+session+"!");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+        else
+            Log.e("Session", "is not null!");
         return session;
     }
 

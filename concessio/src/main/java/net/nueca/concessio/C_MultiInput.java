@@ -5,6 +5,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import net.nueca.concessioengine.activities.module.ModuleActivity;
+import net.nueca.concessioengine.enums.DialogType;
 import net.nueca.concessioengine.fragments.MultiInputSelectedItemFragment;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 
@@ -34,12 +35,14 @@ public class C_MultiInput extends ModuleActivity implements SetupActionBar {
     @Override
     public void onBackPressed() {
         multiInputSelectedItemFragment.updateSelectedProductItem();
+        setResult(SUCCESS);
         super.onBackPressed();
     }
 
     @Override
     public void setupActionBar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,5 +50,4 @@ public class C_MultiInput extends ModuleActivity implements SetupActionBar {
             }
         });
     }
-
 }

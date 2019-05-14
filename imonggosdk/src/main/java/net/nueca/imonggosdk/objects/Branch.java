@@ -1,5 +1,8 @@
 package net.nueca.imonggosdk.objects;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -9,13 +12,15 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
-import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
-import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
+import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rhymart on 5/12/15.
@@ -41,12 +46,29 @@ public class Branch extends BaseTable {
 //    private transient ForeignCollection<RoutePlan> routePlans;
 //    @ForeignCollectionField
 //    private transient ForeignCollection<BranchPrice> branchPrices;
+//    @ForeignCollectionField
+//    private transient ForeignCollection<BranchProduct> branchProducts;
+//    @ForeignCollectionField
+//    private transient ForeignCollection<BranchUnit> branchUnits;
     @ForeignCollectionField
     private transient ForeignCollection<BranchProduct> branchProducts;
-    @ForeignCollectionField
-    private transient ForeignCollection<BranchUnit> branchUnits;
 
     public Branch() { }
+
+    public String generateAddress() {
+        StringBuilder address = new StringBuilder();
+        boolean hasPrevious = false;
+        if(street != null) {
+            address.append(street);
+            hasPrevious = true;
+        }
+        if(zipcode != null) {
+            if(hasPrevious)
+                address.append(", ");
+            address.append(zipcode);
+        }
+        return address.toString();
+    }
 
     public int getSubscription_type() {
         return subscription_type;
@@ -174,14 +196,14 @@ public class Branch extends BaseTable {
     public void setBranchProducts(ForeignCollection<BranchProduct> branchProducts) {
         this.branchProducts = branchProducts;
     }
-
-    public ForeignCollection<BranchUnit> getBranchUnits() {
-        return branchUnits;
-    }
-
-    public void setBranchUnits(ForeignCollection<BranchUnit> branchUnits) {
-        this.branchUnits = branchUnits;
-    }
+//
+//    public ForeignCollection<BranchUnit> getBranchUnits() {
+//        return branchUnits;
+//    }
+//
+//    public void setBranchUnits(ForeignCollection<BranchUnit> branchUnits) {
+//        this.branchUnits = branchUnits;
+//    }
 
     @Override
     public String toString() {
@@ -224,4 +246,38 @@ public class Branch extends BaseTable {
             e.printStackTrace();
         }
     }
+
+    public static List<Branch> allUserBranches(Context context, ImonggoDBHelper2 dbHelper, User user) {
+        return allUserBranches(context, dbHelper, user, false);
+    }
+
+    /**
+     * Generate the user's branches.
+     * @return
+     */
+    public static List<Branch> allUserBranches(Context context, ImonggoDBHelper2 dbHelper, User user, boolean warehouseOnly) {
+        List<Branch> assignedBranches = new ArrayList<>();
+        try {
+            List<BranchUserAssoc> branchUserAssocs = dbHelper.fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", user).query();
+            for(BranchUserAssoc branchUser : branchUserAssocs) {
+                Log.e("Branches", branchUser.getBranch().getName());
+                if(warehouseOnly) {
+                    if (branchUser.getBranch().getSite_type() == null || branchUser.getBranch().getSite_type().equals("null"))
+                        continue;
+                }
+                else if(branchUser.getBranch().getSite_type() != null && branchUser.getBranch().getSite_type().equals("warehouse"))
+                    continue;
+                if(branchUser.getBranch().getStatus().equals("D"))
+                    continue;
+                if(branchUser.getBranch().getId() == (SettingTools.defaultBranch(context).isEmpty() ? user.getHome_branch_id() : Integer.valueOf(SettingTools.defaultBranch(context))))
+                    assignedBranches.add(0, branchUser.getBranch());
+                else
+                    assignedBranches.add(branchUser.getBranch());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return assignedBranches;
+    }
+
 }

@@ -14,8 +14,6 @@ import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.LoggingTools;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class BaseUpdater implements SyncModulesListener {
 
@@ -36,7 +34,6 @@ public abstract class BaseUpdater implements SyncModulesListener {
     protected Context mContext;
 
     protected void startSync() throws SQLException {
-
         if (mServiceBounded) {
             setUpTablesToDownload();
             onPrepareDialog();
@@ -54,7 +51,6 @@ public abstract class BaseUpdater implements SyncModulesListener {
             startSyncService();
             mSyncModulesListener.onErrorDownload(null, "Cannot Start Update, Service not binded");
         }
-
     }
 
     @Override
@@ -65,6 +61,7 @@ public abstract class BaseUpdater implements SyncModulesListener {
     @Override
     public void onDownloadProgress(Table table, int page, int max) {
         if (mSyncModulesListener != null) {
+            Log.e(TAG, "updating progress: " + table);
             mSyncModulesListener.onDownloadProgress(table, page, max);
         }
     }
@@ -111,6 +108,20 @@ public abstract class BaseUpdater implements SyncModulesListener {
 
     }
 
+    protected void unbindSyncService() {
+        if (mServiceBounded) {
+            mServiceBounded = false;
+            if (mContext != null) {
+                mContext.unbindService(mConnection);
+            } else {
+                Log.e(TAG, "Can't Unbind Service, Context is null");
+            }
+        } else {
+            Log.e(TAG, "Can't unbind service, its already unbinded");
+        }
+        mSyncServiceOperation.onUnbindSyncService();
+    }
+
     private void setUpTablesToDownload() {
         if (mModules.length == 0) {
             Log.e(TAG, "mModules is null getting in shared pref");
@@ -127,7 +138,7 @@ public abstract class BaseUpdater implements SyncModulesListener {
                 };
             }
         } else {
-            Log.e(TAG, "modules is not null, size: " + mModules.length );
+            Log.e(TAG, "modules is not null, size: " + mModules.length);
         }
 
         for (int module : mModules) {

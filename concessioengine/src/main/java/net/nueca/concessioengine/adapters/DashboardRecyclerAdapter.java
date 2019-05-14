@@ -34,7 +34,7 @@ public class DashboardRecyclerAdapter extends BaseRecyclerAdapter<DashboardRecyc
 
     @Override
     public void onBindViewHolder(DashboardViewHolder holder, int position) {
-        holder.concessioModule = getItem(position).getConcessioModule();
+        holder.dashboardTile = getItem(position);
         holder.tvTitle.setText(getItem(position).getLabel());
         holder.ivLogo.setImageResource(getItem(position).getImageResource());
     }
@@ -48,7 +48,7 @@ public class DashboardRecyclerAdapter extends BaseRecyclerAdapter<DashboardRecyc
 
         ImageView ivLogo;
         TextView tvTitle;
-        ConcessioModule concessioModule;
+        DashboardTile dashboardTile;
 
         public DashboardViewHolder(View itemView) {
             super(itemView);
@@ -61,7 +61,7 @@ public class DashboardRecyclerAdapter extends BaseRecyclerAdapter<DashboardRecyc
 
         @Override
         public void onClick(View v) {
-            v.setTag(concessioModule);
+            v.setTag(dashboardTile);
             if(onItemClickListener != null)
                 onItemClickListener.onItemClicked(v, getLayoutPosition());
         }

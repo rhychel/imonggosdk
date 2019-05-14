@@ -15,43 +15,47 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
+import net.nueca.imonggosdk.objects.AccountPrice;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.BranchTag;
-import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
-import net.nueca.imonggosdk.objects.invoice.Discount;
-import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
-import net.nueca.imonggosdk.objects.TaxRate;
-import net.nueca.imonggosdk.objects.base.BaseTable;
-import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
-import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Settings;
+import net.nueca.imonggosdk.objects.TaxRate;
 import net.nueca.imonggosdk.objects.TaxSetting;
 import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
+import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
+import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.Extras;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
 import net.nueca.imonggosdk.objects.document.DocumentType;
+import net.nueca.imonggosdk.objects.order.Order;
+import net.nueca.imonggosdk.objects.salespromotion.Discount;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -71,17 +75,24 @@ public abstract class BaseSyncService extends ImonggoService {
     protected int count = 0;
     protected int numberOfPages = 1;
     protected int branchIndex = 0;
-    protected int mCustomIndex = 0;
+    protected int mCustomIdIndex = 0;
+    protected int mCustomPageIndex = 1;
+    protected int mBranchIdIndex = 0;
     protected int mModulesIndex = 0;
     protected int responseCode = 200;
     protected int[] branches;
     protected Table[] mModulesToSync;
     protected Table mCurrentTableSyncing;
+    protected Boolean mSkipNextModule = false;
+    protected Boolean mUpdatingPriceListFromCustomer = false;
     protected Server mServer;
     protected List<BranchUserAssoc> branchUserAssoc;
     protected List<Integer> listOfPricelistIds;
+    protected List<Integer> listOfIdsPriceListSorted;
     protected List<Object> listPriceListStorage;
+    protected List<Object> listOfSalesPromotionStorage;
     protected List<? extends BaseTable> listOfIds;
+    protected List<Integer> listOfSalesPromotionIds;
     protected String from = "", to = "";
     protected String document_type;
     protected String intransit_status;
@@ -91,6 +102,7 @@ public abstract class BaseSyncService extends ImonggoService {
     protected VolleyRequestListener mVolleyRequestListener = null;
     protected SyncModulesListener mSyncModulesListener = null;
     protected RequestType mCurrentRequestType;
+    protected ModuleSetting app = null;
 
     protected Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -119,7 +131,7 @@ public abstract class BaseSyncService extends ImonggoService {
         Bundle bundle = intent.getExtras();
         syncAllModules = bundle.getBoolean(PARAMS_SYNC_ALL_MODULES, true);
         mServer = Server.values()[bundle.getInt(PARAMS_SERVER, Server.IMONGGO.ordinal())];
-        initialSync = bundle.getBoolean(PARAMS_INITIAL_SYNC, false);
+        initialSync = bundle.getBoolean(PARAMS_INITIAL_SYNC, true);
 
         if (!syncAllModules) { // if custom modules where selected to be download
             initializeTablesToSync(bundle.getIntArray(PARAMS_TABLES_TO_SYNC));
@@ -153,7 +165,7 @@ public abstract class BaseSyncService extends ImonggoService {
 
     public void initializeTablesToSync(int[] forSyncing) {
         if (forSyncing != null) {
-            Log.e("initializeTablesToSync", "--" + forSyncing.length);
+            //`Log.e("initializeTablesToSync", "--" + forSyncing.length);
 
             mModulesIndex = 0;
             mModulesToSync = new Table[forSyncing.length];
@@ -187,6 +199,18 @@ public abstract class BaseSyncService extends ImonggoService {
     public boolean isExisting(Object o, int id, Table table, DailySalesEnums dailySalesEnums) throws SQLException {
 
         switch (table) {
+            case SETTINGS:
+                Settings settings = (Settings) o;
+                return getHelper().fetchObjects(Settings.class).queryBuilder().where().eq("name", settings.getName()).queryForFirst() != null;
+            case EXTRAS: {
+                Extras extras = (Extras) o;
+                return getHelper().fetchObjects(Extras.class).queryBuilder().where().eq("id", extras.getId()).queryForFirst() != null;
+            }
+            case ORDERS: {
+                Order order = (Order) o;
+                return getHelper().fetchObjects(Order.class).queryBuilder().where().eq("id", order.getId()).queryForFirst() != null;
+            }
+
             case USERS: {
                 User user = (User) o;
                 return getHelper().fetchObjects(User.class).queryBuilder().where().eq("id", user.getId()).queryForFirst() != null;
@@ -209,7 +233,7 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case CUSTOMERS: {
                 Customer customer = (Customer) o;
-                return getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("id", customer.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId", customer.getReturnId()).queryForFirst() != null;
             }
             case INVENTORIES: {
                 Inventory inventory = (Inventory) o;
@@ -244,12 +268,13 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case INVOICES: {
                 Invoice invoice = (Invoice) o;
-                return getHelper().fetchObjects(Invoice.class).queryBuilder().where().eq("id", invoice.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(Invoice.class).queryBuilder().where().eq("returnId", invoice.getId()).queryForFirst() != null;
             }
             case INVOICE_PURPOSES: {
                 InvoicePurpose invoicePurpose = (InvoicePurpose) o;
                 return getHelper().fetchObjects(InvoicePurpose.class).queryBuilder().where().eq("id", invoicePurpose.getId()).queryForFirst() != null;
             }
+            case PRICE_LISTS_FROM_CUSTOMERS:
             case PRICE_LISTS: {
                 PriceList priceList = (PriceList) o;
                 return getHelper().fetchObjects(PriceList.class).queryBuilder().where().eq("id", priceList.getId()).queryForFirst() != null;
@@ -272,27 +297,37 @@ public abstract class BaseSyncService extends ImonggoService {
             }
             case ROUTE_PLANS: {
                 RoutePlan routePlan = (RoutePlan) o;
-                return getHelper().fetchObjects(RoutePlan.class).queryBuilder().where().eq("id", routePlan.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(RoutePlan.class).queryBuilder().where().eq("user_id", routePlan.getUser()).queryForFirst() != null;
             }
             case ROUTE_PLANS_DETAILS: {
                 RoutePlanDetail routePlanDetail = (RoutePlanDetail) o;
-                return getHelper().fetchObjects(RoutePlanDetail.class).queryBuilder().where().eq("id", routePlanDetail.getId()).queryForFirst() != null;
+                return getHelper().fetchObjects(RoutePlanDetail.class).queryBuilder().where().eq("route_plan_id", routePlanDetail.getRoutePlan()).and().eq("customer_id",routePlanDetail.getCustomer()).queryForFirst() != null;
             }
             case BRANCH_PRODUCTS: {
                 BranchProduct branchProduct = (BranchProduct) o;
-                return getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("product_id", branchProduct.getProduct()).and().eq("branch_id", branchProduct.getBranch()).queryForFirst() != null;
+                return getHelper().fetchObjects(BranchProduct.class).queryBuilder().where().eq("id", branchProduct.getId()).queryForFirst() != null;
+
             }
-/*            case BRANCH_UNITS: {
-                BranchUnit branchUnit = (BranchUnit) o;
-                return getHelper().fetchObjects(BranchUnit.class).queryBuilder().where().eq("unit_id", branchUnit.getUnit()).and().eq("branch_id", branchUnit.getBranch()).queryForFirst() != null;
-            }*/
+            case SALES_PROMOTIONS: {
+
+                SalesPromotion salesPromotion = (SalesPromotion) o;
+                Log.e(TAG, "checking sales promotions... " + (getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", salesPromotion.getId()) != null) + "");
+                return getHelper().fetchObjects(SalesPromotion.class).queryBuilder().where().eq("id", salesPromotion.getId()) != null;
+            }
             case SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS: {
-                Discount discount = (Discount) o;
-                return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("id", discount.getId()) != null;
+                net.nueca.imonggosdk.objects.salespromotion.Discount discount = (Discount) o;
+                return getHelper().fetchObjects(Discount.class).queryBuilder().where().eq("product_id", discount.getProduct()) != null;
             }
-            case PRICE_LISTS_DETAILS:
+            case PRICE_LISTS_DETAILS: {
                 Price price = (Price) o;
                 return getHelper().fetchObjects(Price.class).queryBuilder().where().eq("id", price.getId()).queryForFirst() != null;
+            }
+            case ACCOUNT_PRICES: {
+                AccountPrice accountPrice = (AccountPrice) o;
+                Product px = accountPrice.getProduct();
+
+                return getHelper().fetchObjects(AccountPrice.class).queryBuilder().where().eq("product_id", px).queryForFirst() != null;
+            }
             case DAILY_SALES: {
                 DailySales dailySales = (DailySales) o;
                 if (dailySalesEnums == DailySalesEnums.DATE_OF_DAILY_SALES) {
@@ -340,7 +375,6 @@ public abstract class BaseSyncService extends ImonggoService {
         return false;
     }
 
-
     @Override
     public IBinder onBind(Intent intent) {
         Log.i("onBind", "is called");
@@ -365,21 +399,9 @@ public abstract class BaseSyncService extends ImonggoService {
         Log.e(TAG, "Sync Service has stopped");
     }
 
-    /**
-     * Class for clients to access.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with
-     * IPC.
-     */
-    public class LocalBinder extends Binder {
-        public BaseSyncService getService() {
-            return BaseSyncService.this;
-        }
-    }
-
     public Table getCurrentTableSyncing() {
         return mCurrentTableSyncing;
     }
-
 
     /**
      * removes modules from array for Re-Sync
@@ -388,7 +410,6 @@ public abstract class BaseSyncService extends ImonggoService {
 
         int length = mModulesToSync.length;
         int newlength;
-
 
         newlength = length - mModulesIndex;
         Table[] temp = new Table[newlength];
@@ -431,5 +452,31 @@ public abstract class BaseSyncService extends ImonggoService {
 
     public VolleyRequestListener getVolleyRequestListener() {
         return this.mVolleyRequestListener;
+    }
+
+    /**
+     * Class for clients to access.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with
+     * IPC.
+     */
+    public class LocalBinder extends Binder {
+        public BaseSyncService getService() {
+            return BaseSyncService.this;
+        }
+    }
+
+    public List<BranchUserAssoc> getListOfBranchIds() {
+        //Log.e(TAG, "getListOfBranchIds... ");
+        try {
+          //  Log.e(TAG, "getListOfBranchIds size: " +  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query().size());
+            return  getHelper().fetchObjects(BranchUserAssoc.class).queryBuilder().where().eq("user_id", getSession().getUser()).query();
+        } catch (SQLException e) {
+            //Log.e(TAG, "getListOfBranchIds: is null");
+            return null;
+        }
+    }
+
+    public void setInitialSync() {
+        this.initialSync = true;
     }
 }

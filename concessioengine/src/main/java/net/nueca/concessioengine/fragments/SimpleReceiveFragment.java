@@ -21,12 +21,14 @@ import net.nueca.concessioengine.adapters.SimpleReceiveListAdapter;
 import net.nueca.concessioengine.adapters.SimpleReceiveRecyclerViewAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
 import net.nueca.concessioengine.dialogs.SearchDRDialog;
+import net.nueca.concessioengine.dialogs.SearchDRDialog2;
 import net.nueca.concessioengine.dialogs.SimpleReceiveDialog;
 import net.nueca.concessioengine.lists.ReceivedProductItemList;
 import net.nueca.concessioengine.objects.ExtendedAttributes;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
 import net.nueca.concessioengine.views.SimpleReceiveToolbarExt;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.Unit;
@@ -49,7 +51,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
 
     public FloatingActionButtonListener fabListener;
 
-    private SearchDRDialog searchDRDialog;
+    private SearchDRDialog2 searchDRDialog;
     private SimpleReceiveToolbarExt simpleReceiveToolbarExt;
 
     private SimpleReceiveDialog simpleReceiveDialog;
@@ -103,9 +105,8 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         }
 
         try {
-            searchDRDialog = new SearchDRDialog(getActivity(), getHelper(), getUser());
-
-            searchDRDialog.setDialogListener(new SearchDRDialog.SearchDRDialogListener() {
+            searchDRDialog = new SearchDRDialog2(getActivity(), getHelper(), getUser(), ConcessioModule.RECEIVE_BRANCH, R.style.AppCompatDialogStyle_Light_NoTitle);
+            searchDRDialog.setDialogListener(new SearchDRDialog2.SearchDRDialogListener() {
                 @Override
                 public boolean onCancel() {
                     Log.e("onCancel", "called");
@@ -139,7 +140,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
                     prevLast = 0;
 
                     setDeliveryReceiptNo(deliveryReceiptNo);
-                    setParentDocumentId(document.getId());
+                    setParentDocumentId(document.getReturnId());
                     forceUpdateProductList();
 
                     if (tvDRNo != null)
@@ -264,7 +265,7 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
         return !isManual || getReceivedProductItemList().size() > 0;
     }
 
-    protected void addProductOf(DocumentLine documentLine) {
+    protected void  addProductOf(DocumentLine documentLine) {
         Product product = documentLine.getProduct();
         SelectedProductItem selectedProductItem = getDisplayProductItemList()
                 .getSelectedProductItem(product);
@@ -378,13 +379,13 @@ public class SimpleReceiveFragment extends BaseReceiveFragment {
 
         if(simpleReceiveToolbarExt == null)
             simpleReceiveToolbarExt = new SimpleReceiveToolbarExt();
-        simpleReceiveToolbarExt.setOnClickListener(new SimpleReceiveToolbarExt.OnToolbarClickedListener() {
-            @Override
-            public void onClick() {
-                searchDRDialog.showWithText(((TextView) simpleReceiveToolbarExt.getToolbarExtensionView()
-                        .findViewById(R.id.tvDRNo)).getText().toString());
-            }
-        });
+//        simpleReceiveToolbarExt.setOnClickListener(new SimpleReceiveToolbarExt.OnToolbarClickedListener() {
+//            @Override
+//            public void onClick() {
+//                searchDRDialog.showWithText(((TextView) simpleReceiveToolbarExt.getToolbarExtensionView()
+//                        .findViewById(R.id.tvDRNo)).getText().toString());
+//            }
+//        });
         Log.e(getClass().getSimpleName(), "onViewCreated : attaching simpleReceiveToolbarExt");
         simpleReceiveToolbarExt.attachAfter(getActivity(), tbActionBar);
 

@@ -33,16 +33,6 @@ public class DocumentLine extends BaseTransactionLine {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "document_id")
     protected transient Document document;
-/*
-
-    @Expose
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
-    protected DocumentLineExtras extras;
-*/
-
-    //@Expose
-    //@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "extras")
-    //protected DocumentLineExtras_Old extras;
 
     @Expose
     @DatabaseField

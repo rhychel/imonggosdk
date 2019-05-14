@@ -86,6 +86,7 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             }
         }
         else if(listingType == ListingType.ADVANCED_SALES) {
+            Log.e("Product", product.getId()+"---");
             if(!hasSubtotal)
                 holder.tvSubtotal2.setVisibility(View.GONE);
 
@@ -94,7 +95,6 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                 holder.ivStar.setVisibility(View.VISIBLE);
             holder.llQuantity.setVisibility(View.GONE);
             holder.tvProductName.setText(product.getName());
-            holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
 
             SelectedProductItem selectedProductItem = getSelectedProductItems().getSelectedProductItem(product);
             Unit unit = null;
@@ -104,8 +104,8 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             }
             if(unit == null) {
                 try {
-                    unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("name", product.getUnit()).and().eq
-                            ("product_id", product).queryForFirst();
+                    unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("name", product.getUnit()).and()
+                            .eq("product_id", product).queryForFirst();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -120,9 +120,27 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                         unit = t_unit;
                 } catch (SQLException e) { e.printStackTrace(); }
             }
+            Log.e("UNITS", product.getName()+" --> "+product.getExtras().getDefault_selling_unit());
 
-            Log.e(getClass().getSimpleName(), "selectedProductItem isNull? " + (selectedProductItem == null) );
-            Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice 1");
+            // -------- GET THE DEFAULT SELLING UNIT FOR INVENTORY
+            Log.e("hasInStock", hasInStock+"");
+            if(hasInStock) {
+                if (product.getExtras() != null && product.getExtras().getDefault_selling_unit() != null && !product.getExtras().getDefault_selling_unit().isEmpty()) {
+                    Unit defaultSellingUnit = Unit.fetchById(getHelper(), Unit.class, Integer.valueOf(product.getExtras().getDefault_selling_unit()));
+                    if (defaultSellingUnit != null)
+                        holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(defaultSellingUnit.getQuantity(),
+                                ProductsAdapterHelper.getDecimalPlace()), defaultSellingUnit.getName()));
+                    else
+                        holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+                } else
+                    holder.tvInStock.setText(String.format("In Stock: %1$s %2$s", product.getInStock(), product.getBase_unit_name()));
+            }
+            else
+                holder.tvInStock.setVisibility(View.GONE);
+            // -------- GET THE DEFAULT SELLING UNIT FOR INVENTORY
+
+//            Log.e(getClass().getSimpleName(), "unit : " + (unit == null? "null" : unit.getName()) );
+//            Log.e(getClass().getSimpleName(), "selectedProductItem isNull? " + (selectedProductItem == null) );
 
             // Set subtotal
             holder.tvSubtotal2.setText("");
@@ -134,11 +152,14 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
                     Log.e("values["+selectedProductItem.getValues().indexOf(values)+"] retail_price", retail_price.toString());
                 }
                 Log.e(getClass().getSimpleName(), "Subtotal : " + subtotal);*/
+                Log.e("SSPRA", "subtotal:" + selectedProductItem.getValuesSubtotal() + "  retailprice:" +
+                        selectedProductItem.getValuesRetailPrices(';'));
                 holder.tvSubtotal2.setText(String.format("P%s", NumberTools.separateInCommas(selectedProductItem.getValuesSubtotal())));
-                holder.tvRetailPrice.setText(String.format("P%s", selectedProductItem.getValuesRetailPrices(';')));
+                holder.tvRetailPrice.setText(String.format("P%s/%s", selectedProductItem.getValuesRetailPrices(';'), selectedProductItem.getValuesUnit()));
             }
             // set Retail price
             else {
+                Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
                 Double retail_price = PriceTools.identifyRetailPrice(getHelper(), product, branch, customerGroup, customer, unit);
 
                 if(retail_price == null)
@@ -157,9 +178,12 @@ public class SimpleSalesProductRecyclerAdapter extends BaseSalesProductRecyclerA
             }
         }
 
-        String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
-                ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
-        holder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
+//        Log.e("Thumbnails", product.getThumbnail_url()+" <----");
+        if(product.getThumbnail_url() != null && !product.getThumbnail_url().trim().equals("")) {
+            String imageUrl = ImonggoTools.buildProductImageUrl(getContext(), ProductsAdapterHelper.getSession().getApiToken(),
+                    ProductsAdapterHelper.getSession().getAcctUrlWithoutProtocol(), product.getId() + "", false, false);
+            holder.ivProductImage.setImageUrl(imageUrl, ProductsAdapterHelper.getImageLoaderInstance(getContext(), true));
+        }
     }
 
     @Override

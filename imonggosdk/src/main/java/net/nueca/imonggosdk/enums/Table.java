@@ -2,6 +2,7 @@ package net.nueca.imonggosdk.enums;
 
 import android.util.Log;
 
+import net.nueca.imonggosdk.objects.AccountPrice;
 import net.nueca.imonggosdk.objects.ApplicationSettings;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.BranchPrice;
@@ -11,9 +12,10 @@ import net.nueca.imonggosdk.objects.Inventory;
 import net.nueca.imonggosdk.objects.LastUpdatedAt;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Product;
-import net.nueca.imonggosdk.objects.ProductTag;
 import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.invoice.Discount;
+import net.nueca.imonggosdk.objects.invoice.RewardPayment;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.Settings;
@@ -54,6 +56,7 @@ public enum Table {
     PRODUCTS(API_TYPE.API, "Products", Product.class, "products"),
     TAX_SETTINGS(API_TYPE.API, "Tax Settings", TaxSetting.class, "tax_settings"),
     UNITS(API_TYPE.API, "Units", Unit.class, "units"),
+    ACCOUNT_PRICES(API_TYPE.API, "Account Prices", AccountPrice.class, "account_prices"),
     USERS(API_TYPE.API, "Users", User.class, "users"),
     USERS_ME(API_TYPE.API, "Users", User.class, "users_me"),
     BRANCHES(API_TYPE.API, "Branches", Branch.class, "branches"),
@@ -61,9 +64,13 @@ public enum Table {
     SETTINGS(API_TYPE.API, "Settings", Settings.class, "settings"),
     APPLICATION_SETTINGS(API_TYPE.API, "Application Settings", ApplicationSettings.class, "application_settings"),
     ORDERS(API_TYPE.API, "Orders", Order.class, "orders"),
+    ORDERS_PURCHASES(API_TYPE.API, "Purchase Orders", Order.class, "orders_purchase_orders"),
+    ORDERS_STOCK_REQUEST(API_TYPE.API, "Stock Requests", Order.class, "orders_stock_requests"),
     POS_DEVICES(API_TYPE.API, "Pos Devices", null),
     DAILY_SALES(API_TYPE.API, "Daily Sales", DailySales.class, "daily_sales"),
     DOCUMENTS(API_TYPE.API, "Documents", Document.class, "documents"),
+    DOCUMENT_TRANSFER_OUT(API_TYPE.API, "Transfer Out Docs", Document.class, "document_transfer_out"),
+    DOCUMENT_ADJUSTMENT_OUT(API_TYPE.API, "Adjustment Out Docs", Document.class, "document_adjustment_out"),
     DOCUMENT_TYPES(API_TYPE.API, "Document Types", DocumentType.class, "document_types"),
     DOCUMENT_PURPOSES(API_TYPE.API, "Document Purposes", DocumentPurpose.class, "document_purposes"),
 
@@ -110,7 +117,7 @@ public enum Table {
     PRICE_LISTS_FROM_CUSTOMERS(API_TYPE.API, "Price Lists", PriceList.class, "price_lists_from_customers"),
     PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class, "price_lists"),
     BRANCH_PRICE_LISTS(API_TYPE.API, "Price Lists", PriceList.class, "branch_price_lists"),
-    PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", PriceList.class, "price_lists_details"),
+    PRICE_LISTS_DETAILS(API_TYPE.API, "Price Lists Details", Price.class, "price_lists_details"),
     SALES_PROMOTIONS(API_TYPE.API, "Sales Promotions", SalesPromotion.class, "sales_promotions"),
     SALES_PROMOTIONS_SALES_PUSH(API_TYPE.API, "Sales Push", SalesPromotion.class, "sales_promotions_sales_push"),
     SALES_PROMOTIONS_POINTS(API_TYPE.API, "Points", SalesPromotion.class, "sales_promotions_points"),
@@ -119,13 +126,23 @@ public enum Table {
     SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS(API_TYPE.API, "Discount Details", Discount.class, "sales_promotions_sales_discount_details"),
     ROUTE_PLANS(API_TYPE.API, "Route Plans", RoutePlan.class, "route_plans"),
     ROUTE_PLANS_DETAILS(API_TYPE.API, "Route Details", RoutePlanDetail.class, "route_plans_details"),
+    LAYAWAYS(API_TYPE.API, "Layaways", Invoice.class, "layaways"),
 
-    NONE(API_TYPE.NON_API, "none");
+    REWARDS_POINTS(API_TYPE.API, "Rewards Points", RewardPayment.class, "rewards"),
+
+    NONE(API_TYPE.NON_API, "none"),
+    ALL(API_TYPE.NON_API, "All");
+
+    // 12:00 CUSTOMER
+
+    //  12:02 PRICELIST // customer_id
 
     private final API_TYPE api_type;
     private final String name;
     private final Class aClass;
     private final String tableKey;
+    private Table[] prerequisites;
+
 
     Table(API_TYPE api, String name) {
         this(api, name, null);
@@ -153,6 +170,38 @@ public enum Table {
         return this.name;
     }
     public String getTableKey() {return tableKey;}
+    public Table[] getPrerequisites() {
+        /*
+            + Branch Products
+               - Units
+               - Products
+
+            + Route Plans
+              - Route Plan Details
+
+            + Price List From Customers / Price Lists
+              - Price Lists Details
+
+            + Sales Promotions Sales Discount
+              - Sales Promotions Sales Discount Details
+
+            + Sales Promotions Points
+              - Sales Promotion Sales Points
+         */
+
+        if(this == BRANCH_PRODUCTS)
+            prerequisites = new Table[]{PRODUCTS, UNITS};
+        if(this == CUSTOMER_BY_SALESMAN)
+            prerequisites = new Table[]{PRICE_LISTS_FROM_CUSTOMERS};
+        if(this == PRICE_LISTS_FROM_CUSTOMERS)
+            prerequisites = new Table[]{CUSTOMER_BY_SALESMAN};
+        if(this == USERS_ME)
+            prerequisites = new Table[]{BRANCH_USERS, BRANCH_PRODUCTS};
+        if(this == BRANCH_USERS)
+            prerequisites = new Table[]{USERS_ME, BRANCH_PRODUCTS};
+
+        return prerequisites;
+    }
 
     public static Table convertFromKey(String tableKey) {
         for(Table table : Table.values()) {
@@ -164,4 +213,5 @@ public enum Table {
         }
         return NONE;
     }
+
 }

@@ -47,7 +47,8 @@ public class SalesPromotion extends BaseTable {
             to_date = "",
             from_date = "";
 
-    @DatabaseField(foreign = true, foreignAutoCreate = true)
+    @Expose
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private SalesPushSettings settings;
 
     @DatabaseField
@@ -211,7 +212,17 @@ public class SalesPromotion extends BaseTable {
 
     @Override
     public String toString() {
-        return toJSONString();
+        return "SalesPromotion{" +
+                ", status='" + status + '\'' +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+
+                ", to_date='" + to_date + '\'' +
+                ", from_date='" + from_date + '\'' +
+                ", salesPromotionType='" + salesPromotionType + '\'' +
+                ", discounts=" + discounts +
+                ", discounts_fc=" + discounts_fc +
+                '}';
     }
 
     @Override
@@ -277,6 +288,7 @@ public class SalesPromotion extends BaseTable {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                Log.e(TAG, "updateTing discount");
                 discount.updateTo(dbHelper);
             }
         }

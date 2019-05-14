@@ -13,6 +13,7 @@ import java.sql.SQLException;
 /**
  * Created by rhymart on 12/16/15.
  */
+@Deprecated
 @DatabaseTable
 public class BranchUnit extends DBTable {
 

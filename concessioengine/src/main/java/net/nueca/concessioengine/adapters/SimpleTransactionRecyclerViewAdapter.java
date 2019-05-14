@@ -1,6 +1,7 @@
 package net.nueca.concessioengine.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import net.nueca.concessioengine.adapters.base.BaseTransactionsRecyclerAdapter;
 import net.nueca.concessioengine.adapters.tools.TransactionsAdapterHelper;
 import net.nueca.concessioengine.enums.ListingType;
 import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.tools.DateTimeTools;
 
 import java.util.Calendar;
@@ -57,7 +59,7 @@ public class SimpleTransactionRecyclerViewAdapter extends BaseTransactionsRecycl
     public void onBindViewHolder(SimpleTransactionRecyclerViewAdapter.ListViewHolder viewHolder, int position) {
         OfflineData offlineData = getItem(position);
 
-        viewHolder.tvTransactionRefNo.setText(offlineData.getReference_no());
+        viewHolder.tvTransactionRefNo.setText(offlineData.getReferenceNumber());
         if(listingType == ListingType.DETAILED_HISTORY) {
             viewHolder.tvTransactionDate.setText(DateTimeTools.convertFromTo(offlineData.getDate(), "MMMM d, yyyy, EEEE, h:mma", TimeZone.getTimeZone("UTC"), Calendar.getInstance().getTimeZone()));
             viewHolder.tvTransactionType.setText(TransactionsAdapterHelper.getTransactionType(dbHelper, offlineData));
@@ -68,6 +70,18 @@ public class SimpleTransactionRecyclerViewAdapter extends BaseTransactionsRecycl
         }
         viewHolder.ivStatus.setImageResource(TransactionsAdapterHelper.getStatus(offlineData, listingType == ListingType.BASIC));
         viewHolder.tvTransactionBranch.setText(offlineData.getBranchName());
+
+        viewHolder.llBranch.setVisibility(View.VISIBLE);
+        viewHolder.llLastTransaction.setVisibility(View.VISIBLE);
+        viewHolder.tvLastPurchase.setVisibility(View.VISIBLE);
+        if(offlineData.getType() == OfflineData.CUSTOMER) {
+//            viewHolder.isEditable = false;
+            Log.e("tvTransactionRefNo", (viewHolder.tvTransactionRefNo == null) + "");
+            viewHolder.tvTransactionRefNo.setText(offlineData.getObjectFromData(Customer.class).generateFullName());
+            viewHolder.llBranch.setVisibility(View.GONE);
+            viewHolder.llLastTransaction.setVisibility(View.GONE);
+            viewHolder.tvLastPurchase.setVisibility(View.GONE);
+        }
 
         if(viewHolder.ivStatus.getAnimation() != null)
             viewHolder.ivStatus.getAnimation().cancel();
@@ -83,10 +97,11 @@ public class SimpleTransactionRecyclerViewAdapter extends BaseTransactionsRecycl
     public class ListViewHolder extends BaseRecyclerAdapter.ViewHolder {
         public ImageView ivStatus;
         public AutofitTextView tvTransactionRefNo, tvTransactionBranch;
-        public TextView tvTransactionDate, tvTransactionType;
-        public LinearLayout llCash;
+        public TextView tvTransactionDate, tvTransactionType, tvLastPurchase;
+        public LinearLayout llCash, llLastTransaction, llBranch;
         public TextView tvCash;
         public View root;
+        public boolean isEditable = true;
 
         public ListViewHolder(View itemView) {
             super(itemView);
@@ -96,6 +111,10 @@ public class SimpleTransactionRecyclerViewAdapter extends BaseTransactionsRecycl
             tvTransactionBranch = (AutofitTextView) itemView.findViewById(R.id.tvTransactionBranch);
             tvTransactionDate = (TextView) itemView.findViewById(R.id.tvTransactionDate);
             tvTransactionType = (TextView) itemView.findViewById(R.id.tvTransactionType);
+            tvLastPurchase = (TextView) itemView.findViewById(R.id.tvLastPurchase);
+            llLastTransaction = (LinearLayout) itemView.findViewById(R.id.llLastTransaction);
+            llBranch = (LinearLayout) itemView.findViewById(R.id.llBranch);
+
             if(listingType == ListingType.DETAILED_HISTORY) {
                 llCash = (LinearLayout) itemView.findViewById(R.id.llCash);
                 tvCash = (TextView) itemView.findViewById(R.id.tvCash);
@@ -107,6 +126,8 @@ public class SimpleTransactionRecyclerViewAdapter extends BaseTransactionsRecycl
 
         @Override
         public void onClick(View view) {
+            if(!isEditable)
+                return;
             if(onItemClickListener != null)
                 onItemClickListener.onItemClicked(view, getLayoutPosition());
         }

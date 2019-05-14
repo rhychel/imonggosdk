@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.adapters.SimpleSplitPaymentAdapter;
 import net.nueca.concessioengine.adapters.base.BaseSplitPaymentAdapter;
@@ -20,6 +22,7 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by rhymart on 5/14/15.
@@ -68,14 +71,24 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
             splitPaymentAdapter = new SimpleSplitPaymentAdapter(getActivity(), getHelper());
             splitPaymentAdapter.setPaymentUpdateListener(this);
         }
+        splitPaymentAdapter.setLayaway(isLayaway);
+        splitPaymentAdapter.setComputation(computation);
         splitPaymentAdapter.initializeRecyclerView(getActivity(), rvPayments);
 
         rvPayments.setAdapter(splitPaymentAdapter);
 
+        /*List<InvoicePayment> paymentList = splitPaymentAdapter.getComputation().getPayments();
+        splitPaymentAdapter.getComputation().clearPayments();
+        for(InvoicePayment payment : paymentList)
+            splitPaymentAdapter.addPayment(payment);*/
+
         itemTouchHelper.attachToRecyclerView(rvPayments);
 
-        tvBalance.setText(NumberTools.separateInCommas(computation.getTotalPayable()));
+        tvBalance.setText(NumberTools.separateInCommas(computation.getRemaining()));
 
+        Log.e("SimpleCheckoutFragment", splitPaymentAdapter.getComputation().getRemaining().toPlainString());
+        Gson gson = new Gson();
+        Log.e("SimpleCheckoutFragment", gson.toJson(splitPaymentAdapter.getComputation().getPayments()));
         return view;
     }
 
@@ -98,7 +111,14 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
     }
 
     @Override
-    public void onDeletePayment(int location) {
+    public void onUpdatePayment(int location, double prevValue, InvoicePayment invoicePayment) {
+        Log.e("onUPdatePayment", "fragment");
+        tvBalance.setText(NumberTools.separateInCommas(computation.getRemaining()));
+        rvPayments.scrollToPosition(splitPaymentAdapter.getItemCount() - 1);
+    }
+
+    @Override
+    public void onDeletePayment(int location, double prevValue) {
         //computation.removePayment(location);
         tvBalance.setText(NumberTools.separateInCommas(computation.getRemaining()));
 
@@ -122,6 +142,14 @@ public class SimpleCheckoutFragment extends BaseCheckoutFragment {
                 else
                     splitPaymentAdapter.deletePayment(lvh.getItemIndex());
             }
+        }
+
+        @Override
+        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            if(viewHolder instanceof SimpleSplitPaymentAdapter.ListViewHolder)
+                if(!((SimpleSplitPaymentAdapter.ListViewHolder) viewHolder).isEditable())
+                    return 0;
+            return super.getSwipeDirs(recyclerView, viewHolder);
         }
     });
 

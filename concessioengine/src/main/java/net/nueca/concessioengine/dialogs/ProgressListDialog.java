@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -23,6 +24,7 @@ import java.util.List;
 /**
  * Created by rhymartmanchus on 25/01/2016.
  */
+
 public class ProgressListDialog extends BaseAppCompatDialog {
 
     public interface ProgressListener {
@@ -31,6 +33,7 @@ public class ProgressListDialog extends BaseAppCompatDialog {
 
     private ProgressListener progressListener;
     private ListView lvModules;
+    private Button btnCancel;
     private ProgressAdapter progressAdapter;
     private List<Table> tablesToUpdate;
     private int currentDownloading = -1;
@@ -59,6 +62,13 @@ public class ProgressListDialog extends BaseAppCompatDialog {
         super.setContentView(R.layout.progress_list_dialog);
 
         lvModules = (ListView) super.findViewById(R.id.lvModules);
+        btnCancel = (Button) super.findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
         progressAdapter = new ProgressAdapter(getContext(), generateProgressList());
         lvModules.setAdapter(progressAdapter);
     }
@@ -78,9 +88,14 @@ public class ProgressListDialog extends BaseAppCompatDialog {
         currentDownloading = tablesToUpdate.indexOf(table);
         progressAdapter.getItem(currentDownloading).setInProgress(true);
         progressAdapter.notifyItemChanged(lvModules, currentDownloading);
+        btnCancel.setEnabled(false);
     }
 
     public void updateProgress(int progress, int max) {
+        btnCancel.setEnabled(false);
+
+        Log.e("ProgressListDialog", progressAdapter.getItem(currentDownloading).getTable() + " progressing");
+
         progressAdapter.getItem(currentDownloading).setMax(max);
         progressAdapter.getItem(currentDownloading).updateProgress(progress);
         progressAdapter.notifyItemChanged(lvModules, currentDownloading);
@@ -93,6 +108,7 @@ public class ProgressListDialog extends BaseAppCompatDialog {
     }
 
     public void errorDownload() {
+        btnCancel.setEnabled(true);
         progressAdapter.getItem(currentDownloading).setError(true);
         progressAdapter.notifyItemChanged(lvModules, currentDownloading);
     }
@@ -164,7 +180,6 @@ public class ProgressListDialog extends BaseAppCompatDialog {
 
         public void updateProgress(int page) {
             progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
-            Log.e("apiDownloader", "page="+page+" | max="+max+" | progress="+progress+"%");
         }
     }
 
@@ -199,6 +214,7 @@ public class ProgressListDialog extends BaseAppCompatDialog {
                         if(progressListener != null) {
                             getItem(currentDownloading).setError(false);
                             notifyItemChanged(lvModules, currentDownloading);
+                            btnCancel.setEnabled(false);
                             progressListener.retryDownload();
                         }
                     }
@@ -215,13 +231,14 @@ public class ProgressListDialog extends BaseAppCompatDialog {
             lvh.pbCircularProgressBar.setVisibility(View.VISIBLE);
             lvh.tvDownloadProgress.setVisibility(View.INVISIBLE);
             lvh.ivRetrySync.setVisibility(View.INVISIBLE);
+            lvh.pbModuleProgress.setProgress(0);
             if(progress.isError()) {
                 lvh.ivRetrySync.setVisibility(View.VISIBLE);
                 lvh.pbCircularProgressBar.setVisibility(View.INVISIBLE);
             }
             else if(progress.isInProgress()) {
                 lvh.pbModuleProgress.setProgress(progress.getProgress());
-                lvh.pbModuleProgress.setMax(progress.getMax());
+                lvh.pbModuleProgress.setMax(100);
                 lvh.tvDownloadProgress.setText(progress.getProgress()+"%");
                 lvh.pbCircularProgressBar.setVisibility(View.INVISIBLE);
                 lvh.tvDownloadProgress.setVisibility(View.VISIBLE);

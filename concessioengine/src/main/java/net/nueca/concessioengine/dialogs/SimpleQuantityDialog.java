@@ -29,6 +29,7 @@ import java.util.Calendar;
  * Created by rhymart on 7/16/15.
  * imonggosdk (c)2015
  */
+@Deprecated
 public class SimpleQuantityDialog extends BaseQuantityDialog {
 
     private Spinner spUnits, spBrands;
@@ -157,7 +158,6 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                 if (spUnits.getVisibility() == View.VISIBLE)
                     offsetSpinnerBelowv21(spUnits);
 
-
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
             }
@@ -184,7 +184,7 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
             if(quantity.length() == 0)
                 quantity = "0";
 
-            if (quantity.equals("0") && !isMultiValue)
+            if (Double.valueOf(quantity) == 0 && !isMultiValue)
                 selectedProductItem.removeAll(); // TODO handle this
             else if (quantity.equals("0") && isMultiValue) {
                 if (multiQuantityDialogListener != null)
@@ -207,9 +207,12 @@ public class SimpleQuantityDialog extends BaseQuantityDialog {
                             salesBranch, salesCustomerGroup, salesCustomer, unit);
                     if(price != null)
                         values.setValue(quantity, price, salesCustomer != null? salesCustomer.getDiscount_text() : null);
-                    else
-                        values.setValue(quantity, unit, selectedProductItem.getRetail_price(),
-                                salesCustomer != null? salesCustomer.getDiscount_text() : null);
+                    else {
+                        Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
+                        values.setValue(quantity, unit, PriceTools.identifyRetailPrice(getHelper(), selectedProductItem.getProduct(),
+                                salesBranch, salesCustomerGroup, salesCustomer, unit),
+                                salesCustomer != null ? salesCustomer.getDiscount_text() : null);
+                    }
                 }
 
                     selectedProductItem.getValues().set(valuePosition, values);

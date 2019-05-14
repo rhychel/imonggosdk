@@ -93,9 +93,9 @@ public class SimpleCustomerRecyclerViewAdapter2 extends BaseCustomersRecyclerAda
             name = name.trim();
 
             listViewHolder.tvCustomerName.setText(name);
-            listViewHolder.tvAddress.setText(customer.getFullAddress());
+            listViewHolder.tvAddress.setText(customer.generateAddress());
 
-            if (customer.getFullAddress() != null && !customer.getFullAddress().isEmpty())
+            if (customer.generateAddress() != null && !customer.generateAddress().isEmpty())
                 listViewHolder.tvAddress.setVisibility(View.VISIBLE);
             else
                 listViewHolder.tvAddress.setVisibility(View.GONE);

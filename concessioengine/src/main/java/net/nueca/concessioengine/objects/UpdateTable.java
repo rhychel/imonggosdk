@@ -8,6 +8,9 @@ import net.nueca.imonggosdk.enums.Table;
 public class UpdateTable {
     private Table table;
     private boolean isSelected = false;
+    private boolean isEnabled = true;
+    private boolean isForcedSelected = false;
+    private boolean ignorePrerequisites = false;
 
     public UpdateTable(Table table) {
         this.table = table;
@@ -32,5 +35,34 @@ public class UpdateTable {
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    public boolean isForcedSelected() {
+        return isForcedSelected;
+    }
+
+    public void setForcedSelected(boolean forcedSelected) {
+        isForcedSelected = forcedSelected;
+    }
+
+    public boolean isIgnorePrerequisites() {
+        return ignorePrerequisites;
+    }
+
+    public void setIgnorePrerequisites(boolean ignorePrerequisites) {
+        this.ignorePrerequisites = ignorePrerequisites;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return table == ((UpdateTable)o).getTable();
     }
 }

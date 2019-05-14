@@ -8,7 +8,6 @@ import net.nueca.imonggosdk.enums.Server;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 
 public class Configurations {
@@ -20,53 +19,14 @@ public class Configurations {
                                         "receive_supplier", "release_supplier", "customers", "app"};
 
     public static String API_AUTHENTICATION = "";
-
-    private static String SERVER_KEY = "mServer";
-    private static String ACCOUNT_ID_CACHE = "account_id_cache";
-    private static String EMAIL_CACHE = "email_cache";
-
-    private static SharedPreferences imonggoPreference;
-
-    public static void initializePreference(Context context) {
-        imonggoPreference = PreferenceManager.getDefaultSharedPreferences(context);
-    }
-
-    public static int getServer() {
-        return imonggoPreference.getInt(SERVER_KEY, Server.IRETAILCLOUD_NET.ordinal());
-    }
-
-    public static String getEmail() {
-        return imonggoPreference.getString(EMAIL_CACHE, "");
-    }
-
-    public static String getAccountId() {
-        return imonggoPreference.getString(ACCOUNT_ID_CACHE, "");
-    }
-
-    public static void setAccountId(String accountId) {
-        SharedPreferences.Editor editor = imonggoPreference.edit();
-        editor.putString(ACCOUNT_ID_CACHE, accountId);
-        editor.apply();
-    }
-
-    public static void setEmail(String email) {
-        SharedPreferences.Editor editor = imonggoPreference.edit();
-        editor.putString(EMAIL_CACHE, email);
-        editor.apply();
-    }
-
-    public static void setServer(int server) {
-        SharedPreferences.Editor editor = imonggoPreference.edit();
-        editor.putInt(SERVER_KEY, server);
-        editor.apply();
-    }
-
+    public static double MAX_ITEMS_FOR_PRINTING = 25.0;
     /**
      * EnumMap for API Modules in JSON.
      */
     public static EnumMap<Table, String> API_MODULES = new EnumMap<Table, String>(Table.class) {
 
         private static final long serialVersionUID = 9136022492409598128L;
+
         {
             // ----- Main APIs
             put(Table.TOKENS, "tokens.json");
@@ -82,9 +42,13 @@ public class Configurations {
             put(Table.SETTINGS, "settings.json");
             put(Table.APPLICATION_SETTINGS, "application_settings");
             put(Table.ORDERS, "orders.json");
+            put(Table.ORDERS_PURCHASES, "orders.json");
+            put(Table.ORDERS_STOCK_REQUEST, "orders.json");
             put(Table.POS_DEVICES, "pos_devices.json");
             put(Table.DAILY_SALES, "daily_sales.json");
             put(Table.DOCUMENTS, "documents.json");
+            put(Table.DOCUMENT_ADJUSTMENT_OUT, "documents.json");
+            put(Table.DOCUMENT_TRANSFER_OUT, "documents.json");
             put(Table.DOCUMENT_TYPES, "document_types.json");
             put(Table.DOCUMENT_PURPOSES, "document_purposes.json");
 
@@ -113,13 +77,18 @@ public class Configurations {
             put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
             put(Table.ROUTE_PLANS, "route_plans.json");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
+            put(Table.LAYAWAYS, "invoices.json");
+            put(Table.REWARDS_POINTS, "rewards.json");
+
+            // FOR PETRON
+            put(Table.ACCOUNT_PRICES, "account_prices.json");
 
         }
     };
-
     public static EnumMap<Table, String> API_MODULES_ID = new EnumMap<Table, String>(Table.class) {
 
         private static final long serialVersionUID = 9136022492409598128L;
+
         {
             // ----- Main APIs
             put(Table.TOKENS, "tokens");
@@ -135,9 +104,13 @@ public class Configurations {
             put(Table.SETTINGS, "settings");
             put(Table.APPLICATION_SETTINGS, "application_settings");
             put(Table.ORDERS, "orders");
+            put(Table.ORDERS_PURCHASES, "orders_purchases");
+            put(Table.ORDERS_STOCK_REQUEST, "orders_stock_request");
             put(Table.POS_DEVICES, "pos_devices");
             put(Table.DAILY_SALES, "daily_sales");
             put(Table.DOCUMENTS, "documents");
+            put(Table.DOCUMENT_ADJUSTMENT_OUT, "document_adjustment_out");
+            put(Table.DOCUMENT_TRANSFER_OUT, "document_transfer_out");
             put(Table.DOCUMENT_TYPES, "document_types");
             put(Table.DOCUMENT_PURPOSES, "document_purposes");
 
@@ -152,29 +125,33 @@ public class Configurations {
             put(Table.PAYMENT_TERMS, "payment_terms");
             put(Table.CUSTOMER_CATEGORIES, "customer_categories");
             put(Table.CUSTOMER_BY_SALESMAN, "customers");
+            put(Table.PRICE_LISTS_FROM_CUSTOMERS, "price_lists");
             put(Table.PAYMENT_TYPES, "payment_types");
             put(Table.CUSTOMER_GROUPS, "customer_groups");
             put(Table.PRICE_LISTS, "price_lists");
             put(Table.BRANCH_PRICE_LISTS, "price_lists");
-            put(Table.PRICE_LISTS_DETAILS, "price_lists");
+            put(Table.PRICE_LISTS_DETAILS, "price_lists_details");
             put(Table.SALES_PROMOTIONS, "sales_promotions");
-            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions_details");
+            put(Table.SALES_PROMOTIONS_SALES_PUSH, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_POINTS, "sales_promotions");
+            put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
+            put(Table.ROUTE_PLANS, "route_plans");
+            put(Table.ROUTE_PLANS_DETAILS, "route_plans_details");
+            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions_details");
             put(Table.SALES_PROMOTIONS_SALES_PUSH, "sales_promotions");
             put(Table.SALES_PROMOTIONS_SALES_DISCOUNT, "sales_promotions");
             put(Table.SALES_PROMOTIONS_POINTS, "sales_promotions");
             put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
             put(Table.ROUTE_PLANS, "route_plans");
             put(Table.ROUTE_PLANS_DETAILS, "route_plans");
-            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT_DETAILS, "sales_promotions");
-            put(Table.SALES_PROMOTIONS_SALES_PUSH, "sales_promotions");
-            put(Table.SALES_PROMOTIONS_SALES_DISCOUNT, "sales_promotions");
-            put(Table.SALES_PROMOTIONS_POINTS, "sales_promotions");
-            put(Table.SALES_PROMOTIONS_POINTS_DETAILS, "sales_promotions");
-            put(Table.ROUTE_PLANS, "route_plans");
-            put(Table.ROUTE_PLANS_DETAILS, "route_plans");
+            put(Table.LAYAWAYS, "layaways");
+
+            // FOR PETRON
+            put(Table.ACCOUNT_PRICES, "account_prices");
         }
     };
-
     /**
      * EnumMap for Settings' name.
      */
@@ -236,5 +213,43 @@ public class Configurations {
             put(SettingsName.MASTER_ACCOUNT_ID, "master_account_id");
         }
     };
+    private static String SERVER_KEY = "mServer";
+    private static String ACCOUNT_ID_CACHE = "account_id_cache";
+    private static String EMAIL_CACHE = "email_cache";
+    private static SharedPreferences imonggoPreference;
+
+    public static void initializePreference(Context context) {
+        imonggoPreference = PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    public static int getServer() {
+        return imonggoPreference.getInt(SERVER_KEY, Server.IRETAILCLOUD_NET.ordinal());
+    }
+
+    public static void setServer(int server) {
+        SharedPreferences.Editor editor = imonggoPreference.edit();
+        editor.putInt(SERVER_KEY, server);
+        editor.apply();
+    }
+
+    public static String getEmail() {
+        return imonggoPreference.getString(EMAIL_CACHE, "");
+    }
+
+    public static void setEmail(String email) {
+        SharedPreferences.Editor editor = imonggoPreference.edit();
+        editor.putString(EMAIL_CACHE, email);
+        editor.apply();
+    }
+
+    public static String getAccountId() {
+        return imonggoPreference.getString(ACCOUNT_ID_CACHE, "");
+    }
+
+    public static void setAccountId(String accountId) {
+        SharedPreferences.Editor editor = imonggoPreference.edit();
+        editor.putString(ACCOUNT_ID_CACHE, accountId);
+        editor.apply();
+    }
 
 }

@@ -21,10 +21,14 @@ import net.nueca.concessioengine.fragments.interfaces.MultiInputListener;
 import net.nueca.concessioengine.fragments.interfaces.SetupActionBar;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.fragments.ImonggoFragment;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
 import net.nueca.imonggosdk.objects.ProductTag;
+import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
 import net.nueca.imonggosdk.objects.document.DocumentPurpose;
@@ -55,6 +59,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             hasBrand = false,
             hasDeliveryDate = false,
             hasCategories = true,
+            hasInStock = true,
             multipleInput = false,
             showCategoryOnStart = false,
             lockCategory = false,
@@ -64,8 +69,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             displayOnly = false,
             useSalesProductAdapter = false,
             hasPromotionalProducts = false,
-            isReturnItems = false;
-    private int prevLast = -1;
+            isReturnItems = false,
+            isOnSalesFinalize = false,
+            dialogIsOpened = false;
+    protected int prevLast = -1;
     private String searchKey = "", category = "";
     protected DocumentPurpose reason = null;
     private List<Product> filterProductsBy = new ArrayList<>();
@@ -89,6 +96,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
     protected BaseProductsRecyclerAdapter productRecyclerViewAdapter;
     protected BaseProductsAdapter productListAdapter;
+
+    protected ConcessioModule concessioModule = ConcessioModule.NONE;
 
     protected abstract void showQuantityDialog(int position, Product product, SelectedProductItem selectedProductItem);
     protected abstract void showProductDetails(Product product);
@@ -138,7 +147,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
                         +" - to="+salesPromotion.getToDate()
                         +" - now="+now
                         +" - status="+salesPromotion.getStatus()
-                        +" - promotion_type_name="+salesPromotion.getPromotion_type_name());
+                        +" - promotion_type_name="+salesPromotion.getPromotion_type_name()
+                        +" - toDate"+salesPromotion.getToDate());
             }
 
             Where<SalesPromotion, Integer> whereCondition = getHelper().fetchIntId(SalesPromotion.class).queryBuilder().where();
@@ -152,7 +162,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
             updatePromotion.update();
 
-            SalesPromotion salesPromotion = getHelper().fetchObjects(SalesPromotion.class).queryBuilder().orderBy("id", true)//.query();
+            SalesPromotion salesPromotion = getHelper().fetchObjects(SalesPromotion.class).queryBuilder().orderBy("id", false)//.query();
                     .where().le("fromDate", now)
                             .and().ge("toDate", now).and().eq("status", "A")
                             .and().eq("promotion_type_name", SalesPromotion.DISCOUNT)
@@ -163,8 +173,14 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
                 List<Discount> discounts = getHelper().fetchForeignCollection(salesPromotion.getDiscounts_fc().closeableIterator());
                 Log.e("Discounts", discounts.size()+"");
                 for(Discount discount : discounts) {
-                    promotionalProducts.add(discount.getProduct());
-                    Log.e("Sales Promotion", discount.getProduct().getName());
+                    Log.e("Discounts", "iterating---");
+                    if(discount.getProduct() != null) {
+                        promotionalProducts.add(discount.getProduct());
+                        Log.e("Discounts", discount.getProduct().getName()+"--");
+                    }
+                    else {
+                        Log.e("Discounts", "no product is tagged = "+discount.getProduct_id());
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -184,19 +200,28 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             return products;
         try {
             Where<Product, Integer> whereProducts = getHelper().fetchIntId(Product.class).queryBuilder().where();
-            whereProducts.isNull("status");
+            whereProducts.eq("status", "A").or().isNull("status");
+//            whereProducts.isNull("status");
             Log.e("includeSearchKey", includeSearchKey + "");
             Log.e("includeCategory", includeCategory+"");
             Log.e("hasProductFilter", hasProductFilter+"");
 
             if(includeSearchKey)
                 whereProducts.and().like("searchKey", "%"+searchKey+"%");
+
+            String orderByFilter = "";
             if(hasProductFilter) {
+                orderByFilter = "CASE id";
+                int order = 0;
                 List<Integer> ids = new ArrayList<>();
                 for(Product product : filterProductsBy) {
                     ids.add(product.getId());
+                    orderByFilter += " WHEN "+product.getId()+" THEN "+order;
+                    order++;
+
                     //Log.e("FILTER", product.getId() + "");
                 }
+                orderByFilter += " ELSE 1000000 END, ";
                 whereProducts.and().in("id", ids);
             }
             if(includeCategory) {
@@ -207,7 +232,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
             }
 
             String orderBy = "";
-            if(promotionalProducts.size() > 0) {
+            if(isFinalize) {
+                orderBy += orderByFilter;
+            }
+            else if(promotionalProducts.size() > 0) {
                 orderBy = "CASE id";
                 int order = 0;
                 for(Product product : promotionalProducts) {
@@ -216,13 +244,22 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
                 }
                 orderBy += " ELSE 1000000 END, ";
             }
-            orderBy += "name COLLATE NOCASE ASC";
+            ProductSorting productSorting = getHelper().fetchForeignCollection(getAppSetting().getProductSortings().closeableIterator(), new ImonggoDBHelper2.Conditional<ProductSorting>() {
+                @Override
+                public boolean validate(ProductSorting obj) {
+                    if(obj.is_default())
+                        return true;
+                    return false;
+                }
+            }, 0);
+            orderBy += (productSorting == null ? "name" : productSorting.getColumn()) + " COLLATE NOCASE ASC";
 
             QueryBuilder<Product, Integer> resultProducts = getHelper().fetchIntId(Product.class).queryBuilder().orderByRaw(orderBy)
-                    .limit(LIMIT).offset(offset);
+                    .limit(LIMIT)
+                    .offset(offset);
             resultProducts.setWhere(whereProducts);
 
-            Log.e(">>", resultProducts.prepareStatementString());
+            Log.e("BaseProduct>>", resultProducts.prepareStatementString());
 
             products = resultProducts.query();
         } catch (SQLException e) {
@@ -230,7 +267,6 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         }
 
         Log.e(getClass().getSimpleName(), "getProducts = "+products.size());
-
         return products;
     }
 
@@ -283,9 +319,13 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
 
             int lastItem = firstVisibleItem + visibleItemCount;
 
+            Log.e("BaseProducts", "lastItem ="+lastItem+" | totalItemCount = "+totalItemCount+" | prevLast = "+prevLast);
             if(lastItem == totalItemCount) {
                 if(prevLast != lastItem) {
+                    Log.e("BaseProducts", "prevLast ="+prevLast+" | " +"lastItem ="+lastItem+" | totalItemCount = "+totalItemCount);
+                    Log.e("BaseProducts", "offset ="+offset+" | LIMIT = "+LIMIT);
                     offset += LIMIT;
+                    Log.e("BaseProducts", "offset ="+offset+" | LIMIT = "+LIMIT);
                     whenListEndReached(getProducts());
                     prevLast = lastItem;
                 }
@@ -298,6 +338,7 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     }
 
     public void setCategory(String category) {
+        Log.e("BaseProductsFragment", category+" is set");
         this.category = category;
     }
 
@@ -346,6 +387,8 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
     }
 
     public void setFilterProductsBy(List<Product> filterProductsBy) {
+        offset = 0l;
+        prevLast = -1;
         this.filterProductsBy = filterProductsBy;
     }
 
@@ -373,6 +416,10 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         this.useSalesProductAdapter = useSalesProductAdapter;
     }
 
+    public List<Product> getFilterProductsBy() {
+        return filterProductsBy;
+    }
+
     public void setBranch(Branch branch) {
         this.branch = branch;
         ProductsAdapterHelper.setSelectedBranch(branch);
@@ -388,11 +435,31 @@ public abstract class BaseProductsFragment extends ImonggoFragment {
         ProductsAdapterHelper.setSelectedCustomer(customer);
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
     public void setHasPromotionalProducts(boolean hasPromotionalProducts) {
         this.hasPromotionalProducts = hasPromotionalProducts;
     }
 
     public void setReturnItems(boolean returnItems) {
         isReturnItems = returnItems;
+    }
+
+    public ConcessioModule getConcessioModule() {
+        return concessioModule;
+    }
+
+    public void setConcessioModule(ConcessioModule concessioModule) {
+        this.concessioModule = concessioModule;
+    }
+
+    public void setOnSalesFinalize(boolean onSalesFinalize) {
+        isOnSalesFinalize = onSalesFinalize;
+    }
+
+    public void setHasInStock(boolean hasInStock) {
+        this.hasInStock = hasInStock;
     }
 }

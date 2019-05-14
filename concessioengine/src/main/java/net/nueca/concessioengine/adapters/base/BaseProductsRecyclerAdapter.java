@@ -24,9 +24,11 @@ import java.util.List;
  */
 public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHolder> extends BaseRecyclerAdapter<T, Product> {
 
+    protected Branch branch;
 //    private ProductsAdapterHelper productsAdapterHelper = new ProductsAdapterHelper();
     protected boolean hasSubtotal = false;
     protected boolean isReturnItems = false;
+    protected boolean hasInStock = true;
 
     public BaseProductsRecyclerAdapter(Context context) {
         super(context);
@@ -74,6 +76,22 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
         isReturnItems = returnItems;
     }
 
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
+    public boolean isHasInStock() {
+        return hasInStock;
+    }
+
+    public void setHasInStock(boolean hasInStock) {
+        this.hasInStock = hasInStock;
+    }
+
     @Override
     public Product getItem(int position) {
         return super.getItem(position);
@@ -81,6 +99,7 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
 
     @Override
     public boolean updateList(List<Product> products) {
+        Log.e("SelectedReturnsPI", products.size()+" updateList.size");
         return super.updateList(products);
     }
 
@@ -98,4 +117,9 @@ public abstract class BaseProductsRecyclerAdapter<T extends BaseRecyclerAdapter.
     public void setList(List<Product> objectList) {
         super.setList(objectList);
     }
+
+    public ImonggoDBHelper2 getHelper() {
+        return ProductsAdapterHelper.getDbHelper();
+    }
+
 }

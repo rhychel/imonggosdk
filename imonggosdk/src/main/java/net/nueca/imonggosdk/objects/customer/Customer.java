@@ -6,16 +6,21 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
+import com.j256.ormlite.dao.CloseableIterable;
+import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nueca.imonggosdk.database.ImonggoDBHelper2;
+import net.nueca.imonggosdk.enums.DatabaseOperation;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
+import net.nueca.imonggosdk.objects.base.BaseTable3;
+import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.Extras;
 import net.nueca.imonggosdk.objects.document.Document;
 import net.nueca.imonggosdk.objects.invoice.Invoice;
@@ -24,6 +29,7 @@ import net.nueca.imonggosdk.objects.price.PriceList;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
 import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
 import net.nueca.imonggosdk.tools.FieldValidatorMessage;
+import net.nueca.imonggosdk.tools.NumberTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +43,7 @@ import java.util.List;
  * imonggosdk (c)2015
  */
 @DatabaseTable
-public class Customer extends BaseTable implements Extras.DoOperationsForExtras {
+public class Customer extends BaseTable3 implements Extras.DoOperationsForExtras {
 
     public enum CustomerFields {
         CODE("code"),
@@ -48,6 +54,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         COMPANY_NAME("company_name"),
         TIN("tin", InputType.TYPE_CLASS_PHONE),
         STREET("street", InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES),
+        TOWN("town", InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES),
         CITY("city"),
         STATE("state"),
         ZIPCODE("zipcode", InputType.TYPE_CLASS_PHONE),
@@ -110,10 +117,14 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Expose
     @DatabaseField
     private String code, alternate_code, first_name, middle_name, last_name, name, company_name,
-            tin, street = "", city, state, zipcode, country, telephone, fax,
+            tin, street = "", city, town, state, zipcode, country, telephone, fax,
             mobile, email, remark, customer_type_id, customer_type_name, discount_text,
-            available_points, birthdate, status, birthday,
+            birthdate, status, birthday,
             membership_expired_at, membership_start_at, biometric_signature, gender;
+
+    @DatabaseField
+    private String available_points;
+
     @Expose
     @DatabaseField
     private boolean tax_exempt;
@@ -129,7 +140,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     private transient CustomerCategory customerCategory; // customer_type_id (?)
     @DatabaseField(foreign=true, foreignAutoRefresh = true, columnName = "route_plan_id")
     private transient RoutePlan routePlan;
-    @ForeignCollectionField(orderColumnName = "id")
+    @ForeignCollectionField(orderColumnName = "id", orderAscending = false)
     private transient ForeignCollection<Invoice> invoices;
     @ForeignCollectionField
     private transient ForeignCollection<Document> documents;
@@ -148,11 +159,15 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @ForeignCollectionField(columnName = "offlinedata_id")
     protected transient ForeignCollection<OfflineData> offlineData;
 
+    private Invoice lastPurchase;
+    private String layawayBalance = null;
+    private List<Invoice> myInvoices = null;
+
     public Customer() { }
 
     public Customer(String first_name, String last_name, String name, String company_name,
                     String telephone, String mobile, String fax, String email, String street,
-                    String city, String zipcode, String country, String state, String tin, String gender) {
+                    String city, String town, String zipcode, String country, String state, String tin, String gender) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.name = name;
@@ -163,6 +178,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.email = email;
         this.street = street;
         this.city = city;
+        this.town = town;
         this.zipcode = zipcode;
         this.country = country;
         this.state = state;
@@ -182,6 +198,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.email = builder.email;
         this.street = builder.street;
         this.city = builder.city;
+        this.town = builder.town;
         this.zipcode = builder.zipcode;
         this.country = builder.country;
         this.state = builder.state;
@@ -189,8 +206,33 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.gender = builder.gender;
     }
 
-    public Customer(String s, String s1, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String gender) {
-        super();
+    public void updateCustomerDetail(CustomerFields customerField, Object value) {
+        switch (customerField) {
+            case LAST_NAME:
+                this.last_name = (String)value;
+                break;
+            case FIRST_NAME:
+                this.first_name = (String)value;
+                break;
+            case MIDDLE_NAME:
+                this.middle_name = (String)value;
+                break;
+            case MOBILE:
+                this.mobile = (String)value;
+                break;
+            case TELEPHONE:
+                this.telephone = (String)value;
+                break;
+            case COMPANY_NAME:
+                this.company_name = (String)value;
+                break;
+            case STREET:
+                this.street = (String)value;
+                break;
+            case PAYMENT_TERMS_ID:
+                this.payment_terms_id = (Integer)value;
+                break;
+        }
     }
 
     public int getPoint_to_amount_ratio() {
@@ -202,6 +244,8 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     }
 
     public String getCode() {
+        if(code == null || code.equals("null"))
+            return "";
         return code;
     }
 
@@ -360,6 +404,10 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     }
 
     public String getDiscount_text() {
+        if(discount_text == null)
+            return "";
+        if(discount_text.equals(""))
+            return "";
         return discount_text;
     }
 
@@ -368,6 +416,8 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     }
 
     public String getAvailable_points() {
+        if(available_points == null)
+            return "0";
         return available_points;
     }
 
@@ -559,6 +609,18 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         this.routePlanDetails = routePlanDetails;
     }
 
+    public String getTown() {
+        return town;
+    }
+
+    public void setTown(String town) {
+        this.town = town;
+    }
+
+    public ForeignCollection<OfflineData> getOfflineData() {
+        return offlineData;
+    }
+
     @Override
     public boolean equals(Object o) {
         return (o instanceof Customer) && ((Customer)o).getId() == id;
@@ -592,7 +654,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     @Override
     public String toString() {
-        return name;
+        return "name: " + name + " company name: " + company_name + " address: " + generateAddress();
     }
 
     public String generateFullName() {
@@ -615,7 +677,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         return name;
     }
 
-    public String getFullAddress() {
+    public String generateAddress() {
         String address = "";
 
         if(street != null && !street.isEmpty())
@@ -625,6 +687,12 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
             if(!address.isEmpty())
                 address += ", ";
             address += city;
+        }
+
+        if(town != null && !town.isEmpty()) {
+            if(!address.isEmpty())
+                address += ", ";
+            address += town;
         }
 
         if(zipcode != null && !zipcode.isEmpty()) {
@@ -644,18 +712,59 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
     public String getLastPurchase() {
         try {
-            Invoice invoice = invoices.closeableIterator().first();
+            Log.e(TAG,"getLastPurchase " + (lastPurchase==null? "NULL" : lastPurchase.getInvoice_date()));
+            if(lastPurchase != null)
+                return lastPurchase.getInvoice_date();
+            lastPurchase = invoices.closeableIterator().first();
             invoices.closeLastIterator();
 
-            if(invoice != null)
-                return invoice.getInvoice_date();
+            Log.e(TAG,"getLastPurchase " + (lastPurchase==null? "NULL" : lastPurchase.getInvoice_date()));
+            if(lastPurchase != null)
+                return lastPurchase.getInvoice_date();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return "";
     }
 
-    public List<CustomerGroup>  getCustomerGroups(ImonggoDBHelper2 dbHelper) throws SQLException {
+    public Invoice getLastInvoice() {
+        getLastPurchase();
+        return lastPurchase;
+    }
+
+    public String getLastPurchaseBranch() {
+        getLastPurchase();
+        if(lastPurchase != null) {
+            if(lastPurchase.getBranch() != null)
+                return lastPurchase.getBranch().getName();
+            return "Branch is null";
+        }
+        return "";
+    }
+
+    public List<Invoice> getMyInvoices() {
+        myInvoices = new ArrayList<>();
+        CloseableIterator<Invoice> iterator = invoices.closeableIterator();
+        while (iterator.hasNext()) {
+            Invoice invc = iterator.next();
+            myInvoices.add(invc);
+        }
+        return myInvoices;
+    }
+
+    public void setMyInvoices(List<Invoice> myInvoices) {
+        this.myInvoices = myInvoices;
+    }
+
+    public String getLayawayBalance() {
+        return layawayBalance;
+    }
+
+    public void setLayawayBalance(String layawayBalance) {
+        this.layawayBalance = layawayBalance;
+    }
+
+    public List<CustomerGroup> getCustomerGroups(ImonggoDBHelper2 dbHelper) throws SQLException {
         List<CustomerCustomerGroupAssoc> assocs = dbHelper.fetchObjects(CustomerCustomerGroupAssoc.class).queryBuilder().where().eq
                 (CustomerCustomerGroupAssoc.CUSTOMER_ID_FIELD_NAME, this).query();
 
@@ -664,7 +773,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
 
         List<CustomerGroup> customerGroups = new ArrayList<>();
         for(CustomerCustomerGroupAssoc assoc : assocs) {
-            Log.e("ASSOC", assoc.toString());
+            //Log.e("ASSOC", assoc.toString());
             customerGroups.add(assoc.getCustomerGroup());
         }
         return customerGroups;
@@ -673,8 +782,10 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
-            insertExtrasTo(dbHelper);
+            Log.e("insertTo", id+"before ---");
             dbHelper.insert(Customer.class, this);
+            Log.e("insertTo", id+"after ---");
+            insertExtrasTo(dbHelper);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -706,6 +817,11 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
             extras.setCustomer(this);
             extras.setId(getClass().getName().toUpperCase(), id);
             extras.insertTo(dbHelper);
+            try {
+                dbHelper.update(Customer.class, this);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -719,12 +835,21 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
     public void updateExtrasTo(ImonggoDBHelper2 dbHelper) {
         if(extras != null) {
             String idstr = getClass().getName().toUpperCase() +"_"+ id;
-            if (idstr.equals(extras.getId()))
+            Log.e("Extras", idstr+" -- "+extras.getId());
+            if (idstr.equals(extras.getId())) {
                 extras.updateTo(dbHelper);
+                Log.e("EXTRAS", "update");
+            }
             else {
+                Log.e("EXTRAS", "insert");
                 extras.deleteTo(dbHelper);
                 extras.setId(getClass().getName().toUpperCase(), id);
-                extras.insertTo(dbHelper);
+                try {
+                    if(dbHelper.fetchObjects(Extras.class).queryBuilder().where().eq("id", idstr).queryForFirst() == null)
+                        extras.insertTo(dbHelper);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -734,7 +859,7 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         protected Extras extras;
         protected String utc_created_at, utc_updated_at,
                 code, alternate_code, first_name, last_name, name, company_name,
-                tin, street, city, state, zipcode, country, telephone, fax,
+                tin, street, city, town, state, zipcode, country, telephone, fax,
                 mobile, email, remark, customer_type_id, customer_type_name,
                 discount_text, available_points, birthdate, status, birthday,
                 membership_expired_at = "", membership_start_at = "", biometric_signature = "", gender = "";
@@ -812,6 +937,10 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
             this.zipcode = zipcode;
             return this;
         }
+        public Builder town(String town) {
+            this.town = town;
+            return this;
+        }
         public Builder country(String country) {
             this.country = country;
             return this;
@@ -854,28 +983,54 @@ public class Customer extends BaseTable implements Extras.DoOperationsForExtras 
         FieldValidatorMessage fieldValidatorMessage = new FieldValidatorMessage();
         fieldValidatorMessage.setMessage("Please enter a valid ");
         String lastField = "";
+        boolean numberIsPast = false;
         for(CustomerFields field : fields) {
             switch (field) {
                 case CODE:
                     if(code != null && !code.isEmpty())
-                        break;
+                        continue;
                     fieldValidatorMessage.appendMessage(lastField, false);
                     fieldValidatorMessage.setPassed(false);
                     lastField = "customer code";
                     break;
                 case FIRST_NAME:
                     if(first_name != null && !first_name.isEmpty())
-                        break;
+                        continue;
                     fieldValidatorMessage.appendMessage(lastField, false);
                     fieldValidatorMessage.setPassed(false);
                     lastField = "first name";
                     break;
                 case LAST_NAME:
                     if(last_name != null && !last_name.isEmpty())
-                        break;
+                        continue;
                     fieldValidatorMessage.appendMessage(lastField, false);
                     fieldValidatorMessage.setPassed(false);
                     lastField = "last name";
+                    break;
+                case TELEPHONE:
+                case MOBILE:
+                    if(numberIsPast)
+                        continue;
+                    numberIsPast = true;
+                    if((telephone!= null && !telephone.isEmpty()) || (mobile != null && !mobile.isEmpty()))
+                        continue;
+                    fieldValidatorMessage.appendMessage(lastField, false);
+                    fieldValidatorMessage.setPassed(false);
+                    lastField = "telephone or mobile";
+                    break;
+                case EXTRAS_CATEGORY_ID:
+                    if(extras != null && extras.getCustomerCategory() != null && extras.getCustomerCategory().getId() != -1)
+                        continue;
+                    fieldValidatorMessage.appendMessage(lastField, false);
+                    fieldValidatorMessage.setPassed(false);
+                    lastField = "outlet type";
+                    break;
+                case PAYMENT_TERMS_ID:
+                    if(paymentTerms != null && paymentTerms.getId() != -1)
+                        continue;
+                    fieldValidatorMessage.appendMessage(lastField, false);
+                    fieldValidatorMessage.setPassed(false);
+                    lastField = "payment terms";
                     break;
             }
         }

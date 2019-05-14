@@ -1,5 +1,7 @@
 package net.nueca.imonggosdk.objects;
 
+import android.util.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -61,6 +63,7 @@ public class Inventory extends DBTable {
     }
 
     public String getInventory() {
+        Log.e("Inventory", quantity+"");
         String inventoryQty = String.valueOf(quantity);
         if(inventoryQty.contains(".")) {
             String[] values = inventoryQty.split(".");
@@ -106,17 +109,23 @@ public class Inventory extends DBTable {
     }
 
     public void addQuantity(double addQuantity) {
+        Log.e("Inventory", "addQuantity = "+addQuantity);
         this.quantity += addQuantity;
+        Log.e("Inventory", "addQuantity -> quantity = "+addQuantity);
     }
 
     public void subtractQuantity(double subtractQuantity) {
+        Log.e("Inventory", "subtractQuantity = "+subtractQuantity);
         this.quantity -= subtractQuantity;
+        Log.e("Inventory", "subtractQuantity -> quantity = "+quantity);
     }
 
     @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(Inventory.class, this);
+            product.setInventory(this);
+            product.updateTo(dbHelper);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -135,6 +144,9 @@ public class Inventory extends DBTable {
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.update(Inventory.class, this);
+            product.setInventory(this);
+            product.updateTo(dbHelper);
+            Log.e("Inventory", "update");
         } catch (SQLException e) {
             e.printStackTrace();
         }

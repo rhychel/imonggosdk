@@ -1,5 +1,7 @@
 package net.nueca.concessioengine.adapters.tools;
 
+import android.util.Log;
+
 import net.nueca.concessioengine.R;
 import net.nueca.concessioengine.objects.SelectedProductItem;
 import net.nueca.concessioengine.objects.Values;
@@ -32,9 +34,13 @@ public class TransactionsAdapterHelper {
             return "Order";
         else if(offlineData.getType() == OfflineData.INVOICE)
             return "Sales";
-        ConcessioModule concessioModule = offlineData.getObjectFromData(Document.class).getDocument_type_code().getConcessioModule();
+        else if(offlineData.getType() == OfflineData.CUSTOMER)
+            return "Customer";
+//        ConcessioModule concessioModule = offlineData.getObjectFromData(Document.class)
+//                .getDocument_type_code()
+//                .getConcessioModule();
         try {
-            ModuleSetting moduleSetting = dbHelper.fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", concessioModule).queryForFirst();
+            ModuleSetting moduleSetting = dbHelper.fetchObjects(ModuleSetting.class).queryBuilder().where().eq("module_type", offlineData.getConcessioModule()).queryForFirst();
             if(moduleSetting != null)
                 return moduleSetting.getLabel();
         } catch (SQLException e) {
@@ -66,6 +72,8 @@ public class TransactionsAdapterHelper {
             return R.drawable.ic_sync_black;
 //        if(offlineData.isQueued())
 //            return R.drawable.ic_sync_black;
+        if(offlineData.getOfflineDataTransactionType().isVoiding())
+            return R.drawable.ic_readytosync_black_void;
         return R.drawable.ic_readytosync_black;
     }
 

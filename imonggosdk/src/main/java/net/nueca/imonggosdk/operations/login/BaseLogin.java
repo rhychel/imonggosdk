@@ -8,6 +8,7 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
@@ -29,12 +30,12 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Session;
 import net.nueca.imonggosdk.objects.accountsettings.Cutoff;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
-import net.nueca.imonggosdk.objects.accountsettings.Sequence;
 import net.nueca.imonggosdk.objects.accountsettings.Manual;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.accountsettings.ProductListing;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.accountsettings.QuantityInput;
+import net.nueca.imonggosdk.objects.accountsettings.Sequence;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.operations.ImonggoTools;
 import net.nueca.imonggosdk.operations.http.ImonggoOperations;
@@ -215,7 +216,8 @@ public class BaseLogin {
      * @param server
      */
     private void requestForAccountUrl(final Server server) {
-        StringRequest stringRequestURL = new StringRequest(Request.Method.GET,
+        Log.e("Jn-BaseLogin", LoginTools.getAPIUrl(mContext, server, mAccountId));
+        final StringRequest stringRequestURL = new StringRequest(Request.Method.GET,
                 LoginTools.getAPIUrl(mContext, server, mAccountId), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -226,6 +228,8 @@ public class BaseLogin {
                 mSession.setPassword(mPassword);
                 mSession.setAccountUrl(response);
                 mSession.setServer(server);
+
+                Log.e(LOGIN_TAG, "session created inserting to database");
 
                 // Insert Session to Database
                 mSession.insertTo(mDBHelper);
@@ -242,19 +246,46 @@ public class BaseLogin {
 
                 if (volleyError != null) {
                     // if account id is invalid
+                    if (volleyError instanceof ServerError) {
+                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                                mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID),
+                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        mLoginListener.onPositiveButtonPressed();
+                                        // Execute Listener onStopLogin
+                                        if (mLoginListener != null) {
+                                            mLoginListener.onStopLogin();
+                                        }
+                                    }
+                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                    } else {
+                        if (volleyError.networkResponse != null) {
+                            if (volleyError.networkResponse.statusCode == 500 ||
+                                    volleyError.networkResponse.statusCode == 501 ||
+                                    volleyError.networkResponse.statusCode == 502 ||
+                                    volleyError.networkResponse.statusCode == 503 ||
+                                    volleyError.networkResponse.statusCode == 504 ||
+                                    volleyError.networkResponse.statusCode == 505) {
+                                DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
+                                        mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID),
+                                        mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mLoginListener.onPositiveButtonPressed();
+                                                // Execute Listener onStopLogin
+                                                if (mLoginListener != null) {
+                                                    mLoginListener.onStopLogin();
+                                                }
+                                            }
+                                        }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                            }
+                        } else {
 
-                    if (volleyError.networkResponse != null) {
-
-
-
-                        if (volleyError.networkResponse.statusCode == 500 ||
-                                volleyError.networkResponse.statusCode == 501 ||
-                                volleyError.networkResponse.statusCode == 502 ||
-                                volleyError.networkResponse.statusCode == 503 ||
-                                volleyError.networkResponse.statusCode == 504 ||
-                                volleyError.networkResponse.statusCode == 505) {
                             DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-                                    mContext.getString(R.string.LOGIN_FAILED_ACCOUNT_ID),
+                                    mContext.getString(R.string.LOGIN_FAILED_SERVER_ERROR),
                                     mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
                                     new DialogInterface.OnClickListener() {
                                         @Override
@@ -267,21 +298,7 @@ public class BaseLogin {
                                         }
                                     }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
                         }
-                    } else {
 
-                        DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
-                                mContext.getString(R.string.LOGIN_FAILED_SERVER_ERROR),
-                                mContext.getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mLoginListener.onPositiveButtonPressed();
-                                        // Execute Listener onStopLogin
-                                        if (mLoginListener != null) {
-                                            mLoginListener.onStopLogin();
-                                        }
-                                    }
-                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
                     }
                 } else {
                     DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.LOGIN_FAILED_TITLE),
@@ -298,6 +315,7 @@ public class BaseLogin {
                                 }
                             }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
                 }
+
 
             }
         });
@@ -381,13 +399,13 @@ public class BaseLogin {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } else { // if Account is linked
+                } else { // if Account is Unlinked
                     try {
-
                         // set the response token
-                        getSession().setApiToken(response.getString("api_token"));
-                        getSession().setApiAuthentication(ImonggoTools.buildAPIAuthentication(response.getString("api_token")));
-                        getSession().setUser_id(response.getString("user_id"));
+                        mSession.setApiToken(response.getString("api_token"));
+                        mSession.setApiAuthentication(ImonggoTools.buildAPIAuthentication(response.getString("api_token")));
+                        if(response.has("user_id"))
+                            getSession().setUser_id(response.getString("user_id"));
 
                         // update the session in the database
                         mSession.updateTo(mDBHelper);
@@ -402,7 +420,6 @@ public class BaseLogin {
 
                 // if session don't have device id
                 if (mSession.getDevice_id() == 0) {
-
                     requestForPOSDeviceID(server);
                 } else {
                     if (mLoginListener != null) {
@@ -460,7 +477,8 @@ public class BaseLogin {
                                     public void onClick(DialogInterface dialog, int which) {
                                         mLoginListener.onPositiveButtonPressed();
                                     }
-                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);}
+                                }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
+                    }
                 }
             }
         });
@@ -486,7 +504,6 @@ public class BaseLogin {
                     // Get the response and save it to mSession object
                     JSONObject pos_device = (JSONObject) response;
 
-
                     int id = Integer.parseInt(pos_device.get("id").toString());
                     Log.i("_response", "response: " + response.toString() + "  --  pos_device: " + id);
                     getSession().setDevice_id(id);
@@ -496,14 +513,14 @@ public class BaseLogin {
 
                     // if using concessio Settings
                     if (mConcessioSettings) {
-                        Log.i("Jn-BaseLogin", "Using Concession Settings");
+                        Log.i("Jn-BaseLogin", "Using Concession Settings"+mUseObjectForConcessioSettings);
                         // CODE ADDED by Rhy
                         ImonggoOperations.getConcesioAppSettings(mContext,
                                 getRequestQueue(), getSession(), new VolleyRequestListener() {
                                     @Override
                                     public void onStart(Table table, RequestType requestType) {
-                                        Log.e("Rhy-BaseLogin", "Getting the account-settings now...");
-                                        DialogTools.updateMessage("Downloading settings...");
+                                        Log.e("Rhy-BaseLogin"+mUseObjectForConcessioSettings, "Getting the account-settings now...");
+                                        DialogTools.updateMessage("Configuring your app...");
                                     }
 
                                     @Override
@@ -527,6 +544,8 @@ public class BaseLogin {
                                                     if (key.equals("app")) {
                                                         moduleSetting.insertTo(mDBHelper);
 
+                                                        Log.e("app --> ", "show_only_sellable_products=" + moduleSetting.isShow_only_sellable_products());
+
                                                         // Product Sorting
                                                         JSONArray jsonArrSorting = module.getJSONArray("product_sorting");
                                                         BatchList<ProductSorting> productSortings = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
@@ -547,12 +566,13 @@ public class BaseLogin {
                                                         JSONArray jsonArrDownloadSeq = module.getJSONArray("download_sequence");
                                                         BatchList<Sequence> downloadSequences = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
                                                         int id = 1;
-                                                        for(int j = 0;j < jsonArrDownloadSeq.length();j++) {
+                                                        for (int j = 0; j < jsonArrDownloadSeq.length(); j++) {
                                                             Sequence sequence = new Sequence(jsonArrDownloadSeq.getString(j), moduleSetting, SequenceType.DOWNLOAD);
                                                             Log.e("Download--", jsonArrDownloadSeq.getString(j));
                                                             sequence.setId(id++);
                                                             downloadSequences.add(sequence);
                                                         }
+
                                                         downloadSequences.doOperation(Sequence.class);
 
                                                         Log.e("Download---", module.toString());
@@ -560,7 +580,7 @@ public class BaseLogin {
                                                         JSONArray jsonArrUpdateSeq = module.getJSONArray("update_sequence");
                                                         Log.e("Down-jsonArrUpdateSeq", jsonArrUpdateSeq.toString());
                                                         BatchList<Sequence> updateSequences = new BatchList<>(DatabaseOperation.INSERT, mDBHelper);
-                                                        for(int j = 0;j < jsonArrUpdateSeq.length();j++) {
+                                                        for (int j = 0; j < jsonArrUpdateSeq.length(); j++) {
                                                             Sequence sequence = new Sequence(jsonArrUpdateSeq.getString(j), moduleSetting, SequenceType.UPDATE);
                                                             Log.e("Download---", jsonArrUpdateSeq.getString(j));
                                                             sequence.setId(id++);
@@ -606,9 +626,7 @@ public class BaseLogin {
                                                         moduleSetting.setProductListing(productListing);
                                                         moduleSetting.setQuantityInput(quantityInput);
                                                         moduleSetting.setManual(manual);
-
                                                     }
-
                                                     moduleSetting.updateTo(mDBHelper);
                                                 }
                                             } catch (SQLException e) {
@@ -628,7 +646,7 @@ public class BaseLogin {
                                     @Override
                                     public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
                                         DialogTools.hideIndeterminateProgressDialog();
-                                        Log.e("Rhy-BaseLogin[" + responseCode + "]", (response == null) ? "null" : ((String) response));
+                                        Log.e("Rhy-BaseLogin[" + responseCode + "]"+mUseObjectForConcessioSettings, (response == null) ? "null" : ((String) response));
                                         DialogTools.showBasicWithTitle(mContext,
                                                 mContext.getString(R.string.LOGIN_FAILED_TITLE),
                                                 mContext.getString(R.string.LOGIN_CONCESSIO_SETTINGS_ERROR),
@@ -671,7 +689,7 @@ public class BaseLogin {
 
                 String requires_premium_subscription = mContext.getString(R.string.error_response_requires_premium_subscription);
 
-                if(hasInternet && response != null) {
+                if (hasInternet && response != null) {
 
                     if (requires_premium_subscription.equals(response.toString())) {
                         DialogTools.showBasicWithTitle(mContext, mContext.getString(R.string.error_dialog_title_requires_premium_subscription),

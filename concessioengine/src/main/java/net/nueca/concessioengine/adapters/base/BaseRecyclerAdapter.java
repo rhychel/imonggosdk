@@ -74,6 +74,11 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
         return objectList.size() > 0;
     }
 
+    public void add(int position, Obj obj) {
+        this.objectList.add(position, obj);
+        notifyDataSetChanged();
+    }
+
     public void add(Obj obj) {
         this.objectList.add(obj);
         notifyDataSetChanged();
@@ -81,7 +86,7 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
 
     public void addAll(List<Obj> objList) {
         this.objectList.addAll(objList);
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
     public void remove(Obj obj) {
@@ -97,6 +102,11 @@ public abstract class BaseRecyclerAdapter<T extends BaseRecyclerAdapter.ViewHold
 
     public void removeAll() {
         this.objectList.clear();
+        notifyDataSetChanged();
+    }
+
+    public void set(int position, Obj object) {
+        this.objectList.set(position, object);
         notifyDataSetChanged();
     }
 

@@ -17,7 +17,7 @@ public class ImonggoSwableServiceConnection implements ServiceConnection {
     public ImonggoSwableServiceConnection(ImonggoSwable.SwableStateListener
                                                   swableStateListener) {
         this.swableStateListener = swableStateListener;
-        this.notificationIcon = notificationIcon;
+        //this.notificationIcon = notificationIcon;
     }
     public ImonggoSwableServiceConnection(int notificationIcon, ImonggoSwable.SwableStateListener swableStateListener) {
         this.swableStateListener = swableStateListener;
@@ -30,17 +30,17 @@ public class ImonggoSwableServiceConnection implements ServiceConnection {
         imonggoSwableService = (ImonggoSwable)binder.getServerInstance();
         imonggoSwableService.setSwableStateListener(swableStateListener);
 
-        if(notificationIcon >= -1)
-            imonggoSwableService.setNotificationIcon(notificationIcon);
+//        if(notificationIcon >= -1)
+//            imonggoSwableService.setNotificationIcon(notificationIcon);
 
         isBound = true;
-        Log.d("ImonggoSwableServiceCon", imonggoSwableService.getClass().getSimpleName() + " connected");
+        Log.e("ImonggoSwableServiceCon", imonggoSwableService.getClass().getSimpleName() + " connected");
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
         isBound = false;
-        Log.d("ImonggoSwableServiceCon", imonggoSwableService.getClass().getSimpleName() + " disconnected");
+        Log.e("ImonggoSwableServiceCon", imonggoSwableService.getClass().getSimpleName() + " disconnected");
     }
 
     public boolean isBound() {

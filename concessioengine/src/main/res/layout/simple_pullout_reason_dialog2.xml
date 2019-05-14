@@ -7,7 +7,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="58dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/tvTitle"
@@ -18,76 +18,88 @@
         android:textIsSelectable="false"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:gravity="center_vertical"
+        android:padding="3dp" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
+        android:weightSum="3"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp">
 
         <TextView
-            android:layout_width="72dp"
-            android:layout_height="wrap_content"
             android:text="Reason"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/tvReasonLabel"
-            android:textSize="12sp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_gravity="center_vertical"
+            android:textSize="13sp"
+            android:layout_weight="1" />
 
         <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
             android:id="@+id/spnReason"
-            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:layout_marginLeft="16dp" />
+
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
+        android:weightSum="3"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:id="@+id/llSourceBranch">
 
         <TextView
-            android:layout_width="72dp"
-            android:layout_height="wrap_content"
             android:text="Source Branch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/tvSourceBranchLabel"
-            android:textSize="12sp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_gravity="center_vertical"
+            android:textSize="13sp"
+            android:layout_weight="1" />
 
         <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
             android:id="@+id/spnSourceBranch"
-            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:layout_marginLeft="16dp" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
+        android:weightSum="3"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:id="@+id/llDestinationBranch">
 
         <TextView
-            android:layout_width="72dp"
-            android:layout_height="wrap_content"
             android:text="Destination Branch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/tvDestinationBranchLabel"
-            android:textSize="12sp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_gravity="center_vertical"
+            android:textSize="13sp"
+            android:layout_weight="1" />
 
         <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
             android:id="@+id/spnDestinationBranch"
-            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:layout_marginLeft="16dp" />
     </LinearLayout>
 

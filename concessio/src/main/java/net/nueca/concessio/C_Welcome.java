@@ -2,6 +2,7 @@ package net.nueca.concessio;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -12,17 +13,20 @@ import net.nueca.concessioengine.activities.welcome.WelcomeActivity;
 import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
+import java.util.Calendar;
 
 /**
  * Created by rhymart on 8/20/15.
  * imonggosdk2 (c)2015
  */
 public class C_Welcome extends WelcomeActivity {
-
+    private static String TAG = "C_WELCOME";
     private TextView tvAgentName;
     private Spinner spBranch;
     private Button btnBegin, btnNotYou;
@@ -43,18 +47,19 @@ public class C_Welcome extends WelcomeActivity {
 
         btnNotYou.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View view) {
                 try {
-                    AccountTools.unlinkAccount(C_Welcome.this, getHelper(), new AccountListener() {
+                    AccountTools.logoutUser(C_Welcome.this, getHelper(), new AccountListener() {
                         @Override
-                        public void onLogoutAccount() { }
-
-                        @Override
-                        public void onUnlinkAccount() {
+                        public void onLogoutAccount() {
                             finish();
                             Intent intent = new Intent(C_Welcome.this, C_Login.class);
                             startActivity(intent);
                         }
+
+                        @Override
+                        public void onUnlinkAccount() { }
                     });
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -63,7 +68,8 @@ public class C_Welcome extends WelcomeActivity {
         });
 
         try {
-            tvAgentName.setText("Hello, "+getSession().getUser().getName());
+            Log.e(TAG, "session: " + getSession() + " user: " + getSession().getUser() + " email: "+getSession().getEmail());
+            tvAgentName.setText("Hello, "+getSession().getUser().getName()+"!");
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -7,11 +7,14 @@ import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import net.nueca.imonggosdk.enums.DatabaseOperation;
+import net.nueca.imonggosdk.objects.AccountPrice;
 import net.nueca.imonggosdk.objects.Branch;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.BranchTag;
 import net.nueca.imonggosdk.objects.DailySales;
 import net.nueca.imonggosdk.objects.Inventory;
@@ -28,23 +31,22 @@ import net.nueca.imonggosdk.objects.Unit;
 import net.nueca.imonggosdk.objects.User;
 import net.nueca.imonggosdk.objects.accountsettings.Cutoff;
 import net.nueca.imonggosdk.objects.accountsettings.DebugMode;
-import net.nueca.imonggosdk.objects.accountsettings.Sequence;
 import net.nueca.imonggosdk.objects.accountsettings.Manual;
 import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
 import net.nueca.imonggosdk.objects.accountsettings.ProductListing;
 import net.nueca.imonggosdk.objects.accountsettings.ProductSorting;
 import net.nueca.imonggosdk.objects.accountsettings.QuantityInput;
+import net.nueca.imonggosdk.objects.accountsettings.Sequence;
 import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
 import net.nueca.imonggosdk.objects.associatives.CustomerCustomerGroupAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductSalesPromotionAssoc;
 import net.nueca.imonggosdk.objects.associatives.ProductTaxRateAssoc;
 import net.nueca.imonggosdk.objects.base.BaseTable;
 import net.nueca.imonggosdk.objects.base.BaseTable2;
+import net.nueca.imonggosdk.objects.base.BaseTable3;
 import net.nueca.imonggosdk.objects.base.BatchList;
 import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.base.Extras;
-import net.nueca.imonggosdk.objects.branchentities.BranchProduct;
-import net.nueca.imonggosdk.objects.branchentities.BranchUnit;
 import net.nueca.imonggosdk.objects.customer.Customer;
 import net.nueca.imonggosdk.objects.customer.CustomerCategory;
 import net.nueca.imonggosdk.objects.customer.CustomerGroup;
@@ -60,13 +62,13 @@ import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.invoice.InvoiceTaxRate;
 import net.nueca.imonggosdk.objects.invoice.PaymentTerms;
 import net.nueca.imonggosdk.objects.invoice.PaymentType;
-import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
-import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
-import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 import net.nueca.imonggosdk.objects.order.Order;
 import net.nueca.imonggosdk.objects.order.OrderLine;
 import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.objects.price.PriceList;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlan;
+import net.nueca.imonggosdk.objects.routeplan.RoutePlanDetail;
+import net.nueca.imonggosdk.objects.salespromotion.SalesPromotion;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -79,22 +81,62 @@ import java.util.concurrent.Callable;
 public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "imonggosdk2.db";
-    private static final int DATABASE_VERSION = 58;
+    private static final int DATABASE_VERSION = 91;
 
     private static final Class<?> tables[] = {
-            Branch.class, BranchTag.class, Customer.class,
-            Inventory.class, Product.class, ProductTag.class, Session.class,
-            Discount.class, TaxRate.class, TaxSetting.class, Unit.class, User.class,
-            BranchProduct.class, BranchUnit.class, DocumentType.class, DocumentPurpose.class,
-            BranchUserAssoc.class, ProductTaxRateAssoc.class,
-            LastUpdatedAt.class, OfflineData.class, Document.class, DocumentLine.class,
-            DailySales.class, Settings.class, Order.class, OrderLine.class,
-            Invoice.class, InvoiceLine.class, InvoicePayment.class, InvoiceTaxRate.class,
-            Extras.class, CustomerCategory.class, CustomerGroup.class, InvoicePurpose.class,
-            PaymentTerms.class, PaymentType.class, SalesPromotion.class, net.nueca.imonggosdk.objects.salespromotion.Discount.class, Price.class,
-            PriceList.class, RoutePlan.class, RoutePlanDetail.class, CustomerCustomerGroupAssoc.class,
-            ProductSalesPromotionAssoc.class, ModuleSetting.class, Sequence.class, DebugMode.class, ProductSorting.class,
-            Cutoff.class, ProductListing.class, QuantityInput.class, Manual.class, SalesPushSettings.class};
+            Branch.class,
+            BranchTag.class,
+            Customer.class,
+            Inventory.class,
+            Product.class,
+            ProductTag.class,
+            Session.class,
+            Discount.class,
+            TaxRate.class,
+            TaxSetting.class,
+            Unit.class,
+            User.class,
+            BranchProduct.class,
+            DocumentType.class,
+            DocumentPurpose.class,
+            BranchUserAssoc.class,
+            ProductTaxRateAssoc.class,
+            LastUpdatedAt.class,
+            OfflineData.class,
+            Document.class,
+            DocumentLine.class,
+            DailySales.class,
+            Settings.class,
+            Order.class,
+            OrderLine.class,
+            Invoice.class,
+            InvoiceLine.class,
+            InvoicePayment.class,
+            InvoiceTaxRate.class,
+            Extras.class,
+            CustomerCategory.class,
+            CustomerGroup.class,
+            InvoicePurpose.class,
+            PaymentTerms.class,
+            PaymentType.class,
+            SalesPromotion.class,
+            net.nueca.imonggosdk.objects.salespromotion.Discount.class,
+            Price.class,
+            PriceList.class,
+            RoutePlan.class,
+            RoutePlanDetail.class,
+            CustomerCustomerGroupAssoc.class,
+            ProductSalesPromotionAssoc.class,
+            AccountPrice.class,
+            ModuleSetting.class,
+            Sequence.class,
+            DebugMode.class,
+            ProductSorting.class,
+            Cutoff.class,
+            ProductListing.class,
+            QuantityInput.class,
+            Manual.class,
+            SalesPushSettings.class};
 
     public ImonggoDBHelper2(Context context) { super(context, DATABASE_NAME, null, DATABASE_VERSION); }
 
@@ -160,7 +202,22 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     }
 
     public <D> int deleteAll(Class<D> objClass) throws SQLException {
-        return getDao(objClass).deleteBuilder().delete();
+        return deleteAll(objClass, null);//getDao(objClass).deleteBuilder().delete();
+    }
+
+    public int deleteAll(Class<?>... objClass) throws SQLException {
+        int deletes = 0;
+        for(Class<?> obj : objClass) {
+            deletes += deleteAll(obj);
+        }
+        return deletes;
+    }
+
+    public <D> int deleteAll(Class<D> objClass, DBTable.ConditionsWindow<D, Integer> where) throws SQLException {
+        DeleteBuilder<D, Integer> deleteBuilder = fetchObjectsInt(objClass).deleteBuilder();
+        if(where != null)
+            deleteBuilder.setWhere(where.renderConditions(deleteBuilder.where()));
+        return deleteBuilder.delete();
     }
 
     public void deleteAllDatabaseValues() throws SQLException {
@@ -192,6 +249,25 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
     }
 
     public <D extends BaseTable2> void batchCreateOrUpdateBT2(Class<D> objClass, final BatchList batchList, final DatabaseOperation databaseOperations) {
+        try {
+            Dao<D, ?> daoBatchLists = getDao(objClass);
+            daoBatchLists.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for(D item : ((BatchList<D>)batchList))
+                        item.dbOperation(ImonggoDBHelper2.this, databaseOperations);
+                    return null;
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public <D extends BaseTable3> void batchCreateOrUpdateBT3(Class<D> objClass, final BatchList batchList, final DatabaseOperation
+            databaseOperations) {
         try {
             Dao<D, ?> daoBatchLists = getDao(objClass);
             daoBatchLists.callBatchTasks(new Callable<Void>() {
@@ -254,8 +330,18 @@ public class ImonggoDBHelper2 extends OrmLiteSqliteOpenHelper {
         return theList;
     }
 
+    public <D> D fetchForeignCollection(CloseableIterator<D> iterator, Conditional<D> conditional, int index) throws SQLException {
+        List<D> theList = fetchForeignCollection(iterator, conditional);
+
+        if(theList.size() > 0)
+            return theList.get(index);
+        return null;
+    }
+
     public interface Conditional<D> {
         boolean validate(D obj);
     }
+
+
 
 }

@@ -10,13 +10,13 @@ public enum CustomerDetail {
     LAST_NAME("Last name"),
     CODE("Code"),
     MOBILE_NO("Mobile"),
-    TEL_NO("Work"),
+    TEL_NO("Telephone"),
     COMPANY_NAME("Company"),
     ADDRESS("Address"),
     STREET("Street"),
     TOWN("Town"),
     PROVINCE("Province"),
-    CUSTOMER_TYPE("Business"), // customer category
+    CUSTOMER_TYPE("Customer Type"), // customer category
     TERMS("Terms"),
     SALES_ROUTE("Sales route"),
     DISCOUNT("Discount"),

@@ -12,10 +12,13 @@ import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
 import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.Session;
+import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
 import net.nueca.imonggosdk.operations.http.HTTPRequests;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NotificationTools;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -27,21 +30,17 @@ import java.util.List;
 /**
  * Created by gama on 10/1/15.
  */
-public class SwableVoidModule {
-    private ImonggoDBHelper2 dbHelper;
-    private ImonggoSwable imonggoSwable;
-    private RequestQueue requestQueue;
-    private Session session;
+public class SwableVoidModule extends BaseSwableModule {
 
-    public SwableVoidModule(ImonggoSwable imonggoSwable, ImonggoDBHelper2 helper, Session session, RequestQueue
-            requestQueue) {
-        this.imonggoSwable = imonggoSwable;
-        this.dbHelper = helper;
-        this.session = session;
-        this.requestQueue = requestQueue;
+    public SwableVoidModule(ImonggoSwable imonggoSwable, ImonggoDBHelper2 helper, Session session, RequestQueue requestQueue) {
+        super(imonggoSwable, helper, session, requestQueue);
     }
 
     public void voidTransaction(Table table, final OfflineData offlineData) {
+        if(queueTracker.containsKey(offlineData.getId()))
+            return;
+        queueTracker.put(offlineData.getId(), offlineData);
+        //QUEUED_TRANSACTIONS++;
         try {
             Branch branch = dbHelper.fetchObjects(Branch.class).queryBuilder().where().eq("id", offlineData.getBranch_id())
                     .queryForFirst();
@@ -72,6 +71,8 @@ public class SwableVoidModule {
 
                         @Override
                         public void onSuccess(Table table, RequestType requestType, Object response) {
+                            queueTracker.remove(offlineData.getId());
+                            //QUEUED_TRANSACTIONS--;
                             AccountTools.updateUserActiveStatus(imonggoSwable, true);
 
                             Log.e("ImonggoSwable", "deleting success : " + response);
@@ -80,24 +81,43 @@ public class SwableVoidModule {
 
                             offlineData.setSynced(true);
                             offlineData.setCancelled(true);
+                            Log.e("SwableVoidModule " + 77, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
+
+                            try {
+                                if (response instanceof JSONObject) {
+                                    JSONObject responseJson = ((JSONObject) response);
+                                    if (offlineData.getType() == OfflineData.INVOICE && responseJson.has("customer_points")) {
+                                        Invoice invoice = offlineData.getObjectFromData(Invoice.class);
+                                        Customer customer = invoice.getCustomer();
+                                        customer.setAvailable_points(responseJson.getString("customer_points"));
+                                        customer.updateTo(dbHelper);
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
                             if (imonggoSwable.getSwableStateListener() != null && offlineData.isSynced())
                                 imonggoSwable.getSwableStateListener().onSynced(offlineData);
 
                             if (offlineData.isSynced()) {
-                                imonggoSwable.REQUEST_SUCCESS++;
-                                Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                SUCCESS_TRANSACTIONS++;
+                                Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                             }
 
-                            if (offlineData.isSynced() && imonggoSwable.REQUEST_COUNT == imonggoSwable.REQUEST_SUCCESS)
-                                NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID, imonggoSwable.getNotificationIcon(),
-                                        imonggoSwable.getResources().getString(R.string.app_name), imonggoSwable.REQUEST_SUCCESS + " transaction"
-                                                + (imonggoSwable.REQUEST_SUCCESS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
+                            if (offlineData.isSynced() && getQueueTrackerCount() == 0)
+                                NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID,
+                                        APP_ICON_DRAWABLE,
+//                                        imonggoSwable.getNotificationIcon(),
+                                        imonggoSwable.getResources().getString(R.string.app_name), SUCCESS_TRANSACTIONS + " transaction"
+                                                + (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
                         }
 
                         @Override
                         public void onError(Table table, boolean hasInternet, Object response, int responseCode) {
+                            queueTracker.remove(offlineData.getId());
+                            //QUEUED_TRANSACTIONS--;
                             Log.e("ImonggoSwable", "deleting failed : isConnected? " + hasInternet + " : error [" +
                                     responseCode + "] : " + response);
                             offlineData.setSyncing(false);
@@ -115,6 +135,7 @@ public class SwableVoidModule {
                             }
 
                             offlineData.setSynced(offlineData.isCancelled() || responseCode == ImonggoSwable.NOT_FOUND);
+                            Log.e("SwableVoidModule " + 114, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
 
                             if (imonggoSwable.getSwableStateListener() != null) {
@@ -126,21 +147,24 @@ public class SwableVoidModule {
                             }
 
                             if (offlineData.isSynced() && responseCode != ImonggoSwable.UNAUTHORIZED_ACCESS) {
-                                imonggoSwable.REQUEST_SUCCESS++;
-                                Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                SUCCESS_TRANSACTIONS++;
+                                Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                             }
                         }
 
                         @Override
                         public void onRequestError() {
+                            queueTracker.remove(offlineData.getId());
+                            //QUEUED_TRANSACTIONS--;
                             Log.e("ImonggoSwable", "deleting failed : request error");
                             offlineData.setSyncing(false);
                             offlineData.setQueued(false);
                             offlineData.setSynced(false);
+                            Log.e("SwableVoidModule " + 138, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                             offlineData.updateTo(dbHelper);
                         }
                     }, session.getServer(), table, offlineData.getReturnIdListAt(0), "branch_id=" +
-                            offlineData.getBranch_id() + "&reason=" + URLEncoder.encode(offlineData.getDocumentReason(),
+                            offlineData.getBranch_id() + "&reason=" + URLEncoder.encode(offlineData.getVoidReason(),
                             "UTF-8") + offlineData.getParameters())
             );
         } catch (UnsupportedEncodingException e) {
@@ -153,6 +177,7 @@ public class SwableVoidModule {
         }*/
     }
 
+    @Deprecated
     public void pagedDelete(Table table, final OfflineData offlineData) {
         final List<String> list = offlineData.getReturnIdList();
         try {
@@ -181,21 +206,24 @@ public class SwableVoidModule {
 
                                 offlineData.setCancelled(list.indexOf(id) == 0 || offlineData.isCancelled());
                                 offlineData.setSynced(offlineData.isCancelled());
+                                Log.e("SwableVoidModule " + 181, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                 offlineData.updateTo(dbHelper);
 
                                 list.set(list.indexOf(id), ImonggoSwable.NO_RETURN_ID); // indicator that this has been cancelled
 
                                 if (offlineData.isSynced() && Collections.frequency(list, ImonggoSwable.NO_RETURN_ID) == list.size()) {
-                                    imonggoSwable.REQUEST_SUCCESS++;
-                                    Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                    SUCCESS_TRANSACTIONS++;
+                                    Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                                     if (imonggoSwable.getSwableStateListener() != null)
                                         imonggoSwable.getSwableStateListener().onSynced(offlineData);
                                 }
 
-                                if (offlineData.isSynced() && imonggoSwable.REQUEST_COUNT == imonggoSwable.REQUEST_SUCCESS)
-                                    NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID, imonggoSwable.getNotificationIcon(),
-                                            imonggoSwable.getResources().getString(R.string.app_name), imonggoSwable.REQUEST_SUCCESS + " transaction"
-                                                    + (imonggoSwable.REQUEST_SUCCESS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
+                                if (offlineData.isSynced() && getQueueTrackerCount() == SUCCESS_TRANSACTIONS)
+                                    NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID,
+                                            APP_ICON_DRAWABLE,
+//                                            imonggoSwable.getNotificationIcon(),
+                                            imonggoSwable.getResources().getString(R.string.app_name), SUCCESS_TRANSACTIONS + " transaction"
+                                                    + (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
                             }
 
                             @Override
@@ -218,6 +246,7 @@ public class SwableVoidModule {
 
                                 offlineData.setSynced(offlineData.isCancelled() || responseCode == ImonggoSwable.NOT_FOUND ||
                                         responseCode == ImonggoSwable.UNAUTHORIZED_ACCESS);
+                                Log.e("SwableVoidModule " + 219, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                 offlineData.updateTo(dbHelper);
 
                                 if (imonggoSwable.getSwableStateListener() != null) {
@@ -229,16 +258,18 @@ public class SwableVoidModule {
                                 }
 
                                 if (offlineData.isSynced() && Collections.frequency(list, ImonggoSwable.NO_RETURN_ID) == list.size()) {
-                                    imonggoSwable.REQUEST_SUCCESS++;
-                                    Log.e("--- Request Success +1", "" + imonggoSwable.REQUEST_SUCCESS);
+                                    SUCCESS_TRANSACTIONS++;
+                                    Log.e("--- Request Success +1", "" + SUCCESS_TRANSACTIONS);
                                     if (imonggoSwable.getSwableStateListener() != null)
                                         imonggoSwable.getSwableStateListener().onSynced(offlineData);
                                 }
 
-                                if (offlineData.isSynced() && imonggoSwable.REQUEST_COUNT == imonggoSwable.REQUEST_SUCCESS)
-                                    NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID, imonggoSwable.getNotificationIcon(),
-                                            imonggoSwable.getResources().getString(R.string.app_name), imonggoSwable.REQUEST_SUCCESS + " transaction"
-                                                    + (imonggoSwable.REQUEST_SUCCESS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
+                                if (offlineData.isSynced() && getQueueTrackerCount() == SUCCESS_TRANSACTIONS)
+                                    NotificationTools.postNotification(imonggoSwable, ImonggoSwable.NOTIFICATION_ID,
+                                            APP_ICON_DRAWABLE,
+//                                            imonggoSwable.getNotificationIcon(),
+                                            imonggoSwable.getResources().getString(R.string.app_name), SUCCESS_TRANSACTIONS + " transaction"
+                                                    + (SUCCESS_TRANSACTIONS != 1 ? "s" : "") + " sent", null, imonggoSwable.getPendingIntent());
                             }
 
                             @Override
@@ -248,10 +279,11 @@ public class SwableVoidModule {
                                 offlineData.setQueued(false);
                                 offlineData.setSynced(false);
                                 offlineData.setCancelled(false);
+                                Log.e("SwableVoidModule " + 250, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
                                 offlineData.updateTo(dbHelper);
                             }
                         }, session.getServer(), table, id, "branch_id=" + offlineData.getBranch_id() + "&reason="
-                                + URLEncoder.encode(offlineData.getDocumentReason(), "UTF-8") + offlineData.getParameters())
+                                + URLEncoder.encode(offlineData.getVoidReason(), "UTF-8") + offlineData.getParameters())
                 );
             }
         } catch (UnsupportedEncodingException e) {

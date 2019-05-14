@@ -1,5 +1,6 @@
 package net.nueca.concessioengine.activities.login;
 
+import android.accounts.Account;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -40,6 +41,9 @@ import net.nueca.imonggosdk.tools.LoginTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
 import net.nueca.imonggosdk.tools.SettingTools;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +56,6 @@ import java.util.List;
 public abstract class BaseLoginActivity extends ImonggoAppCompatActivity implements AccountListener, SyncModulesListener {
     public static boolean TEST_ACCOUNT = false;
     private BaseLogin mBaseLogin = null;
-    private Boolean isUnlinked = true;
-    private Boolean isLoggedIn = false;
     private Boolean requireConcessioSettings = false;
     private Boolean requireObjectConcessioSettings = false;
     private Session mSession = null;
@@ -75,6 +77,50 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     private Boolean mUseDefaultDialog = true;
     private LoginState mLoginState = LoginState.LOGIN_DEFAULT;
 
+    protected Boolean useDynamicUrls = true;
+    /**
+     * For Sync Service only
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.e(TAG, "service is connected");
+
+            BaseSyncService.LocalBinder mLocalBinder = (BaseSyncService.LocalBinder) service;
+
+            mSyncModules = (SyncModules) mLocalBinder.getService();
+
+
+            if (mSyncModules != null) {
+                mBounded = true;
+                Log.e(TAG, "Successfully bindLoginModule Service and Activity");
+                mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
+
+                //isAutoUpdate()
+                if (isAutoUpdate() && isLoggedIn() && !isUnlinked())
+                    updateAppData(mSyncModules);
+            } else {
+                Log.e(TAG, "Cannot bindLoginModule Service and Activity");
+                // isAutoUpdate()
+                if (isAutoUpdate() && isLoggedIn() && !isUnlinked()) {
+                    showNextActivityAfterLogin();
+                }
+            }
+
+            // isAutoUpdate()
+            if (isAutoUpdate() && isLoggedIn() && !isUnlinked())
+                updateAppData(mSyncModules);
+        }
+
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBounded = false;
+            mSyncModules = null;
+        }
+    };
+
     /**
      * If you want to initialize your own logic. method before login checker.
      * you should implement this methods: setServer(...) and setModulesToSync(...)
@@ -90,7 +136,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     /**
      * If you want to add some logic before fetching data
      */
-    protected abstract void updateAppData();
+    protected abstract void updateAppData(SyncModules syncmodules);
 
     /**
      * This is where the Login Life Cycle will Stop.
@@ -122,7 +168,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * this is where you will builds the custom downloading
      * progress dialogs and etc.
      */
-    protected abstract void showCustomDownloadDialog();
+    protected abstract void showCustomDownloadDialog(String title);
 
     /**
      * This is where you will create your login layout
@@ -157,7 +203,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         Log.e(TAG, "OnStart()");
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -179,49 +224,20 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setAutoUpdateApp(false);
         super.onCreate(savedInstanceState);
         initLoginEquipments();
         loginChecker();
+        // not logged in and unlinked
         if (!isLoggedIn() || isUnlinked()) {
             onCreateLoginLayout();
         }
         autoUpdateChecker();
 
+        //getIntent();
 
         //updater.execute();
     }
-
-    /**
-     * For Sync Service only
-     * Defines callbacks for service binding, passed to bindService()
-     */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e(TAG, "service is connected");
-
-            BaseSyncService.LocalBinder mLocalBinder = (BaseSyncService.LocalBinder) service;
-
-            mSyncModules = (SyncModules) mLocalBinder.getService();
-
-
-            if (mSyncModules != null) {
-                mBounded = true;
-                Log.e(TAG, "Successfully bind Service and Activity");
-                mSyncModules.setSyncModulesListener(BaseLoginActivity.this);
-            } else {
-                Log.e(TAG, "Cannot bind Service and Activity");
-            }
-        }
-
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBounded = false;
-            mSyncModules = null;
-        }
-    };
 
     /**
      * This method starts handles the downloads and updates of all modules.
@@ -231,10 +247,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     public void startSyncingImonggoModules() throws SQLException {
         if (isSyncServiceBinded()) {
             setUpTableNamesForCustomDialog();
-            showCustomDownloadDialog();
+            showCustomDownloadDialog("Downloading");
 
             Log.e(TAG, "Starting Module Download");
             if (mSyncModules != null) {
+                mSyncModules.resetSession();
                 mSyncModules.startFetchingModules();
             } else {
                 Log.e(TAG, "Service Modules is null cannot start sync");
@@ -243,18 +260,34 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                     customDialog.dismiss();
                 }
                 startSyncService();
+
                 DialogTools.showBasicWithTitle(BaseLoginActivity.this, "Syncing Failed",
-                        "Sync failed. Login again.",
+                        "Sync failed. Retry again.",
                         "Okay", null, null,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                btnSignIn.setEnabled(true);
+                                if (btnSignIn != null)
+                                    btnSignIn.setEnabled(true);
+
+                                // isAutoUpdate()
+                                if (isAutoUpdate()) {
+                                    if (mSyncModules == null) {
+                                        Log.e(TAG, "syncModule is null ");
+                                    } else {
+                                        Log.e(TAG, "syncModule is not null ");
+                                        try {
+                                            mSyncModules.resetSession();
+                                            mSyncModules.startFetchingModules();
+                                        } catch (SQLException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
                             }
                         }, null, null, false, R.style.AppCompatDialogStyle_Light_NoTitle);
             }
         } else {
-
             startSyncService();
         }
     }
@@ -326,16 +359,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
-    @Deprecated
-    public void createNewCustomDialogFrameLayout(Context context, List<String> moduleName) {
-        customDialogFrameLayout = new CustomDialogFrameLayout(context, moduleName);
-        customDialogFrameLayout.setLoginListener(mBaseLogin.getLoginListener());
-    }
-
-
     public void createNewCustomDialogFrameLayout(List<Table> moduleName, Context context) {
         customDialogFrameLayout = new CustomDialogFrameLayout(moduleName, context);
-        customDialogFrameLayout.setLoginListener(mBaseLogin.getLoginListener());
+        if (mBaseLogin != null)
+            customDialogFrameLayout.setLoginListener(mBaseLogin.getLoginListener());
     }
 
     public CustomDialogFrameLayout getCustomDialogFrameLayout() {
@@ -372,11 +399,12 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     }
 
     private void showOrHideCustomDialog(boolean choice) {
-        if (choice) {
-            customDialog.show();
-        } else {
-            customDialog.hide();
-        }
+        if (customDialog != null)
+            if (choice) {
+                customDialog.show();
+            } else {
+                customDialog.hide();
+            }
     }
 
     public void setIsUsingDefaultCustomDialogForSync(boolean choice) {
@@ -413,6 +441,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.etPassword = editTextPassword;
 
         if (TEST_ACCOUNT) {
+            Log.e(TAG, "setting test account..");
             setEditTextAccountID(getResources().getString(R.string.test_account_id));
             setEditTextEmail(getResources().getString(R.string.test_email));
             setEditTextPassword(getResources().getString(R.string.test_password));
@@ -424,6 +453,24 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String accountId = etAccountID.getText().toString().trim();
+                if (useDynamicUrls)
+                    try {
+                        JSONObject servers = new JSONObject(SettingTools.currentServer(BaseLoginActivity.this));
+
+                        Log.e("Servers", servers.toString());
+
+                        String label = "---";
+                        if (servers.has(accountId))
+                            label = servers.getString(accountId);
+                        Log.e("Servers", label);
+
+                        setServer(Server.getServer(label));
+                        //setServer(Server.PETRONDIS_NET);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 initLogin();
             }
         });
@@ -433,7 +480,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      * Validate BaseLogin form and authenticate.
      */
     private void initLogin() {
-
         if (!NetworkTools.isInternetAvailable(this)) {
             DialogTools.showBasicWithTitle(BaseLoginActivity.this, getString(R.string.LOGIN_FAILED_TITLE), "No network connection", getString(R.string.LOGIN_FAILED_POSITIVE_BUTTON), null, null,
                     new DialogInterface.OnClickListener() {
@@ -482,7 +528,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 focusView.requestFocus();
             } else {
                 //show progress dialog
-
                 if (isUsingDefaultDialog()) {
                     DialogTools.showIndeterminateProgressDialog(BaseLoginActivity.this,
                             null,
@@ -514,9 +559,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 mLoginState = LoginState.LOGIN_SUCCESS;
                 successLogin();
                 mSession = session;
-                setLoggedIn(true);
                 setUnlinked(false);
-
+                mSession.setHas_logged_in(true);
+                mSession.updateTo(getHelper());
+                AccountTools.updateLogout(getApplicationContext(), false);
                 try {
                     startSyncingImonggoModules();
                 } catch (SQLException e) {
@@ -578,8 +624,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
                 DialogTools.hideIndeterminateProgressDialog();
                 // delete session data
                 deleteUserSessionData();
-
-                setLoggedIn(false);
                 setUnlinked(true);
             }
         });
@@ -652,7 +696,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
      */
     protected void startLogout() {
         setUnlinked(false);
-        setLoggedIn(false);
         LogOutUser();
     }
 
@@ -664,9 +707,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             if (!isUnlinked()) {
                 AccountTools.unlinkAccount(this, getHelper(), this);
                 setUnlinked(true);
-                setLoggedIn(false);
+                setAutoUpdateApp(isAutoUpdate());
                 setDefaultBranch(BaseLoginActivity.this, "");
                 startSyncService();
+                deleteUserSessionData();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -703,18 +747,21 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     private void LogOutUser() {
         try {
+            mSession.setHas_logged_in(false);
+            mSession.updateTo(getHelper());
             AccountTools.logoutUser(this, getHelper(), this);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    protected void setLoginSession(Session session) {
-        this.mSession = session;
-    }
-
     protected Session getLoginSession() {
         return this.mSession;
+    }
+
+    protected void setLoginSession(Session session) {
+        this.mSession = session;
     }
 
     /**
@@ -723,6 +770,11 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     @Deprecated
     protected List<String> getModulesToSync() {
         return this.mModulesToDownload;
+    }
+
+    protected void setModulesToSync(int... mModules) {
+        setModule(mModules);
+        AccountTools.setModulesToSync(getApplicationContext(), mModules);
     }
 
     protected List<Table> getTableToSync() {
@@ -797,12 +849,29 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
+    public LoginState getmLoginState() {
+        return mLoginState;
+    }
+
+    public void setmLoginState(LoginState mLoginState) {
+        this.mLoginState = mLoginState;
+    }
+
     protected Boolean isLoggedIn() {
-        return isLoggedIn;
+        try {
+            return AccountTools.isLoggedIn(getHelper());
+        } catch (SQLException e) {
+            return false;
+        }
+
+    }
+
+    protected Boolean isLogout() {
+        return AccountTools.isLogout(getApplicationContext());
     }
 
     protected Boolean isUnlinked() {
-        return isUnlinked;
+        return AccountTools.isUnlinked(getApplicationContext());
     }
 
     protected Boolean isAutoUpdate() {
@@ -838,11 +907,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         return mModules;
     }
 
-    protected void setModulesToSync(int... mModules) {
-        setModule(mModules);
-        AccountTools.setModulesToSync(getApplicationContext(), mModules);
-    }
-
     protected void setModule(int[] mModules) {
         this.mModules = mModules;
         if (mModules != null) {
@@ -851,12 +915,8 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
-    protected void setLoggedIn(Boolean isLoggedIn) {
-        this.isLoggedIn = isLoggedIn;
-    }
 
     protected void setUnlinked(Boolean isUnlinked) {
-        this.isUnlinked = isUnlinked;
         AccountTools.updateUnlinked(this, isUnlinked);
     }
 
@@ -868,6 +928,9 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         this.mBounded = bind;
     }
 
+    public EditText getAccountIDEditText() {
+        return etAccountID;
+    }
 
     protected void setSyncAllModules(boolean choice) {
         this.mServiceIntent.putExtra(SyncModules.PARAMS_SYNC_ALL_MODULES, choice);
@@ -888,6 +951,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
     protected SyncModules getSyncModules() {
         return mSyncModules;
     }
+
 
     protected void setSyncModules(SyncModules syncModules) {
         mSyncModules = syncModules;
@@ -915,8 +979,27 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         }
     }
 
+    protected void updateApp() {
+        if (isLoggedIn() && !isUnlinked())
+            if (mSyncModules == null) {
+                Log.e(TAG, "Sync is null");
+                startSyncService();
+            } else {
+                try {
+                    setUpTableNamesForCustomDialog();
+                    showCustomDownloadDialog("Updating");
+
+                    mSyncModules.resetSession();
+                    mSyncModules.startFetchingModules();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+    }
+
+
     protected void startSyncService() {
-        Log.e("execute", "called");
+        Log.e("startSyncService", " execute called");
         if (!isSyncServiceRunning(SyncModules.class) || mSyncModules == null) {
             mBounded = false;
             startService(mServiceIntent);
@@ -932,6 +1015,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
         if (!mBounded || mSyncModules == null) {
             bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
+            mBounded = true;
             Log.e(TAG, "Service binded");
         } else {
             Log.e(TAG, "Service is already binded.");
@@ -974,16 +1058,24 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         int progress = 0;
         String currentTable = getStringOfCurrentTable(table);
 
-        progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
+        table.ordinal();
 
-        Log.e(TAG, table + " progress: " + progress);
+        if (table == Table.BRANCH_PRODUCTS) {
+            progress = page;
+            Log.e(TAG + "~", "setting branch product... " +  progress );
+        } else {
+            Log.e(TAG + "~", "setting others... " +  progress );
+            progress = (int) Math.ceil((((double) page / (double) max) * 100.0));
+        }
+
+        Log.e(TAG + "~", table + "xprogress: " + progress);
+
         if (isUsingDefaultCustomDialogForSync()) {
 
             if (mModulesToDownload != null && mTablesToDownload == null)
                 updateDownloadProgress(mModulesToDownload.indexOf(currentTable), progress);
 
-            if (mTablesToDownload != null &&
-                    mModulesToDownload == null)
+            if (mTablesToDownload != null && mModulesToDownload == null)
                 updateDownloadProgress(mTablesToDownload.indexOf(table), progress);
         }
     }
@@ -992,7 +1084,6 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
         customDialogFrameLayout.getCustomModuleAdapter().hideCircularProgressBar(position);
         customDialogFrameLayout.getCustomModuleAdapter().updateProgressBar(position, progress);
         customDialogFrameLayout.scrollToPositionWithOffset(position, 2);
-        //customDialogFrameLayout.getChildAt(position).setBackgroundColor(Color.parseColor("#F3F3F3"));
     }
 
     @Override
@@ -1007,6 +1098,7 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
             customDialog.dismiss();
             customDialog = null;
         }
+        Log.e(TAG, ">Session " + mSession.isHas_logged_in());
 
         DialogTools.hideIndeterminateProgressDialog();
         showNextActivityAfterLogin();
@@ -1045,6 +1137,10 @@ public abstract class BaseLoginActivity extends ImonggoAppCompatActivity impleme
 
     public void setAutoUpdateApp(Boolean choice) {
         SettingTools.updateSettings(this, SettingsName.AUTO_UPDATE, choice, "");
+    }
+
+    public void setUseDynamicUrls(Boolean useDynamicUrls) {
+        this.useDynamicUrls = useDynamicUrls;
     }
 
     @Override

@@ -12,7 +12,7 @@ import net.nueca.imonggosdk.operations.sync.ImonggoService;
 
 public abstract class SwableService extends ImonggoService implements SwableConnectionHandler.OnConnectionChangedListener {
 
-	public static final int NO_INTERNET_DELAY = 3000;
+	public static final int NO_INTERNET_DELAY = 4000;
 	public static final int INTERNET_DELAY = 10000;
 
 	public interface OnConnectionChangedListener {
@@ -28,57 +28,78 @@ public abstract class SwableService extends ImonggoService implements SwableConn
 	private boolean isSyncing = false;
 	private boolean isConnected = false;
     private boolean isReceiverRegistered = false;
+	private boolean isStarted;
 	
 	public abstract void syncModule();
+	public abstract void updateSyncingStatus();
+	public abstract void restartSyncingAndQueued();
 
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	public void onCreate() {
+		super.onCreate();
+
+		Log.e("SwableService", "binding.....");
 		swableConnectionhandler = new SwableConnectionHandler();
 		swableConnectionhandler.setOnConnectionChangedListener(this);
 		registerReceiver(swableConnectionhandler, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-        isReceiverRegistered = true;
+		isReceiverRegistered = true;
+
+		isStarted = false;
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d("onStartCommand", "Starting...");
-		Thread syncThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while(!isShouldStop()) {
-					try {
-						Thread.sleep(NO_INTERNET_DELAY); // 3 seconds
-						Log.d("SwableService", "---syncing started");
-						while(isShouldSync()) {
-							Log.d("SwableService", "---syncing data set "+isSyncing());
-							if (!isSyncing()) {
-								Log.d("SwableService", "---syncing data called");
-								runSyncModule.sendEmptyMessage(0);
-								//syncModule();
+		if(!isStarted) {
+			Thread syncThread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					while (!isShouldStop()) {
+						try {
+							Thread.sleep(NO_INTERNET_DELAY); // 4 seconds
+							Log.d("SwableService", "---syncing started");
+							Log.d("SwableService", "---should sync? " + isShouldSync());
+							while (isShouldSync()) {
+								Log.d("SwableService", "---syncing data set ~ " + isSyncing());
+								if (!isSyncing()) {
+									Log.d("SwableService", "---syncing data called");
+									//runSyncModule.sendEmptyMessage(0);
+									syncModule();
+								}
+								Thread.sleep(INTERNET_DELAY); // 30 seconds
+								updateSyncingStatus();
+								Log.d("SwableService", "---syncing data");
 							}
-							Thread.sleep(INTERNET_DELAY); // 30 seconds
-							Log.d("SwableService", "---syncing data");
+							restartSyncingAndQueued();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
 					}
 				}
-			}
-		});
-		syncThread.start();
+			});
+			syncThread.start();
+		}
+		isStarted = true;
 		return START_STICKY;
 	}
 
-	public Handler runSyncModule = new Handler() {
+	/*public Handler runSyncModule = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			syncModule();
 		}
-	};
+	};*/
 	
 	@Override
 	public void onDestroy() {
+		restartSyncingAndQueued();
 		Log.d("onDestroy", "Service is about to be destroyed!");
         if(isReceiverRegistered) {
             unregisterReceiver(swableConnectionhandler);
+			swableConnectionhandler = null;
             isReceiverRegistered = false;
         }
+		isStarted = false;
 		setShouldSync(false);
 		setShouldStop(true);
 		super.onDestroy();

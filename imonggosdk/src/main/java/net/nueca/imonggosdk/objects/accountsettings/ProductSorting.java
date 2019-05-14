@@ -69,6 +69,16 @@ public class ProductSorting extends DBTable {
     }
 
     @Override
+    public String toString() {
+        return label;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return is_default == ((ProductSorting)o).is_default();
+    }
+
+    @Override
     public void insertTo(ImonggoDBHelper2 dbHelper) {
         try {
             dbHelper.insert(ProductSorting.class, this);
@@ -80,7 +90,7 @@ public class ProductSorting extends DBTable {
     @Override
     public void deleteTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.insert(ProductSorting.class, this);
+            dbHelper.delete(ProductSorting.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -89,7 +99,7 @@ public class ProductSorting extends DBTable {
     @Override
     public void updateTo(ImonggoDBHelper2 dbHelper) {
         try {
-            dbHelper.insert(ProductSorting.class, this);
+            dbHelper.update(ProductSorting.class, this);
         } catch (SQLException e) {
             e.printStackTrace();
         }

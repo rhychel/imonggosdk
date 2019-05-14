@@ -1,5 +1,6 @@
 package net.nueca.concessio;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,32 +10,55 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.j256.ormlite.stmt.Where;
 
 import net.nueca.concessioengine.activities.DashboardActivity;
 import net.nueca.concessioengine.activities.SettingsActivity;
 import net.nueca.concessioengine.activities.module.ModuleActivity;
 import net.nueca.concessioengine.adapters.DashboardRecyclerAdapter;
 import net.nueca.concessioengine.adapters.interfaces.OnItemClickListener;
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.dialogs.ProgressListDialog;
 import net.nueca.concessioengine.dialogs.UpdaterChooserDialog;
+import net.nueca.concessioengine.lists.SelectedProductItemList;
 import net.nueca.concessioengine.objects.DashboardTile;
+import net.nueca.concessioengine.objects.SelectedProductItem;
+import net.nueca.concessioengine.objects.Values;
+import net.nueca.concessioengine.printer.epson.tools.EpsonPrinterTools;
+import net.nueca.concessioengine.printer.starmicronics.enums.StarIOPaperSize;
+import net.nueca.concessioengine.printer.starmicronics.tools.StarIOPrinterTools;
+import net.nueca.concessioengine.tools.InvoiceTools;
+import net.nueca.concessioengine.tools.PriceTools;
 import net.nueca.imonggosdk.enums.ConcessioModule;
 import net.nueca.imonggosdk.enums.Server;
+import net.nueca.imonggosdk.enums.SettingsName;
 import net.nueca.imonggosdk.enums.Table;
 import net.nueca.imonggosdk.exception.SyncException;
 import net.nueca.imonggosdk.interfaces.AccountListener;
 import net.nueca.imonggosdk.interfaces.SyncModulesListener;
 import net.nueca.imonggosdk.objects.Branch;
-import net.nueca.imonggosdk.objects.OfflineData;
+import net.nueca.imonggosdk.objects.BranchProduct;
 import net.nueca.imonggosdk.objects.Product;
+import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.accountsettings.ModuleSetting;
+import net.nueca.imonggosdk.objects.associatives.BranchUserAssoc;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.customer.Customer;
+import net.nueca.imonggosdk.objects.customer.CustomerGroup;
+import net.nueca.imonggosdk.objects.invoice.Invoice;
+import net.nueca.imonggosdk.objects.invoice.InvoiceLine;
+import net.nueca.imonggosdk.objects.invoice.InvoicePayment;
+import net.nueca.imonggosdk.objects.price.Price;
 import net.nueca.imonggosdk.operations.update.APIDownloader;
 import net.nueca.imonggosdk.swable.SwableTools;
 import net.nueca.imonggosdk.tools.AccountTools;
+import net.nueca.imonggosdk.tools.DialogTools;
+import net.nueca.imonggosdk.tools.SettingTools;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,42 +69,104 @@ import java.util.List;
  */
 public class C_Dashboard extends DashboardActivity implements OnItemClickListener {
 
+    private static String TAG = "C_Dashboardx";
     private Toolbar tbActionBar;
     private Spinner spBranches;
     private RecyclerView rvModules;
     private RecyclerView.LayoutManager layoutManager;
-
+    final APIDownloader apiDownloader = new APIDownloader(C_Dashboard.this, false);
     private ArrayAdapter<Branch> branchesAdapter;
     private DashboardRecyclerAdapter dashboardRecyclerAdapter;
 
-    private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>(){{
-        add(new DashboardTile(ConcessioModule.ROUTE_PLAN, "Sales", R.drawable.ic_booking));
-        add(new DashboardTile(ConcessioModule.CUSTOMERS, "Customers", R.drawable.ic_customers));
-        add(new DashboardTile(ConcessioModule.RECEIVE_SUPPLIER, "Receiving", R.drawable.ic_receiving));
-        add(new DashboardTile(ConcessioModule.RELEASE_SUPPLIER, "Pullout", R.drawable.ic_pullout));
-        add(new DashboardTile(ConcessioModule.RELEASE_ADJUSTMENT, "MSO", R.drawable.ic_mso));
-        add(new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
-        add(new DashboardTile(ConcessioModule.PHYSICAL_COUNT, "Physical Count", R.drawable.ic_physical_count));
-        add(new DashboardTile(ConcessioModule.HISTORY, "History", R.drawable.ic_history));
-    }};
+    private ArrayList<DashboardTile> dashboardTiles = new ArrayList<DashboardTile>();
+    private int currentlySelected = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.c_dashboard);
 
-        Log.e("ClassName", Customer.class.getSimpleName());
-
+        // TODO : remove this
+        /*List<Product> productList = Product.fetchAll(getHelper(),Product.class);
+        Log.e("PRODUCT COUNT", productList.size() + " items");
         try {
-            List<OfflineData> offlineDatas = getHelper().fetchObjects(OfflineData.class).queryForAll();
-            Log.e("OfflineDatas---", offlineDatas == null? "null" : offlineDatas.size()+"");
-            for(OfflineData offlineData : offlineDatas) {
-                Log.e("OfflineData " + offlineData.getId(), offlineData.getReturnId() + " ~ isQueued? "+ offlineData.isQueued() + " isSynced? " +
-                        offlineData.isSynced() + " isSyncing? " + offlineData.isSyncing() + " isCancelled? " + offlineData.isCancelled());
+            Customer customer = getHelper().fetchObjects(Customer.class).queryBuilder().where().eq("returnId",177).queryForFirst();
+            ProductsAdapterHelper.setSelectedCustomer(customer);
+            Branch branch = Branch.fetchById(getHelper(),Branch.class,getSession().getCurrent_branch_id());
+            ProductsAdapterHelper.setSelectedBranch(branch);
+
+            List<CustomerGroup> customerGroups = customer.getCustomerGroups(getHelper());
+            CustomerGroup customerGroup = null;
+            if(customerGroups.size() > 0)
+                customerGroup = customerGroups.get(0);
+
+            for(int i = 0; i < Math.min(335, productList.size()); i++) {
+                Product product = productList.get((int)(Math.random() * 1000) % productList.size());
+                SelectedProductItem selectedProductItem = ProductsAdapterHelper.getSelectedProductItems().getSelectedProductItem(product);
+                if(selectedProductItem == null)
+                    selectedProductItem = ProductsAdapterHelper.getSelectedReturnProductItems().getSelectedProductItem(product);
+                if(selectedProductItem == null)
+                    selectedProductItem = new SelectedProductItem(product);
+
+                Unit unit = getHelper().fetchObjects(Unit.class).queryBuilder().where().eq("product_id", product).queryForFirst();
+                if(unit == null) {
+                    unit = new Unit();
+                    unit.setId(-1);
+                    unit.setName(product.getBase_unit_name());
+                }
+                Values values = selectedProductItem.getValues() != null && selectedProductItem.getValues().size() > 0 ? selectedProductItem.getValues()
+                        .get(0) : null;
+                Price price = PriceTools.identifyPrice(getHelper(),product,branch,customerGroup,customer,unit);
+
+                Integer quantity = 1+ ((int)(Math.random() * 100) % 10);
+                if(i >= 300)
+                    quantity *= -1;
+
+                if(values == null) {
+                    if(price != null)
+                        values = new Values(String.valueOf(quantity),price);
+                    else
+                        values = new Values(unit,String.valueOf(quantity),PriceTools.getBranchPrice(getHelper(),product,branch,unit));
+                }
+                selectedProductItem.addValues(values);
+                if(quantity >= 0)
+                    ProductsAdapterHelper.getSelectedProductItems().add(selectedProductItem);
+                else
+                    ProductsAdapterHelper.getSelectedReturnProductItems().add(selectedProductItem);
             }
+
+            List<InvoiceLine> invoiceLines = new ArrayList<>();
+            invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
+                    .getSelectedProductItems()));
+            invoiceLines.addAll(InvoiceTools.generateInvoiceLines(ProductsAdapterHelper
+                    .getSelectedReturnProductItems(), invoiceLines.size()));
+            Invoice.Builder invoiceBuilder = new Invoice.Builder()
+                    .invoice_lines(invoiceLines);
+            Invoice invoice = invoiceBuilder.build();
+            invoice.setCustomer(customer);
+            invoice.setBranch(branch);
+
+            ProductsAdapterHelper.setDbHelper(getHelper());
+            InvoiceTools.PaymentsComputation computation = new InvoiceTools.PaymentsComputation();
+            computation.addAllInvoiceLines(invoiceLines);
+            computation.addPayment(new InvoicePayment(1,1,1));
+
+            invoice.setPayments(computation.getPayments());
+            for(InvoicePayment payment : computation.getReturnsPayments())
+                invoice.addPayment(payment);
+            invoice.setReference("TEST-0002");
+            invoice.setStatus("L");
+
+            new SwableTools.Transaction(getHelper())
+                    .toSend()
+                    .forBranch(branch)
+                    .fromModule(ConcessioModule.INVOICE_PARTIAL)
+                    .object(invoice)
+                    .queue();
+
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
 
         setNextActivityClass(C_Module.class);
 
@@ -95,25 +181,66 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         branchesAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_dark, getBranches());
         branchesAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_list_light);
         spBranches.setAdapter(branchesAdapter);
+        spBranches.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
+                if (position != currentlySelected) {
+                    DialogTools.showConfirmationDialog(C_Dashboard.this, "Change Default Branch", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            currentlySelected = position;
+                            SettingTools.updateSettings(C_Dashboard.this, SettingsName.DEFAULT_BRANCH, String.valueOf(branchesAdapter.getItem(position).getId()));
+                            Log.e("Branch selected", branchesAdapter.getItem(position).getName());
+                        }
+                    }, "No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            spBranches.setSelection(currentlySelected);
+                        }
+                    }, R.style.AppCompatDialogStyle_Light);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         rvModules.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(this, 2);
         rvModules.setLayoutManager(layoutManager);
 
+        if (getModuleSetting(ConcessioModule.CUSTOMERS).isHas_route_plan()) { // REBISCO
+            for (ModuleSetting moduleSetting : getActiveModuleSetting(null, true)) {
+                if (moduleSetting.getModuleType() == ConcessioModule.INVOICE)
+                    dashboardTiles.add(new DashboardTile(ConcessioModule.ROUTE_PLAN, moduleSetting.getLabel()));
+                else
+                    dashboardTiles.add(new DashboardTile(moduleSetting.getModuleType(), moduleSetting.getLabel()));
+
+            }
+            dashboardTiles.add(5, new DashboardTile(ConcessioModule.LAYAWAY, "Layaway", R.drawable.ic_layaway));
+        } else { // OTHERS
+            for (ModuleSetting moduleSetting : getActiveModuleSetting(null, true)) {
+                if (moduleSetting.getModuleType() == ConcessioModule.INVOICE)
+                    dashboardTiles.add(new DashboardTile(ConcessioModule.CUSTOMERS, moduleSetting.getLabel(), true, ConcessioModule.INVOICE.getLogo()));
+                else
+                    dashboardTiles.add(new DashboardTile(moduleSetting.getModuleType(), moduleSetting.getLabel()));
+
+                Log.e("ModuleSettings", moduleSetting.getModule_type() + "=" + moduleSetting.getDisplay_sequence());
+            }
+        }
+        dashboardTiles.add(new DashboardTile(ConcessioModule.HISTORY, "History"));
+
         dashboardRecyclerAdapter = new DashboardRecyclerAdapter(this, dashboardTiles);
         dashboardRecyclerAdapter.setOnItemClickListener(this);
         rvModules.setAdapter(dashboardRecyclerAdapter);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        try {
-            Log.e("SESSION", "isNULL? " + (getSession() == null));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        //if(!SwableTools.isImonggoSwableRunning(this))
+        if (!SwableTools.isImonggoSwableRunning(this))
             SwableTools.startSwable(this);
         Log.e("SWABLE", "START");
     }
@@ -129,14 +256,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
         switch (item.getItemId()) {
             case R.id.mUpdateApp: {
                 UpdaterChooserDialog updaterChooserDialog = new UpdaterChooserDialog(this, R.style.AppCompatDialogStyle_Light_NoTitle);
-                updaterChooserDialog.setTableToUpdate(getAppSetting().modulesToUpdate(getHelper()));
-//                        Table.BRANCH_USERS, Table.PRODUCTS,
-//                        Table.UNITS, Table.BRANCH_PRODUCTS,
-//                        Table.CUSTOMER_BY_SALESMAN,
-//                        Table.ROUTE_PLANS, // -- details
-//                        Table.PRICE_LISTS_FROM_CUSTOMERS, // -- details
-//                        Table.SALES_PROMOTIONS_POINTS, // -- details
-//                        Table.SALES_PROMOTIONS_SALES_DISCOUNT); // -- details
+                updaterChooserDialog.setTableToUpdate(getAppSetting().modulesToUpdate(getHelper(), getAppSetting().isShow_only_sellable_products()));
                 updaterChooserDialog.setOnTablesSelected(new UpdaterChooserDialog.OnTablesSelected() {
                     @Override
                     public void startUpdate(int[] tables, List<Table> tableList) {
@@ -144,24 +264,29 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         progressListDialog.setCanceledOnTouchOutside(false);
                         progressListDialog.setCancelable(false);
 
-                        final APIDownloader apiDownloader = new APIDownloader(C_Dashboard.this, false);
                         apiDownloader.setSyncServer(Server.IRETAILCLOUD_NET);
                         apiDownloader.setSyncModulesListener(new SyncModulesListener() {
                             @Override
                             public void onStartDownload(Table table) {
-                                Log.e("apiDownloader", "starting"+table.getStringName());
+                                Log.e("apiDownloader", "starting" + table.getStringName());
                                 progressListDialog.initDownload(table);
                             }
 
                             @Override
                             public void onDownloadProgress(Table table, int page, int max) {
-                                Log.e("apiDownloader", "progressing"+table.getStringName()+" page="+page+" | max="+max);
+                                Log.e("apiDownloader", "progressing" + table + " page=" + page + " | max=" + max);
+                                progressListDialog.initDownload(table);
                                 progressListDialog.updateProgress(page, max);
                             }
 
                             @Override
                             public void onEndDownload(Table table) {
-                                Log.e("apiDownloader", "end"+table.getStringName());
+                                Log.e("apiDownloader", "end" + table.getStringName());
+                                if(table == Table.BRANCH_USERS || table == Table.BRANCHES) {
+                                    branchesAdapter.clear();
+                                    branchesAdapter.addAll(getBranches());
+                                    branchesAdapter.notifyDataSetChanged();
+                                }
                                 progressListDialog.finishedDownload();
                             }
 
@@ -174,7 +299,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
                             @Override
                             public void onErrorDownload(Table table, String message) {
-                                Log.e("apiDownloader", "error"+table.getStringName());
+                                Log.e("apiDownloader", "error" + table.getStringName());
                                 progressListDialog.errorDownload();
                             }
 
@@ -202,6 +327,7 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                         });
 
                         apiDownloader.forUpdating();
+
                         try {
                             apiDownloader.addModulesToUpdate(tables);
                             apiDownloader.execute(C_Dashboard.this);
@@ -213,44 +339,79 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
                 });
                 updaterChooserDialog.show();
                 Log.e("updateApp", "tapped");
-            } break;
-            case R.id.mUnlink:{
+            }
+            break;
+            case R.id.mUnlink: {
+                DialogTools.showConfirmationDialog(this, "Unlink this account", "Are you sure?", "Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            AccountTools.unlinkAccount(C_Dashboard.this, getHelper(), new AccountListener() {
+                                @Override
+                                public void onLogoutAccount() {
+                                }
+
+                                @Override
+                                public void onUnlinkAccount() {
+                                    EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+                                    StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+                                    SwableTools.stopSwable(C_Dashboard.this);
+
+                                    finish();
+                                    Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+                                    startActivity(intent);
+                                }
+                            });
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, "No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }, R.style.AppCompatDialogStyle_Light);
+            }
+            break;
+            case R.id.mLogout: {
                 try {
-                    AccountTools.unlinkAccount(this, getHelper(), new AccountListener() {
+                    AccountTools.logoutUser(this, getHelper(), new AccountListener() {
                         @Override
                         public void onLogoutAccount() {
+                            SwableTools.stopSwable(C_Dashboard.this);
 
+                            finish();
+                            Intent intent = new Intent(C_Dashboard.this, C_Login.class);
+                            startActivity(intent);
                         }
 
                         @Override
                         public void onUnlinkAccount() {
-                            finish();
-                            Intent intent = new Intent(C_Dashboard.this, C_Login.class);
-                            startActivity(intent);
+
                         }
                     });
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            } break;
+//                EpsonPrinterTools.clearTargetPrinter(C_Dashboard.this);
+//                StarIOPrinterTools.updateTargetPrinter(C_Dashboard.this, "");
+            }
+            break;
             case R.id.mSettings: {
-                try {
-                    getHelper().deleteAll(OfflineData.class);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-//                Intent intent = new Intent(this, SettingsActivity.class);
-//                startActivity(intent);
-            } break;
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+            }
+            break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected Bundle addExtras(ConcessioModule concessioModule) {
+    protected Bundle addExtras(DashboardTile dashboardTile) {
         Bundle bundle = new Bundle();
-        if(concessioModule == ConcessioModule.CUSTOMERS) {
-            bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, true);
+        if (dashboardTile.getConcessioModule() == ConcessioModule.CUSTOMERS) {
+            bundle.putBoolean(C_Module.FROM_CUSTOMERS_LIST, !dashboardTile.isProxy());
         }
 
         bundle.putBoolean(ModuleActivity.INIT_PRODUCT_ADAPTER_HELPER, true);
@@ -264,8 +425,12 @@ public class C_Dashboard extends DashboardActivity implements OnItemClickListene
 
     @Override
     protected void onDestroy() {
-        if(!SwableTools.isImonggoSwableRunning(this))
+        Log.e("onDestroy", "---- unbind");
+        if (!SwableTools.isImonggoSwableRunning(this))
             SwableTools.stopSwable(this);
+
+        apiDownloader.onUnbindSyncService();
+        Log.e("onDestroy", "---- nothing to unbind");
         super.onDestroy();
     }
 }

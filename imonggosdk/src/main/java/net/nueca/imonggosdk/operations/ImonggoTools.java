@@ -100,6 +100,14 @@ public class ImonggoTools {
                     parameterStr += "salesman_id=%"+stringInputCount+"$s&";
                     stringInputCount++;
                     break;
+				case ORDER_TYPE:
+					parameterStr += "order_type=%"+stringInputCount+"$s&";
+					stringInputCount++;
+					break;
+				case LAYAWAYS:
+					parameterStr += "type=layaways&";
+					stringInputCount++;
+					break;
             }
         }
         if(!parameterStr.equals("?"))
@@ -178,6 +186,44 @@ public class ImonggoTools {
 	 */
 	public static String buildAPIUrlPLDTRetailCloud(Context context, String accountId) {
 		return String.format(context.getString(R.string.API_URL_PLDTRETAILCLOUD), accountId);
+	}
+
+
+	/**
+	 *
+	 * Build URL for getting Account URL on PLDT Retail Cloud.
+	 *
+	 * @param context
+	 * @param accountId
+	 * @return
+	 */
+	public static String buildAPIUrlPetrondisCOM(Context context, String accountId) {
+		return String.format(context.getString(R.string.API_URL_PETRONDIS_COM), accountId);
+	}
+
+
+	/**
+	 *
+	 * Build URL for getting Account URL on PLDT Retail Cloud.
+	 *
+	 * @param context
+	 * @param accountId
+	 * @return
+	 */
+	public static String buildAPIUrlPetrondisNET(Context context, String accountId) {
+		return String.format(context.getString(R.string.API_URL_PETRONDIS_NET), accountId);
+	}
+
+	/**
+	 *
+	 * Build URL for getting Account URL on PLDT Retail Cloud.
+	 *
+	 * @param context
+	 * @param accountId
+	 * @return
+	 */
+	public static String buildAPIUrlRebisco(Context context, String accountId) {
+		return String.format(context.getString(R.string.API_URL_REBISCO), accountId);
 	}
 
     /**

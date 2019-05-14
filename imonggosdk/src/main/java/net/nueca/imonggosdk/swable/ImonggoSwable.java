@@ -5,30 +5,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.annotation.DrawableRes;
 import android.util.Log;
 
-import net.nueca.imonggosdk.R;
-import net.nueca.imonggosdk.enums.RequestType;
 import net.nueca.imonggosdk.enums.Table;
-import net.nueca.imonggosdk.interfaces.VolleyRequestListener;
-import net.nueca.imonggosdk.objects.Branch;
 import net.nueca.imonggosdk.objects.OfflineData;
 import net.nueca.imonggosdk.objects.User;
-import net.nueca.imonggosdk.objects.document.Document;
-import net.nueca.imonggosdk.objects.order.Order;
-import net.nueca.imonggosdk.operations.http.HTTPRequests;
+import net.nueca.imonggosdk.objects.base.BaseTable3;
 import net.nueca.imonggosdk.tools.AccountTools;
 import net.nueca.imonggosdk.tools.NetworkTools;
-import net.nueca.imonggosdk.tools.NotificationTools;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,11 +33,6 @@ public class ImonggoSwable extends SwableService {
     public static final int NOTIFICATION_ID = 1000;
 
     private SwableStateListener swableStateListener;
-
-    protected int REQUEST_SUCCESS = 0;
-    protected int REQUEST_COUNT = 0;
-
-    private int APP_ICON_DRAWABLE = R.drawable.ic_check_circle;
 
     private IntentFilter notificationFilter = new IntentFilter();
 
@@ -92,8 +73,9 @@ public class ImonggoSwable extends SwableService {
                     Log.e("--- RECEIVER", "called");
                     String action = intent.getAction();
                     if(action.equals(NOTIFICATION_ACTION)) {
-                        REQUEST_SUCCESS = 0;
-                        REQUEST_COUNT = 0;
+                        swableSendModule.SUCCESS_TRANSACTIONS = 0;
+                        swableVoidModule.SUCCESS_TRANSACTIONS = 0;
+                        swableUpdateModule.SUCCESS_TRANSACTIONS = 0;
                     }
                 }
             };
@@ -108,11 +90,13 @@ public class ImonggoSwable extends SwableService {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.e("ImonggoSwable", "onCreate");
         if(!isReceiverAttached) {
             notificationFilter = new IntentFilter();
             notificationFilter.addAction(NOTIFICATION_ACTION);
             registerReceiver(receiver, notificationFilter);
         }
+
         swableSendModule = new SwableSendModule(this,getHelper(),getSession(),getQueue());
         swableVoidModule = new SwableVoidModule(this,getHelper(),getSession(),getQueue());
         swableUpdateModule = new SwableUpdateModule(this,getHelper(),getSession(),getQueue());
@@ -152,15 +136,17 @@ public class ImonggoSwable extends SwableService {
                                     .eq("isPastCutoff", false).and()
                                     .eq("type", OfflineData.CUSTOMER).query();
 
-                    offlineDataList.addAll(
-                        getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
-                                .eq("isSynced", false).and()
-                                .eq("isSyncing", false).and()
-                                .eq("isQueued", false).and()
-                                .eq("isCancelled", false).and()
-                                .eq("isBeingModified", false).and()
-                                .eq("isPastCutoff", false).and()
-                                .ne("type", OfflineData.CUSTOMER).query());
+                    if((offlineDataList == null || offlineDataList.size() == 0) && swableSendModule.getQueueTrackerCount() == 0) {
+                        offlineDataList =
+                            getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
+                                    .eq("isSynced", false).and()
+                                    .eq("isSyncing", false).and()
+                                    .eq("isQueued", false).and()
+                                    .eq("isCancelled", false).and()
+                                    .eq("isBeingModified", false).and()
+                                    .eq("isPastCutoff", false).and()
+                                    .ne("type", OfflineData.CUSTOMER).query();
+                    }
 
                     if(offlineDataList.size() <= 0) {
                         Log.e("ImonggoSwable", "syncModule : nothing to sync");
@@ -180,9 +166,10 @@ public class ImonggoSwable extends SwableService {
                                 swableStateListener.onAlreadyCancelled(offlineData);
                             continue;
                         }
-                        if(offlineData.isQueued()) {
+                        if(offlineData.isQueued() || offlineData.isSyncing()) {
                             continue;
-                        }/*
+                        }
+                        /*
                         try {
                             if(offlineData.getObjectFromData() == null) {
                                 offlineData.deleteTo(getHelper());
@@ -192,12 +179,10 @@ public class ImonggoSwable extends SwableService {
                             e.printStackTrace();
                         }*/
                         Log.e("ImonggoSwable", "OFFLINEDATA: " + offlineData.getReturnId());
-                        Log.e("ImonggoSwable", "isCancelled = "+offlineData.isCancelled());
-                        Log.e("ImonggoSwable", "isSyncing = "+offlineData.isSyncing());
-                        Log.e("ImonggoSwable", "isSynced = "+offlineData.isSynced());
-                        Log.e("ImonggoSwable", "isQueued = "+offlineData.isQueued());
 
                         offlineData.setQueued(true);
+                        Log.e("ImonggoSwable " + 200, "updating offlineData <<<<<<<<<<<<<<<<<<<<<<");
+                        offlineData.updateTo(getHelper());
 
                         if(swableStateListener != null)
                             swableStateListener.onQueued(offlineData);
@@ -207,6 +192,7 @@ public class ImonggoSwable extends SwableService {
                                 swableSendModule.sendTransaction(Table.ORDERS, offlineData);
                                 break;
                             case SEND_INVOICE:
+                            //case SEND_LAYAWAY_INVOICE:
                                 swableSendModule.sendTransaction(Table.INVOICES, offlineData);
                                 break;
                             case SEND_DOCUMENT:
@@ -216,18 +202,30 @@ public class ImonggoSwable extends SwableService {
                                 swableSendModule.sendTransaction(Table.CUSTOMERS, offlineData);
                                 break;
 
+                            case UPDATE_INVOICE:
+                                swableUpdateModule.updateTransaction(Table.INVOICES, offlineData);
+                                break;
                             case UPDATE_CUSTOMER:
                                 swableUpdateModule.updateTransaction(Table.CUSTOMERS, offlineData);
                                 break;
 
                             case CANCEL_ORDER:
-                                swableVoidModule.voidTransaction(Table.ORDERS, offlineData);
+                                if(offlineData.isAllPageSynced())
+                                    swableVoidModule.voidTransaction(Table.ORDERS, offlineData);
+                                else
+                                    swableSendModule.sendTransaction(Table.ORDERS, offlineData);
                                 break;
                             case CANCEL_INVOICE:
-                                swableVoidModule.voidTransaction(Table.INVOICES, offlineData);
+                                if(offlineData.isAllPageSynced())
+                                    swableVoidModule.voidTransaction(Table.INVOICES, offlineData);
+                                else
+                                    swableSendModule.sendTransaction(Table.INVOICES, offlineData);
                                 break;
                             case CANCEL_DOCUMENT:
-                                swableVoidModule.voidTransaction(Table.DOCUMENTS, offlineData);
+                                if(offlineData.isAllPageSynced())
+                                    swableVoidModule.voidTransaction(Table.DOCUMENTS, offlineData);
+                                else
+                                    swableSendModule.sendTransaction(Table.DOCUMENTS, offlineData);
                                 break;
                             case DELETE_CUSTOMER:
                                 swableVoidModule.voidTransaction(Table.CUSTOMERS, offlineData);
@@ -237,11 +235,11 @@ public class ImonggoSwable extends SwableService {
                         //offlineData.updateTo(getHelper());
                     }
                     Log.e("ImonggoSwable", "starting sync : " + offlineDataList.size() + " queued transactions");
-                    REQUEST_COUNT += offlineDataList.size();
                     if(swableStateListener != null)
                         swableStateListener.onSwableStarted();
-                    getQueue().start();
-                    setSyncing(false); // -- restarter
+                    //getQueue().start();
+                    //setSyncing(false);
+                    Log.e("ImonggoSwable", "isSyncing? " + isSyncing());
                 }
                 else {
                     if(!AccountTools.isUserActive(this))
@@ -259,7 +257,50 @@ public class ImonggoSwable extends SwableService {
         }
     }
 
+    @Override
+    public void updateSyncingStatus() {
+        Log.d("ImonggoSwable", "updateSyncingStatus : sending ~ " + swableSendModule.getQueueTrackerCount());
+        Log.d("ImonggoSwable", "updateSyncingStatus : updating ~ " + swableUpdateModule.getQueueTrackerCount());
+        Log.d("ImonggoSwable", "updateSyncingStatus : voiding ~ " + swableVoidModule.getQueueTrackerCount());
+
+        setSyncing(swableSendModule.isSyncing() ||
+                swableUpdateModule.isSyncing() ||
+                swableVoidModule.isSyncing());
+        Log.e("ImonggoSwable", "update ~ isSyncing : " + isSyncing());
+    }
+
+    @Override
+    public void restartSyncingAndQueued() {
+        Log.e("ImonggoSwable", "update ~ restartSyncingAndQueued");
+        try {
+            List<OfflineData> offlineDataList =
+                    getHelper().fetchObjects(OfflineData.class).queryBuilder().orderBy("id", true).where()
+                            //.eq("isSynced", false).and()
+                            //.eq("isCancelled", false).and()
+                            //.eq("isBeingModified", false).and()
+                            //.eq("isPastCutoff", false).and()
+                            .eq("isSyncing", true).or()
+                            .eq("isQueued", true).query();
+            for(OfflineData offlineData : offlineDataList) {
+                swableSendModule.requestQueue.cancelAll(offlineData.getObjectFromData(BaseTable3.class).getId());
+                offlineData.setSyncing(false);
+                offlineData.setQueued(false);
+                offlineData.updateTo(getHelper());
+
+                if(swableStateListener != null)
+                    swableStateListener.onSyncProblem(offlineData, false, "", 0);
+            }
+
+            swableSendModule.clearQueueTracker();
+            swableUpdateModule.clearQueueTracker();
+            swableVoidModule.clearQueueTracker();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setSwableStateListener(SwableStateListener swableStateListener) {
+        Log.e("SwableState", "listener is set");
         this.swableStateListener = swableStateListener;
     }
 
@@ -267,12 +308,14 @@ public class ImonggoSwable extends SwableService {
         return swableStateListener;
     }
 
-    public void setNotificationIcon(@DrawableRes int iconResource) {
-        APP_ICON_DRAWABLE = iconResource;
-    }
-    public int getNotificationIcon() {
-        return APP_ICON_DRAWABLE;
-    }
+//    public void setNotificationIcon(@DrawableRes int iconResource) {
+//        APP_ICON_DRAWABLE = iconResource;
+//    }
+//
+//    @DrawableRes
+//    public int getNotificationIcon() {
+//        return APP_ICON_DRAWABLE;
+//    }
 
     public interface SwableStateListener {
         void onSwableStarted();

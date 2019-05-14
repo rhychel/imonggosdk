@@ -2,13 +2,22 @@ package net.nueca.concessioengine.objects;
 
 import android.util.Log;
 
+import com.j256.ormlite.stmt.Where;
+
+import net.nueca.concessioengine.adapters.tools.ProductsAdapterHelper;
 import net.nueca.concessioengine.tools.DiscountTools;
+import net.nueca.concessioengine.tools.PriceTools;
+import net.nueca.imonggosdk.enums.SettingsName;
+import net.nueca.imonggosdk.objects.Settings;
 import net.nueca.imonggosdk.objects.Unit;
+import net.nueca.imonggosdk.objects.base.DBTable;
 import net.nueca.imonggosdk.objects.invoice.InvoicePurpose;
 import net.nueca.imonggosdk.objects.price.Price;
+import net.nueca.imonggosdk.tools.Configurations;
 import net.nueca.imonggosdk.tools.NumberTools;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +32,7 @@ import java.util.List;
          "unit_id": 9088,
          "unit_quantity": 28, --- INPUTTED QUANTITY
          "unit_content_quantity": 11.2, -- quantity from the UNIT OBJECT
-         "unit_retail_price": 98219.52, -- RETAIL PRICE from UNIT OBJECT * UNIT QUANTITY
+         "unit_retail_price": 98219.52, -- RETAIL PRICE from UNIT OBJECT * UNIT QUANTITY ||-> REVISED(04-11-2106 by Mikee) RETAIL PRICE from UNIT OBJECT
          "unit_name": "CUPS",
          "line_no": 1
      },
@@ -67,6 +76,7 @@ public class Values {
             company_discounts = new ArrayList<>(),
             customer_discounts = new ArrayList<>();
     private Price price = null;
+    private boolean allow_decimal = true;
 
     public Values() { }
 
@@ -87,6 +97,7 @@ public class Values {
         return unit;
     }
 
+    // UNIT
     public void setValue(String quantity, Unit unit) {
         //Log.e("VALUES", "setValue(quantity="+quantity +", unit="+(unit!=null?unit.getName():"null")+")");
         if(this.price != null && this.price.getUnit() != null && !this.price.getUnit().equals(unit))
@@ -110,55 +121,32 @@ public class Values {
         setValue(quantity, unit, null);
     }
 
-    public void setValue(String quantity, Price price, String customer_discount_text) {
-        setValue(quantity, price, customer_discount_text, null);
-    }
-
-    public void setValue(String quantity, Price price, String customer_discount_text, ExtendedAttributes extendedAttributes) {
-        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
-        if(customer_discount_text != null)
-            this.customer_discount_text = customer_discount_text;
-        setValue(quantity, price, extendedAttributes);
-    }
-
-    public void setValue(String quantity, Price price) {
-        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
-        setValue(quantity, price, (ExtendedAttributes) null);
-    }
-
-    public void setValue(String quantity, Price price, ExtendedAttributes extendedAttributes) {
-        Log.e("VALUES", "setValue price isNull? " + (price==null));
-        this.price = price;
-        if(price != null) {
-            if (price.getRetail_price() != null)
-                this.retail_price = price.getRetail_price();
-            else
-                this.retail_price = price.getProduct().getRetail_price();
-            this.discount_text = price.getDiscount_text();
-        }
-        setValue(quantity, price == null? null : price.getUnit(), extendedAttributes);
-    }
-
     public void setValue(String quantity, Unit unit, ExtendedAttributes extendedAttributes) {
         if(extendedAttributes != null)
             this.extendedAttributes = extendedAttributes;
         this.unit = unit;
         if(isValidUnit()) {
             Log.e("Quantity-unit", unit.getQuantity()+" * "+quantity);
-            if(quantity.length() > 0)
-                this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_quantity = quantity;
             this.unit_content_quantity = unit.getQuantity();
+            if(quantity.length() > 0)
+                this.quantity = String.valueOf((unit.getQuantity() * Double.valueOf(quantity)));
             this.unit_name = unit.getName();
-            this.unit_retail_price = unit.getRetail_price() * unit.getQuantity();
+//            this.unit_retail_price = this.retail_price * Double.valueOf(this.unit_quantity);
+            this.unit_retail_price = unit.getRetail_price();
+            this.subtotal = this.retail_price * Double.valueOf(this.unit_quantity);
         }
         else {
             this.quantity = quantity;
             this.unit_quantity = null;
             this.unit_content_quantity = 0d;
-            this.unit_retail_price = 0d;
-            if(unit != null)
+            this.subtotal = 0d;
+            if(unit != null) {
+                if(this.retail_price == null)
+                    this.retail_price = unit.getRetail_price();
+                this.unit_retail_price = unit.getRetail_price();
                 this.unit_name = unit.getName();
+            }
         }
 
         Log.e("QTY", this.quantity + " ~ " + quantity);
@@ -177,43 +165,110 @@ public class Values {
 
         Log.e("PRICE OBJ", "isNull? " + (price == null));
         if(this.price == null) {
-            this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
+            if(isValidUnit()) {
+                this.no_discount_subtotal = this.subtotal; // this.unit_retail_price
+//                this.subtotal = this.unit_retail_price;
+            } else if(this.retail_price != null) {
+                this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
+                this.subtotal = this.retail_price * Double.valueOf(this.quantity);
+            }
 
             //if (customer_discount_text != null && customer_discount_text.length() > 0) {
             //    this.subtotal = DiscountTools.applyMultipleDiscounts(
-            //            new BigDecimal(this.retail_price), new BigDecimal(this.quantity),
+            //            new BigDecimal(this.retail_price), new BigDecimal(this.input_quantity),
             //            customer_discounts, customer_discount_text, ","
             //    ).doubleValue();
             //} else {
-                this.subtotal = this.retail_price * Double.valueOf(this.quantity);
+            //    this.subtotal = this.retail_price * Double.valueOf(this.quantity);
             //}
         }
         else {
-            this.no_discount_subtotal = this.retail_price * Double.valueOf(quantity);
+            if(isValidUnit()) {
+                this.no_discount_subtotal = this.subtotal; // this.unit_retail_price
+                this.subtotal = DiscountTools.applyMultipleDiscounts(
+                        new BigDecimal(this.retail_price), new BigDecimal(this.unit_quantity),
+                        product_discounts, company_discounts, discount_text, ";", ","
+                ).doubleValue();
+            } else {
+                this.no_discount_subtotal = this.retail_price * Double.valueOf(this.quantity);
+                this.subtotal = DiscountTools.applyMultipleDiscounts(
+                        new BigDecimal(this.retail_price), new BigDecimal(this.quantity),
+                        product_discounts, company_discounts, discount_text, ";", ","
+                ).doubleValue();
+            }
 
             //if (customer_discount_text != null && customer_discount_text.length() > 0) {
             //    this.subtotal = DiscountTools.applyMultipleDiscounts(
-            //            new BigDecimal(this.retail_price), new BigDecimal(quantity),
+            //            new BigDecimal(this.retail_price), new BigDecimal(input_quantity),
             //            product_discounts, company_discounts, discount_text, ";", ",",
             //            customer_discounts, customer_discount_text
             //    ).doubleValue();
             //} else {
-                this.subtotal = DiscountTools.applyMultipleDiscounts(
-                        new BigDecimal(this.retail_price), new BigDecimal(quantity),
-                        product_discounts, discount_text, ","
-                ).doubleValue();
+            //    this.subtotal = DiscountTools.applyMultipleDiscounts(
+            //            new BigDecimal(this.retail_price), new BigDecimal(input_quantity),
+            //            product_discounts, discount_text, ","
+            //    ).doubleValue();
             //}
         }
 
+        /** DECIMAL FORMATTING **/
+        if(this.subtotal != null)
+            this.subtotal = NumberTools.formatDouble(this.subtotal, ProductsAdapterHelper.getDecimalPlace());
+        else
+            this.subtotal = 0.0;
+
 
         Log.e("QTY", this.quantity + " ~ " + quantity);
-        Log.e("Unit", unit != null? unit.getName() : "null");
+        Log.e("Unit", unit != null? unit.getName()+" id:"+unit.getId() : "null");
         Log.e("Values", "setValue : " + this.retail_price + " * " + quantity + " = " + this.subtotal);
     }
 
+    // PRICE
+    public void setValue(String quantity, Price price) {
+        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
+        setValue(quantity, price, (ExtendedAttributes) null);
+    }
+
+    public void setValue(String quantity, Price price, ExtendedAttributes extendedAttributes) {
+        Log.e("VALUES", "setValue price isNull? " + (price==null));
+        this.price = price;
+        if(price != null) {
+            if (price.getRetail_price() != null)
+                this.retail_price = price.getRetail_price();
+            else {
+                Log.e(getClass().getSimpleName(), "calling PriceTools.identifyRetailPrice");
+                this.retail_price = PriceTools.identifyRetailPrice(ProductsAdapterHelper.getDbHelper(),
+                        price.getProduct(),ProductsAdapterHelper.getSelectedBranch(),ProductsAdapterHelper.getSelectedCustomerGroup(),
+                        ProductsAdapterHelper.getSelectedCustomer(), price.getUnit());
+                //this.retail_price = price.getProduct().getRetail_price();
+            }
+            this.discount_text = price.getDiscount_text();
+        }
+
+        Log.e(">>>>>>", "UNIT: " + (price == null? null : price.getUnit()) );
+
+        setValue(quantity, price == null? null : price.getUnit(), extendedAttributes);
+    }
+
+    public void setValue(String quantity, Price price, String customer_discount_text) {
+        setValue(quantity, price, customer_discount_text, null);
+    }
+
+    public void setValue(String quantity, Price price, String customer_discount_text, ExtendedAttributes extendedAttributes) {
+        Log.e("VALUES", "setValue(quantity="+quantity +", price="+(price!=null?price.toJSONString():"null")+")");
+        if(customer_discount_text != null)
+            this.customer_discount_text = customer_discount_text;
+        setValue(quantity, price, extendedAttributes);
+    }
+
     public String getQuantity() {
-        if(isValidUnit() && unit_quantity != null)
+        if(isValidUnit() && unit_quantity != null) {
+            if(!allow_decimal)
+                return Double.valueOf(unit_quantity).intValue()+"";
             return unit_quantity;
+        }
+        if(!allow_decimal)
+            return Double.valueOf(quantity).intValue()+"";
         return quantity;
     }
 
@@ -369,6 +424,14 @@ public class Values {
 
     public void setInvoicePurpose(InvoicePurpose invoicePurpose) {
         this.invoicePurpose = invoicePurpose;
+    }
+
+    public boolean isAllow_decimal() {
+        return allow_decimal;
+    }
+
+    public void setAllow_decimal(boolean allow_decimal) {
+        this.allow_decimal = allow_decimal;
     }
 
     @Override
